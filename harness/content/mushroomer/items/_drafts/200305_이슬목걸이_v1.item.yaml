@@ -1,0 +1,19 @@
+id: 200305
+name: "이슬 목걸이"
+category: Equipment
+type: Necklace
+tags: [EquipmentUtilityGrowth]
+grade: 1
+rarity: 2
+tier: 1
+power: 26
+equipAddStats:
+  - { type: CriticalPercent, value: [3.0] }
+  - { type: ItemDropPercent, value: [2.0] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 120 }
+      - { id: 200103, count: 2 }
+spriteGroups:
+  Icon: "Items/Equipments/ICN_Equip_Necklace.png"

@@ -1,0 +1,87 @@
+# 업적 카테고리 인덱스 — content/mushroomer/achievements/
+# mushroomer 데이터 완성 최소 사양: 성장/장비/스킬/던전 루프의 목표와 보상.
+
+achievements:
+  - id: 600101
+    name: "첫 승리"
+    file: _drafts/600101_첫승리_v1.achievement.yaml
+    status: draft
+    created_at: 2026-05-26T00:00:00Z
+    created_by: codex
+    type: Normal
+    condition: WinGame
+    refs:
+      units: []
+      items: [5, 6]
+      maps: [500101]
+    tags: [Onboarding, Dungeon]
+
+  - id: 600102
+    name: "포자 사냥꾼"
+    file: _drafts/600102_포자사냥꾼_v1.achievement.yaml
+    status: draft
+    created_at: 2026-05-26T00:00:00Z
+    created_by: codex
+    type: Normal
+    condition: KillUnitAny
+    refs:
+      units: [110201]
+      items: [5, 200103]
+      maps: []
+    tags: [Combat, Growth]
+
+  - id: 600103
+    name: "강화석 수집"
+    file: _drafts/600103_강화석수집_v1.achievement.yaml
+    status: draft
+    created_at: 2026-05-26T00:00:00Z
+    created_by: codex
+    type: Normal
+    condition: AcquireItem
+    refs:
+      units: []
+      items: [200103]
+      maps: []
+    tags: [Equipment, Growth]
+
+  - id: 600104
+    name: "스킬 수련"
+    file: _drafts/600104_스킬수련_v1.achievement.yaml
+    status: draft
+    created_at: 2026-05-26T00:00:00Z
+    created_by: codex
+    type: Normal
+    condition: UseSkill
+    refs:
+      units: []
+      items: [200104]
+      maps: []
+    tags: [Skill, Growth]
+
+  - id: 600105
+    name: "골드 던전 돌파"
+    file: _drafts/600105_골드던전돌파_v1.achievement.yaml
+    status: draft
+    created_at: 2026-05-26T00:00:00Z
+    created_by: codex
+    type: Normal
+    condition: WinGame
+    refs:
+      units: []
+      items: [5, 6]
+      maps: [500201]
+    tags: [Dungeon, Economy]
+
+  - id: 600106
+    name: "요일 던전 입문"
+    file: _drafts/600106_요일던전입문_v1.achievement.yaml
+    status: draft
+    created_at: 2026-05-26T00:00:00Z
+    created_by: codex
+    type: Normal
+    condition: WinGame
+    refs:
+      units: []
+      items: [200105, 200503]
+      maps: [500301]
+    tags: [Dungeon, Weekly]

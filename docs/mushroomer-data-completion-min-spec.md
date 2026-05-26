@@ -34,7 +34,7 @@
 파생하지 않는다. 목적은 `mushroomer` 안에서 부족한 시스템 데이터를 채워 하네스 기반
 콘텐츠 제작 루프가 실제로 닫히는지 검증하는 것이다.
 
-## 현재 상태
+## 작업 전 상태
 
 `python3 harness/tools/idlez_compile.py mushroomer` 기준 현재 툴체인은 통과한다.
 
@@ -49,8 +49,23 @@
 | `Audios.json` | 1 | 전투 BGM 1개 |
 | `Triggers.json` | 10 | 현재 수직 슬라이스 전투 흐름 |
 
-따라서 현재 `mushroomer`는 1맵 수직 슬라이스에 가깝고, 이번 사양서의 작업 목표는
+따라서 작업 전 `mushroomer`는 1맵 수직 슬라이스에 가깝고, 이번 사양서의 작업 목표는
 이 슬라이스를 스탯/성장/스킬/던전/장비/shop이 있는 최소 키우기 루프로 확장하는 것이다.
+
+## 1차 데이터 보강 결과
+
+`python3 harness/tools/idlez_compile.py mushroomer` 기준 1차 보강 후 툴체인은 통과한다.
+
+| 산출물 | 보강 후 수량 | 보강 내용 |
+| --- | ---: | --- |
+| `Units.json` | 3 | 기존 플레이어/몬스터/보스 유지 |
+| `Items.json` | 33 | 재료, 티켓, 무기 3종, 장비 6종, 스킬북, shop 상품, 출석판 추가 |
+| `Skills.json` | 4 | 단일딜, 광역, 보스딜, 자기 버프 스킬 구성 |
+| `Buffs.json` | 1 | 공격/공속 성장형 자기 버프 추가 |
+| `Maps.json` | 15 | 메인 5스테이지, 일반 던전 3종, 요일 던전 7종 |
+| `Achievements.json` | 25 | 튜토리얼/예약 업적 외 성장 유도 업적 6종 추가 |
+| `Audios.json` | 1 | 기존 전투 BGM 유지 |
+| `Triggers.json` | 10 | 기존 `mushroom_field` 전투 트리거 재사용 |
 
 ## 핵심 게임 루프
 

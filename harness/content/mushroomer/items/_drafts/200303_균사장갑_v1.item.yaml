@@ -1,0 +1,18 @@
+id: 200303
+name: "균사 장갑"
+category: Equipment
+type: Gloves
+tags: [EquipmentAttackGrowth]
+grade: 1
+rarity: 1
+tier: 1
+power: 20
+equipAddStats:
+  - { type: Attack, value: [10.0] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 85 }
+      - { id: 200103, count: 1 }
+spriteGroups:
+  Icon: "Items/Equipments/ICN_Equip_Gloves.png"

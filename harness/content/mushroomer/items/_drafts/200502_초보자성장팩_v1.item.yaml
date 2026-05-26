@@ -1,0 +1,19 @@
+id: 200502
+name: "초보자 성장 팩"
+category: Product
+type: Product
+grade: 1
+priceXtr: 120
+productMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 4, count: 120 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 4500, isCore: true }
+      - { itemDataId: 200103, count: 20 }
+      - { itemDataId: 200104, count: 10 }
+spriteGroups:
+  Icon: "Items/Shops/shop_img_banner_newbie_01.png"

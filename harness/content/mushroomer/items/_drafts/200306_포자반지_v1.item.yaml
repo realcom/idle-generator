@@ -1,0 +1,19 @@
+id: 200306
+name: "포자 반지"
+category: Equipment
+type: Ring
+tags: [EquipmentUtilityGrowth]
+grade: 1
+rarity: 2
+tier: 1
+power: 28
+equipAddStats:
+  - { type: CriticalDamagePercent, value: [8.0] }
+  - { type: BossDamageEfficiencyPercent, value: [3.0] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 130 }
+      - { id: 200103, count: 2 }
+spriteGroups:
+  Icon: "Items/Equipments/ICN_Equip_Ring.png"

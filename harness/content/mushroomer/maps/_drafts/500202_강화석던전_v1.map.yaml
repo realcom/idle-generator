@@ -1,0 +1,20 @@
+id: 500202
+group: 500200
+name: "강화석 던전"
+type: Dungeon
+tags: [MaterialDungeon, Equipment]
+scene: "PFB_MAP_Meadow_Day_Chapter"
+popupArgs: { ClientModeManager: ModeManagerMushroom, ClientHomeMapDataId: 500101 }
+initLevel: 8
+initGold: 0
+enableUnitExp: true
+locations:
+  - { id: -1, position: { x: -7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 0.75 } }] }
+  - { id: 1, position: { x: 7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 1.75 } }] }
+triggers: [MAP_ONSTART_MUSHROOMFIELDWAVE1, MAP_ONUPDATE_MUSHROOMFIELDUPDATE]
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 500 }
+      - { itemDataId: 200103, minCount: 12, maxCount: 18, isCore: true }

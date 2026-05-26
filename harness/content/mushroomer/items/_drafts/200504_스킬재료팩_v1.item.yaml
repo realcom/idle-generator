@@ -1,0 +1,17 @@
+id: 200504
+name: "스킬 재료 팩"
+category: Product
+type: Product
+grade: 1
+priceXtr: 60
+productMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 4, count: 60 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200104, count: 25, isCore: true }
+spriteGroups:
+  Icon: "Items/Shops/shop_banner_ruby.png"

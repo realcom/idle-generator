@@ -1,0 +1,18 @@
+id: 200201
+name: "새싹 지팡이"
+category: Weapon
+type: Staff
+tags: [WeaponAttackGrowth]
+grade: 1
+rarity: 1
+tier: 1
+power: 35
+equipAddStats:
+  - { type: Attack, value: [22.0] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 120 }
+      - { id: 200103, count: 2 }
+spriteGroups:
+  Icon: "Items/Icons/ICN_Weapon_Staff.png"

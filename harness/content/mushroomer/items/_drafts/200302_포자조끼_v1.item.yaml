@@ -1,0 +1,19 @@
+id: 200302
+name: "포자 조끼"
+category: Equipment
+type: Chest
+tags: [EquipmentHpGrowth]
+grade: 1
+rarity: 1
+tier: 1
+power: 22
+equipAddStats:
+  - { type: Hp, value: [160.0] }
+  - { type: Defense, value: [5.0] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 90 }
+      - { id: 200103, count: 1 }
+spriteGroups:
+  Icon: "Items/Equipments/ICN_Equip_Chest.png"

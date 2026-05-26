@@ -1,0 +1,19 @@
+id: 200304
+name: "버섯 신발"
+category: Equipment
+type: Boots
+tags: [EquipmentDefenseGrowth]
+grade: 1
+rarity: 1
+tier: 1
+power: 18
+equipAddStats:
+  - { type: Defense, value: [8.0] }
+  - { type: MoveSpeed, value: [0.2] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 80 }
+      - { id: 200103, count: 1 }
+spriteGroups:
+  Icon: "Items/Equipments/ICN_Equip_Boots.png"

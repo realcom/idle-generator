@@ -1,0 +1,19 @@
+id: 200202
+name: "포자 단검"
+category: Weapon
+type: Dagger
+tags: [WeaponAttackGrowth]
+grade: 1
+rarity: 2
+tier: 1
+power: 48
+equipAddStats:
+  - { type: Attack, value: [31.0] }
+  - { type: AttackSpeedPercent, value: [4.0] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 180 }
+      - { id: 200103, count: 3 }
+spriteGroups:
+  Icon: "Items/Icons/ICN_Weapon_Dagger.png"

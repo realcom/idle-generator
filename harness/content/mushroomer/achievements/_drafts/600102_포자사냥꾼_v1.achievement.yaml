@@ -1,0 +1,20 @@
+id: 600102
+name: "포자 사냥꾼"
+type: Normal
+tags: []
+order: 102
+initialOpen: true
+clientAchievement: false
+condition: KillUnitAny
+conditionValue1: 0
+conditionValue2: 0
+targetProgress: 100
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 1200 }
+      - { itemDataId: 200103, count: 5 }

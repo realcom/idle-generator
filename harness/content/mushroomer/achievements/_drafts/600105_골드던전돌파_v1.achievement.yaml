@@ -1,0 +1,20 @@
+id: 600105
+name: "골드 던전 돌파"
+type: Normal
+tags: []
+order: 105
+initialOpen: true
+clientAchievement: false
+condition: WinGame
+conditionValue1: 500201
+conditionValue2: 0
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 3000 }
+      - { itemDataId: 6, count: 150 }
