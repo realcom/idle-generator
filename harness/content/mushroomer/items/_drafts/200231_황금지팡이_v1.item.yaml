@@ -1,0 +1,19 @@
+id: 200231
+name: "황금 지팡이"
+category: Weapon
+type: Staff
+tags: [WeaponTier3Growth]
+grade: 3
+rarity: 3
+tier: 3
+power: 420
+equipAddStats:
+  - { type: Attack, value: [150] }
+  - { type: CooldownPercent, value: [4] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1500 }
+      - { id: 200103, count: 12 }
+spriteGroups:
+  Icon: "Items/Icons/ICN_Weapon_Staff.png"

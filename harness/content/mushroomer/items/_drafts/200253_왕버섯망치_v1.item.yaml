@@ -1,0 +1,19 @@
+id: 200253
+name: "왕버섯 망치"
+category: Weapon
+type: Hammer
+tags: [WeaponTier5Growth]
+grade: 5
+rarity: 5
+tier: 5
+power: 4100
+equipAddStats:
+  - { type: Attack, value: [950] }
+  - { type: BossDamageEfficiencyPercent, value: [20] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 18000 }
+      - { id: 200103, count: 75 }
+spriteGroups:
+  Icon: "Items/Icons/ICN_Weapon_Hammer.png"

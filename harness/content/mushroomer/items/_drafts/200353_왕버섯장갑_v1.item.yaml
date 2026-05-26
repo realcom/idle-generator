@@ -1,0 +1,20 @@
+id: 200353
+name: "왕버섯 장갑"
+category: Equipment
+type: Gloves
+tags: [EquipmentTier5Growth]
+grade: 5
+rarity: 5
+tier: 5
+power: 2750
+equipAddStats:
+  - { type: Attack, value: [540] }
+  - { type: CriticalPercent, value: [18] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 18000 }
+      - { id: 200103, count: 75 }
+requiredAchievementDataIds: [10102]
+spriteGroups:
+  Icon: "Items/Equipments/ICN_Equip_Gloves.png"

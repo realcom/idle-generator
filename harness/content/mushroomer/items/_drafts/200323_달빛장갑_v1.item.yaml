@@ -1,0 +1,20 @@
+id: 200323
+name: "달빛 장갑"
+category: Equipment
+type: Gloves
+tags: [EquipmentTier2Growth]
+grade: 2
+rarity: 2
+tier: 2
+power: 85
+equipAddStats:
+  - { type: Attack, value: [28] }
+  - { type: CriticalPercent, value: [5] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 420 }
+      - { id: 200103, count: 5 }
+requiredAchievementDataIds: [10102]
+spriteGroups:
+  Icon: "Items/Equipments/ICN_Equip_Gloves.png"

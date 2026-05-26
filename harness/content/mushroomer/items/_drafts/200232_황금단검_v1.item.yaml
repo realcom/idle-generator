@@ -1,0 +1,19 @@
+id: 200232
+name: "황금 단검"
+category: Weapon
+type: Dagger
+tags: [WeaponTier3Growth]
+grade: 3
+rarity: 3
+tier: 3
+power: 420
+equipAddStats:
+  - { type: Attack, value: [150] }
+  - { type: AttackSpeedPercent, value: [6] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1500 }
+      - { id: 200103, count: 12 }
+spriteGroups:
+  Icon: "Items/Icons/ICN_Weapon_Dagger.png"

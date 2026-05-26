@@ -1,0 +1,20 @@
+id: 200336
+name: "황금 반지"
+category: Equipment
+type: Ring
+tags: [EquipmentTier3Growth]
+grade: 3
+rarity: 3
+tier: 3
+power: 280
+equipAddStats:
+  - { type: CriticalDamagePercent, value: [28] }
+  - { type: BossDamageEfficiencyPercent, value: [10] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1500 }
+      - { id: 200103, count: 12 }
+requiredAchievementDataIds: [10105]
+spriteGroups:
+  Icon: "Items/Equipments/ICN_Equip_Ring.png"

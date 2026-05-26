@@ -1,0 +1,20 @@
+id: 200356
+name: "왕버섯 반지"
+category: Equipment
+type: Ring
+tags: [EquipmentTier5Growth]
+grade: 5
+rarity: 5
+tier: 5
+power: 2750
+equipAddStats:
+  - { type: CriticalDamagePercent, value: [90] }
+  - { type: BossDamageEfficiencyPercent, value: [25] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 18000 }
+      - { id: 200103, count: 75 }
+requiredAchievementDataIds: [10105]
+spriteGroups:
+  Icon: "Items/Equipments/ICN_Equip_Ring.png"

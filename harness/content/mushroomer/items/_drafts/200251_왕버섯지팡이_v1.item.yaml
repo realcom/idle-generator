@@ -1,0 +1,19 @@
+id: 200251
+name: "왕버섯 지팡이"
+category: Weapon
+type: Staff
+tags: [WeaponTier5Growth]
+grade: 5
+rarity: 5
+tier: 5
+power: 4100
+equipAddStats:
+  - { type: Attack, value: [950] }
+  - { type: CooldownPercent, value: [9] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 18000 }
+      - { id: 200103, count: 75 }
+spriteGroups:
+  Icon: "Items/Icons/ICN_Weapon_Staff.png"

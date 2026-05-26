@@ -1,0 +1,19 @@
+id: 200222
+name: "달빛 단검"
+category: Weapon
+type: Dagger
+tags: [WeaponTier2Growth]
+grade: 2
+rarity: 2
+tier: 2
+power: 120
+equipAddStats:
+  - { type: Attack, value: [60] }
+  - { type: AttackSpeedPercent, value: [3] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 420 }
+      - { id: 200103, count: 5 }
+spriteGroups:
+  Icon: "Items/Icons/ICN_Weapon_Dagger.png"

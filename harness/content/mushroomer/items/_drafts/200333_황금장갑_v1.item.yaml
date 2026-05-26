@@ -1,0 +1,20 @@
+id: 200333
+name: "황금 장갑"
+category: Equipment
+type: Gloves
+tags: [EquipmentTier3Growth]
+grade: 3
+rarity: 3
+tier: 3
+power: 280
+equipAddStats:
+  - { type: Attack, value: [75] }
+  - { type: CriticalPercent, value: [8] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1500 }
+      - { id: 200103, count: 12 }
+requiredAchievementDataIds: [10102]
+spriteGroups:
+  Icon: "Items/Equipments/ICN_Equip_Gloves.png"

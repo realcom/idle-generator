@@ -1,0 +1,20 @@
+id: 200335
+name: "황금 목걸이"
+category: Equipment
+type: Necklace
+tags: [EquipmentTier3Growth]
+grade: 3
+rarity: 3
+tier: 3
+power: 280
+equipAddStats:
+  - { type: CriticalPercent, value: [8] }
+  - { type: ItemDropPercent, value: [7] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1500 }
+      - { id: 200103, count: 12 }
+requiredAchievementDataIds: [10104]
+spriteGroups:
+  Icon: "Items/Equipments/ICN_Equip_Necklace.png"

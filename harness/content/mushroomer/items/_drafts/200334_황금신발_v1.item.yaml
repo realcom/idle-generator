@@ -1,0 +1,20 @@
+id: 200334
+name: "황금 신발"
+category: Equipment
+type: Boots
+tags: [EquipmentTier3Growth]
+grade: 3
+rarity: 3
+tier: 3
+power: 280
+equipAddStats:
+  - { type: Defense, value: [58] }
+  - { type: MoveSpeed, value: [0.45] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1500 }
+      - { id: 200103, count: 12 }
+requiredAchievementDataIds: [10103]
+spriteGroups:
+  Icon: "Items/Equipments/ICN_Equip_Boots.png"

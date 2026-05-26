@@ -1,0 +1,20 @@
+id: 200325
+name: "달빛 목걸이"
+category: Equipment
+type: Necklace
+tags: [EquipmentTier2Growth]
+grade: 2
+rarity: 2
+tier: 2
+power: 85
+equipAddStats:
+  - { type: CriticalPercent, value: [5] }
+  - { type: ItemDropPercent, value: [4] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 420 }
+      - { id: 200103, count: 5 }
+requiredAchievementDataIds: [10104]
+spriteGroups:
+  Icon: "Items/Equipments/ICN_Equip_Necklace.png"
