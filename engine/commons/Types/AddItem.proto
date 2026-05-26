@@ -1,0 +1,65 @@
+syntax = "proto3";
+package Commons.Types;
+
+message AddItem {
+  int32 itemDataId = 1;
+
+  int64 count = 2;
+  int64 minCount = 3;
+  int64 maxCount = 4;
+  
+  int32 level = 5;
+  int32 minLevel = 6;
+  int32 maxLevel = 7;
+
+  int32 days = 8;
+  int32 hours = 13;
+  int32 minutes = 14;
+
+  int64 exp = 10;
+  int64 minExp = 11;
+  int64 maxExp = 12;
+  
+  int32 group = 15;
+  int32 pityGroup = 16;
+  bool hideInRewardPreview = 17;
+  float weight = 9;
+  
+  //TODO: If fix recursive parsing or direct parsing by parse. Let change structure 
+  int32 dropPrefabId = 100;
+  float dropTimeToExpiration = 101;
+  float dropDestroyDelay = 102;
+  bool isDropAutoGetExpired = 103;
+  
+  bool isCore = 200;
+  
+}
+
+message AddItemGroup {
+  repeated AddItem addItems = 1;
+  float probPercent = 2;
+  int32 rank = 3;
+  bool shouldAddAll = 4;
+  int32 level = 5;
+  int32 levelReferenceItemDataId = 6;
+  
+  // for scout
+  int32 minutes = 10;
+  int32 maxMinutes = 11;
+}
+
+message TraitItemGroup {
+  
+  enum Type {
+    LevelUp = 0;
+    Encounter = 1;
+    GoldCardFlip = 2;
+  }
+  repeated AddItem addItems = 1;
+  int32 unitDataId = 2;
+  int32 level = 3;
+  float probPercent = 4;
+  int32 size = 5;
+  bool shouldAddAll = 6;
+  Type type = 7;
+}

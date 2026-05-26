@@ -1,0 +1,11 @@
+# when 조건 예시 — 처치 시 레벨 10 이상이면 보너스 골드
+# 컴파일: SKILL_ONKILL_BONUSGOLD, condition(level>=10) 안에 increaseGold
+name: BonusGold
+domain: skill
+vars:
+  bonus: { type: int, default: 100, comment: "Bonus Gold" }
+on:
+  - event: kill
+    do:
+      - when: "level >= 10"
+        increaseGold: { amount: $bonus }

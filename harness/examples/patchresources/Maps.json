@@ -1,0 +1,59 @@
+{
+ "maps": [
+  {
+   "id": 500101,
+   "name": "초원 1",
+   "type": "Dungeon",
+   "tags": [
+    "ContainPlayerInventory"
+   ],
+   "boardConstants": {
+    "levelUpChoiceCount": 3
+   },
+   "triggers": [
+    "MAP_ONSTART_MEADOW1WAVE1",
+    "MAP_ONSTART_MEADOW1WAVE2",
+    "MAP_ONSTART_MEADOW1WAVE3",
+    "MAP_ONUPDATE_MEADOW1UPDATE"
+   ],
+   "clearAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "minCount": 100,
+       "maxCount": 200,
+       "isCore": true
+      },
+      {
+       "itemDataId": 6,
+       "count": 30
+      }
+     ]
+    },
+    {
+     "shouldAddAll": false,
+     "probPercent": 25,
+     "addItems": [
+      {
+       "itemDataId": 200102,
+       "count": 1,
+       "weight": 70,
+       "group": 2
+      },
+      {
+       "itemDataId": 200103,
+       "count": 1,
+       "weight": 30,
+       "group": 2,
+       "pityGroup": 8
+      }
+     ]
+    }
+   ],
+   "prefab": "Maps/Meadow/meadow_1.prefab"
+  }
+ ]
+}

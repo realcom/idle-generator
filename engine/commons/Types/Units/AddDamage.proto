@@ -1,0 +1,25 @@
+syntax = "proto3";
+package Commons.Types.Units;
+
+import "UseSkill.proto";
+
+message AddDamage {
+  repeated int64 damages = 1;
+  repeated float attackPercentDamages = 2;
+  repeated float hpPercentDamages = 3;
+  repeated float maxHpPercentDamages = 4;
+  repeated int64 spDamages = 5;
+  
+  bool isMagic = 100;
+
+  float knockbackDuration = 200;
+  float knockbackDistance = 201;
+  string fxOnKnockback = 202;
+  
+  float disableMoveDuration = 300;
+  float disableActionDuration = 301;
+
+  string fxOnHit = 400;
+  string fxOnCriticalHit = 401;
+  Types.Units.UseSkill onDamageUseSkill = 402;
+}

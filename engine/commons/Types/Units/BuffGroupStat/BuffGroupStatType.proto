@@ -1,0 +1,25 @@
+syntax = "proto3";
+package Commons.Types.Units.BuffGroupStat;
+
+enum BuffGroupStatType {
+  BuffApplyResistancePercent = 0;
+  BossBuffApplyResistancePercent = 4;
+  
+  BuffApplyAmplifyPercent = 1;
+  
+  BuffApplyResistanceReducePercent = 2;
+  BossBuffApplyResistanceReducePercent = 3;
+  
+  BuffDurationEfficiencyPercent = 5;
+  SelfBuffDurationEfficiencyPercent = 6;
+  TeamBuffDurationEfficiencyPercent = 7;
+  EnemyBuffDurationEfficiencyPercent = 8;
+  
+  Count = 9;
+}
+
+message AddBuffGroupStat {
+  BuffGroupStatType type = 1;
+  repeated int32 buffGroups = 2;
+  repeated float value = 3;
+}

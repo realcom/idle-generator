@@ -1,0 +1,465 @@
+body {
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+body, button, input, select {
+  font-family: 'Roboto', 'Noto Sans KR', sans-serif;
+}
+
+.thrasos-renderer.te-theme .blocklyText, .thrasos-renderer.te-theme .blocklyFlyoutLabelText, .thrasos-renderer.te-theme .blocklyHtmlInput {
+  font-family: 'Roboto', 'Noto Sans KR', sans-serif;
+}
+
+pre, code {
+  overflow: auto;
+}
+
+@font-face {
+  font-family: 'Noto Mono';
+  src: url('./fonts/NotoSansMono-Regular.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Noto Sans KR';
+  src: url('./fonts/NotoSansKR-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF, U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E;
+}
+
+@font-face {
+  font-family: 'Noto Sans KR';
+  src: url('./fonts/NotoSansKR-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF, U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('./fonts/Roboto-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('./fonts/Roboto-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+#pageContainer {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+#navbar {
+  display: flex;
+  justify-content: flex-start;
+  background-color: #282828;
+  color: white;
+}
+
+#navbar button {
+  font-size: 1.0em;
+}
+
+#header {
+  display: flex;
+  justify-content: space-between;
+  background-color: #282828;
+  color: white;
+  padding: 0.1em;
+  font-size: 1.2em;
+  margin-top: 0;
+  height: 100px;
+}
+
+#header h3 {
+  margin: 0;
+  padding: 0rem 1.0rem;
+  display: flex;
+  align-items: center;
+}
+
+.navbar {
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.3em;
+  padding-bottom: 0.2em;
+}
+
+.selectorbar {
+  display: flex;
+  justify-content: flex-end;
+  background-color: #282828;
+  color: white;
+  padding: 0.1em;
+  font-size: 0.9em;
+  padding-top: 0.2em;
+  padding-right: 1.0em;
+  padding-bottom: 0.2em;
+}
+
+.selectorbar label {
+  margin-right: 1em;
+  padding: 0.35rem 1.0rem;
+}
+
+.selectorbar input, select {
+  background-color: #282828;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 0.0rem 0.4rem;
+  margin-top: 0.0rem;
+  margin-bottom: 0.0rem;
+  cursor: pointer;
+  height: 36px;
+  min-width: 3rem;
+}
+
+.selectorbar select {
+  -webkit-appearance: none;
+}
+
+tspan {
+  dominant-baseline: central;
+}
+
+.button {
+  background-color: #282828;
+  color: white;
+  border: none;
+  padding: 0.1rem 1rem;
+  cursor: pointer;
+}
+
+
+.selectorbar button {
+  border: 1px solid #555;
+  margin: 0.0rem 0.0rem 0.2rem 0.8rem;
+  border-radius: 10px;
+}
+
+label {
+  padding: 0.4rem 1rem;
+}
+
+#horizontal {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: calc(100% - 100px);
+  padding: 0;
+}
+
+#blocklyDiv {
+  display: inline-block;
+  height: 100%;
+  width: 70%;
+  min-width: 200px;
+  margin: 0;
+}
+
+#divider {
+  display: flex;
+  width: 20px;
+  background-color: #282828;
+  color: #666;
+  font-size: 0.8rem;
+  cursor: col-resize;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
+
+#outputPane {
+  display: flex;
+  flex-direction: column;
+  width: calc(30% - 20px);
+  min-width: 200px;
+  overflow: auto;
+  padding: 1rem;
+  margin: 0;
+  background-color: #222;
+  color: white;
+}
+
+#outputPane h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+#generatedCode {
+  height: calc(50% - 11rem);
+}
+
+#output {
+  height: 50%;
+}
+
+code {
+  font-family: 'Noto Mono', monospace;
+  font-size: 0.8em;
+}
+
+datalist option {
+  font-size: 0.8em;
+  padding: 0.1em 1em;
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+.blocklyMainBackground {
+  stroke-width: 0;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown button {
+  background-color: #282828;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #282828;
+  color: white;
+  min-width: 300px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.dropdown-content button {
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+  width: 100%;
+}
+
+.dropdown-content hr {
+  border: 0.5px solid #444;
+  margin: 2px;
+}
+
+.dropdown-content button:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.dropdown-content button:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding-bottom: 15px;
+}
+
+.dropdown-content button:hover {
+  background-color: #444;
+}
+
+/* note: not html5 standard */
+input::-webkit-calendar-picker-indicator {
+  opacity: 100;
+  color: rgb(255, 102, 128);
+}
+
+.blocklyHtmlInput {
+  text-align: left;
+  padding-left: 0.3em;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Black with alpha 50% */
+  z-index: 100;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  background-color: #222;
+  padding: 20px;
+  padding-bottom: 17px;
+  color: white;
+  z-index: 101;
+  border-radius: 10px;
+}
+
+.modal-title {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.modal-title h4 {
+  margin: 0.3rem;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body {
+  max-height: 80vh;
+  overflow-y: scroll;
+}
+
+.modal-footer {
+  margin-top: 1rem;
+}
+
+.button-modal {
+  background-color: #444;
+  border-radius: 5px;
+  padding: 0.7rem 1.4rem;
+}
+
+.dropdown-modal {
+  border-radius: 5px;
+  padding: 0.0rem 1.4rem;
+  margin-left: 0.5rem;
+}
+
+.modal input {
+  background-color: #333;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 0 0.5rem;
+  cursor: pointer;
+}
+
+.trigger-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.7rem 1rem;
+  border: 1px solid #555;
+  border-bottom: none;
+  cursor: pointer;
+  align-items: center;
+}
+
+.trigger-item:first-child {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.trigger-item:last-child {
+  border-bottom: 1px solid #555;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.trigger-item-dragging {
+  opacity: 0.8;
+  border: 1px dashed #555;
+}
+
+.trigger-edit {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 0.8rem;
+  border-radius: 10px;
+  border: 1px solid #555;
+  padding: 5px;
+  margin-left: 2px;
+}
+
+.trigger-edit-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.smalltalk {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.smalltalk div.page {
+  background-color: #333;
+  color: white;
+  padding: 0.8rem 1rem;
+  padding-bottom: 0.5rem;
+  border-radius: 10px;
+  margin: 0.5rem;
+}
+
+.smalltalk div.page header {
+  color: white;
+  text-shadow: none;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.smalltalk .page input {
+  background-color: #333;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 0.2rem 0.5rem;
+  margin-top: -0.1rem;
+  margin-bottom: 0.1rem;
+  cursor: pointer;
+  height: 36px;
+}
+
+.smalltalk .page button {
+  background: #333;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  text-shadow: none;
+  box-shadow: none;
+  padding-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.smalltalk .page button:hover {
+  background: #383838;
+}
+
+.smalltalk .page button:enabled:active {
+  background: #444;
+  background-image: none;
+}
+
+.blocklyFlyoutButton {
+  display: none;
+}
+
+.ss-arrow {
+  width: 10px;
+}

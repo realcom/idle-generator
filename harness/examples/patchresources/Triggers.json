@@ -1,0 +1,1253 @@
+{
+ "triggers": [
+  {
+   "name": "MAP_ONSTART_MEADOW1WAVE1",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "SendWaveStartedEvent"
+       }
+      },
+      "assignments": []
+     }
+    },
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "AddUnit"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "variable": {
+             "triggerVariable": {
+              "name": "wave1_unit"
+             }
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "UnitDataId"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "variable": {
+             "triggerVariable": {
+              "name": "wave1_count"
+             }
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Count"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": "Normal"
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Rank"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "variable": {
+             "triggerVariable": {
+              "name": "wave1_delay"
+             }
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "SpawnDelay"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": true
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Approach"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 80
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "MoveSpeed"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 160
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "AttackRange"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "vars": {
+    "wave1_unit": 110201,
+    "wave1_count": 5,
+    "wave1_delay": 1.0
+   }
+  },
+  {
+   "name": "MAP_ONSTART_MEADOW1WAVE2",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "SendWaveStartedEvent"
+       }
+      },
+      "assignments": []
+     }
+    },
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "AddUnit"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "variable": {
+             "triggerVariable": {
+              "name": "wave2_unit"
+             }
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "UnitDataId"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "variable": {
+             "triggerVariable": {
+              "name": "wave2_count"
+             }
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Count"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": "Elite"
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Rank"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "variable": {
+             "triggerVariable": {
+              "name": "wave2_delay"
+             }
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "SpawnDelay"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": true
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Approach"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 100
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "MoveSpeed"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 140
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "AttackRange"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "vars": {
+    "wave2_unit": 110201,
+    "wave2_count": 3,
+    "wave2_delay": 1.5
+   }
+  },
+  {
+   "name": "MAP_ONSTART_MEADOW1WAVE3",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "SendWaveStartedEvent"
+       }
+      },
+      "assignments": []
+     }
+    },
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "AddUnit"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "variable": {
+             "triggerVariable": {
+              "name": "wave3_boss"
+             }
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "UnitDataId"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 1
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Count"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": "Boss"
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Rank"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": true
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Approach"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 40
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "MoveSpeed"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 200
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "AttackRange"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "AddUnit"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "variable": {
+             "triggerVariable": {
+              "name": "wave3_minion"
+             }
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "UnitDataId"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 2
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Count"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": "Elite"
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Rank"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 1.5
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "SpawnDelay"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": true
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Approach"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 110
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "MoveSpeed"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 150
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "AttackRange"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "vars": {
+    "wave3_boss": 110501,
+    "wave3_minion": 110201
+   }
+  },
+  {
+   "name": "MAP_ONUPDATE_MEADOW1UPDATE",
+   "statements": [
+    {
+     "condition": {
+      "expression": {
+       "postfix": [
+        {
+         "operand": {
+          "call": {
+           "method": {
+            "boardMethod": {
+             "type": "GetBoardState"
+            }
+           },
+           "assignments": []
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 1.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operand": {
+          "call": {
+           "method": {
+            "boardMethod": {
+             "type": "GetUnitCountByTeam"
+            }
+           },
+           "assignments": [
+            {
+             "expression": {
+              "postfix": [
+               {
+                "operand": {
+                 "variable": {
+                  "triggerVariable": {
+                   "name": "enemy_team"
+                  }
+                 }
+                }
+               }
+              ]
+             },
+             "variable": {
+              "parameter": {
+               "type": "Value"
+              }
+             }
+            }
+           ]
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 0.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operator": {
+          "type": "And"
+         }
+        }
+       ]
+      },
+      "statements": [
+       {
+        "call": {
+         "method": {
+          "boardMethod": {
+           "type": "SetBoardState"
+          }
+         },
+         "assignments": [
+          {
+           "expression": {
+            "postfix": [
+             {
+              "operand": {
+               "constant": {
+                "value": 2
+               }
+              }
+             }
+            ]
+           },
+           "variable": {
+            "parameter": {
+             "type": "Value"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "call": {
+         "method": {
+          "boardMethod": {
+           "type": "SendWaveQueuedEvent"
+          }
+         },
+         "assignments": [
+          {
+           "expression": {
+            "postfix": [
+             {
+              "operand": {
+               "constant": {
+                "value": "MAP_ONSTART_MEADOW1WAVE2"
+               }
+              }
+             }
+            ]
+           },
+           "variable": {
+            "parameter": {
+             "type": "TriggerName"
+            }
+           }
+          }
+         ]
+        }
+       }
+      ],
+      "elseStatements": []
+     }
+    },
+    {
+     "condition": {
+      "expression": {
+       "postfix": [
+        {
+         "operand": {
+          "call": {
+           "method": {
+            "boardMethod": {
+             "type": "GetBoardState"
+            }
+           },
+           "assignments": []
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 2.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operand": {
+          "call": {
+           "method": {
+            "boardMethod": {
+             "type": "GetUnitCountByTeam"
+            }
+           },
+           "assignments": [
+            {
+             "expression": {
+              "postfix": [
+               {
+                "operand": {
+                 "variable": {
+                  "triggerVariable": {
+                   "name": "enemy_team"
+                  }
+                 }
+                }
+               }
+              ]
+             },
+             "variable": {
+              "parameter": {
+               "type": "Value"
+              }
+             }
+            }
+           ]
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 0.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operator": {
+          "type": "And"
+         }
+        }
+       ]
+      },
+      "statements": [
+       {
+        "call": {
+         "method": {
+          "boardMethod": {
+           "type": "SetBoardState"
+          }
+         },
+         "assignments": [
+          {
+           "expression": {
+            "postfix": [
+             {
+              "operand": {
+               "constant": {
+                "value": 3
+               }
+              }
+             }
+            ]
+           },
+           "variable": {
+            "parameter": {
+             "type": "Value"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "call": {
+         "method": {
+          "boardMethod": {
+           "type": "SendWaveQueuedEvent"
+          }
+         },
+         "assignments": [
+          {
+           "expression": {
+            "postfix": [
+             {
+              "operand": {
+               "constant": {
+                "value": "MAP_ONSTART_MEADOW1WAVE3"
+               }
+              }
+             }
+            ]
+           },
+           "variable": {
+            "parameter": {
+             "type": "TriggerName"
+            }
+           }
+          }
+         ]
+        }
+       }
+      ],
+      "elseStatements": []
+     }
+    },
+    {
+     "condition": {
+      "expression": {
+       "postfix": [
+        {
+         "operand": {
+          "call": {
+           "method": {
+            "boardMethod": {
+             "type": "GetBoardState"
+            }
+           },
+           "assignments": []
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 3.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operand": {
+          "call": {
+           "method": {
+            "boardMethod": {
+             "type": "GetUnitCountByTeam"
+            }
+           },
+           "assignments": [
+            {
+             "expression": {
+              "postfix": [
+               {
+                "operand": {
+                 "variable": {
+                  "triggerVariable": {
+                   "name": "enemy_team"
+                  }
+                 }
+                }
+               }
+              ]
+             },
+             "variable": {
+              "parameter": {
+               "type": "Value"
+              }
+             }
+            }
+           ]
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 0.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operator": {
+          "type": "And"
+         }
+        }
+       ]
+      },
+      "statements": [
+       {
+        "call": {
+         "method": {
+          "boardMethod": {
+           "type": "SetBoardState"
+          }
+         },
+         "assignments": [
+          {
+           "expression": {
+            "postfix": [
+             {
+              "operand": {
+               "constant": {
+                "value": 9
+               }
+              }
+             }
+            ]
+           },
+           "variable": {
+            "parameter": {
+             "type": "Value"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "call": {
+         "method": {
+          "boardMethod": {
+           "type": "EndGame"
+          }
+         },
+         "assignments": [
+          {
+           "expression": {
+            "postfix": [
+             {
+              "operand": {
+               "constant": {
+                "value": "win"
+               }
+              }
+             }
+            ]
+           },
+           "variable": {
+            "parameter": {
+             "type": "Result"
+            }
+           }
+          }
+         ]
+        }
+       }
+      ],
+      "elseStatements": []
+     }
+    }
+   ],
+   "type": "OnUpdate",
+   "period": 3,
+   "vars": {
+    "enemy_team": 1
+   }
+  },
+  {
+   "name": "UNIT_ONSTART_SLIMEBOUNCE",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "unitMethod": {
+        "type": "SetMoveRandomDestination"
+       }
+      },
+      "assignments": []
+     }
+    }
+   ]
+  },
+  {
+   "name": "UNIT_ONSTART_SLIMEBOSS_ENRAGE",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "unitMethod": {
+        "type": "SetMoveRandomDestination"
+       }
+      },
+      "assignments": []
+     }
+    }
+   ]
+  },
+  {
+   "name": "UNIT_ONUPDATE_SLIMEBOSS_SPLIT",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "AddUnit"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "variable": {
+             "triggerVariable": {
+              "name": "spawn_unit"
+             }
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "UnitDataId"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "variable": {
+             "triggerVariable": {
+              "name": "spawn_count"
+             }
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Count"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "type": "OnUpdate",
+   "period": 12,
+   "vars": {
+    "spawn_unit": 110201,
+    "spawn_count": 2
+   }
+  },
+  {
+   "name": "SKILL_ONUPDATE_INCREASEGOLD",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "unitMethod": {
+        "type": "IncreaseGold"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "variable": {
+             "triggerVariable": {
+              "name": "count"
+             }
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Count"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "type": "OnUpdate",
+   "period": 30,
+   "vars": {
+    "count": 1
+   }
+  },
+  {
+   "name": "SKILL_ONKILL_BONUSGOLD",
+   "statements": [
+    {
+     "condition": {
+      "expression": {
+       "postfix": [
+        {
+         "operand": {
+          "variable": {
+           "predefinedVariable": {
+            "type": "Level"
+           }
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 10.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "GreaterThanOrEqual"
+         }
+        }
+       ]
+      },
+      "statements": [
+       {
+        "call": {
+         "method": {
+          "unitMethod": {
+           "type": "IncreaseGold"
+          }
+         },
+         "assignments": [
+          {
+           "expression": {
+            "postfix": [
+             {
+              "operand": {
+               "variable": {
+                "triggerVariable": {
+                 "name": "bonus"
+                }
+               }
+              }
+             }
+            ]
+           },
+           "variable": {
+            "parameter": {
+             "type": "Count"
+            }
+           }
+          }
+         ]
+        }
+       }
+      ],
+      "elseStatements": []
+     }
+    }
+   ],
+   "type": "OnKill",
+   "vars": {
+    "bonus": 100
+   }
+  }
+ ]
+}

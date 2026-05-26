@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <LangVersion>9</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FlatBuffers\Google.FlatBuffers.csproj" />
+      <ProjectReference Include="..\Google.Protobuf\Google.Protobuf.csproj" />
+    </ItemGroup>
+
+    <Import Project="..\Commons\Commons.projitems" Label="Shared" />
+
+</Project>

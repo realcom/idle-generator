@@ -1,0 +1,64 @@
+# JetBrains Rider
+.idea/
+*.sln.iml
+**/Demos/**
+
+# Unity - migrated from previous projects
+Client/*.sln
+Client/*.csproj
+Client/Patches
+Client/*.zip
+Client/*.csproj
+Client/UserSettings/*
+Client/WebGL
+Client.userprefs.meta
+Client/UserSettings
+
+# Resource - migrated from previous projects
+**/Debug.xml
+**/Debug.xml.meta
+**/Debug.Build.xml
+**/Debug.Build.xml.meta
+
+# IdleZ
+*.log
+**/koverwatch SDF.asset
+**/EnvironmentSettings.prefab
+*[dD][oO][nN][oO][tT][sS][hH][iI][pP]*
+
+# Trigger Editor
+TriggerEditor/data/workspace.triggerws
+
+**/__pycache__
+**/*.pyc
+**/*_log.txt
+**/*_log.txt.meta
+tools/protobuf/*
+tools/next_account.json
+Client/Idlez_google_BackUpThisFolder_ButDontShipItWithYourGame
+*BurstDebugInformation_DoNotShip
+Client/Assets/**/*.unitypackage
+Client/Assets/**/*.unitypackage.meta
+Client/Assets/PatchResources/*.bytes
+Client/Assets/PatchResources/*.bytes.meta
+Build_ios
+.Ds_Store
+Client/AssetMapCache
+Client/Assets/AddressableAssetsData/link.xml.meta
+Client/Assets/AddressableAssetsData/link.xml
+Client/*_google_BackUpThisFolder_ButDontShipItWithYourGame
+Client/Assets/Resources/PerformanceTestRunInfo.json
+Client/Assets/Resources/PerformanceTestRunInfo.json.meta
+Client/Assets/Resources/PerformanceTestRunSettings.json
+Client/Assets/Resources/PerformanceTestRunSettings.json.meta
+Client/Assets/AddressableAssetsData/link.xml
+Client/Assets/AddressableAssetsData/link.xml.meta
+
+# Ignore the auto-generated AOT compatibility dll.
+Client/Assets/Plugins/Sirenix/Assemblies/AOT/*
+
+# Ignore all unpacked demos.
+Client/Assets/Plugins/Sirenix/Demos/*
+
+# Unity package imported samples
+Client/Assets/Samples/

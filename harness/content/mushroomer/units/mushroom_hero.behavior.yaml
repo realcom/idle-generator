@@ -1,0 +1,15 @@
+name: MushroomHeroAttack
+domain: unit
+
+"on":
+  - event: start
+    do:
+      - moveTo:
+          x: -1.8
+          y: 0.0
+
+  - event: update
+    every: 1s
+    do:
+      - useSkillToTarget:
+          skillDataId: 300101

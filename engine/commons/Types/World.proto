@@ -1,0 +1,33 @@
+﻿syntax = "proto3";
+package Commons.Types;
+
+message WorldMessage {
+  enum State {
+      None = 0;
+      Deleted = -999;
+      Inactive = -1;
+      Normal = 1;
+      Full = 10;
+  }
+
+  enum Region {
+    // 광역(region) 구분 (0–9)
+    WW = 0; // Worldwide
+    AS = 1;
+    NA = 2;  // North America
+    EU = 3;
+    SA = 4;  // South America
+    AF = 5;  // Africa
+    OC = 7;  // Oceania
+
+    // 특정 국가 전용 (100–199)
+    KR = 100; // South Korea
+    JP = 101; // Japan
+  }
+  int64 id = 1;
+  Region region = 3;
+  int32 regionIndex = 4;
+  State state = 5;
+  int32 utcOffsetHours = 6;
+}
+

@@ -1,0 +1,57 @@
+name: Deploy Test Server
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: build
+  cancel-in-progress: true
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.PAT_TOKEN }}
+        submodules: true
+        fetch-depth: 0
+        ref: test
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: Server
+
+    - name: Build and publish WorldServer
+      run: |
+        dotnet publish WorldServer -c Release -r linux-arm64 -o output -p:Deterministic=true -p:DeterministicSourcePaths=true -p:ProduceReferenceAssembly=false
+      working-directory: Server
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-2
+
+    - name: Log in to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build and push docker image
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        REPOSITORY: puzzlemonsters/idlez-server-test
+      run: |
+        docker build -t $REGISTRY/$REPOSITORY:latest .
+        docker push 246743264504.dkr.ecr.ap-northeast-2.amazonaws.com/puzzlemonsters/idlez-server-test:latest

@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  api-server:
+    # 워크플로우에서 빌드된 ECR 이미지 주소입니다.
+    image: 246743264504.dkr.ecr.ap-northeast-2.amazonaws.com/puzzlemonsters/idlez-api:latest
+    container_name: api-server-container
+    restart: always
+    ports:
+      # 호스트의 80번 포트를 컨테이너의 80번 포트(Nginx)에 연결합니다.
+      - "80:80"
+    volumes:
+      # run_api.py 스크립트에서 사용하던 볼륨 마운트 설정입니다.
+      - /home/ubuntu/idlez-Config.json:/app/Config.json
+      - /tmp:/tmp
+      - /home/ubuntu/idlez-client/Client/Assets/PatchResources:/PatchResources

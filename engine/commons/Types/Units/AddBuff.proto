@@ -1,0 +1,22 @@
+syntax = "proto3";
+package Commons.Types.Units;
+
+message AddBuff {
+  enum ApplyTarget {
+    Self = 0;
+    ToOwner = 1;
+    WithOwner = 2;
+    WithTeam = 4;
+  }
+  
+  int32 buffDataId = 1;
+  float duration = 2;
+  int32 level = 3;
+
+  // note: TODO
+  float weight = 4;
+
+  ApplyTarget applyTarget = 5;
+
+  repeated AddBuff consecutiveApplyAddBuffs = 10;
+}

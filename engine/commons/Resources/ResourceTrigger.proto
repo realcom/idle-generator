@@ -1,0 +1,676 @@
+syntax = "proto3";
+package Commons.Resources;
+
+message ResourceTrigger {
+  message Expression {
+    message Operator {
+      enum Type {
+        Or = 0;
+        And = 1;
+        Not = 2;
+
+        Equal = 3;
+        NotEqual = 4;
+        GreaterThan = 5;
+        GreaterThanOrEqual = 6;
+        LessThan = 7;
+        LessThanOrEqual = 8;
+
+        Add = 9;
+        Subtract = 10;
+
+        Multiply = 11;
+        Divide = 12;
+        Modulo = 13;
+
+        UnaryMinus = 14;
+
+        Exponent = 15;
+
+        OpenParenthesis = 16;
+        CloseParenthesis = 17;
+      }
+
+      Type type = 1;
+    }
+
+    message Operand {
+      message Constant {
+        double value = 1;
+      }
+
+      message Variable {
+        message Parameter {
+          enum Type {
+            NotUsed = 0;
+            // 1 - 99: Predefined
+            // 100 - 299: Parameters
+            PositionX = 100;
+            PositionY = 101;
+            Angle = 102;
+            DirectionX = 103;
+            DirectionY = 104;
+            PositionXRange = 105;
+            PositionYRange = 106;
+
+            UnitDataId = 110;
+            SkillDataId = 111;
+            BuffDataId = 112;
+            AchievementDataId = 113;
+            MapDataId = 114;
+            PlayerId = 115;
+            StringKey = 116;
+            ItemDataId = 117;
+
+            LocationId = 200;
+            Team = 201;
+            Count = 202;
+            Min = 203;
+            Max = 204;
+            Damage = 205;
+            Duration = 206;
+            Offset = 207;
+            TriangleNumber = 208;
+            IsNavigable = 209;
+            Heal = 210;
+            Progress = 211;
+            Distance = 212;
+            Level = 213;
+            ETag = 214;
+            Value = 215;
+            BoardState = 216;
+            Rarity = 217;
+            Category = 218;
+            Grade = 219;
+            Size = 220;
+            
+
+            // 300 - 499: Editor defined
+            // 500 - 599: Player Interaction
+            // 1,000,000 - 1,999,999: Unit death
+          }
+
+          Type type = 1;
+        }
+
+        message ObjectVariable {
+          enum Type {
+            Unit = 0;
+            Skill = 1;
+            Buff = 2;
+          }
+
+          bool caller = 1;
+          Type type = 2;
+        }
+
+        message PredefinedVariable {
+          enum Type {
+            NotUsed = 0;
+            // 1 - 99: Predefined
+            Return = 1;
+            Random = 2;
+            Level = 3;
+            Damage = 4;
+            ValidDamage = 5;
+            IsCritical = 6;
+            
+            // 100 - 299: Parameter
+            // 300 - 499: Editor defined
+            // 500 - 599: Player Interaction
+            PlayerInteractionMin = 500;
+            PlayerInteraction1 = 501;
+            PlayerInteraction2 = 502;
+            PlayerInteraction3 = 503;
+            PlayerInteraction4 = 504;
+            PlayerInteraction5 = 505;
+            PlayerInteractionMax = 599;
+            SpawnItemCount = 601;
+
+            // 1,000 - 1,099: Stats for Trait Select
+            selectTraitUnitDataId = 1000;
+            selectTraitShouldAddAll = 1010;
+            selectTraitType = 1011;
+
+            // 1,000,000 - 1,999,999: Unit death
+            UnitDeath = 1000000;
+          }
+
+          Type type = 1;
+        }
+
+        message BoardVariable {
+          enum Type {
+            NotUsed = 0;
+            DataId = 1;
+            Tick = 2;
+            Timer = 3;
+            MapType = 4;
+            
+
+          }
+
+          Type type = 1;
+        }
+
+        message UnitVariable {
+          enum Type {
+            Caller = 0;
+            DataId = 1;
+
+            PositionX = 100;
+            PositionY = 101;
+            DirectionX = 102;
+            DirectionY = 103;
+            VelocityX = 104;
+            VelocityY = 105;
+
+            HasMoveDirection = 200;
+            MoveDirectionX = 201;
+            MoveDirectionY = 202;
+            HasMoveDestination = 203;
+            MoveDestinationX = 204;
+            MoveDestinationY = 205;
+
+            Level = 300;
+            State = 301;
+            IsCollidingWall = 302;
+            IsCollidingUnit = 303;
+
+            Hp = 400;
+            MaxHp = 401;
+            HpRatio = 402;
+            Mp = 403;
+            MaxMp = 404;
+            MpRatio = 405;
+            Shield = 406;
+            Guard = 407;
+            Luck = 408;
+
+            Target = 500;
+            HasTarget = 501;
+            TargetPositionX = 502;
+            TargetPositionY = 503;
+            TargetDistance = 504;
+            TargetAngle = 505;
+            
+            IsBoss = 601;
+
+            FreeRollCount = 1000;
+            AddFreeRollCountPercentBySell = 1001;
+            PaybackBasicConsumablePercentBySell = 1002;
+            TotalSpawnItemCount = 1003;
+            FixedSpawnPrice = 1004;
+            OnMergeAddSameGradeRandomWeapon = 1005;
+            PaybackGoldOnSellConsumable = 1006;
+
+            RespawnCount = 2000;
+            PurchaseRespawnCount = 2001;
+            RespawnHpPercent = 2002;
+            RespawnMpPercent = 2003;
+
+            // 10,000: Cumulative spawn count
+            CumulativeSpawnCount = 10000;
+            CumulativeSpawnCountWithoutReset = 10001;
+            CumulativeFreeRollCount = 10002;
+            CumulativeTotalCountBeforeBagExpand = 10003;
+            CumulativeLuckAppliedCount = 10004;
+            CumulativeMergeCount = 10005;
+          }
+
+          bool caller = 1;
+          Type type = 2;
+        }
+
+        message SkillVariable {
+          enum Type {
+            Caller = 0;
+            DataId = 1;
+
+            PositionX = 100;
+            PositionY = 101;
+            DirectionX = 102;
+            DirectionY = 103;
+            VelocityX = 104;
+            VelocityY = 105;
+            AccelerationX = 106;
+            AccelerationY = 107;
+            Level = 108;
+
+            SenderUnit = 200;
+            TargetUnit = 201;
+          }
+
+          bool caller = 1;
+          Type type = 2;
+        }
+
+        message BuffVariable {
+          enum Type {
+            Caller = 0;
+            DataId = 1;
+
+            Stack = 100;
+            Level = 101;
+            Enabled = 102;
+            MaxLevel = 103;
+            MaxStack = 104;
+          }
+
+          bool caller = 1;
+          Type type = 2;
+        }
+
+        bool caller = 8;
+        oneof variable {
+          int32 boardKey = 1;
+          int32 callerKey = 2;
+          int32 stateKey = 3;
+
+          Parameter parameter = 4;
+          ObjectVariable objectVariable = 5;
+          PredefinedVariable predefinedVariable = 6;
+          int32 editorDefinedVariable = 7;
+
+          BoardVariable boardVariable = 9;
+          int32 unitKey = 10;
+          UnitVariable unitVariable = 11;
+          int32 skillKey = 12;
+          SkillVariable skillVariable = 13;
+          int32 buffKey = 14;
+          BuffVariable buffVariable = 15;
+        }
+      }
+
+      oneof operand {
+        Constant constant = 1;
+        Variable variable = 2;
+      }
+    }
+
+    message Element {
+      oneof element {
+        Operator operator = 1;
+        Operand operand = 2;
+      }
+    }
+
+    repeated Element postfix = 1;
+  }
+
+  message Assignment {
+    Expression.Operand.Variable variable = 1;
+    Expression expression = 2;
+  }
+
+  message Call {
+    message BoardMethod {
+      enum Type {
+        Unknown = 0;
+
+        // int UnitDataId
+        // optional int LocationId
+        // optional float PositionX
+        // optional float PositionY
+        // optional float Angle = random (radian)
+        // optional int Team = Neutral
+        // optional int Count = 1
+        // optional int Offset
+        AddUnit = 1;
+
+        // int UnitDataId
+        // return int
+        GetUnitCount = 2;
+
+        // int Offset
+        GetUnitCountByOffset = 3;
+
+        // int Team
+        GetUnitCountByTeam = 4;
+
+        // int Min
+        // int Max
+        // return float
+        RandomBetween = 5;
+
+        // int Min
+        // int Max
+        // return int
+        RandomIntBetween = 6;
+
+        // float Duration
+        StartTimer = 7;
+
+        // float Duration
+        AddTimer = 8;
+
+        StopTimer = 9;
+
+        PauseTimer = 10;
+
+        ResumeTimer = 11;
+
+        // int Team
+        KillAllUnits = 12;
+
+        // string ArgumentString
+        // repeated Expression ArgumentExpressions
+        ToastMessage = 13;
+
+        // int Team
+        EndGame = 14;
+
+        // int TriangleNumber
+        // bool IsNavigable
+        SetNavigability = 15;
+
+        // int AchievementDataId
+        GetAchievementProgress = 16;
+
+        // int AchievementDataId
+        GetAchievementState = 17;
+
+        // int AchievementDataId
+        // optional int PlayerId = 0
+        // optional int Progress = 1
+        IncreaseAchievementProgress = 18;
+
+        // int SkillDataId
+        // optional int PositionX = 0
+        // optional int PositionY = 0
+        UseSkill = 19;
+
+        // int AchievementDataId
+        IsAchievementCompleted = 20;
+
+        // int AchievementDataId
+        IsAchievementRewarded = 21;
+
+        // optional int PlayerId = 0
+        // int MapDataId = 0
+        MoveBoard = 22;
+
+        // int UnitDataId
+        GetUnitByDataId = 23;
+        // int UnitDataId
+        KillUnitsByDataId = 24;
+
+        ShowSelectTrait = 25;
+        StartWaveEndSelectTrait = 26;
+        StartLevelUpSelectTrait = 27;
+        RerollLevelUpSelectTrait = 38;
+
+        //        GetWaveEndSelectTraitUnitDataId = 25;
+        //        ShowLevelUpSelectTrait = 26;
+        //        ShowWaveEndSelectTrait = 27;
+
+        SendWaveQueuedEvent = 30;
+        SendWaveStartedEvent = 31;
+
+        // int Team
+        KillAllNormalUnits = 32;
+
+        //argumentString
+        ShowPopup = 33;
+
+        //variable int
+        GetMainPlayerUnitVariable = 34;
+
+        // BoardState state
+        GetBoardState = 35;
+        SetBoardState = 36;
+
+        GetMainPlayerUnit = 37;
+
+        SendResetMapScrollEvent = 39;
+
+
+        BlockSkillAction = 500;
+        UnBlockSkillAction = 501;
+        BlockMoveAction = 502;
+        UnBlockMoveAction = 503;
+      }
+
+      Type type = 1;
+    }
+
+    message UnitMethod {
+      enum Type {
+        Unknown = 0;
+
+        // int SkillDataId
+        // optional int PositionX
+        // optional int PositionY
+        UseSkill = 1;
+
+        // optional float Angle = random (radian)
+        SetDirection = 2;
+
+        // float PositionX
+        // float PositionY
+        LookAt = 3;
+
+        // optional float Angle = random (radian)
+        SetMoveDirection = 4;
+
+        // float PositionX
+        // float PositionY
+        SetMoveDestination = 5;
+
+        // optional float PositionX
+        // optional float PositionY
+        // float PositionXRange
+        // float PositionYRange
+        SetMoveRandomDestination = 6;
+
+        // float distance
+        RunawayFromTarget = 7;
+
+        Suicide = 8;
+
+        Stop = 9;
+
+        GetWeaponType = 10;
+
+        IsUsingSkill = 11;
+
+        // int SkillDataid
+        IsUsingSkillBySkillDataId = 12;
+
+        // int SkillDataId
+        GetSkillCooldown = 13;
+
+        LookAtTarget = 14;
+
+        // int SkillDataId
+        UseSkillToTarget = 15;
+
+        // int BuffDataId
+        GetBuffByDataId = 16;
+
+        // int BuffDataId
+        // optional int Level
+        // optional float Duration
+        AddBuff = 17;
+        // int BuffDataId
+        RemoveBuff = 32;
+
+        GetInventoryEmptySlotCount = 18;
+        HasDuplicateInventoryItem = 19;
+
+        // Tag Tag
+        GetInventoryItemCountByTag = 20;
+
+        GetGoldCount = 21;
+
+        GetLevel = 22;
+
+        GetCurrentHpPercent = 23;
+        // int Level
+        IncreaseGold = 24;
+        AddInventoryItemByItemDataId = 25;
+        AddInventoryItem2 = 26;
+        IncreaseExp = 27;
+        GetKillCount = 28;
+        IncreaseLevel = 29;
+        IsBuffApplied = 30;
+        AcquireItem = 33;
+        IncreaseRerollLevelUpSelectTrait = 34;
+        TeleportToPosition = 35;
+        SetRespawnDelay = 36;
+        ChangeRandomInventoryItem = 37;
+        RemoveRandomInventoryItem = 38;
+        
+        PlayFxEvent = 100;
+      }
+
+      Type type = 1;
+    }
+
+    message SkillMethod {
+      enum Type {
+        Unknown = 0;
+        GetSkillCooldown = 1;
+        ReduceSkillCooldownByPercent = 2;
+        ReduceSkillCooldownBySeconds = 3;
+      }
+
+      Type type = 1;
+    }
+
+    message BuffMethod {
+      enum Type {
+        Unknown = 0;
+        IncreaseStack = 1;
+        AddBuffToOwner = 2;
+        AddBuffToSender = 3;
+      }
+
+      Type type = 1;
+    }
+
+    message DebugMethod {
+      enum Type {
+        Log = 0;
+        Error = 1;
+        Exception = 2;
+      }
+
+      Type type = 1;
+      string message = 2;
+      Expression expression = 3;
+    }
+
+    message RunTrigger {
+      string name = 1;
+    }
+
+    message Method {
+      oneof method {
+        BoardMethod boardMethod = 1;
+        UnitMethod unitMethod = 2;
+        SkillMethod skillMethod = 3;
+        BuffMethod buffMethod = 4;
+        DebugMethod debugMethod = 5;
+        RunTrigger runTrigger = 6;
+      }
+    }
+
+    bool caller = 1;
+    Method method = 2;
+    string argumentString = 3;
+    repeated Expression argumentExpressions = 4;
+    repeated Assignment assignments = 5;
+  }
+
+  message Return {
+  }
+
+  message Break {
+  }
+
+  message Continue {
+  }
+
+  message Condition {
+    Expression expression = 1;
+    repeated Statement statements = 2;
+    repeated Statement elseStatements = 3;
+  }
+
+  message Loop {
+    Expression expression = 1;
+    repeated Statement statements = 2;
+  }
+
+  message Statement {
+    string comment = 1;
+
+    oneof statement {
+      Assignment assignment = 2;
+      Call call = 3;
+      Return return = 4;
+      Break break = 5;
+      Continue continue = 6;
+      Condition condition = 7;
+      Loop loop = 8;
+    }
+  }
+
+  message Variables {
+    map<int32, int64> variables = 1;
+  }
+
+  message MethodMetadata {
+    message ParameterMetadata {
+      Expression.Operand.Variable.Parameter parameter = 1;
+      bool optional = 2;
+      string comment = 3;
+    }
+
+    oneof method {
+      Call.BoardMethod boardMethod = 1;
+      Call.UnitMethod unitMethod = 2;
+      Call.SkillMethod skillMethod = 3;
+      Call.BuffMethod buffMethod = 4;
+      Call.DebugMethod debugMethod = 5;
+      Call.RunTrigger runTrigger = 6;
+    }
+    repeated ParameterMetadata parameters = 7;
+    bool isClientMethod = 8;
+    bool hasReturn = 9;
+  }
+
+  message InitVariable {
+    int32 callerKey = 1;
+    double value = 2;
+  }
+
+  message AddVariable {
+    int32 callerKey = 1;
+    double value = 2;
+  }
+
+  enum Type {
+    OnStart = 0; //Board, Unit, Skill, Buff
+    OnUpdate = 1; //Board, Unit, Skill, Buff
+    OnAttack = 2; //Unit, Skill, Buff
+    OnAttacked = 3; //Unit, Buff
+    OnAttackedPost = 11; //Unit, Buff
+    OnHeal = 6; //Unit, Skill, Buff
+    OnHealed = 7; //Unit
+    OnBuffApply = 10; //Unit, Buff
+    OnKill = 8; //Unit, Skill, Buff
+    OnOwnerKill = 9; //Unit, Skill, Buff
+    OnDead = 4; //Unit
+    OnDestroy = 5; //Unit, Skill, Buff
+  }
+
+  string name = 1;
+  string comment = 2;
+  repeated int32 parameterLocalKeys = 3;
+
+  Type type = 4;
+  repeated Statement statements = 5;
+  uint32 period = 6;
+}

@@ -1,0 +1,105 @@
+{
+ "itemGlobal": {
+  "dataId": {
+   "playerLevel": 1,
+   "credit": 2,
+   "ruby": 3,
+   "freeRuby": 4,
+   "gold": 5,
+   "exp": 6,
+   "rankPoint": 7,
+   "energy": 8,
+   "defaultCharacter": 110101
+  },
+  "avatarConstants": {
+   "maxUnitCount": 1,
+   "maxDefenseUnitCount": 1,
+   "maxOffenseUnitCount": 1
+  }
+ },
+ "items": [
+  {
+   "id": 1,
+   "name": "플레이어 레벨",
+   "initialCreate": true,
+   "initialCreateCount": 1,
+   "initialCreateLevel": 1
+  },
+  {
+   "id": 2,
+   "name": "크레딧",
+   "initialCreate": true,
+   "initialCreateCount": 0
+  },
+  {
+   "id": 3,
+   "name": "루비",
+   "initialCreate": true,
+   "initialCreateCount": 0
+  },
+  {
+   "id": 4,
+   "name": "무료 루비",
+   "initialCreate": true,
+   "initialCreateCount": 0
+  },
+  {
+   "id": 5,
+   "name": "골드",
+   "initialCreate": true,
+   "initialCreateCount": 0
+  },
+  {
+   "id": 6,
+   "name": "경험치",
+   "initialCreate": true,
+   "initialCreateCount": 0
+  },
+  {
+   "id": 7,
+   "name": "랭크 포인트",
+   "initialCreate": true,
+   "initialCreateCount": 0
+  },
+  {
+   "id": 8,
+   "name": "에너지",
+   "initialCreate": true,
+   "initialCreateCount": 0
+  },
+  {
+   "id": 110101,
+   "name": "버섯커",
+   "category": "Character",
+   "grade": 1,
+   "unitDataId": 110111,
+   "power": 20,
+   "initialCreate": true,
+   "initialCreateCount": 1,
+   "initialCreateLevel": 1,
+   "spriteGroups": {
+    "Icon": "UIAssets/Images/unit_110101.png"
+   }
+  },
+  {
+   "id": 200101,
+   "name": "작은 포자",
+   "category": "Material",
+   "grade": 1,
+   "sellPrice": 24,
+   "spriteGroups": {
+    "Icon": "Items/Goods/ICN_COMMON_Clover.png"
+   }
+  },
+  {
+   "id": 200102,
+   "name": "이끼 결정",
+   "category": "Material",
+   "grade": 2,
+   "sellPrice": 90,
+   "spriteGroups": {
+    "Icon": "Items/Goods/ICN_COMMON_Insight.png"
+   }
+  }
+ ]
+}

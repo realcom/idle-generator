@@ -1,0 +1,16 @@
+[Unit]
+Description=ApiServer
+
+[Service]
+WorkingDirectory=/home/idlez
+ExecStart=/usr/bin/dotnet Server/ApiServer/ApiServer.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=ApiServer
+User=idlez
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target

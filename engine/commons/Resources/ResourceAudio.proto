@@ -1,0 +1,43 @@
+syntax = "proto3";
+package Commons.Resources;
+
+import "Tags.proto";
+
+message ResourceAudio {
+  message Global {
+    message DataId {
+    }
+
+    DataId dataId = 1;
+  }
+
+  enum Type {
+    Unspecified = 0;
+
+    Bgm = 1;
+    Fx = 2;
+  }
+  
+  enum HapticType {
+    None = 0;
+    Small = 1;
+    Medium = 2;
+    Large = 3;
+  }
+  
+  repeated Tag tags = 1;
+
+  int32 id = 100;
+  Type type = 101;
+
+  string name = 200;
+  string prefab = 201;
+  
+  float delay = 300;
+  float volume = 301;
+  float minTimeBetweenPlays = 302;
+  int32 maxInstanceCount = 303;
+  
+  HapticType hapticType = 400;
+  float hapticDelay = 401;
+}

@@ -1,0 +1,231 @@
+syntax = "proto3";
+package Commons.Resources;
+
+import "google/protobuf/timestamp.proto";
+import "Tags.proto";
+import "AddItem.proto";
+
+message ResourceAchievement {
+  message Global {
+    message DataId {
+      int32 tutorialComplete = 1;
+      repeated int32 tutorialSteps = 2;
+      int32 ingameTutorialEnter = 3;
+      int32 sentFeedback = 4;
+      int32 reviewedOnStore = 5;
+      int32 chapterEnterAgainCondition = 6;
+      
+      // 10000-19999: Ninja Squad
+      int32 battleUnlock = 10000;
+      
+      // 10100-10199: EquipmentSlotUnlock
+      int32 equipmentSlotUnlockHead = 10100;
+      int32 equipmentSlotUnlockChest = 10101;
+      int32 equipmentSlotUnlockGloves = 10102;
+      int32 equipmentSlotUnlockBoots = 10103;
+      int32 equipmentSlotUnlockNecklace = 10104;
+      int32 equipmentSlotUnlockRing = 10105;
+      
+      repeated int32 petSlotUnlocks = 10200;
+      
+      // 20000-29999: Hamster
+      int32 abilityRoot = 20000;
+      int32 equipmentPetUnlock = 20001;
+      int32 lobbyDungeonUnlock = 20002;
+      int32 premiumDailyReward = 20003;
+      
+      int32 inventoryAutoSpawnUnlock = 20100;
+    }
+
+    DataId dataId = 1;
+  }
+
+  enum Type {
+    Unspecified = 0;
+
+    Normal = 101;
+
+    Daily = 201;
+    Weekly = 202;
+    Ranking = 203;
+    
+    EventPass = 301;
+    
+    Mission = 401;
+  }
+  
+  enum Condition {
+    Unused = 0;
+    
+    // 1-9999: Achievement
+    EnableAchievement = 1;
+    CompleteAchievement = 2;
+    ClaimRewardAchievement = 3;
+    AchievementProgressDay = 4;
+    
+    // 10000-19999: Item
+    // 10000-10099: Acquire Item
+    AcquireItemAny = 10000;
+    AcquireItem = 10001;
+    AcquireItemLevel = 10002;
+    AcquireItemGrade = 10003;
+    AcquireUnitItemAny = 10004;
+    AcquireUnitItemGrade = 10005;
+    AcquireCostumeItemAny = 10006;
+    AcquireCostumeItemGrade = 10007;
+    AcquireHairItemAny = 10008;
+    AcquireHairItemGrade = 10009;
+    AcquireHeadItemAny = 10010;
+    AcquireHeadItemGrade = 10011;
+    AcquireChestItemAny = 10012;
+    AcquireChestItemGrade = 10013;
+    AcquireLegItemAny = 10014;
+    AcquireLegItemGrade = 10015;
+    AcquireBootsItemAny = 10016;
+    AcquireBootsItemGrade = 10017;
+    AcquireGlovesItemAny = 10018;
+    AcquireGlovesItemGrade = 10019;
+    AcquireNecklaceItemAny = 10020;
+    AcquireNecklaceItemGrade = 10021;
+    AcquireBraceletItemAny = 10022;
+    AcquireBraceletItemGrade = 10023;
+    AcquireRingItemAny = 10024;
+    AcquireRingItemGrade = 10025;
+    AcquireCyberOperatingItemAny = 10026;
+    AcquireCyberOperatingItemGrade = 10027;
+    AcquireCyberExosuitItemAny = 10028;
+    AcquireCyberExosuitItemGrade = 10029;
+    AcquireCyberSkeletonItemAny = 10030;
+    AcquireCyberSkeletonItemGrade = 10031;
+    AcquireCyberArmItemAny = 10032;
+    AcquireCyberArmItemGrade = 10033;
+    AcquireCyberHandItemAny = 10034;
+    AcquireCyberHandItemGrade = 10035;
+    AcquireCyberLegItemAny = 10036;
+    AcquireCyberLegItemGrade = 10037;
+    AcquireKatanaItemAny = 10038;
+    AcquireKatanaItemGrade = 10039;
+    AcquireGunItemAny = 10040;
+    AcquireGunItemGrade = 10041;
+    AcquireDaggerItemAny = 10042;
+    AcquireDaggerItemGrade = 10043;
+    AcquireHammerItemAny = 10044;
+    AcquireHammerItemGrade = 10045;
+    AcquireWeaponItemAny = 10046;
+    AcquireWeaponItemGrade = 10047;
+    AcquireEquipmentItemAny = 10048;
+    AcquireEquipmentItemGrade = 10049;
+    
+    // 10100-10199: Has Item
+    HasItem = 10100;
+    HasItemLevel = 10101;
+    
+    // 10200-10299: Use Item
+    UseItemAny = 10200;
+    UseItem = 10201;
+    UseUnitItemAvatar = 10202;
+    
+    // 10300-10399: Create Item
+    CreateItemAny = 10300;
+    CreateItemRecipe = 10301;
+    
+    // 10400-10499: Buy Item
+    BuyItemAny = 10400;
+    BuyItemProduct = 10401;
+    BuyItemProductAction = 10402; //행동 단위
+    
+    // 10500-10599: Level Up Item
+    LevelUpItemAny = 10500;
+    LevelUpItem = 10501;
+    ExpUpItem = 10502;
+    
+    // 10600-10699: Consume Item
+    ConsumeItemAny = 10600;
+    ConsumeItem = 10601;
+    
+    // 20000-29999: Map
+    KillUnitAny = 20000;
+    KillUnit = 20001;
+    WinGameAny = 20002;
+    WinGame = 20003;
+    WinGameGroup = 20004;
+    LoseGameAny = 20005;
+    LoseGame = 20006;
+    LoseGameGroup = 20007;
+    JoinGameAny = 20008;
+    JoinGame = 20010;
+    JoinGameGroup = 20011;
+    WinWave = 20009;
+    
+    // 30000-39999: Player
+    Login = 30000;
+    AcquireReferral = 30001;
+    AcquirePremiumReferral = 30002;
+    HasReferrals = 30003;
+    AddReferral = 30004;
+    AddPremiumReferral = 30005;
+    AcquireNonPremiumReferral = 30006;
+    DayReset = 30007;
+    WeekReset = 30008;
+    RankingReset = 30009;
+    AddNonPremiumReferral = 30010;
+    OnlineAtHour = 30011; 
+
+    // 40000-49999 Mission
+    // 40000-40099 weapon
+    MissionAcquireWeaponAny = 40000;
+    MissionAcquireWeaponAnyGrade = 40001;
+    MissionAcquireWeaponAnyRarity = 40002;
+    MissionAcquireWeapon = 40003;
+    MissionSellWeapon = 40010;
+    MissionUnitLevelUp = 40100;
+    MissionUnitHpBelow = 40201;
+    MissionUnitNoDamageDuration = 40202;
+    MissionAcquireTraitAny =  40300;
+    MissionAcquireTrait =  40301;
+    MissionAcquireTraitAnyRarity =  40302;
+    MissionGoldBalance = 40401;
+    // backpack game special rule
+    MissionInventoryExpand = 41000;
+    MissionInventoryFull = 41001;
+    
+    // 50000-59999: Skill
+    UseSkillAny = 50000;
+    UseSkill = 50001;
+    
+  }
+
+  repeated Tag tags = 1;
+  repeated Types.AddItemGroup rewardAddItemGroups = 2;
+  map<string, string> popupArgs = 3;
+
+  int32 id = 100;
+  Type type = 101;
+  google.protobuf.Timestamp startAt = 102;
+  google.protobuf.Timestamp untilAt = 103;
+
+  string name = 200;
+  int32 order = 201;
+
+  bool initialOpen = 300;
+  bool clientAchievement = 301;
+  Condition condition = 302;
+  int32 conditionValue1 = 303;
+  int32 conditionValue2 = 304;
+  int32 targetProgress = 305;
+  bool repeatable = 306;
+  bool autoReward = 307;
+  repeated int32 childAchievementDataIds = 308;
+  bool openChildrenOnComplete = 309;
+  int32 parentAchievementDataId = 310;
+  bool progressParentOnComplete = 311;
+  int32 rewardRequiredItemDataId = 312;
+  int32 initialProgress = 313;
+  int32 dayResetOpenRequiredAchievementDataId = 314;
+  int32 rewardLevelReferenceItemDataId = 315;
+
+  int32 rankingItemDataId = 400;
+  int32 rankingDelayDays = 401;
+  
+  int32 rewardMailDays = 500;
+}

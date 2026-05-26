@@ -1,0 +1,15 @@
+syntax = "proto3";
+package Commons.Types.Players;
+
+import "PlayerItem.proto";
+
+message PlayerAvatar {
+  PlayerItemMessage character = 1;
+  repeated PlayerItemMessage units = 2;
+  repeated PlayerItemMessage weapons = 3;
+  repeated PlayerItemMessage equipments = 4;
+  repeated PlayerItemMessage defenseUnits = 5;
+  repeated PlayerItemMessage offenseUnits = 6;
+  repeated PlayerItemMessage traits = 7;
+  repeated PlayerItemMessage pets = 8;
+}

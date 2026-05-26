@@ -1,0 +1,15 @@
+syntax = "proto3";
+package Commons.Types.Units.SkillGroupStat;
+
+enum SkillGroupStatType {
+  DamagePercent = 0;
+  SkillScalePercent = 1;
+  
+  Count = 2;
+}
+
+message AddSkillGroupStat {
+  SkillGroupStatType type = 1;
+  repeated int32 skillGroups = 2;
+  repeated float value = 3;
+} 

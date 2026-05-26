@@ -1,0 +1,177 @@
+syntax = "proto3";
+package Commons.Resources;
+
+import "Tags.proto";
+import "ResourceTrigger.proto";
+import "GeometryMessage.proto";
+import "AddItem.proto";
+import "AddBuff.proto";
+import "MaterialItem.proto";
+import "UnitStatType.proto";
+
+message ResourceMap {
+  message Global {
+    message DataId {
+      int32 tutorialMap = 1;
+    }
+    
+    message BoardConstants {
+      bool fixX = 1;
+      bool fixY = 2;
+
+      int32 levelUpChoiceCount = 4;
+      
+      repeated PlayerInventoryShape defaultPlayerInventoryShapes = 5;
+    }
+    
+    DataId dataId = 1;
+    BoardConstants boardConstants = 2;
+    int32 ScoutMinInterval = 3;
+    repeated Commons.Types.Geometry.Vector2Message petSpawnOffsets = 4;
+  }
+  
+  enum Type {
+    Unspecified = 0;
+    
+    Lobby = 100;
+    ScenarioLobby = 101;
+    
+    Dungeon = 200;
+    RespawnDungeon = 201;
+    ScenarioDungeon = 202;
+    
+    Raid = 300;
+    
+    Event = 400;
+    
+    Rank = 500;
+    DefenseRank = 501;
+
+    BackpackDungeon = 600;
+  }
+  
+  message Terrain {
+    enum Type {
+      Unit = 0;
+      Skill = 1;
+    }
+    
+    message Vertex {
+      Commons.Types.Geometry.Vector2Message position = 1;
+      float height = 2;
+    }
+    
+    message Triangle {
+      uint32 v1 = 1;
+      uint32 v2 = 2;
+      uint32 v3 = 3;
+    }
+    
+    Type type = 3;
+    repeated Vertex vertices = 1;
+    repeated Triangle triangles = 2;
+  }
+  
+  message Location {
+    int32 id = 1;
+    Commons.Types.Geometry.Vector2Message position = 2;
+    repeated Commons.Types.Geometry.GeometryMessage geometries = 3;
+  }
+  
+  message PlayerInventoryShapeRow {
+    repeated bool cells = 1;
+  }
+  
+  message PlayerInventoryShape {
+    repeated PlayerInventoryShapeRow rows = 1;
+  }
+
+  message Array2DRow {
+    repeated float cells = 1;
+  }
+
+  message Array2D {
+    repeated Array2DRow rows = 1;
+  }
+  
+
+  message AddStatGroup {
+    repeated Types.Units.AddUnitStat addStats = 1;
+    float probPercent = 2;
+
+    int32 rank = 3;
+  }
+  
+  repeated Tag tags = 1;
+  repeated string triggers = 2;
+  repeated ResourceTrigger.InitVariable initVariables = 3;
+  repeated int32 referenceAchievementDataIds = 4;
+  repeated Terrain terrains = 5;
+  repeated Location locations = 6;
+  repeated Types.AddItemGroup rewardAddItemGroups = 7;
+  repeated Types.MaterialItemGroup entryMaterialItemGroups = 8;
+  repeated int32 MissionDataIds = 9;
+  repeated Types.Units.AddBuff playerEntryAddBuffs = 11;
+  
+  int32 id = 100;
+  int32 group = 101;
+  Type type = 102;
+  int32 playerUnitCount = 103;
+  PlayerInventoryShape playerInventoryShape = 104;
+  int32 initGold = 105;
+  int32 stage = 106;
+  int32 initLevel = 107;
+  repeated int64 requiredExps = 108;
+  repeated Types.TraitItemGroup levelUpAddItemGroups = 109;
+  repeated Types.TraitItemGroup waveEndTraitItemGroups = 110;
+  repeated Types.AddItemGroup scoutAddItemGroups = 111;
+  
+  string name = 200;
+  string scene = 201;
+  string sprite = 202;
+  int32 achievementMapDataId = 203;
+  
+  Types.Geometry.Vector2Message targetCameraPivot = 298;
+  float fov = 299;
+  
+  bool lockLeaveUntilEnd = 300;
+  bool enableUnitExp = 301;
+  
+  int32 requiredUnitStamina = 400;
+  int32 unitStaminaPenalty = 401;
+  int32 unitStaminaPenaltyOnDeath = 402;
+  
+  int32 defenseMatchRankPointRange1 = 500;
+  int32 defenseMatchRankPointRange2 = 501;
+  float defenseMatchRankPointRangeConstant = 502;
+  float defenseFailHpPercent = 503;
+  int32 defenseFailBonusRankPoint = 504;
+  float defenseEndRankPointPercent = 505;
+  int32 defenseEndBonusRankPoint = 506;
+  float defenseSuccessRankPointPercent = 507;
+  int32 defenseSuccessBonusRankPoint = 508;
+  
+  float playerUnitRespawnDelay = 600;
+  int32 playerUnitMaxPurchaseRespawnCount = 601;
+  
+  repeated float spawnItemRarityWeights = 700;
+  repeated float spawnItemGradeWeights = 701;
+  int32 spawnCount = 702;
+  int32 maxHoldCount = 712;
+  int32 bagExpansionMinInterval = 703;
+  int32 bagExpansionMaxInterval = 704;
+  repeated int32 spawnPrices = 705;
+//  repeated int32 spawnPriceSpawnCounts = 706;
+  repeated Types.AddItemGroup SpawnAddItemGroups = 707;
+
+  Array2D SpawnWeights = 708;
+  Array2D LuckSpawnBaseWeights = 709;
+  Array2D LuckSpawnAdditionalWeights = 710;
+  float LuckScaleFactor = 711;
+
+  map<string, string> spriteGroups = 1000;
+  map<string, string> popupArgs = 1001;
+  map<string, int32> relativeItemDataIdGroups = 1002;
+  
+}
+

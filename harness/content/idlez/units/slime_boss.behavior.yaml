@@ -1,0 +1,28 @@
+# 슬라임 보스 기본 트리거.
+# 현재는 컴파일/연동 기준선을 위한 베이스라인 패턴만 둔다.
+# 이후 behavior-author 단계에서 HP 조건 분노 페이즈와 추가 소환 패턴으로 확장 가능.
+
+name: SlimeBoss_Enrage
+domain: unit
+
+on:
+  - event: start
+    do:
+      - moveRandom: {}
+
+---
+
+name: SlimeBoss_Split
+domain: unit
+
+vars:
+  spawn_unit:  { type: int, default: 110201 }
+  spawn_count: { type: int, default: 2 }
+
+on:
+  - event: update
+    every: 12s
+    do:
+      - spawnUnit:
+          unitDataId: $spawn_unit
+          count: $spawn_count

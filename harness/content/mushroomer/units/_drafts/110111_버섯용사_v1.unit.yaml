@@ -1,0 +1,24 @@
+id: 110111
+name: "버섯 용사"
+type: Player
+warmupDelay: 2.0
+targetMode: Chaser
+targetAwareDistance: 24.0
+targetResetDistance: 30.0
+
+addStats:
+  - { type: Hp, value: [420.0] }
+  - { type: Attack, value: [34.0] }
+  - { type: Defense, value: [12.0] }
+  - { type: CriticalPercent, value: [8.0] }
+  - { type: AttackSpeed, value: [1.0] }
+  - { type: MoveSpeed, value: [3.4] }
+
+triggers:
+  - UNIT_ONSTART_MUSHROOMHEROATTACK
+  - UNIT_ONUPDATE_MUSHROOMHEROATTACK
+
+prefab: "Units/Characters/PFB_HAM_Angel.prefab"
+sprite: "Units/Characters/Assets/hamsterAngel.png"
+uiScale: 1.15
+uiOffset: { x: 0.0, y: 0.15 }

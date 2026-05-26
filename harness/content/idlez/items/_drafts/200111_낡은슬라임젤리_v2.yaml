@@ -1,0 +1,15 @@
+# 재료 아이템 (슬라임 젤리 시리즈 — 1등급)
+# 출처: 110201 초록 슬라임 dropAddItemGroups
+# 시리즈: slime-jelly (200111~200113)
+#
+# ⚠️ v2 정정: idlez Material 컨벤션 따라 grade/rarity 제거.
+#   재료의 등급 차이는 ID + name으로만 표현 (proto 필드 미사용).
+#   참고: harness/engine-contract/concepts/rank-fields.md
+
+id: 200111
+name: "낡은 슬라임 젤리"
+category: Material            # Item.Category: Material (=100)
+sellPrice: 20
+
+spriteGroups:
+  Icon: "Items/Material/slime_jelly_common.png"

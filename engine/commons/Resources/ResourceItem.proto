@@ -1,0 +1,384 @@
+syntax = "proto3";
+package Commons.Resources;
+
+import "google/protobuf/timestamp.proto";
+import "Tags.proto";
+import "GeometryMessage.proto";
+import "UnitStatType.proto";
+import "ArmorTypeStatType.proto";
+import "DamageTypeStatType.proto";
+import "ItemGroupStatType.proto";
+import "SlotStatType.proto";
+import "BuffGroupStatType.proto";
+import "SkillGroupStatType.proto";
+import "AddBuff.proto";
+import "AddItem.proto";
+import "MaterialItem.proto";
+import "ItemOption.proto";
+
+message ResourceItem {
+  message Global {
+    message DataId {
+      // 1-999: Player
+      int32 playerLevel = 1;
+      int32 credit = 2;
+      int32 ruby = 3;
+      int32 freeRuby = 4;
+      int32 gold = 5;
+      int32 exp = 6;
+      int32 rankPoint = 7;
+      int32 energy = 8;
+      int32 stage = 9;
+      
+      // 100-199: Ninja Squad
+      int32 maxUnitItemCount = 100;
+      
+      // 200-299: Hamzzi
+      int32 abilityRank = 200;
+      // special Utility Item
+      int32 quickScoutProduct = 300;
+      int32 respawnProduct = 301;
+      
+      // 1000-1999: Player Avatar
+      int32 defaultCharacter = 1000;
+      int32 defaultWeapon1 = 1001;
+      int32 defaultWeapon2 = 1002;
+      
+      // 2000-2999: System
+      int32 allMines = 2000;
+      int32 mailNoticeCache = 2001;
+      
+      int32 tutorialGachaProduct = 10000;
+      int32 tutorialSummonPetProduct = 10001;
+    }
+    
+    message AvatarConstants {
+      int32 maxUnitCount = 1;
+      int32 maxDefenseUnitCount = 2;
+      int32 maxOffenseUnitCount = 3;
+    }
+
+    DataId dataId = 1;
+    AvatarConstants avatarConstants = 2;
+  }
+  
+  enum Category {
+    System = 0;
+    
+    Character = 1;
+    Weapon = 2;
+    Equipment = 3;
+    Stat = 4;
+    Skill = 5;
+    Trait = 6;
+    SlotRoot = 7;
+    
+    Material = 100; // 거의안쓰임...?
+    
+    Product = 200;
+    Recipe = 201;
+    Boost = 202;
+    Utility = 203;
+    GamePass = 204;
+    Ticket = 205;
+    SelectableBox = 206;
+    Premium = 207;
+    Attendance = 208;
+    
+    Unit = 300;  // param1: stamina, param2: refreshAt, (long)int.MaxValue * param3 + param4: Mine Item Id
+    Mine = 301;
+    Pet = 302;
+    
+    Ranking = 400;
+    
+    InventoryBundle = 10000;
+    
+  }
+  
+  enum Type {
+    Unspecified = 0;
+    
+    // 100-199: System
+    Setting = 100;
+    SummonPetLevel = 101;
+    PotentialLevel = 102;
+    DailyQuestPoint = 103;
+    WeeklyQuestPoint = 104;
+    TimeLimitedMission = 105;
+    Honor = 106;
+    
+    // 200-299: Weapon
+    Katana = 200;
+    Gun = 201;
+    Dagger = 202;
+    Hammer = 203;
+    
+    // 300-399: Equipment
+    Costume = 300;
+    Hair = 301;
+    Head = 302;
+    Chest = 303;
+    Leg = 304;
+    Boots = 305;
+    Gloves = 306;
+    Necklace = 307;
+    Bracelet = 308;
+    Ring = 309;
+    CyberOperating = 310;
+    CyberExosuit = 311;
+    CyberSkeleton = 312;
+    CyberArm = 313;
+    CyberHand = 314;
+    CyberLeg = 315;
+    
+    // 400-499: Boost
+    MineBoost = 400;
+    MaxUnitBoost = 401;
+    MaxStaminaBoost = 402;
+    StaminaRegenBoost = 403;
+    
+    // 500-599: Utility
+    AddStamina = 500;
+    AutoMerge = 501;
+    AddInventory = 502;
+    // would be deprecated
+    AddMaxCount = 503;
+    // would be deprecated
+    AddRegenPeriod = 504;
+    Scout = 505;
+    Respawn = 506;
+    
+    // 600-699: Skill
+    PlayerUnitActiveSkill = 600;
+    InventorySkill = 601;
+    
+    // 700-799: Product
+    NormalProduct = 700;  
+    Gacha = 701;
+    MaterialAd = 702;
+    MaterialSingle = 703;
+    MaterialMulti = 704;
+    MaterialRealPrice = 705;
+    MaterialAMAP = 707;
+    Bundle = 706;
+    
+//   Roulette = 700;  // param1: bonusProgress
+//    Pity = 701; // param1:  
+    
+    // 800 - 899: Trait
+    Passive = 800;
+    Learnable = 801;
+    LearnableWithoutItem = 802;
+    
+    // 900 - 929: GamePass
+    GamePassGroup = 902;
+    GamePassMain = 900;
+    GamePassSub = 901;
+    
+    // 930 - 959: Stat
+    TrainingRank = 930;
+    
+    // 20600 - 20699: SelectableBox
+    SeasonalSelectableBox = 20600;
+    
+    // 20800 - 20899: Attendance
+    Attendance7Day = 20800;
+  }
+  
+  enum WeaponCategory {
+    Normal = 0;
+    Explosive = 1;
+    Feast = 2;
+    Frozen = 3;
+    Poison = 4;
+    Consumable = 50;
+  }
+  
+  message InventorySkillCommand {
+    message CommandItem {
+      int32 dx = 1;
+      int32 dy = 2;
+      int32 itemGroup = 3;
+      int32 itemGrade = 4;
+    }
+    
+    repeated CommandItem items = 1;
+    int32 buffDataId = 2;
+  }
+
+  message InventoryCell {
+    int32 dx = 1;
+    int32 dy = 2;
+  }
+  
+  repeated Tag tags = 1;
+  map<string, string> spriteGroups = 2;
+  map<string, string> popupArgs = 3;
+  repeated int64 requiredExps = 4;
+  map<int32, string> prefabGroups = 5;
+  map<string, int32> relativeItemDataIdGroups = 6;
+
+  int32 id = 100;
+  int32 parentId = 101;
+  int32 materialId = 102;
+  Category category = 103;
+  Type type = 104;
+  int32 grade = 105;
+  int32 extraGrade = 112;
+  int32 power = 106;
+  float constantDamageRatio = 107;
+  int32 rarity = 108;
+  int32 tier = 109;
+  google.protobuf.Timestamp startAt = 110;
+  google.protobuf.Timestamp untilAt = 111;
+  repeated float powerAttackMultiplyPercents = 113;
+  repeated float powerDefenseMultiplyPercents = 114;
+  repeated float powerHpMultiplyPercents = 115;
+  
+  //TODO: Client only data. Move to Client data table
+  float inventoryShakeSpeed = 150;
+  float inventoryShakeMagnitude = 151;
+
+  string name = 200;
+  string prefab = 201;
+  string sprite = 202;
+  int32 tab = 203;
+  int32 priority = 204;
+  int32 unitDataId = 205;
+  int32 achievementDataId = 206;
+  int32 achievementItemDataId = 207;
+  int32 rankingItemDataId = 208;
+  int32 group = 209;
+  int32 order = 210;
+  int32 skillDataId = 211;
+  int32 productExpiredPushDays = 212;
+  int32 productItemDataId = 213;
+  int32 mergeSkillDataId = 214;
+  int32 DiscardSkillDataId = 215;
+  
+  bool initialCreate = 300;
+  int32 initialCreateCount = 301;
+  int32 initialCreateLevel = 302;
+  bool unstackable = 303;
+  bool disposable = 304;
+  // 구매 제한 관련: 305 - 308
+  repeated int32 requiredAchievementDataIds = 305;
+  repeated int32 exclusiveAchievementDataIds = 306;
+  repeated int32 requiredItemDataIds = 307;
+  repeated int32 exclusiveItemDataIds = 308;
+  repeated Tag requiredItemTags = 322;
+  repeated Tag exclusiveItemTags = 323;
+  int32 minCount = 309;
+  int32 maxCount = 310;
+  repeated int32 multipliers = 311;
+  repeated float multiplierWeights = 312;
+  int32 bonusCount = 313;
+  int32 bonusItemDataId = 314;
+  int32 sellPrice = 315;
+  repeated Types.AddItemGroup sellAddItemGroups = 316;
+  int32 reprocessableDelayMinutes = 317;
+  int32 purchaseUnit = 318;
+  int32 exp = 319;
+  repeated int32 bonusCounts = 320;
+  repeated int32 bonusItemDataIds = 321;
+  int32 deadlineApproachingSeconds = 324;
+  
+  float dropTtl = 400;  // default: 10
+  bool isDropAutoGetExpired = 401;
+  bool isDropPublic = 402;
+  
+  repeated int32 equipSkillDataIds = 403;
+  repeated Types.Units.AddUnitStat addStats = 404;
+  repeated Types.Units.AddUnitStat equipAddStats = 405;
+  repeated Types.Units.AddBuff equipAddBuffs = 406;
+  repeated Types.Units.ArmorTypeStat.AddArmorTypeStat addArmorTypeStats = 407;
+  repeated Types.Units.ArmorTypeStat.AddArmorTypeStat equipAddArmorTypeStats = 408;
+  repeated Types.Units.DamageTypeStat.AddDamageTypeStat addDamageTypeStats = 409;
+  repeated Types.Units.DamageTypeStat.AddDamageTypeStat equipAddDamageTypeStats = 410;
+  repeated Types.Units.ItemGroupStat.AddItemGroupStat addItemGroupStats = 411;
+  repeated Types.Units.ItemGroupStat.AddItemGroupStat equipAddItemGroupStats = 412;
+  repeated Types.Units.SlotStat.AddSlotStat addSlotStats = 413;
+  repeated Types.Units.SlotStat.AddSlotStat equipAddSlotStats = 414;
+  repeated Types.Units.BuffGroupStat.AddBuffGroupStat addBuffGroupStats = 415;
+  repeated Types.Units.BuffGroupStat.AddBuffGroupStat equipAddBuffGroupStats = 416;
+  repeated Types.Units.SkillGroupStat.AddSkillGroupStat addSkillGroupStats = 417;
+  repeated Types.Units.SkillGroupStat.AddSkillGroupStat equipAddSkillGroupStats = 418;
+  
+  repeated Types.AddItemGroup addItemGroups = 500;
+  int32 addItemLevelReferenceItemDataId = 504;
+  repeated Types.AddItemGroup equipAddItemGroups = 501;
+  repeated Types.AddItemGroup decomposeAddItemGroups = 502;
+  
+  repeated Types.AddItemGroup DailyRewardAddItemGroups = 550;
+  int32 dailyRewardMailDays = 551;
+  
+  repeated Types.MaterialItemGroup productMaterialItemGroups = 600;
+  repeated Types.MaterialItemGroup materialItemGroups = 601;
+  repeated Types.MaterialItemGroup levelUpMaterialItemGroups = 602;
+
+  int32 rankingId = 700;
+  int32 rankingOrder = 701; // TODO: deprecate
+//  google.protobuf.Timestamp rankingStartAt = 702;
+  int32 rankingPeriodDays = 702;
+  bool rankingExpScore = 703;
+  bool rankingAccumulateScore = 704;
+  
+  float boostPercent = 800;
+  int32 boostCount = 801;
+
+  string iapIdentifier = 900;
+  float priceUsd = 901;
+  float priceDisplayUsd = 902;
+  int32 priceXtr = 903;
+  int32 priceWon = 904;
+  
+  //Regen Rule
+  int32 regenCount = 1000;
+  int32 regenPeriod = 1001;
+  
+  //Pass
+  repeated int32 targetItemDataIds = 1100;
+  repeated int32 targetAchievementDataIds = 1101;
+  
+  //Map
+  int32 MapGroup = 1200;
+  
+  // Mine
+  float efficiencyPercent = 10000;
+  repeated float efficiencyPercents = 10001;
+  int32 maxStamina = 10002;
+  int32 staminaRegenPerSecond = 10003;
+  int32 staminaCostPerSecond = 10004;
+  repeated int32 unitSlotCounts = 10005;
+  int32 stamina = 10006;
+  
+  // InventorySkill
+  repeated InventorySkillCommand inventorySkillCommands = 11000;
+  repeated float mergeGroupWeights = 11001;
+  repeated int32 mergeGroups = 11002;
+
+  Commons.Types.Geometry.Vector2Message weaponGraphicCenterPivot = 11998;
+  WeaponCategory weaponCategory = 11999;
+  
+  // Sized item
+  repeated InventoryCell inventoryCells = 12000;
+  
+  // Options
+  repeated Types.ItemOptionGroup options = 13000;
+  repeated int32 optionCounts = 13001;
+  
+  // Options.Reroll
+  int32 rerollLimit = 13100;
+  repeated Types.MaterialItemGroup rerollMaterialItemGroups = 13101;
+  
+  // Premium
+  int32 bonusItemLevel = 14000;
+  float discountMaterialPricePercent = 14001;
+  float boostScoutRewardPercent = 14002;
+  int32 boostScoutMaxMinutes = 14003;
+  int32 boostMaxCountItemDataId = 14004;
+  int32 boostMaxCount = 14005;
+  int32 boostRegenCountItemDataId = 14006;
+  int32 boostRegenCount = 14007;
+  
+}

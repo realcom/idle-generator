@@ -1,0 +1,66 @@
+# 맵/던전 — engine-contract/schema/map.md
+# id 500101 유지(덮어쓰기). 웨이브 로직은 triggers[] + meadow_1.behavior.yaml(domain: map)로 분리.
+# 적 편성 Unit.id 참조: slime_green=110201, slime_boss=110501.
+# ★ 스테이지 요구 전투력 곡선은 economy-balancer(growth-pipeline.md)에 위임.
+
+id: 500101
+name: "초원 1"
+type: Dungeon                  # Map.Type: Dungeon
+# 인벤토리 보드형 전투의 최소 예시. 다른 일반 던전은 이 태그를 따라갈 필요 없음.
+tags: [ContainPlayerInventory]
+scene: "PFB_MAP_Meadow_Day_Chapter"
+prefab: "Maps/Prefabs/PFB_MAP_Meadow_Day_Chapter.prefab"
+
+boardConstants:
+  levelUpChoiceCount: 3        # 레벨업 선택지 수 (기본값)
+
+# 웨이브 트리거 — 맵에는 각 타입당 하나만 직접 연결하고, 다음 웨이브는 trigger 내부에서 연쇄 실행.
+triggers:
+  - MAP_ONSTART_MEADOW1WAVE1    # 웨이브 1: 일반 슬라임 스폰
+  - MAP_ONUPDATE_MEADOW1UPDATE  # 상시 업데이트 (패트롤·이동 규칙 등)
+
+locations:
+  - id: -1
+    position: { x: -4.0, y: 0.0 }
+    geometries:
+      - circle:
+          center: { x: 0.0, y: 0.0 }
+          radius: 1.25
+
+terrains:
+  - vertices:
+      - { position: { x: -10.0, y: -6.0 }, height: 0.0 }
+      - { position: { x: 10.0, y: -6.0 }, height: 0.0 }
+      - { position: { x: 10.0, y: 6.0 }, height: 0.0 }
+      - { position: { x: -10.0, y: 6.0 }, height: 0.0 }
+    triangles:
+      - { v1: 0, v2: 1, v3: 2 }
+      - { v1: 0, v2: 2, v3: 3 }
+  - type: Skill
+    vertices:
+      - { position: { x: -10.0, y: -6.0 }, height: 0.0 }
+      - { position: { x: 10.0, y: -6.0 }, height: 0.0 }
+      - { position: { x: 10.0, y: 6.0 }, height: 0.0 }
+      - { position: { x: -10.0, y: 6.0 }, height: 0.0 }
+    triangles:
+      - { v1: 0, v2: 1, v3: 2 }
+      - { v1: 0, v2: 2, v3: 3 }
+
+# 적 편성 — 웨이브 트리거에서 spawnUnit 으로 참조. 검증기가 Unit.id 무결성 확인.
+# Unit.id 참조 목록:
+#   110201  초록 슬라임   (일반 잡몹, Wave1/Wave2)
+#   110501  슬라임 보스   (보스, Wave3)
+
+# 클리어 보상
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 100, maxCount: 200, isCore: true }  # 골드(id=5)
+      - { itemDataId: 6, count: 30 }                                   # 경험치(id=6)
+
+  - shouldAddAll: false
+    probPercent: 25
+    addItems:
+      - { itemDataId: 200102, count: 1, weight: 70, group: 2 }         # 고급 재료
+      - { itemDataId: 200103, count: 1, weight: 30, group: 2, pityGroup: 8 }  # 희귀(천장8)

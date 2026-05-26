@@ -1,0 +1,48 @@
+syntax = "proto3";
+package Commons.Resources;
+
+import "ResourceAchievement.proto";
+import "ResourceAudio.proto";
+import "ResourceBuff.proto";
+import "ResourceItem.proto";
+import "ResourceMap.proto";
+import "ResourceSkill.proto";
+import "ResourceString.proto";
+import "ResourceTrigger.proto";
+import "ResourceUnit.proto";
+
+message Resources {
+  message GlobalData {
+    int32 minNameLength = 1;
+    int32 maxNameLength = 2;
+  }
+  
+  repeated ResourceAchievement achievements = 1;
+  ResourceAchievement.Global achievementGlobal = 100;
+  
+  repeated ResourceAudio audios = 2;
+  ResourceAudio.Global audioGlobal = 200;
+  
+  repeated ResourceBuff buffs = 3;
+  ResourceBuff.Global buffGlobal = 300;
+  
+  repeated ResourceItem items = 4;
+  ResourceItem.Global itemGlobal = 400;
+  
+  repeated ResourceMap maps = 5;
+  ResourceMap.Global mapGlobal = 500;
+  
+  repeated ResourceSkill skills = 6;
+  ResourceSkill.Global skillGlobal = 600;
+
+  repeated ResourceUnit units = 7;
+  ResourceUnit.Global unitGlobal = 700;
+  
+  repeated ResourceString strings = 8;
+  ResourceString.Global stringGlobal = 800;
+  
+  repeated ResourceTrigger triggers = 9;
+  repeated ResourceTrigger.MethodMetadata triggerMethods = 900;
+
+  GlobalData globalData = 10000;
+}

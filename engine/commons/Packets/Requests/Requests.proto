@@ -1,0 +1,611 @@
+syntax = "proto3";
+package Commons.Packets.Requests;
+
+import "google/protobuf/timestamp.proto";
+import "Player.proto";
+import "PlayerInfo.proto";
+import "PlayerItem.proto";
+import "PlayerAvatar.proto";
+import "PlayerAchievement.proto";
+import "PlayerRanking.proto";
+import "PlayerMail.proto";
+import "Notice.proto";
+import "Chat.proto";
+import "World.proto";
+
+enum StatusCode {
+  Ok = 0;
+  
+  // 1-99: Common
+  BadRequest = -1;
+  TooManyRequests = -2;
+  NoReason = -3;
+  OutdatedClient = -4;
+  RequestTimeOut = -5;
+  LostConnection = -6;
+  
+  // 1001-1999: Item
+  ItemNotFound = -1001;
+  ItemNotEnough = -1002;
+  ItemNotBuyable = -1003;
+  ItemNotDisposable = -1004;
+  ItemNotEnoughStamina = -1005;
+  ItemNotCreatable = -1006;
+  // 2001-2999: Board
+  BoardNotFound = -2001;
+  BoardFull = -2002;
+  BoardAlreadyJoined = -2003;
+  BoardNotJoined = -2004;
+  BoardDestroyed = -2005;
+  BoardNotEnded = -2006;
+  BoardMatchFailed = -2007;
+  
+  // 3001-3999: Achievement
+  AchievementNotFound = -3001;
+  AchievementNotCompleted = -3002;
+  AchievementRewardAlreadyClaimed = -3003;
+  AchievementRequiredItemNotExist = -3004;
+  
+  // 4001-4999: Player
+  ServerMaintenance = -4001;
+  PlayerDuplicateLogin = -4002;
+  ConnectedAccountExist = -4003;
+  InconsistentCommonsVersion = -4004;
+  PlayerDuplicateName = -4005;
+  PlayerNotFound = -4006;
+}
+
+message Request {
+  int64 id = 1;
+  oneof Request {
+    // 2-15 (1 byte)
+    PingRequest pingRequest = 2; // --ignore-server-handle
+    SkipBoardRequest skipBoardRequest = 3;
+    
+    // 16-2047 (2 bytes)
+    
+    // 2048-262144 (3 bytes)
+    // Debug
+    SendCommandRequest sendCommandRequest = 2000;
+    SendCommandRequest.Response sendCommandResponse = 2001; // --ignore-server-handle
+    
+    // Login
+    LoginRequest loginRequest = 3000; // --ignore-server-handle
+    LoginRequest.Response loginResponse = 3001; // --ignore-server-handle
+    SignInOauthRequest signInOauthRequest = 3002;
+    SignInOauthRequest.Response signInOauthResponse = 3003; // --ignore-server-handle
+
+    // Item
+    UseCashItemRequest useCashItemRequest = 4000;
+    UseCashItemRequest.Response useCashItemResponse = 4001; // --ignore-server-handle
+    LevelUpItemRequest levelUpItemRequest = 4010;
+    LevelUpItemRequest.Response levelUpItemResponse = 4011; // --ignore-server-handle
+    LevelDownItemRequest levelDownItemRequest = 4012;
+    LevelDownItemRequest.Response levelDownItemResponse = 4013; // --ignore-server-handle
+    DecomposeItemRequest decomposeItemRequest = 4014;
+    DecomposeItemRequest.Response decomposeItemResponse = 4015; // --ignore-server-handle
+    ClaimDailyRewardRequest claimDailyRewardRequest = 4016;
+    ClaimDailyRewardRequest.Response claimDailyRewardResponse = 4017; // --ignore-server-handle
+    CreateItemRequest createItemRequest = 4020;
+    CreateItemRequest.Response createItemResponse = 4021; // --ignore-server-handle
+    BuyItemRequest buyItemRequest = 4030;
+    BuyItemRequest.Response buyItemResponse = 4031; // --ignore-server-handle
+    DisposeItemRequest disposeItemRequest = 4040;
+    DisposeItemRequest.Response disposeItemResponse = 4041; // --ignore-server-handle
+    RerollItemOptionRequest rerollItemOptionRequest = 4042;
+    RerollItemOptionRequest.Response rerollItemOptionResponse = 4043; // --ignore-server-handle
+    CreateReceiptRequest createReceiptRequest = 4050;
+    CreateReceiptRequest.Response createReceiptResponse = 4051; // --ignore-server-handle
+    VerifyReceiptRequest verifyReceiptRequest = 4052;
+    VerifyReceiptRequest.Response verifyReceiptResponse = 4053; // --ignore-server-handle
+    
+    // Board
+    CreateBoardRequest createBoardRequest = 5000;
+    CreateBoardRequest.Response createBoardResponse = 5001; // --ignore-server-handle
+    JoinBoardRequest joinBoardRequest = 5010;
+    JoinBoardRequest.Response joinBoardResponse = 5011; // --ignore-server-handle
+    GetBoardRequest getBoardRequest = 5020;
+    GetBoardRequest.Response getBoardResponse = 5021; // --ignore-server-handle
+    LeaveBoardRequest leaveBoardRequest = 5030;
+    LeaveBoardRequest.Response leaveBoardResponse = 5031; // --ignore-server-handle
+    InteractBoardRequest interactBoardRequest = 5040; // --ignore-server-handle
+    InteractBoardRequest.Response interactBoardResponse = 5041; // --ignore-server-handle
+    AutoPlayToTickBoardRequest autoPlayToTickBoardRequest = 5042;
+    AutoPlayToTickBoardRequest.Response autoPlayToTickBoardResponse = 5043; // --ignore-server-handle
+    
+    // Achievement
+    ClaimAchievementRewardRequest claimAchievementRewardRequest = 6000;
+    ClaimAchievementRewardRequest.Response claimAchievementRewardResponse = 6001; // --ignore-server-handle
+    IncreaseAchievementRequest increaseAchievementRequest = 6010;
+    IncreaseAchievementRequest.Response increaseAchievementResponse = 6011; // --ignore-server-handle
+    
+    // Player
+    GetPlayerRankingRequest getPlayerRankingRequest = 7000;
+    GetPlayerRankingRequest.Response getPlayerRankingResponse = 7001; // --ignore-server-handle
+    GetPlayerReferralsRequest getPlayerReferralsRequest = 7010;
+    GetPlayerReferralsRequest.Response getPlayerReferralsResponse = 7011; // --ignore-server-handle
+    AddPlayerReferralRequest addPlayerReferralRequest = 7020;
+    AddPlayerReferralRequest.Response addPlayerReferralResponse = 7021; // --ignore-server-handle
+    GetPlayerMailsRequest getPlayerMailsRequest = 7030;
+    GetPlayerMailsRequest.Response getPlayerMailsResponse = 7031; // --ignore-server-handle
+    ReadPlayerMailsRequest readPlayerMailsRequest = 7040;
+    ReadPlayerMailsRequest.Response readPlayerMailsResponse = 7041; // --ignore-server-handle
+    DeletePlayerMailsRequest deletePlayerMailsRequest = 7042;
+    DeletePlayerMailsRequest.Response deletePlayerMailsResponse = 7043; // --ignore-server-handle
+    UpdatePlayerTelegramTonAddressRequest updatePlayerTelegramTonAddressRequest = 7050;
+    UpdatePlayerTelegramTonAddressRequest.Response updatePlayerTelegramTonAddressResponse = 7051; // --ignore-server-handle
+    GetPlayerDefenseRankResultsRequest getPlayerDefenseRankResultsRequest = 7060;
+    GetPlayerDefenseRankResultsRequest.Response getPlayerDefenseRankResultsResponse = 7061; // --ignore-server-handle
+    GetPlayerChatsRequest getPlayerChatsRequest = 7070;
+    GetPlayerChatsRequest.Response getPlayerChatsResponse = 7071; // --ignore-server-handle
+    SendPlayerChatRequest sendPlayerChatRequest = 7080;
+    SendPlayerChatRequest.Response sendPlayerChatResponse = 7081; // --ignore-server-handle
+    UpdatePlayerNameRequest updatePlayerNameRequest = 7082;
+    UpdatePlayerNameRequest.Response updatePlayerNameResponse = 7083; // --ignore-server-handle
+    GetPlayerInfoRequest getPlayerInfoRequest = 7084;
+    GetPlayerInfoRequest.Response getPlayerInfoResponse = 7085; // --ignore-server-handle
+    
+    
+    // General
+    GetNoticesRequest getNoticesRequest = 8000;
+    GetNoticesRequest.Response getNoticesResponse = 8001; // --ignore-server-handle
+    ReadNoticeRequest readNoticeRequest = 8010;
+    ReadNoticeRequest.Response readNoticeResponse = 8011; // --ignore-server-handle
+  }
+}
+
+message PingRequest {
+  google.protobuf.Timestamp timestamp = 1;
+  uint32 latencyMilliseconds = 2;
+}
+
+message SkipBoardRequest {
+  uint32 tick = 1;
+}
+
+// ::::::: Debug ::::::
+message SendCommandRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+  }
+
+  string command = 1;
+}
+
+// :::::: Login ::::::
+message LoginRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+
+    Types.Players.PlayerMessage player = 3;
+    
+    repeated Types.Players.PlayerItemMessage items = 4;
+    Types.Players.PlayerAvatar avatar = 5;
+    repeated Types.Players.PlayerAchievementMessage achievements = 6;
+    
+    google.protobuf.Timestamp maintenanceUntilAt = 7;
+    Types.WorldMessage world = 8;
+  }
+  
+  string snsId = 1;
+  string language = 2;
+  string loginKey = 3;
+  uint32 clientVersion = 4;
+  string country = 5;
+  string deviceId = 6;
+  string deviceOS = 7;
+  string deviceModel = 8;
+  string pushToken = 9;
+  string commonsCommitHash = 10;
+}
+
+message SignInOauthRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+  }
+  string snsId = 1;
+}
+
+// :::::: Item ::::::
+message UseCashItemRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    repeated Types.Players.PlayerItemMessage items = 3;
+  }
+  
+  int64 itemId = 1;
+  int32 itemDataId = 2;
+  int64 targetItemId = 3;
+
+  int32 count = 4;
+  int32 slot = 5;
+  
+  int32 param1 = 6;
+  int32 param2 = 7;
+}
+
+message LevelUpItemRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    repeated Types.Players.PlayerItemMessage items = 3;
+  }
+  
+  int64 itemId = 1;
+  int32 count = 2;
+  repeated int64 selectedMaterialItemIds = 3;
+}
+
+message LevelDownItemRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    repeated Types.Players.PlayerItemMessage items = 3;
+  }
+
+  int64 itemId = 1;
+  int32 count = 2;
+}
+
+message CreateItemRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    repeated Types.Players.PlayerItemMessage items = 3;
+  }
+  
+  int32 recipeItemDataId = 1;
+  repeated int32 recipeItemDataIds = 4;
+  int32 count = 2;
+  repeated int64 selectedMaterialItemIds = 3;
+}
+
+message BuyItemRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    repeated Types.Players.PlayerItemMessage items = 3;
+    int32 multiplier = 4;
+  }
+  
+  int32 productItemDataId = 1;
+  repeated int64 selectedMaterialItemIds = 2;
+  int32 count = 3;
+}
+
+message DisposeItemRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+  }
+  
+  int64 itemId = 1;
+  int32 count = 2;
+}
+
+message RerollItemOptionRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+  }
+  
+  int64 itemId = 1;
+  int32 slot = 2;
+}
+
+message DecomposeItemRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    repeated Types.Players.PlayerItemMessage items = 3;
+  }
+  
+  int64 itemId = 1;
+  repeated int64 itemIds = 2;
+}
+
+message ClaimDailyRewardRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    repeated Types.Players.PlayerItemMessage items = 3;
+  }
+  
+  int64 itemId = 1;
+  repeated int64 itemIds = 2;
+  bool acquiredItemUpdateSilently = 3;
+}
+
+message CreateReceiptRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    
+    string telegramInvoiceLink = 3;
+    string tonAddress = 4;
+    string tonPayload = 5;
+    int64 tonPrice = 6;
+  }
+  
+  int32 productItemDataId = 1;
+  string currency = 2;
+}
+//
+enum StoreType {
+  UNKNOWN = 0;
+  GOOGLE = 1;
+  APPLE = 2;
+}
+
+message VerifyReceiptRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    repeated Types.Players.PlayerItemMessage items = 3;
+  }
+  int32 productItemDataId = 1;
+  string currency = 2;
+  StoreType store = 3;
+  string receipt = 4;
+}
+
+// :::::: Board ::::::
+message CreateBoardRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+  }
+
+  int32 mapDataId = 1;
+}
+
+message JoinBoardRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+  }
+  
+  int64 boardId = 1;
+  int32 mapDataId = 2;
+}
+
+message GetBoardRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    
+    uint32 tick = 3;
+    bytes compressedBoard = 4;
+    int32 boardHash = 5;
+  }
+
+  bool getHash = 1;
+}
+
+message LeaveBoardRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+  }
+}
+
+message InteractBoardRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+  }
+  
+  uint32 tick = 1;
+  int32 key = 2;
+  float value = 3;
+}
+
+message AutoPlayToTickBoardRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    bytes compressedBoard = 3;
+  }
+
+  uint32 tick = 1;
+  uint32 toTick = 2;
+}
+
+// :::::: Achievement ::::::
+message ClaimAchievementRewardRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    
+    repeated Types.Players.PlayerItemMessage items = 3;
+  }
+  
+  int32 achievementDataId = 1;
+  repeated int32 achievementDataIds = 2;
+  int32 count = 3;
+  bool acquiredItemUpdateSilently = 4;
+}
+
+message IncreaseAchievementRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+
+    repeated Types.Players.PlayerItemMessage items = 3;
+  }
+  
+  int32 achievementDataId = 1;
+  int32 progress = 2;
+}
+
+// :::::: Player ::::::
+message GetPlayerRankingRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+
+    Types.Players.PlayerRankingMessage myPlayerRanking = 3;
+    repeated Types.Players.PlayerRankingMessage playerRankings = 4;
+    Types.Players.PlayerRankingMessage targetPlayerRanking = 5;
+  }
+  
+  int32 rankingItemDataId = 1;
+  int32 date = 2;
+  bool myRankOnly = 3;
+  int64 targetPlayerId = 4;
+}
+
+message GetPlayerReferralsRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    
+    repeated Types.Players.PlayerMessage players = 3;
+  }
+}
+
+message AddPlayerReferralRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+  }
+  
+  int64 telegramUserId = 1;
+}
+
+message GetPlayerMailsRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    
+    bool hasUnread = 3;
+    repeated Types.Players.PlayerMailMessage mails = 4;
+  }
+  
+  bool hasUnreadOnly = 1;
+}
+
+message ReadPlayerMailsRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    
+    repeated Types.Players.PlayerItemMessage items = 3;
+  }
+  
+  repeated int64 mailIDs = 1;
+}
+
+message DeletePlayerMailsRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+  }
+  
+  repeated int64 mailIDs = 1;
+}
+
+message UpdatePlayerTelegramTonAddressRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+  }
+  
+  string tonAddress = 1;
+}
+
+message GetPlayerDefenseRankResultsRequest {
+  message PlayerDefenseRankResult {
+    Types.Players.PlayerMessage player = 1;
+    int64 prevPlayerRankPoint = 2;
+    int64 playerRankPoint = 3;
+    
+    Types.Players.PlayerMessage opponentPlayer = 4;
+    int64 prevOpponentPlayerRankPoint = 5;
+    int64 opponentPlayerRankPoint = 6;
+    
+    int32 winningTeam = 7;
+    int32 rankPointBonus = 8;
+    int32 rankPointTake = 9;
+    int32 opponentRankPointBonus = 10;
+    
+    google.protobuf.Timestamp createdAt = 11;
+  }
+  
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    
+    repeated PlayerDefenseRankResult results = 3;
+  }
+
+  google.protobuf.Timestamp from = 1;
+}
+
+message GetPlayerChatsRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+
+    repeated Types.ChatMessage chats = 3;
+  }
+
+  string channelKey = 1;
+  int64 lastChatId = 2;
+}
+
+message SendPlayerChatRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+  }
+
+  Types.ChatMessage chat = 1;
+}
+
+message UpdatePlayerNameRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+    repeated Types.Players.PlayerItemMessage items = 4;
+  }
+
+  string name = 1;
+  int32 productItemDataId = 2;
+}
+
+message GetPlayerInfoRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+
+    Types.Players.PlayerInfoMessage playerInfo = 3;
+  }
+  
+  int64 playerId = 1;
+}
+
+message GetNoticesRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+
+    bool hasUnread = 3;
+    repeated Types.NoticeMessage notices = 4;
+  }
+
+  bool hasUnreadOnly = 1;
+}
+
+message ReadNoticeRequest {
+  message Response {
+    StatusCode status = 1;
+    string message = 2;
+  }
+
+  repeated int64 noticeIDs = 1;
+}

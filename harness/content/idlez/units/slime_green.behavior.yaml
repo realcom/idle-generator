@@ -1,0 +1,10 @@
+# 슬라임 이동 트리거 — slime_green.unit.yaml 의 triggers[]가 참조
+# 스폰 시 무작위 목적지로 이동 (가장 단순한 유닛 AI)
+# 컴파일: UNIT_ONSTART_SLIMEBOUNCE
+
+name: SlimeBounce
+domain: unit
+on:
+  - event: start
+    do:
+      - moveRandom: {}     # unitMethod:SetMoveRandomDestination

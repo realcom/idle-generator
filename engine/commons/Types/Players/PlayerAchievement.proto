@@ -1,0 +1,15 @@
+syntax = "proto3";
+package Commons.Types.Players;
+
+message PlayerAchievementMessage {
+  enum State {
+    InProgress = 0;
+    Disabled = -1;
+    Completed = 1;
+    Rewarded = 2;
+  }
+  
+  int32 achievementDataId = 1;
+  State state = 2;
+  int32 progress = 3;
+}

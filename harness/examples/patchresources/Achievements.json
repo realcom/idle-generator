@@ -1,0 +1,235 @@
+{
+ "achievementGlobal": {
+  "dataId": {
+   "tutorialComplete": -20020108,
+   "ingameTutorialEnter": 1,
+   "chapterEnterAgainCondition": 1001,
+   "tutorialSteps": [
+    11,
+    12,
+    13,
+    101,
+    102,
+    103,
+    104,
+    105
+   ]
+  }
+ },
+ "achievements": [
+  {
+   "id": 600001,
+   "name": "첫 처치",
+   "type": "Normal",
+   "tags": [],
+   "condition": "KillUnitAny",
+   "conditionValue1": 0,
+   "conditionValue2": 0,
+   "targetProgress": 10,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "rewardAddItemGroups": [
+    {
+     "adds": [
+      {
+       "itemDataId": 5,
+       "count": 500
+      },
+      {
+       "itemDataId": 6,
+       "count": 100
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": -20020108,
+   "initialOpen": true,
+   "clientAchievement": true
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 1,
+   "initialOpen": true,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    201
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 1001,
+   "initialOpen": true,
+   "condition": "WinGame",
+   "conditionValue1": 100001,
+   "parentAchievementDataId": 1002,
+   "progressParentOnComplete": true
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 2,
+   "autoReward": true,
+   "id": 1002,
+   "initialOpen": true,
+   "childAchievementDataIds": [
+    206
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 201,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    101
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 202,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    203
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 203,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    102
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 204,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    205
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 205,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    105
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 206,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    104
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 207,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    204
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "initialOpen": true,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    12
+   ],
+   "id": 11
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    13
+   ],
+   "id": 12
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "clientAchievement": true,
+   "id": 13
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "condition": "HasItem",
+   "conditionValue1": 1000,
+   "conditionValue2": 16,
+   "childAchievementDataIds": [
+    202
+   ],
+   "id": 101
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": false,
+   "condition": "BuyItemProductAction",
+   "conditionValue1": 20801000,
+   "childAchievementDataIds": [
+    103
+   ],
+   "id": 102
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "clientAchievement": true,
+   "parentAchievementDataId": 1002,
+   "id": 103
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "condition": "AcquireItem",
+   "conditionValue1": 1111005,
+   "id": 104
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "condition": "BuyItemProductAction",
+   "conditionValue1": 20401000,
+   "id": 105
+  }
+ ]
+}

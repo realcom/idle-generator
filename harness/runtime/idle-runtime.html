@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>idlez 하네스 — 참조 런타임 (실제 아트)</title>
+<style>
+:root{
+  --color-background-primary:#fff;--color-background-secondary:#efeee8;--color-background-tertiary:#e4e2d9;
+  --color-text-primary:#2c2c2a;--color-text-secondary:#5f5e5a;--color-text-tertiary:#8a8983;
+  --color-text-success:#1D9E75;--color-text-danger:#A32D2D;
+  --color-border-tertiary:rgba(0,0,0,.12);--color-border-secondary:rgba(0,0,0,.2);
+  --border-radius-md:8px;--border-radius-lg:12px;--font-sans:system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --bg:#f6f5f0;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--color-text-primary);font-family:var(--font-sans)}
+.page{max-width:680px;margin:0 auto;padding:24px 16px 40px}
+h1{font-size:18px;font-weight:500;margin:0}
+.sub{font-size:13px;color:var(--color-text-secondary);margin:4px 0 14px;line-height:1.6}
+.foot{font-size:12px;color:var(--color-text-secondary);margin-top:18px;line-height:1.7}
+code{background:var(--color-background-secondary);padding:1px 5px;border-radius:5px;font-size:12px}
+.w-wrap{display:flex;flex-direction:column;gap:11px}
+.w-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px}
+.w-arena{position:relative;height:170px;background:linear-gradient(180deg,#dfe6cf,#eef0e6);border-radius:var(--border-radius-lg);overflow:hidden}
+.w-spr{object-fit:contain;display:block;image-rendering:auto;filter:drop-shadow(0 2px 1px rgba(0,0,0,.18))}
+.w-mini{height:7px;border-radius:5px;background:rgba(0,0,0,.18);overflow:hidden;margin-bottom:4px}
+.w-mf{height:100%}
+.w-enemies{position:absolute;right:16px;bottom:24px;display:flex;gap:12px;align-items:flex-end}
+.w-ecol{display:flex;flex-direction:column;align-items:center}
+.w-flo{position:absolute;font-weight:500;font-size:14px;pointer-events:none;animation:wflo .7s ease-out forwards;text-shadow:0 1px 2px rgba(255,255,255,.7)}
+@keyframes wflo{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-32px)}}
+.w-hit{animation:whit .16s ease}@keyframes whit{50%{transform:scale(1.16)}}
+.w-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--color-text-secondary)}
+.w-up{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:7px}
+.w-btn{text-align:left;padding:8px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;font-family:inherit;font-size:12.5px}
+.w-btn:hover{background:var(--color-background-secondary)}.w-btn:disabled{opacity:.4;cursor:default}
+.w-skills{display:flex;flex-wrap:wrap;gap:7px}
+.w-chip{font-size:12px;padding:5px 9px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary)}
+.w-metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;text-align:center}
+.w-log{font-size:12px;color:var(--color-text-secondary);line-height:1.6;min-height:70px}
+.w-name{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>idlez 하네스 · 참조 런타임 (실제 아트)</h1>
+  <p class="sub">유닛 스프라이트는 idlez <code>PatchResources</code>에서 가져온 실제 아트(<code>runtime/assets/</code>): 햄찌 플레이어, 슬라임·스켈레톤·박쥐 몬스터, 슬라임 보스. 한 맵에 여러 몬스터(웨이브, 5스테이지마다 보스), 유닛이 스킬을 쿨마다 자동 사용.</p>
+  <div class="w-wrap">
+    <div class="w-row"><span id="w-stage" style="color:var(--color-text-primary);font-weight:500;font-size:15px">초원 던전 · 1</span><span id="w-best">최고 1</span></div>
+    <div class="w-arena" id="w-arena">
+      <div style="position:absolute;left:16px;bottom:24px;width:66px">
+        <div class="w-mini"><div class="w-mf" id="w-php" style="background:var(--color-text-success)"></div></div>
+        <img class="w-spr" id="w-pu" src="assets/player.png" alt="용사" style="width:64px;height:64px;margin:0 auto">
+        <div class="w-name" style="text-align:center">용사 햄찌</div>
+      </div>
+      <div class="w-enemies" id="w-enemies"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      <div class="w-metric"><div style="font-size:11px;color:var(--color-text-secondary)">골드</div><div id="w-gold" style="font-size:19px;font-weight:500">0</div></div>
+      <div class="w-metric"><div style="font-size:11px;color:var(--color-text-secondary)">방치/초</div><div id="w-gps" style="font-size:19px;font-weight:500">0</div></div>
+      <div class="w-metric"><div style="font-size:11px;color:var(--color-text-secondary)">남은 적</div><div id="w-wave" style="font-size:19px;font-weight:500">1</div></div>
+    </div>
+    <div class="w-card">
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:7px">장착 스킬 (쿨마다 자동 사용)</div>
+      <div class="w-skills" id="w-skillrow"></div>
+    </div>
+    <div class="w-up">
+      <button class="w-btn" id="w-batk"></button><button class="w-btn" id="w-bhp"></button>
+      <button class="w-btn" id="w-bdef"></button><button class="w-btn" id="w-bspd"></button><button class="w-btn" id="w-bcrit"></button>
+    </div>
+    <div class="w-card"><div class="w-log" id="w-log"></div></div>
+  </div>
+  <p class="foot">유닛 아트 출처: idlez <code>PatchResources/UIAssets·Units/Monsters</code> (리사이즈본). 단순화된 참조 런타임이며, 동일 콘텐츠를 <code>tools/idlez_compile.py</code>로 컴파일하면 실제 idlez(Unity)에서 동작.</p>
+</div>
+<script>
+(function(){
+  var G={hp:function(L){return 120*Math.pow(1.12,L-1)},atk:function(L){return 12*Math.pow(1.11,L-1)},def:function(L){return 4+1.5*(L-1)}};
+  var MON=['slime','skeleton','bat'], MNAME={slime:'슬라임',skeleton:'스켈레톤',bat:'박쥐'};
+  var S={stage:1,best:1,gold:0,atkLv:0,hpLv:0,defLv:0,spdLv:0,critLv:0,spin:false,smash:false};
+  function pAtk(){return Math.round(34+S.atkLv*9*Math.pow(1.07,S.atkLv))}
+  function pHpMax(){return Math.round(340+S.hpLv*80*Math.pow(1.07,S.hpLv))}
+  function pDef(){return Math.round(5+S.defLv*3)}
+  function pSpd(){return +(1.0+S.spdLv*0.12).toFixed(2)}
+  function pCrit(){return Math.min(85,5+S.critLv*4)}
+  var CDMG=160;
+  function gReward(){return Math.round((6+Math.random()*6)*Math.pow(1.16,S.stage-1))}
+  function gps(){return Math.round(3*Math.pow(1.12,S.best-1))}
+  function C(b,r,l){return Math.round(b*Math.pow(r,l))}
+  function fmt(n){n=Math.floor(n);if(n<1000)return ''+n;var u=['','K','M','B','T','aa','ab'],i=0;while(n>=1000&&i<u.length-1){n/=1000;i++}return n.toFixed(2)+u[i]}
+  function $(id){return document.getElementById(id)}
+  var logs=[];function log(t){logs.unshift(t);if(logs.length>5)logs.pop();$('w-log').innerHTML=logs.join('<br>')}
+  var php=340, enemies=[], pbt=1, goldT=30, pskills=[];
+  function buildSkills(){pskills=[{n:'베기',cd:1.5,t:1.5,mult:1.2,tg:'one',col:'#534AB7'}];
+    if(S.spin)pskills.push({n:'회전베기',cd:5,t:5,mult:0.8,tg:'all',col:'#185FA5'});
+    if(S.smash)pskills.push({n:'강타',cd:9,t:2,mult:4.0,tg:'one',col:'#993C1D'});}
+  function mkEnemy(boss){var L=S.stage;var spr=boss?'slime_boss':MON[Math.floor((S.stage-1)/3)%MON.length];
+    return{hp:G.hp(L)*(boss?7:1),max:G.hp(L)*(boss?7:1),atk:G.atk(L)*(boss?1.6:1),def:G.def(L)*(boss?1.2:1),spd:boss?0.6:0.8,bt:boss?1.7:1.25,boss:boss,spr:spr,alive:true,skills:boss?[{n:'광역강타',cd:6,t:6,mult:2.2}]:[]};}
+  function spawnWave(){var boss=S.stage%5===0;enemies=boss?[mkEnemy(true)]:[];
+    if(!boss){var n=Math.min(5,3+Math.floor(S.stage/4));for(var i=0;i<n;i++)enemies.push(mkEnemy(false));}
+    php=pHpMax();renderEnemies();log((boss?'★ 보스 등장':enemies.length+'마리 출현')+' · 스테이지 '+S.stage);}
+  function renderEnemies(){var c=$('w-enemies');c.innerHTML='';
+    enemies.forEach(function(e,i){var w=e.boss?86:54;var col=document.createElement('div');col.className='w-ecol';col.style.width=w+'px';
+      col.innerHTML='<div class="w-mini" style="width:100%"><div class="w-mf" id="eh'+i+'" style="background:var(--color-text-danger)"></div></div>'+
+        '<img class="w-spr" src="assets/'+e.spr+'.png" style="width:'+w+'px;height:'+(e.boss?70:52)+'px" alt="'+(e.boss?'보스':MNAME[e.spr])+'">'+
+        '<div class="w-name" style="text-align:center">'+(e.boss?'슬라임 보스':MNAME[e.spr])+'</div>';
+      c.appendChild(col);e.node=col;});}
+  function floatAt(node,txt,col,dy){var a=$('w-arena'),r=node.getBoundingClientRect(),ar=a.getBoundingClientRect();
+    var s=document.createElement('div');s.className='w-flo';s.textContent=txt;s.style.color=col;
+    s.style.left=(r.left-ar.left+r.width/2-8)+'px';s.style.top=(r.top-ar.top-(dy||0))+'px';a.appendChild(s);setTimeout(function(){s.remove()},700);}
+  function bump(node){if(!node)return;node.classList.remove('w-hit');void node.offsetWidth;node.classList.add('w-hit');}
+  function hitEnemy(e,raw){var crit=Math.random()*100<pCrit();var d=Math.max(1,Math.round(raw*(crit?CDMG/100:1)-e.def));
+    e.hp-=d;floatAt(e.node,(crit?'★':'')+fmt(d),crit?'#BA7517':'#D85A30');bump(e.node.querySelector('.w-spr'));if(e.hp<=0)e.alive=false;}
+  function hitPlayer(raw){var d=Math.max(1,Math.round(raw-pDef()));php-=d;floatAt($('w-pu'),fmt(d),'#A32D2D',0);bump($('w-pu'));}
+  function step(dt){var alive=enemies.filter(function(e){return e.alive;});
+    if(alive.length&&php>0){pbt-=dt;if(pbt<=0){hitEnemy(alive[0],pAtk());pbt+=1/pSpd();}
+      pskills.forEach(function(sk){sk.t-=dt;if(sk.t<=0){if(sk.tg=='all'){alive.forEach(function(e){hitEnemy(e,pAtk()*sk.mult);});floatAt($('w-pu'),sk.n+'!',sk.col,46);}else{hitEnemy(alive[0],pAtk()*sk.mult);floatAt(alive[0].node,sk.n+'!',sk.col,20);}sk.t+=sk.cd;}});
+      alive.forEach(function(e){e.bt-=dt;if(e.bt<=0){hitPlayer(e.atk);e.bt+=1/e.spd;}e.skills.forEach(function(es){es.t-=dt;if(es.t<=0){hitPlayer(e.atk*es.mult);floatAt($('w-pu'),es.n+'!','#791F1F',46);es.t+=es.cd;}});});}
+    if(goldT<=0){var g=gps()*5;S.gold+=g;floatAt($('w-pu'),'+'+fmt(g)+'G','#3B6D11',66);goldT+=30;}
+    goldT-=dt;S.gold+=gps()*dt;
+    if(enemies.length&&enemies.every(function(e){return !e.alive;})){var rw=gReward()*enemies.length;S.gold+=rw;log('웨이브 클리어 · +'+fmt(rw)+'G');S.stage++;if(S.stage>S.best)S.best=S.stage;spawnWave();}
+    else if(php<=0){log('패배 · 스테이지 '+S.stage+' — 강화/스킬 필요');if(S.stage>1)S.stage--;spawnWave();}}
+  function render(){
+    $('w-stage').textContent='초원 던전 · '+S.stage;$('w-best').textContent='최고 '+S.best;
+    $('w-php').style.width=Math.max(0,Math.min(100,php/pHpMax()*100))+'%';
+    enemies.forEach(function(e,i){var b=$('eh'+i);if(b)b.style.width=Math.max(0,Math.min(100,e.hp/e.max*100))+'%';});
+    $('w-gold').textContent=fmt(S.gold);$('w-gps').textContent=fmt(gps());$('w-wave').textContent=enemies.filter(function(e){return e.alive;}).length+'/'+enemies.length;
+    $('w-batk').innerHTML='공격 Lv'+S.atkLv+' · '+fmt(pAtk())+'<br><span style="font-size:11px;color:var(--color-text-secondary)">'+fmt(C(12,1.16,S.atkLv))+'G</span>';
+    $('w-bhp').innerHTML='체력 Lv'+S.hpLv+' · '+fmt(pHpMax())+'<br><span style="font-size:11px;color:var(--color-text-secondary)">'+fmt(C(10,1.16,S.hpLv))+'G</span>';
+    $('w-bdef').innerHTML='방어 Lv'+S.defLv+' · '+fmt(pDef())+'<br><span style="font-size:11px;color:var(--color-text-secondary)">'+fmt(C(15,1.19,S.defLv))+'G</span>';
+    $('w-bspd').innerHTML='공속 Lv'+S.spdLv+' · '+pSpd()+'<br><span style="font-size:11px;color:var(--color-text-secondary)">'+fmt(C(40,1.35,S.spdLv))+'G</span>';
+    $('w-bcrit').innerHTML='치명 Lv'+S.critLv+' · '+pCrit()+'%<br><span style="font-size:11px;color:var(--color-text-secondary)">'+fmt(C(30,1.3,S.critLv))+'G</span>';
+    $('w-batk').disabled=S.gold<C(12,1.16,S.atkLv);$('w-bhp').disabled=S.gold<C(10,1.16,S.hpLv);$('w-bdef').disabled=S.gold<C(15,1.19,S.defLv);$('w-bspd').disabled=S.gold<C(40,1.35,S.spdLv);$('w-bcrit').disabled=S.gold<C(30,1.3,S.critLv);
+    var sr=$('w-skillrow'),h='';
+    pskills.forEach(function(sk){h+='<span class="w-chip" style="color:'+sk.col+'">'+sk.n+' <span style="color:var(--color-text-tertiary)">'+sk.cd+'s</span></span>';});
+    if(!S.spin)h+='<button class="w-btn" id="ul-spin">+ 회전베기(AoE) · 800G</button>';
+    if(!S.smash)h+='<button class="w-btn" id="ul-smash">+ 강타 · 3000G</button>';
+    sr.innerHTML=h;
+    if($('ul-spin'))$('ul-spin').onclick=function(){if(S.gold>=800){S.gold-=800;S.spin=true;buildSkills();log('회전베기 장착!');}};
+    if($('ul-smash'))$('ul-smash').onclick=function(){if(S.gold>=3000){S.gold-=3000;S.smash=true;buildSkills();log('강타 장착!');}};}
+  function buy(k){var t={atk:[12,1.16,'atkLv'],hp:[10,1.16,'hpLv'],def:[15,1.19,'defLv'],spd:[40,1.35,'spdLv'],crit:[30,1.3,'critLv']}[k];
+    var c=C(t[0],t[1],S[t[2]]);if(S.gold<c)return;S.gold-=c;S[t[2]]++;if(k=='hp')php=pHpMax();render();}
+  $('w-batk').onclick=function(){buy('atk')};$('w-bhp').onclick=function(){buy('hp')};$('w-bdef').onclick=function(){buy('def')};
+  $('w-bspd').onclick=function(){buy('spd')};$('w-bcrit').onclick=function(){buy('crit')};
+  buildSkills();spawnWave();log('초원 던전 입장 · 자동전투 시작');render();
+  var last=Date.now();setInterval(function(){var now=Date.now(),dt=Math.min(0.1,(now-last)/1000);last=now;step(dt);render();},50);
+})();
+</script>
+</body>
+</html>

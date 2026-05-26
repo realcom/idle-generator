@@ -1,0 +1,102 @@
+# ============================================================
+# Game Profile: mushroomer
+# 검증용 버섯커-lite 프로젝트.
+# 목표는 "새 게임 1종을 profile + content + compile 로 폐회로 검증"하는 것.
+# 엔진 예약 ID는 idlez와 최대한 호환되게 유지해 초기 리스크를 줄인다.
+# ============================================================
+
+game:
+  id: mushroomer
+  name: "Mushroomer"
+  genre: afk-idle-rpg-lite
+  engine_ref: idlez-client
+
+stats:
+  use:
+    - Hp
+    - HpPercent
+    - Attack
+    - AttackPercent
+    - Defense
+    - DefensePercent
+    - CriticalPercent
+    - CriticalDamagePercent
+    - AttackSpeed
+    - AttackSpeedPercent
+    - MoveSpeed
+    - CooldownPercent
+    - ExpPercent
+    - ItemDropPercent
+    - MonsterDamageEfficiencyPercent
+    - BossDamageEfficiencyPercent
+  guardrails:
+    Attack: { min: 1 }
+    Hp: { min: 1 }
+    CriticalPercent: { min: 0, max: 100 }
+    CriticalDamagePercent: { min: 0, max: 100000 }
+
+currencies:
+  soft:         { id: 5,  name: "골드" }
+  premium:      { id: 3,  name: "루비" }
+  premium_free: { id: 4,  name: "무료루비" }
+  exp:          { id: 6,  name: "경험치" }
+  credit:       { id: 2,  name: "크레딧" }
+
+reserved_ids:
+  playerLevel: 1
+  rankPoint: 7
+  energy: 8
+  abilityRank: 1010
+  defaultCharacter: 110101
+  respawnProduct: 10040
+  tutorialGachaProduct: 20801001
+  tutorialSummonPetProduct: 20401001
+  achievement:
+    tutorialComplete: 610000
+    tutorialSteps: [610101, 610102, 610103, 610201, 610202, 610203, 610204, 610205]
+    ingameTutorialEnter: 610001
+    sentFeedback: -20020904
+    reviewedOnStore: -20010101
+    chapterEnterAgainCondition: 610010
+    battleUnlock: 10000
+    equipmentSlotUnlockHead: 10100
+    equipmentSlotUnlockChest: 10101
+    equipmentSlotUnlockGloves: 10102
+    equipmentSlotUnlockBoots: 10103
+    equipmentSlotUnlockNecklace: 10104
+    equipmentSlotUnlockRing: 10105
+    petSlotUnlocks: [50002, 50003, 50004]
+    abilityRoot: 10001
+    equipmentPetUnlock: 50002
+    lobbyDungeonUnlock: 50006
+    premiumDailyReward: 20700000
+    inventoryAutoSpawnUnlock: 50007
+
+id_ranges:
+  unit:        { start: 110000, end: 119999, note: "플레이어/몬스터/보스" }
+  item:        { start: 200000, end: 299999 }
+  skill:       { start: 300000, end: 399999 }
+  buff:        { start: 400000, end: 499999 }
+  map:         { start: 500000, end: 599999 }
+  achievement: { start: 600000, end: 699999 }
+  reward:      { start: 700000, end: 799999 }
+
+theme:
+  tone: "귀엽고 단순한 버섯 판타지"
+  setting: "작은 버섯 용사가 숲과 동굴을 돌파하는 캐주얼 키우기 RPG"
+  naming_style: "한글 2~10자, 짧고 읽기 쉬운 이름"
+  motifs: [버섯, 포자, 숲, 동굴, 이끼]
+
+balance:
+  level_cap: 120
+  required_exp:
+    monotonic: increasing
+  prestige:
+    enabled: false
+    name: ""
+  idle:
+    offline_cap_hours: 8
+
+behavior:
+  triggerType_map: {}
+  disallow_actions: []

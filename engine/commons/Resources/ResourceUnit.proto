@@ -1,0 +1,124 @@
+syntax = "proto3";
+package Commons.Resources;
+
+import "Tags.proto";
+import "ResourceTrigger.proto";
+import "UnitStatType.proto";
+import "ArmorTypeStatType.proto";
+import "DamageTypeStatType.proto";
+import "ItemGroupStatType.proto";
+import "SlotStatType.proto";
+import "BuffGroupStatType.proto";
+import "SkillGroupStatType.proto";
+import "AddItem.proto";
+import "GeometryMessage.proto";
+import "UseSkill.proto";
+import "ArmorType.proto";
+import "DamageType.proto";
+
+message ResourceUnit {
+  message Global {
+    message DataId {
+    }
+    
+    message StatConstants {
+      message DamageCoefficient {
+        Types.Units.ArmorType armorType = 1;
+        Types.Units.DamageType damageType = 2;
+        float damagePercent = 3;
+      }
+      
+      repeated DamageCoefficient damageCoefficients = 1;
+      
+      bool usePercentDefense = 100;
+    }
+    
+    message Value {
+      float sizeClampMinHpPercent = 10;
+      float sizeClampMaxHpPercent = 11;
+      float minClampedSizePercent = 12;
+      float maxClampedSizePercent = 13;
+    }
+
+    DataId dataId = 1;
+    StatConstants statConstants = 2;
+    Value value = 3;
+    map<int32, TypeGroup> typeGroups = 4; // key: unitType to int
+  }
+  
+  enum Type {
+    Normal = 0;
+    
+    // 1-9: Player
+    Player = 1;
+    Pet = 2;
+    
+    // 10-19: Monster
+    Elite = 10;
+    MidBoss = 12;
+    Boss = 11;
+    
+    
+    // 20-29
+    Building = 20;
+  }
+
+  enum TypeGroup {
+    MonsterGroup = 0;
+    PlayerGroup = 1;
+    BossGroup = 2;
+    BuildingGroup = 15;
+  }
+  
+  enum TargetMode {
+    None = 0;
+    Chaser = 1;
+    Avenger = 2;
+  }
+  
+  repeated Tag tags = 1;
+  repeated string triggers = 2;
+  repeated ResourceTrigger.InitVariable initVariables = 3;
+  repeated Types.Units.AddUnitStat addStats = 4;
+  repeated Types.AddItemGroup dropAddItemGroups = 5;
+  repeated int64 requiredExps = 6;
+  
+  int32 id = 100;
+  Type type = 101;
+  Types.Units.ArmorType armorType = 102;
+  repeated Types.Units.ArmorTypeStat.AddArmorTypeStat addArmorTypeStats = 103;
+  repeated Types.Units.DamageTypeStat.AddDamageTypeStat addDamageTypeStats = 104;
+  repeated Types.Units.ItemGroupStat.AddItemGroupStat addItemGroupStats = 105;
+  repeated Types.Units.SlotStat.AddSlotStat addSlotStats = 106;
+  repeated Types.Units.BuffGroupStat.AddBuffGroupStat addBuffGroupStats = 107;
+  repeated Types.Units.SkillGroupStat.AddSkillGroupStat addSkillGroupStats = 108;
+
+  string name = 200;
+  string prefab = 201;
+  string sprite = 202;
+  int32 itemDataId = 203;
+  int32 achievementUnitDataId = 204;
+  float uiScale = 205;
+  Types.Geometry.Vector2Message uiOffset = 206;
+  
+  float warmupDelay = 300;
+  float collideSize = 301;
+  Types.Geometry.Vector2Message collideOffset = 302;
+  float hitSize = 303;
+  Types.Geometry.Vector2Message hitOffset = 304;
+  float hitDropItemSize = 305;
+  Types.Geometry.Vector2Message shotOffset = 306;
+  
+  string hitFx = 400;
+  string hitHealFx = 401;
+  Types.Units.UseSkill deadUseSkill = 402;
+  uint32 deadDestroyDelay = 403;  // legacy
+  TargetMode targetMode = 404;
+  float targetAwareDistance = 405;
+  float targetResetDistance = 406;
+  float dropDistance = 407;
+  float deadDestroyDelaySeconds = 408;
+  
+  map<string, string> animations = 1000;
+  
+}

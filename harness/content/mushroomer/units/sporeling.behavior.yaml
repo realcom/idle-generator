@@ -1,0 +1,21 @@
+name: SporelingWander
+domain: unit
+
+"on":
+  - event: start
+    do:
+      - moveTo:
+          x: 1.8
+          y: 0.0
+
+---
+
+name: SporelingAttack
+domain: unit
+
+"on":
+  - event: update
+    every: 2s
+    do:
+      - useSkillToTarget:
+          skillDataId: 300101

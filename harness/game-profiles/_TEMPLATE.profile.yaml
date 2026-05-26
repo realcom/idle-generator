@@ -1,0 +1,77 @@
+# ============================================================
+# Game Profile (TEMPLATE)
+# 새 게임 시작: 이 파일을 복제 → <game>.profile.yaml 로 저장 후 채운다.
+# 이 프로필 + engine-contract = AI/기획자/검증기가 콘텐츠를 만들 때 보는 "그 게임의 규칙".
+# engine-contract(불변)는 건드리지 않는다. 여기엔 "이 게임이 무엇을 어떻게 쓰는지"만.
+# ============================================================
+
+game:
+  id: ""                       # 짧은 슬러그 (예: idlez, backpack). content/<id>/ 와 일치
+  name: ""                     # 표시명
+  genre: afk-idle-rpg-lite     # 고정
+  engine_ref: idlez-client     # 기반 엔진 (Resource/Player/Game proto-JSON)
+
+# --- 사용 스탯: engine-contract/stat-catalog.md 의 76종 중 이 게임이 쓰는 것만 ---
+# 검증기는 콘텐츠가 여기 없는 스탯을 쓰거나 범위를 벗어나면 잡는다.
+stats:
+  use:                         # 활성 스탯 키 목록
+    - Hp
+    - Attack
+    - Defense
+    - CriticalPercent
+    - CriticalDamagePercent
+    - AttackSpeed
+    - MoveSpeed
+  guardrails:                  # 스탯별 권장 상·하한 (밸런스 가드레일)
+    Attack:        { min: 1, max: 1.0e12 }
+    Hp:            { min: 1, max: 1.0e13 }
+    CriticalPercent: { min: 0, max: 100 }
+
+# --- 통화 / 예약 dataId: engine-contract/reference-graph.md 의 예약 id 셋을 이 게임 값으로 ---
+currencies:
+  soft:    { id: 5,  name: "골드" }
+  premium: { id: 3,  name: "루비" }
+  premium_free: { id: 4, name: "무료루비" }
+  exp:     { id: 6,  name: "경험치" }
+reserved_ids:
+  playerLevel: 1
+  energy: 8
+  stage: 9
+  achievement:
+    # 실제 Achievements.json.achievementGlobal.dataId 값. proto field number가 아님.
+    tutorialComplete: null
+    tutorialSteps: []
+    ingameTutorialEnter: null
+  # ... 게임별로 확장
+
+# --- ID 대역 규칙: 콘텐츠 id 충돌 방지 + AI가 새 id를 안전히 할당하게 ---
+id_ranges:
+  unit:   { start: 100000, end: 199999, note: "유닛(캐릭터/펫/몬스터)" }
+  item:   { start: 200000, end: 299999, note: "아이템/장비/통화 외" }
+  skill:  { start: 300000, end: 399999 }
+  buff:   { start: 400000, end: 499999 }
+  map:    { start: 500000, end: 599999 }
+
+# --- 테마/네이밍: AI 콘텐츠 발산 시 톤 고정 ---
+theme:
+  tone: "귀여운 / 캐주얼"
+  setting: ""                  # 예: "슬라임이 주인공인 역(逆) 용사물"
+  naming_style: ""             # 예: "한글 짧은 이름 2~10자 (ResourceGlobals: minNameLength 2, maxNameLength 10)"
+  motifs: []                   # 예: [슬라임, 햄스터, 닌자]
+
+# --- 밸런스 가드레일: 성장/경제 곡선의 허용 모양 (growth-pipeline 검증에 사용) ---
+balance:
+  level_cap: 200
+  required_exp:
+    monotonic: increasing      # 요구 경험치는 단조증가여야 함
+  prestige:
+    enabled: true
+    name: ""                   # 예: 환생 / 전직
+  idle:
+    offline_cap_hours: 12
+
+# --- 행동 어휘 오버라이드 (선택): engine-contract/behavior-format.md 의 액션 어휘 중 ---
+# 이 게임에서 막거나 별칭 줄 액션. 비우면 엔진 기본 전체 허용.
+behavior:
+  triggerType_map: {}          # event→정수 매핑 오버라이드 (기본은 컴파일러 보유)
+  disallow_actions: []

@@ -1,0 +1,14 @@
+syntax = "proto3";
+package Commons.Types.Players;
+
+import "Player.proto";
+import "PlayerAvatar.proto";
+import "World.proto";
+
+message PlayerInfoMessage {
+  PlayerMessage player = 1;
+  PlayerAvatar avatar = 2;
+  repeated float stat = 3;
+  int32 highestChapter = 4;
+  WorldMessage world = 5;
+}

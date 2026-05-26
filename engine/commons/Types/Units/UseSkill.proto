@@ -1,0 +1,12 @@
+syntax = "proto3";
+package Commons.Types.Units;
+
+import "GeometryMessage.proto";
+
+message UseSkill {
+  int32 skillDataId = 100;
+  
+  bool atTarget = 200;
+  Types.Geometry.Vector2Message position = 201;
+  float rotation = 202;
+}

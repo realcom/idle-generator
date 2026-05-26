@@ -1,0 +1,16 @@
+syntax = "proto3";
+package Commons.Types;
+
+
+message MaterialItem {
+  int32 id = 1;
+  int32 count = 2;
+  int32 minLevel = 3;
+  int32 maxLevel = 4;
+}
+
+message MaterialItemGroup {
+  repeated MaterialItem materialItems = 1;
+  int32 level = 2;
+  bool shouldAllValid = 3;
+}

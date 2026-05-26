@@ -1,0 +1,19 @@
+syntax = "proto3";
+package Commons.Types.Units.SlotStat;
+
+enum SlotStatType {
+  DamagePercent = 0;
+  CooldownPercent = 1;
+  CriticalPercent = 2;
+  CriticalDamagePercent = 3;
+  KnockbackPercent = 4;
+  AdditionalAttackPercent = 5;
+  Count = 6;
+}
+
+message AddSlotStat {
+  SlotStatType type = 1;
+  repeated int32 rows = 2;
+  repeated int32 slots = 3;
+  repeated float value = 4;
+}

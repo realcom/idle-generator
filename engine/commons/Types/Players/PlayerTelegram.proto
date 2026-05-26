@@ -1,0 +1,8 @@
+syntax = "proto3";
+package Commons.Types.Players;
+
+message PlayerTelegramMessage {
+  int64 telegramUserId = 1;
+  bool isPremium = 2;
+  string tonAddress = 3;
+}

@@ -1,0 +1,2112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2100a85f9cacbe04ea674673e859a727, type: 3}
+  m_Name: CRC
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 21300000, guid: f6815543fb4b21c47966f8b125a545cc, type: 3}
+    - {fileID: 21300000, guid: c39ff6df7fe118e4cbda8325e9f2ec76, type: 3}
+    - {fileID: 21300000, guid: 5c2c644f2c592254ebbb88ccb3b6baa7, type: 3}
+    - {fileID: 21300000, guid: 1c2a2ef3caf3e444a82c09eff64c16c3, type: 3}
+    - {fileID: 21300000, guid: b083d4cd71a592348bcb1c96cbac40d9, type: 3}
+    - {fileID: 21300000, guid: e9a522c91b0c7e84d982f7f4cfb89b79, type: 3}
+    - {fileID: 21300000, guid: 4063be21920715545a96b3bd4da52749, type: 3}
+    - {fileID: 21300000, guid: 760bd291674edfe4fab67f3e8b6c6f47, type: 3}
+    - {fileID: 21300000, guid: 6cd988582fe42ce40b741a82d6a29ccd, type: 3}
+    - {fileID: 21300000, guid: e3a2fc97e1a39134aba76c3036c6e323, type: 3}
+    - {fileID: 21300000, guid: 43128cc6e053d2443a8693db52bb8f8a, type: 3}
+    - {fileID: 21300000, guid: 5dea87a4489f9684e967540946e896dd, type: 3}
+    - {fileID: 21300000, guid: 9efbed2cf8a912645ad61bc731460fe3, type: 3}
+    - {fileID: 21300000, guid: 2106f97597e51db4a9b7e3ad31df3542, type: 3}
+    - {fileID: 21300000, guid: 4a162e5211c8669449c0fc6eb8018fff, type: 3}
+    - {fileID: 21300000, guid: 7ed4b31fcf560fc4bafdf4caf4bbe733, type: 3}
+    - {fileID: 21300000, guid: 005a4212febb1714798997e20e382e1f, type: 3}
+    - {fileID: 21300000, guid: 86247c8d4c581814faa77c5722b31516, type: 3}
+    - {fileID: 21300000, guid: f5227306bfe998f4b86b49c7ed4097e4, type: 3}
+    - {fileID: 21300000, guid: 50d818777fb34d84b9c78884de78dc3e, type: 3}
+    - {fileID: 21300000, guid: 086e9b91db28e4f498660773620cd113, type: 3}
+    - {fileID: 21300000, guid: 4a16b2fff3f7d04468c31a39b50eff53, type: 3}
+    - {fileID: 21300000, guid: 21e3dbe9a5c06ed4aa175433d01324af, type: 3}
+    - {fileID: 21300000, guid: f2c7e8eb38b3e8a469070bf9cdc65eb8, type: 3}
+    - {fileID: 21300000, guid: 92458e40aa4147c43acf6af8ea4d8934, type: 3}
+    - {fileID: 21300000, guid: 6d7f9d093a9b74941b44265098c7f9aa, type: 3}
+    - {fileID: 21300000, guid: aec7367f28027cd40b00c10b8baab198, type: 3}
+    - {fileID: 21300000, guid: 3bc785791bc449543865adf80f10c035, type: 3}
+    - {fileID: 21300000, guid: 11e1eee97dfabe744b56ecd7a6aad721, type: 3}
+    - {fileID: 21300000, guid: 89035a237655a5740a892585b0cad335, type: 3}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: luckyEffectLevels
+      Entry: 7
+      Data: 0|System.Int32[,], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 16
+    - Name: ranks
+      Entry: 1
+      Data: 4|4
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 2
+    - Name: 
+      Entry: 3
+      Data: 2
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: tabDefinitions
+      Entry: 7
+      Data: 1|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.Generic.List`1[[CRC+TabDesignDefinition,
+        Assembly-CSharp]], mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 2|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Popup_SelectEventDungeon
+    - Name: $v
+      Entry: 7
+      Data: 3|System.Collections.Generic.List`1[[CRC+TabDesignDefinition, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 7
+      Data: 4|CRC+TabDesignDefinition, Assembly-CSharp
+    - Name: tabNameKey
+      Entry: 1
+      Data: Dungeon
+    - Name: tabIconPath
+      Entry: 1
+      Data: Items/UI/ICN_Tab_Dungeon.png
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 5|CRC+TabDesignDefinition, Assembly-CSharp
+    - Name: tabNameKey
+      Entry: 1
+      Data: Challenge
+    - Name: tabIconPath
+      Entry: 1
+      Data: Items/UI/ICN_Tab_Battle.png
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: goodsItemDataIdsByKey
+      Entry: 7
+      Data: 6|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.Generic.List`1[[System.Int32,
+        mscorlib]], mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 7|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 4
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Popup_GamePass
+    - Name: $v
+      Entry: 7
+      Data: 8|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 2
+    - Name: 
+      Entry: 3
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 8
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Popup_SelectEventDungeon
+    - Name: $v
+      Entry: 7
+      Data: 9|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 2
+    - Name: 
+      Entry: 3
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 8
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Popup_Pet
+    - Name: $v
+      Entry: 7
+      Data: 10|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 2
+    - Name: 
+      Entry: 3
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 10002
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Popup_ScoutReward
+    - Name: $v
+      Entry: 7
+      Data: 11|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 3
+      Data: 2
+    - Name: 
+      Entry: 3
+      Data: 3
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: premiumItemDataIdByKey
+      Entry: 7
+      Data: 12|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Int32,
+        mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 13|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Popup_Pet_SummonPremium
+    - Name: $v
+      Entry: 3
+      Data: 20700010
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Popup_ScoutReward
+    - Name: $v
+      Entry: 3
+      Data: 20700020
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: itemTypeIcons
+      Entry: 7
+      Data: 14|System.Collections.Generic.Dictionary`2[[Commons.Resources.ResourceItem+Types+Type,
+        Assembly-CSharp],[UnityEngine.Sprite, UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 15|System.Collections.Generic.EnumEqualityComparer`1[[Commons.Resources.ResourceItem+Types+Type,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 6
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 302
+    - Name: $v
+      Entry: 10
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 303
+    - Name: $v
+      Entry: 10
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 305
+    - Name: $v
+      Entry: 10
+      Data: 2
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 306
+    - Name: $v
+      Entry: 10
+      Data: 3
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 309
+    - Name: $v
+      Entry: 10
+      Data: 4
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 307
+    - Name: $v
+      Entry: 10
+      Data: 5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: m_WeaponCategoryCellColors
+      Entry: 7
+      Data: 16|System.Collections.Generic.Dictionary`2[[Commons.Resources.ResourceItem+Types+WeaponCategory,
+        Assembly-CSharp],[UnityEngine.Color, UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 17|System.Collections.Generic.EnumEqualityComparer`1[[Commons.Resources.ResourceItem+Types+WeaponCategory,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 6
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 0
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.7882353
+    - Name: 
+      Entry: 4
+      Data: 0.7882353
+    - Name: 
+      Entry: 4
+      Data: 0.7882353
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.9308176
+    - Name: 
+      Entry: 4
+      Data: 0.5570699
+    - Name: 
+      Entry: 4
+      Data: 0.184407145
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 2
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.8862745
+    - Name: 
+      Entry: 4
+      Data: 0.647058845
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 3
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.311320662
+    - Name: 
+      Entry: 4
+      Data: 0.7939386
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 4
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.797759533
+    - Name: 
+      Entry: 4
+      Data: 0.9308176
+    - Name: 
+      Entry: 4
+      Data: 0.307345331
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 50
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.8156863
+    - Name: 
+      Entry: 4
+      Data: 0.745098054
+    - Name: 
+      Entry: 4
+      Data: 0.6745098
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: unitArmorTypeIcons
+      Entry: 7
+      Data: 18|System.Collections.Generic.Dictionary`2[[Commons.Types.Units.ArmorType,
+        Assembly-CSharp],[UnityEngine.Sprite, UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 19|System.Collections.Generic.EnumEqualityComparer`1[[Commons.Types.Units.ArmorType,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 10
+      Data: 6
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 0
+    - Name: $v
+      Entry: 10
+      Data: 7
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 2
+    - Name: $v
+      Entry: 10
+      Data: 8
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: damageTypeIcons
+      Entry: 7
+      Data: 20|System.Collections.Generic.Dictionary`2[[Commons.Types.Units.DamageType,
+        Assembly-CSharp],[UnityEngine.Sprite, UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 21|System.Collections.Generic.EnumEqualityComparer`1[[Commons.Types.Units.DamageType,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 4
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 0
+    - Name: $v
+      Entry: 10
+      Data: 9
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 10
+      Data: 10
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 2
+    - Name: $v
+      Entry: 10
+      Data: 11
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 3
+    - Name: $v
+      Entry: 10
+      Data: 12
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: effectTypeColors
+      Entry: 7
+      Data: 22|System.Collections.Generic.Dictionary`2[[EffectType, Assembly-CSharp],[UnityEngine.Color,
+        UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 23|System.Collections.Generic.EnumEqualityComparer`1[[EffectType, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 0
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.9372549
+    - Name: 
+      Entry: 4
+      Data: 0.368627459
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 2
+    - Name: $v
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 0.623529434
+    - Name: 
+      Entry: 4
+      Data: 0.247058824
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: damageTextColorsBySkillGroup
+      Entry: 7
+      Data: 24|System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[UnityEngine.Color,
+        UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 25|System.Collections.Generic.GenericEqualityComparer`1[[System.Int32,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: damageTextColorsByBuffGroup
+      Entry: 7
+      Data: 26|System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[UnityEngine.Color,
+        UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 9
+      Data: 25
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: snsIconSprites
+      Entry: 7
+      Data: 27|System.Collections.Generic.Dictionary`2[[CRC+SnsType, Assembly-CSharp],[UnityEngine.Sprite,
+        UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 28|System.Collections.Generic.EnumEqualityComparer`1[[CRC+SnsType, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 12
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 0
+    - Name: $v
+      Entry: 10
+      Data: 13
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 10
+      Data: 14
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 2
+    - Name: $v
+      Entry: 10
+      Data: 15
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 3
+    - Name: $v
+      Entry: 10
+      Data: 16
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 4
+    - Name: $v
+      Entry: 10
+      Data: 17
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 5
+    - Name: $v
+      Entry: 10
+      Data: 18
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 6
+    - Name: $v
+      Entry: 10
+      Data: 19
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 7
+    - Name: $v
+      Entry: 10
+      Data: 20
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 8
+    - Name: $v
+      Entry: 10
+      Data: 21
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 9
+    - Name: $v
+      Entry: 10
+      Data: 22
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 10
+    - Name: $v
+      Entry: 10
+      Data: 23
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 11
+    - Name: $v
+      Entry: 10
+      Data: 24
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: statInfo
+      Entry: 7
+      Data: 29|System.Collections.Generic.Dictionary`2[[Commons.Types.Units.UnitStatType,
+        Assembly-CSharp],[CRC+StatInfo, Assembly-CSharp]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 30|System.Collections.Generic.EnumEqualityComparer`1[[Commons.Types.Units.UnitStatType,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 11
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 0
+    - Name: $v
+      Entry: 7
+      Data: 31|CRC+StatInfo, Assembly-CSharp
+    - Name: temporaryName
+      Entry: 1
+      Data: Hp
+    - Name: stringKey
+      Entry: 1
+      Data: Hp
+    - Name: sprite
+      Entry: 6
+      Data: 
+    - Name: spritePath
+      Entry: 1
+      Data: Items/Icons/icn_heart.png
+    - Name: order
+      Entry: 3
+      Data: 1
+    - Name: minDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: maxDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: displayFormat
+      Entry: 1
+      Data: '{0:NF0}'
+    - Name: displayCoefficient
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 13
+    - Name: $v
+      Entry: 7
+      Data: 32|CRC+StatInfo, Assembly-CSharp
+    - Name: temporaryName
+      Entry: 1
+      Data: Attack
+    - Name: stringKey
+      Entry: 1
+      Data: Attack
+    - Name: sprite
+      Entry: 6
+      Data: 
+    - Name: spritePath
+      Entry: 1
+      Data: Items/Icons/icn_atk.png
+    - Name: order
+      Entry: 3
+      Data: 5
+    - Name: minDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: maxDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: displayFormat
+      Entry: 1
+      Data: '{0:NF0}'
+    - Name: displayCoefficient
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 20
+    - Name: $v
+      Entry: 7
+      Data: 33|CRC+StatInfo, Assembly-CSharp
+    - Name: temporaryName
+      Entry: 1
+      Data: Critical%
+    - Name: stringKey
+      Entry: 1
+      Data: Critical_Percent
+    - Name: sprite
+      Entry: 6
+      Data: 
+    - Name: spritePath
+      Entry: 6
+      Data: 
+    - Name: order
+      Entry: 3
+      Data: 8
+    - Name: minDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: maxDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: displayFormat
+      Entry: 1
+      Data: '{0:NF1%}'
+    - Name: displayCoefficient
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 10
+    - Name: $v
+      Entry: 7
+      Data: 34|CRC+StatInfo, Assembly-CSharp
+    - Name: temporaryName
+      Entry: 1
+      Data: Move Speed
+    - Name: stringKey
+      Entry: 1
+      Data: Move_Speed
+    - Name: sprite
+      Entry: 6
+      Data: 
+    - Name: spritePath
+      Entry: 6
+      Data: 
+    - Name: order
+      Entry: 3
+      Data: 0
+    - Name: minDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: maxDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: displayFormat
+      Entry: 1
+      Data: '{0:NF1}'
+    - Name: displayCoefficient
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 14
+    - Name: $v
+      Entry: 7
+      Data: 35|CRC+StatInfo, Assembly-CSharp
+    - Name: temporaryName
+      Entry: 1
+      Data: Attack%
+    - Name: stringKey
+      Entry: 1
+      Data: Attack_Percent
+    - Name: sprite
+      Entry: 6
+      Data: 
+    - Name: spritePath
+      Entry: 1
+      Data: Items/Icons/icn_atk.png
+    - Name: order
+      Entry: 3
+      Data: 6
+    - Name: minDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: maxDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: displayFormat
+      Entry: 1
+      Data: '{0:NF1%}'
+    - Name: displayCoefficient
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 22
+    - Name: $v
+      Entry: 7
+      Data: 36|CRC+StatInfo, Assembly-CSharp
+    - Name: temporaryName
+      Entry: 1
+      Data: Critical Damage%
+    - Name: stringKey
+      Entry: 1
+      Data: Critical_Damage_Percent
+    - Name: sprite
+      Entry: 6
+      Data: 
+    - Name: spritePath
+      Entry: 6
+      Data: 
+    - Name: order
+      Entry: 3
+      Data: 9
+    - Name: minDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: maxDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: displayFormat
+      Entry: 1
+      Data: '{0:NF1%}'
+    - Name: displayCoefficient
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 27
+    - Name: $v
+      Entry: 7
+      Data: 37|CRC+StatInfo, Assembly-CSharp
+    - Name: temporaryName
+      Entry: 1
+      Data: Cool Down%
+    - Name: stringKey
+      Entry: 1
+      Data: Cool_Down_Percent
+    - Name: sprite
+      Entry: 6
+      Data: 
+    - Name: spritePath
+      Entry: 6
+      Data: 
+    - Name: order
+      Entry: 3
+      Data: 10
+    - Name: minDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: maxDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: displayFormat
+      Entry: 1
+      Data: '{0:NF1%}'
+    - Name: displayCoefficient
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 11
+    - Name: $v
+      Entry: 7
+      Data: 38|CRC+StatInfo, Assembly-CSharp
+    - Name: temporaryName
+      Entry: 1
+      Data: Move Speed%
+    - Name: stringKey
+      Entry: 1
+      Data: Move_Speed_Percent
+    - Name: sprite
+      Entry: 6
+      Data: 
+    - Name: spritePath
+      Entry: 6
+      Data: 
+    - Name: order
+      Entry: 3
+      Data: 4
+    - Name: minDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: maxDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: displayFormat
+      Entry: 1
+      Data: '{0:NF1%}'
+    - Name: displayCoefficient
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 7
+      Data: 39|CRC+StatInfo, Assembly-CSharp
+    - Name: temporaryName
+      Entry: 1
+      Data: Hp%
+    - Name: stringKey
+      Entry: 1
+      Data: Hp_Percent
+    - Name: sprite
+      Entry: 6
+      Data: 
+    - Name: spritePath
+      Entry: 1
+      Data: Items/Icons/icn_heart.png
+    - Name: order
+      Entry: 3
+      Data: 2
+    - Name: minDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: maxDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: displayFormat
+      Entry: 1
+      Data: '{0:NF1%}'
+    - Name: displayCoefficient
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 16
+    - Name: $v
+      Entry: 7
+      Data: 40|CRC+StatInfo, Assembly-CSharp
+    - Name: temporaryName
+      Entry: 1
+      Data: Defense
+    - Name: stringKey
+      Entry: 1
+      Data: Defense
+    - Name: sprite
+      Entry: 6
+      Data: 
+    - Name: spritePath
+      Entry: 1
+      Data: Items/Icons/icn_defense.png
+    - Name: order
+      Entry: 3
+      Data: 7
+    - Name: minDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: maxDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: displayFormat
+      Entry: 1
+      Data: '{0:NF0}'
+    - Name: displayCoefficient
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 3
+    - Name: $v
+      Entry: 7
+      Data: 41|CRC+StatInfo, Assembly-CSharp
+    - Name: temporaryName
+      Entry: 1
+      Data: Hp Regen
+    - Name: stringKey
+      Entry: 1
+      Data: Hp_Regen
+    - Name: sprite
+      Entry: 10
+      Data: 25
+    - Name: spritePath
+      Entry: 1
+      Data: Items/Icons/icn_heart.png
+    - Name: order
+      Entry: 3
+      Data: 3
+    - Name: minDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: maxDisplayValue
+      Entry: 4
+      Data: 0
+    - Name: displayFormat
+      Entry: 1
+      Data: '{0:NF1}'
+    - Name: displayCoefficient
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: m_WavePointSprites
+      Entry: 7
+      Data: 42|System.Collections.Generic.Dictionary`2[[ZModeManagerBattle+WavePointType,
+        Assembly-CSharp],[UnityEngine.Sprite, UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 43|System.Collections.Generic.EnumEqualityComparer`1[[ZModeManagerBattle+WavePointType,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 4
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 0
+    - Name: $v
+      Entry: 10
+      Data: 26
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 10
+      Data: 27
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 2
+    - Name: $v
+      Entry: 10
+      Data: 28
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 3
+    - Name: $v
+      Entry: 10
+      Data: 29
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: appearMonsterDataIdsByMapId
+      Entry: 7
+      Data: 44|System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Collections.Generic.List`1[[System.Collections.Generic.List`1[[System.Int32,
+        mscorlib]], mscorlib]], mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 45|System.Collections.Generic.GenericEqualityComparer`1[[System.Int32,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 500001
+    - Name: $v
+      Entry: 7
+      Data: 46|System.Collections.Generic.List`1[[System.Collections.Generic.List`1[[System.Int32,
+        mscorlib]], mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 10
+    - Name: 
+      Entry: 7
+      Data: 47|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 5000006
+    - Name: 
+      Entry: 3
+      Data: 5000002
+    - Name: 
+      Entry: 3
+      Data: 5000001
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 48|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 5001006
+    - Name: 
+      Entry: 3
+      Data: 5001002
+    - Name: 
+      Entry: 3
+      Data: 5001003
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 49|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 5002006
+    - Name: 
+      Entry: 3
+      Data: 5002001
+    - Name: 
+      Entry: 3
+      Data: 5002003
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 50|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 5003006
+    - Name: 
+      Entry: 3
+      Data: 5003001
+    - Name: 
+      Entry: 3
+      Data: 5003003
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 51|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 5004006
+    - Name: 
+      Entry: 3
+      Data: 5004003
+    - Name: 
+      Entry: 3
+      Data: 5004004
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 52|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 5005006
+    - Name: 
+      Entry: 3
+      Data: 5005003
+    - Name: 
+      Entry: 3
+      Data: 5005004
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 53|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 5006006
+    - Name: 
+      Entry: 3
+      Data: 5006002
+    - Name: 
+      Entry: 3
+      Data: 5006004
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 54|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 5007006
+    - Name: 
+      Entry: 3
+      Data: 5007002
+    - Name: 
+      Entry: 3
+      Data: 5007003
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 55|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 5008006
+    - Name: 
+      Entry: 3
+      Data: 5008003
+    - Name: 
+      Entry: 3
+      Data: 5008001
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 56|System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 3
+      Data: 5009006
+    - Name: 
+      Entry: 3
+      Data: 5009003
+    - Name: 
+      Entry: 3
+      Data: 5009001
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  globalParameters:
+    hitEffectIntensity: 0.5
+    hitEffectDuration: 0.1
+    playerHitEffectColor: {r: 0.8039216, g: 0.15686275, b: 0.043137256, a: 1}
+    playerHealEffectColor: {r: 0.17254902, g: 0.6156863, b: 0.18431373, a: 1}
+    playerShieldHealEffectColor: {r: 0.21960784, g: 0.52156866, b: 0.52156866, a: 1}
+    enemyHitEffectColor: {r: 1, g: 1, b: 1, a: 1}
+    rebirthValidDuration: 10
+    rebirthDelay: 1.5
+    autoSpawnPeriod: 1
+  enoughColor: {r: 0.38039216, g: 0.6, b: 0, a: 1}
+  notEnoughColor: {r: 0.8117647, g: 0.2627451, b: 0.039215688, a: 1}
+  gradeColors:
+  - {r: 0.56078434, g: 0.56078434, b: 0.56078434, a: 1}
+  - {r: 0.56078434, g: 0.56078434, b: 0.56078434, a: 1}
+  - {r: 0.5411765, g: 0.93725497, b: 0.22352943, a: 1}
+  - {r: 0.12941177, g: 0.69803923, b: 1, a: 1}
+  - {r: 0.7176471, g: 0.15294118, b: 0.89019614, a: 1}
+  - {r: 0.93725497, g: 0.82745105, b: 0.22352943, a: 1}
+  gradeIcons: []
+  extraGradeIcons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 21300000, guid: 8435b888931c7d1439c90fffcfa38312, type: 3}
+  gradeCellFrameSprites:
+  - {fileID: 21300000, guid: 65ef448d66121f3479fcb5a352a70ef7, type: 3}
+  - {fileID: 21300000, guid: 65ef448d66121f3479fcb5a352a70ef7, type: 3}
+  - {fileID: 21300000, guid: 6ef06ea6eef7e264f9186ee86f3045bd, type: 3}
+  - {fileID: 21300000, guid: 12d182be77b5bc543a2020be43a446ce, type: 3}
+  - {fileID: 21300000, guid: c669cceb79995e846a4d57d1dbcc0c6a, type: 3}
+  - {fileID: 21300000, guid: c097666425c41ca4abc46466c6334783, type: 3}
+  gradeMiniFrameSprites:
+  - {fileID: 21300000, guid: 068c16a17ac5bbf4cb6a7b1f56184d9f, type: 3}
+  - {fileID: 21300000, guid: 068c16a17ac5bbf4cb6a7b1f56184d9f, type: 3}
+  - {fileID: 21300000, guid: 4398016f3036e7844908c673dcfd7d63, type: 3}
+  - {fileID: 21300000, guid: f5000bcb78efaca4190a327ba444cca9, type: 3}
+  - {fileID: 21300000, guid: 11fb67a5febb0734da10162ccc6ad0d2, type: 3}
+  - {fileID: 21300000, guid: 18054d1f02661bf4aa01f7c3b0d3173e, type: 3}
+  gradeSymbolSprites:
+  - {fileID: 21300000, guid: 6aa918b89c168cb488d242e7b78c8143, type: 3}
+  - {fileID: 21300000, guid: 6aa918b89c168cb488d242e7b78c8143, type: 3}
+  - {fileID: 21300000, guid: a6f0f1637958a9c41b6aff828075ec4e, type: 3}
+  - {fileID: 21300000, guid: a6fda643b97275a4e9b3ea5da931239b, type: 3}
+  - {fileID: 21300000, guid: 9afb5ea04d3eecb4496437df3c5d3c0d, type: 3}
+  - {fileID: 21300000, guid: 4669d3d6466c14e4c9db894a2e49519b, type: 3}
+  - {fileID: 21300000, guid: 1728dd4a009ddb44a8016d305ce389d0, type: 3}
+  - {fileID: 21300000, guid: 940c2c028ca85774c8bd8355fbd76932, type: 3}
+  gradeFootboardSprites:
+  - {fileID: 21300000, guid: 0c99167766ce7ab4b909dfad877b54ef, type: 3}
+  - {fileID: 21300000, guid: 0c99167766ce7ab4b909dfad877b54ef, type: 3}
+  - {fileID: 21300000, guid: d008fafa0e9d7c8499fccd71d1c3ea55, type: 3}
+  - {fileID: 21300000, guid: 111858a842201fb41bf97e98339b3ebd, type: 3}
+  - {fileID: 21300000, guid: 8b06bb5e7a97d51409bff65a45432dac, type: 3}
+  - {fileID: 21300000, guid: a490a253d7c273d45ab5522e78a5eb36, type: 3}
+  - {fileID: 21300000, guid: 76258436e1547c74097b028631a2adf4, type: 3}
+  - {fileID: 21300000, guid: 86a5643f94ad83d49889272d18db6e84, type: 3}
+  - {fileID: 21300000, guid: 98e4221612d9f754483ba061102c1b19, type: 3}
+  miniGradeFrameSprites:
+  - {fileID: 21300000, guid: 068c16a17ac5bbf4cb6a7b1f56184d9f, type: 3}
+  - {fileID: 21300000, guid: 068c16a17ac5bbf4cb6a7b1f56184d9f, type: 3}
+  - {fileID: 21300000, guid: 4398016f3036e7844908c673dcfd7d63, type: 3}
+  - {fileID: 21300000, guid: f5000bcb78efaca4190a327ba444cca9, type: 3}
+  - {fileID: 21300000, guid: 11fb67a5febb0734da10162ccc6ad0d2, type: 3}
+  - {fileID: 21300000, guid: 18054d1f02661bf4aa01f7c3b0d3173e, type: 3}
+  - {fileID: 21300000, guid: 2d862903e1588574b8bbd2c8f1ddd702, type: 3}
+  - {fileID: 21300000, guid: 31c98c02f3b485d43b44ebca967ee0b2, type: 3}
+  miniGradeDecoSprites:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 21300000, guid: ec7d3f65ff1baaf40ab57ac71686c5a0, type: 3}
+  - {fileID: 21300000, guid: a310177e89c6e1649aec0fe32fb31fce, type: 3}
+  - {fileID: 21300000, guid: bf87a86d9e9672c42bafa74bb77ed842, type: 3}
+  levelStarSprites:
+  - {fileID: 21300000, guid: 17788a47d1976424b8ec088dc2d9a0a6, type: 3}
+  - {fileID: 21300000, guid: 99c908c0af4a6434cb5333dca65c631b, type: 3}
+  - {fileID: 21300000, guid: c4794353e5ba94543b9ad0432b2e0c78, type: 3}
+  - {fileID: 21300000, guid: 63ba5d1a24fd9e54d9192264a2620f97, type: 3}
+  rankCellSprites:
+  - {fileID: 21300000, guid: 5fa9b284fa3197a49b149725916fdef1, type: 3}
+  - {fileID: 21300000, guid: 9b1950eb37f70694a8eb0addc90bcaa2, type: 3}
+  - {fileID: 21300000, guid: 854d50ad86e9ed441a61830c9852b4f0, type: 3}
+  - {fileID: 21300000, guid: 50204cfbedcded843bac694d711e3733, type: 3}
+  equipmentFrameSprites:
+  - {fileID: 21300000, guid: 10f931efb4167e9478dcff0e4226e8e1, type: 3}
+  staminaBorderSprites:
+  - {fileID: 21300000, guid: 4b91bdabe8042ff4e9a451702d8fada9, type: 3}
+  - {fileID: 21300000, guid: cdae7ade7a32b3945901d235b41bd49e, type: 3}
+  - {fileID: 21300000, guid: 35ebabb23c15aaa4e9363f160623d82e, type: 3}
+  staminaFillSprites:
+  - {fileID: 21300000, guid: 39f6bf40e6666fb43afbb6be142f69cd, type: 3}
+  - {fileID: 21300000, guid: 8f3267346f15365429855b59ff032a94, type: 3}
+  - {fileID: 21300000, guid: 34e04cfde1a6f6a4699ddce499a721aa, type: 3}
+  staminaCircleFillSprites:
+  - {fileID: 21300000, guid: 927872db35ad9a242a73e09936f6dca7, type: 3}
+  - {fileID: 21300000, guid: a3d0c6ed40cc1184192ddc2ce96e3fa4, type: 3}
+  - {fileID: 21300000, guid: c5c9ec3cf2024fc4dad5e3a07e846782, type: 3}
+  staminaBatteryFillSprites:
+  - {fileID: 21300000, guid: 0909101850a57674faae26fce3d78bbb, type: 3}
+  - {fileID: 21300000, guid: fb0d14aad0829d94a81a7fa04071af97, type: 3}
+  - {fileID: 21300000, guid: 03e778ee8b6213042a486c92e37bfc9c, type: 3}
+  - {fileID: 21300000, guid: 4c5b89a631e812d45b81a2c9974d6f73, type: 3}
+  ninjaPointSpritePairs:
+  - amount: 0
+    sprite: {fileID: 21300000, guid: 579ffc5d744041547b1514fac70fddbc, type: 3}
+  - amount: 10000000
+    sprite: {fileID: 21300000, guid: 1e456aa2b05e00b43bbd223c7682da6a, type: 3}
+  - amount: 1000000000
+    sprite: {fileID: 21300000, guid: 004d88b2f4a3fce4685aa28e344c4e8e, type: 3}
+  unitHpBarFill:
+  - {fileID: 21300000, guid: 1d34fba6dfd648d41a1dcc2838629cf2, type: 3}
+  - {fileID: 21300000, guid: 1d34fba6dfd648d41a1dcc2838629cf2, type: 3}
+  - {fileID: 21300000, guid: 1d34fba6dfd648d41a1dcc2838629cf2, type: 3}
+  - {fileID: 21300000, guid: 1d34fba6dfd648d41a1dcc2838629cf2, type: 3}
+  - {fileID: 21300000, guid: 76fe2c2aa5aa070489367ffe5ec00a56, type: 3}
+  - {fileID: 21300000, guid: b46b15a871bbc75468e5060810b4ef37, type: 3}
+  - {fileID: 21300000, guid: b46b15a871bbc75468e5060810b4ef37, type: 3}
+  unitHpBarFillFake:
+  - {fileID: 21300000, guid: 1d34fba6dfd648d41a1dcc2838629cf2, type: 3}
+  - {fileID: 21300000, guid: 1d34fba6dfd648d41a1dcc2838629cf2, type: 3}
+  - {fileID: 21300000, guid: 1d34fba6dfd648d41a1dcc2838629cf2, type: 3}
+  - {fileID: 21300000, guid: 1d34fba6dfd648d41a1dcc2838629cf2, type: 3}
+  - {fileID: 21300000, guid: 76fe2c2aa5aa070489367ffe5ec00a56, type: 3}
+  - {fileID: 21300000, guid: b46b15a871bbc75468e5060810b4ef37, type: 3}
+  - {fileID: 21300000, guid: b46b15a871bbc75468e5060810b4ef37, type: 3}
+  unitHpBarFillColor:
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  unitHpBarFillFakeColor:
+  - {r: 1, g: 1, b: 1, a: 0.49019608}
+  - {r: 1, g: 1, b: 1, a: 0.49019608}
+  - {r: 1, g: 1, b: 1, a: 0.49019608}
+  - {r: 1, g: 1, b: 1, a: 0.49019608}
+  - {r: 1, g: 1, b: 1, a: 0.49019608}
+  - {r: 1, g: 1, b: 1, a: 0.49019608}
+  - {r: 1, g: 1, b: 1, a: 0.49019608}
+  unitHpBarScales:
+  - {x: 1, y: 1, z: 1}
+  - {x: 1, y: 1, z: 1}
+  - {x: 1, y: 1, z: 1}
+  - {x: 1, y: 1, z: 1}
+  - {x: 1, y: 1, z: 1}
+  - {x: 1.5, y: 2, z: 1}
+  - {x: 1.5, y: 2, z: 1}
+  m_RarityCellColors:
+  - {r: 0.7882353, g: 0.7882353, b: 0.7882353, a: 1}
+  - {r: 0.7882353, g: 0.7882353, b: 0.7882353, a: 1}
+  - {r: 0.3137255, g: 0.79607844, b: 1, a: 1}
+  - {r: 0.93725497, g: 0.82745105, b: 0.22352943, a: 1}
+  m_RarityCellFrameSprites:
+  - {fileID: 21300000, guid: 65ef448d66121f3479fcb5a352a70ef7, type: 3}
+  - {fileID: 21300000, guid: 65ef448d66121f3479fcb5a352a70ef7, type: 3}
+  - {fileID: 21300000, guid: 12d182be77b5bc543a2020be43a446ce, type: 3}
+  - {fileID: 21300000, guid: c097666425c41ca4abc46466c6334783, type: 3}
+  m_BoardWeaponImageMaterials:
+  - {fileID: 2100000, guid: bd4612f47111b794b923a40937c0bacb, type: 2}
+  - {fileID: 2100000, guid: bd4612f47111b794b923a40937c0bacb, type: 2}
+  - {fileID: 2100000, guid: 390b37b0a2936434e91c01320741d452, type: 2}
+  - {fileID: 2100000, guid: 41d109f1a29a1624eba55a54b78782e3, type: 2}
+  consumableTypeIcon: {fileID: 21300000, guid: 202e7aa9a26916e428e8f45a77fa86ea, type: 3}
+  abilityTrainingUnitSteps:
+  - stepNameKey: LevelBeginner
+    openAchievementDataId: 1
+    focusAchievementDataId: 10001
+    completeAchievementDataId: 10003
+  - stepNameKey: LevelApprentice
+    openAchievementDataId: 10003
+    focusAchievementDataId: 10003
+    completeAchievementDataId: 10018
+  - stepNameKey: LevelAdventurer
+    openAchievementDataId: 10018
+    focusAchievementDataId: 10018
+    completeAchievementDataId: 10033
+  - stepNameKey: LevelChallenger
+    openAchievementDataId: 10033
+    focusAchievementDataId: 10033
+    completeAchievementDataId: 10063
+  - stepNameKey: LevelExpert
+    openAchievementDataId: 10063
+    focusAchievementDataId: 10063
+    completeAchievementDataId: 10093
+  - stepNameKey: LevelExplorer
+    openAchievementDataId: 10093
+    focusAchievementDataId: 10093
+    completeAchievementDataId: 10123
+  - stepNameKey: LevelMaster
+    openAchievementDataId: 10123
+    focusAchievementDataId: 10123
+    completeAchievementDataId: 10153
+  - stepNameKey: LevelHero
+    openAchievementDataId: 10153
+    focusAchievementDataId: 10153
+    completeAchievementDataId: 10180

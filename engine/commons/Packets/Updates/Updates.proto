@@ -1,0 +1,249 @@
+syntax = "proto3";
+package Commons.Packets.Updates;
+
+import "Requests.proto";
+import "Player.proto";
+import "PlayerItem.proto";
+import "PlayerAvatar.proto";
+import "PlayerAchievement.proto";
+import "Chat.proto";
+
+message Update {
+  oneof Update {
+    // 1-15 (1 byte)
+    PlayerItemUpdate playerItemUpdate = 1; // --ignore-server-handle
+    PlayerAvatarUpdate playerAvatarUpdate = 2; // --ignore-server-handle
+    PlayerAchievementUpdate playerAchievementUpdate = 3; // --ignore-server-handle
+
+    // 16-2047 (2 bytes)
+    // 16-99: Player
+    PlayerUpdate playerUpdate = 16; // --ignore-server-handle
+    PlayerAcquiredItemsUpdate playerAcquiredItemsUpdate = 17; // --ignore-server-handle
+    PlayerDisplayMessageUpdate playerDisplayMessageUpdate = 18; // --ignore-server-handle
+    PlayerDisconnectedUpdate playerDisconnectedUpdate = 19; // --ignore-server-handle
+    PlayerChatUpdate playerChatUpdate = 20; // --ignore-server-handle
+    
+    
+    // 100-199: Board
+    BoardPlayerUpdate boardPlayerUpdate = 100; // --board-update
+    BoardAchievementUpdate boardAchievementUpdate = 101;  // --board-update
+    BoardPlayerInventoryMergeUpdate boardPlayerInventoryMergeUpdate = 102;  // --board-update
+    BoardPlayerInventorySpawnUpdate boardPlayerInventorySpawnUpdate = 103;  // --board-update
+    BoardPlayerInventoryMoveUpdate boardPlayerInventoryMoveUpdate = 104;  // --board-update
+    BoardPlayerInventoryTransferUpdate boardPlayerInventoryTransferUpdate = 105;  // --board-update
+    BoardPlayerInventoryExpandUpdate boardPlayerInventoryExpandUpdate = 106;  // --board-update
+    BoardPlayerInventoryResetHoldUpdate boardPlayerInventoryResetHoldUpdate = 107;  // --board-update
+    VariableUpdate variableUpdate = 108;  // --board-update
+    SelectTraitUpdate selectTraitUpdate = 109;  // --board-update
+    CompleteSelectTraitUpdate completeSelectTraitUpdate = 110;  // --board-update
+    BoardStateUpdate boardStateUpdate = 111;  // --board-update
+    BoardPlayerRunCheatUpdate boardPlayerRunCheatUpdate = 112;  // --board-update
+    RerollSelectTraitUpdate rerollSelectTraitUpdate = 113;  // --board-update
+    BoardPlayerInventoryRootingUpdate boardPlayerInventoryRootingUpdate = 114; // --board-update
+  }
+}
+
+message PlayerItemUpdate {
+  repeated Types.Players.PlayerItemMessage items = 1;
+}
+
+message PlayerAvatarUpdate {
+  Types.Players.PlayerAvatar avatar = 1;
+}
+
+message PlayerAchievementUpdate {
+  repeated Types.Players.PlayerAchievementMessage achievements = 1;
+}
+
+message PlayerUpdate {
+  Types.Players.PlayerMessage player = 1;
+}
+
+message PlayerAcquiredItemsUpdate {
+  enum Type {
+    Unspecified = 0;
+    ClaimReward = 1;
+    EndGame = 2;
+    BuyProduct = 3;
+    WinWave = 4;
+    ItemDailyReward = 5;
+  }
+  
+  Type type = 1;
+  repeated Types.Players.PlayerItemMessage items = 2;
+  
+  int32 achievementDataId = 3;
+  int32 mapDataId = 4;
+  int32 productItemDataId = 5;
+  int32 multiplier = 6;
+  bool silent = 7;
+}
+
+message PlayerDisplayMessageUpdate {
+  enum Type {
+    Alert = 0;
+    Toast = 1;
+  }
+  
+  Type type = 1;
+  string title = 2;
+  string message = 3;
+}
+
+message PlayerDisconnectedUpdate {
+  Packets.Requests.StatusCode status = 1;
+  string message = 2;
+}
+
+message PlayerChatUpdate {
+  Types.ChatMessage chat = 1;
+}
+
+message BoardPlayerUpdate {
+  uint32 tick = 1;
+  Types.Players.BoardPlayerMessage player = 2;
+  Types.Players.PlayerAvatar avatar = 3;
+  bool left = 4;
+}
+
+message BoardAchievementUpdate {
+  uint32 tick = 1;
+  repeated Types.Players.PlayerAchievementMessage achievements = 2;
+}
+
+message BoardPlayerInventoryMergeUpdate {
+  enum Type {
+    inventory = 0;
+    hold = 1;
+  }
+
+  uint32 tick = 1;
+  int64 playerId = 2;
+  Type sourceType = 3;
+  int32 sourceRow = 4;
+  int32 sourceIndex = 5;
+  Type targetType = 6;
+  int32 targetRow = 7;
+  int32 targetIndex = 8;
+}
+
+message BoardPlayerInventorySpawnUpdate {
+  enum Type {
+    inventory = 0;
+    hold = 1;
+  }
+  
+  uint32 tick = 1;
+  int64 playerId = 2;
+  bool resetHold = 3;
+}
+
+message BoardPlayerInventoryMoveUpdate {
+  uint32 tick = 1;
+  int64 playerId = 2;
+  int32 sourceRow = 3;
+  int32 sourceIndex = 4;
+  int32 targetRow = 5;
+  int32 targetIndex = 6;
+}
+
+message BoardPlayerInventoryTransferUpdate {
+  enum Type {
+    INVENTORY = 0;
+    HOLD = 1;
+    SELL = 2;
+    DISCARD = 3;
+  }
+
+  uint32 tick = 1;
+  int64 playerId = 2;
+  Type sourceType = 3;
+  int32 sourceRow = 4;
+  int32 sourceIndex = 5;
+  Type targetType = 6;
+  int32 targetRow = 7;
+  int32 targetIndex = 8;
+}
+
+message BoardPlayerInventoryExpandUpdate {
+  uint32 tick = 1;
+  int64 playerId = 2;
+  int32 row = 3;
+  int32 index = 4;
+}
+
+message BoardPlayerInventoryResetHoldUpdate {
+  uint32 tick = 1;
+  int64 playerId = 2;
+}
+
+message BoardPlayerInventoryRootingUpdate {
+  uint32 tick = 1;
+  int64 playerId = 2;
+}
+
+message VariableUpdate {
+  enum Type {
+    BoardVariable = 0;
+    UnitVariable = 1;
+    SkillVariable = 2;
+    BuffVariable = 3;
+
+    ObjectVariable = 4;
+  }
+
+  uint32 tick = 1;
+  int64 playerId = 2;
+
+  Type type = 3;
+  int32 key = 4;
+  float value = 5;
+}
+
+message SelectTraitUpdate {
+  enum Type {
+    None = 0;
+    LevelUp = 1;
+    Encounter = 2;
+  }
+  uint32 tick = 1;
+  int64 playerId = 2;
+  int32 unitDataId = 3;
+  repeated int32 traitDataIds = 4;
+  Type type = 5;
+}
+
+message CompleteSelectTraitUpdate {
+  uint32 tick = 1;
+  int64 playerId = 2;
+  int32 traitDataId = 3;
+}
+
+message RerollSelectTraitUpdate {
+  uint32 tick = 1;
+  int64 playerId = 2;
+  SelectTraitUpdate.Type type = 3;
+}
+
+message BoardStateUpdate {
+  uint32  tick = 1;
+  int64 playerId = 2;
+  int32 state = 3;
+}
+
+message BoardPlayerRunCheatUpdate {
+  enum CheatType {
+    None = 0;
+    Spawn = 1;
+    Skill = 2;
+    Buff = 3;
+    Trait = 4;
+    Weapon = 5;
+  }
+
+  uint32  tick = 1;
+  repeated int32 parameters = 2;
+
+  int64 playerId = 3;
+  CheatType cheatType = 4;
+}

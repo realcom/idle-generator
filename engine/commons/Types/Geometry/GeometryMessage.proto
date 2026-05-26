@@ -1,0 +1,53 @@
+syntax = "proto3";
+package Commons.Types.Geometry;
+
+message Vector2Message {
+  float x = 1;
+  float y = 2;
+}
+
+message GeometryMessage {
+  message Line {
+    Vector2Message p1 = 1;
+    Vector2Message p2 = 2;
+  }
+  
+  message BoundingBox {
+    Vector2Message center = 1;
+    Vector2Message extents = 2;
+  }
+  
+  message Circle {
+    Vector2Message center = 1;
+    float radius = 2;
+  }
+  
+  message CircleSector {
+    Vector2Message center = 1;
+    float radius = 2;
+    float angle = 3;
+    float angleOffset = 4;
+  }
+  
+  message Triangle {
+    Vector2Message p1 = 1;
+    Vector2Message p2 = 2;
+    Vector2Message p3 = 3;
+  }
+  
+  message Rectangle {
+    Vector2Message pivot = 1;
+    float angle = 2;
+    float halfWidth = 3;
+    float height = 4;
+  }
+  
+  oneof geometry {
+    Line line = 1;
+    BoundingBox boundingBox = 2;
+    Circle circle = 3;
+    CircleSector circleSector = 4;
+    Triangle triangle = 5;
+    Rectangle rectangle = 6;
+  }
+}

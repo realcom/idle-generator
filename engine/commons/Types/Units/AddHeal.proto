@@ -1,0 +1,16 @@
+syntax = "proto3";
+package Commons.Types.Units;
+
+import "UseSkill.proto";
+
+message AddHeal {
+  repeated int64 heals = 1;
+  repeated float attackPercentHeals = 2;
+  repeated int64 spHeals = 3;
+  repeated float maxHpPercentHeals = 4;
+  repeated int64 guardHeals = 5;
+  repeated float maxHpPercentShieldHeals = 6;
+
+  string fxOnHit = 100;
+  Types.Units.UseSkill onHealUseSkill = 101;
+}

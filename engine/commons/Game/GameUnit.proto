@@ -1,0 +1,68 @@
+syntax = "proto3";
+package Commons.Game;
+
+import "PlayerAvatar.proto";
+import "GeometryMessage.proto";
+import "GameBuff.proto";
+import "ResourceUnit.proto";
+import "ResourceTrigger.proto";
+
+message GameUnit {
+  repeated Types.Geometry.Vector2Message path = 1;
+  map<int32, uint32> cooldowns = 2;
+  repeated float baseStat = 3;
+  map<int64, GameBuff> buffs = 4;
+  map<int64, uint32> itemCooldowns = 5;
+  map<int64, Resources.ResourceTrigger.Variables> variablesByItemId = 6;
+  repeated int32 equipSkillDataIds = 7;
+  
+  int64 id = 100;
+  int32 dataId = 101;
+  int32 offset = 102;
+  Types.Geometry.Vector2Message initPosition = 103;
+  int64 ownerUnitId = 104;
+
+  int64 playerId = 200;
+  Types.Players.PlayerAvatar playerAvatar = 201;
+  int32 playerAvatarWeaponSlot = 202;
+  
+  int32 team = 300;
+  int32 level = 301;
+  int64 exp = 302;
+
+  uint32 tick = 400;
+  uint32 tickOffset = 401;
+  Resources.ResourceTrigger.Variables variables = 402;
+  uint32 nextBuffId = 403;
+  Types.Geometry.Vector2Message position = 404;
+  Types.Geometry.Vector2Message direction = 405;
+  Types.Geometry.Vector2Message velocity = 406;
+  Types.Geometry.Vector2Message moveDirection = 407;
+  Types.Geometry.Vector2Message moveDestination = 408;
+  Resources.ResourceUnit.TargetMode targetMode = 409;
+  float targetAwareDistance = 410;
+  float targetResetDistance = 411;
+  int64 targetUnitId = 412;
+  Types.Geometry.Vector2Message positionOffset = 413;
+
+  Types.Geometry.Vector2Message knockbackDirection = 500;
+  uint32 knockbackTick = 501;
+  float knockbackSpeed = 502;
+
+  uint32 state = 600;
+  uint32 moveDisabledTick = 601;
+  uint32 actionDisabledTick = 602;
+  int32 actionDisabledPriority = 603;
+  uint32 destroyTick = 604;
+  uint32 respawnTick = 605;
+  uint32 noDamageTick = 606;
+  
+  int64 hp = 700;
+  int64 mp = 701;
+  int64 shield = 702;
+  int64 sp = 703;
+  uint32 spRegenTick = 704;
+  int64 guard = 705;
+  
+  
+}

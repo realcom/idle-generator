@@ -1,0 +1,206 @@
+{
+ "achievementGlobal": {
+  "dataId": {
+   "tutorialComplete": 610000,
+   "ingameTutorialEnter": 610001,
+   "chapterEnterAgainCondition": 610010,
+   "tutorialSteps": [
+    610101,
+    610102,
+    610103,
+    610201,
+    610202,
+    610203,
+    610204,
+    610205
+   ]
+  }
+ },
+ "achievements": [
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 610000,
+   "initialOpen": true,
+   "clientAchievement": true
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 610001,
+   "initialOpen": true,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    610301
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 610010,
+   "initialOpen": true,
+   "condition": "WinGame",
+   "conditionValue1": 100001,
+   "parentAchievementDataId": 610011,
+   "progressParentOnComplete": true
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 2,
+   "autoReward": true,
+   "id": 610011,
+   "initialOpen": true,
+   "childAchievementDataIds": [
+    610306
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "initialOpen": true,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    610102
+   ],
+   "id": 610101
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    610103
+   ],
+   "id": 610102
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "clientAchievement": true,
+   "id": 610103
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "condition": "HasItem",
+   "conditionValue1": 1000,
+   "conditionValue2": 16,
+   "childAchievementDataIds": [
+    610302
+   ],
+   "id": 610201
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": false,
+   "condition": "BuyItemProductAction",
+   "conditionValue1": 20801000,
+   "childAchievementDataIds": [
+    610203
+   ],
+   "id": 610202
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "clientAchievement": true,
+   "parentAchievementDataId": 610011,
+   "id": 610203
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "condition": "AcquireItem",
+   "conditionValue1": 1111005,
+   "id": 610204
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "condition": "BuyItemProductAction",
+   "conditionValue1": 20401000,
+   "id": 610205
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 610301,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    610201
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 610302,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    610303
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 610303,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    610202
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 610304,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    610305
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 610305,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    610205
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 610306,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    610204
+   ]
+  },
+  {
+   "type": "Normal",
+   "targetProgress": 1,
+   "autoReward": true,
+   "id": 610307,
+   "clientAchievement": true,
+   "childAchievementDataIds": [
+    610304
+   ]
+  }
+ ]
+}

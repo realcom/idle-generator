@@ -1,0 +1,12 @@
+syntax = "proto3";
+package Commons.Types.Players;
+
+import "PlayerItem.proto";
+
+message PlayerInventoryRow {
+  repeated PlayerItemMessage items = 1;
+}
+
+message PlayerInventory {
+  repeated PlayerInventoryRow rows = 1;
+}

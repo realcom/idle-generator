@@ -1,0 +1,98 @@
+# meadow_1.behavior.yaml
+# 맵 웨이브 로직 — domain: map (boardMethod 액션만 사용)
+#
+# Unit.id 참조:
+#   110201  slime_green  (일반/엘리트)
+#   110501  slime_boss   (보스)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ───────────────── Wave 1: 슬라임 × 5, 접근 후 공격 ─────────────────
+name: Meadow1Wave1
+domain: map
+
+vars:
+  wave1_unit:  { type: int,   default: 110201 }
+  wave1_count: { type: int,   default: 5 }
+  enemy_team:  { type: int,   default: 4 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: 1 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $wave1_unit
+          count: $wave1_count
+          team: $enemy_team
+
+---
+
+# ───────────────── Wave 2: 엘리트 × 3, 더 빠르게 접근 ─────────────────
+name: Meadow1Wave2
+domain: map
+
+vars:
+  wave2_unit:  { type: int, default: 110201 }
+  wave2_count: { type: int, default: 3 }
+  enemy_team:  { type: int, default: 4 }
+
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $wave2_unit
+          count: $wave2_count
+          team: $enemy_team
+
+---
+
+# ───────────────── Wave 3: 보스 + 호위, 보스는 느리게 접근 ──────────────
+name: Meadow1Wave3
+domain: map
+
+vars:
+  wave3_boss:   { type: int, default: 110501 }
+  wave3_minion: { type: int, default: 110201 }
+  enemy_team:   { type: int, default: 4 }
+
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $wave3_boss
+          count: 1
+          team: $enemy_team
+      - AddUnit:
+          unitDataId: $wave3_minion
+          count: 2
+          team: $enemy_team
+
+---
+
+# ───────────────── Update: 웨이브 클리어 체크 (3초 폴링) ────────────────
+name: Meadow1Update
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+
+"on":
+  - event: update
+    every: 3s
+    do:
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "board.GetBoardState() == 1 and return == 0"
+        SetBoardState: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_MEADOW1WAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "board.GetBoardState() == 2 and return == 0"
+        SetBoardState: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_MEADOW1WAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "board.GetBoardState() == 3 and return == 0"
+        SetBoardState: { value: 9 }
+        EndGame: { result: win }

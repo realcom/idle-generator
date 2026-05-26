@@ -1,0 +1,54 @@
+syntax = "proto3";
+package Commons.Types.Players;
+
+import "google/protobuf/timestamp.proto";
+
+message PlayerItemOption {
+  message Option {
+    int32 id = 1;
+    int32 poolId = 2;
+    int32 level = 3;
+  }
+  
+  repeated PlayerItemMessage slots = 1;
+  repeated Option rerollOptions = 2;
+  
+  message DailyRewardOption {
+    google.protobuf.Timestamp claimedAt = 1;
+  }
+
+  DailyRewardOption dailyRewardOption = 3;
+  
+  message ProductOption {
+    repeated int32 pityCounts = 1;
+    
+    int32 multiplyBonusCount = 14;
+    google.protobuf.Timestamp reprocessableAt = 15;
+  }
+  
+  ProductOption productOption = 15;
+  
+}
+
+message PlayerItemMessage {
+  int64 id = 1;
+  int32 itemDataId = 2;
+  
+  int64 count = 3;
+  int32 grade = 4;
+  int32 level = 5;
+  int64 exp = 6;
+  google.protobuf.Timestamp untilAt = 7;
+  google.protobuf.Timestamp timeExpirationProcessAt = 14;
+  google.protobuf.Timestamp createdAt = 15;
+  uint32 stateFlag = 16;
+  
+  int32 param1 = 8;
+  int32 param2 = 9;
+  int32 param3 = 10;
+  int32 param4 = 11;
+
+  PlayerItemOption option = 12;
+  
+  int32 rarity = 13;
+}

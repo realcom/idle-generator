@@ -1,0 +1,227 @@
+syntax = "proto3";
+package Commons.Resources;
+
+import "Tags.proto";
+import "ResourceTrigger.proto";
+import "GeometryMessage.proto";
+import "AddDamage.proto";
+import "AddHeal.proto";
+import "AddBuff.proto";
+import "AddItem.proto";
+import "UseSkill.proto";
+import "DamageType.proto";
+
+message ResourceSkill {
+  message Global {
+    message DataId {
+      // 1-999: Player
+      int32 playerLevelUp = 1;
+      int32 playerRespawn = 2;
+    }
+    
+    message Value {
+      float additionalAttackDelay = 1;
+      
+      float sizeClampMinAttackPercent = 10;
+      float sizeClampMaxAttackPercent = 11;
+      float minClampedSizePercent = 12;
+      float maxClampedSizePercent = 13;
+    }
+
+    DataId dataId = 1;
+    Value value = 2;
+  }
+  
+  message Timeline {
+    message Hit {
+      repeated Types.Geometry.GeometryMessage geometries = 1;
+      int32 maxHit = 2;
+      bool hitAlly = 7;
+      bool ignoreSender = 8;
+      Types.Units.AddDamage addDamage = 3;
+      Types.Units.AddHeal addHeal = 5;
+      repeated Types.Units.AddBuff addBuffs = 4;
+      Types.Units.UseSkill useSkill = 6;
+      Types.Units.AddHeal senderAddHeal = 9;
+      
+      int32 addSenderBuffStackCount = 100;
+      int32 addSenderBuffStackDataId = 101;
+      
+      int32 repeat = 200;
+      float repeatInterval = 201;
+    }
+    
+    message UnitDisableMove {
+      float duration = 1;
+    }
+    
+    message UnitDisableAction {
+      float duration = 1;
+      int32 priority = 2;
+    }
+    
+    message UnitLookAt {
+      float angle = 1;
+      bool lookMoveDirection = 2;
+    }
+    
+    message UnitCharge {
+      float angle = 1;
+      float duration = 2;
+      float distance = 3;
+      bool adjustDistanceToTarget = 4;
+    }
+    
+    message UnitKnockback {
+      float angle = 1;
+      float duration = 2;
+      float distance = 3;
+    }
+    
+    message UnitUseSkill {
+      Types.Units.UseSkill useSkill = 1;
+    }
+    
+    message AddSkill {
+      Types.Units.UseSkill useSkill = 1;
+    }
+    
+    message OwnerUseSkill {
+      Types.Units.UseSkill useSkill = 1;
+    }
+    
+    message SelfAddBuff {
+      Types.Units.AddBuff addBuff = 1;
+    }
+    
+    message UnitPlayAnimation {
+      string animation = 1;
+    }
+    
+    message PlayFx {
+      string prefab = 1;
+    }
+    
+    message ShowDialog {
+      message Portrait {
+        string image = 1;
+        string emotion = 2;
+        bool disabled = 3;
+      }
+
+      repeated Portrait portraits = 1;
+      string image = 5;
+      string name = 6;
+      string message = 7;
+      
+      bool pauseBoard = 8;
+      string preFx = 9;
+      string postFx = 10;
+      float duration = 11;
+      
+      int32 interactionKey = 12;
+      repeated string interactionChoices = 13;
+    }
+    
+    message SetUpdateSpeed {
+      float boardSpeed = 1;
+      float editorSpeed = 2;
+      float duration = 3;
+    }
+    
+    message RunTrigger {
+      string name = 1;
+      repeated ResourceTrigger.InitVariable initVariables = 17;
+    }
+    
+    message Destroy {
+    }
+    
+    float time = 1;
+    oneof action {
+      Hit hit = 2;
+      UnitDisableMove unitDisableMove = 3;
+      UnitDisableAction unitDisableAction = 4;
+      UnitLookAt unitLookAt = 5;
+      UnitCharge unitCharge = 6;
+      UnitKnockback unitKnockback = 7;
+      UnitUseSkill unitUseSkill = 8;
+      AddSkill addSkill = 9;
+      OwnerUseSkill ownerUseSkill = 17;
+      SelfAddBuff selfAddBuff = 10;
+      UnitPlayAnimation unitPlayAnimation = 11;
+      PlayFx playFx = 12;
+      ShowDialog showDialog = 16;
+      SetUpdateSpeed setUpdateSpeed = 13;
+      RunTrigger runTrigger = 14;
+      Destroy destroy = 15;
+    }
+  }
+  
+  enum ProjectileType {
+    None = 0;
+    Straight = 1;
+    Target = 2;
+    Relative = 3;
+    Parabolic = 4;
+    
+  }
+  
+  enum TargetRefreshType {
+    NoRefresh = 0;
+    Random = 1;
+    Nearest = 2;
+    Furthest = 5;
+    LowestHp = 3;
+    HighestHp = 4;
+    
+    ClearTarget = 999;
+  }
+  
+  repeated Tag tags = 1;
+  repeated string triggers = 2;
+  repeated ResourceTrigger.InitVariable initVariables = 3;
+  
+  int32 id = 100;
+  ProjectileType projectileType = 101;
+  int32 priority = 102;
+  int32 maxHit = 103;
+  float initCooldown = 104;
+  float cooldown = 105;
+  Types.Units.DamageType damageType = 106;
+  TargetRefreshType targetRefreshType = 107;
+  int32 group = 108;
+
+  string name = 200;
+  string prefab = 201;
+  string sprite = 202;
+  float scale = 203;
+  int32 itemDataId = 204;
+  int32 achievementSkillDataId = 205;
+  
+  bool useAttackSpeed = 301;
+  bool ignoreShotOffset = 302;
+  repeated Timeline timelines = 303;
+  string timelinePrefab = 304;
+  bool hitOncePerUnit = 305;
+  float disableMove = 306;
+  float disableAction = 307;
+  int32 disableActionPriority = 308;
+  int32 maxHitByUnit = 309;
+
+  Types.Geometry.Vector2Message initPosition = 400;
+  float initRotation = 401;
+  float initSpeed = 402;
+  Types.Geometry.Vector2Message initAcceleration = 403;
+  Types.Geometry.Vector2Message initAbsoluteAcceleration = 404;
+  float targetHeight = 405;
+  float targetArrivalTime = 406;
+  
+  Types.Units.AddDamage selfAddDamage = 500;
+  Types.Units.AddHeal selfAddHeal = 501;
+  Types.Units.UseSkill consecutiveUseSkill = 502;
+  repeated Types.Units.AddBuff selfAddBuffs = 503;
+  repeated Types.Units.AddBuff hitAddBuffs = 504;
+  Types.Units.AddHeal hitSelfAddHeal = 505;
+  repeated Types.AddItemGroup selfAddItemGroups = 506;
+}

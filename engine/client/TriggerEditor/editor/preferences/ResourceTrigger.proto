@@ -1,0 +1,383 @@
+syntax = "proto3";
+package Commons.Resources;
+
+message ResourceTrigger {
+  message Expression {
+    message Operator {
+      enum Type {
+        Or = 0;
+        And = 1;
+        Not = 2;
+
+        Equal = 3;
+        NotEqual = 4;
+        GreaterThan = 5;
+        GreaterThanOrEqual = 6;
+        LessThan = 7;
+        LessThanOrEqual = 8;
+
+        Add = 9;
+        Subtract = 10;
+
+        Multiply = 11;
+        Divide = 12;
+        Modulo = 13;
+        
+        UnaryMinus = 14;
+
+        Exponent = 15;
+        
+        OpenParenthesis = 16;
+        CloseParenthesis = 17;
+      }
+
+      Type type = 1;
+    }
+
+    message Operand {
+      message Constant {
+        float value = 1;
+      }
+
+      message Variable {
+        message Parameter {
+          enum Type {
+            NotUsed = 0;
+            // 1 - 99: Predefined
+            // 100 - 299: Parameters
+            PositionX = 100;
+            PositionY = 101;
+            Angle = 102;
+            DirectionX = 103;
+            DirectionY = 104;
+            
+            UnitDataId = 110;
+            SkillDataId = 111;
+            BuffDataId = 112;
+            
+            LocationId = 200;
+            Team = 201;
+            Count = 202;
+            // 300 - 399: Editor defined
+          }
+
+          Type type = 1;
+        }
+        
+        message ObjectVariable {
+          enum Type {
+            Unit = 0;
+            Skill = 1;
+            Buff = 2;
+          }
+
+          bool caller = 1;
+          Type type = 2;
+        }
+        
+        message PredefinedVariable {
+          enum Type {
+            NotUsed = 0;
+            // 1 - 99: Predefined
+            Return = 1;
+            // 100 - 299: Parameter
+            // 300 - 399: Editor defined
+          }
+
+          Type type = 1;
+        }
+
+        message BoardVariable {
+          enum Type {
+            NotUsed = 0;
+            DataId = 1;
+            Tick = 2;
+          }
+
+          Type type = 1;
+        }
+
+        message UnitVariable {
+          enum Type {
+            Caller = 0;
+            DataId = 1;
+
+            PositionX = 101;
+            PositionY = 102;
+            DirectionX = 103;
+            DirectionY = 104;
+            VelocityX = 105;
+            VelocityY = 106;
+
+            MoveDirectionX = 201;
+            MoveDirectionY = 202;
+            MoveDestinationX = 203;
+            MoveDestinationY = 204;
+
+            Level = 301;
+            State = 302;
+
+            Hp = 401;
+            MaxHp = 402;
+            HpRatio = 403;
+            Mp = 404;
+            MaxMp = 405;
+            MpRatio = 406;
+            Shield = 407;
+            
+            Target = 501;
+            TargetPositionX = 502;
+            TargetPositionY = 503;
+            TargetDistance = 504;
+            TargetAngle = 505;
+          }
+
+          bool caller = 1;
+          Type type = 2;
+        }
+
+        message SkillVariable {
+          enum Type {
+            Caller = 0;
+            DataId = 1;
+
+            PositionX = 101;
+            PositionY = 102;
+            DirectionX = 103;
+            DirectionY = 104;
+            VelocityX = 105;
+            VelocityY = 106;
+            AccelerationX = 107;
+            AccelerationY = 108;
+
+            SenderUnit = 201;
+            TargetUnit = 202;
+          }
+
+          bool caller = 1;
+          Type type = 2;
+        }
+
+        message BuffVariable {
+          enum Type {
+            Caller = 0;
+            DataId = 1;
+          }
+
+          bool caller = 1;
+          Type type = 2;
+        }
+
+        bool caller = 8;
+        oneof variable {
+          int32 boardKey = 1;
+          int32 callerKey = 2;
+          int32 stateKey = 3;
+          
+          Parameter parameter = 4;
+          ObjectVariable objectVariable = 5;
+          PredefinedVariable predefinedVariable = 6;
+          int32 editorDefinedVariable = 7;
+
+          BoardVariable boardVariable = 9;
+          int32 unitKey = 10;
+          UnitVariable unitVariable = 11;
+          int32 skillKey = 12;
+          SkillVariable skillVariable = 13;
+          int32 buffKey = 14;
+          BuffVariable buffVariable = 15;
+        }
+      }
+
+      oneof operand {
+        Constant constant = 1;
+        Variable variable = 2;
+      }
+    }
+
+    message Element {
+      oneof element {
+        Operator operator = 1;
+        Operand operand = 2;
+      }
+    }
+
+    repeated Element postfix = 1;
+  }
+
+  message Assignment {
+    Expression.Operand.Variable variable = 1;
+    Expression expression = 2;
+  }
+
+  message Call {
+    message BoardMethod {
+      enum Type {
+        Unknown = 0;
+        
+        // int UnitDataId
+        // optional int LocationId
+        // optional float PositionX
+        // optional float PositionY
+        // optional float Angle = random (radian)
+        // optional int Team = Team.Enemy0
+        // optional int Count = 1
+        AddUnit = 1;
+      }
+
+      Type type = 1;
+    }
+
+    message UnitMethod {
+      enum Type {
+        Unknown = 0;
+        
+        // int SkillDataId
+        UseSkill = 1;
+        
+        // optional float Angle = random (radian)
+        SetDirection = 2;
+        
+        // float PositionX
+        // float PositionY
+        LookAt = 3;
+
+        // optional float Angle = random (radian)
+        SetMoveDirection = 4;
+
+        // float PositionX
+        // float PositionY
+        SetMoveDestination = 5;
+      }
+
+      Type type = 1;
+    }
+
+    message SkillMethod {
+      enum Type {
+        Unknown = 0;
+        
+//        SetDirection = 0;
+//        LookAt = 1;
+//        SetAcceleration = 2;
+      }
+
+      Type type = 1;
+    }
+
+    message BuffMethod {
+      enum Type {
+        Unknown = 0;
+      }
+
+      Type type = 1;
+    }
+
+    message DebugMethod {
+      enum Type {
+        Log = 0;
+        Error = 1;
+        Exception = 2;
+      }
+
+      Type type = 1;
+      string message = 2;
+      Expression.Operand.Variable variable = 3;
+    }
+
+    message RunTrigger {
+      string name = 1;
+    }
+
+    message Method {
+      oneof method {
+        BoardMethod boardMethod = 1;
+        UnitMethod unitMethod = 2;
+        SkillMethod skillMethod = 3;
+        BuffMethod buffMethod = 4;
+        DebugMethod debugMethod = 5;
+        RunTrigger runTrigger = 6;
+      }
+    }
+
+    bool caller = 1;
+    Method method = 2;
+    repeated Assignment assignments = 3;
+  }
+
+  message Return {
+  }
+
+  message Break {
+  }
+
+  message Continue {
+  }
+
+  message Condition {
+    Expression expression = 1;
+    repeated Statement statements = 2;
+  }
+
+  message Loop {
+    Expression expression = 1;
+    repeated Statement statements = 2;
+  }
+
+  message Statement {
+    string comment = 1;
+
+    oneof statement {
+      Assignment assignment = 2;
+      Call call = 3;
+      Return return = 4;
+      Break break = 5;
+      Continue continue = 6;
+      Condition condition = 7;
+      Loop loop = 8;
+    }
+  }
+  
+  message Variables {
+    message KeyValue {
+      int32 key = 1;
+      float value = 2;
+    }
+    repeated KeyValue variables = 1;
+  }
+  
+  message MethodMetadata {
+    message ParameterMetadata {
+      Expression.Operand.Variable.Parameter parameter = 1;
+      bool optional = 2;
+      float defaultValue = 3;
+      string comment = 4;
+    }
+
+    oneof method {
+      Call.BoardMethod boardMethod = 1;
+      Call.UnitMethod unitMethod = 2;
+      Call.SkillMethod skillMethod = 3;
+      Call.BuffMethod buffMethod = 4;
+      Call.DebugMethod debugMethod = 5;
+      Call.RunTrigger runTrigger = 6;
+    }
+    repeated ParameterMetadata parameters = 7;
+  }
+  
+  enum Type {
+    OnStart = 0;
+    OnUpdate = 1;
+    OnAttacked = 2;
+    OnDead = 3;
+    OnDestroy = 4;
+  }
+  
+  string name = 1;
+  string comment = 2;
+  repeated int32 parameterLocalKeys = 3;
+  
+  Type type = 4;
+  repeated Statement statements = 5;
+  uint32 period = 6;
+}

@@ -1,0 +1,169 @@
+syntax = "proto3";
+package Commons.Resources;
+
+enum Tag {
+  Unknown = 0;
+  
+  // 10000 - 19999: Maps
+  // 10010 - 10019: TeamInteraction
+  TeamInteractionPlayerCollide = 10010;
+  TeamInteractionNonCollide = 10011;
+  
+  SkipPossible = 10020;
+  
+  // 18000 - 18999: Maps Common
+  IgnoreHeldWeaponCheck = 18001;
+  RefundMaterialsWhenFail = 18002;
+  AutoplaceInInventoryOnSpawn = 18003;
+  ResetHoldItemsOnSpawn = 18004;
+  ContainPlayerInventory = 18005;
+  ContainPlayerTrait = 18006;
+  InfiniteWaves = 18007;
+  // 19000 - 19999: Maps Client
+  HideHeldGold = 19000;
+  BlockUserInteraction = 19001;
+  HideWaveInfo = 19002;
+  HideTimer = 19003;
+  HideAutoSpawn = 19004;
+  
+  // 20000 - 29999: Units
+  // 20000 - 20009: Ignore
+  IgnoreDisableMoveByDamage = 20000; // +Buffs
+  IgnoreDisableActionByDamage = 20001; // +Buffs
+  IgnoreKnockbackByDamage = 20002; // +Buffs
+  IgnoreNormalDamage = 20003; // +Buffs
+  IgnorePierceDamage = 20004; // +Buffs
+  IgnoreExplosiveDamage = 20005; // +Buffs
+  IgnoreSpellDamage = 20006; // +Buffs
+  // 20010 - 20019: Target
+  DefenseTarget = 20010;
+  Untargetable = 20011;
+  // 20020 - 20029
+  RespawnAtInitPosition = 20020;
+  // 29000 - 29999: Client
+  HideUnitCanvas = 29000;
+  
+  // 30000 - 39999: Skills
+  AbsoluteRotation = 30000;
+  AdditionalAttackPossible = 30001;
+  ScaleRemappingPossible = 30002; // +Units
+  // 30010 - 30019: Ignore
+  IgnoreActable = 30010;
+  IgnoreAlive = 30011;
+  // 30020 - 30029: Respawn
+  SelfRespawn = 30020;
+  SelfRespawnWhenDead = 30021;
+  SelfRemoveUnitDebuffs = 30022;
+  AutoAim = 30023;
+  RemoveUnitBuffs = 30024;
+  UseToTarget = 30025;
+  TargetPosition = 30026;
+  MovementSkill = 30027;
+  KnockbackByStat = 30028;
+  // 30030 - -30039: Item rule for ingame
+  AddItem = 30030;
+  CopyRandomInventoryItem = 30031;
+  CopyRandomInventoryItemToFirstGrade = 30032;
+  ValidWithoutDamage = 30033;
+  PurchasedSkill = 39999;
+  
+  
+  // 40000 - 49999: Buffs
+  HideUnit = 40000;
+  Invincible = 40001; // +Units
+  DisableHpRegen = 40002;
+  DisableMpRegen = 40003;
+  DisableSpRegen = 40004;
+  InventorySkillCommandBuff = 40005;
+  ResetStackOnMaxStack = 40006;
+  NoExpiration = 40007;
+  LevelUpChoice = 40008;
+  LevelUpOnStacked = 40009;
+  DisableMove = 40010;
+  DisableAction = 40011;
+  PauseAnimation = 40012;
+  DisplayOnUnit = 40013;
+  DisplayStack = 40014;
+  DisplayLevel = 40015;
+  IgnoreDestroyWhenDead = 40016; // +Skills
+  
+  // 50000 - 59999: Items
+  ClientPeriodicUpdate = 50000;
+  UseSkillWhenHasTarget = 50001;
+  InventoryExpand = 50002;
+  Consumable = 50003;
+  SpecificDisplay = 50004;
+  AddParam1ToCount = 50005;
+  EachProcessCreateAndAdd = 50006;
+  InventoryExpandStartBonus = 50007;
+  RerollLevelUpSelectTrait = 50008;
+  CombineCountInDisplay = 50009;
+  HideFromAcquiredItems = 50010;
+  ExtensionPurchaseAvailable = 50011;
+
+  RetroactiveAchievementReward = 50098;
+  RetroactiveDailyReward = 50099;
+  
+  // 51000 - 51099: Shop
+  ShopLobby = 51000;
+  ShopMain = 51001;
+  
+  // 51100 - 51199: DayPeriod
+  RegenDaily = 51101;
+  RegenWeekly = 51102;
+  ResetDaily = 51103;
+  ResetWeekly = 51104;
+  
+  //51200 - 51299: GamePass
+  ChapterPass = 51200;
+  EnableGamePassPreview = 51201;
+
+  // 51300 - 51399: Summon
+  SummonPet = 51300;
+  
+  // 51400 - 51499: Recipe
+  EquipmentCombineRecipe = 51400;
+  AutoCombineAvailable = 51401;
+  
+  // 52000 - 52999 for Product
+  Pity = 52001; // param1 -> 천장 뽑기 기록. BonusItemDataId Column 있어야 함. 
+  MultiplyChance = 52002;// param1 -> multiply 기록. BonusCount Column 있어야 함
+  ProductRespawn = 53001;
+  ProductQuickScout = 53002;
+  PurchaseButtonHideWhenNotBuyable = 53003;
+  ProductHideWhenNotBuyable = 53004;
+  DirectRepurchaseAvailable = 53005;
+  
+  ScoutNormal = 53101;
+  ScoutQuick = 53102;
+  
+  // 54000 - 54999: Premium
+  BonusItemLevel = 54000;
+  DiscountPetOptionRerollMaterialPrice = 54001;
+  ADFree = 54002;
+  BoostScoutReward = 54003;
+  BoostScoutMaxMinutes = 54004;
+  BypassDailyProductRespawnLimit = 54005;
+  BypassScoutQuickLimit = 54006;
+  BoostMaxCount = 54007;
+  BoostRegenCount = 54008;
+  
+  
+  // 60000 - 69999: Achievements
+  HudChallenge = 60000;
+  HudScenarioQuest = 60001;
+  Wave = 60002;
+  SpecialChapterPassStep = 60003;
+  ProductBuyLimit = 60004;
+  ClaimRewardWhenReset = 60005;
+  RewardToMail = 60006;
+  ForDayCheck = 60007;
+  
+  // 70000 - 79999: Common
+  Main = 70000;
+  Deprecated = 70001;
+  HideDisplay = 70002;
+  Meta = 70003;
+  
+  
+}

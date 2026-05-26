@@ -1,0 +1,20 @@
+syntax = "proto3";
+package Commons.Game;
+
+import "ResourceTrigger.proto";
+
+message GameBuff {
+  int64 Id = 100;
+  int32 dataId = 101;
+
+  int32 team = 200;
+  int64 attackerUnitId = 201;
+  int32 level = 202;
+  uint32 ttl = 203;
+  int32 stack = 204;
+  bool enabled = 205;
+  
+  uint32 pendingPeriod = 299;
+  uint32 tick = 300;
+  Commons.Resources.ResourceTrigger.Variables variables = 301;
+}

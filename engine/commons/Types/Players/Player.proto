@@ -1,0 +1,55 @@
+syntax = "proto3";
+package Commons.Types.Players;
+
+import "PlayerTelegram.proto";
+import "PlayerInventory.proto";
+import "PlayerItem.proto";
+import "PlayerAchievement.proto";
+import "AddItem.proto";
+
+message PlayerMessage {
+  int64 id = 1;
+  string name = 2;
+  int32 level = 4;
+  bool isAdmin = 6;
+  int64 boardId = 3;
+  int64 power = 7;
+  int32 avatarCharacterItemDataId = 8;
+  
+  PlayerTelegramMessage telegram = 5;
+}
+
+message SelectTraitEventMessage {
+  enum State {
+    Pending = 0;
+    Immediate = 1;
+  }
+  State state = 1;
+  Types.TraitItemGroup traitItemGroup = 2;
+}
+
+message BoardPlayerMessage {
+  int64 id = 1;
+  bytes bytesName = 2;
+  int32 level = 3;
+  repeated float itemStat = 4;
+  
+  int32 kills = 5;
+  int32 deaths = 6;
+  int64 gold = 7;
+  int64 exp = 8;
+
+  repeated PlayerInventory inventories = 9;
+  repeated PlayerInventory rootedInventories = 19;
+  
+  repeated PlayerItemMessage holdItems = 10;
+  
+  repeated PlayerItemMessage acquiredItems = 12;
+  map<int32, Types.Players.PlayerAchievementMessage> missions = 13;
+  repeated PlayerItemMessage learnableTraits = 14;
+  repeated PlayerItemMessage appliedTraits = 15;
+  repeated PlayerItemMessage inventorySkills = 18;
+  
+  int32 rerollLevelUpSelectTrait = 16;
+  repeated SelectTraitEventMessage selectTraitEvents = 17;
+}

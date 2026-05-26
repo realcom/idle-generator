@@ -1,0 +1,16 @@
+syntax = "proto3";
+package Commons.Types.Units.ArmorTypeStat;
+
+import "ArmorType.proto";
+
+enum ArmorTypeStatType {
+  DamagePercent = 0;
+
+  Count = 1;
+}
+
+message AddArmorTypeStat {
+  Types.Units.ArmorType armorType = 1;
+  ArmorTypeStatType type = 2;
+  repeated float value = 3;
+}

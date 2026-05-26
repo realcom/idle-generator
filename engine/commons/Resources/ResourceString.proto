@@ -1,0 +1,40 @@
+syntax = "proto3";
+package Commons.Resources;
+
+message ResourceString {
+  message Global {
+    message DataId {
+    }
+
+    DataId dataId = 1;
+  }
+  
+  enum Category {
+    Unspecified = 0;
+
+    Achievement = 1;
+    Buff = 2;
+    Item = 3;
+    Map = 4;
+    Skill = 5;
+    Trigger = 6;
+    Unit = 7;
+    
+    Editor = 10;
+    Server = 11;
+    Dialog = 12;
+    Client = 13;
+  }
+  
+  enum Language {
+    English = 0;
+    Korean = 1;
+  }
+  
+  Category category = 1;
+  int32 id = 2;
+  string key = 3;
+  
+  string english = 4;
+  string korean = 5;
+}

@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
+      <PackageReference Include="Dapper" Version="2.1.35" />
+      <PackageReference Include="Dapper.SimpleCRUD" Version="2.3.0" />
+      <PackageReference Include="DotNetty.Buffers" Version="0.7.6" />
+      <PackageReference Include="DotNetty.Codecs" Version="0.7.6" />
+      <PackageReference Include="DotNetty.Codecs.Http" Version="0.7.6" />
+      <PackageReference Include="DotNetty.Common" Version="0.7.6" />
+      <PackageReference Include="DotNetty.Handlers" Version="0.7.6" />
+      <PackageReference Include="DotNetty.Transport" Version="0.7.6" />
+      <PackageReference Include="DotNetty.Transport.Libuv" Version="0.7.6" />
+      <PackageReference Include="FirebaseAdmin" Version="3.4.0" />
+      <PackageReference Include="Grpc.AspNetCore" Version="2.61.0" />
+      <PackageReference Include="log4net" Version="3.3.1" />
+      <PackageReference Include="NCrontab" Version="3.4.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="Npgsql" Version="8.0.3" />
+      <PackageReference Include="Npgsql.Json.NET" Version="8.0.3" />
+      <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FlatBuffers\Google.FlatBuffers.csproj" />
+      <ProjectReference Include="..\Google.Protobuf\Google.Protobuf.csproj" />
+    </ItemGroup>
+
+    <Import Project="..\Commons\Commons.projitems" Label="Shared" />
+
+</Project>

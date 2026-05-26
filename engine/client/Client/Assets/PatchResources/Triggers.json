@@ -1,0 +1,1397 @@
+{
+ "triggers": [
+  {
+   "name": "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "SetBoardState"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 2001
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "BoardState"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "assignment": {
+      "variable": {
+       "boardKey": 601
+      },
+      "expression": {
+       "postfix": [
+        {
+         "operand": {
+          "constant": {
+           "value": 1
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "SendWaveStartedEvent"
+       }
+      },
+      "assignments": []
+     }
+    },
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "AddUnit"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 110201
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "UnitDataId"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 5
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Count"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 1
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "LocationId"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 4
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Team"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "MAP_ONSTART_MUSHROOMFIELDWAVE2",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "SendWaveStartedEvent"
+       }
+      },
+      "assignments": []
+     }
+    },
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "AddUnit"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 110201
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "UnitDataId"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 4
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Count"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 1
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "LocationId"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 4
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Team"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "MAP_ONSTART_MUSHROOMFIELDWAVE3",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "SendWaveStartedEvent"
+       }
+      },
+      "assignments": []
+     }
+    },
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "AddUnit"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 110501
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "UnitDataId"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 1
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Count"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 1
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "LocationId"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 4
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Team"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "AddUnit"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 110201
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "UnitDataId"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 2
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Count"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 1
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "LocationId"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 4
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Team"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "MAP_ONUPDATE_MUSHROOMFIELDUPDATE",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "GetUnitCountByTeam"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 4
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Team"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "condition": {
+      "expression": {
+       "postfix": [
+        {
+         "operand": {
+          "variable": {
+           "boardKey": 603
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 1.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operand": {
+          "variable": {
+           "predefinedVariable": {
+            "type": "Return"
+           }
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 0.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "GreaterThan"
+         }
+        },
+        {
+         "operator": {
+          "type": "And"
+         }
+        }
+       ]
+      },
+      "statements": [
+       {
+        "assignment": {
+         "variable": {
+          "boardKey": 603
+         },
+         "expression": {
+          "postfix": [
+           {
+            "operand": {
+             "constant": {
+              "value": 0
+             }
+            }
+           }
+          ]
+         }
+        }
+       }
+      ],
+      "elseStatements": []
+     }
+    },
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "GetUnitCountByTeam"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 4
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Team"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "condition": {
+      "expression": {
+       "postfix": [
+        {
+         "operand": {
+          "variable": {
+           "boardKey": 603
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 0.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operand": {
+          "variable": {
+           "boardKey": 601
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 1.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operator": {
+          "type": "And"
+         }
+        },
+        {
+         "operand": {
+          "variable": {
+           "predefinedVariable": {
+            "type": "Return"
+           }
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 0.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operator": {
+          "type": "And"
+         }
+        }
+       ]
+      },
+      "statements": [
+       {
+        "assignment": {
+         "variable": {
+          "boardKey": 603
+         },
+         "expression": {
+          "postfix": [
+           {
+            "operand": {
+             "constant": {
+              "value": 1
+             }
+            }
+           }
+          ]
+         }
+        }
+       },
+       {
+        "assignment": {
+         "variable": {
+          "boardKey": 601
+         },
+         "expression": {
+          "postfix": [
+           {
+            "operand": {
+             "constant": {
+              "value": 2
+             }
+            }
+           }
+          ]
+         }
+        }
+       },
+       {
+        "call": {
+         "method": {
+          "boardMethod": {
+           "type": "SendWaveQueuedEvent"
+          }
+         },
+         "assignments": []
+        }
+       },
+       {
+        "call": {
+         "method": {
+          "runTrigger": {
+           "name": "MAP_ONSTART_MUSHROOMFIELDWAVE2"
+          }
+         },
+         "assignments": []
+        }
+       }
+      ],
+      "elseStatements": []
+     }
+    },
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "GetUnitCountByTeam"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 4
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Team"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "condition": {
+      "expression": {
+       "postfix": [
+        {
+         "operand": {
+          "variable": {
+           "boardKey": 603
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 0.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operand": {
+          "variable": {
+           "boardKey": 601
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 2.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operator": {
+          "type": "And"
+         }
+        },
+        {
+         "operand": {
+          "variable": {
+           "predefinedVariable": {
+            "type": "Return"
+           }
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 0.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operator": {
+          "type": "And"
+         }
+        }
+       ]
+      },
+      "statements": [
+       {
+        "assignment": {
+         "variable": {
+          "boardKey": 603
+         },
+         "expression": {
+          "postfix": [
+           {
+            "operand": {
+             "constant": {
+              "value": 1
+             }
+            }
+           }
+          ]
+         }
+        }
+       },
+       {
+        "assignment": {
+         "variable": {
+          "boardKey": 601
+         },
+         "expression": {
+          "postfix": [
+           {
+            "operand": {
+             "constant": {
+              "value": 3
+             }
+            }
+           }
+          ]
+         }
+        }
+       },
+       {
+        "call": {
+         "method": {
+          "boardMethod": {
+           "type": "SendWaveQueuedEvent"
+          }
+         },
+         "assignments": []
+        }
+       },
+       {
+        "call": {
+         "method": {
+          "runTrigger": {
+           "name": "MAP_ONSTART_MUSHROOMFIELDWAVE3"
+          }
+         },
+         "assignments": []
+        }
+       }
+      ],
+      "elseStatements": []
+     }
+    },
+    {
+     "call": {
+      "method": {
+       "boardMethod": {
+        "type": "GetUnitCountByTeam"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 4
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "Team"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "condition": {
+      "expression": {
+       "postfix": [
+        {
+         "operand": {
+          "variable": {
+           "boardKey": 603
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 0.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operand": {
+          "variable": {
+           "boardKey": 601
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 3.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operator": {
+          "type": "And"
+         }
+        },
+        {
+         "operand": {
+          "variable": {
+           "predefinedVariable": {
+            "type": "Return"
+           }
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 0.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        },
+        {
+         "operator": {
+          "type": "And"
+         }
+        }
+       ]
+      },
+      "statements": [
+       {
+        "call": {
+         "method": {
+          "boardMethod": {
+           "type": "EndGame"
+          }
+         },
+         "assignments": [
+          {
+           "expression": {
+            "postfix": [
+             {
+              "operand": {
+               "constant": {
+                "value": 1
+               }
+              }
+             }
+            ]
+           },
+           "variable": {
+            "parameter": {
+             "type": "Team"
+            }
+           }
+          }
+         ]
+        }
+       }
+      ],
+      "elseStatements": []
+     }
+    }
+   ],
+   "type": "OnUpdate",
+   "period": 90
+  },
+  {
+   "name": "UNIT_ONSTART_MUSHROOMHEROATTACK",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "unitMethod": {
+        "type": "SetMoveDestination"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": -1.8
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "PositionX"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 0.0
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "PositionY"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "UNIT_ONUPDATE_MUSHROOMHEROATTACK",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "unitMethod": {
+        "type": "UseSkillToTarget"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 300101
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "SkillDataId"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "type": "OnUpdate",
+   "period": 30
+  },
+  {
+   "name": "UNIT_ONSTART_SPOREKINGENRAGE",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "unitMethod": {
+        "type": "SetMoveDestination"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 2.3
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "PositionX"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 0.0
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "PositionY"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "UNIT_ONUPDATE_SPOREKINGBATTLE",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "unitMethod": {
+        "type": "UseSkillToTarget"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 300101
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "SkillDataId"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "condition": {
+      "expression": {
+       "postfix": [
+        {
+         "operand": {
+          "variable": {
+           "predefinedVariable": {
+            "type": "Tick"
+           }
+          }
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 360.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Modulo"
+         }
+        },
+        {
+         "operand": {
+          "constant": {
+           "value": 0.0
+          }
+         }
+        },
+        {
+         "operator": {
+          "type": "Equal"
+         }
+        }
+       ]
+      },
+      "statements": [
+       {
+        "call": {
+         "method": {
+          "boardMethod": {
+           "type": "AddUnit"
+          }
+         },
+         "assignments": [
+          {
+           "expression": {
+            "postfix": [
+             {
+              "operand": {
+               "constant": {
+                "value": 110201
+               }
+              }
+             }
+            ]
+           },
+           "variable": {
+            "parameter": {
+             "type": "UnitDataId"
+            }
+           }
+          },
+          {
+           "expression": {
+            "postfix": [
+             {
+              "operand": {
+               "constant": {
+                "value": 2
+               }
+              }
+             }
+            ]
+           },
+           "variable": {
+            "parameter": {
+             "type": "Count"
+            }
+           }
+          },
+          {
+           "expression": {
+            "postfix": [
+             {
+              "operand": {
+               "constant": {
+                "value": 1
+               }
+              }
+             }
+            ]
+           },
+           "variable": {
+            "parameter": {
+             "type": "LocationId"
+            }
+           }
+          },
+          {
+           "expression": {
+            "postfix": [
+             {
+              "operand": {
+               "constant": {
+                "value": 4
+               }
+              }
+             }
+            ]
+           },
+           "variable": {
+            "parameter": {
+             "type": "Team"
+            }
+           }
+          }
+         ]
+        }
+       }
+      ],
+      "elseStatements": []
+     }
+    }
+   ],
+   "type": "OnUpdate",
+   "period": 30
+  },
+  {
+   "name": "UNIT_ONSTART_SPORELINGWANDER",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "unitMethod": {
+        "type": "SetMoveDestination"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 1.8
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "PositionX"
+         }
+        }
+       },
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 0.0
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "PositionY"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "UNIT_ONUPDATE_SPORELINGATTACK",
+   "statements": [
+    {
+     "call": {
+      "method": {
+       "unitMethod": {
+        "type": "UseSkillToTarget"
+       }
+      },
+      "assignments": [
+       {
+        "expression": {
+         "postfix": [
+          {
+           "operand": {
+            "constant": {
+             "value": 300101
+            }
+           }
+          }
+         ]
+        },
+        "variable": {
+         "parameter": {
+          "type": "SkillDataId"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "type": "OnUpdate",
+   "period": 60
+  }
+ ]
+}

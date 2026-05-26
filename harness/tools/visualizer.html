@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idle Game Resource Visualizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .search-section {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .resource-type {
+            margin-bottom: 15px;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .resource-type:hover {
+            background: #e8e8e8;
+        }
+
+        .resource-type.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .resource-count {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-left: auto;
+            display: inline-block;
+        }
+
+        .resource-type > span {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resource-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .resource-card {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid #007bff;
+        }
+
+        .resource-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .resource-card.selected {
+            background: #e7f3ff;
+            border-left-color: #0056b3;
+        }
+
+        .resource-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .resource-id {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .resource-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .detail-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .detail-panel.visible {
+            display: block;
+        }
+
+        .detail-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-title {
+            font-weight: 600;
+            color: #007bff;
+            margin-bottom: 10px;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .detail-content {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .references {
+            list-style: none;
+        }
+
+        .references li {
+            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+
+        .references li:last-child {
+            border-bottom: none;
+        }
+
+        .reference-link {
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .reference-link:hover {
+            color: #0056b3;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .stats {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .stats-row:last-child {
+            border-bottom: none;
+        }
+
+        .stats-value {
+            font-weight: 600;
+            color: #007bff;
+        }
+
+        .growth-card {
+            background: #fff8e6;
+            border: 1px solid #f0d97a;
+            border-radius: 6px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+        }
+
+        .growth-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }
+
+        .growth-id {
+            font-weight: 600;
+            color: #8a6d00;
+            font-size: 14px;
+        }
+
+        .growth-meta {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .growth-bind {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .growth-label {
+            display: inline-block;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #999;
+            margin-right: 4px;
+        }
+
+        .growth-target {
+            background: white;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-left: 3px solid #f0c040;
+        }
+
+        .growth-field {
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .growth-field code {
+            background: #f3f3f3;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+            font-size: 12px;
+        }
+
+        .formula-code {
+            background: #2d2d2d !important;
+            color: #f8f8f2 !important;
+            padding: 4px 8px !important;
+            font-weight: 500;
+        }
+
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+            font-size: 11px;
+        }
+
+        .param-table th, .param-table td {
+            padding: 4px 8px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .param-table th {
+            background: #fafafa;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            font-size: 10px;
+        }
+
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 12px;
+        }
+
+        .asset-card {
+            display: flex;
+            background: #f0f8ff;
+            border: 1px solid #b3d4f0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .asset-preview {
+            width: 96px;
+            min-width: 96px;
+            height: 96px;
+            background: #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .asset-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            image-rendering: pixelated;
+        }
+
+        .asset-no-preview {
+            color: #999;
+            font-size: 11px;
+        }
+
+        .asset-info {
+            flex: 1;
+            padding: 10px 12px;
+            min-width: 0;
+        }
+
+        .asset-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+        .asset-stem {
+            font-weight: 600;
+            font-size: 13px;
+            color: #1a4d80;
+        }
+
+        .asset-kind {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .asset-kind-spine {
+            background: #ff6b35;
+            color: white;
+        }
+
+        .asset-kind-image {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .asset-match {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        .asset-match-exact {
+            background: #28a745;
+            color: white;
+        }
+
+        .asset-match-fuzzy {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .asset-refs {
+            margin-bottom: 8px;
+            padding: 6px 8px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 3px;
+        }
+
+        .asset-ref-row {
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 1px 0;
+            word-break: break-all;
+        }
+
+        .asset-ref-path {
+            color: #1a4d80;
+            background: transparent;
+            padding: 0;
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+            font-weight: 600;
+        }
+
+        .asset-ref-arrow {
+            color: #999;
+        }
+
+        .asset-ref-val {
+            color: #555;
+            background: transparent;
+            padding: 0;
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+        }
+
+        .asset-files {
+            font-size: 11px;
+        }
+
+        .asset-file {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 2px 0;
+        }
+
+        .asset-role {
+            display: inline-block;
+            min-width: 40px;
+            font-size: 9px;
+            text-transform: uppercase;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .asset-filename {
+            color: #0066cc;
+            text-decoration: none;
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+            font-size: 10px;
+        }
+
+        .asset-filename:hover {
+            text-decoration: underline;
+        }
+
+        .asset-size {
+            color: #999;
+            font-size: 10px;
+            margin-left: auto;
+        }
+
+        .growth-source {
+            font-size: 10px;
+            color: #aaa;
+            text-align: right;
+            margin-top: 6px;
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2 style="margin-bottom: 20px; font-size: 16px;">Resource Types</h2>
+            <div id="resourceTypes" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <div class="main-content">
+            <div class="search-section">
+                <input type="text" id="searchInput" class="search-input" placeholder="검색 (이름, ID, 카테고리)...">
+            </div>
+
+            <div class="content-area">
+                <div id="contentContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ResourceVisualizer {
+            constructor() {
+                this.resources = {};
+                this.growth = [];
+                this.currentType = null;
+                this.currentSelected = null;
+                this.filteredResources = {};
+                this.init();
+            }
+
+            async init() {
+                await Promise.all([this.loadResources(), this.loadGrowth(), this.loadAssets()]);
+                this.render();
+                this.setupEventListeners();
+            }
+
+            async loadResources() {
+                const types = ['Items', 'Units', 'Skills', 'Maps', 'Buffs', 'Triggers', 'Achievements', 'Audios', 'Strings'];
+
+                for (const type of types) {
+                    try {
+                        const response = await fetch(`../build/idlez/${type}.json`);
+                        const data = await response.json();
+                        const key = Object.keys(data)[0]; // items, units, skills, etc.
+                        this.resources[type] = {
+                            key: key,
+                            data: data[key] || []
+                        };
+                    } catch (e) {
+                        console.error(`Failed to load ${type}:`, e);
+                        this.resources[type] = { key: null, data: [] };
+                    }
+                }
+
+                this.filteredResources = JSON.parse(JSON.stringify(this.resources));
+            }
+
+            async loadGrowth() {
+                try {
+                    const r = await fetch('/api/growth');
+                    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                    this.growth = await r.json();
+                } catch (e) {
+                    console.warn('Growth API unavailable (static mode?):', e);
+                    this.growth = [];
+                }
+            }
+
+            async loadAssets() {
+                try {
+                    const r = await fetch('/api/assets');
+                    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                    this.assets = await r.json();
+                } catch (e) {
+                    console.warn('Assets API unavailable:', e);
+                    this.assets = [];
+                }
+                this.assetByStem = {};
+                this.stemList = [];
+                for (const a of (this.assets || [])) {
+                    this.assetByStem[a.stem.toLowerCase()] = a;
+                    this.stemList.push(a.stem);
+                }
+            }
+
+            // Fields that hold asset/art references (heuristic — paths or basenames)
+            // Other fields like 'triggers' carry trigger IDs in UPPER_SNAKE; we skip those.
+            isAssetField(path) {
+                const p = path.toLowerCase();
+                return /(^|\.)(sprite|prefab|icon|image|atlas|skel|portrait|thumbnail)/.test(p)
+                    || /(^|\.)spritegroups?(\.|$)/.test(p)
+                    || /(^|\.)animations?(\.|$)/.test(p);
+            }
+
+            // Walk the resource and collect string values that look like asset references
+            collectAssetRefs(resource) {
+                const refs = [];
+                const visit = (val, path) => {
+                    if (typeof val === 'string') {
+                        if (!this.isAssetField(path)) return;
+                        const base = val.split('/').pop();
+                        const stemCandidate = base.replace(/\.(png|jpg|jpeg|gif|webp|prefab|atlas\.txt|skel\.bytes)$/i, '');
+                        refs.push({ path, raw: val, stemCandidate });
+                    } else if (Array.isArray(val)) {
+                        val.forEach((v, i) => visit(v, `${path}[${i}]`));
+                    } else if (val && typeof val === 'object') {
+                        for (const [k, v] of Object.entries(val)) {
+                            visit(v, path ? `${path}.${k}` : k);
+                        }
+                    }
+                };
+                visit(resource, '');
+                return refs;
+            }
+
+            // Find best asset for a single ref. Prefer: exact > longest-prefix > contains.
+            bestAssetFor(stemCandidate) {
+                const lower = stemCandidate.toLowerCase();
+
+                if (this.assetByStem[lower]) {
+                    return { asset: this.assetByStem[lower], matchType: 'exact' };
+                }
+
+                // Pick the *longest* stem that is a prefix of (or equals) the candidate.
+                let bestPrefix = null;
+                for (const stem of this.stemList) {
+                    const sl = stem.toLowerCase();
+                    if (lower === sl || lower.startsWith(sl + '_') || lower.startsWith(sl + '-')) {
+                        if (!bestPrefix || sl.length > bestPrefix.length) bestPrefix = sl;
+                    }
+                }
+                if (bestPrefix) return { asset: this.assetByStem[bestPrefix], matchType: 'prefix' };
+
+                // Last resort: candidate is a prefix of an asset stem (e.g. "slime_green" → "slime_green_v2")
+                let bestContains = null;
+                for (const stem of this.stemList) {
+                    const sl = stem.toLowerCase();
+                    if (sl.startsWith(lower + '_') || sl.startsWith(lower + '-')) {
+                        if (!bestContains || sl.length > bestContains.length) bestContains = sl;
+                    }
+                }
+                if (bestContains) return { asset: this.assetByStem[bestContains], matchType: 'contains' };
+
+                return null;
+            }
+
+            // Returns grouped matches: one entry per asset, listing all refs that point to it.
+            findAssetMatches(resource) {
+                const refs = this.collectAssetRefs(resource);
+                const byStem = {};
+                for (const ref of refs) {
+                    const found = this.bestAssetFor(ref.stemCandidate);
+                    if (!found) continue;
+                    const key = found.asset.stem;
+                    if (!byStem[key]) byStem[key] = { asset: found.asset, matchType: found.matchType, refs: [] };
+                    byStem[key].refs.push(ref);
+                    if (found.matchType === 'exact') byStem[key].matchType = 'exact';
+                }
+                return Object.values(byStem);
+            }
+
+            // Find growth entries that bind to this resource
+            findGrowthFor(resource, type) {
+                if (!this.growth || this.growth.length === 0) return [];
+                const typeLower = type.toLowerCase().replace(/s$/, ''); // "Items" -> "item"
+                const matches = [];
+                for (const g of this.growth) {
+                    const bind = g.bind || {};
+                    const bindType = (bind.type || '').toLowerCase();
+                    if (bindType && bindType !== typeLower) continue;
+                    const m = bind.match || {};
+                    let ok = true;
+                    if (m.id !== undefined && m.id !== null) {
+                        if (String(m.id) !== String(resource.id)) ok = false;
+                    }
+                    if (m.tag) {
+                        const tags = resource.tags || [];
+                        if (!tags.includes(m.tag)) ok = false;
+                    }
+                    if (m.name) {
+                        if ((resource.name || '') !== m.name) ok = false;
+                    }
+                    if (ok) matches.push(g);
+                }
+                return matches;
+            }
+
+            getTotalCount() {
+                return Object.values(this.resources)
+                    .reduce((sum, type) => sum + (type.data.length || 0), 0);
+            }
+
+            render() {
+                this.renderSidebar();
+                this.renderContent();
+            }
+
+            renderSidebar() {
+                const sidebar = document.getElementById('resourceTypes');
+                sidebar.innerHTML = '';
+
+                const statsDiv = document.createElement('div');
+                statsDiv.className = 'stats';
+                statsDiv.innerHTML = `
+                    <div class="stats-row">
+                        <span>Total Resources</span>
+                        <span class="stats-value">${this.getTotalCount()}</span>
+                    </div>
+                    ${Object.entries(this.resources).map(([type, info]) =>
+                        `<div class="stats-row">
+                            <span>${type}</span>
+                            <span class="stats-value">${info.data.length}</span>
+                        </div>`
+                    ).join('')}
+                `;
+                sidebar.appendChild(statsDiv);
+
+                Object.keys(this.resources).forEach(type => {
+                    const count = this.resources[type].data.length;
+                    const button = document.createElement('div');
+                    button.className = 'resource-type';
+                    if (this.currentType === type) button.classList.add('active');
+                    button.innerHTML = `<span><span>${type}</span><span class="resource-count">${count}</span></span>`;
+                    button.addEventListener('click', () => this.selectType(type));
+                    sidebar.appendChild(button);
+                });
+            }
+
+            selectType(type) {
+                this.currentType = type;
+                this.currentSelected = null;
+                this.render();
+            }
+
+            renderContent() {
+                const container = document.getElementById('contentContainer');
+
+                if (!this.currentType) {
+                    container.innerHTML = '<div class="empty-state">리소스 타입을 선택하세요</div>';
+                    return;
+                }
+
+                const typeData = this.filteredResources[this.currentType];
+                if (!typeData || typeData.data.length === 0) {
+                    container.innerHTML = '<div class="empty-state">리소스가 없습니다</div>';
+                    return;
+                }
+
+                const grid = document.createElement('div');
+                grid.className = 'resource-grid';
+
+                typeData.data.forEach(resource => {
+                    const card = this.createResourceCard(resource, this.currentType);
+                    grid.appendChild(card);
+                });
+
+                container.innerHTML = '';
+                container.appendChild(grid);
+            }
+
+            createResourceCard(resource, type) {
+                const card = document.createElement('div');
+                card.className = 'resource-card';
+                if (this.currentSelected === resource.id) card.classList.add('selected');
+
+                const name = resource.name || resource.id || '(Unnamed)';
+                const category = resource.category || resource.type || '';
+
+                let meta = '';
+                if (category) meta += `<span class="badge">${category}</span>`;
+                if (resource.grade) meta += `<span class="badge">Grade ${resource.grade}</span>`;
+                if (resource.tags) meta += resource.tags.map(t => `<span class="badge">${t}</span>`).join('');
+
+                card.innerHTML = `
+                    <div class="resource-name">${this.escapeHtml(name)}</div>
+                    <div class="resource-id">ID: ${resource.id}</div>
+                    <div class="resource-meta">${meta}</div>
+                `;
+
+                card.addEventListener('click', () => this.showDetail(resource, type));
+                return card;
+            }
+
+            showDetail(resource, type) {
+                this.currentSelected = resource.id;
+
+                const container = document.getElementById('contentContainer');
+
+                const detail = document.createElement('div');
+                detail.className = 'detail-panel visible';
+
+                const name = resource.name || resource.id || '(Unnamed)';
+
+                let html = `<div class="detail-header">${this.escapeHtml(name)}</div>`;
+
+                // 1) Matching assets (spine / image) — show first
+                const assetMatches = this.findAssetMatches(resource);
+                if (assetMatches.length > 0) {
+                    html += `
+                        <div class="detail-section">
+                            <div class="detail-title">🎨 매칭된 에셋</div>
+                            <div class="asset-grid">
+                                ${assetMatches.map(m => this.renderAssetCard(m)).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 2) Matching growth formulas — show second
+                const growthMatches = this.findGrowthFor(resource, type);
+                if (growthMatches.length > 0) {
+                    html += `
+                        <div class="detail-section">
+                            <div class="detail-title">📈 관련 성장 공식</div>
+                            ${growthMatches.map(g => this.renderGrowthCard(g)).join('')}
+                        </div>
+                    `;
+                }
+
+                // 3) Basic info JSON
+                html += `
+                    <div class="detail-section">
+                        <div class="detail-title">기본 정보</div>
+                        <div class="detail-content">
+                            <pre>${JSON.stringify({
+                                id: resource.id,
+                                type: type,
+                                ...Object.fromEntries(
+                                    Object.entries(resource)
+                                        .filter(([k]) => k !== 'id' && k !== 'name')
+                                        .slice(0, 10)
+                                )
+                            }, null, 2)}</pre>
+                        </div>
+                    </div>
+                `;
+
+                // 4) Full properties JSON (when many fields)
+                const complexProps = Object.keys(resource)
+                    .filter(k => k !== 'id' && k !== 'name' && k !== 'type' && k !== 'category');
+                if (complexProps.length > 10) {
+                    html += `
+                        <div class="detail-section">
+                            <div class="detail-title">상세 속성</div>
+                            <div class="detail-content">
+                                <pre>${JSON.stringify(resource, null, 2)}</pre>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 5) References to other resources
+                const references = this.findReferences(resource.id);
+                if (references.length > 0) {
+                    html += `
+                        <div class="detail-section">
+                            <div class="detail-title">연결된 리소스</div>
+                            <ul class="references">
+                                ${references.map(ref =>
+                                    `<li><span class="reference-link" onclick="visualizer.selectAndShowResource(${ref.id}, '${ref.type}')">${ref.type}: ${ref.name}</span></li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                detail.innerHTML = html;
+                container.innerHTML = '';
+                container.appendChild(detail);
+            }
+
+            findReferences(resourceId) {
+                const references = [];
+                const visited = new Set();
+
+                // Search in all resource types
+                Object.entries(this.resources).forEach(([type, typeData]) => {
+                    typeData.data.forEach(resource => {
+                        const jsonStr = JSON.stringify(resource);
+                        if (jsonStr.includes(String(resourceId))) {
+                            const key = `${type}-${resource.id}`;
+                            if (!visited.has(key)) {
+                                visited.add(key);
+                                references.push({
+                                    id: resource.id,
+                                    name: resource.name || `ID: ${resource.id}`,
+                                    type: type
+                                });
+                            }
+                        }
+                    });
+                });
+
+                return references;
+            }
+
+            renderAssetCard(match) {
+                const { asset, matchType, refs } = match;
+                const isSpine = asset.kind === 'spine';
+                const imgUrl = asset.files.image ? asset.files.image.url : null;
+
+                const filesList = Object.entries(asset.files).map(([role, f]) =>
+                    `<div class="asset-file">
+                        <span class="asset-role">${role}</span>
+                        <a href="${f.url}" target="_blank" class="asset-filename">${this.escapeHtml(f.name)}</a>
+                        <span class="asset-size">${this.formatBytes(f.sizeBytes)}</span>
+                    </div>`
+                ).join('');
+
+                const refsList = refs.map(r =>
+                    `<div class="asset-ref-row">
+                        <code class="asset-ref-path">${this.escapeHtml(r.path)}</code>
+                        <span class="asset-ref-arrow">→</span>
+                        <code class="asset-ref-val">${this.escapeHtml(r.raw)}</code>
+                    </div>`
+                ).join('');
+
+                const kindBadge = isSpine
+                    ? `<span class="asset-kind asset-kind-spine">SPINE</span>`
+                    : `<span class="asset-kind asset-kind-image">IMAGE</span>`;
+                const matchBadge = matchType === 'exact'
+                    ? `<span class="asset-match asset-match-exact">exact</span>`
+                    : `<span class="asset-match asset-match-fuzzy">${this.escapeHtml(matchType)}</span>`;
+
+                return `
+                    <div class="asset-card">
+                        <div class="asset-preview">
+                            ${imgUrl ? `<img src="${imgUrl}" alt="${this.escapeHtml(asset.stem)}" loading="lazy">` : '<div class="asset-no-preview">no preview</div>'}
+                        </div>
+                        <div class="asset-info">
+                            <div class="asset-header">
+                                <span class="asset-stem">${this.escapeHtml(asset.stem)}</span>
+                                ${kindBadge}${matchBadge}
+                            </div>
+                            <div class="asset-refs">${refsList}</div>
+                            <div class="asset-files">${filesList}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            formatBytes(n) {
+                if (n < 1024) return n + ' B';
+                if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+                return (n / 1024 / 1024).toFixed(2) + ' MB';
+            }
+
+            renderGrowthCard(g) {
+                const bind = g.bind || {};
+                const matchStr = Object.entries(bind.match || {})
+                    .map(([k, v]) => `${k}=${v}`).join(', ');
+
+                const targetsHtml = (g.targets || []).map(t => {
+                    const expr = t.expression ? `<code class="formula-code">${this.escapeHtml(t.expression)}</code>` : '';
+                    const paramsRows = Object.entries(t.params || {})
+                        .map(([k, v]) => `<tr><td>${this.escapeHtml(k)}</td><td>${this.escapeHtml(String(v))}</td></tr>`)
+                        .join('');
+                    const paramsTable = paramsRows
+                        ? `<table class="param-table"><thead><tr><th>param</th><th>value</th></tr></thead><tbody>${paramsRows}</tbody></table>`
+                        : '';
+                    return `
+                        <div class="growth-target">
+                            <div class="growth-field"><span class="growth-label">field</span> <code>${this.escapeHtml(t.field || '')}</code></div>
+                            <div class="growth-field"><span class="growth-label">formula</span> <code>${this.escapeHtml(t.formula || '')}</code></div>
+                            ${expr ? `<div class="growth-field"><span class="growth-label">expression</span> ${expr}</div>` : ''}
+                            ${paramsTable}
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="growth-card">
+                        <div class="growth-header">
+                            <span class="growth-id">${this.escapeHtml(g.id || '(no id)')}</span>
+                            <span class="growth-meta">levels: ${this.escapeHtml(String(g.levels || '?'))} · output: ${this.escapeHtml(String(g.output || '?'))}</span>
+                        </div>
+                        <div class="growth-bind">
+                            <span class="growth-label">bind</span> ${this.escapeHtml(bind.type || '?')}${matchStr ? ` { ${this.escapeHtml(matchStr)} }` : ''}
+                        </div>
+                        ${targetsHtml}
+                        <div class="growth-source">${this.escapeHtml(g.source || '')}</div>
+                    </div>
+                `;
+            }
+
+            selectAndShowResource(id, type) {
+                this.currentType = type;
+                this.currentSelected = id;
+                const typeData = this.resources[type];
+                const resource = typeData.data.find(r => r.id === id);
+                if (resource) {
+                    this.showDetail(resource, type);
+                    this.renderSidebar();
+                }
+            }
+
+            setupEventListeners() {
+                const searchInput = document.getElementById('searchInput');
+                searchInput.addEventListener('input', (e) => this.handleSearch(e.target.value));
+            }
+
+            handleSearch(query) {
+                query = query.toLowerCase();
+
+                this.filteredResources = {};
+                Object.entries(this.resources).forEach(([type, typeData]) => {
+                    this.filteredResources[type] = {
+                        key: typeData.key,
+                        data: typeData.data.filter(resource => {
+                            const name = (resource.name || '').toLowerCase();
+                            const id = String(resource.id);
+                            const category = (resource.category || resource.type || '').toLowerCase();
+                            return name.includes(query) || id.includes(query) || category.includes(query);
+                        })
+                    };
+                });
+
+                if (this.currentType) {
+                    this.renderContent();
+                }
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        const visualizer = new ResourceVisualizer();
+    </script>
+</body>
+</html>

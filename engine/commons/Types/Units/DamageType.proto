@@ -1,0 +1,9 @@
+syntax = "proto3";
+package Commons.Types.Units;
+
+enum DamageType {
+  NormalDamage = 0;
+  Pierce = 1;
+  Explosive = 2;
+  Spell = 3;
+}

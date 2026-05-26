@@ -1,0 +1,25 @@
+# 샘플 드롭 테이블 — engine-contract/schema/reward.md 준수 (AddItemGroup)
+# 컴파일되면 AddItemGroup 으로, 유닛의 dropAddItemGroups 등에서 참조($ref anchor).
+# 모든 itemDataId 는 실재 Item.id 여야 함 (검증기 필수 체크).
+# ※ 직렬화(json-serialization.md): count/minCount/maxCount 는 int64 → 컴파일 시 JSON 문자열("8").
+#    소스 YAML 은 사람이 읽기 쉽게 숫자로 쓰고, 컴파일러가 문자열로 변환한다.
+
+green_slime:                     # ← slime_green.unit.yaml 가 #green_slime 으로 참조
+  # 항상 주는 골드 (shouldAddAll=true 그룹)
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 8, maxCount: 15, isCore: true }   # 골드(통화 id=5)
+      - { itemDataId: 6, count: 5 }                                  # 경험치(id=6)
+
+  # 확률 드롭 (가중 추첨 그룹) — pityGroup 으로 천장 공유
+  - shouldAddAll: false
+    probPercent: 35
+    addItems:
+      - { itemDataId: 200101, count: 1, weight: 70, group: 1 }                 # 일반 재료
+      - { itemDataId: 200102, count: 1, weight: 25, group: 1 }                 # 고급 재료
+      - { itemDataId: 200103, count: 1, weight: 5,  group: 1, pityGroup: 10 }  # 희귀(천장 그룹10)
+
+# 검증기가 산출하는 것(예):
+#  - 기대 골드/처치 = (8+15)/2 = 11.5
+#  - 희귀(200103) 기대 획득률 = 0.35 * 0.05 = 1.75%/처치, pityGroup=10 천장 카운터로 보장

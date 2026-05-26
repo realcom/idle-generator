@@ -1,0 +1,123 @@
+syntax = "proto3";
+package Commons.Types.Units;
+
+enum UnitStatType {
+  Hp = 0;
+  HpPercent = 1;
+  GameplayHpPercent = 2;
+  HpRegen = 3;
+
+  Mp = 4;
+  MpPercent = 5;
+  MpRegen = 6;
+  ShieldPercent = 7;
+
+  Sp = 8;
+  SpRegen = 9;
+
+  MoveSpeed = 10;
+  MoveSpeedPercent = 11;
+
+  Weight = 12;
+
+  Attack = 13;
+  AttackPercent = 14;
+  GameplayAttackPercent = 15;
+  Defense = 16;
+  DefensePercent = 17;
+  GamePlayDefensePercent = 63;
+  MagicResist = 18;
+  MagicResistPercent = 19;
+
+  CriticalPercent = 20;
+  GameplayCriticalPercent = 21;
+  CriticalDamagePercent = 22;
+  GameplayCriticalDamagePercent = 23;
+
+  ExpPercent = 24;
+  ItemDropPercent = 25;
+
+  ImmunityPercent = 26; // deprecated. Use BuffApplyResistancePercent instead
+
+  CooldownPercent = 27;
+  GameplayCooldownPercent = 28;
+  AttackSpeed = 29;
+  AttackSpeedPercent = 30;
+
+  GuardPercent = 31;
+
+  SellPricePercent = 32;
+  
+  KnockbackPercent = 33;
+  GameplayKnockbackPercent = 34;
+  KnockbackEfficiencyPercent = 35;
+  GameplayKnockbackEfficiencyPercent = 36;
+  
+  //추가 공격 확률
+  AdditionalAttackPercent = 37;
+  GameplayAdditionalAttackPercent = 38;
+
+  //버프 적용 저항 확률
+  BuffApplyResistancePercent = 39;
+  GameplayBuffApplyResistancePercent = 40;
+  
+  //버프 적용 증폭 확률
+  BuffApplyAmplifyPercent = 41;
+  GameplayBuffApplyAmplifyPercent = 42;
+  
+  //버프 적용 저항 확률 감소치
+  BuffApplyResistanceReducePercent = 43;
+  GameplayBuffApplyResistanceReducePercent = 44;
+  
+  Luck = 45;
+  GameplayLuck = 46;
+  
+  ScalePercent = 47;
+  GameplayScalePercent = 48;
+  SkillScalePercent = 49;
+  GameplaySkillScalePercent = 50;
+  
+  BuffDurationEfficiencyPercent = 51;
+  GameplayBuffDurationEfficiencyPercent = 52;
+  SelfBuffDurationEfficiencyPercent = 53;
+  GameplaySelfBuffDurationEfficiencyPercent = 54;
+  TeamBuffDurationEfficiencyPercent = 55;
+  GameplayTeamBuffDurationEfficiencyPercent = 56;
+  EnemyBuffDurationEfficiencyPercent = 57;
+  GameplayEnemyBuffDurationEfficiencyPercent = 58;
+  
+  //실드 반영 증폭치
+  ShieldEfficiencyPercent = 59;
+  GamePlayShieldEfficiencyPercent = 60;  
+  
+  //받피증감
+  DamageTakenEfficiencyPercent = 64;
+  GamePlayDamageTakenEfficiencyPercent = 65;
+  
+  //몬스터 피해 증가
+  MonsterDamageEfficiencyPercent = 66;
+  GameplayMonsterDamageEfficiencyPercent = 67;
+
+  //보스 피해 증가
+  BossDamageEfficiencyPercent = 68;
+  GameplayBossDamageEfficiencyPercent = 69;
+
+  // 회복 효율
+  HealEfficiencyPercent = 70;
+  GameplayHealEfficiencyPercent = 71;
+  
+  //몬스터에게 받는 데미지 효율
+  MonsterDamageTakenEfficiencyPercent = 72;
+  GameplayMonsterDamageTakenEfficiencyPercent = 73;
+
+  //보스에게 받는 데미지 효율
+  BossDamageTakenEfficiencyPercent = 74;
+  GameplayBossDamageTakenEfficiencyPercent = 75;
+
+  Count = 76;
+}
+
+message AddUnitStat {
+  UnitStatType type = 1;
+  repeated float value = 2;
+}

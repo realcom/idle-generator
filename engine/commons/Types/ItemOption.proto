@@ -1,0 +1,23 @@
+syntax = "proto3";
+package Commons.Types;
+
+import "UnitStatType.proto";
+
+message ItemOption {
+  int32 id = 1;
+  int32 grade = 2;
+  int32 group = 3;
+  
+  float weight = 50;
+
+  int32 minLevel = 98;
+  int32 maxLevel = 99;
+
+  repeated Types.Units.AddUnitStat addStats = 100;
+  repeated Types.Units.AddUnitStat equipAddStats = 101;
+  
+}
+
+message ItemOptionGroup {
+  repeated ItemOption options = 1;
+}

@@ -1,0 +1,675 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6090546660402695518
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 992a8ebcea4446c40b4bd7fa020e10de, type: 3}
+  m_Name: EffectClip
+  m_EditorClassIdentifier: 
+  template:
+    fxSettings: {fileID: 11400000, guid: bf790d274bdc52343b1c5454b31f00f7, type: 2}
+    isIndependent: 0
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 11400000, guid: bf790d274bdc52343b1c5454b31f00f7, type: 2}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: template
+      Entry: 7
+      Data: 0|EffectBehaviour, Assembly-CSharp
+    - Name: wasFirstFrameInvoke
+      Entry: 5
+      Data: false
+    - Name: wasBehaviourEnterInvoke
+      Entry: 5
+      Data: false
+    - Name: fxSettings
+      Entry: 10
+      Data: 0
+    - Name: isIndependent
+      Entry: 5
+      Data: false
+    - Name: _effectInstance
+      Entry: 6
+      Data: 
+    - Name: _particleSystems
+      Entry: 7
+      Data: 1|UnityEngine.ParticleSystem[], UnityEngine.ParticleSystemModule
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: _randomSeedParticleSystems
+      Entry: 9
+      Data: 1
+    - Name: _rootParticleSystem
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: <postRefreshCallback>k__BackingField
+      Entry: 6
+      Data: 
+--- !u!114 &-2470242482513766923
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec994db5ae744c24966a8a58f03644c3, type: 3}
+  m_Name: AttackClip
+  m_EditorClassIdentifier: 
+  template:
+    hitAlly: 0
+    ignoreSender: 0
+    maxHitPerTick: 1000
+    hitInterval: 15
+    knockbackDuration: 0
+    knockbackDistance: 0
+    onKnockbackFxSettings: {fileID: 11400000, guid: c8bc1de0ee162e14e8380accdf9728d8,
+      type: 2}
+    disableMoveDuration: 0
+    disableActionDuration: 0
+    useOnHitSkill: 0
+    onHitSkill:
+      skillID: 0
+      atTarget: 0
+      position: {x: 0, y: 0}
+      angle: 0
+    onHitAddBuffs:
+    - buffDataId: 50300
+      duration: 0
+    damages: 0100000000000000
+    damage:
+      <name>k__BackingField: Skill/TIMELINE_DAMAGE_001
+      <key>k__BackingField: 901
+    useOnDamageSkill: 0
+    onDamageSkill:
+      skillID: 0
+      atTarget: 0
+      position: {x: 0, y: 0}
+      angle: 0
+    onDamageFxSettings: {fileID: 11400000, guid: 60303b7dc6591bb4aaf347a676797847,
+      type: 2}
+    heals: 
+    heal:
+      <name>k__BackingField: 
+      <key>k__BackingField: 0
+    useOnHealSkill: 0
+    onHealSkill:
+      skillID: 0
+      atTarget: 0
+      position: {x: 0, y: 0}
+      angle: 0
+    onHealFxSettings: {fileID: 11400000, guid: c1311d7b123e98a4898163df71bf75eb, type: 2}
+    senderHeals: 
+    senderHeal:
+      <name>k__BackingField: 
+      <key>k__BackingField: 0
+    useOnSenderHealSkill: 0
+    onSenderHealSkill:
+      skillID: 0
+      atTarget: 0
+      position: {x: 0, y: 0}
+      angle: 0
+    onSenderHealFxSettings: {fileID: 11400000, guid: 5b758b6d0dec221448af2d429449a429,
+      type: 2}
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 11400000, guid: c8bc1de0ee162e14e8380accdf9728d8, type: 2}
+    - {fileID: 11400000, guid: 60303b7dc6591bb4aaf347a676797847, type: 2}
+    - {fileID: 11400000, guid: c1311d7b123e98a4898163df71bf75eb, type: 2}
+    - {fileID: 11400000, guid: 5b758b6d0dec221448af2d429449a429, type: 2}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: template
+      Entry: 7
+      Data: 0|AttackBehaviour, Assembly-CSharp
+    - Name: wasFirstFrameInvoke
+      Entry: 5
+      Data: false
+    - Name: wasBehaviourEnterInvoke
+      Entry: 5
+      Data: false
+    - Name: geometries
+      Entry: 7
+      Data: 1|System.Collections.Generic.List`1[[Commons.Types.Geometry.IGeometry,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 2|Commons.Types.Geometry.Circle, Assembly-CSharp
+    - Name: Center
+      Entry: 7
+      Data: Commons.Types.Geometry.FixedVector2, Assembly-CSharp
+    - Name: x
+      Entry: 7
+      Data: Commons.Types.FixedFloat, Assembly-CSharp
+    - Name: Raw
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: y
+      Entry: 7
+      Data: Commons.Types.FixedFloat, Assembly-CSharp
+    - Name: Raw
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Radius
+      Entry: 7
+      Data: Commons.Types.FixedFloat, Assembly-CSharp
+    - Name: Raw
+      Entry: 3
+      Data: 163840
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: hitAlly
+      Entry: 5
+      Data: false
+    - Name: ignoreSender
+      Entry: 5
+      Data: false
+    - Name: maxHitPerTick
+      Entry: 3
+      Data: 1000
+    - Name: hitInterval
+      Entry: 3
+      Data: 15
+    - Name: knockbackDuration
+      Entry: 4
+      Data: 0
+    - Name: knockbackDistance
+      Entry: 4
+      Data: 0
+    - Name: onKnockbackFxSettings
+      Entry: 10
+      Data: 0
+    - Name: disableMoveDuration
+      Entry: 4
+      Data: 0
+    - Name: disableActionDuration
+      Entry: 4
+      Data: 0
+    - Name: useOnHitSkill
+      Entry: 5
+      Data: false
+    - Name: onHitSkill
+      Entry: 7
+      Data: AttackBehaviour+UseSkillSettings, Assembly-CSharp
+    - Name: skillID
+      Entry: 3
+      Data: 0
+    - Name: atTarget
+      Entry: 5
+      Data: false
+    - Name: position
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: angle
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: onHitAddBuffs
+      Entry: 7
+      Data: 3|System.Collections.Generic.List`1[[AttackBehaviour+AddBuffSettings,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: AttackBehaviour+AddBuffSettings, Assembly-CSharp
+    - Name: buffDataId
+      Entry: 3
+      Data: 50300
+    - Name: duration
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: damages
+      Entry: 7
+      Data: 4|System.Collections.Generic.List`1[[System.Int64, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: damage
+      Entry: 7
+      Data: 5|DamageKey, Assembly-CSharp
+    - Name: <name>k__BackingField
+      Entry: 1
+      Data: Skill/TIMELINE_DAMAGE_001
+    - Name: <key>k__BackingField
+      Entry: 3
+      Data: 901
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: useOnDamageSkill
+      Entry: 5
+      Data: false
+    - Name: onDamageSkill
+      Entry: 7
+      Data: AttackBehaviour+UseSkillSettings, Assembly-CSharp
+    - Name: skillID
+      Entry: 3
+      Data: 0
+    - Name: atTarget
+      Entry: 5
+      Data: false
+    - Name: position
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: angle
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: onDamageFxSettings
+      Entry: 10
+      Data: 1
+    - Name: heals
+      Entry: 7
+      Data: 6|System.Collections.Generic.List`1[[System.Int64, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: heal
+      Entry: 7
+      Data: 7|HealKey, Assembly-CSharp
+    - Name: <name>k__BackingField
+      Entry: 6
+      Data: 
+    - Name: <key>k__BackingField
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: useOnHealSkill
+      Entry: 5
+      Data: false
+    - Name: onHealSkill
+      Entry: 7
+      Data: AttackBehaviour+UseSkillSettings, Assembly-CSharp
+    - Name: skillID
+      Entry: 3
+      Data: 0
+    - Name: atTarget
+      Entry: 5
+      Data: false
+    - Name: position
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: angle
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: onHealFxSettings
+      Entry: 10
+      Data: 2
+    - Name: senderHeals
+      Entry: 7
+      Data: 8|System.Collections.Generic.List`1[[System.Int64, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: senderHeal
+      Entry: 7
+      Data: 9|SenderAddHealKey, Assembly-CSharp
+    - Name: <name>k__BackingField
+      Entry: 6
+      Data: 
+    - Name: <key>k__BackingField
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: useOnSenderHealSkill
+      Entry: 5
+      Data: false
+    - Name: onSenderHealSkill
+      Entry: 7
+      Data: AttackBehaviour+UseSkillSettings, Assembly-CSharp
+    - Name: skillID
+      Entry: 3
+      Data: 0
+    - Name: atTarget
+      Entry: 5
+      Data: false
+    - Name: position
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: angle
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: onSenderHealFxSettings
+      Entry: 10
+      Data: 3
+    - Name: 
+      Entry: 8
+      Data: 
+--- !u!114 &-1525873782985132379
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a97c77b614449218ee2eb9446d94861, type: 3}
+  m_Name: Attack Track
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children: []
+  m_Clips:
+  - m_Version: 1
+    m_Start: 0
+    m_ClipIn: 0
+    m_Asset: {fileID: -2470242482513766923}
+    m_Duration: 1
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: -1525873782985132379}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: 0
+    m_BlendOutDuration: 0
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: AttackClip
+  m_Markers:
+    m_Objects: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfda56da833e2384a9677cd3c976a436, type: 3}
+  m_Name: Timeline_50313
+  m_EditorClassIdentifier: 
+  m_Version: 0
+  m_Tracks:
+  - {fileID: -1525873782985132379}
+  - {fileID: 4365611968452498463}
+  m_FixedDuration: 0
+  m_EditorSettings:
+    m_Framerate: 30
+    m_ScenePreview: 1
+  m_DurationMode: 0
+  m_MarkerTrack: {fileID: 0}
+--- !u!114 &4365611968452498463
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 840dc7f2e02d96d438eed9161150179e, type: 3}
+  m_Name: Effect Track
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children: []
+  m_Clips:
+  - m_Version: 1
+    m_Start: 0
+    m_ClipIn: 0
+    m_Asset: {fileID: -6090546660402695518}
+    m_Duration: 1
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 4365611968452498463}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: 0
+    m_BlendOutDuration: 0
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: EffectClip
+  m_Markers:
+    m_Objects: []

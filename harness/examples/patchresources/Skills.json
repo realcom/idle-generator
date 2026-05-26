@@ -1,0 +1,34 @@
+{
+ "skills": [
+  {
+   "id": 300101,
+   "name": "베기",
+   "damageType": "Pierce",
+   "cooldown": 1.5,
+   "priority": 1,
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/VFX_Slash.prefab"
+     }
+    },
+    {
+     "time": 0.1,
+     "hit": {
+      "maxHit": 1,
+      "addDamage": {
+       "damagePercent": [
+        120.0
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.4,
+     "destroy": {}
+    }
+   ]
+  }
+ ]
+}

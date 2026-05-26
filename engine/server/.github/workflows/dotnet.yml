@@ -1,0 +1,146 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+concurrency:
+  group: builder
+  cancel-in-progress: true
+
+jobs:
+  build-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.PAT_TOKEN }}
+        submodules: true
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: Server
+
+    - name: Build and publish EdgeServer
+      run: |
+        dotnet publish EdgeServer -c Release -r win-x64 -o output -p:Deterministic=true -p:DeterministicSourcePaths=true -p:ProduceReferenceAssembly=false
+        dotnet publish EdgeServer -c Release -r linux-x64 -o output -p:Deterministic=true -p:DeterministicSourcePaths=true -p:ProduceReferenceAssembly=false
+      working-directory: Server
+
+    - name: Build and publish WorldServer
+      run: |
+        dotnet publish WorldServer -c Release -r win-x64 -o output -p:Deterministic=true -p:DeterministicSourcePaths=true -p:ProduceReferenceAssembly=false
+        dotnet publish WorldServer -c Release -r linux-x64 -o output -p:Deterministic=true -p:DeterministicSourcePaths=true -p:ProduceReferenceAssembly=false
+      working-directory: Server
+
+    - name: Import GPG key
+      run: |
+        mkdir -p ~/.gnupg
+        chmod 700 ~/.gnupg
+        echo "$GPG_KEY" | gpg --batch --import
+        gpg --list-secret-keys --keyid-format LONG
+      env:
+        GPG_KEY: ${{ secrets.GPG_KEY }}
+
+    - name: Configure Git to use GPG signing
+      run: |
+        git config --global user.name 'CI Bot'
+        git config --global user.email 'pm-Hormon@users.noreply.github.com'
+        git config --global user.signingKey $GPG_KEY_ID
+        git config --global commit.gpgSign true
+      env:
+        GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+
+    - name: Checkout target repository
+      uses: actions/checkout@v4
+      with:
+        repository: puzzlemonsters/idlez-client
+        token: ${{ secrets.PAT_TOKEN }}
+        path: idlez-client
+        
+    - name: Copy artifact to target repository
+      run: |
+        cp -r -f Server/output/* idlez-client/Server/
+
+    - name: Get latest commit message
+      id: get-commit-message
+      run: |
+        latest_commit_message=$(git log -1 --pretty=%B | sed 's/"/\\"/g' | head -1)
+        latest_committer_name=$(git log -1 --pretty=format:'%cn')
+        latest_commit_hash=$(git log -1 --pretty=format:'%H')
+        latest_commit_short_hash=${latest_commit_hash:0:7}
+        echo "latest_commit_message=$latest_commit_message" >> $GITHUB_ENV
+        echo "latest_committer_name=$latest_committer_name" >> $GITHUB_ENV
+        echo "latest_commit_hash=$latest_commit_hash" >> $GITHUB_ENV
+        echo "latest_commit_short_hash=$latest_commit_short_hash" >> $GITHUB_ENV
+        
+    - name: Commit and push changes
+      run: |
+        set -euo pipefail
+
+        for attempt in 1 2 3; do
+          echo "===== Attempt $attempt to commit & push ====="
+
+          git add .
+
+          # 변경 없으면 성공 처리하고 빠져나감
+          if git diff --cached --quiet; then
+           echo "No changes to commit. Exiting successfully."
+            exit 0
+          fi
+
+          # 커밋 & 푸시 시도
+          if git commit -m "[Bot] 🚀 서버 빌드 업데이트 ($latest_committer_name: $latest_commit_message) - https://github.com/puzzlemonsters/idlez-server/commit/$latest_commit_hash"; then
+            echo "Commit succeeded"
+          else
+            echo "Commit failed on attempt $attempt"
+            # commit 자체가 실패한 경우는 보통 에러 상황, sleep 후 retry
+            if [ "$attempt" -lt 3 ]; then
+              echo "Retrying in 5 seconds..."
+              sleep 5
+              continue
+            else
+              echo "Commit failed after 3 attempts"
+              exit 1
+            fi
+          fi
+
+          # push 시도
+          if git push origin master; then
+            echo "Push succeeded on attempt $attempt"
+            exit 0
+          else
+            echo "Push failed on attempt $attempt"
+
+            if [ "$attempt" -lt 3 ]; then
+              echo "Retrying push in 5 seconds..."
+              sleep 5
+              continue
+            else
+              echo "Push failed after 3 attempts"
+              exit 1
+            fi
+          fi
+        done
+      working-directory: idlez-client
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        latest_commit_message: ${{ env.latest_commit_message }}
+        latest_committer_name: ${{ env.latest_committer_name }}
+        latest_commit_hash: ${{ env.latest_commit_hash }}
+        latest_commit_short_hash: ${{ env.latest_commit_short_hash }}
+ 

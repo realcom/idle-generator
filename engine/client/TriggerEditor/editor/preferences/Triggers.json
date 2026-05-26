@@ -1,0 +1,540 @@
+{
+  "triggers": [
+    {
+      "name": "Unit/Reset_Combo_Count",
+      "statements": [
+        {
+          "comment": "",
+          "condition": {
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "variable": {
+                      "boardVariable": {
+                        "type": "Tick"
+                      }
+                    }
+                  }
+                },
+                {
+                  "operand": {
+                    "variable": {
+                      "callerKey": 6
+                    }
+                  }
+                },
+                {
+                  "operand": {
+                    "constant": {
+                      "value": 40
+                    }
+                  }
+                },
+                {
+                  "operator": {
+                    "type": "Add"
+                  }
+                },
+                {
+                  "operator": {
+                    "type": "GreaterThanOrEqual"
+                  }
+                }
+              ]
+            },
+            "statements": [
+              {
+                "comment": "",
+                "assignment": {
+                  "variable": {
+                    "caller": true,
+                    "callerKey": 2
+                  },
+                  "expression": {
+                    "postfix": [
+                      {
+                        "operand": {
+                          "constant": {
+                            "value": 1
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "type": "OnUpdate",
+      "period": 15
+    },
+    {
+      "name": "Unit/InitializeVariables",
+      "statements": [
+        {
+          "comment": "",
+          "assignment": {
+            "variable": {
+              "caller": true,
+              "callerKey": 2
+            },
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "constant": {
+                      "value": 1
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "comment": "",
+          "assignment": {
+            "variable": {
+              "caller": true,
+              "callerKey": 6
+            },
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "constant": {
+                      "value": 0
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "type": "OnStart",
+      "period": 15
+    },
+    {
+      "name": "Skill/Combo_Skill",
+      "statements": [
+        {
+          "comment": "",
+          "condition": {
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "variable": {
+                      "caller": true,
+                      "unitKey": 2
+                    }
+                  }
+                },
+                {
+                  "operand": {
+                    "constant": {
+                      "value": 1
+                    }
+                  }
+                },
+                {
+                  "operator": {
+                    "type": "Equal"
+                  }
+                }
+              ]
+            },
+            "statements": [
+              {
+                "comment": "",
+                "assignment": {
+                  "variable": {
+                    "parameter": {
+                      "type": "SkillDataId"
+                    }
+                  },
+                  "expression": {
+                    "postfix": [
+                      {
+                        "operand": {
+                          "constant": {
+                            "value": 1010
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "comment": "",
+          "condition": {
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "variable": {
+                      "caller": true,
+                      "unitKey": 2
+                    }
+                  }
+                },
+                {
+                  "operand": {
+                    "constant": {
+                      "value": 2
+                    }
+                  }
+                },
+                {
+                  "operator": {
+                    "type": "Equal"
+                  }
+                }
+              ]
+            },
+            "statements": [
+              {
+                "comment": "",
+                "assignment": {
+                  "variable": {
+                    "parameter": {
+                      "type": "SkillDataId"
+                    }
+                  },
+                  "expression": {
+                    "postfix": [
+                      {
+                        "operand": {
+                          "constant": {
+                            "value": 1020
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "comment": "",
+          "condition": {
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "variable": {
+                      "caller": true,
+                      "unitKey": 2
+                    }
+                  }
+                },
+                {
+                  "operand": {
+                    "constant": {
+                      "value": 3
+                    }
+                  }
+                },
+                {
+                  "operator": {
+                    "type": "Equal"
+                  }
+                }
+              ]
+            },
+            "statements": [
+              {
+                "comment": "",
+                "assignment": {
+                  "variable": {
+                    "parameter": {
+                      "type": "SkillDataId"
+                    }
+                  },
+                  "expression": {
+                    "postfix": [
+                      {
+                        "operand": {
+                          "constant": {
+                            "value": 1030
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "call": {
+            "method": {
+              "unitMethod": {
+                "type": "UseSkill"
+              }
+            },
+            "caller": true
+          }
+        },
+        {
+          "comment": "",
+          "assignment": {
+            "variable": {
+              "caller": true,
+              "unitKey": 2
+            },
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "variable": {
+                      "caller": true,
+                      "unitKey": 2
+                    }
+                  }
+                },
+                {
+                  "operand": {
+                    "constant": {
+                      "value": 3
+                    }
+                  }
+                },
+                {
+                  "operator": {
+                    "type": "Modulo"
+                  }
+                },
+                {
+                  "operand": {
+                    "constant": {
+                      "value": 1
+                    }
+                  }
+                },
+                {
+                  "operator": {
+                    "type": "Add"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "comment": "",
+          "assignment": {
+            "variable": {
+              "caller": true,
+              "unitKey": 6
+            },
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "variable": {
+                      "boardVariable": {
+                        "type": "Tick"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "type": "OnStart",
+      "period": 15
+    },
+    {
+      "name": "Map/Ares_Lobby_Spawn",
+      "statements": [
+        {
+          "comment": "",
+          "assignment": {
+            "variable": {
+              "parameter": {
+                "type": "LocationId"
+              }
+            },
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "constant": {
+                      "value": 1
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "comment": "",
+          "assignment": {
+            "variable": {
+              "parameter": {
+                "type": "UnitDataId"
+              }
+            },
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "constant": {
+                      "value": 2
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "comment": "",
+          "assignment": {
+            "variable": {
+              "parameter": {
+                "type": "Count"
+              }
+            },
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "constant": {
+                      "value": 10
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "call": {
+            "method": {
+              "boardMethod": {
+                "type": "AddUnit"
+              }
+            },
+            "caller": true
+          }
+        }
+      ],
+      "period": 0
+    },
+    {
+      "name": "Unit/Monster_DuckSlime",
+      "statements": [
+        {
+          "comment": "",
+          "assignment": {
+            "variable": {
+              "parameter": {
+                "type": "PositionX"
+              }
+            },
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "variable": {
+                      "caller": true,
+                      "unitVariable": {
+                        "type": "TargetPositionX"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "comment": "",
+          "assignment": {
+            "variable": {
+              "parameter": {
+                "type": "PositionY"
+              }
+            },
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "variable": {
+                      "caller": true,
+                      "unitVariable": {
+                        "type": "TargetPositionY"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "call": {
+            "method": {
+              "unitMethod": {
+                "type": "SetMoveDestination"
+              }
+            },
+            "caller": true
+          }
+        },
+        {
+          "comment": "",
+          "assignment": {
+            "variable": {
+              "parameter": {
+                "type": "Angle"
+              }
+            },
+            "expression": {
+              "postfix": [
+                {
+                  "operand": {
+                    "variable": {
+                      "caller": true,
+                      "unitVariable": {
+                        "type": "TargetAngle"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "call": {
+            "method": {
+              "unitMethod": {
+                "type": "LookAt"
+              }
+            },
+            "caller": true
+          }
+        }
+      ],
+      "type": "OnUpdate",
+      "period": 15
+    }
+  ]
+}

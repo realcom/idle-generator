@@ -1,0 +1,221 @@
+{
+ "unitGlobal": {},
+ "units": [
+  {
+   "id": 110111,
+   "name": "버섯 용사",
+   "type": "Player",
+   "warmupDelay": 2.0,
+   "targetMode": "Chaser",
+   "targetAwareDistance": 24.0,
+   "targetResetDistance": 30.0,
+   "addStats": [
+    {
+     "value": [
+      420.0
+     ]
+    },
+    {
+     "type": "Attack",
+     "value": [
+      34.0
+     ]
+    },
+    {
+     "type": "Defense",
+     "value": [
+      12.0
+     ]
+    },
+    {
+     "type": "CriticalPercent",
+     "value": [
+      8.0
+     ]
+    },
+    {
+     "type": "AttackSpeed",
+     "value": [
+      1.0
+     ]
+    },
+    {
+     "type": "MoveSpeed",
+     "value": [
+      3.4
+     ]
+    }
+   ],
+   "triggers": [
+    "UNIT_ONSTART_MUSHROOMHEROATTACK",
+    "UNIT_ONUPDATE_MUSHROOMHEROATTACK"
+   ],
+   "prefab": "Units/Characters/PFB_HAM_Angel.prefab",
+   "sprite": "Units/Characters/Assets/hamsterAngel.png",
+   "uiScale": 1.15,
+   "uiOffset": {
+    "x": 0.0,
+    "y": 0.15
+   }
+  },
+  {
+   "id": 110201,
+   "name": "이끼 포자",
+   "tags": [
+    "Monster"
+   ],
+   "warmupDelay": 2.0,
+   "targetMode": "Chaser",
+   "targetAwareDistance": 24.0,
+   "targetResetDistance": 30.0,
+   "addStats": [
+    {
+     "value": [
+      140.0
+     ]
+    },
+    {
+     "type": "Attack",
+     "value": [
+      14.0
+     ]
+    },
+    {
+     "type": "Defense",
+     "value": [
+      5.0
+     ]
+    },
+    {
+     "type": "MoveSpeed",
+     "value": [
+      3.1
+     ]
+    }
+   ],
+   "triggers": [
+    "UNIT_ONSTART_SPORELINGWANDER",
+    "UNIT_ONUPDATE_SPORELINGATTACK"
+   ],
+   "dropAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "minCount": "18",
+       "maxCount": "28",
+       "isCore": true
+      },
+      {
+       "itemDataId": 6,
+       "count": "8"
+      }
+     ]
+    },
+    {
+     "probPercent": 45.0,
+     "addItems": [
+      {
+       "itemDataId": 200101,
+       "count": "1",
+       "group": 1,
+       "weight": 100.0
+      }
+     ]
+    }
+   ],
+   "prefab": "Units/Monsters/large_melee_slime_green.prefab",
+   "sprite": "Units/Monsters/Assets/large_melee_slime.png",
+   "uiScale": 1.0
+  },
+  {
+   "id": 110501,
+   "name": "포자 대왕",
+   "type": "Boss",
+   "tags": [
+    "Monster"
+   ],
+   "armorType": "BossArmor",
+   "warmupDelay": 2.4,
+   "targetMode": "Chaser",
+   "targetAwareDistance": 26.0,
+   "targetResetDistance": 32.0,
+   "addStats": [
+    {
+     "value": [
+      5600.0
+     ]
+    },
+    {
+     "type": "Attack",
+     "value": [
+      82.0
+     ]
+    },
+    {
+     "type": "Defense",
+     "value": [
+      28.0
+     ]
+    },
+    {
+     "type": "MoveSpeed",
+     "value": [
+      1.8
+     ]
+    }
+   ],
+   "triggers": [
+    "UNIT_ONSTART_SPOREKINGENRAGE",
+    "UNIT_ONUPDATE_SPOREKINGBATTLE"
+   ],
+   "dropAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "minCount": "260",
+       "maxCount": "420",
+       "isCore": true
+      },
+      {
+       "itemDataId": 6,
+       "count": "70"
+      }
+     ]
+    },
+    {
+     "probPercent": 70.0,
+     "addItems": [
+      {
+       "itemDataId": 200101,
+       "count": "2",
+       "group": 1,
+       "weight": 70.0
+      },
+      {
+       "itemDataId": 200102,
+       "count": "1",
+       "group": 1,
+       "pityGroup": 5,
+       "weight": 30.0
+      }
+     ]
+    }
+   ],
+   "prefab": "Units/Monsters/finalboss_melee_slime_boss_green.prefab",
+   "sprite": "Units/Monsters/Assets/finalboss_melee_slime_boss.png",
+   "uiScale": 1.8,
+   "uiOffset": {
+    "x": 0.0,
+    "y": 0.3
+   },
+   "collideSize": 1.8,
+   "hitSize": 2.0
+  }
+ ]
+}

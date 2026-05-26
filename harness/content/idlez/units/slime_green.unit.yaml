@@ -1,0 +1,37 @@
+# 샘플 유닛 (몬스터) — engine-contract/schema/unit.md 준수
+# 컴파일되면 Units.json 의 units[] 한 항목으로 들어간다.
+# ※ 검증으로 정정됨: 유닛은 requiredExps 미사용. 성장은 addStats[].value[] 배열(level-1 인덱싱).
+# ※ 직렬화 쿽: type=Hp(enum0)는 컴파일 시 생략, value는 float, tags는 닫힌 Tag enum.
+
+id: 110201
+name: "초록 슬라임"          # 한글 2~10자 (profile.theme.naming_style)
+type: Elite                  # ResourceUnit.Type: Normal(생략)/Player/Pet/Elite/Boss/MidBoss/Building
+tags: [Monster]              # ★ 닫힌 Tag enum 값만 (자유문자열 X). 실제 Tag 목록은 engine 확인
+armorType: NormalArmor       # 상성 (ArmorType: NormalArmor=0 → 컴파일 시 생략)
+
+# 기본 스탯 — value[] 는 레벨 배열(level-1 인덱싱, 클램프). 길이1이면 상수.
+# 레벨 성장이 필요하면 growth/slime-stat-growth 식에서 길게 채워 bind 로 머지.
+addStats:
+  - { type: Hp,        value: [120.0] }   # 컴파일 시 type 생략 → {"value":[120.0]}
+  - { type: Attack,    value: [12.0] }
+  - { type: Defense,   value: [4.0] }
+  - { type: MoveSpeed, value: [3.0] }
+
+# (유닛은 requiredExps 미사용 — 필드 자체를 두지 않음)
+
+# 행동/로직 (트리거 이름 참조, UPPER_SNAKE) — content/idlez/skills/*.behavior.yaml 가 정의
+triggers:
+  - UNIT_ONSTART_SLIMEBOUNCE   # (예시) 컴파일된 트리거 이름
+
+# 처치 시 드롭 — rewards/meadow_slime_drops.reward.yaml 의 그룹을 인라인 또는 참조
+dropAddItemGroups:
+  - $ref: rewards/meadow_slime_drops.reward.yaml#green_slime
+
+# 표현(아트 키 — idlez 에선 PatchResources 의 prefab/sprite/animation 키)
+prefab: "Units/Slime/slime_green.prefab"
+sprite: "Units/Slime/slime_green.png"
+uiScale: 1.0
+animations:
+  idle: "slime_green_idle"
+  move: "slime_green_move"
+  dead: "slime_green_dead"

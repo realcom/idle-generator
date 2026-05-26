@@ -1,0 +1,21 @@
+syntax = "proto3";
+package Commons.Types;
+
+import "google/protobuf/timestamp.proto";
+
+message NoticeMessage {
+  int64 id = 1;
+  
+  int64 order = 2;
+  int32 type = 3;
+
+  google.protobuf.Timestamp startAt = 4;
+  google.protobuf.Timestamp untilAt = 5;
+  string language = 6;
+  string title = 7;
+  string message = 8;
+  string image_url = 9;
+  string image_path = 10;
+
+  google.protobuf.Timestamp createdAt = 11;
+}

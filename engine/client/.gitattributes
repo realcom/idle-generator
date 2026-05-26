@@ -1,0 +1,87 @@
+# Attribute macros are defined in the repo-root .gitattributes.
+# Unity source files
+*.cginc                 text
+*.compute               text linguist-language=hlsl
+*.cs                    text diff=csharp
+*.hlsl                  text linguist-language=hlsl
+*.raytrace              text linguist-language=hlsl
+*.shader                text
+# Unity JSON files
+*.asmdef                unity-json
+*.asmref                unity-json
+*.index                 unity-json
+*.inputactions          unity-json
+*.shadergraph           unity-json
+*.shadersubgraph        unity-json
+# Unity YAML
+*.anim                  unity-yaml
+*.asset                 unity-yaml
+*.brush                 unity-yaml
+*.controller            unity-yaml
+*.flare                 unity-yaml
+*.fontsettings          unity-yaml
+*.giparams              unity-yaml
+*.guiskin               unity-yaml
+*.lighting              unity-yaml
+*.mask                  unity-yaml
+*.mat                   unity-yaml
+*.meta                  unity-yaml
+*.mixer                 unity-yaml
+*.overrideController    unity-yaml
+*.playable              unity-yaml
+*.prefab                unity-yaml
+*.preset                unity-yaml
+*.renderTexture         unity-yaml
+*.scenetemplate         unity-yaml
+*.shadervariants        unity-yaml
+*.signal                unity-yaml
+*.spriteatlas           unity-yaml
+*.spriteatlasv2         unity-yaml
+*.terrainlayer          unity-yaml
+*.unity                 unity-yaml
+# Unity LFS for large file types
+*.exe                   lfs
+*.dll                   lfs
+*.dylib                 lfs
+*.a                     lfs
+*.so                    lfs
+*.bundle                lfs
+*.unitypackage          lfs
+*.framework             lfs
+*.jar                   lfs
+*.aar                   lfs
+*.srcaar                lfs
+*.aarsrc                lfs
+*.FBX                   lfs
+*.fbx                   lfs
+*.jpg                   lfs
+*.jpeg                  lfs
+*.png                   lfs
+*.gif                   lfs
+*.psb                   lfs
+*.tga                   lfs
+*.tif                   lfs
+*.tiff                  lfs
+*.exr                   lfs
+*.wav                   lfs
+*.ogg                   lfs
+*.mp3                   lfs
+*.mp4                   lfs
+*.mov                   lfs
+*.webm                  lfs
+*.ttf                   lfs
+*.otf                   lfs
+*.pdf                   lfs
+*.rar                   lfs
+*.zip                   lfs
+*.tgz                   lfs
+*.bytes                 lfs
+# Special Unity Asset files
+LightingData.asset      lfs
+# Folders
+CreatorRoot/**          lfs
+# Exclude third-party plugins from GitHub stats
+Assets/Plugins/**       linguist-vendored
+Client/Assets/Plugins/** linguist-vendored
+*.psd                   lfs
+*.br                    lfs

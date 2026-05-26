@@ -1,0 +1,16 @@
+syntax = "proto3";
+package Commons.Types;
+
+message Curve {
+  message Keyframe {
+    float time = 1;
+    float value = 2;
+    float inTangent = 3;
+    float outTangent = 4;
+    int32 weightedMode = 5;
+    float inWeight = 6;
+    float outWeight = 7;
+  }
+
+  repeated Keyframe keys = 1;
+}

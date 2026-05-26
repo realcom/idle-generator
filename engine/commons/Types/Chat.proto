@@ -1,0 +1,22 @@
+syntax = "proto3";
+package Commons.Types;
+
+import "google/protobuf/timestamp.proto";
+import "Player.proto";
+
+message ChatMessage {
+  int64 id = 1;
+
+  int64 order = 2;
+  int32 type = 3;
+//  int32 chatId = 4;
+  string channelKey = 4;
+  string language = 6;
+  string title = 7;
+  string message = 8;
+
+  google.protobuf.Timestamp createdAt = 12;
+
+  Players.PlayerMessage senderPlayer = 13;
+  
+}

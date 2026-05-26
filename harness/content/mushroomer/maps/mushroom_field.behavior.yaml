@@ -1,0 +1,100 @@
+name: MushroomFieldWave1
+domain: map
+
+vars:
+  wave1_unit:  { type: int, default: 110201 }
+  wave1_count: { type: int, default: 5 }
+  enemy_team:  { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $wave1_unit
+          count: $wave1_count
+          team: $enemy_team
+          locationId: $enemy_spawn
+
+---
+
+name: MushroomFieldWave2
+domain: map
+
+vars:
+  wave2_unit:  { type: int, default: 110201 }
+  wave2_count: { type: int, default: 4 }
+  enemy_team:  { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $wave2_unit
+          count: $wave2_count
+          team: $enemy_team
+          locationId: $enemy_spawn
+
+---
+
+name: MushroomFieldWave3
+domain: map
+
+vars:
+  wave3_boss:   { type: int, default: 110501 }
+  wave3_minion: { type: int, default: 110201 }
+  enemy_team:   { type: int, default: 4 }
+  enemy_spawn:  { type: int, default: 1 }
+
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $wave3_boss
+          count: 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $wave3_minion
+          count: 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+
+---
+
+name: MushroomFieldUpdate
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 3s
+    do:
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 1 and return > 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_MUSHROOMFIELDWAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_MUSHROOMFIELDWAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        EndGame: { result: win }

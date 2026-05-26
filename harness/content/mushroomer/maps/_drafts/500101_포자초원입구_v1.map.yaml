@@ -1,0 +1,69 @@
+id: 500101
+group: 500101
+name: "포자초원 입구"
+type: Dungeon
+tags: [Main]
+
+scene: "PFB_MAP_Meadow_Day_Chapter"
+sprite: "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png"
+targetCameraPivot: { x: 0.5, y: 0.58 }
+fov: 9.25
+
+popupArgs:
+  ClientModeManager: ModeManagerMushroom
+  ClientHomeMapDataId: self
+
+boardConstants:
+  levelUpChoiceCount: 3
+
+initLevel: 1
+initGold: 180
+enableUnitExp: true
+playerUnitCount: 0
+locations:
+  - id: -1
+    position: { x: -7.5, y: 0.0 }
+    geometries:
+      - circle:
+          center: { x: 0.0, y: 0.0 }
+          radius: 0.75
+  - id: 1
+    position: { x: 7.5, y: 0.0 }
+    geometries:
+      - circle:
+          center: { x: 0.0, y: 0.0 }
+          radius: 1.75
+terrains:
+  - vertices:
+      - { position: { x: -12.0, y: -6.0 }, height: 0.0 }
+      - { position: { x: 12.0, y: -6.0 }, height: 0.0 }
+      - { position: { x: 12.0, y: 6.0 }, height: 0.0 }
+      - { position: { x: -12.0, y: 6.0 }, height: 0.0 }
+    triangles:
+      - { v1: 0, v2: 1, v3: 2 }
+      - { v1: 0, v2: 2, v3: 3 }
+  - type: Skill
+    vertices:
+      - { position: { x: -12.0, y: -6.0 }, height: 0.0 }
+      - { position: { x: 12.0, y: -6.0 }, height: 0.0 }
+      - { position: { x: 12.0, y: 6.0 }, height: 0.0 }
+      - { position: { x: -12.0, y: 6.0 }, height: 0.0 }
+    triangles:
+      - { v1: 0, v2: 1, v3: 2 }
+      - { v1: 0, v2: 2, v3: 3 }
+
+triggers:
+  - MAP_ONSTART_MUSHROOMFIELDWAVE1
+  - MAP_ONUPDATE_MUSHROOMFIELDUPDATE
+
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 120, maxCount: 180, isCore: true }
+      - { itemDataId: 6, count: 40 }
+  - shouldAddAll: false
+    probPercent: 50
+    addItems:
+      - { itemDataId: 200101, count: 2, weight: 70, group: 1 }
+      - { itemDataId: 200102, count: 1, weight: 30, group: 1 }

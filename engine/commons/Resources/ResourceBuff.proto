@@ -1,0 +1,122 @@
+syntax = "proto3";
+package Commons.Resources;
+
+import "Tags.proto";
+import "ResourceTrigger.proto";
+import "AddDamage.proto";
+import "AddHeal.proto";
+import "AddBuff.proto";
+import "UnitStatType.proto";
+import "ArmorTypeStatType.proto";
+import "DamageTypeStatType.proto";
+import "ItemGroupStatType.proto";
+import "SlotStatType.proto";
+import "BuffGroupStatType.proto";
+import "SkillGroupStatType.proto";
+import "UseSkill.proto";
+import "DamageType.proto";
+
+message ResourceBuff {
+  message Global {
+    enum BuffGroupPolicy {
+      KeepAll = 0;
+      UseHighestTier = 1;
+      UseLowestTier = 2;
+    }
+    message DataId {
+      int32 exhaustion = 1;
+    }
+    
+    message BuffApplyProbability {
+      repeated float probabilities = 1;
+    }
+    
+    
+    
+    DataId dataId = 1;
+    // key: BuffGroup
+    map<int32, BuffApplyProbability> buffApplyProbabilities = 2;
+    map<int32, BuffGroupPolicy> buffGroupPolicy = 3;
+  }
+  
+  enum AddState {
+    NotUsed = 0;
+    Ghost = 24;
+  }
+  
+  enum Type {
+    Unspecified = 0;
+    
+    // 100-199: System
+    System = 100;
+    
+    // 200-299: Unit
+    UnitBuff = 200;
+    UnitDebuff = 201;
+    UnitItemBuff = 202;
+    
+    // 300-399: Stage
+    StageBuff = 300;
+    StageDebuff = 301;
+  }
+  
+  enum PrefabAttachmentTarget {
+    SkinRoot = 0;
+    UnitBackground = 1;
+    Freeze = 2;
+  }
+  
+  repeated Tag tags = 1;
+  repeated string triggers = 2;
+  repeated ResourceTrigger.InitVariable initVariables = 3;
+  repeated AddState addStates = 4;
+  repeated Types.Units.AddUnitStat addStats = 5;
+  repeated int32 replaceSourceSkillDataIds = 6;
+  repeated int32 replaceTargetSkillDataIds = 7;
+  repeated ResourceTrigger.AddVariable addVariables = 8;
+  map<string, string> spriteGroups = 9;
+  
+  int32 id = 100;
+  int32 stack = 101;
+  int32 maxStack = 102;
+  Type type = 103;
+  Types.Units.DamageType damageType = 104;
+  repeated Types.Units.ArmorTypeStat.AddArmorTypeStat addArmorTypeStats = 105;
+  repeated Types.Units.DamageTypeStat.AddDamageTypeStat addDamageTypeStats = 106;
+  repeated Types.Units.ItemGroupStat.AddItemGroupStat addItemGroupStats = 107;
+  repeated Types.Units.SlotStat.AddSlotStat addSlotStats = 108;
+  repeated Types.Units.BuffGroupStat.AddBuffGroupStat addBuffGroupStats = 109;
+  repeated Types.Units.SkillGroupStat.AddSkillGroupStat addSkillGroupStats = 110;
+  
+  int32 group = 198;
+  int32 groupTier = 197;
+  int32 maxLevel = 199;
+
+  string name = 200;
+  string prefab = 201;
+  PrefabAttachmentTarget prefabAttachmentTarget = 202;
+  
+  float duration = 300;
+  float period = 301;
+  float delay = 302;
+  
+  Types.Units.AddDamage initialAddDamage = 400;
+  Types.Units.AddHeal initialAddHeal = 401;
+  Types.Units.AddDamage periodicAddDamage = 402;
+  Types.Units.AddHeal periodicAddHeal = 403;
+  Types.Units.AddDamage onAttackedSelfAddDamage = 404;
+  Types.Units.AddDamage onAttackedAttackerAddDamage = 405;
+  Types.Units.AddDamage expirationAddDamage = 406;
+  Types.Units.AddHeal expirationAddHeal = 407;
+  Types.Units.UseSkill periodicUseSkill = 408;
+  Types.Units.UseSkill maxStackUseSkill = 409;
+  Types.Units.AddDamage maxLevelPeriodicAddDamage = 410;
+  Types.Units.AddHeal maxLevelPeriodicAddHeal = 411;
+  Types.Units.UseSkill maxLevelPeriodicUseSkill = 412;
+  repeated Types.Units.AddBuff maxStackAddBuffs = 413;
+  
+  int32 periodicAddStack = 500;
+
+  Types.Units.DamageType replaceItemDamageType = 600;
+  int32 replaceItemDamageTypeGroup = 601;
+}

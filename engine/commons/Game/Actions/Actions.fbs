@@ -1,0 +1,34 @@
+namespace Commons.Game.Actions;
+
+struct UnitMoveDirectionAction {
+  tick: uint32;
+  unit_id: uint32;
+  dir_x: float;
+  dir_y: float;
+}
+
+struct UnitMovePositionAction {
+  tick: uint32;
+  unit_id: uint32;
+  pos_x: float;
+  pos_y: float;
+}
+
+struct UnitUseSkillAction {
+  tick: uint32;
+  unit_id: uint32;
+  skill_data_id: int32;
+}
+
+struct UnitUseTargetSkillAction {
+  tick: uint32;
+  unit_id: uint32;
+  skill_data_id: int32;
+  target_unit_id: uint32;
+}
+
+struct UnitChangePlayerAvatarWeaponSlotAction {
+  tick: uint32;
+  unit_id: uint32;
+  weapon_slot: int32;
+}

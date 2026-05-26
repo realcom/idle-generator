@@ -1,0 +1,56 @@
+# 보스 유닛 — engine-contract/schema/unit.md 준수
+# 컴파일되면 Units.json 의 units[] 한 항목으로 들어간다.
+# ※ 유닛은 requiredExps 미사용. 성장은 addStats[].value[] 배열(level-1 인덱싱).
+# ※ 직렬화 쿽: type=Hp(enum0)는 컴파일 시 생략, value는 float, tags는 닫힌 Tag enum.
+# id 대역: unit 110000~119999 (profile.id_ranges.unit). slime_green=110201 → 보스=110501.
+
+id: 110501
+name: "슬라임 보스"            # 한글 2~10자 (profile.theme.naming_style)
+type: Boss                     # ResourceUnit.Type: Boss(11)
+tags: [Monster]                # ★ 닫힌 Tag enum 값만 (자유문자열 X)
+armorType: BossArmor           # 상성 — BossArmor (BossDamageEfficiencyPercent 상성 발동)
+
+# 기본 스탯 — value[] 는 상수(길이1). 성장이 필요하면 growth/slime-boss-stat-growth 로 위임.
+# 보스 스탯 참고: 초록 슬라임(Hp 120 / Atk 12) 대비 보스 배율 적용.
+addStats:
+  - { type: Hp,        value: [6000.0] }
+  - { type: Attack,    value: [80.0]   }
+  - { type: Defense,   value: [30.0]   }
+  - { type: MoveSpeed, value: [1.5]    }
+
+# (유닛은 requiredExps 미사용 — 필드 자체를 두지 않음)
+
+# 행동/로직 — behavior-author 가 content/idlez/units/slime_boss.behavior.yaml 에 작성.
+# ★ 실제 트리거 이름 확정 전 placeholder. 검증기 통과를 위해 behavior 파일과 이름 일치 필요.
+triggers:
+  - UNIT_ONSTART_SLIMEBOSS_ENRAGE   # 일정 Hp 이하 분노 패턴
+  - UNIT_ONUPDATE_SLIMEBOSS_SPLIT   # 주기적 슬라임 분열 스폰
+
+# 처치 시 드롭
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 300, maxCount: 500, isCore: true }  # 골드(id=5)
+      - { itemDataId: 6, count: 80 }                                   # 경험치(id=6)
+
+  - shouldAddAll: false
+    probPercent: 60
+    addItems:
+      - { itemDataId: 200101, count: 3, weight: 50, group: 1 }         # 일반 재료
+      - { itemDataId: 200102, count: 2, weight: 35, group: 1 }         # 고급 재료
+      - { itemDataId: 200103, count: 1, weight: 15, group: 1, pityGroup: 5 }  # 희귀(천장5)
+
+# 표현(아트 키 — asset-producer 담당)
+prefab: "Units/Slime/slime_boss.prefab"
+sprite: "Units/Slime/slime_boss.png"
+uiScale: 2.0
+uiOffset: { x: 0.0, y: 0.3 }
+collideSize: { x: 1.8, y: 1.8 }
+hitSize:     { x: 2.0, y: 2.0 }
+animations:
+  idle:   "slime_boss_idle"
+  move:   "slime_boss_move"
+  attack: "slime_boss_attack"
+  dead:   "slime_boss_dead"
+  enrage: "slime_boss_enrage"

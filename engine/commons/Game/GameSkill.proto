@@ -1,0 +1,29 @@
+syntax = "proto3";
+package Commons.Game;
+
+import "GeometryMessage.proto";
+import "ResourceTrigger.proto";
+
+message GameSkill {
+  map<int64, int32> hitCountByUnitIds = 1;
+  
+  int64 id = 100;
+  int32 dataId = 101;
+  int64 itemId = 102;
+  int32 itemDataId = 103;
+
+  int32 team = 200;
+  int64 senderUnitId = 201;
+  int64 targetUnitId = 202;
+  float timelineSpeed = 203;
+  int32 level = 204;
+  int32 priority = 205;
+
+  uint32 tick = 300;
+  Commons.Resources.ResourceTrigger.Variables variables = 301;
+  Commons.Types.Geometry.Vector2Message position = 302;
+  Commons.Types.Geometry.Vector2Message direction = 303;
+  Commons.Types.Geometry.Vector2Message velocity = 304;
+  Commons.Types.Geometry.Vector2Message acceleration = 305;
+  int32 hit = 306;
+}

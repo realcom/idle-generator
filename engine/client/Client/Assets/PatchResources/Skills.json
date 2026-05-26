@@ -1,0 +1,51 @@
+{
+ "skillGlobal": {},
+ "skills": [
+  {
+   "id": 300101,
+   "name": "포자 충격",
+   "tags": [
+    "UseToTarget",
+    "TargetPosition"
+   ],
+   "cooldown": 1.6,
+   "priority": 1,
+   "targetRefreshType": "Nearest",
+   "sprite": "UIAssets/Images/ingame_icn_start.png",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/VFX_LiquidHitGreen.prefab"
+     }
+    },
+    {
+     "time": 0.1,
+     "hit": {
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.4
+        }
+       }
+      ],
+      "maxHit": 1,
+      "addDamage": {
+       "damagePercent": [
+        110.0
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.35,
+     "destroy": {}
+    }
+   ]
+  }
+ ]
+}

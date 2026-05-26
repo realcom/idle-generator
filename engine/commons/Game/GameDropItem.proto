@@ -1,0 +1,22 @@
+syntax = "proto3";
+package Commons.Game;
+
+import "GeometryMessage.proto";
+
+message GameDropItem {
+  int64 id = 100;
+  int32 itemDataId = 101;
+  int64 count = 102;
+  int32 level = 103;
+  int32 prefabId = 104;
+  bool isDropAutoGetExpired = 105;
+
+  int64 dropUnitId = 200;
+  int64 ownerUnitId = 201;
+  Commons.Types.Geometry.Vector2Message position = 202;
+  
+  uint32 ttl = 300;
+  uint32 destroyDelay = 301;
+  uint32 timeToExpiration = 302;
+  uint32 getItemDelay = 303;
+}

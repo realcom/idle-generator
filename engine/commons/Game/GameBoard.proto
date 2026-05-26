@@ -1,0 +1,66 @@
+syntax = "proto3";
+package Commons.Game;
+
+import "google/protobuf/timestamp.proto";
+import "GameUnit.proto";
+import "GameSkill.proto";
+import "GameDropItem.proto";
+import "ResourceTrigger.proto";
+import "Player.proto";
+import "PlayerAchievement.proto";
+import "PlayerAvatar.proto";
+
+message GameBoard {
+  
+  enum State {
+    Idle = 0;
+    
+    WillInitialize = 1000;
+    Initializing = 1001;
+    Initialized = 1002;
+    
+    WillPlay = 2000;
+    Playing = 2001;
+    
+    WillEnded = 1000000;
+    Ended = 1000001;
+  }
+  
+  enum BlockActionFlag {
+      None     = 0;
+      Skill    = 0x1;
+      Move     = 0x2;
+      Heal     = 0x4;
+   }
+
+   map<int64, Types.Players.BoardPlayerMessage> players = 1;
+  map<int32, Types.Players.PlayerAchievementMessage> achievements = 2;
+
+  map<int32, bool> disabledTerrainTriangles = 3;
+  map<int64, GameUnit> units = 4;
+  map<int64, GameSkill> skills = 5;
+  map<int64, GameDropItem> dropItems = 6;
+  
+  int64 id = 100;
+  int32 dataId = 101;
+  
+  uint32 tick = 200;
+  uint32 seed = 201;
+  Resources.ResourceTrigger.Variables variables = 202;
+  uint32 timerStartTick = 203;
+  uint32 timerPauseTick = 204;
+  uint32 timerEndTick = 205;
+  int32 winningTeam = 206;
+  State state = 207;
+  uint64 actionBlockFlags = 208;
+
+  uint32 nextUnitId = 300;
+  uint32 nextDropItemId = 301;
+  uint32 nextSkillId = 302;
+  uint32 nextInventoryItemId = 303;
+
+  Types.Players.BoardPlayerMessage defensePlayer = 400;
+  Types.Players.PlayerAvatar defensePlayerAvatar = 401;
+
+  google.protobuf.Timestamp createdAt = 2000;
+}

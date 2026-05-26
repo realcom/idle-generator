@@ -1,0 +1,21 @@
+syntax = "proto3";
+package Commons.Resources;
+
+message ResourceString {
+  enum Category {
+    Editor = 0;
+    Buff = 1;
+    Item = 2;
+    Map = 3;
+    Skill = 4;
+    Trigger = 5;
+    Unit = 6;
+  }
+  
+  Category category = 1;
+  int32 id = 2;
+  string key = 3;
+  
+  string english = 4;
+  string korean = 5;
+}

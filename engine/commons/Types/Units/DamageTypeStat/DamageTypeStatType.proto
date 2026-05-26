@@ -1,0 +1,17 @@
+syntax = "proto3";
+package Commons.Types.Units.DamageTypeStat;
+
+import "DamageType.proto";
+
+enum DamageTypeStatType {
+  DamagePercent = 0;
+  GotDamagePercent = 1;
+
+  Count = 2;
+}
+
+message AddDamageTypeStat {
+  Types.Units.DamageType damageType = 1;
+  DamageTypeStatType type = 2;
+  repeated float value = 3;
+}

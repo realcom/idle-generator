@@ -1,0 +1,33 @@
+name: SporeKingEnrage
+domain: unit
+
+"on":
+  - event: start
+    do:
+      - moveTo:
+          x: 2.3
+          y: 0.0
+
+---
+
+name: SporeKingBattle
+domain: unit
+
+vars:
+  spawn_unit: { type: int, default: 110201 }
+  spawn_count: { type: int, default: 2 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - useSkillToTarget:
+          skillDataId: 300101
+      - when: "tick % 360 == 0"
+        AddUnit:
+          unitDataId: $spawn_unit
+          count: $spawn_count
+          team: $enemy_team
+          locationId: $enemy_spawn
