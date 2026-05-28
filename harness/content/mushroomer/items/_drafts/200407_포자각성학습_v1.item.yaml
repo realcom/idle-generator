@@ -1,0 +1,29 @@
+id: 200407
+name: "포자 각성 학습"
+category: Recipe
+grade: 1
+rarity: 3
+group: 200401
+order: 4
+targetItemDataIds: [200404]
+requiredItemDataIds: [200402, 200403]
+exclusiveItemDataIds: [200404]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200107, count: 4 }
+      - { id: 200104, count: 8 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200404, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Mushroomer"
+  UnlockSkillItemDataId: "200404"
+  RequiredSkillItemDataIds: "200402,200403"
+  RequiredSkillLevel: "3"
+  UnlockCostLevelPoint: "4"
+  LevelPointItemDataId: "200107"
+spriteGroups:
+  Icon: "UIAssets/Images/ingame_icn_start.png"

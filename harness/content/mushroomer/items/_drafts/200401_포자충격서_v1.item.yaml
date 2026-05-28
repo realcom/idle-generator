@@ -1,12 +1,50 @@
 id: 200401
 name: "포자 충격서"
 category: Skill
+type: PlayerUnitActiveSkill
 grade: 1
 rarity: 1
+group: 200401
+constantDamageRatio: 1.0
+order: 1
+parentId: 200401
 skillDataId: 300101
+initialCreate: true
+initialCreateCount: 1
+initialCreateLevel: 1
+unstackable: true
+targetItemDataIds: [200402, 200403]
 levelUpMaterialItemGroups:
   - shouldAllValid: true
+    level: 1
     materialItems:
+      - { id: 200107, count: 1 }
       - { id: 200104, count: 2 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200107, count: 1 }
+      - { id: 200104, count: 3 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200107, count: 2 }
+      - { id: 200104, count: 4 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200107, count: 2 }
+      - { id: 200104, count: 6 }
+popupArgs:
+  SkillTree: "Mushroomer"
+  SkillTreeNode: "Root"
+  ChildrenSkillItemDataIds: "200402,200403"
+  UnlockRecipeItemDataId: "0"
+  UnlockCostLevelPoint: "0"
+  LevelPointItemDataId: "200107"
+  RequiredSkillItemDataIds: ""
+  RequiredSkillLevel: "0"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "1"
 spriteGroups:
   Icon: "UIAssets/Images/ingame_icn_start.png"

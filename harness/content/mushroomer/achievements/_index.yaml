@@ -85,3 +85,17 @@ achievements:
       items: [200105, 200503]
       maps: [500301]
     tags: [Dungeon, Weekly]
+
+  - id: 600107
+    name: "레벨 포인트 지급"
+    file: _drafts/600107_레벨포인트지급_v1.achievement.yaml
+    status: draft
+    created_at: 2026-05-28T00:00:00Z
+    created_by: codex
+    type: Normal
+    condition: LevelUpItem
+    refs:
+      units: []
+      items: [1, 200107]
+      maps: []
+    tags: [System, SkillTree, LevelPoint, Hidden, Repeatable]

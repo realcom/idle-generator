@@ -4,10 +4,12 @@ tags: [UseToTarget, TargetPosition, AoE]
 cooldown: 5.5
 priority: 2
 targetRefreshType: Nearest
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
 sprite: "UIAssets/Images/ingame_icn_start.png"
+itemDataId: 200402
 
 timelines:
-  - { time: 0.0, playFx: { prefab: "FXPrefabs/VFX_PoisonMaxHit.prefab" } }
+  - { time: 0.0, unitPlayAnimation: { animation: "Attack" } }
   - time: 0.25
     hit:
       geometries:

@@ -4,10 +4,13 @@ tags: [UseToTarget, TargetPosition, Boss]
 cooldown: 8.0
 priority: 3
 targetRefreshType: HighestHp
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
 sprite: "UIAssets/Images/ingame_icn_start.png"
+itemDataId: 200403
 
 timelines:
-  - { time: 0.0, playFx: { prefab: "FXPrefabs/VFX_IronRetribution.prefab" } }
+  - { time: 0.0, unitPlayAnimation: { animation: "Attack" } }
+  - { time: 0.0, unitCharge: { duration: 0.16, distance: 0.7, adjustDistanceToTarget: true } }
   - time: 0.18
     hit:
       geometries:
@@ -16,4 +19,4 @@ timelines:
             radius: 1.9
       maxHit: 1
       addDamage: { damagePercent: [360.0] }
-  - { time: 0.45, destroy: {} }
+  - { time: 0.7, destroy: {} }

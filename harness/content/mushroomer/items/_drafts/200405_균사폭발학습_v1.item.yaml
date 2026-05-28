@@ -1,0 +1,29 @@
+id: 200405
+name: "균사 폭발 학습"
+category: Recipe
+grade: 1
+rarity: 2
+group: 200401
+order: 2
+targetItemDataIds: [200402]
+requiredItemDataIds: [200401]
+exclusiveItemDataIds: [200402]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200107, count: 2 }
+      - { id: 200104, count: 4 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200402, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Mushroomer"
+  UnlockSkillItemDataId: "200402"
+  RequiredSkillItemDataIds: "200401"
+  RequiredSkillLevel: "3"
+  UnlockCostLevelPoint: "2"
+  LevelPointItemDataId: "200107"
+spriteGroups:
+  Icon: "UIAssets/Images/ingame_icn_start.png"

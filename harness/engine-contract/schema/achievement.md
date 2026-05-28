@@ -78,6 +78,7 @@
 | `AcquireItemGrade` | Item.id | grade |
 | `AcquireWeaponItemAnyGrade` | (미사용) | grade |
 | `HasItemLevel` | Item.id | 요구 레벨 |
+| `LevelUpItem` | Item.id | (미사용) |
 | `WinGame` | Map.id | (미사용) |
 | `WinGameGroup` | mapGroup tag/id | (미사용) |
 | `MissionUnitLevelUp` | Unit.id | 요구 레벨 |
@@ -85,6 +86,13 @@
 | `OnlineAtHour` | hour(0~23) | (미사용) |
 
 → 정확한 의미는 엔진 카운트 처리부(서버/클라) 참고. 헷갈리면 엔진팀 확인 후 작성.
+
+### 레벨업 보상 관례
+
+플레이어 레벨업에 따라 별도 포인트를 지급해야 할 때는 신규 엔진 훅을 만들기보다
+`LevelUpItem` 업적을 우선 사용한다. `conditionValue1`에는 프로필의
+`reserved_ids.playerLevel` 아이템 id를 넣고, `targetProgress: 1`, `repeatable: true`,
+`autoReward: true`로 두면 플레이어 레벨 아이템이 1회 레벨업할 때마다 보상이 자동 지급된다.
 
 ## 전역(Global) 예약 dataId
 

@@ -97,6 +97,21 @@ balance:
   idle:
     offline_cap_hours: 8
 
+progression:
+  skill_tree:
+    level_point_item_id: 200107
+    level_point_grant:
+      via: achievement
+      achievement_id: 600107
+      condition: LevelUpItem
+      player_level_item_id: 1
+      grant_per_player_level_up: 1
+
+shop:
+  product_costs:
+    use: productMaterialItemGroups
+    disallow_fields: [priceXtr]
+
 behavior:
   triggerType_map: {}
   disallow_actions: []
