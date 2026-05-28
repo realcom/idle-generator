@@ -20,7 +20,7 @@ targets:
 
 | param | value |
 | --- | --- |
-| base | 5600 |
+| base | 900 |
 | growth | 1.16 |
 
 ## attack(level)
@@ -28,7 +28,7 @@ targets:
 
 | param | value |
 | --- | --- |
-| base | 82 |
+| base | 12 |
 | growth | 1.12 |
 
 ## defense(level)
@@ -36,5 +36,5 @@ targets:
 
 | param | value |
 | --- | --- |
-| base | 28 |
+| base | 4 |
 | growth | 1.10 |

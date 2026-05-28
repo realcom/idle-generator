@@ -36,7 +36,7 @@ public class ModeManagerMushroom : ZModeManagerBattle
     private const float BottomSideMargin = 28f;
     private const string GrowthPanelId = AbilityPageAddressKey;
     private const string ShopPanelId = ShopPageAddressKey;
-    private static readonly Rect MushroomCameraRect = new(0f, BottomUiHeightRatio, 1f, 1f - BottomUiHeightRatio);
+    private static readonly Rect MushroomCameraRect = new(0f, BottomUiHeightRatio, 1f, 1f);
     private static readonly Vector2 MushroomCameraPivot = new(0.5f, 0.58f);
 
     private readonly struct PageSpec

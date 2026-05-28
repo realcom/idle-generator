@@ -11,12 +11,14 @@
    "cooldown": 1.6,
    "priority": 1,
    "targetRefreshType": "Nearest",
+   "prefab": "FXPrefabs/VFX_LiquidHitGreen.prefab",
    "sprite": "UIAssets/Images/ingame_icn_start.png",
+   "itemDataId": 200401,
    "timelines": [
     {
      "time": 0.0,
-     "playFx": {
-      "prefab": "FXPrefabs/VFX_LiquidHitGreen.prefab"
+     "unitPlayAnimation": {
+      "animation": "Attack"
      }
     },
     {
@@ -29,20 +31,158 @@
           "x": 0.0,
           "y": 0.0
          },
-         "radius": 1.4
+         "radius": 5.0
         }
        }
       ],
       "maxHit": 1,
       "addDamage": {
-       "damagePercent": [
-        110.0
+       "attackPercentDamages": [
+        1.1
        ]
       }
      }
     },
     {
-     "time": 0.35,
+     "time": 0.6,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300102,
+   "name": "균사 폭발",
+   "tags": [
+    "UseToTarget",
+    "TargetPosition",
+    "AoE"
+   ],
+   "cooldown": 5.5,
+   "priority": 2,
+   "targetRefreshType": "Nearest",
+   "prefab": "FXPrefabs/VFX_LiquidHitGreen.prefab",
+   "sprite": "UIAssets/Images/ingame_icn_start.png",
+   "itemDataId": 200402,
+   "timelines": [
+    {
+     "time": 0.0,
+     "unitPlayAnimation": {
+      "animation": "Attack"
+     }
+    },
+    {
+     "time": 0.25,
+     "hit": {
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.8
+        }
+       }
+      ],
+      "maxHit": 6,
+      "addDamage": {
+       "attackPercentDamages": [
+        1.65
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.55,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300103,
+   "name": "왕포자 강타",
+   "tags": [
+    "UseToTarget",
+    "TargetPosition",
+    "Boss"
+   ],
+   "cooldown": 8.0,
+   "priority": 3,
+   "targetRefreshType": "HighestHp",
+   "prefab": "FXPrefabs/VFX_LiquidHitGreen.prefab",
+   "sprite": "UIAssets/Images/ingame_icn_start.png",
+   "itemDataId": 200403,
+   "timelines": [
+    {
+     "time": 0.0,
+     "unitPlayAnimation": {
+      "animation": "Attack"
+     }
+    },
+    {
+     "time": 0.0,
+     "unitCharge": {
+      "duration": 0.16,
+      "distance": 0.7,
+      "adjustDistanceToTarget": true
+     }
+    },
+    {
+     "time": 0.18,
+     "hit": {
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.9
+        }
+       }
+      ],
+      "maxHit": 1,
+      "addDamage": {
+       "attackPercentDamages": [
+        3.6
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.7,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300104,
+   "name": "포자 각성",
+   "tags": [
+    "Self",
+    "Buff"
+   ],
+   "cooldown": 18.0,
+   "priority": 4,
+   "prefab": "FXPrefabs/VFX_LiquidHitGreen.prefab",
+   "sprite": "UIAssets/Images/ingame_icn_start.png",
+   "itemDataId": 200404,
+   "selfAddBuffs": [
+    {
+     "buffDataId": 400101,
+     "level": 1,
+     "duration": 8.0
+    }
+   ],
+   "timelines": [
+    {
+     "time": 0.0,
+     "unitPlayAnimation": {
+      "animation": "Cast"
+     }
+    },
+    {
+     "time": 0.6,
      "destroy": {}
     }
    ]

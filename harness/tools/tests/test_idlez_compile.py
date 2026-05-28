@@ -85,7 +85,12 @@ class IdlezCompileTests(unittest.TestCase):
         update_trigger = next(
             trigger for trigger in triggers if trigger["name"] == "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
         )
-        unit_count_call = update_trigger["statements"][0]["call"]
+        unit_count_call = next(
+            statement["call"]
+            for statement in update_trigger["statements"]
+            if "call" in statement
+            and statement["call"]["method"].get("boardMethod", {}).get("type") == "GetUnitCountByTeam"
+        )
 
         self.assertEqual(
             "Team",
@@ -104,36 +109,203 @@ class IdlezCompileTests(unittest.TestCase):
         self.assertEqual("UseSkillToTarget", method["type"])
         self.assertTrue(attack_trigger["statements"][0]["call"]["caller"])
 
+    def test_string_map_fields_emit_string_values(self):
+        bundles, _, _, _, errors = idlez_compile.compile_game("mushroomer")
+
+        self.assertEqual([], errors)
+        dungeon_map = next(entry for entry in bundles["map"] if entry["id"] == 500201)
+
+        self.assertEqual("500101", dungeon_map["popupArgs"]["ClientHomeMapDataId"])
+
     def test_mushroomer_behavior_seconds_compile_to_engine_ticks(self):
         _, triggers, _, _, errors = idlez_compile.compile_game("mushroomer")
 
         self.assertEqual([], errors)
         periods = {trigger["name"]: trigger.get("period") for trigger in triggers}
 
-        self.assertEqual(90, periods["MAP_ONUPDATE_MUSHROOMFIELDUPDATE"])
+        self.assertEqual(30, periods["MAP_ONUPDATE_MUSHROOMFIELDUPDATE"])
         self.assertEqual(30, periods["UNIT_ONUPDATE_MUSHROOMHEROATTACK"])
         self.assertEqual(60, periods["UNIT_ONUPDATE_SPORELINGATTACK"])
         self.assertEqual(30, periods["UNIT_ONUPDATE_SPOREKINGBATTLE"])
+
+    def test_skill_damage_percent_compiles_to_engine_attack_ratio(self):
+        bundles, _, _, _, errors = idlez_compile.compile_game("mushroomer")
+
+        self.assertEqual([], errors)
+        spore_shock = next(entry for entry in bundles["skill"] if entry["id"] == 300101)
+        hit_timeline = next(timeline for timeline in spore_shock["timelines"] if "hit" in timeline)
+        add_damage = hit_timeline["hit"]["addDamage"]
+        hit_radius = hit_timeline["hit"]["geometries"][0]["circle"]["radius"]
+
+        self.assertNotIn("damagePercent", add_damage)
+        self.assertEqual([1.1], add_damage["attackPercentDamages"])
+        self.assertFalse(any("unitCharge" in timeline for timeline in spore_shock.get("timelines", [])))
+        self.assertGreaterEqual(hit_radius, 4.8)
+
+    def test_mushroomer_skills_use_instantiable_prefab_and_attack_animation(self):
+        bundles, _, _, _, errors = idlez_compile.compile_game("mushroomer")
+
+        self.assertEqual([], errors)
+        skill_by_id = {entry["id"]: entry for entry in bundles["skill"]}
+        buff_by_id = {entry["id"]: entry for entry in bundles["buff"]}
+        unit_by_id = {entry["id"]: entry for entry in bundles["unit"]}
+        item_by_id = {entry["id"]: entry for entry in bundles["item"]}
+
+        for skill_id in [300101, 300102, 300103]:
+            skill = skill_by_id[skill_id]
+            self.assertEqual("FXPrefabs/VFX_LiquidHitGreen.prefab", skill["prefab"])
+            self.assertFalse(
+                any("playFx" in timeline for timeline in skill.get("timelines", [])),
+                f"{skill_id} should use ResourceSkill.prefab, not playFx",
+            )
+            self.assertEqual("Attack", skill["timelines"][0]["unitPlayAnimation"]["animation"])
+
+        self.assertEqual(
+            "Cast",
+            skill_by_id[300104]["timelines"][0]["unitPlayAnimation"]["animation"],
+        )
+        self.assertEqual("Units/Characters/PFB_HAM_Hamzzi.prefab", unit_by_id[110111]["prefab"])
+        self.assertEqual("Units/Characters/Assets/Ninster3.png", unit_by_id[110111]["sprite"])
+        self.assertEqual(
+            {"Idle": "Idle", "Run": "Run", "Attack": "Attack", "Cast": "Attack2"},
+            unit_by_id[110111]["animations"],
+        )
+        self.assertEqual("Attack1", unit_by_id[110201]["animations"]["Attack"])
+        self.assertEqual("Attack1", unit_by_id[110501]["animations"]["Attack"])
+        self.assertEqual("Attack2", unit_by_id[110501]["animations"]["SpecialAttack"])
+
+        self.assertEqual("FXPrefabs/VFX_LiquidHitGreen.prefab", buff_by_id[400101]["prefab"])
+        for item_id in [200401, 200402, 200403, 200404]:
+            self.assertEqual(1.0, item_by_id[item_id]["constantDamageRatio"])
 
     def test_mushroomer_wave_spawns_use_location(self):
         _, triggers, _, _, errors = idlez_compile.compile_game("mushroomer")
 
         self.assertEqual([], errors)
-        wave1_trigger = next(
-            trigger for trigger in triggers if trigger["name"] == "MAP_ONSTART_MUSHROOMFIELDWAVE1"
+        update_trigger = next(
+            trigger for trigger in triggers if trigger["name"] == "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
         )
-        add_unit_call = next(
-            statement["call"]
-            for statement in wave1_trigger["statements"]
-            if "call" in statement
-            and statement["call"]["method"].get("boardMethod", {}).get("type") == "AddUnit"
+
+        def calls(statements):
+            for statement in statements:
+                if "call" in statement:
+                    yield statement["call"]
+                if "condition" in statement:
+                    yield from calls(statement["condition"].get("statements", []))
+
+        add_unit_calls = [
+            call
+            for call in calls(update_trigger["statements"])
+            if call["method"].get("boardMethod", {}).get("type") == "AddUnit"
+        ]
+
+        self.assertGreaterEqual(len(add_unit_calls), 1)
+        for add_unit_call in add_unit_calls:
+            parameter_types = {
+                assignment["variable"]["parameter"]["type"]
+                for assignment in add_unit_call["assignments"]
+            }
+            count_assignment = next(
+                assignment
+                for assignment in add_unit_call["assignments"]
+                if assignment["variable"]["parameter"]["type"] == "Count"
+            )
+
+            self.assertIn("LocationId", parameter_types)
+            self.assertEqual(
+                1,
+                count_assignment["expression"]["postfix"][0]["operand"]["constant"]["value"],
+            )
+
+    def test_mushroomer_three_easy_waves_then_boss(self):
+        bundles, triggers, _, _, errors = idlez_compile.compile_game("mushroomer")
+
+        self.assertEqual([], errors)
+
+        def trigger(name):
+            return next(entry for entry in triggers if entry["name"] == name)
+
+        def calls(statements):
+            for statement in statements:
+                if "call" in statement:
+                    yield statement["call"]
+                if "condition" in statement:
+                    yield from calls(statement["condition"].get("statements", []))
+
+        def assignments(statements):
+            for statement in statements:
+                if "assignment" in statement:
+                    yield statement["assignment"]
+                if "condition" in statement:
+                    yield from assignments(statement["condition"].get("statements", []))
+
+        def param_value(call, param_type):
+            assignment = next(
+                item for item in call["assignments"] if item["variable"]["parameter"]["type"] == param_type
+            )
+            return assignment["expression"]["postfix"][0]["operand"]["constant"]["value"]
+
+        for wave_name in [
+            "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+            "MAP_ONSTART_MUSHROOMFIELDWAVE2",
+            "MAP_ONSTART_MUSHROOMFIELDWAVE3",
+        ]:
+            wave_trigger = trigger(wave_name)
+            self.assertFalse(
+                any(call["method"].get("boardMethod", {}).get("type") == "AddUnit" for call in calls(wave_trigger["statements"]))
+            )
+            self.assertTrue(
+                any(assignment["variable"].get("boardKey") == 604 for assignment in assignments(wave_trigger["statements"]))
+            )
+
+        boss_wave_start = trigger("MAP_ONSTART_MUSHROOMFIELDBOSSWAVE")
+        self.assertFalse(
+            any(
+                call["method"].get("boardMethod", {}).get("type") == "AddUnit"
+                for call in calls(boss_wave_start["statements"])
+            )
         )
-        parameter_types = {
-            assignment["variable"]["parameter"]["type"]
-            for assignment in add_unit_call["assignments"]
+
+        update_trigger = trigger("MAP_ONUPDATE_MUSHROOMFIELDUPDATE")
+        add_unit_calls = [
+            call
+            for call in calls(update_trigger["statements"])
+            if call["method"].get("boardMethod", {}).get("type") == "AddUnit"
+        ]
+        self.assertEqual(4, len(add_unit_calls))
+        for call in add_unit_calls[:3]:
+            self.assertEqual(110201, param_value(call, "UnitDataId"))
+            self.assertEqual(1, param_value(call, "Count"))
+        self.assertEqual(110501, param_value(add_unit_calls[3], "UnitDataId"))
+        self.assertEqual(1, param_value(add_unit_calls[3], "Count"))
+
+        boss_update = trigger("UNIT_ONUPDATE_SPOREKINGBATTLE")
+
+        boss_calls = list(calls(boss_update["statements"]))
+        self.assertFalse(
+            any(call["method"].get("boardMethod", {}).get("type") == "AddUnit" for call in boss_calls)
+        )
+        self.assertIn(
+            "UseSkillToTarget",
+            [call["method"].get("unitMethod", {}).get("type") for call in boss_calls],
+        )
+
+        unit_by_id = {entry["id"]: entry for entry in bundles["unit"]}
+        stat_by_type = {
+            unit_id: {stat.get("type", "Hp"): stat["value"][0] for stat in unit["addStats"]}
+            for unit_id, unit in unit_by_id.items()
+            if unit_id in {110111, 110201, 110501}
         }
 
-        self.assertIn("LocationId", parameter_types)
+        self.assertEqual(1800.0, stat_by_type[110111]["Hp"])
+        self.assertEqual(90.0, stat_by_type[110111]["Attack"])
+        self.assertEqual(2.0, stat_by_type[110111]["Defense"])
+        self.assertEqual(60.0, stat_by_type[110201]["Hp"])
+        self.assertEqual(4.0, stat_by_type[110201]["Attack"])
+        self.assertEqual(900.0, stat_by_type[110501]["Hp"])
+        self.assertEqual(12.0, stat_by_type[110501]["Attack"])
+        self.assertEqual(0.45, unit_by_id[110201]["deadDestroyDelaySeconds"])
+        self.assertEqual(0.75, unit_by_id[110501]["deadDestroyDelaySeconds"])
 
     def test_mushroomer_spawns_have_approach_spacing(self):
         bundles, triggers, _, _, errors = idlez_compile.compile_game("mushroomer")
@@ -154,9 +326,39 @@ class IdlezCompileTests(unittest.TestCase):
             for assignment in move_call["assignments"]
         }
 
-        self.assertEqual("SetMoveDestination", move_call["method"]["unitMethod"]["type"])
+        self.assertEqual("SetMoveRandomDestination", move_call["method"]["unitMethod"]["type"])
         self.assertTrue(move_call["caller"])
-        self.assertEqual({"PositionX", "PositionY"}, parameter_types)
+        self.assertEqual({"PositionX", "PositionY", "PositionXrange", "PositionYrange"}, parameter_types)
+
+        attack_trigger = next(
+            trigger for trigger in triggers if trigger["name"] == "UNIT_ONUPDATE_SPORELINGATTACK"
+        )
+        conditions = [statement["condition"] for statement in attack_trigger["statements"]]
+
+        def unit_variable_types(node):
+            if isinstance(node, dict):
+                unit_variable = node.get("unitVariable")
+                if unit_variable:
+                    yield unit_variable["type"]
+                for value in node.values():
+                    yield from unit_variable_types(value)
+            elif isinstance(node, list):
+                for value in node:
+                    yield from unit_variable_types(value)
+
+        self.assertEqual(2, len(conditions))
+        self.assertIn("TargetDistance", list(unit_variable_types(conditions[0]["expression"])))
+        self.assertCountEqual(
+            ["HasTarget", "TargetDistance"],
+            list(unit_variable_types(conditions[1]["expression"])),
+        )
+        self.assertEqual(
+            ["Stop", "UseSkillToTarget"],
+            [
+                statement["call"]["method"]["unitMethod"]["type"]
+                for statement in conditions[1]["statements"]
+            ],
+        )
 
     def test_skill_behavior_unit_method_targets_caller_unit(self):
         _, triggers, _, _, errors = idlez_compile.compile_game("idlez")
@@ -239,16 +441,16 @@ class IdlezCompileTests(unittest.TestCase):
 
         self.assertEqual(4, len(unit_count_calls))
         self.assertIn(603, list(board_keys(conditions[0]["expression"])))
-        self.assertIn("Return", predefined_variables(conditions[0]["expression"]["postfix"]))
 
-        for condition, wave in zip(conditions[1:], [1.0, 2.0, 3.0]):
+        for condition, wave in zip(conditions[1:5], [1.0, 2.0, 3.0, 4.0]):
             expression = condition["expression"]
             self.assertIn(603, list(board_keys(expression)))
             self.assertIn(601, list(board_keys(expression)))
+            self.assertIn(604, list(board_keys(expression)))
             self.assertIn(wave, constants(expression["postfix"]))
             self.assertIn("Return", predefined_variables(expression["postfix"]))
 
-        for condition, next_wave in zip(conditions[1:3], [2, 3]):
+        for condition, next_wave in zip(conditions[1:4], [2, 3, 4]):
             transition_flag_assignment = condition["statements"][0]["assignment"]
             wave_assignment = condition["statements"][1]["assignment"]
 
@@ -263,8 +465,30 @@ class IdlezCompileTests(unittest.TestCase):
                 wave_assignment["expression"]["postfix"][0]["operand"]["constant"]["value"],
             )
 
-        end_game_call = conditions[3]["statements"][0]["call"]
+        boss_wave_trigger = conditions[3]["statements"][3]["call"]["method"]["runTrigger"]["name"]
+        self.assertEqual("MAP_ONSTART_MUSHROOMFIELDBOSSWAVE", boss_wave_trigger)
+
+        end_game_call = conditions[4]["statements"][0]["call"]
         self.assertEqual("EndGame", end_game_call["method"]["boardMethod"]["type"])
+
+        for condition, wave in zip(conditions[5:9], [1.0, 2.0, 3.0, 4.0]):
+            expression = condition["expression"]
+            self.assertIn(603, list(board_keys(expression)))
+            self.assertIn(601, list(board_keys(expression)))
+            self.assertIn(604, list(board_keys(expression)))
+            self.assertIn(wave, constants(expression["postfix"]))
+            add_unit_call = condition["statements"][0]["call"]
+            spawn_count = next(
+                assignment
+                for assignment in add_unit_call["assignments"]
+                if assignment["variable"]["parameter"]["type"] == "Count"
+            )
+            spawned_assignment = condition["statements"][1]["assignment"]
+
+            self.assertEqual("AddUnit", add_unit_call["method"]["boardMethod"]["type"])
+            self.assertEqual(1, spawn_count["expression"]["postfix"][0]["operand"]["constant"]["value"])
+            self.assertEqual(604, spawned_assignment["variable"]["boardKey"])
+            self.assertIn("Add", [item.get("operator", {}).get("type") for item in spawned_assignment["expression"]["postfix"]])
 
     def test_validate_rejects_add_unit_missing_unit_resource(self):
         bundles, triggers, globals_out, _, errors = idlez_compile.compile_game("mushroomer")

@@ -28,6 +28,7 @@
 
 | 문서 | 내용 | 출처(추출원) |
 | --- | --- | --- |
+| `trigger-feature-guide.md` | AI/사람용 behavior 기능 사용 가이드 | 하네스 compiler + 런타임 계약 |
 | `action-vocabulary.md` | 트리거 액션·이벤트·변수 정본 | `ResourceTrigger.*Method.cs`, `ResourceTrigger.proto` |
 | `trigger-runtime-semantics.md` | caller/slot, 숫자, AddUnit, Return 등 실행 의미 | `ResourceTrigger.*`, `GameUnit.*`, 서버 테스트 |
 | `json-serialization.md` | idlez 커스텀 JSON 쿽 | 실제 `Units.json`/`Items.json` |
@@ -36,7 +37,7 @@
 ## 함의 (왜 이 분리가 중요한가)
 
 - **트리거/행동을 짜는 건 곧 idlez를 상대로 프로그래밍하는 것**이다. `action-vocabulary.md`에 없는 동작은 behavior로 우회 불가 → "엔진에 메서드 추가 필요"로 플래그.
-- AI가 behavior를 쓸 때는 `behavior-format.md`만 보지 말고 `trigger-runtime-semantics.md`까지 같이 본다. 특히 `Return`, caller/slot, `AddUnit.locationId`, long damage/heal 규칙은 런타임 버그로 직결된다.
+- AI가 behavior를 쓸 때는 `trigger-feature-guide.md`를 진입점으로 보고, 세부는 `behavior-format.md`와 `trigger-runtime-semantics.md`까지 같이 본다. 특히 `Return`, caller/slot, `AddUnit.locationId`, long damage/heal 규칙은 런타임 버그로 직결된다.
 - 하네스의 **재사용 가능한 자산은 주로 🟢/🟡**(데이터·성장·밸런스 작성·검증·AI 생성)에 있다. 🔴은 idlez에 단단히 묶고 버전을 고정한다.
 - 엔진 전환(Godot 등)을 고려할 때: 🟢 거의 유지, 🟡 재매핑, 🔴 재작성. 행동 자산이 클수록 전환 비용이 커진다. (그래서 "행동의 AI 친화성"은 엔진이 아니라 *프론트엔드*에서 확보 — `behavior-format.md` 참조.)
 

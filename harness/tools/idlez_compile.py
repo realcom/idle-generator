@@ -40,6 +40,7 @@ SPECS = {
         global_key="unitGlobal",
         enum={"type": "Normal", "armorType": "NormalArmor", "targetMode": "None"},
         int64=["requiredExps"],
+        string_map=["animations"],
         stat=["addStats"],
         drop=["dropAddItemGroups"],
     ),
@@ -50,6 +51,7 @@ SPECS = {
         global_key="itemGlobal",
         enum={"category": "System", "type": "Unspecified", "weaponCategory": "Normal"},
         int64=["requiredExps"],
+        string_map=["spriteGroups", "popupArgs"],
         stat=["addStats", "equipAddStats"],
         drop=[
             "addItemGroups",
@@ -71,6 +73,7 @@ SPECS = {
             "damageType": "NormalDamage",
         },
         int64=[],
+        string_map=[],
         stat=[],
         drop=["selfAddItemGroups"],
     ),
@@ -85,6 +88,7 @@ SPECS = {
             "damageType": "NormalDamage",
         },
         int64=[],
+        string_map=["spriteGroups"],
         stat=["addStats"],
         drop=[],
     ),
@@ -95,6 +99,7 @@ SPECS = {
         global_key="mapGlobal",
         enum={"type": "Unspecified"},
         int64=[],
+        string_map=["spriteGroups", "popupArgs"],
         stat=[],
         drop=["rewardAddItemGroups", "scoutAddItemGroups", "SpawnAddItemGroups"],
         alias={
@@ -110,6 +115,7 @@ SPECS = {
         global_key="stringGlobal",
         enum={},
         int64=[],
+        string_map=[],
         stat=[],
         drop=[],
     ),
@@ -120,6 +126,7 @@ SPECS = {
         global_key="achievementGlobal",
         enum={},
         int64=[],
+        string_map=["popupArgs"],
         stat=[],
         drop=["rewardAddItemGroups"],
     ),
@@ -130,6 +137,7 @@ SPECS = {
         global_key="audioGlobal",
         enum={},
         int64=[],
+        string_map=[],
         stat=[],
         drop=[],
     ),
@@ -346,6 +354,34 @@ def compile_statarray(stats, gmap):
     return out
 
 
+def stringify_map_values(mapping):
+    out = {}
+    for key, value in (mapping or {}).items():
+        if value is None:
+            continue
+        if isinstance(value, bool):
+            out[key] = "true" if value else "false"
+        else:
+            out[key] = str(value)
+    return out
+
+
+def normalize_combat_effect_aliases(value):
+    if isinstance(value, list):
+        return [normalize_combat_effect_aliases(v) for v in value]
+
+    if not isinstance(value, dict):
+        return value
+
+    out = {key: normalize_combat_effect_aliases(v) for key, v in value.items()}
+    add_damage = out.get("addDamage")
+    if isinstance(add_damage, dict) and "damagePercent" in add_damage and "attackPercentDamages" not in add_damage:
+        raw = add_damage.pop("damagePercent")
+        values = raw if isinstance(raw, list) else [raw]
+        add_damage["attackPercentDamages"] = [float(v) / 100.0 for v in values]
+    return out
+
+
 def compile_entry(src, tname, spec, game, growth, errors, source_path):
     raw = copy.deepcopy(src)
     if tname == "unit":
@@ -371,13 +407,15 @@ def compile_entry(src, tname, spec, game, growth, errors, source_path):
                 out[out_key] = value
         elif out_key in spec["int64"]:
             out[out_key] = [i64(x) for x in value] if isinstance(value, list) else i64(value)
+        elif out_key in spec.get("string_map", []):
+            out[out_key] = stringify_map_values(value)
         elif out_key in spec["stat"]:
             out[out_key] = compile_statarray(value, gmap.get(out_key, {}))
         elif out_key in spec["drop"]:
             out.setdefault(out_key, []).extend(compile_groups(value, game))
         else:
             out[out_key] = value
-    return out
+    return normalize_combat_effect_aliases(out)
 
 
 def compile_tutorial_manifest(game, errors):
@@ -514,6 +552,42 @@ BOARD_VARIABLES = {
     "wave": 601,
     "wavetransitionpending": 603,
     "wave_transition_pending": 603,
+    "wavespawned": 604,
+    "wave_spawned": 604,
+}
+UNIT_VARIABLES = {
+    "dataid": "DataId",
+    "positionx": "PositionX",
+    "positiony": "PositionY",
+    "directionx": "DirectionX",
+    "directiony": "DirectionY",
+    "velocityx": "VelocityX",
+    "velocityy": "VelocityY",
+    "hasmovedirection": "HasMoveDirection",
+    "movedirectionx": "MoveDirectionX",
+    "movedirectiony": "MoveDirectionY",
+    "hasmovedestination": "HasMoveDestination",
+    "movedestinationx": "MoveDestinationX",
+    "movedestinationy": "MoveDestinationY",
+    "level": "Level",
+    "state": "State",
+    "iscollidingwall": "IsCollidingWall",
+    "iscollidingunit": "IsCollidingUnit",
+    "hp": "Hp",
+    "maxhp": "MaxHp",
+    "hpratio": "HpRatio",
+    "mp": "Mp",
+    "maxmp": "MaxMp",
+    "mpratio": "MpRatio",
+    "shield": "Shield",
+    "guard": "Guard",
+    "luck": "Luck",
+    "hastarget": "HasTarget",
+    "targetpositionx": "TargetPositionX",
+    "targetpositiony": "TargetPositionY",
+    "targetdistance": "TargetDistance",
+    "targetangle": "TargetAngle",
+    "isboss": "IsBoss",
 }
 
 
@@ -601,10 +675,20 @@ def _operand(tok, vars_, errors, ctx):
     if tok.startswith("$"):
         return _const_operand(_resolve_behavior_var(tok, vars_, errors, ctx))
     low = tok.lower()
+    norm = low.replace("_", "").replace("-", "")
     if low in BOARD_VARIABLES:
         return {"operand": {"variable": {"boardKey": BOARD_VARIABLES[low]}}}
     if low in PREDEF:
         return {"operand": {"variable": {"predefinedVariable": {"type": PREDEF[low]}}}}
+    if norm in UNIT_VARIABLES:
+        return {
+            "operand": {
+                "variable": {
+                    "caller": True,
+                    "unitVariable": {"type": UNIT_VARIABLES[norm]},
+                }
+            }
+        }
     errors.append(f"{ctx}: 표현식 식별자 '{tok}' 미지원(사전정의 변수/$var/숫자/도메인.메서드 만)")
     return _const_operand(0)
 
@@ -871,21 +955,27 @@ def validate_action_args(akey, args, allowed_keys, errors, ctx):
         errors.append(f"{ctx}: 액션 '{akey}' 미지원 인자 {unknown}")
 
 
+def board_assignment_expression(value, vars_, errors, ctx):
+    if isinstance(value, str):
+        return expr_postfix(value, vars_, errors, ctx)
+    return {
+        "postfix": [
+            {
+                "operand": {
+                    "constant": {
+                        "value": _resolve_behavior_var(value, vars_, errors, ctx)
+                    }
+                }
+            }
+        ]
+    }
+
+
 def build_board_variable_assignment(key, value, vars_, errors, ctx):
     return {
         "assignment": {
             "variable": {"boardKey": _resolve_behavior_var(key, vars_, errors, ctx)},
-            "expression": {
-                "postfix": [
-                    {
-                        "operand": {
-                            "constant": {
-                                "value": _resolve_behavior_var(value, vars_, errors, ctx)
-                            }
-                        }
-                    }
-                ]
-            },
+            "expression": board_assignment_expression(value, vars_, errors, ctx),
         }
     }
 

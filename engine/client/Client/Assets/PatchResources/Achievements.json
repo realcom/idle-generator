@@ -18,6 +18,227 @@
  },
  "achievements": [
   {
+   "id": 600101,
+   "name": "첫 승리",
+   "type": "Normal",
+   "tags": [],
+   "order": 101,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "WinGame",
+   "conditionValue1": 500101,
+   "conditionValue2": 0,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "count": "500"
+      },
+      {
+       "itemDataId": 6,
+       "count": "60"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 600102,
+   "name": "포자 사냥꾼",
+   "type": "Normal",
+   "tags": [],
+   "order": 102,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "KillUnitAny",
+   "conditionValue1": 0,
+   "conditionValue2": 0,
+   "targetProgress": 100,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "count": "1200"
+      },
+      {
+       "itemDataId": 200103,
+       "count": "5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 600103,
+   "name": "강화석 수집",
+   "type": "Normal",
+   "tags": [],
+   "order": 103,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "AcquireItem",
+   "conditionValue1": 200103,
+   "conditionValue2": 0,
+   "targetProgress": 10,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 200103,
+       "count": "10"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 600104,
+   "name": "스킬 수련",
+   "type": "Normal",
+   "tags": [],
+   "order": 104,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "UseSkill",
+   "conditionValue1": 300101,
+   "conditionValue2": 0,
+   "targetProgress": 20,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 200104,
+       "count": "20"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 600105,
+   "name": "골드 던전 돌파",
+   "type": "Normal",
+   "tags": [],
+   "order": 105,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "WinGame",
+   "conditionValue1": 500201,
+   "conditionValue2": 0,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "count": "3000"
+      },
+      {
+       "itemDataId": 6,
+       "count": "150"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 600106,
+   "name": "요일 던전 입문",
+   "type": "Normal",
+   "tags": [],
+   "order": 106,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "WinGame",
+   "conditionValue1": 500301,
+   "conditionValue2": 0,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 200105,
+       "count": "1"
+      },
+      {
+       "itemDataId": 200503,
+       "count": "1"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 600107,
+   "name": "레벨 포인트 지급",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay"
+   ],
+   "order": 107,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "LevelUpItem",
+   "conditionValue1": 1,
+   "conditionValue2": 0,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": true,
+   "autoReward": true,
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 200107,
+       "count": "1",
+       "isCore": true
+      }
+     ]
+    }
+   ],
+   "popupArgs": {
+    "Source": "PlayerLevelUp",
+    "PlayerLevelItemDataId": "1",
+    "LevelPointItemDataId": "200107",
+    "GrantPerLevel": "1"
+   }
+  },
+  {
    "type": "Normal",
    "targetProgress": 1,
    "autoReward": true,

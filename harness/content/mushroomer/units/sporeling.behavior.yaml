@@ -4,18 +4,31 @@ domain: unit
 "on":
   - event: start
     do:
-      - moveTo:
-          x: 1.8
+      - moveRandom:
+          x: 2.4
           y: 0.0
+          xRange: 0.25
+          yRange: 1.6
 
 ---
 
 name: SporelingAttack
 domain: unit
 
+vars:
+  attack_range: { type: float, default: 4.8 }
+
 "on":
   - event: update
     every: 2s
     do:
-      - useSkillToTarget:
+      - when: "targetDistance > $attack_range"
+        moveRandom:
+          x: 2.4
+          y: 0.0
+          xRange: 0.25
+          yRange: 1.6
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget:
           skillDataId: 300101

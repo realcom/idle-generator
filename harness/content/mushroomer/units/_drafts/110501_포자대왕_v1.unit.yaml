@@ -7,11 +7,12 @@ warmupDelay: 2.4
 targetMode: Chaser
 targetAwareDistance: 26.0
 targetResetDistance: 32.0
+deadDestroyDelaySeconds: 0.75
 
 addStats:
-  - { type: Hp, value: [5600.0] }
-  - { type: Attack, value: [82.0] }
-  - { type: Defense, value: [28.0] }
+  - { type: Hp, value: [900.0] }
+  - { type: Attack, value: [12.0] }
+  - { type: Defense, value: [4.0] }
   - { type: MoveSpeed, value: [1.8] }
 
 triggers:
@@ -32,6 +33,12 @@ dropAddItemGroups:
 
 prefab: "Units/Monsters/finalboss_melee_slime_boss_green.prefab"
 sprite: "Units/Monsters/Assets/finalboss_melee_slime_boss.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  SpecialAttack: Attack2
+  Dead: Dead
 uiScale: 1.8
 uiOffset: { x: 0.0, y: 0.3 }
 collideSize: { x: 1.8, y: 1.8 }

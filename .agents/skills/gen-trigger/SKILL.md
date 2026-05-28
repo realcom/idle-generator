@@ -22,6 +22,7 @@ agent: behavior-author
 - **_index.yaml**: 트리거 단독 카테고리는 없음 — 소속 유닛/맵/스킬의 _index 항목에 `triggers: [이름]`이 명시되면 추적됨.
 
 ## 항상 먼저 읽는다
+- `harness/engine-contract/trigger-feature-guide.md` — 현재 하네스가 지원하는 behavior 기능, 액션 인자, 예제
 - `harness/engine-contract/action-vocabulary.md` — ★ 액션·이벤트·변수 **정본**(idlez 추출, 🔴 engine-bound). do[] 액션은 여기 있는 것만.
 - `harness/engine-contract/behavior-format.md` — behavior YAML 구조, expression DSL, 트리거 네이밍(자유 문자열·혼합; 하네스는 `{DOMAIN}_ON{EVENT}_{NAME}` 채택)
 - `harness/engine-contract/trigger-runtime-semantics.md` — caller/slot, `Return`, 대형 damage/heal, `AddUnit.locationId` 안전 규칙

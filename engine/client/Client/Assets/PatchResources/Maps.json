@@ -240,6 +240,1511 @@
      ]
     }
    ]
+  },
+  {
+   "id": 500102,
+   "group": 500100,
+   "name": "포자초원 깊은길",
+   "type": "Dungeon",
+   "tags": [
+    "Main"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "sprite": "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "self"
+   },
+   "boardConstants": {
+    "levelUpChoiceCount": 3
+   },
+   "initLevel": 4,
+   "initGold": 260,
+   "enableUnitExp": true,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "terrains": [
+    {
+     "vertices": [
+      {
+       "position": {
+        "x": -12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": -12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      }
+     ],
+     "triangles": [
+      {
+       "v1": 0,
+       "v2": 1,
+       "v3": 2
+      },
+      {
+       "v1": 0,
+       "v2": 2,
+       "v3": 3
+      }
+     ]
+    },
+    {
+     "type": "Skill",
+     "vertices": [
+      {
+       "position": {
+        "x": -12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": -12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      }
+     ],
+     "triangles": [
+      {
+       "v1": 0,
+       "v2": 1,
+       "v3": 2
+      },
+      {
+       "v1": 0,
+       "v2": 2,
+       "v3": 3
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "minCount": "220",
+       "maxCount": "320",
+       "isCore": true
+      },
+      {
+       "itemDataId": 6,
+       "count": "70"
+      },
+      {
+       "itemDataId": 200103,
+       "count": "2"
+      }
+     ]
+    }
+   ],
+   "scoutAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "minutes": 10,
+     "maxMinutes": 480,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "count": "90"
+      },
+      {
+       "itemDataId": 6,
+       "count": "18"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 500103,
+   "group": 500100,
+   "name": "이끼숲 입구",
+   "type": "Dungeon",
+   "tags": [
+    "Main"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "sprite": "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "self"
+   },
+   "boardConstants": {
+    "levelUpChoiceCount": 3
+   },
+   "initLevel": 8,
+   "initGold": 420,
+   "enableUnitExp": true,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "terrains": [
+    {
+     "vertices": [
+      {
+       "position": {
+        "x": -12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": -12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      }
+     ],
+     "triangles": [
+      {
+       "v1": 0,
+       "v2": 1,
+       "v3": 2
+      },
+      {
+       "v1": 0,
+       "v2": 2,
+       "v3": 3
+      }
+     ]
+    },
+    {
+     "type": "Skill",
+     "vertices": [
+      {
+       "position": {
+        "x": -12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": -12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      }
+     ],
+     "triangles": [
+      {
+       "v1": 0,
+       "v2": 1,
+       "v3": 2
+      },
+      {
+       "v1": 0,
+       "v2": 2,
+       "v3": 3
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "minCount": "360",
+       "maxCount": "520",
+       "isCore": true
+      },
+      {
+       "itemDataId": 6,
+       "count": "110"
+      },
+      {
+       "itemDataId": 200103,
+       "count": "3"
+      },
+      {
+       "itemDataId": 200104,
+       "count": "1"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 500104,
+   "group": 500100,
+   "name": "이끼숲 깊은길",
+   "type": "Dungeon",
+   "tags": [
+    "Main"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "sprite": "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "self"
+   },
+   "boardConstants": {
+    "levelUpChoiceCount": 3
+   },
+   "initLevel": 12,
+   "initGold": 640,
+   "enableUnitExp": true,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "terrains": [
+    {
+     "vertices": [
+      {
+       "position": {
+        "x": -12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": -12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      }
+     ],
+     "triangles": [
+      {
+       "v1": 0,
+       "v2": 1,
+       "v3": 2
+      },
+      {
+       "v1": 0,
+       "v2": 2,
+       "v3": 3
+      }
+     ]
+    },
+    {
+     "type": "Skill",
+     "vertices": [
+      {
+       "position": {
+        "x": -12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": -12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      }
+     ],
+     "triangles": [
+      {
+       "v1": 0,
+       "v2": 1,
+       "v3": 2
+      },
+      {
+       "v1": 0,
+       "v2": 2,
+       "v3": 3
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "minCount": "540",
+       "maxCount": "760",
+       "isCore": true
+      },
+      {
+       "itemDataId": 6,
+       "count": "160"
+      },
+      {
+       "itemDataId": 200103,
+       "count": "4"
+      },
+      {
+       "itemDataId": 200104,
+       "count": "2"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 500105,
+   "group": 500100,
+   "name": "포자대왕 둥지",
+   "type": "Dungeon",
+   "tags": [
+    "Main",
+    "Boss"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "sprite": "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "self"
+   },
+   "boardConstants": {
+    "levelUpChoiceCount": 3
+   },
+   "initLevel": 16,
+   "initGold": 900,
+   "enableUnitExp": true,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "terrains": [
+    {
+     "vertices": [
+      {
+       "position": {
+        "x": -12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": -12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      }
+     ],
+     "triangles": [
+      {
+       "v1": 0,
+       "v2": 1,
+       "v3": 2
+      },
+      {
+       "v1": 0,
+       "v2": 2,
+       "v3": 3
+      }
+     ]
+    },
+    {
+     "type": "Skill",
+     "vertices": [
+      {
+       "position": {
+        "x": -12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": -6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": 12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      },
+      {
+       "position": {
+        "x": -12.0,
+        "y": 6.0
+       },
+       "height": 0.0
+      }
+     ],
+     "triangles": [
+      {
+       "v1": 0,
+       "v2": 1,
+       "v3": 2
+      },
+      {
+       "v1": 0,
+       "v2": 2,
+       "v3": 3
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "minCount": "900",
+       "maxCount": "1300",
+       "isCore": true
+      },
+      {
+       "itemDataId": 6,
+       "count": "240"
+      },
+      {
+       "itemDataId": 200103,
+       "count": "8"
+      },
+      {
+       "itemDataId": 200104,
+       "count": "4"
+      },
+      {
+       "itemDataId": 200503,
+       "count": "1"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 500201,
+   "group": 500200,
+   "name": "골드 던전",
+   "type": "Dungeon",
+   "tags": [
+    "MaterialDungeon",
+    "Gold"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "500101"
+   },
+   "initLevel": 6,
+   "initGold": 0,
+   "enableUnitExp": true,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "minCount": "1800",
+       "maxCount": "2600",
+       "isCore": true
+      },
+      {
+       "itemDataId": 6,
+       "count": "120"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 500202,
+   "group": 500200,
+   "name": "강화석 던전",
+   "type": "Dungeon",
+   "tags": [
+    "MaterialDungeon",
+    "Equipment"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "500101"
+   },
+   "initLevel": 8,
+   "initGold": 0,
+   "enableUnitExp": true,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "count": "500"
+      },
+      {
+       "itemDataId": 200103,
+       "minCount": "12",
+       "maxCount": "18",
+       "isCore": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 500203,
+   "group": 500200,
+   "name": "스킬 던전",
+   "type": "Dungeon",
+   "tags": [
+    "MaterialDungeon",
+    "Skill"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "500101"
+   },
+   "initLevel": 10,
+   "initGold": 0,
+   "enableUnitExp": true,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "count": "500"
+      },
+      {
+       "itemDataId": 200104,
+       "minCount": "10",
+       "maxCount": "16",
+       "isCore": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 500301,
+   "group": 500300,
+   "name": "월요 골드 던전",
+   "type": "Dungeon",
+   "tags": [
+    "WeekdayDungeon",
+    "Monday"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "500101"
+   },
+   "initLevel": 10,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "count": "3200",
+       "isCore": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 500302,
+   "group": 500300,
+   "name": "화요 장비 던전",
+   "type": "Dungeon",
+   "tags": [
+    "WeekdayDungeon",
+    "Tuesday"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "500101"
+   },
+   "initLevel": 10,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 200103,
+       "count": "24",
+       "isCore": true
+      },
+      {
+       "itemDataId": 200106,
+       "count": "4"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 500303,
+   "group": 500300,
+   "name": "수요 스킬 던전",
+   "type": "Dungeon",
+   "tags": [
+    "WeekdayDungeon",
+    "Wednesday"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "500101"
+   },
+   "initLevel": 10,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 200104,
+       "count": "22",
+       "isCore": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 500304,
+   "group": 500300,
+   "name": "목요 경험치 던전",
+   "type": "Dungeon",
+   "tags": [
+    "WeekdayDungeon",
+    "Thursday"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "500101"
+   },
+   "initLevel": 10,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 6,
+       "count": "900",
+       "isCore": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 500305,
+   "group": 500300,
+   "name": "금요 장비 상자 던전",
+   "type": "Dungeon",
+   "tags": [
+    "WeekdayDungeon",
+    "Friday"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "500101"
+   },
+   "initLevel": 12,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 200103,
+       "count": "16"
+      },
+      {
+       "itemDataId": 200106,
+       "count": "8"
+      },
+      {
+       "itemDataId": 200503,
+       "count": "1",
+       "isCore": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 500306,
+   "group": 500300,
+   "name": "토요 종합 던전",
+   "type": "Dungeon",
+   "tags": [
+    "WeekdayDungeon",
+    "Saturday"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "500101"
+   },
+   "initLevel": 12,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "count": "1800"
+      },
+      {
+       "itemDataId": 200103,
+       "count": "12"
+      },
+      {
+       "itemDataId": 200104,
+       "count": "12"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 500307,
+   "group": 500300,
+   "name": "일요 보너스 던전",
+   "type": "Dungeon",
+   "tags": [
+    "WeekdayDungeon",
+    "Sunday"
+   ],
+   "scene": "PFB_MAP_Meadow_Day_Chapter",
+   "popupArgs": {
+    "ClientModeManager": "ModeManagerMushroom",
+    "ClientHomeMapDataId": "500101"
+   },
+   "initLevel": 14,
+   "locations": [
+    {
+     "id": -1,
+     "position": {
+      "x": -7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 0.75
+       }
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "position": {
+      "x": 7.5,
+      "y": 0.0
+     },
+     "geometries": [
+      {
+       "circle": {
+        "center": {
+         "x": 0.0,
+         "y": 0.0
+        },
+        "radius": 1.75
+       }
+      }
+     ]
+    }
+   ],
+   "triggers": [
+    "MAP_ONSTART_MUSHROOMFIELDWAVE1",
+    "MAP_ONUPDATE_MUSHROOMFIELDUPDATE"
+   ],
+   "rewardAddItemGroups": [
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 5,
+       "count": "2400"
+      },
+      {
+       "itemDataId": 6,
+       "count": "500"
+      },
+      {
+       "itemDataId": 200103,
+       "count": "18"
+      },
+      {
+       "itemDataId": 200104,
+       "count": "18"
+      },
+      {
+       "itemDataId": 4,
+       "count": "30",
+       "isCore": true
+      }
+     ]
+    }
+   ]
   }
  ]
 }

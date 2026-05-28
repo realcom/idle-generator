@@ -6,11 +6,12 @@ warmupDelay: 2.0
 targetMode: Chaser
 targetAwareDistance: 24.0
 targetResetDistance: 30.0
+deadDestroyDelaySeconds: 0.45
 
 addStats:
-  - { type: Hp, value: [140.0] }
-  - { type: Attack, value: [14.0] }
-  - { type: Defense, value: [5.0] }
+  - { type: Hp, value: [60.0] }
+  - { type: Attack, value: [4.0] }
+  - { type: Defense, value: [0.0] }
   - { type: MoveSpeed, value: [3.1] }
 
 triggers:
@@ -30,4 +31,9 @@ dropAddItemGroups:
 
 prefab: "Units/Monsters/large_melee_slime_green.prefab"
 sprite: "Units/Monsters/Assets/large_melee_slime.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
 uiScale: 1.0
