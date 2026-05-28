@@ -17,6 +17,8 @@ public class ModeManagerMushroom : ZModeManagerBattle
     public const string AbilityPageAddressKey = nameof(Page_Ability);
     public const string ShopPageAddressKey = "Page_Shop_New";
 
+    private const string HamsterGrowthDockPreviewName = "HamsterGrowthDockPreview";
+    private const string HamsterGrowthDockPreviewResource = "HarnessPreview/HamsterGrowthDock";
     private const string PauseRequestKey = "ModeManagerMushroomOverlay";
     private const float MushroomCameraFov = 9.25f;
     private const float BottomUiHeightRatio = 0.38f;
@@ -112,6 +114,8 @@ public class ModeManagerMushroom : ZModeManagerBattle
     private TextMeshProUGUI _feedbackText;
     private Button _battleButton;
     private Button _overlayCloseButton;
+    private GameObject _hamsterGrowthDockPreview;
+    private bool _hasLoggedHamsterGrowthDockPreviewMissing;
     private bool _isOverlayOpen;
     private bool _isCameraLayoutQueued;
     private string _currentPanelId;
@@ -123,6 +127,7 @@ public class ModeManagerMushroom : ZModeManagerBattle
         EnsureMushroomHud();
         EnsureOverlayUI();
         EnsureMushroomControls();
+        EnsureHamsterGrowthDockPreview();
         ApplyMushroomSceneLayout(queueCameraAfterFrame: true);
         RefreshMushroomHud();
         EnsureLocalMushroomRuntimeReady();
@@ -130,6 +135,7 @@ public class ModeManagerMushroom : ZModeManagerBattle
 
     public override IEnumerator Release()
     {
+        CleanupHamsterGrowthDockPreview();
         CleanupMushroomHud();
         CleanupOverlay();
         yield return base.Release();
@@ -139,6 +145,7 @@ public class ModeManagerMushroom : ZModeManagerBattle
     {
         await base.HandleEvent(e);
         HideLegacyBattleUi();
+        EnsureHamsterGrowthDockPreview();
         ApplyMushroomSceneLayout(e.type == GameEventType.MAP_LOADED);
         UpdateMushroomControlLabels();
         RefreshMushroomHud();
@@ -258,6 +265,68 @@ public class ModeManagerMushroom : ZModeManagerBattle
 
         GameManager.Get().HideLoading().Forget();
         SceneLoader.Get().SetActive(false, true);
+    }
+
+    private void EnsureHamsterGrowthDockPreview()
+    {
+        if (_hamsterGrowthDockPreview != null)
+        {
+            ConfigureHamsterGrowthDockPreview();
+            return;
+        }
+
+        var existing = transform.Find(HamsterGrowthDockPreviewName);
+        if (existing != null)
+        {
+            _hamsterGrowthDockPreview = existing.gameObject;
+            ConfigureHamsterGrowthDockPreview();
+            return;
+        }
+
+        var prefab = Resources.Load<GameObject>(HamsterGrowthDockPreviewResource);
+        if (prefab == null)
+        {
+            if (!_hasLoggedHamsterGrowthDockPreviewMissing)
+            {
+                Debug.LogWarning($"Missing UI harness preview prefab at Resources/{HamsterGrowthDockPreviewResource}.");
+                _hasLoggedHamsterGrowthDockPreviewMissing = true;
+            }
+
+            return;
+        }
+
+        _hasLoggedHamsterGrowthDockPreviewMissing = false;
+        _hamsterGrowthDockPreview = Instantiate(prefab, transform, false);
+        _hamsterGrowthDockPreview.name = HamsterGrowthDockPreviewName;
+        ConfigureHamsterGrowthDockPreview();
+    }
+
+    private void ConfigureHamsterGrowthDockPreview()
+    {
+        if (_hamsterGrowthDockPreview == null)
+            return;
+
+        if (_hamsterGrowthDockPreview.transform is RectTransform rectTransform)
+            StretchToParent(rectTransform);
+
+        var canvasGroup = _hamsterGrowthDockPreview.GetComponent<CanvasGroup>();
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 1f;
+            canvasGroup.blocksRaycasts = false;
+            canvasGroup.interactable = false;
+        }
+
+        if (!_isOverlayOpen)
+            _hamsterGrowthDockPreview.transform.SetAsLastSibling();
+    }
+
+    private void CleanupHamsterGrowthDockPreview()
+    {
+        if (_hamsterGrowthDockPreview != null)
+            Object.Destroy(_hamsterGrowthDockPreview);
+
+        _hamsterGrowthDockPreview = null;
     }
 
     private void EnsureMushroomHud()
@@ -1192,6 +1261,8 @@ public class ModeManagerMushroom : ZModeManagerBattle
             _hudRoot.SetAsLastSibling();
         if (_overlayRoot != null && _overlayRoot.gameObject.activeSelf)
             _overlayRoot.SetAsLastSibling();
+        if (_hamsterGrowthDockPreview != null && !_isOverlayOpen)
+            _hamsterGrowthDockPreview.transform.SetAsLastSibling();
     }
 
     private static void SetPreferredWidth(RectTransform rt, float preferredWidth)
