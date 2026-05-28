@@ -1,0 +1,52 @@
+version: 1
+game: idlez
+source_concept: hamster_portrait_combat_growth_dock_d
+
+blockers:
+  - id: wrong_orientation
+    check: Main GameScene concept must be portrait, not landscape.
+  - id: combat_hidden
+    check: Growth dock must not hide the hamster, active enemy, HP bars, or primary hit feedback.
+  - id: hamster_identity_lost
+    check: Hero must remain recognizably golden hamster-first, not generic mushroom creature.
+  - id: non_mobile_layout
+    check: Core controls must be thumb-reachable and safe-area aware.
+  - id: unreadable_priority
+    check: Damage numbers, upgrade CTA, and stat card costs must remain visually scannable.
+
+weighted_checks:
+  character_appeal:
+    weight: 20
+    asks:
+      - Is the hamster cute, rounded, and emotionally central?
+      - Does it match the existing thick-outline flat 2D asset language?
+  combat_readability:
+    weight: 20
+    asks:
+      - Can the user immediately identify hero, enemy, HP, hit, and drops?
+      - Does feedback avoid hiding controls?
+  mobile_idle_loop:
+    weight: 20
+    asks:
+      - Is the bottom dock clearly an upgrade/reward loop?
+      - Is the primary claim/growth CTA obvious?
+  visual_cohesion:
+    weight: 15
+    asks:
+      - Do wood, parchment, gold, and green accents feel like one UI family?
+      - Are outlines and shadows consistent?
+  implementation_fit:
+    weight: 15
+    asks:
+      - Can the design split into uGUI atoms?
+      - Are repeated cards/buttons separable from the background?
+  density_control:
+    weight: 10
+    asks:
+      - Is the screen rich without becoming noisy?
+      - Are labels short enough for localization?
+
+score_thresholds:
+  accept: 85
+  iterate: 70
+  reject: 69

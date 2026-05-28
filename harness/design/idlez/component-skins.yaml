@@ -1,0 +1,109 @@
+version: 1
+game: idlez
+source_concept: hamster_portrait_combat_growth_dock_d
+
+components:
+  TopHudStrip:
+    role: Compact persistent status strip.
+    material: carved wood with dark inset pockets.
+    contents:
+      - combat_power
+      - coin_currency
+      - heart_or_energy
+      - menu
+      - auto_or_speed
+    style_notes:
+      - Use small icon plus short number.
+      - Keep top progress readable before decorative flourishes.
+
+  StageProgressNodes:
+    role: Stage wave progress ending in boss node.
+    material: circular medallions connected by gold bar.
+    states:
+      complete: green or gold rim
+      current: bright orange rim
+      boss: red rim
+    icon_style: Simple face silhouettes with thick brown outline.
+
+  MissionCard:
+    role: Floating objective or completion reward card.
+    material: cream parchment with rounded brown stroke.
+    placement: upper right of combat arena.
+    style_notes:
+      - White/cream card should not block hit feedback.
+      - Reward rows use coin/seed icons, not long text.
+
+  CombatLane:
+    role: Readable arena surface for live auto-battle.
+    material: warm wood or packed grass with soft edge.
+    style_notes:
+      - Keep lower edge compatible with growth dock overlap.
+      - Avoid noisy plank texture behind damage numbers.
+
+  GrowthDockRoot:
+    role: Persistent bottom upgrade surface.
+    material: carved wood frame with parchment interior.
+    shape: large rounded rectangle anchored to bottom safe area.
+    style_notes:
+      - Feels like one solid mobile-game control dock.
+      - Must not look like a separate popup pasted over combat.
+
+  GrowthStatCard:
+    role: Repeated stat upgrade card.
+    material: parchment card inside wood dock.
+    required_parts:
+      - Text_Level
+      - Icon
+      - Text_StatName
+      - Text_Value
+      - Btn_Upgrade
+      - Text_Cost
+    icon_medallion: gold circular badge.
+    upgrade_button: green glossy pill with coin icon.
+    stats:
+      - attack
+      - health
+      - gold_gain
+      - growth_speed
+
+  GrowthRewardButton:
+    role: Primary growth reward claim button.
+    material: large glossy gold-orange button.
+    required_parts:
+      - Icon_Hamster
+      - Text_Label
+      - Text_RewardAmount
+    emphasis: largest touch target in growth dock.
+
+  AutoEnhanceButton:
+    role: Secondary automation button.
+    material: green glossy rounded rectangle.
+    required_parts:
+      - Icon_HamsterOrMushroom
+      - Text_Label
+    emphasis: secondary, visually smaller than GrowthRewardButton.
+
+  BottomTabBar:
+    role: Core mobile navigation.
+    material: dock-integrated wood tabs.
+    tabs:
+      - growth
+      - companion
+      - equipment
+      - pet
+      - adventure
+      - locked_or_guild
+    states:
+      selected: gold fill with hamster icon highlight
+      inactive: darker wood fill
+      alert: red dot badge
+
+  DamageNumber:
+    role: Combat impact readability.
+    material: orange fill, dark outline, small white highlight.
+    behavior: Pops near enemy and drifts upward.
+
+  DropToast:
+    role: Reward flow feedback.
+    material: small black translucent pill with coin/seed icons.
+    placement: above growth dock, right side preferred.

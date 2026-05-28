@@ -1,0 +1,46 @@
+version: 1
+game: idlez
+purpose: Track design concepts, approval state, and downstream extracted sources.
+
+statuses:
+  draft: Exploratory image or note.
+  candidate: Promising direction, not yet binding.
+  selected: Current visual target for implementation.
+  extracted: Tokens/recipes were derived from this concept.
+  approved: Human-approved production design source.
+  superseded: Kept for history, no longer a target.
+
+concepts:
+  hamster_ingame_combat_a:
+    status: candidate
+    kind: ingame_combat
+    image: concepts/hamster_ingame_combat_concept_a.png
+    note: concepts/hamster_ingame_combat_concept_a.md
+    summary: First portrait combat/HUD exploration.
+  hamster_side_combat_b:
+    status: superseded
+    kind: side_combat
+    image: concepts/hamster_side_combat_concept_b.png
+    note: concepts/hamster_side_combat_concept_b.md
+    summary: Landscape side-combat exploration. Useful for battle-lane atoms only.
+  hamster_side_combat_bottom_bar_c:
+    status: superseded
+    kind: side_combat_growth_dock
+    image: concepts/hamster_side_combat_bottom_bar_concept_c.png
+    note: concepts/hamster_side_combat_bottom_bar_concept_c.md
+    summary: Landscape battle with growth dock. Superseded by portrait composition.
+  hamster_portrait_combat_growth_dock_d:
+    status: selected
+    kind: portrait_combat_growth_dock
+    image: concepts/hamster_portrait_combat_growth_dock_concept_d.png
+    note: concepts/hamster_portrait_combat_growth_dock_concept_d.md
+    summary: Current target. Portrait GameScene with live combat and persistent bottom growth dock.
+    extracted_to:
+      - art-direction.yaml
+      - layout-tokens.yaml
+      - component-skins.yaml
+      - motion-juice.yaml
+      - critique-rubric.yaml
+      - ../../unity/recipes/ingame/hamster_growth_dock.yaml
+
+current_target: hamster_portrait_combat_growth_dock_d

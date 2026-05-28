@@ -1,0 +1,117 @@
+version: 1
+game: idlez
+backend: ugui
+purpose: Map design atoms to reusable or generated Unity uGUI prefab pieces.
+
+naming_rules:
+  field_prefixes:
+    text: [Text_, txt]
+    button: [Btn_, btn]
+    image: [Icon, Img_, img]
+    game_object: [Panel_, go]
+  note: Names should satisfy UIElement.FillReference and GetTypeStrippedName conventions.
+
+atoms:
+  TopHudStrip:
+    status: needs_mapping
+    source_prefab_candidates:
+      - Assets/Popups/PopupElementPrefabs/TopBar_New.prefab
+      - Assets/Popups/PopupElementPrefabs/TopBar_WithProfile.prefab
+    required_children:
+      - Text_CombatPower
+      - Icon_Coin
+      - Text_Coin
+      - Icon_Heart
+      - Text_Heart
+      - StageProgressNodes
+
+  StageProgressNodes:
+    status: generated
+    required_children:
+      - Node_00
+      - Node_01
+      - Node_02
+      - Node_Boss
+      - FillBar
+
+  CombatArenaFrame:
+    status: scene_owned
+    required_children:
+      - HeroAnchor
+      - EnemyAnchor
+      - DamageFeedbackRoot
+      - DropFeedbackRoot
+      - MissionCard
+
+  MissionCard:
+    status: generated
+    required_children:
+      - Text_Title
+      - Text_Objective
+      - RewardRow
+
+  GrowthDockRoot:
+    status: generated
+    required_children:
+      - Panel_Frame
+      - StatCardGrid
+      - Btn_GrowthReward
+      - Btn_AutoEnhance
+      - BottomTabBar
+
+  GrowthStatCard:
+    status: generated
+    repeatable: true
+    required_children:
+      - Text_Level
+      - Icon
+      - Text_StatName
+      - Text_Value
+      - Btn_Upgrade
+      - Text_Cost
+    required_components:
+      - RectTransform
+      - Image
+      - LayoutElement
+
+  GrowthRewardButton:
+    status: generated
+    required_children:
+      - Icon_Hamster
+      - Text_Label
+      - Text_RewardAmount
+    required_components:
+      - CustomButton
+      - Image
+
+  AutoEnhanceButton:
+    status: generated
+    required_children:
+      - Icon_HamsterOrMushroom
+      - Text_Label
+    required_components:
+      - CustomButton
+      - Image
+
+  BottomTabBar:
+    status: generated
+    required_children:
+      - Tab_Growth
+      - Tab_Companion
+      - Tab_Equipment
+      - Tab_Pet
+      - Tab_Adventure
+      - Tab_LockedGuild
+
+  DamageNumber:
+    status: generated
+    required_children:
+      - Text_Damage
+
+  DropToast:
+    status: generated
+    required_children:
+      - Icon_Coin
+      - Text_CoinDelta
+      - Icon_Seed
+      - Text_SeedDelta

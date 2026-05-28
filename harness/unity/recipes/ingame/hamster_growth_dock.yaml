@@ -1,0 +1,127 @@
+version: 1
+game: idlez
+status: draft
+target: GameScene
+backend: ugui
+source_concept: ../../../design/idlez/concepts/hamster_portrait_combat_growth_dock_concept_d.md
+design_sources:
+  art_direction: ../../../design/idlez/art-direction.yaml
+  layout_tokens: ../../../design/idlez/layout-tokens.yaml
+  component_skins: ../../../design/idlez/component-skins.yaml
+  motion_juice: ../../../design/idlez/motion-juice.yaml
+
+prefab_output:
+  root: Assets/Popups/Generated/HamsterGrowthDock.prefab
+  owner_script: HamsterGrowthDock
+  generation_policy: Generated from harness recipe; do not hand-edit generated output.
+
+screen:
+  orientation: portrait
+  aspect: "9:16"
+  safe_area: true
+
+regions:
+  top_hud:
+    atom: TopHudStrip
+    anchor: top_stretch
+    height_ratio: 0.15
+    bindings:
+      combat_power: player.combatPower
+      coin: player.currency.gold
+      heart: player.vitality
+      stage_progress: board.stageProgress
+  combat_arena:
+    atom: CombatArenaFrame
+    anchor: middle_stretch
+    height_ratio: 0.47
+    bindings:
+      hero_unit: board.playerUnit
+      enemy_units: board.enemyUnits
+      damage_events: board.damageEvents
+      drop_events: board.dropEvents
+      mission: board.currentMission
+  growth_dock:
+    atom: GrowthDockRoot
+    anchor: bottom_safe_area_stretch
+    height_ratio: 0.38
+
+growth_dock:
+  stat_cards:
+    atom: GrowthStatCard
+    layout: grid_2x2
+    data:
+      - key: attack
+        icon: Icon_AttackSword
+        label_key: ui.growth.attack
+        level_binding: player.growth.attack.level
+        value_binding: player.growth.attack.value
+        cost_binding: player.growth.attack.cost
+        action: UpgradeAttack
+      - key: health
+        icon: Icon_Heart
+        label_key: ui.growth.health
+        level_binding: player.growth.health.level
+        value_binding: player.growth.health.value
+        cost_binding: player.growth.health.cost
+        action: UpgradeHealth
+      - key: gold_gain
+        icon: Icon_CoinPaw
+        label_key: ui.growth.goldGain
+        level_binding: player.growth.goldGain.level
+        value_binding: player.growth.goldGain.value
+        cost_binding: player.growth.goldGain.cost
+        action: UpgradeGoldGain
+      - key: growth_speed
+        icon: Icon_Mushroom
+        label_key: ui.growth.speed
+        level_binding: player.growth.speed.level
+        value_binding: player.growth.speed.value
+        cost_binding: player.growth.speed.cost
+        action: UpgradeGrowthSpeed
+  reward_button:
+    atom: GrowthRewardButton
+    label_key: ui.growth.claimReward
+    amount_binding: player.growth.pendingReward
+    action: ClaimGrowthReward
+  auto_enhance_button:
+    atom: AutoEnhanceButton
+    label_key: ui.growth.autoEnhance
+    state_binding: player.growth.autoEnhanceEnabled
+    action: ToggleAutoEnhance
+  tabs:
+    atom: BottomTabBar
+    selected: growth
+    items:
+      - key: growth
+        icon: Icon_TabGrowthHamster
+        action: OpenGrowth
+      - key: companion
+        icon: Icon_TabMushroom
+        action: OpenCompanion
+      - key: equipment
+        icon: Icon_TabGear
+        action: OpenEquipment
+      - key: pet
+        icon: Icon_TabPetHamster
+        action: OpenPet
+      - key: adventure
+        icon: Icon_TabAdventure
+        action: OpenAdventure
+      - key: locked_guild
+        icon: Icon_TabLocked
+        action: ShowLockedGuild
+
+validation:
+  required_viewports:
+    - name: phone_9x16
+      size: [1080, 1920]
+    - name: tall_phone_9x19_5
+      size: [1080, 2340]
+    - name: small_phone_9x16
+      size: [720, 1280]
+  blockers:
+    - no_missing_references
+    - no_text_overflow
+    - no_combat_dock_overlap
+    - stat_cards_repeatable
+    - safe_area_tab_bar
