@@ -15,5 +15,48 @@ levelUpMaterialItemGroups:
     materialItems:
       - { id: 5, count: 120 }
       - { id: 200103, count: 2 }
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [1]
+options:
+  - options:
+      - id: 2003051
+        grade: 1
+        group: 1
+        weight: 30
+        minLevel: 1
+        maxLevel: 2
+        addStats:
+          - { type: ItemDropPercent, value: [1.5, 2.5, 4, 6, 9] }
+      - id: 2003052
+        grade: 1
+        group: 1
+        weight: 26
+        minLevel: 1
+        maxLevel: 2
+        addStats:
+          - { type: CooldownPercent, value: [1, 1.8, 2.8, 4.2, 6] }
+      - id: 2003053
+        grade: 1
+        group: 1
+        weight: 24
+        minLevel: 1
+        maxLevel: 2
+        addStats:
+          - { type: CriticalPercent, value: [0.8, 1.4, 2.2, 3.4, 5] }
+      - id: 2003054
+        grade: 1
+        group: 1
+        weight: 20
+        minLevel: 1
+        maxLevel: 2
+        addStats:
+          - { type: ExpPercent, value: [1.5, 2.5, 4, 6, 9] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 200 }
+      - { id: 200106, count: 1 }
 spriteGroups:
   Icon: "Items/Equipments/ICN_Equip_Necklace.png"

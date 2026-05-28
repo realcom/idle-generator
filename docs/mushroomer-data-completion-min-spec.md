@@ -59,7 +59,7 @@
 | 산출물 | 보강 후 수량 | 보강 내용 |
 | --- | ---: | --- |
 | `Units.json` | 3 | 기존 플레이어/몬스터/보스 유지 |
-| `Items.json` | 69 | 재료, 티켓, 무기 15종, 장비 30종, 스킬북, shop 상품, 출석판 추가 |
+| `Items.json` | 70 | 재료, 티켓, 옵션 재료, 무기 15종, 장비 30종, 스킬북, shop 상품, 출석판 추가 |
 | `Skills.json` | 4 | 단일딜, 광역, 보스딜, 자기 버프 스킬 구성 |
 | `Buffs.json` | 1 | 공격/공속 성장형 자기 버프 추가 |
 | `Maps.json` | 15 | 메인 5스테이지, 일반 던전 3종, 요일 던전 7종 |
@@ -75,11 +75,15 @@
 | 구분 | 수량 | 구성 |
 | --- | ---: | --- |
 | 무기 | 15 | Staff/Dagger/Hammer x T1~T5 |
-| 장비 | 30 | Head/Chest/Gloves/Boots/Necklace/Ring x T1~T5 |
+| 장비 | 30 | Head/Chest/Gloves/Boots/Necklace/Ring x T1~T5, 슬롯별 랜덤 옵션 풀 |
 | 장비 상자 | 1 | T1~T5 전체 장비 풀을 tier별 가중치로 드롭 |
+| 옵션 재료 | 1 | 장비 옵션 리롤용 `옵션 포자` |
 
 T2~T5는 `WeaponTier*Growth`, `EquipmentTier*Growth` 태그를 사용해 티어별 성장 배열을
 분리한다. 따라서 상위 티어 장비가 T1과 같은 스탯 배열을 공유하지 않는다.
+
+방어구/악세는 슬롯별 옵션 후보가 다르며, tier가 오를수록 `optionCounts`와 옵션
+`minLevel/maxLevel`이 상승한다. T1은 1옵션, T5는 4옵션 구조다.
 
 ## 핵심 게임 루프
 

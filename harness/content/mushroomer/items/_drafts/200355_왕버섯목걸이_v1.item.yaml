@@ -16,5 +16,48 @@ levelUpMaterialItemGroups:
       - { id: 5, count: 18000 }
       - { id: 200103, count: 75 }
 requiredAchievementDataIds: [10104]
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [4]
+options:
+  - options:
+      - id: 2003551
+        grade: 5
+        group: 1
+        weight: 30
+        minLevel: 5
+        maxLevel: 5
+        addStats:
+          - { type: ItemDropPercent, value: [3.675, 6.125, 9.8, 14.7, 22.05] }
+      - id: 2003552
+        grade: 5
+        group: 1
+        weight: 26
+        minLevel: 5
+        maxLevel: 5
+        addStats:
+          - { type: CooldownPercent, value: [2.45, 4.41, 6.86, 10.29, 14.7] }
+      - id: 2003553
+        grade: 5
+        group: 1
+        weight: 24
+        minLevel: 5
+        maxLevel: 5
+        addStats:
+          - { type: CriticalPercent, value: [1.96, 3.43, 5.39, 8.33, 12.25] }
+      - id: 2003554
+        grade: 5
+        group: 1
+        weight: 20
+        minLevel: 5
+        maxLevel: 5
+        addStats:
+          - { type: ExpPercent, value: [3.675, 6.125, 9.8, 14.7, 22.05] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 15000 }
+      - { id: 200106, count: 16 }
 spriteGroups:
   Icon: "Items/Equipments/ICN_Equip_Necklace.png"

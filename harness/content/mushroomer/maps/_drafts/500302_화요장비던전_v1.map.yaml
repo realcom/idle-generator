@@ -13,4 +13,6 @@ triggers: [MAP_ONSTART_MUSHROOMFIELDWAVE1, MAP_ONUPDATE_MUSHROOMFIELDUPDATE]
 rewardAddItemGroups:
   - shouldAddAll: true
     probPercent: 100
-    addItems: [{ itemDataId: 200103, count: 24, isCore: true }]
+    addItems:
+      - { itemDataId: 200103, count: 24, isCore: true }
+      - { itemDataId: 200106, count: 4 }

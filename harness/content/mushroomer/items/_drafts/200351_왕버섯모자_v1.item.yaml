@@ -15,5 +15,48 @@ levelUpMaterialItemGroups:
       - { id: 5, count: 18000 }
       - { id: 200103, count: 75 }
 requiredAchievementDataIds: [10100]
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [4]
+options:
+  - options:
+      - id: 2003511
+        grade: 5
+        group: 1
+        weight: 34
+        minLevel: 5
+        maxLevel: 5
+        addStats:
+          - { type: HpPercent, value: [3.675, 5.88, 8.82, 12.74, 18.375] }
+      - id: 2003512
+        grade: 5
+        group: 1
+        weight: 28
+        minLevel: 5
+        maxLevel: 5
+        addStats:
+          - { type: DefensePercent, value: [2.45, 4.41, 6.86, 10.29, 14.7] }
+      - id: 2003513
+        grade: 5
+        group: 1
+        weight: 18
+        minLevel: 5
+        maxLevel: 5
+        addStats:
+          - { type: CooldownPercent, value: [1.47, 2.45, 3.92, 5.88, 8.33] }
+      - id: 2003514
+        grade: 5
+        group: 1
+        weight: 20
+        minLevel: 5
+        maxLevel: 5
+        addStats:
+          - { type: ExpPercent, value: [2.45, 4.41, 6.86, 9.8, 14.21] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 15000 }
+      - { id: 200106, count: 16 }
 spriteGroups:
   Icon: "Items/Equipments/ICN_Equip_Head.png"

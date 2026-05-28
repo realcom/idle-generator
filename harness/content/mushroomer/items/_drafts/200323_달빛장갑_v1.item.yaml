@@ -16,5 +16,48 @@ levelUpMaterialItemGroups:
       - { id: 5, count: 420 }
       - { id: 200103, count: 5 }
 requiredAchievementDataIds: [10102]
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [2]
+options:
+  - options:
+      - id: 2003231
+        grade: 2
+        group: 1
+        weight: 32
+        minLevel: 2
+        maxLevel: 3
+        addStats:
+          - { type: AttackPercent, value: [1.875, 3.125, 5, 7.75, 11.25] }
+      - id: 2003232
+        grade: 2
+        group: 1
+        weight: 26
+        minLevel: 2
+        maxLevel: 3
+        addStats:
+          - { type: CriticalPercent, value: [1, 1.625, 2.5, 3.75, 5.625] }
+      - id: 2003233
+        grade: 2
+        group: 1
+        weight: 22
+        minLevel: 2
+        maxLevel: 3
+        addStats:
+          - { type: CriticalDamagePercent, value: [5, 8.125, 12.5, 18.75, 27.5] }
+      - id: 2003234
+        grade: 2
+        group: 1
+        weight: 20
+        minLevel: 2
+        maxLevel: 3
+        addStats:
+          - { type: AttackSpeedPercent, value: [1.25, 2.25, 3.5, 5.25, 7.5] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 600 }
+      - { id: 200106, count: 2 }
 spriteGroups:
   Icon: "Items/Equipments/ICN_Equip_Gloves.png"

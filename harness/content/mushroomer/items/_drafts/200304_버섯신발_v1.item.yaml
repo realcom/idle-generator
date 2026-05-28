@@ -15,5 +15,48 @@ levelUpMaterialItemGroups:
     materialItems:
       - { id: 5, count: 80 }
       - { id: 200103, count: 1 }
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [1]
+options:
+  - options:
+      - id: 2003041
+        grade: 1
+        group: 1
+        weight: 28
+        minLevel: 1
+        maxLevel: 2
+        addStats:
+          - { type: MoveSpeed, value: [0.08, 0.12, 0.18, 0.26, 0.38] }
+      - id: 2003042
+        grade: 1
+        group: 1
+        weight: 24
+        minLevel: 1
+        maxLevel: 2
+        addStats:
+          - { type: AttackSpeedPercent, value: [1, 1.7, 2.6, 4, 5.8] }
+      - id: 2003043
+        grade: 1
+        group: 1
+        weight: 24
+        minLevel: 1
+        maxLevel: 2
+        addStats:
+          - { type: ItemDropPercent, value: [1, 1.8, 2.8, 4.2, 6.2] }
+      - id: 2003044
+        grade: 1
+        group: 1
+        weight: 24
+        minLevel: 1
+        maxLevel: 2
+        addStats:
+          - { type: ExpPercent, value: [1, 1.8, 2.8, 4.2, 6.2] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 200 }
+      - { id: 200106, count: 1 }
 spriteGroups:
   Icon: "Items/Equipments/ICN_Equip_Boots.png"
