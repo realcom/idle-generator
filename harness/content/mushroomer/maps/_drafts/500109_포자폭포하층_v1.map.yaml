@@ -1,0 +1,38 @@
+id: 500109
+group: 500109
+name: "포자폭포 하층"
+type: Dungeon
+tags: [InfiniteWaves]
+scene: "PFB_MAP_Meadow_Day_Chapter"
+sprite: "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png"
+popupArgs:
+  ClientModeManager: ModeManagerMushroom
+  ClientHomeMapDataId: self
+  ClientAutoAdvance: true
+  ClientNextMapDataId: 500110
+  ClientRetryMapDataId: self
+initVariables:
+  - { callerKey: 605, value: 9 }
+  - { callerKey: 606, value: 9 }
+boardConstants: { levelUpChoiceCount: 3 }
+initLevel: 9
+initGold: 2388
+enableUnitExp: true
+locations:
+  - { id: -1, position: { x: -7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 0.75 } }] }
+  - { id: 1, position: { x: 7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 1.75 } }] }
+terrains:
+  - vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+  - type: Skill
+    vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+triggers: [MAP_ONSTART_MUSHROOMFIELDWAVE1, MAP_ONUPDATE_MUSHROOMFIELDUPDATE]
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 3704, maxCount: 5112, isCore: true }
+      - { itemDataId: 6, count: 274 }
+      - { itemDataId: 200103, count: 13 }
+      - { itemDataId: 200104, count: 6 }

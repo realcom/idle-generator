@@ -1,0 +1,49 @@
+id: 110501
+name: "포자 대왕"
+type: Boss
+tags: [Monster]
+armorType: BossArmor
+warmupDelay: 2.4
+targetMode: Chaser
+targetAwareDistance: 26.0
+targetResetDistance: 32.0
+deadDestroyDelaySeconds: 0.75
+
+addStats:
+  - { type: Hp, value: [900.0] }
+  - { type: Attack, value: [12.0] }
+  - { type: Defense, value: [4.0] }
+  - { type: MoveSpeed, value: [1.8] }
+
+triggers:
+  - UNIT_ONSTART_SPOREKINGENRAGE
+  - UNIT_ONUPDATE_SPOREKINGBATTLE
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 260, maxCount: 420, isCore: true }
+      - { itemDataId: 6, count: 70 }
+  - shouldAddAll: false
+    probPercent: 70
+    addItems:
+      - { itemDataId: 200101, count: 2, weight: 70, group: 1 }
+      - { itemDataId: 200102, count: 1, weight: 30, group: 1, pityGroup: 5 }
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200108, count: 50 }
+
+prefab: "Units/Monsters/finalboss_melee_slime_boss_green.prefab"
+sprite: "Units/Monsters/Assets/finalboss_melee_slime_boss.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  SpecialAttack: Attack2
+  Dead: Dead
+uiScale: 1.8
+uiOffset: { x: 0.0, y: 0.3 }
+collideSize: { x: 1.8, y: 1.8 }
+hitSize: { x: 2.0, y: 2.0 }

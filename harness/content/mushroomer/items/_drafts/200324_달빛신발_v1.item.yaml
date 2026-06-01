@@ -1,0 +1,68 @@
+id: 200324
+name: "달빛 신발"
+category: Equipment
+type: Boots
+tags: [EquipmentTier2Growth]
+grade: 2
+rarity: 2
+tier: 2
+power: 85
+equipAddStats:
+  - { type: Defense, value: [22] }
+  - { type: MoveSpeed, value: [0.3] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 420 }
+      - { id: 200103, count: 5 }
+requiredAchievementDataIds: [10103]
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [2]
+options:
+  - options:
+      - id: 2003241
+        grade: 2
+        group: 1
+        weight: 28
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: MoveSpeed, value: [0.1, 0.15, 0.225, 0.325, 0.475] }
+      - id: 2003242
+        grade: 2
+        group: 1
+        weight: 24
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: AttackSpeedPercent, value: [1.25, 2.125, 3.25, 5, 7.25] }
+      - id: 2003243
+        grade: 2
+        group: 1
+        weight: 24
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: ItemDropPercent, value: [1.25, 2.25, 3.5, 5.25, 7.75] }
+      - id: 2003244
+        grade: 2
+        group: 1
+        weight: 24
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: ExpPercent, value: [1.25, 2.25, 3.5, 5.25, 7.75] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 600 }
+      - { id: 200106, count: 2 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 240 }
+spriteGroups:
+  Icon: "assets/items/equipment/boots_starlight.png"

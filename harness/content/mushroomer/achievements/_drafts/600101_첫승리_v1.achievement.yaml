@@ -1,0 +1,20 @@
+id: 600101
+name: "첫 승리"
+type: Normal
+tags: []
+order: 101
+initialOpen: true
+clientAchievement: false
+condition: WinGame
+conditionValue1: 500101
+conditionValue2: 0
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 500 }
+      - { itemDataId: 6, count: 60 }

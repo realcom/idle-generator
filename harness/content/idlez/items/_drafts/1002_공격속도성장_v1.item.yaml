@@ -1,0 +1,14 @@
+id: 1002
+name: "공격속도 성장"
+category: Stat
+tab: -1
+priority: 3
+tags: [HamsterGrowthStat, GrowthAttackSpeed]
+initialCreate: true
+initialCreateCount: 1
+initialCreateLevel: 1
+addStats:
+  - { type: AttackSpeedPercent, value: [0.0] }
+levelUpGoldCost: { levels: 1..80, base: 55, step: 30 }
+spriteGroups:
+  Icon: "Items/Goods/ICN_Goods_Gold.png"

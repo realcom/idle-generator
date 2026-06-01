@@ -1,0 +1,16 @@
+id: 300104
+name: "포자 각성"
+tags: [Self, Buff]
+cooldown: 18.0
+priority: 4
+targetRefreshType: NoRefresh
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "UIAssets/Images/ingame_icn_start.png"
+itemDataId: 200404
+
+selfAddBuffs:
+  - { buffDataId: 400101, level: 1, duration: 8.0 }
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - { time: 0.6, destroy: {} }

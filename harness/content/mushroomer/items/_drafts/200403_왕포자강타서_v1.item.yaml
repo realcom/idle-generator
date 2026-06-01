@@ -1,0 +1,48 @@
+id: 200403
+name: "왕포자 강타서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 1
+rarity: 2
+group: 200401
+constantDamageRatio: 1.0
+order: 3
+parentId: 200401
+skillDataId: 300103
+unstackable: true
+requiredItemDataIds: [200401]
+targetItemDataIds: [200404]
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200107, count: 2 }
+      - { id: 200104, count: 4 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200107, count: 2 }
+      - { id: 200104, count: 6 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200107, count: 3 }
+      - { id: 200104, count: 8 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200107, count: 4 }
+      - { id: 200104, count: 12 }
+popupArgs:
+  SkillTree: "Mushroomer"
+  SkillTreeNode: "Boss"
+  ChildrenSkillItemDataIds: "200404"
+  UnlockRecipeItemDataId: "200406"
+  UnlockCostLevelPoint: "2"
+  LevelPointItemDataId: "200107"
+  RequiredSkillItemDataIds: "200401"
+  RequiredSkillLevel: "3"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "3"
+spriteGroups:
+  Icon: "UIAssets/Images/ingame_icn_start.png"

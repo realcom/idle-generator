@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>idlez 하네스 — Spine WebGL 실제 통합 런타임</title>
+<script src="https://unpkg.com/@esotericsoftware/spine-webgl@4.2.79/dist/iife/spine-webgl.js"></script>
+<style>
+:root{
+  --bg-primary:#1a1a1a;--bg-secondary:#2a2a2a;--bg-tertiary:#3a3a3a;
+  --text-primary:#fff;--text-secondary:#bbb;--text-tertiary:#888;
+  --success:#4ade80;--danger:#f87171;--warning:#fbbf24;--info:#60a5fa;
+  --border:rgba(255,255,255,.1);--radius-md:8px;--radius-lg:12px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg-primary);color:var(--text-primary);font-family:system-ui,'Apple SD Gothic Neo',sans-serif}
+.container{max-width:1000px;margin:0 auto;padding:20px}
+.header{text-align:center;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:15px}
+.header h1{margin:0;font-size:24px;background:linear-gradient(135deg, var(--info), var(--success));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{margin:6px 0 0;color:var(--text-secondary);font-size:12px}
+#stageWrap{position:relative;width:960px;max-width:100%;height:420px;margin:0 auto 20px;background:linear-gradient(180deg,#3a4a3a 0%,#1a2a1a 80%,#2a3a2a 100%);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden}
+#stageWrap::before{content:'';position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.4));pointer-events:none;z-index:1}
+#spineCanvas{display:block;width:100%;height:100%}
+#loadingOverlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.85);color:var(--info);font-size:14px;z-index:10}
+.hud{position:absolute;left:0;right:0;top:0;padding:12px 16px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;z-index:2}
+.hud-left,.hud-right{background:rgba(0,0,0,.5);padding:8px 12px;border-radius:8px;backdrop-filter:blur(4px);font-size:12px;line-height:1.5}
+.hud-stage{font-size:14px;font-weight:600;color:var(--warning)}
+.hud-stats{display:flex;gap:14px;margin-top:4px;color:var(--text-secondary)}
+.floats-layer{position:absolute;inset:0;pointer-events:none;z-index:3;overflow:hidden}
+.float-text{position:absolute;font-size:14px;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,.8);animation:floatUp .9s ease-out forwards;white-space:nowrap}
+@keyframes floatUp{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-50px)}}
+.ui-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px}
+.ui-panel{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-lg);padding:15px}
+.ui-panel-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary);margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat-box{background:var(--bg-tertiary);padding:10px;border-radius:var(--radius-md);text-align:center}
+.stat-label{font-size:9px;color:var(--text-tertiary);text-transform:uppercase}
+.stat-value{font-size:18px;font-weight:600;color:var(--success);margin-top:2px}
+.stat-level{font-size:10px;color:var(--text-tertiary)}
+.upgrade-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.upgrade-btn{background:var(--bg-tertiary);border:1px solid var(--border);color:var(--text-primary);padding:8px 4px;border-radius:var(--radius-md);cursor:pointer;font-size:10px;transition:all .15s;text-align:center;font-family:inherit}
+.upgrade-btn:hover:not(:disabled){background:var(--bg-primary);border-color:var(--info);transform:translateY(-1px)}
+.upgrade-btn:disabled{opacity:.3;cursor:not-allowed}
+.upgrade-btn.buy-ready{background:var(--info);border-color:var(--info)}
+.log-box{background:var(--bg-tertiary);border-radius:var(--radius-md);padding:10px;height:140px;overflow-y:auto;font-size:11px;line-height:1.6}
+.log-entry{margin:2px 0}
+.monster-selector{margin-top:12px;padding:10px;background:var(--bg-tertiary);border-radius:var(--radius-md)}
+.monster-selector label{font-size:10px;color:var(--text-tertiary);text-transform:uppercase;display:block;margin-bottom:6px}
+.monster-buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.monster-btn{background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);padding:6px;border-radius:var(--radius-md);cursor:pointer;font-size:10px;font-family:inherit}
+.monster-btn:hover{border-color:var(--warning)}
+.monster-btn.active{background:var(--warning);border-color:var(--warning);color:#000}
+.info-item{background:var(--bg-tertiary);padding:8px 10px;border-radius:var(--radius-md);margin-bottom:6px;border-left:3px solid var(--info);font-size:11px;display:flex;justify-content:space-between}
+.info-label{color:var(--text-tertiary)}
+.info-value{color:var(--text-primary);font-weight:600}
+.anim-controls{display:flex;gap:6px;margin-top:8px;font-size:10px;color:var(--text-tertiary)}
+.anim-controls span{background:var(--bg-tertiary);padding:3px 6px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>⚔️ idlez 하네스 · Spine WebGL 통합</h1>
+    <p>실제 Spine 4.2 스켈레톤 애니메이션 + 자동전투 + 하네스 콘텐츠</p>
+  </div>
+
+  <div id="stageWrap">
+    <div class="hud">
+      <div class="hud-left">
+        <div class="hud-stage" id="hudStage">초원 던전 · 1</div>
+        <div class="hud-stats">
+          <span>최고 <b id="hudBest" style="color:var(--info)">1</b></span>
+          <span>골드 <b id="hudGold" style="color:var(--success)">0</b></span>
+          <span>방치 <b id="hudGps" style="color:var(--warning)">0</b>/s</span>
+        </div>
+      </div>
+      <div class="hud-right">
+        <div>현재 적: <b id="hudMonster" style="color:var(--warning)">로딩중</b></div>
+        <div>남은: <b id="hudWave">0/0</b></div>
+      </div>
+    </div>
+    <canvas id="spineCanvas"></canvas>
+    <div class="floats-layer" id="floatsLayer"></div>
+    <div id="loadingOverlay">🎬 Spine 에셋 로딩중...</div>
+  </div>
+
+  <div class="ui-grid">
+    <div class="ui-panel">
+      <div class="ui-panel-title">⚡ 플레이어 능력치</div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-label">ATK</div><div class="stat-value" id="atkValue">34</div><div class="stat-level" id="atkLevel">Lv0</div></div>
+        <div class="stat-box"><div class="stat-label">HP</div><div class="stat-value" id="hpValue">340</div><div class="stat-level" id="hpLevel">Lv0</div></div>
+        <div class="stat-box"><div class="stat-label">DEF</div><div class="stat-value" id="defValue">5</div><div class="stat-level" id="defLevel">Lv0</div></div>
+      </div>
+
+      <div class="ui-panel-title">🛡️ 강화</div>
+      <div class="upgrade-grid" id="upgradeGrid"></div>
+
+      <div class="monster-selector">
+        <label>몬스터 종류 (5스테이지마다 보스):</label>
+        <div class="monster-buttons" id="monsterButtons">
+          <button class="monster-btn active" data-type="slime">🟢 해적 슬라임</button>
+          <button class="monster-btn" data-type="skeleton">💀 스켈레톤</button>
+          <button class="monster-btn" data-type="bat">🦇 박쥐</button>
+          <button class="monster-btn" data-type="queen">👑 슬라임퀸</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui-panel">
+      <div class="ui-panel-title">📜 전투 로그</div>
+      <div class="log-box" id="logBox"></div>
+
+      <div class="ui-panel-title" style="margin-top:15px">📈 시스템</div>
+      <div class="info-item"><span class="info-label">Spine 런타임</span><span class="info-value">spine-webgl 4.2.79</span></div>
+      <div class="info-item"><span class="info-label">로드된 스켈레톤</span><span class="info-value" id="loadedCount">0/5</span></div>
+      <div class="info-item"><span class="info-label">데이터 소스</span><span class="info-value">하네스 Units.json</span></div>
+      <div class="anim-controls">
+        <span id="animPlayer">player: -</span>
+        <span id="animEnemy">enemy: -</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// Units.json (하네스 컴파일 결과 인라인)
+// ─────────────────────────────────────────────────────────────
+const UNITS_DATA = {
+  name: "초록 슬라임",
+  hpCurve: [120,134.4,150.5,168.6,188.8,211.5,236.9,265.3,297.1,332.8,372.7,417.4,467.5,523.6,586.5,656.8,735.6,823.9,922.8,1033.5,1157.6,1296.5,1452,1626.3,1821.4,2040,2284.8,2559,2866,3210,3595,4027,4510,5051,5657,6336,7096,7948,8902,9970,11166,12506,14007,15688,17570,19679,22040,24685,27647,30965],
+  atkCurve: [12,13.3,14.8,16.4,18.2,20.2,22.4,24.9,27.7,30.7,34.1,37.8,42,46.6,51.7,57.4,63.7,70.7,78.5,87.2,96.7,107.4,119.2,132.3,146.9,163,181,200.9,223,247.5,274.7,305,338.5,375.7,417,462.9,513.8,570.3,633.1,702.7,780,865.8,961,1066.8,1184.1,1314.4,1458.9,1619.4,1797.6,1995.3],
+  defCurve: [4,5.5,7,8.5,10,11.5,13,14.5,16,17.5,19,20.5,22,23.5,25,26.5,28,29.5,31,32.5,34,35.5,37,38.5,40,41.5,43,44.5,46,47.5,49,50.5,52,53.5,55,56.5,58,59.5,61,62.5,64,65.5,67,68.5,70,71.5,73,74.5,76,77.5]
+};
+
+// ─────────────────────────────────────────────────────────────
+// Spine 에셋 매니페스트
+// ─────────────────────────────────────────────────────────────
+const SPINE_ASSETS = {
+  Ninster:             { skel: 'assets/Ninster.skel.bytes',              atlas: 'assets/Ninster.atlas.txt',              png: 'assets/Ninster.png',              scale: 0.45 },
+  melee_slime3_pirate: { skel: 'assets/melee_slime3_pirate.skel.bytes',  atlas: 'assets/melee_slime3_pirate.atlas.txt',  png: 'assets/melee_slime3_pirate.png',  scale: 0.16 },
+  melee_skeleton:      { skel: 'assets/melee_skeleton.skel.bytes',       atlas: 'assets/melee_skeleton.atlas.txt',       png: 'assets/melee_skeleton.png',       scale: 0.16 },
+  melee_bat:           { skel: 'assets/melee_bat.skel.bytes',            atlas: 'assets/melee_bat.atlas.txt',            png: 'assets/melee_bat.png',            scale: 0.13 },
+  Slimequeen:          { skel: 'assets/Slimequeen.skel.bytes',           atlas: 'assets/Slimequeen.atlas.txt',           png: 'assets/Slimequeen.png',           scale: 0.22 }
+};
+
+// 몬스터 타입 매핑
+const MONSTER_MAP = {
+  slime:    { spineKey: 'melee_slime3_pirate', name: '해적 슬라임' },
+  skeleton: { spineKey: 'melee_skeleton',      name: '스켈레톤' },
+  bat:      { spineKey: 'melee_bat',           name: '박쥐' },
+  queen:    { spineKey: 'melee_slime3_pirate', name: '슬라임 퀸 (보스)' }
+};
+
+// ─────────────────────────────────────────────────────────────
+// Spine 에셋 로더
+// ─────────────────────────────────────────────────────────────
+const skeletonDataCache = {};
+
+async function loadSpineAsset(key, gl) {
+  const cfg = SPINE_ASSETS[key];
+  if (!cfg) throw new Error('Unknown spine key: ' + key);
+  if (skeletonDataCache[key]) return skeletonDataCache[key];
+
+  // 1. atlas 텍스트 (한글 부위명 — ArrayBuffer → UTF-8 명시 디코딩)
+  const atlasBuf = await fetch(cfg.atlas).then(r => r.arrayBuffer());
+  const atlasText = new TextDecoder('utf-8').decode(atlasBuf);
+
+  // 2. PNG 텍스처
+  const img = await new Promise((resolve, reject) => {
+    const i = new Image();
+    i.crossOrigin = 'anonymous';
+    i.onload = () => resolve(i);
+    i.onerror = reject;
+    i.src = cfg.png;
+  });
+
+  // 3. atlas + 텍스처 묶기 (pages + regions 모두 명시 설정)
+  const texture = new spine.GLTexture(gl, img);
+  const atlas = new spine.TextureAtlas(atlasText);
+  atlas.pages.forEach(page => {
+    page.texture = texture;
+    page.width = img.width;
+    page.height = img.height;
+    if (typeof page.setTexture === 'function') page.setTexture(texture);
+  });
+  atlas.regions.forEach(region => {
+    region.texture = texture;
+    region.page.texture = texture;
+  });
+
+  // 4. skel binary
+  const skelBuf = await fetch(cfg.skel).then(r => r.arrayBuffer());
+  const attachLoader = new spine.AtlasAttachmentLoader(atlas);
+  const skelBinary = new spine.SkeletonBinary(attachLoader);
+  skelBinary.scale = cfg.scale;
+  const skeletonData = skelBinary.readSkeletonData(new Uint8Array(skelBuf));
+
+  skeletonDataCache[key] = skeletonData;
+  console.log(`✅ Spine 로드: ${key} (애니메이션 ${skeletonData.animations.length}개, regions=${atlas.regions.length}, pages=${atlas.pages.length})`);
+  // 첫 번째 region 이름 (인코딩 확인용)
+  console.log(`   첫 region: "${atlas.regions[0]?.name}" — 한글 정상 표시?`);
+  return skeletonData;
+}
+
+function makeInstance(skeletonData) {
+  const skeleton = new spine.Skeleton(skeletonData);
+
+  // ★ 핵심: skin + setup pose. 이게 없으면 attachment가 비어있음(bounds=Infinity)
+  if (skeletonData.defaultSkin) {
+    skeleton.setSkin(skeletonData.defaultSkin);
+  } else if (skeletonData.skins && skeletonData.skins.length > 0) {
+    skeleton.setSkin(skeletonData.skins[0]);
+  }
+  skeleton.setSlotsToSetupPose();
+
+  const stateData = new spine.AnimationStateData(skeletonData);
+  stateData.defaultMix = 0.15;
+  const state = new spine.AnimationState(stateData);
+
+  // attachment 카운트 (디버그)
+  let withAtt = 0, withRegion = 0;
+  skeleton.slots.forEach(s => {
+    const a = s.getAttachment();
+    if (a) {
+      withAtt++;
+      if (a.region) withRegion++;
+    }
+  });
+  console.log(`   makeInstance: slots=${skeleton.slots.length}, attached=${withAtt}, withRegion=${withRegion}, skins=${skeletonData.skins?.length}, defaultSkin=${!!skeletonData.defaultSkin}`);
+
+  return { skeleton, state };
+}
+
+// 가능한 애니메이션 이름 후보를 시도
+function tryPlay(state, candidates, loop = true) {
+  if (!state || !state.data || !state.data.skeletonData) return null;
+  const anims = state.data.skeletonData.animations.map(a => a.name);
+  for (const cand of candidates) {
+    const found = anims.find(a => a.toLowerCase().includes(cand.toLowerCase()));
+    if (found) {
+      state.setAnimation(0, found, loop);
+      return found;
+    }
+  }
+  // fallback: 첫번째
+  if (anims.length) {
+    state.setAnimation(0, anims[0], loop);
+    return anims[0];
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────────────────────
+// 게임 상태
+// ─────────────────────────────────────────────────────────────
+const game = {
+  stage: 1, best: 1, gold: 0,
+  atkLv: 0, hpLv: 0, defLv: 0, spdLv: 0, critLv: 0,
+  spin: false, smash: false,
+  playerHp: 340, playerHpMax: 340,
+  enemies: [], logs: [],
+  monsterType: 'slime',
+  pbt: 1, goldT: 30,
+  playerInst: null,
+  skills: [{ n: '베기', cd: 1.5, t: 1.5, mult: 1.2, tg: 'one' }],
+  currentPlayerAnim: '',
+  startTime: performance.now()
+};
+
+function getStats() {
+  const C = (b, r, l) => Math.round(b * Math.pow(r, l));
+  return {
+    atk: Math.round(34 + game.atkLv * 9 * Math.pow(1.07, game.atkLv)),
+    hpMax: Math.round(340 + game.hpLv * 80 * Math.pow(1.07, game.hpLv)),
+    def: Math.round(5 + game.defLv * 3),
+    spd: +(1.0 + game.spdLv * 0.12).toFixed(2),
+    crit: Math.min(85, 5 + game.critLv * 4),
+    C
+  };
+}
+
+function fmt(n) {
+  n = Math.floor(n);
+  if (n < 1000) return '' + n;
+  const u = ['', 'K', 'M', 'B', 'T'];
+  let i = 0;
+  while (n >= 1000 && i < u.length - 1) { n /= 1000; i++; }
+  return n.toFixed(1) + u[i];
+}
+
+function addLog(msg) {
+  game.logs.unshift(msg);
+  if (game.logs.length > 8) game.logs.pop();
+}
+
+// ─────────────────────────────────────────────────────────────
+// 메인 로직
+// ─────────────────────────────────────────────────────────────
+const canvas = document.getElementById('spineCanvas');
+const stageWrap = document.getElementById('stageWrap');
+const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
+if (!gl) {
+  document.getElementById('loadingOverlay').innerHTML = '❌ WebGL을 지원하지 않는 브라우저입니다.';
+  throw new Error('WebGL unsupported');
+}
+
+// 캔버스 사이즈 셋업
+function resizeCanvas() {
+  const r = stageWrap.getBoundingClientRect();
+  canvas.width = r.width;
+  canvas.height = r.height;
+  gl.viewport(0, 0, canvas.width, canvas.height);
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// spine-webgl 렌더 리소스
+const shader = spine.Shader.newTwoColoredTextured(gl);
+const batcher = new spine.PolygonBatcher(gl);
+const mvp = new spine.Matrix4();
+const skeletonRenderer = new spine.SkeletonRenderer(gl);
+skeletonRenderer.premultipliedAlpha = false;
+
+// 적 스폰
+function spawnWave() {
+  game.enemies = [];
+  const isBoss = game.stage % 5 === 0;
+  const idx = Math.min(game.stage - 1, UNITS_DATA.hpCurve.length - 1);
+  const baseHp = UNITS_DATA.hpCurve[idx];
+  const baseAtk = UNITS_DATA.atkCurve[idx];
+  const baseDef = UNITS_DATA.defCurve[idx];
+
+  // 보스면 Slimequeen, 아니면 선택된 몬스터 타입
+  const mon = MONSTER_MAP[game.monsterType] || MONSTER_MAP.slime;
+  const spineKey = isBoss ? 'Slimequeen' : mon.spineKey;
+  const skeletonData = skeletonDataCache[spineKey];
+  if (!skeletonData) {
+    console.warn('Skeleton data not loaded:', spineKey);
+    return;
+  }
+
+  const count = isBoss ? 1 : Math.min(5, 3 + Math.floor(game.stage / 4));
+  const hpMult = isBoss ? 7 : 1;
+  const atkMult = isBoss ? 1.6 : 1;
+
+  console.log(`🎯 spawnWave: canvas=${canvas.width}x${canvas.height}, count=${count}, isBoss=${isBoss}, spineKey=${spineKey}`);
+
+  for (let i = 0; i < count; i++) {
+    const inst = makeInstance(skeletonData);
+    // 적은 햄찌(좌측)를 바라봄. 햄찌가 -scaleX로 우측 향이면 적은 +scaleX로 좌측 향이 매칭
+    inst.skeleton.scaleX = Math.abs(inst.skeleton.scaleX || 1);
+    // 적은 캔버스 우측 절반에 일렬 배치 (픽셀 단위로 명확히)
+    const x = isBoss ? canvas.width * 0.7 : canvas.width * 0.55 + i * 90;
+    const y = canvas.height * 0.18;
+    inst.skeleton.x = x;
+    inst.skeleton.y = y;
+
+    const animName = tryPlay(inst.state, ['idle', 'wait', 'stand'], true);
+
+    // 디버그: 적 위치/크기 출력
+    inst.skeleton.updateWorldTransform(spine.Physics.update);
+    const bounds = new spine.Vector2();
+    const size = new spine.Vector2();
+    inst.skeleton.getBounds(bounds, size);
+    console.log(`  enemy[${i}] pos=(${x.toFixed(0)},${y.toFixed(0)}) bounds=${bounds.x.toFixed(0)},${bounds.y.toFixed(0)} size=${size.x.toFixed(0)}x${size.y.toFixed(0)} anim=${animName}`);
+
+    game.enemies.push({
+      hp: baseHp * hpMult,
+      max: baseHp * hpMult,
+      atk: baseAtk * atkMult,
+      def: baseDef * (isBoss ? 1.2 : 1),
+      spd: isBoss ? 0.6 : 0.8,
+      boss: isBoss,
+      alive: true,
+      bt: isBoss ? 1.7 : 1.25,
+      inst, x, y,
+      animName,
+      attackCooldown: 0,
+      skills: isBoss ? [{ n: '광역강타', cd: 6, t: 6, mult: 2.2 }] : []
+    });
+  }
+
+  game.playerHpMax = getStats().hpMax;
+  game.playerHp = game.playerHpMax;
+
+  addLog(isBoss ? `⭐ ${MONSTER_MAP.queen.name} 등장!` : `🐌 ${count}마리 ${mon.name} 출현`);
+}
+
+// 플로팅 텍스트
+function showFloat(x, y, text, color) {
+  const div = document.createElement('div');
+  div.className = 'float-text';
+  div.textContent = text;
+  div.style.color = color;
+  div.style.left = x + 'px';
+  div.style.top = y + 'px';
+  div.style.transform = 'translateX(-50%)';
+  document.getElementById('floatsLayer').appendChild(div);
+  setTimeout(() => div.remove(), 900);
+}
+
+// 공격 애니메이션 트리거 (idle → attack → idle)
+function triggerAttack(inst, onComplete) {
+  if (!inst || !inst.state) return;
+  const anims = inst.state.data.skeletonData.animations.map(a => a.name);
+  const attackAnim = anims.find(a => /attack|atk|hit/i.test(a));
+  if (attackAnim) {
+    inst.state.setAnimation(0, attackAnim, false);
+    inst.state.addAnimation(0, anims.find(a => /idle|wait|stand/i.test(a)) || anims[0], true, 0);
+  }
+}
+
+// 적 피격
+function hitEnemy(eIdx, dmg) {
+  const e = game.enemies[eIdx];
+  if (!e || !e.alive) return;
+  const stats = getStats();
+  const crit = Math.random() * 100 < stats.crit;
+  const actual = Math.max(1, Math.round(dmg * (crit ? 1.6 : 1) - e.def));
+  e.hp -= actual;
+  if (e.hp <= 0) e.hp = 0;
+
+  showFloat(e.x, e.y - 80, (crit ? '★' : '') + fmt(actual), crit ? '#fbbf24' : '#f87171');
+
+  if (e.hp <= 0) {
+    e.alive = false;
+    // dead 애니메이션 시도
+    const anims = e.inst.state.data.skeletonData.animations.map(a => a.name);
+    const deadAnim = anims.find(a => /dead|die|death/i.test(a));
+    if (deadAnim) e.inst.state.setAnimation(0, deadAnim, false);
+    e.fadeStart = performance.now();
+  }
+}
+
+function hitPlayer(dmg) {
+  const stats = getStats();
+  const actual = Math.max(1, Math.round(dmg - stats.def));
+  game.playerHp -= actual;
+  if (game.playerHp < 0) game.playerHp = 0;
+
+  const px = canvas.width * 0.2;
+  const py = canvas.height * 0.5;
+  showFloat(px, py, fmt(actual), '#ff4444');
+}
+
+// 게임 로직 (50ms tick)
+function gameTick() {
+  const dt = 0.05;
+  const stats = getStats();
+  const alive = game.enemies.map((e, i) => e.alive ? i : -1).filter(i => i >= 0);
+
+  if (alive.length && game.playerHp > 0) {
+    game.pbt -= dt;
+    if (game.pbt <= 0) {
+      hitEnemy(alive[0], stats.atk);
+      triggerAttack(game.playerInst);
+      const e = game.enemies[alive[0]];
+      if (e && e.inst) {
+        const anims = e.inst.state.data.skeletonData.animations.map(a => a.name);
+        const hitAnim = anims.find(a => /hit|hurt|damage/i.test(a));
+        if (hitAnim) {
+          e.inst.state.setAnimation(0, hitAnim, false);
+          e.inst.state.addAnimation(0, anims.find(a => /idle|wait|stand/i.test(a)) || anims[0], true, 0);
+        }
+      }
+      game.pbt += 1 / stats.spd;
+    }
+
+    game.skills.forEach(sk => {
+      sk.t -= dt;
+      if (sk.t <= 0) {
+        if (sk.tg === 'all') alive.forEach(i => hitEnemy(i, stats.atk * sk.mult));
+        else hitEnemy(alive[0], stats.atk * sk.mult);
+        showFloat(canvas.width * 0.2, canvas.height * 0.4, sk.n + '!', '#60a5fa');
+        triggerAttack(game.playerInst);
+        sk.t += sk.cd;
+      }
+    });
+
+    alive.forEach(i => {
+      const e = game.enemies[i];
+      e.bt -= dt;
+      if (e.bt <= 0) {
+        hitPlayer(e.atk);
+        triggerAttack(e.inst);
+        e.bt += 1 / e.spd;
+      }
+      e.skills.forEach(es => {
+        es.t -= dt;
+        if (es.t <= 0) {
+          hitPlayer(e.atk * es.mult);
+          showFloat(canvas.width * 0.2, canvas.height * 0.4, es.n + '!', '#ff4444');
+          es.t += es.cd;
+        }
+      });
+    });
+  }
+
+  // 방치 골드
+  game.goldT -= dt;
+  const gps = Math.round(3 * Math.pow(1.12, game.best - 1));
+  if (game.goldT <= 0) {
+    const g = gps * 5;
+    game.gold += g;
+    showFloat(canvas.width * 0.2, canvas.height * 0.65, '+' + fmt(g) + 'G', '#4ade80');
+    game.goldT = 30;
+  }
+  game.gold += gps * dt;
+
+  // 웨이브 종료
+  if (game.enemies.length && game.enemies.every(e => !e.alive)) {
+    const reward = Math.round((6 + Math.random() * 6) * Math.pow(1.16, game.stage - 1)) * game.enemies.length;
+    game.gold += reward;
+    addLog(`✨ 웨이브 클리어! +${fmt(reward)}G`);
+    game.stage++;
+    if (game.stage > game.best) game.best = game.stage;
+    spawnWave();
+  } else if (game.playerHp <= 0) {
+    addLog(`💀 패배 · 스테이지 ${game.stage}`);
+    if (game.stage > 1) game.stage--;
+    spawnWave();
+  }
+
+  updateHUD();
+}
+
+// ★ 강화 버튼은 1회만 생성. 이후엔 cost/disabled만 업데이트 (innerHTML 재작성 X)
+const UPGRADE_DEFS = [
+  { key: 'atk', label: 'ATK', baseCost: 12, rate: 1.16, lvField: 'atkLv' },
+  { key: 'hp',  label: 'HP',  baseCost: 10, rate: 1.16, lvField: 'hpLv' },
+  { key: 'def', label: 'DEF', baseCost: 15, rate: 1.19, lvField: 'defLv' },
+  { key: 'spd', label: 'SPD', baseCost: 40, rate: 1.35, lvField: 'spdLv' },
+  { key: 'crit',label: 'CRIT',baseCost: 30, rate: 1.3,  lvField: 'critLv' },
+  { key: 'spin',label: '회전', flatCost: 800,  skill: true },
+  { key: 'smash',label:'강타', flatCost: 3000, skill: true }
+];
+
+function buildUpgradeButtons() {
+  const grid = document.getElementById('upgradeGrid');
+  grid.innerHTML = UPGRADE_DEFS.map(u => `
+    <button class="upgrade-btn" data-upgrade="${u.key}" id="ubtn-${u.key}">
+      <div>${u.label}</div>
+      <div class="ubtn-meta" style="font-size:9px;opacity:.7" id="ubtn-meta-${u.key}">-</div>
+    </button>
+  `).join('');
+}
+
+// 매 tick 호출 — innerHTML 재생성 X, 값/상태만 갱신
+function updateHUD() {
+  const stats = getStats();
+  const gps = Math.round(3 * Math.pow(1.12, game.best - 1));
+
+  document.getElementById('hudStage').textContent = `초원 던전 · ${game.stage}`;
+  document.getElementById('hudBest').textContent = game.best;
+  document.getElementById('hudGold').textContent = fmt(game.gold);
+  document.getElementById('hudGps').textContent = fmt(gps);
+  document.getElementById('hudMonster').textContent = game.enemies[0]?.boss ? '👑 슬라임퀸 보스' : (MONSTER_MAP[game.monsterType]?.name || '-');
+  document.getElementById('hudWave').textContent = game.enemies.filter(e => e.alive).length + '/' + game.enemies.length;
+  document.getElementById('atkValue').textContent = fmt(stats.atk);
+  document.getElementById('atkLevel').textContent = `Lv${game.atkLv}`;
+  document.getElementById('hpValue').textContent = fmt(stats.hpMax);
+  document.getElementById('hpLevel').textContent = `Lv${game.hpLv}`;
+  document.getElementById('defValue').textContent = fmt(stats.def);
+  document.getElementById('defLevel').textContent = `Lv${game.defLv}`;
+  document.getElementById('animPlayer').textContent = 'player: ' + (game.playerInst?.state.tracks[0]?.animation.name || '-');
+  document.getElementById('animEnemy').textContent = 'enemy: ' + (game.enemies[0]?.inst?.state.tracks[0]?.animation.name || '-');
+
+  // 강화 버튼 값만 업데이트
+  UPGRADE_DEFS.forEach(u => {
+    const btn = document.getElementById(`ubtn-${u.key}`);
+    const meta = document.getElementById(`ubtn-meta-${u.key}`);
+    if (!btn || !meta) return;
+
+    let cost, owned = false, lv = 0;
+    if (u.skill) {
+      cost = u.flatCost;
+      owned = !!game[u.key];
+    } else {
+      lv = game[u.lvField];
+      cost = Math.round(u.baseCost * Math.pow(u.rate, lv));
+    }
+    btn.dataset.cost = cost;
+
+    const canBuy = !owned && game.gold >= cost;
+    btn.classList.toggle('buy-ready', canBuy);
+    btn.disabled = owned;
+    meta.textContent = owned ? '✓ 보유중' : ((lv > 0 ? `Lv${lv} · ` : '') + fmt(cost) + 'G');
+  });
+
+  // 로그
+  const logBox = document.getElementById('logBox');
+  const newLogHtml = game.logs.map(l => `<div class="log-entry">${l}</div>`).join('');
+  if (logBox.innerHTML !== newLogHtml) logBox.innerHTML = newLogHtml;
+}
+
+function buyUpgrade(key, cost) {
+  console.log(`🛒 buyUpgrade(${key}, ${cost}) — gold=${game.gold.toFixed(0)}, canBuy=${game.gold >= cost}`);
+  if (game.gold < cost) { console.log('  ❌ 골드 부족'); return; }
+  if ((key === 'spin' && game.spin) || (key === 'smash' && game.smash)) { console.log('  ❌ 이미 보유'); return; }
+  game.gold -= cost;
+  if (key === 'spin') { game.spin = true; game.skills.push({ n: '회전베기', cd: 5, t: 5, mult: 0.8, tg: 'all' }); addLog('⚔️ 회전베기 획득!'); }
+  else if (key === 'smash') { game.smash = true; game.skills.push({ n: '강타', cd: 9, t: 2, mult: 4.0, tg: 'one' }); addLog('💥 강타 획득!'); }
+  else {
+    game[key + 'Lv']++;
+    if (key === 'hp') { game.playerHpMax = getStats().hpMax; game.playerHp = game.playerHpMax; }
+    addLog(`📈 ${key.toUpperCase()} Lv${game[key + 'Lv']}`);
+  }
+  updateHUD();
+}
+
+// 이벤트 위임
+document.addEventListener('click', e => {
+  const ub = e.target.closest('[data-upgrade]');
+  if (ub) { buyUpgrade(ub.dataset.upgrade, parseInt(ub.dataset.cost)); return; }
+  const mb = e.target.closest('.monster-btn');
+  if (mb) {
+    document.querySelectorAll('.monster-btn').forEach(b => b.classList.remove('active'));
+    mb.classList.add('active');
+    game.monsterType = mb.dataset.type;
+    game.stage = 1;
+    spawnWave();
+    addLog(`🔄 ${MONSTER_MAP[game.monsterType].name} 선택`);
+  }
+});
+
+// ─────────────────────────────────────────────────────────────
+// 메인 렌더 루프
+// ─────────────────────────────────────────────────────────────
+let lastTime = performance.now();
+let tickAccum = 0;
+
+function render() {
+  const now = performance.now();
+  const delta = Math.min(0.05, (now - lastTime) / 1000);
+  lastTime = now;
+
+  // 게임 tick (50ms마다)
+  tickAccum += delta;
+  while (tickAccum >= 0.05) {
+    gameTick();
+    tickAccum -= 0.05;
+  }
+
+  // 렌더링
+  gl.clearColor(0, 0, 0, 0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  mvp.ortho2d(0, 0, canvas.width - 1, canvas.height - 1);
+  shader.bind();
+  shader.setUniformi(spine.Shader.SAMPLER, 0);
+  shader.setUniform4x4f(spine.Shader.MVP_MATRIX, mvp.values);
+
+  batcher.begin(shader);
+
+  // 플레이어 그리기
+  if (game.playerInst) {
+    game.playerInst.state.update(delta);
+    game.playerInst.state.apply(game.playerInst.skeleton);
+    game.playerInst.skeleton.x = canvas.width * 0.22;
+    game.playerInst.skeleton.y = canvas.height * 0.15;
+    game.playerInst.skeleton.updateWorldTransform(spine.Physics.update);
+    skeletonRenderer.draw(batcher, game.playerInst.skeleton);
+  }
+
+  // 적 그리기
+  game.enemies.forEach(e => {
+    if (!e.inst) return;
+    // 사망 후 페이드아웃
+    if (!e.alive && e.fadeStart) {
+      const elapsed = (now - e.fadeStart) / 600;
+      if (elapsed >= 1) return;
+      e.inst.skeleton.color.a = 1 - elapsed;
+    }
+    e.inst.state.update(delta);
+    e.inst.state.apply(e.inst.skeleton);
+    e.inst.skeleton.updateWorldTransform(spine.Physics.update);
+    skeletonRenderer.draw(batcher, e.inst.skeleton);
+  });
+
+  batcher.end();
+  shader.unbind();
+
+  requestAnimationFrame(render);
+}
+
+// ─────────────────────────────────────────────────────────────
+// 초기화
+// ─────────────────────────────────────────────────────────────
+async function init() {
+  const overlay = document.getElementById('loadingOverlay');
+  const keys = Object.keys(SPINE_ASSETS);
+  let loaded = 0;
+  for (const key of keys) {
+    try {
+      await loadSpineAsset(key, gl);
+      loaded++;
+      overlay.innerHTML = `🎬 Spine 로딩... ${loaded}/${keys.length}: ${key}`;
+      document.getElementById('loadedCount').textContent = `${loaded}/${keys.length}`;
+    } catch (err) {
+      console.error('로드 실패:', key, err);
+      overlay.innerHTML = `❌ ${key} 로드 실패: ${err.message}`;
+      return;
+    }
+  }
+
+  // 플레이어 인스턴스 생성 (기본 햄찌 = Ninster)
+  game.playerInst = makeInstance(skeletonDataCache.Ninster);
+  // 좌우반전: 햄찌가 우측 적을 바라보도록
+  game.playerInst.skeleton.scaleX = -Math.abs(game.playerInst.skeleton.scaleX || 1);
+  game.currentPlayerAnim = tryPlay(game.playerInst.state, ['idle', 'wait', 'stand'], true);
+
+  // 강화 버튼 1회 생성
+  buildUpgradeButtons();
+
+  // 첫 웨이브
+  spawnWave();
+  addLog('🎮 초원 던전 입장 — Spine 애니메이션 시작');
+
+  overlay.style.display = 'none';
+  updateHUD();
+  requestAnimationFrame(render);
+}
+
+init().catch(err => {
+  console.error(err);
+  document.getElementById('loadingOverlay').innerHTML = `❌ 초기화 실패: ${err.message}<br><small>${err.stack || ''}</small>`;
+});
+</script>
+</body>
+</html>

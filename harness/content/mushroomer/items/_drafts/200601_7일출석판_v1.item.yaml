@@ -1,0 +1,43 @@
+id: 200601
+name: "7일 출석판"
+category: Attendance
+grade: 1
+dailyRewardAddItemGroups:
+  - level: 1
+    shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 600 }
+  - level: 2
+    shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200103, count: 5 }
+  - level: 3
+    shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200104, count: 5 }
+  - level: 4
+    shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200105, count: 1 }
+  - level: 5
+    shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 4, count: 40 }
+  - level: 6
+    shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200503, count: 1 }
+  - level: 7
+    shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 4, count: 100, isCore: true }
+      - { itemDataId: 200103, count: 15 }
+spriteGroups:
+  Icon: "Items/Shops/shop_img_banner_newbie_01.png"

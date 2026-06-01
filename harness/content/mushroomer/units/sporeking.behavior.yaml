@@ -1,0 +1,34 @@
+name: SporeKingEnrage
+domain: unit
+
+"on":
+  - event: start
+    do:
+      - moveRandom:
+          x: 3.0
+          y: 0.0
+          xRange: 0.2
+          yRange: 0.45
+
+---
+
+name: SporeKingBattle
+domain: unit
+
+vars:
+  attack_range: { type: float, default: 5.4 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom:
+          x: 3.0
+          y: 0.0
+          xRange: 0.2
+          yRange: 0.45
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget:
+          skillDataId: 300101

@@ -1,0 +1,43 @@
+id: 110201
+name: "이끼 포자"
+tags: [Monster]
+armorType: NormalArmor
+warmupDelay: 2.0
+targetMode: Chaser
+targetAwareDistance: 24.0
+targetResetDistance: 30.0
+deadDestroyDelaySeconds: 0.45
+
+addStats:
+  - { type: Hp, value: [60.0] }
+  - { type: Attack, value: [4.0] }
+  - { type: Defense, value: [1.0] }
+  - { type: MoveSpeed, value: [3.1] }
+
+triggers:
+  - UNIT_ONSTART_SPORELINGWANDER
+  - UNIT_ONUPDATE_SPORELINGATTACK
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 18, maxCount: 28, isCore: true }
+      - { itemDataId: 6, count: 8 }
+  - shouldAddAll: false
+    probPercent: 45
+    addItems:
+      - { itemDataId: 200101, count: 1, weight: 100, group: 1 }
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200108, count: 5 }
+
+prefab: "Units/Monsters/large_melee_slime_green.prefab"
+sprite: "Units/Monsters/Assets/large_melee_slime.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 1.0

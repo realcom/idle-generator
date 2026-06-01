@@ -1,0 +1,72 @@
+version: 1
+game: idlez
+source_concept: hamster_portrait_combat_growth_dock_d
+
+motion_principles:
+  - Keep combat readable before adding flourish.
+  - Use short, bouncy, toy-like motion.
+  - Reward motion should travel toward the growth dock or currency strip.
+  - Avoid full-screen effects during normal auto-battle loops.
+
+events:
+  attack_hit:
+    visual:
+      - orange slash flash at enemy
+      - damage number scale-pop
+      - small enemy squash
+    timing_ms:
+      hit_flash: 120
+      damage_pop: 240
+      enemy_squash: 160
+  enemy_defeat:
+    visual:
+      - coin and seed burst
+      - drops arc toward lower right DropToast
+      - tiny dust puff
+    timing_ms:
+      burst: 180
+      collect_arc: 450
+  stat_upgrade:
+    visual:
+      - GrowthStatCard button press inset
+      - icon medallion glow ring
+      - value count-up
+    timing_ms:
+      press: 90
+      glow: 300
+      count_up: 280
+  growth_reward_claim:
+    visual:
+      - GrowthRewardButton squash-pop
+      - hamster face bounce
+      - coin stream toward top currency
+      - dock gold rim pulse
+    timing_ms:
+      press: 100
+      stream: 650
+      rim_pulse: 500
+  auto_enhance_toggle:
+    visual:
+      - green button glow
+      - small circular arrows rotate once
+    timing_ms:
+      toggle: 280
+  stage_node_complete:
+    visual:
+      - progress node stamps complete
+      - connector bar fills left-to-right
+    timing_ms:
+      stamp: 180
+      fill: 300
+
+sfx_keys:
+  attack_hit: sfx_hamster_hit_soft
+  enemy_defeat: sfx_coin_seed_burst
+  stat_upgrade: sfx_upgrade_pop
+  reward_claim: sfx_reward_claim_gold
+  auto_toggle: sfx_auto_toggle
+
+haptic:
+  stat_upgrade: light
+  reward_claim: medium
+  boss_warning: medium

@@ -1,0 +1,68 @@
+id: 200346
+name: "심연 반지"
+category: Equipment
+type: Ring
+tags: [EquipmentTier4Growth]
+grade: 4
+rarity: 4
+tier: 4
+power: 880
+equipAddStats:
+  - { type: CriticalDamagePercent, value: [52] }
+  - { type: BossDamageEfficiencyPercent, value: [16] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 5200 }
+      - { id: 200103, count: 30 }
+requiredAchievementDataIds: [10105]
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [3]
+options:
+  - options:
+      - id: 2003461
+        grade: 4
+        group: 1
+        weight: 30
+        minLevel: 4
+        maxLevel: 5
+        equipAddStats:
+          - { type: CriticalDamagePercent, value: [9.75, 16.575, 25.35, 39, 58.5] }
+      - id: 2003462
+        grade: 4
+        group: 1
+        weight: 28
+        minLevel: 4
+        maxLevel: 5
+        equipAddStats:
+          - { type: BossDamageEfficiencyPercent, value: [2.925, 5.07, 8.19, 12.675, 18.525] }
+      - id: 2003463
+        grade: 4
+        group: 1
+        weight: 22
+        minLevel: 4
+        maxLevel: 5
+        equipAddStats:
+          - { type: MonsterDamageEfficiencyPercent, value: [2.925, 5.07, 8.19, 12.675, 18.525] }
+      - id: 2003464
+        grade: 4
+        group: 1
+        weight: 20
+        minLevel: 4
+        maxLevel: 5
+        equipAddStats:
+          - { type: AttackPercent, value: [2.34, 3.9, 6.24, 9.75, 14.625] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 5400 }
+      - { id: 200106, count: 8 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 1600 }
+spriteGroups:
+  Icon: "assets/items/equipment/ring_relic.png"

@@ -1,0 +1,20 @@
+id: 600106
+name: "요일 던전 입문"
+type: Normal
+tags: []
+order: 106
+initialOpen: true
+clientAchievement: false
+condition: WinGame
+conditionValue1: 500301
+conditionValue2: 0
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200105, count: 1 }
+      - { itemDataId: 200503, count: 1 }

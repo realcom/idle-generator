@@ -1,0 +1,68 @@
+id: 200335
+name: "황금 목걸이"
+category: Equipment
+type: Necklace
+tags: [EquipmentTier3Growth]
+grade: 3
+rarity: 3
+tier: 3
+power: 280
+equipAddStats:
+  - { type: CriticalPercent, value: [8] }
+  - { type: ItemDropPercent, value: [7] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1500 }
+      - { id: 200103, count: 12 }
+requiredAchievementDataIds: [10104]
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [2]
+options:
+  - options:
+      - id: 2003351
+        grade: 3
+        group: 1
+        weight: 30
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: ItemDropPercent, value: [2.325, 3.875, 6.2, 9.3, 13.95] }
+      - id: 2003352
+        grade: 3
+        group: 1
+        weight: 26
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: CooldownPercent, value: [1.55, 2.79, 4.34, 6.51, 9.3] }
+      - id: 2003353
+        grade: 3
+        group: 1
+        weight: 24
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: CriticalPercent, value: [1.24, 2.17, 3.41, 5.27, 7.75] }
+      - id: 2003354
+        grade: 3
+        group: 1
+        weight: 20
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: ExpPercent, value: [2.325, 3.875, 6.2, 9.3, 13.95] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1800 }
+      - { id: 200106, count: 4 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 650 }
+spriteGroups:
+  Icon: "assets/items/equipment/necklace_hero.png"

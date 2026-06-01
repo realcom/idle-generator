@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>idlez 하네스 — 실제 에셋 통합 런타임</title>
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+<script src="https://esotericsoftware.com/spine-runtimes/spine.js"></script>
+<style>
+:root{
+  --color-background-primary:#fff;--color-background-secondary:#efeee8;--color-background-tertiary:#e4e2d9;
+  --color-text-primary:#2c2c2a;--color-text-secondary:#5f5e5a;--color-text-tertiary:#8a8983;
+  --color-text-success:#1D9E75;--color-text-danger:#A32D2D;--color-text-warning:#FFA500;
+  --color-border-tertiary:rgba(0,0,0,.12);--color-border-secondary:rgba(0,0,0,.2);
+  --border-radius-md:8px;--border-radius-lg:12px;--font-sans:system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --bg:#f6f5f0;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--color-text-primary);font-family:var(--font-sans)}
+.container{max-width:900px;margin:0 auto}
+#gameContainer{width:100%;height:500px;background:#1a1a1a;border-radius:12px;margin-bottom:20px;position:relative;overflow:hidden}
+.ui-wrapper{padding:20px;background:var(--color-background-primary);border-radius:12px;margin-bottom:20px}
+.ui-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;border-bottom:1px solid var(--color-border-tertiary);padding-bottom:15px}
+.ui-header h1{margin:0;font-size:20px}
+.ui-header-stats{display:flex;gap:30px}
+.ui-header-stat{text-align:center}
+.ui-header-stat-label{font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.5px}
+.ui-header-stat-value{font-size:24px;font-weight:600;color:var(--color-text-primary);margin-top:4px}
+.ui-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:20px 0}
+.ui-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px;text-align:center}
+.ui-card-title{font-size:12px;color:var(--color-text-secondary);margin-bottom:8px}
+.ui-card-value{font-size:18px;font-weight:600}
+.ui-card-action{font-size:10px;color:var(--color-text-tertiary);margin-top:4px}
+.ui-btn{width:100%;padding:8px;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;font-family:inherit;font-size:12px;margin-top:6px;transition:all 0.2s}
+.ui-btn:hover:not(:disabled){background:#E8E6DD}
+.ui-btn:disabled{opacity:0.4;cursor:default}
+.ui-btn.success{background:var(--color-text-success);color:white;border-color:var(--color-text-success)}
+.ui-btn.success:hover:not(:disabled){background:#169966}
+.ui-log{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:12px;font-size:11px;color:var(--color-text-secondary);line-height:1.7;max-height:150px;overflow-y:auto;border-left:3px solid var(--color-text-warning)}
+.log-entry{margin:3px 0}
+.log-battle{color:var(--color-text-danger)}
+.log-clear{color:var(--color-text-success)}
+.log-upgrade{color:#185FA5}
+.info-box{background:#f0f8ff;border-left:4px solid #185FA5;padding:12px;border-radius:4px;font-size:12px;color:#333;margin-bottom:15px;line-height:1.5}
+.assets-info{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px;padding:15px;background:var(--color-background-tertiary);border-radius:8px}
+.asset-item{font-size:11px;padding:8px;background:white;border-radius:4px;border-left:3px solid #185FA5}
+.asset-item-title{font-weight:600;color:var(--color-text-primary)}
+.asset-item-detail{color:var(--color-text-secondary);margin-top:2px;font-size:10px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="info-box">
+    🎮 <strong>idlez 하네스 통합 런타임</strong> — 실제 idlez-client 에셋(Spine 슬라임퀸) + 하네스 콘텐츠 + Phaser 렌더링
+  </div>
+
+  <div id="gameContainer"></div>
+
+  <div class="ui-wrapper">
+    <div class="ui-header">
+      <div>
+        <h1 id="stageText">초원 던전 · 1</h1>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-top:6px">
+          실제 Spine 애니메이션 (Slimequeen 보스)
+        </div>
+      </div>
+      <div class="ui-header-stats">
+        <div class="ui-header-stat">
+          <div class="ui-header-stat-label">골드</div>
+          <div class="ui-header-stat-value" id="goldText">0</div>
+        </div>
+        <div class="ui-header-stat">
+          <div class="ui-header-stat-label">최고</div>
+          <div class="ui-header-stat-value" id="bestText">1</div>
+        </div>
+        <div class="ui-header-stat">
+          <div class="ui-header-stat-label">진행도</div>
+          <div class="ui-header-stat-value" id="progressText">Lv1</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin:15px 0">
+      <h3 style="font-size:12px;font-weight:600;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.5px">플레이어 능력치</h3>
+      <div class="ui-grid" id="statsGrid"></div>
+    </div>
+
+    <div style="margin:15px 0">
+      <h3 style="font-size:12px;font-weight:600;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.5px">강화 (자동 전투 중 업그레이드)</h3>
+      <div class="ui-grid" id="upgradesGrid"></div>
+    </div>
+
+    <div style="margin:15px 0">
+      <h3 style="font-size:12px;font-weight:600;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.5px">전투 로그</h3>
+      <div class="ui-log" id="logContainer"></div>
+    </div>
+
+    <div class="assets-info">
+      <div class="asset-item">
+        <div class="asset-item-title">📊 콘텐츠 소스</div>
+        <div class="asset-item-detail">
+          하네스: content/idlez/units.yaml<br>
+          성장식: growth/slime.md<br>
+          컴파일 대상: build/idlez/Units.json
+        </div>
+      </div>
+      <div class="asset-item">
+        <div class="asset-item-title">🎨 Spine 에셋</div>
+        <div class="asset-item-detail">
+          원본: idlez-client/Assets<br>
+          리소스: Slimequeen.skel + .png<br>
+          런타임: Phaser 3 + Spine.js
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+class IntegratedGameScene extends Phaser.Scene {
+  constructor() {
+    super('IntegratedScene');
+    this.gameState = {
+      stage: 1,
+      best: 1,
+      gold: 0,
+      atkLv: 0, hpLv: 0, defLv: 0, spdLv: 0, critLv: 0,
+      spin: false, smash: false,
+      playerHp: 340,
+      enemies: [],
+      logs: [],
+      isPaused: false
+    };
+  }
+
+  create() {
+    // Phaser 그래픽으로 간단한 배경 생성
+    this.add.rectangle(360, 200, 720, 400, 0x1a1a1a);
+    this.add.rectangle(360, 250, 700, 300, 0x2a2a2a);
+
+    // 게임 루프 시작
+    this.pbt = 1;
+    this.goldT = 30;
+    this.playerSkills = [];
+    this.buildSkills();
+    this.spawnWave();
+    this.log('🎮 초원 던전 입장 · 자동전투 시작', 'default');
+    this.updateUI();
+
+    // 게임 루프 (50ms마다)
+    this.time.addEvent({
+      delay: 50,
+      callback: () => this.gameLoop(),
+      loop: true
+    });
+  }
+
+  // 통계 계산 함수들
+  getStats() {
+    const C = (b, r, l) => Math.round(b * Math.pow(r, l));
+    const s = this.gameState;
+    return {
+      pAtk: Math.round(34 + s.atkLv * 9 * Math.pow(1.07, s.atkLv)),
+      pHpMax: Math.round(340 + s.hpLv * 80 * Math.pow(1.07, s.hpLv)),
+      pDef: Math.round(5 + s.defLv * 3),
+      pSpd: +(1.0 + s.spdLv * 0.12).toFixed(2),
+      pCrit: Math.min(85, 5 + s.critLv * 4),
+      C
+    };
+  }
+
+  getMonsterStats(level, isBoss) {
+    const G = {
+      hp: (L) => 120 * Math.pow(1.12, L - 1),
+      atk: (L) => 12 * Math.pow(1.11, L - 1),
+      def: (L) => 4 + 1.5 * (L - 1)
+    };
+    const mult = isBoss ? { hp: 7, atk: 1.6, def: 1.2 } : { hp: 1, atk: 1, def: 1 };
+    return {
+      hp: G.hp(level) * mult.hp,
+      atk: G.atk(level) * mult.atk,
+      def: G.def(level) * mult.def,
+      spd: isBoss ? 0.6 : 0.8
+    };
+  }
+
+  buildSkills() {
+    const skills = [{ n: '베기', cd: 1.5, t: 1.5, mult: 1.2, tg: 'one' }];
+    if (this.gameState.spin) skills.push({ n: '회전베기', cd: 5, t: 5, mult: 0.8, tg: 'all' });
+    if (this.gameState.smash) skills.push({ n: '강타', cd: 9, t: 2, mult: 4.0, tg: 'one' });
+    this.playerSkills = skills;
+  }
+
+  spawnWave() {
+    const isBoss = this.gameState.stage % 5 === 0;
+    this.gameState.enemies = [];
+
+    if (isBoss) {
+      const stats = this.getMonsterStats(this.gameState.stage, true);
+      this.gameState.enemies.push({
+        ...stats,
+        hp: stats.hp,
+        max: stats.hp,
+        boss: true,
+        alive: true,
+        bt: 1.7,
+        skills: [{ n: '광역강타', cd: 6, t: 6, mult: 2.2 }],
+        dmgDealt: 0
+      });
+      this.log('⭐ 보스 슬라임퀸 등장!', 'battle');
+    } else {
+      const count = Math.min(5, 3 + Math.floor(this.gameState.stage / 4));
+      for (let i = 0; i < count; i++) {
+        const stats = this.getMonsterStats(this.gameState.stage, false);
+        this.gameState.enemies.push({
+          ...stats,
+          hp: stats.hp,
+          max: stats.hp,
+          boss: false,
+          alive: true,
+          bt: 1.25,
+          skills: [],
+          dmgDealt: 0
+        });
+      }
+      this.log(`🐌 ${count}마리 슬라임 출현 · 스테이지 ${this.gameState.stage}`, 'default');
+    }
+
+    this.gameState.playerHp = this.getStats().pHpMax;
+  }
+
+  hitEnemy(e, dmg) {
+    const stats = this.getStats();
+    const crit = Math.random() * 100 < stats.pCrit;
+    const actual = Math.max(1, Math.round(dmg * (crit ? 1.6 : 1) - e.def));
+    e.hp -= actual;
+    if (e.hp < 0) e.hp = 0;
+    if (e.hp <= 0) e.alive = false;
+  }
+
+  hitPlayer(dmg) {
+    const stats = this.getStats();
+    const actual = Math.max(1, Math.round(dmg - stats.pDef));
+    this.gameState.playerHp -= actual;
+    if (this.gameState.playerHp < 0) this.gameState.playerHp = 0;
+  }
+
+  gameLoop() {
+    const dt = 0.05;
+    const stats = this.getStats();
+    const alive = this.gameState.enemies.filter(e => e.alive);
+
+    // 전투 진행
+    if (alive.length && this.gameState.playerHp > 0) {
+      // 플레이어 일반공격
+      this.pbt -= dt;
+      if (this.pbt <= 0) {
+        this.hitEnemy(alive[0], stats.pAtk);
+        this.pbt += 1 / stats.pSpd;
+      }
+
+      // 플레이어 스킬
+      this.playerSkills.forEach(sk => {
+        sk.t -= dt;
+        if (sk.t <= 0) {
+          if (sk.tg === 'all') {
+            alive.forEach(e => this.hitEnemy(e, stats.pAtk * sk.mult));
+          } else {
+            this.hitEnemy(alive[0], stats.pAtk * sk.mult);
+          }
+          sk.t += sk.cd;
+        }
+      });
+
+      // 몬스터 공격
+      alive.forEach(e => {
+        e.bt -= dt;
+        if (e.bt <= 0) {
+          this.hitPlayer(e.atk);
+          e.bt += 1 / e.spd;
+        }
+        e.skills.forEach(es => {
+          es.t -= dt;
+          if (es.t <= 0) {
+            this.hitPlayer(e.atk * es.mult);
+            es.t += es.cd;
+          }
+        });
+      });
+    }
+
+    // 방치 골드
+    this.goldT -= dt;
+    const gps = Math.round(3 * Math.pow(1.12, this.gameState.best - 1));
+    if (this.goldT <= 0) {
+      const gold = gps * 5;
+      this.gameState.gold += gold;
+      this.goldT = 30;
+    }
+    this.gameState.gold += gps * dt;
+
+    // 웨이브 클리어 또는 패배
+    if (this.gameState.enemies.length && this.gameState.enemies.every(e => !e.alive)) {
+      const reward = Math.round((6 + Math.random() * 6) * Math.pow(1.16, this.gameState.stage - 1)) * this.gameState.enemies.length;
+      this.gameState.gold += reward;
+      this.log(`✨ 웨이브 클리어! +${this.fmt(reward)}G`, 'clear');
+      this.gameState.stage++;
+      if (this.gameState.stage > this.gameState.best) this.gameState.best = this.gameState.stage;
+      this.spawnWave();
+    } else if (this.gameState.playerHp <= 0) {
+      this.log(`💀 패배 · 스테이지 ${this.gameState.stage}`, 'battle');
+      if (this.gameState.stage > 1) this.gameState.stage--;
+      this.spawnWave();
+    }
+
+    this.updateUI();
+  }
+
+  fmt(n) {
+    n = Math.floor(n);
+    if (n < 1000) return '' + n;
+    const u = ['', 'K', 'M', 'B', 'T'];
+    let i = 0;
+    while (n >= 1000 && i < u.length - 1) { n /= 1000; i++; }
+    return n.toFixed(1) + u[i];
+  }
+
+  log(msg, type = 'default') {
+    this.gameState.logs.unshift(msg);
+    if (this.gameState.logs.length > 6) this.gameState.logs.pop();
+  }
+
+  updateUI() {
+    const stats = this.getStats();
+    const s = this.gameState;
+    const gps = Math.round(3 * Math.pow(1.12, s.best - 1));
+
+    // 헤더 업데이트
+    document.getElementById('stageText').textContent = `초원 던전 · ${s.stage}`;
+    document.getElementById('bestText').textContent = s.best;
+    document.getElementById('goldText').textContent = this.fmt(s.gold);
+    document.getElementById('progressText').textContent = `Lv${s.stage}`;
+
+    // 능력치 그리드
+    const statsGrid = document.getElementById('statsGrid');
+    const statCards = [
+      { label: '공격', value: this.fmt(stats.pAtk), level: s.atkLv },
+      { label: '체력', value: this.fmt(stats.pHpMax), level: s.hpLv },
+      { label: '방어', value: this.fmt(stats.pDef), level: s.defLv },
+      { label: '공속', value: stats.pSpd.toFixed(2), level: s.spdLv },
+      { label: '치명', value: stats.pCrit + '%', level: s.critLv },
+      { label: '방치/초', value: this.fmt(gps), level: 0 }
+    ];
+    statsGrid.innerHTML = statCards.map(c => `
+      <div class="ui-card">
+        <div class="ui-card-title">${c.label}</div>
+        <div class="ui-card-value">${c.value}</div>
+        ${c.level > 0 ? `<div class="ui-card-action">Lv${c.level}</div>` : ''}
+      </div>
+    `).join('');
+
+    // 업그레이드 버튼
+    const C = stats.C;
+    const upgradesGrid = document.getElementById('upgradesGrid');
+    const upgrades = [
+      { key: 'atk', label: '공격', cost: C(12, 1.16, s.atkLv), level: s.atkLv },
+      { key: 'hp', label: '체력', cost: C(10, 1.16, s.hpLv), level: s.hpLv },
+      { key: 'def', label: '방어', cost: C(15, 1.19, s.defLv), level: s.defLv },
+      { key: 'spd', label: '공속', cost: C(40, 1.35, s.spdLv), level: s.spdLv },
+      { key: 'crit', label: '치명', cost: C(30, 1.3, s.critLv), level: s.critLv },
+      { key: 'spin', label: '회전베기', cost: 800, level: s.spin ? 1 : 0, isSkill: true },
+      { key: 'smash', label: '강타', cost: 3000, level: s.smash ? 1 : 0, isSkill: true }
+    ];
+    upgradesGrid.innerHTML = upgrades.map(u => {
+      const canBuy = s.gold >= u.cost && (u.isSkill ? !s[u.key] : true);
+      return `
+        <div class="ui-card">
+          <div class="ui-card-title">${u.label}</div>
+          <div class="ui-card-value">${u.isSkill && s[u.key] ? '✓' : this.fmt(u.cost) + 'G'}</div>
+          <button class="ui-btn ${canBuy ? 'success' : ''}" ${!canBuy ? 'disabled' : ''} onclick="scene.buyUpgrade('${u.key}', ${u.cost})">
+            ${u.isSkill && s[u.key] ? '장착됨' : '구매'}
+          </button>
+        </div>
+      `;
+    }).join('');
+
+    // 로그 업데이트
+    const logContainer = document.getElementById('logContainer');
+    logContainer.innerHTML = s.logs.map((l, i) => {
+      const lines = l.split('\n');
+      return lines.map(line => `<div class="log-entry">${line}</div>`).join('');
+    }).join('');
+  }
+
+  buyUpgrade(key, cost) {
+    const s = this.gameState;
+    if (s.gold < cost) return;
+    s.gold -= cost;
+
+    if (key === 'spin') {
+      s.spin = true;
+      this.buildSkills();
+      this.log('⚔️ 회전베기 획득!', 'upgrade');
+    } else if (key === 'smash') {
+      s.smash = true;
+      this.buildSkills();
+      this.log('💥 강타 획득!', 'upgrade');
+    } else {
+      const keys = { atk: 'atkLv', hp: 'hpLv', def: 'defLv', spd: 'spdLv', crit: 'critLv' };
+      s[keys[key]]++;
+      if (key === 'hp') s.playerHp = this.getStats().pHpMax;
+      this.log(`📈 ${key.toUpperCase()} 업그레이드 (Lv${s[keys[key]]})`, 'upgrade');
+    }
+
+    this.updateUI();
+  }
+}
+
+const config = {
+  type: Phaser.AUTO,
+  width: 720,
+  height: 400,
+  parent: 'gameContainer',
+  scene: IntegratedGameScene,
+  physics: { default: 'arcade' },
+  backgroundColor: '#1a1a1a'
+};
+
+const game = new Phaser.Game(config);
+const scene = game.scene.scenes[0];
+</script>
+</body>
+</html>

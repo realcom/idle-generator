@@ -1,0 +1,67 @@
+id: 200222
+name: "달빛 단검"
+category: Weapon
+type: Dagger
+tags: [WeaponTier2Growth]
+grade: 2
+rarity: 2
+tier: 2
+power: 120
+equipAddStats:
+  - { type: Attack, value: [60] }
+  - { type: AttackSpeedPercent, value: [3] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 420 }
+      - { id: 200103, count: 5 }
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [2]
+options:
+  - options:
+      - id: 2002221
+        grade: 2
+        group: 1
+        weight: 34
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: AttackPercent, value: [1.5, 2.5, 4, 6.25, 9.375] }
+      - id: 2002222
+        grade: 2
+        group: 1
+        weight: 28
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: AttackSpeedPercent, value: [1.25, 2.125, 3.25, 5, 7.25] }
+      - id: 2002223
+        grade: 2
+        group: 1
+        weight: 18
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: CriticalPercent, value: [1, 1.625, 2.5, 3.75, 5.625] }
+      - id: 2002224
+        grade: 2
+        group: 1
+        weight: 20
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: ItemDropPercent, value: [1.25, 2.25, 3.5, 5.25, 7.75] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 600 }
+      - { id: 200106, count: 2 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 360 }
+spriteGroups:
+  Icon: "Items/Icons/ICN_Weapon_Dagger.png"

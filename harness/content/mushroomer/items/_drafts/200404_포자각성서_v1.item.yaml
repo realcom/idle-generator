@@ -1,0 +1,47 @@
+id: 200404
+name: "포자 각성서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 1
+rarity: 3
+group: 200401
+constantDamageRatio: 1.0
+order: 4
+parentId: 200401
+skillDataId: 300104
+unstackable: true
+requiredItemDataIds: [200402, 200403]
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200107, count: 4 }
+      - { id: 200104, count: 8 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200107, count: 5 }
+      - { id: 200104, count: 12 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200107, count: 6 }
+      - { id: 200104, count: 16 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200107, count: 8 }
+      - { id: 200104, count: 22 }
+popupArgs:
+  SkillTree: "Mushroomer"
+  SkillTreeNode: "Buff"
+  ChildrenSkillItemDataIds: ""
+  UnlockRecipeItemDataId: "200407"
+  UnlockCostLevelPoint: "4"
+  LevelPointItemDataId: "200107"
+  RequiredSkillItemDataIds: "200402,200403"
+  RequiredSkillLevel: "3"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "4"
+spriteGroups:
+  Icon: "UIAssets/Images/ingame_icn_start.png"

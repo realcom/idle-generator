@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>idlez — Phaser + Spine WebGL 런타임 (meadow_1)</title>
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+<script src="https://unpkg.com/@esotericsoftware/spine-webgl@4.2.79/dist/iife/spine-webgl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+<style>
+:root {
+  --bg: #1a1a1a; --panel: #2a2a2a; --panel2: #333;
+  --text: #eee; --text2: #aaa; --text3: #666;
+  --accent: #4a90e2; --success: #4caf50; --warn: #ff9800; --danger: #f44336;
+  --boss: #e91e63; --boot: #00bcd4; --kill: #4caf50;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: 13px;
+}
+.container { max-width: 1100px; margin: 0 auto; padding: 16px; display: grid; grid-template-columns: 1fr 320px; gap: 16px; }
+.header { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid #444; }
+.header h1 { margin: 0; font-size: 18px; }
+.header .subtitle { font-size: 11px; color: var(--text2); margin-top: 4px; }
+#status { font-size: 11px; color: var(--text2); }
+
+.game-col, .side-col { display: flex; flex-direction: column; gap: 12px; }
+
+/* ── HUD 오버레이 ── */
+.hud { position: absolute; top: 0; left: 0; right: 0; z-index: 5; padding: 8px 12px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  background: linear-gradient(180deg, rgba(0,0,0,.6) 0%, transparent 100%);
+  pointer-events: none; }
+.hud-left, .hud-right { display: flex; flex-direction: column; gap: 2px; }
+.hud-stage { font-size: 14px; font-weight: 600; color: #fff; }
+.hud-stats { display: flex; gap: 12px; font-size: 11px; color: var(--text2); }
+.hud-stats b { margin-left: 2px; }
+
+#stageWrap {
+  position: relative;
+  width: 720px; height: 360px;
+  background: linear-gradient(180deg, #3a4a3a 0%, #2a3a2a 60%, #2a3a2a 100%);
+  border-radius: 8px; overflow: hidden; border: 1px solid #444;
+}
+#spineCanvas {
+  position: absolute; inset: 0; z-index: 1;
+  display: block; width: 100%; height: 100%;
+  pointer-events: none;
+}
+#phaserContainer { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+#phaserContainer canvas { display: block; width: 100%; height: 100%; }
+.floats-layer { position: absolute; inset: 0; pointer-events: none; z-index: 3; overflow: hidden; }
+.float-text {
+  position: absolute; font-size: 14px; font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0,0,0,.8);
+  animation: floatUp .9s ease-out forwards; white-space: nowrap;
+}
+@keyframes floatUp { from { opacity:1; transform:translateY(0) } to { opacity:0; transform:translateY(-50px) } }
+#loadingOverlay {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.85); color: var(--accent); font-size: 14px; z-index: 10;
+}
+
+.panel { background: var(--panel); border-radius: 8px; padding: 12px; }
+.panel h3 { margin: 0 0 8px; font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ── 스탯 패널 ── */
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+.stat-box { background: var(--panel2); padding: 8px; border-radius: 6px; text-align: center; }
+.stat-label { font-size: 9px; color: var(--text3); text-transform: uppercase; }
+.stat-value { font-size: 16px; font-weight: 600; color: var(--success); margin-top: 2px; }
+.stat-level { font-size: 9px; color: var(--text3); }
+
+/* ── 강화 버튼 ── */
+.upgrade-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+.upgrade-btn {
+  background: var(--panel2); border: 1px solid #444; color: var(--text);
+  padding: 6px 4px; border-radius: 6px; cursor: pointer;
+  font-size: 10px; text-align: center; font-family: inherit;
+  transition: all .15s;
+}
+.upgrade-btn:hover:not(:disabled) { background: #444; border-color: var(--accent); transform: translateY(-1px); }
+.upgrade-btn:disabled { opacity: .3; cursor: not-allowed; }
+.upgrade-btn .ubtn-icon { font-size: 14px; }
+.upgrade-btn .ubtn-label { font-size: 9px; font-weight: 600; }
+.upgrade-btn .ubtn-cost { font-size: 8px; color: var(--warn); margin-top: 2px; }
+
+/* ── 스킬 버튼 ── */
+.skill-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; margin-top: 8px; }
+.skill-btn {
+  background: #1a2a4a; border: 1px solid #336; color: var(--text);
+  padding: 8px; border-radius: 6px; cursor: pointer;
+  font-size: 10px; text-align: center; font-family: inherit;
+  transition: all .15s;
+}
+.skill-btn:hover:not(:disabled) { background: #2a3a5a; border-color: var(--accent); }
+.skill-btn:disabled { opacity: .3; cursor: not-allowed; }
+.skill-btn.owned { background: #1a3a1a; border-color: var(--success); opacity: 1; cursor: default; }
+
+#state div { padding: 2px 0; font-size: 12px; }
+#state strong { color: var(--text2); margin-right: 6px; }
+
+#log { max-height: 260px; overflow-y: auto; font-family: ui-monospace, Menlo, monospace; font-size: 11px; }
+.log-entry { padding: 3px 6px; border-radius: 3px; margin-bottom: 2px; line-height: 1.4; }
+.log-info { color: var(--text); background: #333; }
+.log-boot { color: var(--boot); background: #002a33; }
+.log-spawn { color: var(--accent); }
+.log-boss { color: var(--boss); background: #3a0a1f; font-weight: 600; }
+.log-kill { color: var(--kill); }
+.log-clear { color: var(--success); background: #1a3a1a; font-weight: 600; }
+.log-state { color: var(--warn); }
+.log-error { color: var(--danger); background: #3a1a1a; }
+.log-gold { color: var(--warn); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <h1 id="mapTitle">Phaser + Spine 런타임</h1>
+      <div class="subtitle">Phaser 3.55 + Spine 4.2 WebGL + 스탯/강화 시스템</div>
+    </div>
+    <div id="status">초기화...</div>
+  </div>
+
+  <div class="game-col">
+    <div id="stageWrap">
+      <div class="hud">
+        <div class="hud-left">
+          <div class="hud-stage" id="hudStage">초원 1</div>
+          <div class="hud-stats">
+            <span>골드 <b id="hudGold" style="color:#4caf50">0</b></span>
+            <span>남은적 <b id="hudWave" style="color:#ff9800">0</b></span>
+          </div>
+        </div>
+        <div class="hud-right" style="text-align: right;">
+          <div style="font-size:10px; color: var(--text2);">ATK <b id="hudAtk" style="color:#f44">34</b></div>
+          <div style="font-size:10px; color: var(--text2);">HP <b id="hudHp" style="color:#4caf50">340</b>/<b id="hudHpMax" style="color:#4caf50">340</b></div>
+        </div>
+      </div>
+      <div id="phaserContainer"></div>
+      <canvas id="spineCanvas"></canvas>
+      <div class="floats-layer" id="floatsLayer"></div>
+      <div id="loadingOverlay">로딩중...</div>
+    </div>
+    <div class="panel">
+      <h3>전투 로그</h3>
+      <div id="log"></div>
+    </div>
+  </div>
+
+  <div class="side-col">
+    <div class="panel">
+      <h3>플레이어 능력치</h3>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-label">ATK</div><div class="stat-value" id="atkValue">34</div><div class="stat-level" id="atkLevel">Lv0</div></div>
+        <div class="stat-box"><div class="stat-label">HP</div><div class="stat-value" id="hpValue">340</div><div class="stat-level" id="hpLevel">Lv0</div></div>
+        <div class="stat-box"><div class="stat-label">DEF</div><div class="stat-value" id="defValue">5</div><div class="stat-level" id="defLevel">Lv0</div></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-label">SPD</div><div class="stat-value" id="spdValue">1.0</div><div class="stat-level" id="spdLevel">Lv0</div></div>
+        <div class="stat-box"><div class="stat-label">CRIT</div><div class="stat-value" id="critValue">5%</div><div class="stat-level" id="critLevel">Lv0</div></div>
+        <div class="stat-box"><div class="stat-label">GLD/s</div><div class="stat-value" id="gpsValue">3</div><div class="stat-level" id="gpsLevel">-</div></div>
+      </div>
+      <h3>강화</h3>
+      <div class="upgrade-grid" id="upgradeGrid"></div>
+      <div class="skill-grid" id="skillGrid"></div>
+    </div>
+    <div class="panel">
+      <h3>Board 상태</h3>
+      <div id="state">로딩...</div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

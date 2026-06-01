@@ -1,0 +1,36 @@
+# 업적: 첫 처치 (튜토리얼) — engine-contract/schema/achievement.md 준수
+# 컴파일되면 Achievements.json 의 achievements[] 한 항목으로 들어간다.
+# ※ 직렬화 쿽: 기본값(0/false/Normal 등)은 컴파일 시 생략 — 단순 항목은 출력이 매우 짧다.
+
+id: 600001
+name: "첫 처치"                  # 한글 2~10자 (profile.theme.naming_style)
+type: Normal                     # ResourceAchievement.Type: Normal(101)/Daily/Weekly/Ranking/EventPass/Mission
+tags: []                         # 닫힌 Tag enum (HideDisplay 등). 사용자 노출 업적은 보통 비움.
+
+# 진행 카운트 (engine-bound: action-vocabulary와 동급, Condition enum)
+condition: KillUnitAny           # 어떤 적이든 처치 카운트
+conditionValue1: 0               # KillUnitAny는 value1/2 미사용
+conditionValue2: 0
+targetProgress: 10               # 10마리 처치
+initialProgress: 0
+repeatable: false
+autoReward: true                 # 완료 즉시 자동 지급 (수동 클레임 X)
+initialOpen: true                # 시작부터 보임 (튜토리얼 가시성)
+clientAchievement: false         # 보상 있는 업적은 서버 검증
+
+# 완료 보상 — itemDataId는 game-profile currencies 또는 items/_index.yaml의 approved에 실재해야
+rewardAddItemGroups:
+  - addItems:
+      - { itemDataId: 5, count: 500 }    # 골드 500 (profile.currencies.soft.id=5)
+      - { itemDataId: 6, count: 100 }    # 경험치 100 (profile.currencies.exp.id=6)
+
+# (옵션) 부모-자식 — 튜토리얼 트리 묶을 때 활성
+# parentAchievementDataId: 0
+# childAchievementDataIds: []
+# openChildrenOnComplete: false
+# progressParentOnComplete: false
+
+# (옵션) 시즌/이벤트 — Normal 업적은 미사용
+# startAt: ...
+# untilAt: ...
+# popupArgs: {}

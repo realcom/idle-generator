@@ -1,0 +1,93 @@
+# Top-level macros. Git only allows these definitions in the repo-root
+# .gitattributes; nested files may reference them but must not redefine them.
+[attr]lfs               filter=lfs diff=lfs merge=lfs -text
+[attr]unity-json        eol=lf linguist-language=json
+[attr]unity-yaml        merge=unityyamlmerge eol=lf linguist-language=yaml
+
+# Repository text defaults
+*                       text=auto
+*.cs                    text diff=csharp
+*.md                    text eol=lf
+*.py                    text eol=lf
+*.sh                    text eol=lf
+*.yaml                  text eol=lf
+*.yml                   text eol=lf
+
+# Unity JSON-like text files
+*.asmdef                unity-json
+*.asmref                unity-json
+*.index                 unity-json
+*.inputactions          unity-json
+*.shadergraph           unity-json
+*.shadersubgraph        unity-json
+
+# Unity YAML-like text files
+*.anim                  unity-yaml
+*.asset                 unity-yaml
+*.brush                 unity-yaml
+*.controller            unity-yaml
+*.flare                 unity-yaml
+*.fontsettings          unity-yaml
+*.giparams              unity-yaml
+*.guiskin               unity-yaml
+*.lighting              unity-yaml
+*.mask                  unity-yaml
+*.mat                   unity-yaml
+*.meta                  unity-yaml
+*.mixer                 unity-yaml
+*.overrideController    unity-yaml
+*.playable              unity-yaml
+*.prefab                unity-yaml
+*.preset                unity-yaml
+*.renderTexture         unity-yaml
+*.scenetemplate         unity-yaml
+*.shadervariants        unity-yaml
+*.signal                unity-yaml
+*.spriteatlas           unity-yaml
+*.spriteatlasv2         unity-yaml
+*.terrainlayer          unity-yaml
+*.unity                 unity-yaml
+
+# Binary assets and bundled tools are stored via Git LFS.
+*.exe                   lfs
+*.dll                   lfs
+*.dylib                 lfs
+*.a                     lfs
+*.so                    lfs
+*.bundle                lfs
+*.jar                   lfs
+*.aar                   lfs
+*.srcaar                lfs
+*.aarsrc                lfs
+*.unitypackage          lfs
+
+*.FBX                   lfs
+*.fbx                   lfs
+*.psd                   lfs
+*.psb                   lfs
+*.tga                   lfs
+*.tif                   lfs
+*.tiff                  lfs
+*.exr                   lfs
+*.jpg                   lfs
+*.jpeg                  lfs
+*.png                   lfs
+*.gif                   lfs
+
+*.wav                   lfs
+*.ogg                   lfs
+*.mp3                   lfs
+*.mp4                   lfs
+*.mov                   lfs
+*.webm                  lfs
+
+*.ttf                   lfs
+*.otf                   lfs
+*.pdf                   lfs
+*.rar                   lfs
+*.zip                   lfs
+*.tgz                   lfs
+*.br                    lfs
+
+engine/commons/build/flatc-*  lfs
+engine/commons/build/protoc-* lfs

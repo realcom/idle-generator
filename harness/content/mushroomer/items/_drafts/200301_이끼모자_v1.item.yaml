@@ -1,0 +1,66 @@
+id: 200301
+name: "이끼 모자"
+category: Equipment
+type: Head
+tags: [EquipmentHpGrowth]
+grade: 1
+rarity: 1
+tier: 1
+power: 18
+equipAddStats:
+  - { type: Hp, value: [120.0] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 80 }
+      - { id: 200103, count: 1 }
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [1]
+options:
+  - options:
+      - id: 2003011
+        grade: 1
+        group: 1
+        weight: 34
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: HpPercent, value: [1.5, 2.4, 3.6, 5.2, 7.5] }
+      - id: 2003012
+        grade: 1
+        group: 1
+        weight: 28
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: DefensePercent, value: [1, 1.8, 2.8, 4.2, 6] }
+      - id: 2003013
+        grade: 1
+        group: 1
+        weight: 18
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: CooldownPercent, value: [0.6, 1, 1.6, 2.4, 3.4] }
+      - id: 2003014
+        grade: 1
+        group: 1
+        weight: 20
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: ExpPercent, value: [1, 1.8, 2.8, 4, 5.8] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 200 }
+      - { id: 200106, count: 1 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 80 }
+spriteGroups:
+  Icon: "assets/items/equipment/helmet_magic.png"

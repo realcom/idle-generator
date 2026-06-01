@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>idlez 하네스 — Phaser 동적 런타임</title>
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+<style>
+:root{
+  --color-background-primary:#fff;--color-background-secondary:#efeee8;--color-background-tertiary:#e4e2d9;
+  --color-text-primary:#2c2c2a;--color-text-secondary:#5f5e5a;--color-text-tertiary:#8a8983;
+  --color-text-success:#1D9E75;--color-text-danger:#A32D2D;
+  --color-border-tertiary:rgba(0,0,0,.12);--color-border-secondary:rgba(0,0,0,.2);
+  --border-radius-md:8px;--border-radius-lg:12px;--font-sans:system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --bg:#f6f5f0;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--color-text-primary);font-family:var(--font-sans)}
+#gameContainer{width:100%;max-width:720px;margin:0 auto;background:var(--color-background-primary)}
+.ui-wrapper{max-width:720px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.ui-header{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
+.ui-header h1{margin:0;font-size:16px;font-weight:500}
+.ui-header span{font-size:13px;color:var(--color-text-secondary)}
+.ui-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ui-metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;text-align:center}
+.ui-metric-label{font-size:11px;color:var(--color-text-secondary)}
+.ui-metric-value{font-size:18px;font-weight:500;margin-top:4px}
+.ui-skills{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--color-background-secondary);border-radius:var(--border-radius-lg)}
+.ui-skill-chip{padding:6px 10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px}
+.ui-upgrades{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.ui-btn{padding:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;font-family:inherit;font-size:12px;text-align:center;transition:all 0.2s}
+.ui-btn:hover:not(:disabled){background:var(--color-background-secondary)}
+.ui-btn:disabled{opacity:0.4;cursor:default}
+.ui-log{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:12px;font-size:12px;color:var(--color-text-secondary);line-height:1.6;min-height:70px;max-height:100px;overflow-y:auto}
+.ui-log-entry{margin:2px 0}
+.log-battle{color:#A32D2D}
+.log-clear{color:#1D9E75}
+.log-upgrade{color:#185FA5}
+</style>
+</head>
+<body>
+<div id="gameContainer"></div>
+<div class="ui-wrapper">
+  <div class="ui-header">
+    <div>
+      <h1 id="stageText">초원 던전 · 1</h1>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-top:4px">Phaser 동적 런타임</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:11px;color:var(--color-text-secondary)">최고 기록</div>
+      <div id="bestText" style="font-size:18px;font-weight:500">1</div>
+    </div>
+  </div>
+
+  <div class="ui-metrics">
+    <div class="ui-metric">
+      <div class="ui-metric-label">골드</div>
+      <div class="ui-metric-value" id="goldText">0</div>
+    </div>
+    <div class="ui-metric">
+      <div class="ui-metric-label">방치/초</div>
+      <div class="ui-metric-value" id="gpsText">0</div>
+    </div>
+    <div class="ui-metric">
+      <div class="ui-metric-label">남은 적</div>
+      <div class="ui-metric-value" id="waveText">1</div>
+    </div>
+  </div>
+
+  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:12px">
+    <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">장착 스킬 (쿨마다 자동 사용)</div>
+    <div class="ui-skills" id="skillsContainer"></div>
+  </div>
+
+  <div class="ui-upgrades" id="upgradesContainer"></div>
+
+  <div class="ui-log" id="logContainer"></div>
+</div>
+
+<script>
+class GameScene extends Phaser.Scene {
+  constructor() {
+    super('GameScene');
+    this.gameState = {
+      stage: 1,
+      best: 1,
+      gold: 0,
+      atkLv: 0, hpLv: 0, defLv: 0, spdLv: 0, critLv: 0,
+      spin: false, smash: false,
+      playerHp: 340,
+      enemies: [],
+      logs: []
+    };
+  }
+
+  create() {
+    this.add.image(360, 200, null).setTint(0x8aD8E8); // Placeholder background
+
+    // Create player sprite
+    const graphics = this.make.graphics({ x: 0, y: 0, add: false });
+    graphics.fillStyle(0xFFD700, 1);
+    graphics.fillRoundedRect(0, 0, 64, 64, 8);
+    graphics.generateTexture('player', 64, 64);
+    graphics.destroy();
+
+    this.player = this.add.sprite(60, 200, 'player').setScale(0.8);
+    this.playerText = this.add.text(60, 250, '용사\n햄찌', { fontSize: '11px', color: '#5f5e5a', align: 'center' });
+
+    // Create enemy container
+    this.enemyGroup = this.add.group();
+
+    // Particle emitters for effects
+    this.damageParticles = this.add.particles(0xD85A30);
+    this.damageParticles.createEmitter({
+      speed: { min: -100, max: 100 },
+      angle: { min: 240, max: 300 },
+      scale: { start: 0.8, end: 0.3 },
+      lifespan: 600,
+      emitting: false
+    });
+
+    this.critParticles = this.add.particles(0xBA7517);
+    this.critParticles.createEmitter({
+      speed: { min: -150, max: 150 },
+      angle: { min: 200, max: 340 },
+      scale: { start: 1, end: 0.2 },
+      lifespan: 700,
+      emitting: false
+    });
+
+    this.spawnWave();
+    this.buildSkills();
+    this.log('초원 던전 입장 · 자동전투 시작');
+    this.updateUI();
+    this.time.addEvent({ delay: 50, callback: () => this.gameLoop(), loop: true });
+  }
+
+  getPlayerStats() {
+    const C = (b, r, l) => Math.round(b * Math.pow(r, l));
+    const pAtk = () => Math.round(34 + this.gameState.atkLv * 9 * Math.pow(1.07, this.gameState.atkLv));
+    const pHpMax = () => Math.round(340 + this.gameState.hpLv * 80 * Math.pow(1.07, this.gameState.hpLv));
+    const pDef = () => Math.round(5 + this.gameState.defLv * 3);
+    const pSpd = () => +(1.0 + this.gameState.spdLv * 0.12).toFixed(2);
+    const pCrit = () => Math.min(85, 5 + this.gameState.critLv * 4);
+    return { pAtk, pHpMax, pDef, pSpd, pCrit, C };
+  }
+
+  buildSkills() {
+    const skills = [{ n: '베기', cd: 1.5, t: 1.5, mult: 1.2, tg: 'one', col: 0x534AB7 }];
+    if (this.gameState.spin) skills.push({ n: '회전베기', cd: 5, t: 5, mult: 0.8, tg: 'all', col: 0x185FA5 });
+    if (this.gameState.smash) skills.push({ n: '강타', cd: 9, t: 2, mult: 4.0, tg: 'one', col: 0x993C1D });
+    this.playerSkills = skills;
+  }
+
+  mkEnemy(boss) {
+    const L = this.gameState.stage;
+    const G = { hp: (L) => 120 * Math.pow(1.12, L - 1), atk: (L) => 12 * Math.pow(1.11, L - 1), def: (L) => 4 + 1.5 * (L - 1) };
+    const MON = ['slime', 'skeleton', 'bat'];
+    const spr = boss ? 'boss' : MON[Math.floor((L - 1) / 3) % MON.length];
+    return {
+      hp: G.hp(L) * (boss ? 7 : 1), max: G.hp(L) * (boss ? 7 : 1),
+      atk: G.atk(L) * (boss ? 1.6 : 1), def: G.def(L) * (boss ? 1.2 : 1),
+      spd: boss ? 0.6 : 0.8, bt: boss ? 1.7 : 1.25, boss: boss, spr,
+      alive: true, skills: boss ? [{ n: '광역강타', cd: 6, t: 6, mult: 2.2 }] : [],
+      sprite: null, x: 300 + Math.random() * 60
+    };
+  }
+
+  spawnWave() {
+    this.enemyGroup.clear(true);
+    const boss = this.gameState.stage % 5 === 0;
+    const enemies = boss ? [this.mkEnemy(true)] : [];
+    if (!boss) {
+      const n = Math.min(5, 3 + Math.floor(this.gameState.stage / 4));
+      for (let i = 0; i < n; i++) enemies.push(this.mkEnemy(false));
+    }
+    this.gameState.enemies = enemies;
+    this.renderEnemies();
+    const stats = this.getPlayerStats();
+    this.gameState.playerHp = stats.pHpMax();
+    this.log((boss ? '★ 보스 등장' : enemies.length + '마리 출현') + ' · 스테이지 ' + this.gameState.stage);
+  }
+
+  renderEnemies() {
+    const G = { hp: (L) => 120 * Math.pow(1.12, L - 1) };
+    this.gameState.enemies.forEach((e, i) => {
+      const w = e.boss ? 86 : 54;
+      const h = e.boss ? 70 : 52;
+      const x = 280 + i * 80;
+
+      const graphics = this.make.graphics({ x: 0, y: 0, add: false });
+      if (e.boss) {
+        graphics.fillStyle(0xFF6B6B, 1);
+        graphics.fillCircle(w / 2, w / 2, w / 2);
+      } else {
+        graphics.fillStyle(0x90EE90, 1);
+        graphics.fillCircle(w / 2, w / 2, w / 2);
+      }
+      graphics.generateTexture('enemy_' + i, w, w);
+      graphics.destroy();
+
+      e.sprite = this.add.sprite(x, 140, 'enemy_' + i).setScale(0.9);
+      e.hpBar = this.add.graphics();
+      this.drawEnemyHpBar(e);
+    });
+  }
+
+  drawEnemyHpBar(e) {
+    if (!e.hpBar) return;
+    e.hpBar.clear();
+    const w = e.boss ? 86 : 54;
+    const x = e.sprite.x - w / 2;
+    const y = e.sprite.y - w / 2 - 10;
+    e.hpBar.fillStyle(0x333333, 0.3);
+    e.hpBar.fillRect(x, y, w, 5);
+    const hpPct = Math.max(0, Math.min(1, e.hp / e.max));
+    e.hpBar.fillStyle(0xA32D2D, 1);
+    e.hpBar.fillRect(x, y, w * hpPct, 5);
+  }
+
+  floatText(x, y, txt, color) {
+    const floatText = this.add.text(x, y, txt, { fontSize: '16px', fontStyle: 'bold', color });
+    this.tweens.add({
+      targets: floatText,
+      y: y - 40,
+      alpha: 0,
+      duration: 700,
+      ease: 'Quad.easeOut',
+      onComplete: () => floatText.destroy()
+    });
+  }
+
+  hitEnemy(e, raw) {
+    const stats = this.getPlayerStats();
+    const crit = Math.random() * 100 < stats.pCrit();
+    const d = Math.max(1, Math.round(raw * (crit ? 1.6 : 1) - e.def));
+    e.hp -= d;
+
+    const x = e.sprite.x;
+    const y = e.sprite.y;
+    const txt = (crit ? '★' : '') + this.fmt(d);
+    this.floatText(x, y, txt, crit ? '#BA7517' : '#D85A30');
+
+    this.tweens.add({ targets: e.sprite, scaleX: 1.2, scaleY: 1.2, duration: 100, yoyo: true });
+    this.drawEnemyHpBar(e);
+
+    if (e.hp <= 0) e.alive = false;
+  }
+
+  hitPlayer(raw) {
+    const stats = this.getPlayerStats();
+    const d = Math.max(1, Math.round(raw - stats.pDef()));
+    this.gameState.playerHp -= d;
+
+    this.floatText(this.player.x, this.player.y, this.fmt(d), '#A32D2D');
+    this.tweens.add({ targets: this.player, scaleX: 1.15, scaleY: 1.15, duration: 100, yoyo: true });
+  }
+
+  gameLoop() {
+    const stats = this.getPlayerStats();
+    const alive = this.gameState.enemies.filter(e => e.alive);
+    const dt = 0.05;
+
+    if (alive.length && this.gameState.playerHp > 0) {
+      // Player attack
+      let pbt = this.pbt || 1;
+      pbt -= dt;
+      if (pbt <= 0) {
+        this.hitEnemy(alive[0], stats.pAtk());
+        pbt += 1 / stats.pSpd();
+      }
+      this.pbt = pbt;
+
+      // Player skills
+      this.playerSkills.forEach(sk => {
+        sk.t -= dt;
+        if (sk.t <= 0) {
+          if (sk.tg === 'all') {
+            alive.forEach(e => this.hitEnemy(e, stats.pAtk() * sk.mult));
+            this.floatText(this.player.x, this.player.y - 50, sk.n + '!', '#' + sk.col.toString(16));
+          } else {
+            this.hitEnemy(alive[0], stats.pAtk() * sk.mult);
+            this.floatText(alive[0].sprite.x, alive[0].sprite.y - 30, sk.n + '!', '#' + sk.col.toString(16));
+          }
+          sk.t += sk.cd;
+        }
+      });
+
+      // Enemy attacks
+      alive.forEach(e => {
+        e.bt -= dt;
+        if (e.bt <= 0) {
+          this.hitPlayer(e.atk);
+          e.bt += 1 / e.spd;
+        }
+        e.skills.forEach(es => {
+          es.t -= dt;
+          if (es.t <= 0) {
+            this.hitPlayer(e.atk * es.mult);
+            this.floatText(this.player.x, this.player.y - 50, es.n + '!', '#791F1F');
+            es.t += es.cd;
+          }
+        });
+      });
+    }
+
+    // AFK gold
+    let goldT = this.goldT || 30;
+    goldT -= dt;
+    const G = (b, r, l) => Math.round(b * Math.pow(r, l));
+    const gps = () => Math.round(3 * Math.pow(1.12, this.gameState.best - 1));
+    if (goldT <= 0) {
+      const g = gps() * 5;
+      this.gameState.gold += g;
+      this.floatText(this.player.x, this.player.y + 50, '+' + this.fmt(g) + 'G', '#3B6D11');
+      goldT = 30;
+    }
+    this.gameState.gold += gps() * dt;
+    this.goldT = goldT;
+
+    // Wave clear / lose
+    if (this.gameState.enemies.length && this.gameState.enemies.every(e => !e.alive)) {
+      const rw = Math.round((6 + Math.random() * 6) * Math.pow(1.16, this.gameState.stage - 1)) * this.gameState.enemies.length;
+      this.gameState.gold += rw;
+      this.log('웨이브 클리어 · +' + this.fmt(rw) + 'G', 'clear');
+      this.gameState.stage++;
+      if (this.gameState.stage > this.gameState.best) this.gameState.best = this.gameState.stage;
+      this.spawnWave();
+    } else if (this.gameState.playerHp <= 0) {
+      this.log('패배 · 스테이지 ' + this.gameState.stage + ' — 강화/스킬 필요', 'battle');
+      if (this.gameState.stage > 1) this.gameState.stage--;
+      this.spawnWave();
+    }
+
+    this.updateUI();
+  }
+
+  fmt(n) {
+    n = Math.floor(n);
+    if (n < 1000) return '' + n;
+    const u = ['', 'K', 'M', 'B', 'T', 'aa', 'ab'];
+    let i = 0;
+    while (n >= 1000 && i < u.length - 1) { n /= 1000; i++; }
+    return n.toFixed(2) + u[i];
+  }
+
+  log(msg, type = 'default') {
+    this.gameState.logs.unshift(msg);
+    if (this.gameState.logs.length > 5) this.gameState.logs.pop();
+  }
+
+  updateUI() {
+    const stats = this.getPlayerStats();
+    document.getElementById('stageText').textContent = '초원 던전 · ' + this.gameState.stage;
+    document.getElementById('bestText').textContent = this.gameState.best;
+    document.getElementById('goldText').textContent = this.fmt(this.gameState.gold);
+    const gps = () => Math.round(3 * Math.pow(1.12, this.gameState.best - 1));
+    document.getElementById('gpsText').textContent = this.fmt(gps());
+    document.getElementById('waveText').textContent = this.gameState.enemies.filter(e => e.alive).length + '/' + this.gameState.enemies.length;
+
+    // Update log
+    const logEl = document.getElementById('logContainer');
+    logEl.innerHTML = this.gameState.logs.map(m => '<div class="ui-log-entry">' + m + '</div>').join('');
+
+    // Update upgrades
+    const upgradesEl = document.getElementById('upgradesContainer');
+    const C = (b, r, l) => Math.round(b * Math.pow(r, l));
+    const upgrades = [
+      { key: 'atk', label: '공격', lv: this.gameState.atkLv, fn: stats.pAtk, cost: C(12, 1.16, this.gameState.atkLv) },
+      { key: 'hp', label: '체력', lv: this.gameState.hpLv, fn: stats.pHpMax, cost: C(10, 1.16, this.gameState.hpLv) },
+      { key: 'def', label: '방어', lv: this.gameState.defLv, fn: stats.pDef, cost: C(15, 1.19, this.gameState.defLv) },
+      { key: 'spd', label: '공속', lv: this.gameState.spdLv, fn: stats.pSpd, cost: C(40, 1.35, this.gameState.spdLv) },
+      { key: 'crit', label: '치명', lv: this.gameState.critLv, fn: stats.pCrit, cost: C(30, 1.3, this.gameState.critLv) }
+    ];
+    upgradesEl.innerHTML = upgrades.map(u => {
+      const val = u.key === 'spd' ? stats.pSpd() : u.fn();
+      const canBuy = this.gameState.gold >= u.cost;
+      return `<button class="ui-btn" ${!canBuy ? 'disabled' : ''} onclick="scene.buyUpgrade('${u.key}')">${u.label} Lv${u.lv}<br><span style="font-size:10px;color:var(--color-text-secondary)">${this.fmt(val)}</span><br><span style="font-size:10px">${this.fmt(u.cost)}G</span></button>`;
+    }).join('');
+
+    // Update skills
+    const skillsEl = document.getElementById('skillsContainer');
+    let html = this.playerSkills.map(sk => `<div class="ui-skill-chip" style="color:#${sk.col.toString(16)}">${sk.n} <span style="color:var(--color-text-tertiary)">${sk.cd}s</span></div>`).join('');
+    if (!this.gameState.spin) html += `<button class="ui-btn" onclick="scene.buySkill('spin')">+ 회전베기<br>800G</button>`;
+    if (!this.gameState.smash) html += `<button class="ui-btn" onclick="scene.buySkill('smash')">+ 강타<br>3000G</button>`;
+    skillsEl.innerHTML = html;
+  }
+
+  buyUpgrade(key) {
+    const C = (b, r, l) => Math.round(b * Math.pow(r, l));
+    const costs = { atk: [12, 1.16], hp: [10, 1.16], def: [15, 1.19], spd: [40, 1.35], crit: [30, 1.3] };
+    const [base, mult] = costs[key];
+    const lvKey = key + 'Lv';
+    const cost = C(base, mult, this.gameState[lvKey]);
+    if (this.gameState.gold < cost) return;
+    this.gameState.gold -= cost;
+    this.gameState[lvKey]++;
+    if (key === 'hp') {
+      const stats = this.getPlayerStats();
+      this.gameState.playerHp = stats.pHpMax();
+    }
+    this.log('업그레이드: ' + key.toUpperCase() + ' Lv' + this.gameState[lvKey], 'upgrade');
+    this.updateUI();
+  }
+
+  buySkill(type) {
+    const costs = { spin: 800, smash: 3000 };
+    const cost = costs[type];
+    if (this.gameState.gold < cost) return;
+    this.gameState.gold -= cost;
+    this.gameState[type] = true;
+    this.buildSkills();
+    this.log(type === 'spin' ? '회전베기 장착!' : '강타 장착!', 'upgrade');
+    this.updateUI();
+  }
+}
+
+const config = {
+  type: Phaser.AUTO,
+  width: 720,
+  height: 360,
+  parent: 'gameContainer',
+  scene: GameScene,
+  physics: { default: 'arcade' },
+  backgroundColor: '#dfe6cf'
+};
+
+const game = new Phaser.Game(config);
+const scene = game.scene.scenes[0];
+</script>
+</body>
+</html>

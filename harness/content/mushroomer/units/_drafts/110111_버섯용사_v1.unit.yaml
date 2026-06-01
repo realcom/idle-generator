@@ -1,0 +1,30 @@
+id: 110111
+name: "버섯 용사"
+type: Player
+warmupDelay: 2.0
+targetMode: Chaser
+targetAwareDistance: 24.0
+targetResetDistance: 30.0
+
+addStats:
+  - { type: Hp, value: [1800.0] }
+  - { type: Attack, value: [90.0] }
+  - { type: Defense, value: [2.0] }
+  - { type: CriticalPercent, value: [12.0] }
+  - { type: AttackSpeed, value: [1.0] }
+  - { type: MoveSpeed, value: [3.4] }
+
+triggers:
+  - UNIT_ONSTART_MUSHROOMHEROATTACK
+  - UNIT_ONUPDATE_MUSHROOMHEROATTACK
+
+prefab: "Units/Characters/PFB_HAM_Hamzzi.prefab"
+sprite: "Units/Characters/Assets/Ninster3.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack
+  Cast: Attack2
+uiScale: 1.15
+uiOffset: { x: 0.0, y: 0.15 }
+hitDropItemSize: 40.0

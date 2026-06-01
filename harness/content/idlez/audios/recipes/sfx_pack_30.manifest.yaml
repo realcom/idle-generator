@@ -1,0 +1,38 @@
+# Source recipe:
+#   harness/content/idlez/audios/recipes/sfx_pack_30.sfx.js
+#
+# Render pattern:
+#   python3 harness/tools/sfx_from_h5.py harness/content/idlez/audios/recipes/sfx_pack_30.sfx.js \
+#     --name <id> --option preset=<id> --out harness/build/sfx/<id>.wav --duration <duration> --channels 1
+
+sounds:
+  - { id: ui_click_soft, duration: 0.25, role: ui, note: "soft menu tap" }
+  - { id: ui_click_confirm, duration: 0.32, role: ui, note: "positive confirm tap" }
+  - { id: ui_error_buzz, duration: 0.42, role: ui, note: "invalid action buzz" }
+  - { id: ui_reward_chime, duration: 0.8, role: ui, note: "small reward sparkle" }
+  - { id: coin_pickup, duration: 0.45, role: loot, note: "coin pickup tick" }
+  - { id: gem_pickup, duration: 0.62, role: loot, note: "premium gem pickup" }
+  - { id: level_up, duration: 1.05, role: progression, note: "level-up flourish" }
+  - { id: quest_complete, duration: 0.95, role: progression, note: "quest complete fanfare" }
+  - { id: sword_slash_light, duration: 0.42, role: battle, note: "fast blade slash" }
+  - { id: sword_slash_heavy, duration: 0.58, role: battle, note: "heavy blade slash" }
+  - { id: arrow_shot, duration: 0.42, role: battle, note: "bow release and air streak" }
+  - { id: shield_block, duration: 0.5, role: battle, note: "wood/metal block" }
+  - { id: hit_blunt, duration: 0.45, role: battle, note: "small blunt hit" }
+  - { id: hit_critical, duration: 0.68, role: battle, note: "critical impact flash" }
+  - { id: monster_pop, duration: 0.48, role: battle, note: "cartoon monster defeat pop" }
+  - { id: slime_squish, duration: 0.55, role: battle, note: "wet slime squish" }
+  - { id: fireball_cast, duration: 0.72, role: magic, note: "fireball launch" }
+  - { id: fireball_impact, duration: 0.85, role: magic, note: "fireball impact" }
+  - { id: ice_shard_hit, duration: 0.62, role: magic, note: "ice shard strike" }
+  - { id: lightning_zap, duration: 0.46, role: magic, note: "short electric zap" }
+  - { id: heal_cast, duration: 0.9, role: magic, note: "warm healing cast" }
+  - { id: poison_tick, duration: 0.5, role: magic, note: "poison damage tick" }
+  - { id: teleport_whoosh, duration: 0.9, role: magic, note: "teleport arrival/departure" }
+  - { id: buff_activate, duration: 0.75, role: magic, note: "positive buff activation" }
+  - { id: debuff_curse, duration: 0.82, role: magic, note: "dark curse activation" }
+  - { id: chest_open, duration: 0.95, role: loot, note: "chest latch and reward glint" }
+  - { id: item_drop, duration: 0.5, role: loot, note: "item lands on ground" }
+  - { id: crafting_success, duration: 0.9, role: crafting, note: "crafting completion" }
+  - { id: boss_roar_short, duration: 1.15, role: boss, note: "short stylized boss roar" }
+  - { id: explosion_small, duration: 0.8, role: battle, note: "small cartoon explosion" }

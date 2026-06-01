@@ -1,0 +1,21 @@
+id: 300102
+name: "균사 폭발"
+tags: [UseToTarget, TargetPosition, AoE]
+cooldown: 5.5
+priority: 2
+targetRefreshType: Nearest
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "UIAssets/Images/ingame_icn_start.png"
+itemDataId: 200402
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Attack" } }
+  - time: 0.25
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.8
+      maxHit: 6
+      addDamage: { damagePercent: [165.0] }
+  - { time: 0.55, destroy: {} }

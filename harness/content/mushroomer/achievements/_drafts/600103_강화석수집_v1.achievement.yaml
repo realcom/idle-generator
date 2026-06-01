@@ -1,0 +1,19 @@
+id: 600103
+name: "강화석 수집"
+type: Normal
+tags: []
+order: 103
+initialOpen: true
+clientAchievement: false
+condition: AcquireItem
+conditionValue1: 200103
+conditionValue2: 0
+targetProgress: 10
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200103, count: 10 }

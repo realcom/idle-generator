@@ -1,0 +1,68 @@
+id: 200356
+name: "왕버섯 반지"
+category: Equipment
+type: Ring
+tags: [EquipmentTier5Growth]
+grade: 5
+rarity: 5
+tier: 5
+power: 2750
+equipAddStats:
+  - { type: CriticalDamagePercent, value: [90] }
+  - { type: BossDamageEfficiencyPercent, value: [25] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 18000 }
+      - { id: 200103, count: 75 }
+requiredAchievementDataIds: [10105]
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [4]
+options:
+  - options:
+      - id: 2003561
+        grade: 5
+        group: 1
+        weight: 30
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: CriticalDamagePercent, value: [12.25, 20.825, 31.85, 49, 73.5] }
+      - id: 2003562
+        grade: 5
+        group: 1
+        weight: 28
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: BossDamageEfficiencyPercent, value: [3.675, 6.37, 10.29, 15.925, 23.275] }
+      - id: 2003563
+        grade: 5
+        group: 1
+        weight: 22
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: MonsterDamageEfficiencyPercent, value: [3.675, 6.37, 10.29, 15.925, 23.275] }
+      - id: 2003564
+        grade: 5
+        group: 1
+        weight: 20
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: AttackPercent, value: [2.94, 4.9, 7.84, 12.25, 18.375] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 15000 }
+      - { id: 200106, count: 16 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 4200 }
+spriteGroups:
+  Icon: "assets/items/equipment/ring_guardian.png"

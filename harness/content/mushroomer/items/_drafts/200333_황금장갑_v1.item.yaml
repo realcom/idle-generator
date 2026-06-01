@@ -1,0 +1,68 @@
+id: 200333
+name: "황금 장갑"
+category: Equipment
+type: Gloves
+tags: [EquipmentTier3Growth]
+grade: 3
+rarity: 3
+tier: 3
+power: 280
+equipAddStats:
+  - { type: Attack, value: [75] }
+  - { type: CriticalPercent, value: [8] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1500 }
+      - { id: 200103, count: 12 }
+requiredAchievementDataIds: [10102]
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [2]
+options:
+  - options:
+      - id: 2003331
+        grade: 3
+        group: 1
+        weight: 32
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: AttackPercent, value: [2.325, 3.875, 6.2, 9.61, 13.95] }
+      - id: 2003332
+        grade: 3
+        group: 1
+        weight: 26
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: CriticalPercent, value: [1.24, 2.015, 3.1, 4.65, 6.975] }
+      - id: 2003333
+        grade: 3
+        group: 1
+        weight: 22
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: CriticalDamagePercent, value: [6.2, 10.075, 15.5, 23.25, 34.1] }
+      - id: 2003334
+        grade: 3
+        group: 1
+        weight: 20
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: AttackSpeedPercent, value: [1.55, 2.79, 4.34, 6.51, 9.3] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1800 }
+      - { id: 200106, count: 4 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 650 }
+spriteGroups:
+  Icon: "assets/items/equipment/gloves_hero.png"

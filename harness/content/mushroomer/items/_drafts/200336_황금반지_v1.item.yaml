@@ -1,0 +1,68 @@
+id: 200336
+name: "황금 반지"
+category: Equipment
+type: Ring
+tags: [EquipmentTier3Growth]
+grade: 3
+rarity: 3
+tier: 3
+power: 280
+equipAddStats:
+  - { type: CriticalDamagePercent, value: [28] }
+  - { type: BossDamageEfficiencyPercent, value: [10] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1500 }
+      - { id: 200103, count: 12 }
+requiredAchievementDataIds: [10105]
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [2]
+options:
+  - options:
+      - id: 2003361
+        grade: 3
+        group: 1
+        weight: 30
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: CriticalDamagePercent, value: [7.75, 13.175, 20.15, 31, 46.5] }
+      - id: 2003362
+        grade: 3
+        group: 1
+        weight: 28
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: BossDamageEfficiencyPercent, value: [2.325, 4.03, 6.51, 10.075, 14.725] }
+      - id: 2003363
+        grade: 3
+        group: 1
+        weight: 22
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: MonsterDamageEfficiencyPercent, value: [2.325, 4.03, 6.51, 10.075, 14.725] }
+      - id: 2003364
+        grade: 3
+        group: 1
+        weight: 20
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: AttackPercent, value: [1.86, 3.1, 4.96, 7.75, 11.625] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1800 }
+      - { id: 200106, count: 4 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 650 }
+spriteGroups:
+  Icon: "assets/items/equipment/ring_hero.png"

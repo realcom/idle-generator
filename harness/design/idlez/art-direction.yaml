@@ -1,0 +1,72 @@
+version: 1
+game: idlez
+source_concept: hamster_portrait_combat_growth_dock_d
+
+identity:
+  title: Hamster Raising portrait combat
+  mood:
+    - cute
+    - warm
+    - readable
+    - toy-like
+    - rewarding
+  promise: A live auto-battle screen where a cute hamster keeps fighting while the player feeds upgrades through a chunky growth dock.
+
+character_anchor:
+  silhouette: Rounded golden-yellow hamster with cream belly and muzzle.
+  face: Tiny round ears, simple eyes, small mouth, soft blush.
+  linework: Thick dark chocolate outline, no thin detail lines.
+  render_style: Flat clean 2D, Spine-atlas friendly parts, no realistic fur.
+  accents:
+    allowed:
+      - green mushroom-cap hood
+      - leaf cape
+      - small spoon, knife, spear, or mushroom tool
+    rule: Hamster-first identity; mushroom details are secondary.
+
+environment:
+  biome: Cozy mushroom garden battlefield.
+  stage_materials:
+    - warm wooden lane or platform
+    - soft green grass
+    - oversized mushrooms
+    - simple flowers
+    - rounded fence or path shapes
+  readability: Background must stay lower contrast than character, enemies, damage numbers, and UI.
+
+ui_materials:
+  primary_frame: warm carved wood
+  content_card: cream parchment
+  primary_cta: glossy gold-orange
+  purchase_button: saturated leaf green
+  reward_accent: coin gold
+  outline: dark chocolate brown
+  shadow: soft rounded drop shadow
+
+palette:
+  outline_brown: "#3A2416"
+  wood_dark: "#7A431D"
+  wood_mid: "#A8652A"
+  parchment: "#FFEAC0"
+  parchment_shadow: "#D7A563"
+  gold: "#F6B331"
+  gold_highlight: "#FFD96A"
+  green_button: "#72B943"
+  green_accent: "#8BD45C"
+  damage_orange: "#FF7A1A"
+  hp_red: "#EF4E45"
+  combat_grass: "#8ACB5A"
+
+typography:
+  style: Heavy rounded Korean mobile-game display text.
+  treatment: White or dark brown fill with thick dark outline for combat-critical labels.
+  warning: Long readable text is not required in concepts; production UI should use short labels.
+
+avoid:
+  - landscape-only battle layout for the main target
+  - generic grey wireframe UI
+  - realistic hamster fur
+  - thin outlines
+  - dark gloomy palette
+  - fantasy effects that hide combat
+  - bottom dock covering the hamster or enemy silhouettes

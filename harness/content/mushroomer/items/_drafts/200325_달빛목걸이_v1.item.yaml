@@ -1,0 +1,68 @@
+id: 200325
+name: "달빛 목걸이"
+category: Equipment
+type: Necklace
+tags: [EquipmentTier2Growth]
+grade: 2
+rarity: 2
+tier: 2
+power: 85
+equipAddStats:
+  - { type: CriticalPercent, value: [5] }
+  - { type: ItemDropPercent, value: [4] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 420 }
+      - { id: 200103, count: 5 }
+requiredAchievementDataIds: [10104]
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [2]
+options:
+  - options:
+      - id: 2003251
+        grade: 2
+        group: 1
+        weight: 30
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: ItemDropPercent, value: [1.875, 3.125, 5, 7.5, 11.25] }
+      - id: 2003252
+        grade: 2
+        group: 1
+        weight: 26
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: CooldownPercent, value: [1.25, 2.25, 3.5, 5.25, 7.5] }
+      - id: 2003253
+        grade: 2
+        group: 1
+        weight: 24
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: CriticalPercent, value: [1, 1.75, 2.75, 4.25, 6.25] }
+      - id: 2003254
+        grade: 2
+        group: 1
+        weight: 20
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: ExpPercent, value: [1.875, 3.125, 5, 7.5, 11.25] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 600 }
+      - { id: 200106, count: 2 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 240 }
+spriteGroups:
+  Icon: "assets/items/equipment/necklace_starlight.png"

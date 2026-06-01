@@ -1,0 +1,177 @@
+version: 1
+game: idlez
+source_concept: hamster_portrait_combat_growth_dock_d
+
+components:
+  ButtonSkinFamilyV1:
+    source_concept: hamster_button_skin_sheet_v1
+    shared_rules:
+      - dark chocolate outer stroke
+      - inner cream or yellow highlight rim
+      - lower brown contact shadow
+      - pressed state moves down and darkens
+      - Korean labels stay one or two short lines
+    skins:
+      PrimaryRewardCTA:
+        material: glossy gold-orange
+        parts:
+          - hamster_medallion_left
+          - large_white_label
+          - dark_cost_pill
+          - coin_icon
+      GreenUpgradePill:
+        material: saturated leaf green
+        parts:
+          - coin_medallion_left
+          - short_label_or_cost
+      AutoEnhanceButton:
+        material: green rounded square
+        parts:
+          - small_hamster_or_mushroom_icon
+          - two_line_label
+      SideUtilityButton:
+        material: vertical carved wood
+        parts:
+          - centered_icon
+          - short_label
+          - optional_alert_badge
+      BottomTabButton:
+        material: dock-integrated wood tray
+        states:
+          active: raised gold tab
+          inactive: recessed dark wood tab
+      CurrencyPlusChip:
+        material: compact dark wood capsule
+        parts:
+          - currency_medallion
+          - amount_text
+          - plus_knob
+
+  TopHudStrip:
+    role: Compact persistent status strip.
+    material: carved wood with dark inset pockets.
+    contents:
+      - combat_power
+      - coin_currency
+      - heart_or_energy
+      - menu
+      - auto_or_speed
+    style_notes:
+      - Use small icon plus short number.
+      - Keep top progress readable before decorative flourishes.
+
+  StageProgressNodes:
+    role: Stage wave progress ending in boss node.
+    material: circular medallions connected by gold bar.
+    states:
+      complete: green or gold rim
+      current: bright orange rim
+      boss: red rim
+    icon_style: Simple face silhouettes with thick brown outline.
+
+  MissionCard:
+    role: Floating objective or completion reward card.
+    material: cream parchment with rounded brown stroke.
+    placement: upper right of combat arena.
+    style_notes:
+      - White/cream card should not block hit feedback.
+      - Reward rows use coin/seed icons, not long text.
+
+  CombatLane:
+    role: Readable arena surface for live auto-battle.
+    material: warm wood or packed grass with soft edge.
+    style_notes:
+      - Keep lower edge compatible with growth dock overlap.
+      - Avoid noisy plank texture behind damage numbers.
+
+  GrowthDockRoot:
+    role: Persistent bottom upgrade surface.
+    material: carved wood frame with parchment interior.
+    shape: large rounded rectangle anchored to bottom safe area.
+    style_notes:
+      - Feels like one solid mobile-game control dock.
+      - Must not look like a separate popup pasted over combat.
+      - Split the dock into compact stat upgrades on the left and equipment preview on the right.
+
+  GrowthStatCard:
+    role: Repeated stat upgrade card.
+    material: parchment card inside wood dock.
+    required_parts:
+      - Text_Level
+      - Icon
+      - Text_StatName
+      - Text_Value
+      - Btn_Upgrade
+      - Text_Cost
+    icon_medallion: gold circular badge.
+    upgrade_button: green glossy pill with coin icon.
+    stats:
+      - attack
+      - health
+      - gold_gain
+      - growth_speed
+    scale_note: Compact half-width layout; labels must stay short.
+
+  EquipmentPanel:
+    role: Inline equipment preview inside the growth dock.
+    material: dark carved wood tray with parchment slot cards.
+    required_parts:
+      - Text_Title
+      - Text_Summary
+      - Text_SoulValue
+      - EquipmentSlotGrid
+    style_notes:
+      - Show equipped or recently acquired gear as tappable-looking slots.
+      - Empty slots use muted icons and short labels.
+
+  EquipmentSummonButton:
+    role: Primary equipment lamp summon entry.
+    material: glossy gold-orange button with lamp icon.
+    placement: centered between combat arena and bottom dock.
+    required_parts:
+      - Icon_Lamp
+      - Text_Label
+      - Text_Cost
+
+  GrowthRewardButton:
+    role: Primary growth reward claim button.
+    material: large glossy gold-orange button.
+    required_parts:
+      - Icon_Hamster
+      - Text_Label
+      - Text_RewardAmount
+    emphasis: largest touch target in growth dock.
+
+  AutoEnhanceButton:
+    role: Secondary automation button.
+    material: green glossy rounded rectangle.
+    required_parts:
+      - Icon_HamsterOrMushroom
+      - Text_Label
+    emphasis: secondary, visually smaller than GrowthRewardButton.
+
+  BottomTabBar:
+    role: Core mobile navigation.
+    material: dock-integrated wood tabs using the compact bottom-tab runtime atlas.
+    tabs:
+      - growth
+      - companion
+      - equipment
+      - pet
+      - adventure
+      - locked_or_guild
+    states:
+      selected: gold fill with hamster icon highlight
+      inactive: darker wood fill
+      alert: red dot badge
+      pressed: depressed duplicate body with 1px down motion
+
+  DamageNumber:
+    role: Combat impact readability.
+    material: orange fill, dark outline, small white highlight.
+    behavior: Pops near enemy and drifts upward.
+
+  DropToast:
+    role: Reward flow feedback.
+    material: small black translucent pill with coin/seed icons.
+    placement: above growth dock, right side preferred.

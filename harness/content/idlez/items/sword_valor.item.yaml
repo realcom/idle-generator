@@ -1,0 +1,13 @@
+# 장비 아이템 (무기) — engine-contract/schema/item.md
+# equipAddStats 의 value[] 는 sword_valor.growth.md 식으로 레벨별 확장
+id: 200201
+name: "용사의 검"
+category: Weapon             # Item.Category: Weapon
+type: Katana                 # Item.Type: Katana(무기)
+grade: 1
+equipAddStats:
+  - { type: Attack, value: [16.0] }   # growth bind 로 레벨 배열 확장
+inventoryCells:
+  - { dx: 0, dy: 0 }
+spriteGroups:
+  Icon: "Items/Icon/sword_valor.png"

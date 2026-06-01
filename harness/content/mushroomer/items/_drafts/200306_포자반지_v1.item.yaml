@@ -1,0 +1,67 @@
+id: 200306
+name: "포자 반지"
+category: Equipment
+type: Ring
+tags: [EquipmentUtilityGrowth]
+grade: 1
+rarity: 2
+tier: 1
+power: 28
+equipAddStats:
+  - { type: CriticalDamagePercent, value: [8.0] }
+  - { type: BossDamageEfficiencyPercent, value: [3.0] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 130 }
+      - { id: 200103, count: 2 }
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [1]
+options:
+  - options:
+      - id: 2003061
+        grade: 1
+        group: 1
+        weight: 30
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: CriticalDamagePercent, value: [5, 8.5, 13, 20, 30] }
+      - id: 2003062
+        grade: 1
+        group: 1
+        weight: 28
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: BossDamageEfficiencyPercent, value: [1.5, 2.6, 4.2, 6.5, 9.5] }
+      - id: 2003063
+        grade: 1
+        group: 1
+        weight: 22
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: MonsterDamageEfficiencyPercent, value: [1.5, 2.6, 4.2, 6.5, 9.5] }
+      - id: 2003064
+        grade: 1
+        group: 1
+        weight: 20
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: AttackPercent, value: [1.2, 2, 3.2, 5, 7.5] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 200 }
+      - { id: 200106, count: 1 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 80 }
+spriteGroups:
+  Icon: "assets/items/equipment/ring_magic.png"

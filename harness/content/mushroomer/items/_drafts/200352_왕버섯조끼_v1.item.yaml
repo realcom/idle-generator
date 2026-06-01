@@ -1,0 +1,68 @@
+id: 200352
+name: "왕버섯 조끼"
+category: Equipment
+type: Chest
+tags: [EquipmentTier5Growth]
+grade: 5
+rarity: 5
+tier: 5
+power: 2750
+equipAddStats:
+  - { type: Hp, value: [7000] }
+  - { type: Defense, value: [420] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 18000 }
+      - { id: 200103, count: 75 }
+requiredAchievementDataIds: [10101]
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [4]
+options:
+  - options:
+      - id: 2003521
+        grade: 5
+        group: 1
+        weight: 34
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: HpPercent, value: [4.9, 7.84, 11.76, 17.15, 24.5] }
+      - id: 2003522
+        grade: 5
+        group: 1
+        weight: 32
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: DefensePercent, value: [3.675, 6.37, 9.8, 14.21, 20.825] }
+      - id: 2003523
+        grade: 5
+        group: 1
+        weight: 16
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: BossDamageEfficiencyPercent, value: [2.45, 4.41, 7.35, 11.76, 17.15] }
+      - id: 2003524
+        grade: 5
+        group: 1
+        weight: 18
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: MonsterDamageEfficiencyPercent, value: [2.45, 4.41, 7.35, 11.76, 17.15] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 15000 }
+      - { id: 200106, count: 16 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 4200 }
+spriteGroups:
+  Icon: "assets/items/equipment/armor_guardian.png"

@@ -1,0 +1,67 @@
+id: 200203
+name: "균사 망치"
+category: Weapon
+type: Hammer
+tags: [WeaponAttackGrowth]
+grade: 1
+rarity: 3
+tier: 1
+power: 68
+equipAddStats:
+  - { type: Attack, value: [44.0] }
+  - { type: CriticalDamagePercent, value: [12.0] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 260 }
+      - { id: 200103, count: 5 }
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [1]
+options:
+  - options:
+      - id: 2002031
+        grade: 1
+        group: 1
+        weight: 30
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: AttackPercent, value: [1.2, 2, 3.2, 5, 7.5] }
+      - id: 2002032
+        grade: 1
+        group: 1
+        weight: 30
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: CriticalDamagePercent, value: [5, 8.5, 13, 20, 30] }
+      - id: 2002033
+        grade: 1
+        group: 1
+        weight: 20
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: BossDamageEfficiencyPercent, value: [1.5, 2.6, 4.2, 6.5, 9.5] }
+      - id: 2002034
+        grade: 1
+        group: 1
+        weight: 20
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: MonsterDamageEfficiencyPercent, value: [1, 1.8, 3, 4.8, 7] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 200 }
+      - { id: 200106, count: 1 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 120 }
+spriteGroups:
+  Icon: "Items/Icons/ICN_Weapon_Hammer.png"

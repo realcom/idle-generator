@@ -1,0 +1,23 @@
+# 샘플 행동 — engine-contract/behavior-format.md 준수
+# 30초마다 골드를 주는 스킬 로직. (idlez 실제 .ws 의 AI-friendly 재표현)
+# 컴파일되면 idlez 규칙대로 트리거 "SKILL_ONUPDATE_INCREASEGOLD" (UPPER_SNAKE) 로 들어가고,
+# 스킬/유닛 정의의 triggers[] 가 이 컴파일된 이름을 참조한다.
+
+name: IncreaseGold             # 도메인+이름. 컴파일: SKILL_ON{EVENT}_INCREASEGOLD
+domain: skill
+
+vars:
+  count: { type: int, default: 1, comment: "Gold Count" }
+
+on:
+  - event: update
+    every: 30s                 # = .ws period 30
+    do:
+      - increaseGold: { amount: $count }
+
+# 조건 분기 예시(주석): 카운트가 크면 보너스
+#  - event: update
+#    every: 30s
+#    do:
+#      - when: "$count > 5"
+#        increaseGold: { amount: "$count * 10" }

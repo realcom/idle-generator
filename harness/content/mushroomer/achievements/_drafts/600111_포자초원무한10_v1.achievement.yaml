@@ -1,0 +1,24 @@
+id: 600111
+name: "포자초원 10회 돌파"
+type: Normal
+tags: [Wave]
+order: 111
+initialOpen: true
+clientAchievement: false
+condition: WinWave
+conditionValue1: 500101
+conditionValue2: 0
+targetProgress: 10
+initialProgress: 0
+repeatable: false
+autoReward: true
+popupArgs:
+  WaveDisplayType: Boss
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 3600 }
+      - { itemDataId: 6, count: 300 }
+      - { itemDataId: 200103, count: 12 }
+      - { itemDataId: 200503, count: 1 }

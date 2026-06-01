@@ -1,0 +1,71 @@
+version: 1
+game: idlez
+source_concept: hamster_portrait_combat_growth_dock_d
+
+screen:
+  orientation: portrait
+  target_aspect: "9:16"
+  minimum_supported_aspect: "9:19.5"
+  coordinate_policy: Use safe-area aware anchors; avoid viewport-scaled font sizes.
+
+regions:
+  top_hud:
+    y_anchor: top
+    height_ratio:
+      min: 0.12
+      target: 0.15
+      max: 0.18
+    role: Currency, combat power, stage progress, menu, and auto controls.
+  combat_arena:
+    y_anchor: middle
+    height_ratio:
+      min: 0.42
+      target: 0.47
+      max: 0.52
+    role: Live battle, hero, enemies, HP bars, hit VFX, drops, mission card.
+    priority: Highest visual clarity after primary CTA.
+  growth_dock:
+    y_anchor: bottom
+    height_ratio:
+      min: 0.33
+      target: 0.38
+      max: 0.42
+    role: Persistent stat upgrades, growth reward CTA, auto-enhance, tab bar.
+
+combat_arena_rules:
+  hero_anchor: lower_left_third_above_dock
+  enemy_anchor: lower_right_third_above_dock
+  lane: short horizontal platform or ground strip, visible above growth dock.
+  required_clearance_px:
+    above_growth_dock: 48
+    around_hero_silhouette: 24
+    around_damage_numbers: 16
+  mission_card:
+    preferred_anchor: upper_right_inside_combat_arena
+    max_width_ratio: 0.34
+
+growth_dock_rules:
+  stat_card_layout:
+    portrait_default: "2x2"
+    alternate: "4 compact cards only if text remains readable"
+  stat_card_count: 4
+  reward_cta:
+    placement: dock_lower_center
+    emphasis: primary
+    min_height_px: 72
+  auto_enhance:
+    placement: right_of_reward_cta
+    emphasis: secondary
+  tab_bar:
+    placement: bottom_safe_area
+    min_touch_px: 56
+
+z_order:
+  background: 0
+  combat_lane: 10
+  units: 20
+  combat_feedback: 30
+  top_hud: 40
+  mission_card: 45
+  growth_dock: 50
+  modal_popups: 100

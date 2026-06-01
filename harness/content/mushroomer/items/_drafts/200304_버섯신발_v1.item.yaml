@@ -1,0 +1,67 @@
+id: 200304
+name: "버섯 신발"
+category: Equipment
+type: Boots
+tags: [EquipmentDefenseGrowth]
+grade: 1
+rarity: 1
+tier: 1
+power: 18
+equipAddStats:
+  - { type: Defense, value: [8.0] }
+  - { type: MoveSpeed, value: [0.2] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 80 }
+      - { id: 200103, count: 1 }
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [1]
+options:
+  - options:
+      - id: 2003041
+        grade: 1
+        group: 1
+        weight: 28
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: MoveSpeed, value: [0.08, 0.12, 0.18, 0.26, 0.38] }
+      - id: 2003042
+        grade: 1
+        group: 1
+        weight: 24
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: AttackSpeedPercent, value: [1, 1.7, 2.6, 4, 5.8] }
+      - id: 2003043
+        grade: 1
+        group: 1
+        weight: 24
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: ItemDropPercent, value: [1, 1.8, 2.8, 4.2, 6.2] }
+      - id: 2003044
+        grade: 1
+        group: 1
+        weight: 24
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: ExpPercent, value: [1, 1.8, 2.8, 4.2, 6.2] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 200 }
+      - { id: 200106, count: 1 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 80 }
+spriteGroups:
+  Icon: "assets/items/equipment/boots_magic.png"

@@ -1,0 +1,68 @@
+id: 200332
+name: "황금 조끼"
+category: Equipment
+type: Chest
+tags: [EquipmentTier3Growth]
+grade: 3
+rarity: 3
+tier: 3
+power: 280
+equipAddStats:
+  - { type: Hp, value: [900] }
+  - { type: Defense, value: [58] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1500 }
+      - { id: 200103, count: 12 }
+requiredAchievementDataIds: [10101]
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [2]
+options:
+  - options:
+      - id: 2003321
+        grade: 3
+        group: 1
+        weight: 34
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: HpPercent, value: [3.1, 4.96, 7.44, 10.85, 15.5] }
+      - id: 2003322
+        grade: 3
+        group: 1
+        weight: 32
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: DefensePercent, value: [2.325, 4.03, 6.2, 8.99, 13.175] }
+      - id: 2003323
+        grade: 3
+        group: 1
+        weight: 16
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: BossDamageEfficiencyPercent, value: [1.55, 2.79, 4.65, 7.44, 10.85] }
+      - id: 2003324
+        grade: 3
+        group: 1
+        weight: 18
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: MonsterDamageEfficiencyPercent, value: [1.55, 2.79, 4.65, 7.44, 10.85] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1800 }
+      - { id: 200106, count: 4 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 650 }
+spriteGroups:
+  Icon: "assets/items/equipment/armor_hero.png"

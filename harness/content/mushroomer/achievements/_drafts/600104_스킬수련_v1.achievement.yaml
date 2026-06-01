@@ -1,0 +1,19 @@
+id: 600104
+name: "스킬 수련"
+type: Normal
+tags: []
+order: 104
+initialOpen: true
+clientAchievement: false
+condition: UseSkill
+conditionValue1: 300101
+conditionValue2: 0
+targetProgress: 20
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200104, count: 20 }

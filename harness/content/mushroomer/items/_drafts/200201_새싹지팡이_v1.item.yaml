@@ -1,0 +1,66 @@
+id: 200201
+name: "새싹 지팡이"
+category: Weapon
+type: Staff
+tags: [WeaponAttackGrowth]
+grade: 1
+rarity: 1
+tier: 1
+power: 35
+equipAddStats:
+  - { type: Attack, value: [22.0] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 120 }
+      - { id: 200103, count: 2 }
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [1]
+options:
+  - options:
+      - id: 2002011
+        grade: 1
+        group: 1
+        weight: 34
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: AttackPercent, value: [1.2, 2, 3.2, 5, 7.5] }
+      - id: 2002012
+        grade: 1
+        group: 1
+        weight: 28
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: CooldownPercent, value: [0.6, 1, 1.6, 2.4, 3.4] }
+      - id: 2002013
+        grade: 1
+        group: 1
+        weight: 18
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: ExpPercent, value: [1, 1.8, 2.8, 4, 5.8] }
+      - id: 2002014
+        grade: 1
+        group: 1
+        weight: 20
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: MonsterDamageEfficiencyPercent, value: [1, 1.8, 3, 4.8, 7] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 200 }
+      - { id: 200106, count: 1 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 120 }
+spriteGroups:
+  Icon: "Items/Icons/ICN_Weapon_Staff.png"

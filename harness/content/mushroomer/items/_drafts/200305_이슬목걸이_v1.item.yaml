@@ -1,0 +1,67 @@
+id: 200305
+name: "이슬 목걸이"
+category: Equipment
+type: Necklace
+tags: [EquipmentUtilityGrowth]
+grade: 1
+rarity: 2
+tier: 1
+power: 26
+equipAddStats:
+  - { type: CriticalPercent, value: [3.0] }
+  - { type: ItemDropPercent, value: [2.0] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 120 }
+      - { id: 200103, count: 2 }
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [1]
+options:
+  - options:
+      - id: 2003051
+        grade: 1
+        group: 1
+        weight: 30
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: ItemDropPercent, value: [1.5, 2.5, 4, 6, 9] }
+      - id: 2003052
+        grade: 1
+        group: 1
+        weight: 26
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: CooldownPercent, value: [1, 1.8, 2.8, 4.2, 6] }
+      - id: 2003053
+        grade: 1
+        group: 1
+        weight: 24
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: CriticalPercent, value: [0.8, 1.4, 2.2, 3.4, 5] }
+      - id: 2003054
+        grade: 1
+        group: 1
+        weight: 20
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: ExpPercent, value: [1.5, 2.5, 4, 6, 9] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 200 }
+      - { id: 200106, count: 1 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 80 }
+spriteGroups:
+  Icon: "assets/items/equipment/necklace_magic.png"

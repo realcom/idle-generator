@@ -1,0 +1,23 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile.phaser",
+    "watchPatterns": [
+      "Dockerfile.phaser",
+      "railway.json",
+      "deploy/railway/phaser/**",
+      "harness/runtime/**",
+      "harness/tools/**",
+      "harness/content/mushroomer/**",
+      "harness/game-profiles/mushroomer.profile.yaml",
+      "harness/engine-contract/**",
+      "engine/commons/**"
+    ]
+  },
+  "deploy": {
+    "healthcheckPath": "/healthz",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}

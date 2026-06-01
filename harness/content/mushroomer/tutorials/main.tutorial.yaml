@@ -1,0 +1,167 @@
+# mushroomer tutorial manifest.
+#
+# 현재 Unity 클라는 Tutorial.Step enum 순서와 achievementGlobal.dataId.tutorialSteps[]
+# 순서를 1:1로 매핑한다. 검증용 mushroomer도 legacy 튜토리얼 업적 세트를 유지해
+# 로그인/튜토리얼/로비 진입 경로가 비지 않도록 한다.
+
+id: main
+runtime: legacy-unity-tutorial
+
+achievementGlobal:
+  dataId:
+    tutorialComplete: 610000
+    ingameTutorialEnter: 610001
+    chapterEnterAgainCondition: 610010
+    tutorialSteps: [610101, 610102, 610103, 610201, 610202, 610203, 610204, 610205]
+
+defaults:
+  achievement:
+    type: Normal
+    targetProgress: 1
+    autoReward: true
+
+achievements:
+  tutorialComplete:
+    id: 610000
+    initialOpen: true
+    clientAchievement: true
+
+  ingameTutorialEnter:
+    id: 610001
+    initialOpen: true
+    clientAchievement: true
+    childAchievementDataIds: [610301]
+
+  chapterEnterAgainCondition:
+    id: 610010
+    initialOpen: true
+    condition: WinGame
+    conditionValue1: 100001
+    parentAchievementDataId: 610011
+    progressParentOnComplete: true
+
+  outgameReadyGate:
+    id: 610011
+    initialOpen: true
+    targetProgress: 2
+    childAchievementDataIds: [610306]
+
+  openTrainingNotice:
+    id: 610301
+    clientAchievement: true
+    childAchievementDataIds: [610201]
+
+  openEquipmentNotice:
+    id: 610302
+    clientAchievement: true
+    childAchievementDataIds: [610303]
+
+  openShopNotice:
+    id: 610303
+    clientAchievement: true
+    childAchievementDataIds: [610202]
+
+  openDungeonNotice:
+    id: 610304
+    clientAchievement: true
+    childAchievementDataIds: [610305]
+
+  openPetNotice:
+    id: 610305
+    clientAchievement: true
+    childAchievementDataIds: [610205]
+
+  openPassNotice:
+    id: 610306
+    clientAchievement: true
+    childAchievementDataIds: [610204]
+
+  openScoutNotice:
+    id: 610307
+    clientAchievement: true
+    childAchievementDataIds: [610304]
+
+steps:
+  - id: 610101
+    key: InGameTutorial_1_Merge
+    phase: in_game
+    clientFlow:
+      type: legacySwitch
+      step: InGameTutorial_1_Merge
+    achievement:
+      initialOpen: true
+      clientAchievement: true
+      childAchievementDataIds: [610102]
+
+  - id: 610102
+    key: InGameTutorial_2_ExpandInventory
+    phase: in_game
+    clientFlow:
+      type: legacySwitch
+      step: InGameTutorial_2_ExpandInventory
+    achievement:
+      clientAchievement: true
+      childAchievementDataIds: [610103]
+
+  - id: 610103
+    key: InGameTutorial_3_Consumable
+    phase: in_game
+    clientFlow:
+      type: legacySwitch
+      step: InGameTutorial_3_Consumable
+    achievement:
+      clientAchievement: true
+
+  - id: 610201
+    key: OutGameTutorial_1_Training
+    phase: lobby
+    clientFlow:
+      type: legacySwitch
+      step: OutGameTutorial_1_Training
+    achievement:
+      condition: HasItem
+      conditionValue1: 1000
+      conditionValue2: 16
+      childAchievementDataIds: [610302]
+
+  - id: 610202
+    key: OutGameTutorial_2_Gacha
+    phase: lobby
+    clientFlow:
+      type: legacySwitch
+      step: OutGameTutorial_2_Gacha
+    achievement:
+      autoReward: false
+      condition: BuyItemProductAction
+      conditionValue1: 20801000
+      childAchievementDataIds: [610203]
+
+  - id: 610203
+    key: OutGameTutorial_3_Equipment
+    phase: lobby
+    clientFlow:
+      type: legacySwitch
+      step: OutGameTutorial_3_Equipment
+    achievement:
+      clientAchievement: true
+      parentAchievementDataId: 610011
+
+  - id: 610204
+    key: OutGameTutorial_4_Pass
+    phase: lobby
+    clientFlow:
+      type: legacySwitch
+      step: OutGameTutorial_4_Pass
+    achievement:
+      condition: AcquireItem
+      conditionValue1: 1111005
+
+  - id: 610205
+    key: OutGameTutorial_5_Pet
+    phase: lobby
+    clientFlow:
+      type: legacySwitch
+      step: OutGameTutorial_5_Pet
+    achievement:
+      condition: BuyItemProductAction
+      conditionValue1: 20401000

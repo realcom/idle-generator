@@ -1,0 +1,67 @@
+id: 200331
+name: "황금 모자"
+category: Equipment
+type: Head
+tags: [EquipmentTier3Growth]
+grade: 3
+rarity: 3
+tier: 3
+power: 280
+equipAddStats:
+  - { type: Hp, value: [900] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1500 }
+      - { id: 200103, count: 12 }
+requiredAchievementDataIds: [10100]
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [2]
+options:
+  - options:
+      - id: 2003311
+        grade: 3
+        group: 1
+        weight: 34
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: HpPercent, value: [2.325, 3.72, 5.58, 8.06, 11.625] }
+      - id: 2003312
+        grade: 3
+        group: 1
+        weight: 28
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: DefensePercent, value: [1.55, 2.79, 4.34, 6.51, 9.3] }
+      - id: 2003313
+        grade: 3
+        group: 1
+        weight: 18
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: CooldownPercent, value: [0.93, 1.55, 2.48, 3.72, 5.27] }
+      - id: 2003314
+        grade: 3
+        group: 1
+        weight: 20
+        minLevel: 3
+        maxLevel: 4
+        equipAddStats:
+          - { type: ExpPercent, value: [1.55, 2.79, 4.34, 6.2, 8.99] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 1800 }
+      - { id: 200106, count: 4 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 650 }
+spriteGroups:
+  Icon: "assets/items/equipment/helmet_hero.png"

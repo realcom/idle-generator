@@ -1,0 +1,24 @@
+id: 600107
+name: "레벨 포인트 지급"
+type: Normal
+tags: [HideDisplay]
+order: 107
+initialOpen: true
+clientAchievement: false
+condition: LevelUpItem
+conditionValue1: 1
+conditionValue2: 0
+targetProgress: 1
+initialProgress: 0
+repeatable: true
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200107, count: 1, isCore: true }
+popupArgs:
+  Source: "PlayerLevelUp"
+  PlayerLevelItemDataId: "1"
+  LevelPointItemDataId: "200107"
+  GrantPerLevel: "1"

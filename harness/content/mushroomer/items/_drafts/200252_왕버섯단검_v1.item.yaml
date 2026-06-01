@@ -1,0 +1,67 @@
+id: 200252
+name: "왕버섯 단검"
+category: Weapon
+type: Dagger
+tags: [WeaponTier5Growth]
+grade: 5
+rarity: 5
+tier: 5
+power: 4100
+equipAddStats:
+  - { type: Attack, value: [950] }
+  - { type: AttackSpeedPercent, value: [14] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 18000 }
+      - { id: 200103, count: 75 }
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [4]
+options:
+  - options:
+      - id: 2002521
+        grade: 5
+        group: 1
+        weight: 34
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: AttackPercent, value: [2.94, 4.9, 7.84, 12.25, 18.375] }
+      - id: 2002522
+        grade: 5
+        group: 1
+        weight: 28
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: AttackSpeedPercent, value: [2.45, 4.165, 6.37, 9.8, 14.21] }
+      - id: 2002523
+        grade: 5
+        group: 1
+        weight: 18
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: CriticalPercent, value: [1.96, 3.185, 4.9, 7.35, 11.025] }
+      - id: 2002524
+        grade: 5
+        group: 1
+        weight: 20
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: ItemDropPercent, value: [2.45, 4.41, 6.86, 10.29, 15.19] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 15000 }
+      - { id: 200106, count: 16 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 6200 }
+spriteGroups:
+  Icon: "Items/Icons/ICN_Weapon_Dagger.png"

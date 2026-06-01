@@ -1,0 +1,14 @@
+id: 1001
+name: "체력 성장"
+category: Stat
+tab: -1
+priority: 2
+tags: [HamsterGrowthStat, GrowthHp]
+initialCreate: true
+initialCreateCount: 1
+initialCreateLevel: 1
+addStats:
+  - { type: Hp, value: [0.0] }
+levelUpGoldCost: { levels: 1..80, base: 35, step: 20 }
+spriteGroups:
+  Icon: "assets/ui/icons/stat_hp.png"

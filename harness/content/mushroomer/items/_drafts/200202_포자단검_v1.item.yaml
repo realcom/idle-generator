@@ -1,0 +1,67 @@
+id: 200202
+name: "포자 단검"
+category: Weapon
+type: Dagger
+tags: [WeaponAttackGrowth]
+grade: 1
+rarity: 2
+tier: 1
+power: 48
+equipAddStats:
+  - { type: Attack, value: [31.0] }
+  - { type: AttackSpeedPercent, value: [4.0] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 180 }
+      - { id: 200103, count: 3 }
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [1]
+options:
+  - options:
+      - id: 2002021
+        grade: 1
+        group: 1
+        weight: 34
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: AttackPercent, value: [1.2, 2, 3.2, 5, 7.5] }
+      - id: 2002022
+        grade: 1
+        group: 1
+        weight: 28
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: AttackSpeedPercent, value: [1, 1.7, 2.6, 4, 5.8] }
+      - id: 2002023
+        grade: 1
+        group: 1
+        weight: 18
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: CriticalPercent, value: [0.8, 1.3, 2, 3, 4.5] }
+      - id: 2002024
+        grade: 1
+        group: 1
+        weight: 20
+        minLevel: 1
+        maxLevel: 2
+        equipAddStats:
+          - { type: ItemDropPercent, value: [1, 1.8, 2.8, 4.2, 6.2] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 200 }
+      - { id: 200106, count: 1 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 120 }
+spriteGroups:
+  Icon: "Items/Icons/ICN_Weapon_Dagger.png"

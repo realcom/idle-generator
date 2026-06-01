@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Idle Game Generator · Harness</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg-0: #0a0e1a;
+    --bg-1: #111827;
+    --bg-2: #1a2233;
+    --border: rgba(255,255,255,0.08);
+    --text-1: #f1f5f9;
+    --text-2: #94a3b8;
+    --text-3: #64748b;
+    --accent-green:  #10b981;
+    --accent-blue:   #3b82f6;
+    --accent-orange: #f59e0b;
+    --accent-purple: #a855f7;
+    --accent-cyan:   #06b6d4;
+    --accent-yellow: #eab308;
+    --accent-pink:   #ec4899;
+  }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg-0);
+    color: var(--text-1);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(at 20% 0%,  rgba(59,130,246,0.10) 0px, transparent 50%),
+      radial-gradient(at 80% 0%,  rgba(168,85,247,0.10) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, rgba(16,185,129,0.08) 0px, transparent 50%);
+  }
+  .container { max-width: 1400px; margin: 0 auto; padding: 48px 32px 96px; }
+
+  /* HEADER */
+  .header { text-align: center; margin-bottom: 64px; }
+  .badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(59,130,246,0.12);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 999px;
+    color: var(--accent-blue);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  h1 {
+    font-size: 56px; font-weight: 800; letter-spacing: -2px;
+    background: linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .subtitle { color: var(--text-2); font-size: 18px; font-weight: 400; max-width: 600px; margin: 0 auto; }
+
+  /* LAYER */
+  .layer { margin-bottom: 48px; position: relative; }
+  .layer-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  }
+  .layer-num {
+    width: 32px; height: 32px;
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 13px;
+    color: var(--text-2);
+  }
+  .layer-title { font-size: 20px; font-weight: 700; }
+  .layer-desc { color: var(--text-3); font-size: 14px; margin-left: 8px; }
+
+  /* GRID */
+  .grid { display: grid; gap: 16px; }
+  .grid-1 { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .grid-5 { grid-template-columns: repeat(5, 1fr); }
+
+  /* CARD */
+  .card {
+    background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    cursor: default;
+  }
+  .card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--card-glow, transparent) 0%, transparent 50%);
+    opacity: 0.15;
+    pointer-events: none;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: var(--card-color, var(--border));
+    box-shadow: 0 12px 32px -8px var(--card-shadow, rgba(0,0,0,0.3));
+  }
+  .card-icon {
+    width: 36px; height: 36px;
+    background: var(--card-bg, rgba(255,255,255,0.05));
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; font-weight: 600;
+    color: var(--card-color, var(--text-1));
+    margin-bottom: 6px;
+  }
+  .card-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+  .card-tag {
+    display: inline-block;
+    margin-top: 10px; padding: 3px 8px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.5px;
+    background: var(--card-bg, rgba(255,255,255,0.05));
+    color: var(--card-color, var(--text-3));
+    border-radius: 4px; text-transform: uppercase;
+  }
+
+  /* COLOR VARIANTS */
+  .c-green   { --card-color: var(--accent-green);  --card-bg: rgba(16,185,129,0.12);  --card-glow: rgba(16,185,129,0.4);  --card-shadow: rgba(16,185,129,0.25); }
+  .c-blue    { --card-color: var(--accent-blue);   --card-bg: rgba(59,130,246,0.12);  --card-glow: rgba(59,130,246,0.4);  --card-shadow: rgba(59,130,246,0.25); }
+  .c-orange  { --card-color: var(--accent-orange); --card-bg: rgba(245,158,11,0.12);  --card-glow: rgba(245,158,11,0.4);  --card-shadow: rgba(245,158,11,0.25); }
+  .c-purple  { --card-color: var(--accent-purple); --card-bg: rgba(168,85,247,0.12);  --card-glow: rgba(168,85,247,0.4);  --card-shadow: rgba(168,85,247,0.25); }
+  .c-cyan    { --card-color: var(--accent-cyan);   --card-bg: rgba(6,182,212,0.12);   --card-glow: rgba(6,182,212,0.4);   --card-shadow: rgba(6,182,212,0.25); }
+  .c-yellow  { --card-color: var(--accent-yellow); --card-bg: rgba(234,179,8,0.12);   --card-glow: rgba(234,179,8,0.4);   --card-shadow: rgba(234,179,8,0.25); }
+  .c-pink    { --card-color: var(--accent-pink);   --card-bg: rgba(236,72,153,0.12);  --card-glow: rgba(236,72,153,0.4);  --card-shadow: rgba(236,72,153,0.25); }
+
+  /* CONNECTORS */
+  .connector {
+    height: 32px; display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .connector::before {
+    content: ''; width: 2px; height: 100%;
+    background: linear-gradient(180deg, transparent 0%, var(--border) 30%, var(--border) 70%, transparent 100%);
+  }
+  .connector::after {
+    content: '↓';
+    position: absolute; bottom: 4px;
+    color: var(--text-3); font-size: 14px;
+    background: var(--bg-0); padding: 0 6px;
+  }
+
+  /* FLOW EXAMPLE */
+  .flow {
+    margin-top: 64px; padding: 32px;
+    background: linear-gradient(135deg, rgba(59,130,246,0.05) 0%, rgba(168,85,247,0.05) 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+  .flow-title {
+    font-size: 18px; font-weight: 700; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .flow-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 12px var(--accent-green); }
+  .flow-steps { display: flex; gap: 16px; align-items: stretch; flex-wrap: wrap; }
+  .flow-step {
+    flex: 1; min-width: 140px;
+    padding: 14px;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    position: relative;
+  }
+  .flow-step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text-3); font-weight: 600;
+  }
+  .flow-step-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 600; margin: 4px 0;
+    color: var(--flow-color, var(--text-1));
+  }
+  .flow-step-desc { font-size: 11px; color: var(--text-2); line-height: 1.4; }
+  .flow-arrow {
+    align-self: center; color: var(--text-3); font-size: 18px; font-weight: 700;
+  }
+
+  /* STATS */
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 48px;
+  }
+  .stat {
+    padding: 20px; background: var(--bg-1);
+    border: 1px solid var(--border); border-radius: 12px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px; font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .stat-label { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+
+  @media (max-width: 900px) {
+    .grid-3, .grid-4, .grid-5 { grid-template-columns: repeat(2, 1fr); }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    h1 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="badge">⚙️ System Architecture</div>
+    <h1>Idle Game Generator</h1>
+    <p class="subtitle">자연어 콘텐츠 요청을 게임 리소스로 변환하는 멀티 에이전트 harness</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Skills</div></div>
+    <div class="stat"><div class="stat-num">5</div><div class="stat-label">Agents</div></div>
+    <div class="stat"><div class="stat-num">4</div><div class="stat-label">Runtimes</div></div>
+    <div class="stat"><div class="stat-num">1</div><div class="stat-label">Compiler</div></div>
+  </div>
+
+  <!-- LAYER 1 -->
+  <div class="layer">
+    <div class="layer-header">
+      <div class="layer-num">01</div>
+      <div class="layer-title">Entry · 콘텐츠 요청</div>
+      <div class="layer-desc">자연어 요청을 받는 진입점</div>
+    </div>
+    <div class="grid grid-1">
+      <div class="card c-green">
+        <div class="card-icon">🎮</div>
+        <div class="card-title">User Request</div>
+        <div class="card-desc">"새 보스 만들기" · "맵 추가" · "스킬 밸런스 조정" — 자연어 입력</div>
+        <span class="card-tag">Input</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- LAYER 2 -->
+  <div class="layer">
+    <div class="layer-header">
+      <div class="layer-num">02</div>
+      <div class="layer-title">Router · 라우팅</div>
+      <div class="layer-desc">콘텐츠 타입을 판별해 전용 스킬로 분기</div>
+    </div>
+    <div class="grid grid-1">
+      <div class="card c-blue">
+        <div class="card-icon">🔀</div>
+        <div class="card-title">new-content</div>
+        <div class="card-desc">자연어 요청 → 콘텐츠 타입 판별 (유닛/스킬/맵/트리거/아이템/스탯) → 전용 스킬로 라우팅</div>
+        <span class="card-tag">Orchestrator</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- LAYER 3 -->
+  <div class="layer">
+    <div class="layer-header">
+      <div class="layer-num">03</div>
+      <div class="layer-title">Skills · 수직 슬라이스 생성</div>
+      <div class="layer-desc">콘텐츠 타입별 완성형 제작 스킬</div>
+    </div>
+    <div class="grid grid-3">
+      <div class="card c-orange">
+        <div class="card-icon">🧙</div>
+        <div class="card-title">gen-unit</div>
+        <div class="card-desc">유닛 1종 완성형 — 정의 · 성장식 · 행동 · 드롭 · 에셋</div>
+        <span class="card-tag">Vertical Slice</span>
+      </div>
+      <div class="card c-orange">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">gen-skill</div>
+        <div class="card-desc">스킬 1개 — 발사체 · 타임라인 · 타격/버프 · 쿨다운 · 상성</div>
+        <span class="card-tag">Vertical Slice</span>
+      </div>
+      <div class="card c-orange">
+        <div class="card-icon">🤖</div>
+        <div class="card-title">gen-trigger</div>
+        <div class="card-desc">AI 행동 로직 — 이벤트×액션 어휘로 behavior YAML 작성</div>
+        <span class="card-tag">Vertical Slice</span>
+      </div>
+      <div class="card c-orange">
+        <div class="card-icon">🗺️</div>
+        <div class="card-title">gen-map</div>
+        <div class="card-desc">맵 1개 — 타입 · 웨이브 · 적 편성 · 보상 · 보드규칙</div>
+        <span class="card-tag">Vertical Slice</span>
+      </div>
+      <div class="card c-orange">
+        <div class="card-icon">📊</div>
+        <div class="card-title">balance-review</div>
+        <div class="card-desc">경제 시뮬레이션 — 성장곡선 · 드롭 · 천장 · 골드 흐름</div>
+        <span class="card-tag">Validator</span>
+      </div>
+      <div class="card c-orange">
+        <div class="card-icon">🎨</div>
+        <div class="card-title">gen-asset</div>
+        <div class="card-desc">AI 이미지 생성 · 스프라이트 · 아이콘 · 에셋 키 바인딩</div>
+        <span class="card-tag">Vertical Slice</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- LAYER 4 -->
+  <div class="layer">
+    <div class="layer-header">
+      <div class="layer-num">04</div>
+      <div class="layer-title">Agents · 도메인 전문가</div>
+      <div class="layer-desc">각 도메인을 책임지는 전문 에이전트가 협력</div>
+    </div>
+    <div class="grid grid-5">
+      <div class="card c-purple">
+        <div class="card-icon">📐</div>
+        <div class="card-title">content-designer</div>
+        <div class="card-desc">데이터 정의 · engine-contract 스키마 준수</div>
+      </div>
+      <div class="card c-purple">
+        <div class="card-icon">📝</div>
+        <div class="card-title">behavior-author</div>
+        <div class="card-desc">YAML 행동 작성 · DSL 컴파일</div>
+      </div>
+      <div class="card c-purple">
+        <div class="card-icon">🖼️</div>
+        <div class="card-title">asset-producer</div>
+        <div class="card-desc">에셋 생성 · 키 바인딩 · 레지스트리 관리</div>
+      </div>
+      <div class="card c-purple">
+        <div class="card-icon">✅</div>
+        <div class="card-title">content-reviewer</div>
+        <div class="card-desc">스키마 · 참조 · 가드레일 검증</div>
+      </div>
+      <div class="card c-purple">
+        <div class="card-icon">⚖️</div>
+        <div class="card-title">economy-balancer</div>
+        <div class="card-desc">성장곡선 · faucet/sink · 천장 밸런싱</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- LAYER 5 -->
+  <div class="layer">
+    <div class="layer-header">
+      <div class="layer-num">05</div>
+      <div class="layer-title">Compile · 컴파일</div>
+      <div class="layer-desc">YAML 정의를 런타임 JSON으로 변환</div>
+    </div>
+    <div class="grid grid-2">
+      <div class="card c-cyan">
+        <div class="card-icon">🔧</div>
+        <div class="card-title">idlez_compile.py</div>
+        <div class="card-desc">YAML → JSON 컴파일 · Spine 바인딩 · 에셋 검증 · Triggers.json 생성</div>
+        <span class="card-tag">Build Pipeline</span>
+      </div>
+      <div class="card c-cyan">
+        <div class="card-icon">📡</div>
+        <div class="card-title">serve_visualizer.py</div>
+        <div class="card-desc">:8080 — /api/growth · /api/assets · 실시간 컴파일 & 핫리로드</div>
+        <span class="card-tag">Dev Server</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- LAYER 6 -->
+  <div class="layer">
+    <div class="layer-header">
+      <div class="layer-num">06</div>
+      <div class="layer-title">Runtime · 실행 & 검증</div>
+      <div class="layer-desc">생성된 콘텐츠를 즉시 테스트할 수 있는 런타임</div>
+    </div>
+    <div class="grid grid-4">
+      <div class="card c-yellow">
+        <div class="card-icon">📋</div>
+        <div class="card-title">data-runtime</div>
+        <div class="card-desc">JSON 데이터 검증용 경량 런타임</div>
+      </div>
+      <div class="card c-yellow">
+        <div class="card-icon">🦴</div>
+        <div class="card-title">full-spine-runtime</div>
+        <div class="card-desc">Spine 애니메이션 풀 프리뷰</div>
+      </div>
+      <div class="card c-yellow">
+        <div class="card-icon">🔗</div>
+        <div class="card-title">idlez-integration</div>
+        <div class="card-desc">실제 idlez 게임 엔진 통합</div>
+      </div>
+      <div class="card c-yellow">
+        <div class="card-icon">🎮</div>
+        <div class="card-title">phaser-runtime</div>
+        <div class="card-desc">Phaser 기반 인터랙티브 테스트</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOW EXAMPLE -->
+  <div class="flow">
+    <div class="flow-title">
+      <span class="dot"></span>
+      예시 흐름 · "슬라임 퀸 보스 만들기"
+    </div>
+    <div class="flow-steps">
+      <div class="flow-step" style="--flow-color: var(--accent-green)">
+        <div class="flow-step-num">STEP 01</div>
+        <div class="flow-step-name">User</div>
+        <div class="flow-step-desc">자연어 요청</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="--flow-color: var(--accent-blue)">
+        <div class="flow-step-num">STEP 02</div>
+        <div class="flow-step-name">new-content</div>
+        <div class="flow-step-desc">"유닛" 타입 판별</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="--flow-color: var(--accent-orange)">
+        <div class="flow-step-num">STEP 03</div>
+        <div class="flow-step-name">gen-unit</div>
+        <div class="flow-step-desc">에이전트 협력 생성</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="--flow-color: var(--accent-purple)">
+        <div class="flow-step-num">STEP 04</div>
+        <div class="flow-step-name">reviewer</div>
+        <div class="flow-step-desc">스키마 검증</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="--flow-color: var(--accent-cyan)">
+        <div class="flow-step-num">STEP 05</div>
+        <div class="flow-step-name">compile</div>
+        <div class="flow-step-desc">YAML → JSON</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="--flow-color: var(--accent-yellow)">
+        <div class="flow-step-num">STEP 06</div>
+        <div class="flow-step-name">runtime</div>
+        <div class="flow-step-desc">브라우저 테스트</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

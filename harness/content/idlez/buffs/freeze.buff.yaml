@@ -1,0 +1,10 @@
+# 버프(디버프) — engine-contract/schema/buff.md
+id: 400101
+name: "빙결"
+type: UnitDebuff             # Buff.Type: UnitDebuff (Unspecified=0 이면 생략)
+duration: 2.0
+prefabAttachmentTarget: Freeze
+addStats:
+  - { type: MoveSpeed, value: [-50.0] }   # 이동속도 감소(슬로우). type 유지(Hp 아님)
+tags: [DisableAction]
+prefab: "FXPrefabs/VFX_Freezing.prefab"

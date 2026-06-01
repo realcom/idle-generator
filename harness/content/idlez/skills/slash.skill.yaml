@@ -1,0 +1,14 @@
+# 스킬 — engine-contract/schema/skill.md
+# timelines 는 시점별 액션(중첩) — 컴파일 시 passthrough (직렬화 쿽은 스칼라/enum에 적용)
+id: 300101
+name: "베기"
+damageType: Pierce           # DamageType: Pierce (NormalDamage=0 이면 생략)
+cooldown: 1.5
+priority: 1
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/VFX_Slash.prefab" } }
+  - time: 0.1
+    hit:
+      maxHit: 1
+      addDamage: { damagePercent: [120.0] }
+  - { time: 0.4, destroy: {} }

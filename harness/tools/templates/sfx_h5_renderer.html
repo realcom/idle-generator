@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SFX Renderer</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #111418;
+      --panel: #191f27;
+      --line: #2c3440;
+      --text: #f2f5f8;
+      --muted: #a8b3c2;
+      --accent: #5ed3a2;
+      --danger: #ff7b7b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main {
+      width: min(980px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 36px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+    .meta {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0;
+    }
+    button {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: #202833;
+      color: var(--text);
+      border-radius: 6px;
+      padding: 9px 13px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #07110d;
+    }
+    button:disabled {
+      opacity: 0.55;
+      cursor: wait;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+      gap: 16px;
+    }
+    section {
+      min-width: 0;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    h2 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      font-weight: 740;
+      letter-spacing: 0;
+    }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: #d9e1eb;
+      max-height: 56vh;
+      overflow: auto;
+    }
+    dl {
+      margin: 0;
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr);
+      gap: 8px 10px;
+    }
+    dt {
+      color: var(--muted);
+    }
+    dd {
+      margin: 0;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+    }
+    .status {
+      min-height: 22px;
+      color: var(--muted);
+      margin: 12px 0 0;
+    }
+    .status.error {
+      color: var(--danger);
+    }
+    @media (max-width: 760px) {
+      header {
+        display: block;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1 id="title">SFX Renderer</h1>
+        <div class="meta" id="sourcePath"></div>
+      </div>
+      <div class="meta" id="format"></div>
+    </header>
+
+    <div class="controls">
+      <button id="previewBtn">Preview</button>
+      <button class="primary" id="exportBtn">Export WAV</button>
+    </div>
+
+    <div class="grid">
+      <section>
+        <h2>Recipe</h2>
+        <pre id="source"></pre>
+      </section>
+      <section>
+        <h2>Render Info</h2>
+        <dl>
+          <dt>Name</dt><dd id="name"></dd>
+          <dt>Duration</dt><dd id="duration"></dd>
+          <dt>Sample Rate</dt><dd id="sampleRate"></dd>
+          <dt>Channels</dt><dd id="channels"></dd>
+          <dt>Entry</dt><dd id="entry"></dd>
+          <dt>Peak</dt><dd id="peak">-</dd>
+          <dt>RMS</dt><dd id="rms">-</dd>
+          <dt>Download</dt><dd id="downloadName"></dd>
+        </dl>
+        <div class="status" id="status"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const SFX_CONFIG = __SFX_CONFIG_JSON__;
+    const RECIPE_SOURCE = __SFX_RECIPE_SOURCE_JSON__;
+
+    const $ = (id) => document.getElementById(id);
+    $("title").textContent = SFX_CONFIG.name;
+    $("sourcePath").textContent = SFX_CONFIG.sourcePath;
+    $("format").textContent = `${SFX_CONFIG.sampleRate} Hz / ${SFX_CONFIG.channels} ch`;
+    $("source").textContent = RECIPE_SOURCE;
+    $("name").textContent = SFX_CONFIG.name;
+    $("duration").textContent = `${SFX_CONFIG.duration}s`;
+    $("sampleRate").textContent = `${SFX_CONFIG.sampleRate}`;
+    $("channels").textContent = `${SFX_CONFIG.channels}`;
+    $("entry").textContent = SFX_CONFIG.entry || "auto";
+    $("downloadName").textContent = SFX_CONFIG.downloadName;
+
+    function setBusy(isBusy) {
+      $("previewBtn").disabled = isBusy;
+      $("exportBtn").disabled = isBusy;
+    }
+
+    function setStatus(message, isError = false) {
+      $("status").textContent = message;
+      $("status").className = isError ? "status error" : "status";
+    }
+
+    window.Sfx = {
+      whiteNoise(ctx, durationSeconds = 0.2) {
+        const frames = Math.max(1, Math.ceil(ctx.sampleRate * durationSeconds));
+        const buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < frames; i += 1) data[i] = Math.random() * 2 - 1;
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        return source;
+      },
+      applyAdsr(gainParam, t, attack = 0.005, decay = 0.04, sustain = 0.25, release = 0.12, peak = 1) {
+        gainParam.cancelScheduledValues(t);
+        gainParam.setValueAtTime(0.0001, t);
+        gainParam.exponentialRampToValueAtTime(Math.max(0.0001, peak), t + attack);
+        gainParam.exponentialRampToValueAtTime(Math.max(0.0001, peak * sustain), t + attack + decay);
+        gainParam.exponentialRampToValueAtTime(0.0001, t + attack + decay + release);
+      },
+      clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      },
+    };
+
+    function createConstructorPatch(ctx) {
+      const oldAudioContext = window.AudioContext;
+      const oldWebkitAudioContext = window.webkitAudioContext;
+      function PatchedAudioContext() {
+        return ctx;
+      }
+      window.AudioContext = PatchedAudioContext;
+      window.webkitAudioContext = PatchedAudioContext;
+      return () => {
+        window.AudioContext = oldAudioContext;
+        window.webkitAudioContext = oldWebkitAudioContext;
+      };
+    }
+
+    async function runRecipe(ctx) {
+      const restore = createConstructorPatch(ctx);
+      try {
+        const runner = new Function(
+          "ctx",
+          "audioCtx",
+          "options",
+          `"use strict";\n${RECIPE_SOURCE}\n` +
+          `const entry = ${JSON.stringify(SFX_CONFIG.entry || "")};\n` +
+          `if (entry) {\n` +
+          `  if (typeof globalThis[entry] === "function") return globalThis[entry](ctx, options);\n` +
+          `  if (typeof eval(entry) === "function") return eval(entry)(ctx, options);\n` +
+          `  throw new Error("entry function not found: " + entry);\n` +
+          `}\n` +
+          `if (typeof renderSfx === "function") return renderSfx(ctx, options);\n` +
+          `if (typeof playSfx === "function") return playSfx(ctx, options);\n` +
+          `if (typeof playSound === "function") return playSound(ctx, options);\n` +
+          `if (typeof play === "function") return play(ctx, options);\n`
+        );
+        await runner(ctx, ctx, SFX_CONFIG.options || {});
+      } finally {
+        restore();
+      }
+    }
+
+    async function renderOffline() {
+      const frames = Math.ceil(SFX_CONFIG.duration * SFX_CONFIG.sampleRate);
+      const ctx = new OfflineAudioContext(SFX_CONFIG.channels, frames, SFX_CONFIG.sampleRate);
+      await runRecipe(ctx);
+      return ctx.startRendering();
+    }
+
+    async function preview() {
+      setBusy(true);
+      setStatus("Previewing...");
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContextClass({ sampleRate: SFX_CONFIG.sampleRate });
+        await runRecipe(ctx);
+        setTimeout(() => ctx.close(), Math.ceil(SFX_CONFIG.duration * 1000) + 250);
+        setStatus("Preview scheduled.");
+      } catch (error) {
+        setStatus(error && error.message ? error.message : String(error), true);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    function statsForBuffer(buffer) {
+      let peak = 0;
+      let sumSquares = 0;
+      let samples = 0;
+      for (let channel = 0; channel < buffer.numberOfChannels; channel += 1) {
+        const data = buffer.getChannelData(channel);
+        samples += data.length;
+        for (let i = 0; i < data.length; i += 1) {
+          const value = data[i];
+          peak = Math.max(peak, Math.abs(value));
+          sumSquares += value * value;
+        }
+      }
+      return {
+        peak,
+        rms: samples ? Math.sqrt(sumSquares / samples) : 0,
+        duration: buffer.duration,
+        sampleRate: buffer.sampleRate,
+        channels: buffer.numberOfChannels,
+      };
+    }
+
+    function audioBufferToWav(buffer) {
+      const channels = buffer.numberOfChannels;
+      const sampleRate = buffer.sampleRate;
+      const frames = buffer.length;
+      const bytesPerSample = 2;
+      const blockAlign = channels * bytesPerSample;
+      const dataBytes = frames * blockAlign;
+      const out = new ArrayBuffer(44 + dataBytes);
+      const view = new DataView(out);
+      let offset = 0;
+
+      function writeString(value) {
+        for (let i = 0; i < value.length; i += 1) {
+          view.setUint8(offset, value.charCodeAt(i));
+          offset += 1;
+        }
+      }
+      function writeU16(value) {
+        view.setUint16(offset, value, true);
+        offset += 2;
+      }
+      function writeU32(value) {
+        view.setUint32(offset, value, true);
+        offset += 4;
+      }
+
+      writeString("RIFF");
+      writeU32(36 + dataBytes);
+      writeString("WAVE");
+      writeString("fmt ");
+      writeU32(16);
+      writeU16(1);
+      writeU16(channels);
+      writeU32(sampleRate);
+      writeU32(sampleRate * blockAlign);
+      writeU16(blockAlign);
+      writeU16(16);
+      writeString("data");
+      writeU32(dataBytes);
+
+      const channelData = Array.from({ length: channels }, (_, channel) => buffer.getChannelData(channel));
+      for (let i = 0; i < frames; i += 1) {
+        for (let channel = 0; channel < channels; channel += 1) {
+          const sample = Math.max(-1, Math.min(1, channelData[channel][i]));
+          view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+          offset += 2;
+        }
+      }
+      return out;
+    }
+
+    function arrayBufferToBase64(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let binary = "";
+      const chunk = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunk) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+      }
+      return btoa(binary);
+    }
+
+    async function exportWav({ download } = { download: true }) {
+      const buffer = await renderOffline();
+      const stats = statsForBuffer(buffer);
+      $("peak").textContent = stats.peak.toFixed(5);
+      $("rms").textContent = stats.rms.toFixed(5);
+      const wav = audioBufferToWav(buffer);
+      if (download) {
+        const blob = new Blob([wav], { type: "audio/wav" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = SFX_CONFIG.downloadName;
+        anchor.click();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      }
+      return { wav, stats };
+    }
+
+    $("previewBtn").addEventListener("click", () => preview());
+    $("exportBtn").addEventListener("click", async () => {
+      setBusy(true);
+      setStatus("Rendering WAV...");
+      try {
+        await exportWav({ download: true });
+        setStatus("WAV export ready.");
+      } catch (error) {
+        setStatus(error && error.message ? error.message : String(error), true);
+      } finally {
+        setBusy(false);
+      }
+    });
+
+    window.__sfxRenderForAutomation = async () => {
+      try {
+        const { wav, stats } = await exportWav({ download: false });
+        return { ok: true, base64: arrayBufferToBase64(wav), stats };
+      } catch (error) {
+        return { ok: false, error: error && error.stack ? error.stack : String(error) };
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+# ========== OS junk ==========
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ========== Editors / IDEs ==========
+.idea/
+*.sln.iml
+*.swp
+*.swo
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# ========== Python ==========
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+
+# ========== Node ==========
+node_modules/
+
+# ========== Harness compile artifacts ==========
+# 컴파일 산출물은 소스에서 생성됨 (tools/idlez_compile.py)
+harness/build/
+/build/
+
+# ========== Local env / caches ==========
+.env
+.env.*
+!.env.example
+.cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage/
+htmlcov/
+
+# ========== Logs ==========
+*.log
+*.log.*
+[Ll]ogs/
+**/[Ll]ogs/
+
+# ========== Local-only Claude settings ==========
+.claude/settings.local.json
+.claude/skills/hwpxskill/
+
+# ========== Local server overrides ==========
+**/Config.local.json

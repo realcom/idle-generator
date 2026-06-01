@@ -1,0 +1,21 @@
+id: 300101
+name: "포자 충격"
+tags: [UseToTarget, TargetPosition]
+cooldown: 1.6
+priority: 1
+targetRefreshType: Nearest
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "UIAssets/Images/ingame_icn_start.png"
+itemDataId: 200401
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Attack" } }
+  - time: 0.1
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 5.0
+      maxHit: 1
+      addDamage: { damagePercent: [110.0] }
+  - { time: 0.6, destroy: {} }
