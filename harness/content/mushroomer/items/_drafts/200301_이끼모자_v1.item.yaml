@@ -25,7 +25,7 @@ options:
         weight: 34
         minLevel: 1
         maxLevel: 2
-        addStats:
+        equipAddStats:
           - { type: HpPercent, value: [1.5, 2.4, 3.6, 5.2, 7.5] }
       - id: 2003012
         grade: 1
@@ -33,7 +33,7 @@ options:
         weight: 28
         minLevel: 1
         maxLevel: 2
-        addStats:
+        equipAddStats:
           - { type: DefensePercent, value: [1, 1.8, 2.8, 4.2, 6] }
       - id: 2003013
         grade: 1
@@ -41,7 +41,7 @@ options:
         weight: 18
         minLevel: 1
         maxLevel: 2
-        addStats:
+        equipAddStats:
           - { type: CooldownPercent, value: [0.6, 1, 1.6, 2.4, 3.4] }
       - id: 2003014
         grade: 1
@@ -49,7 +49,7 @@ options:
         weight: 20
         minLevel: 1
         maxLevel: 2
-        addStats:
+        equipAddStats:
           - { type: ExpPercent, value: [1, 1.8, 2.8, 4, 5.8] }
 rerollMaterialItemGroups:
   - level: 1
@@ -57,5 +57,10 @@ rerollMaterialItemGroups:
     materialItems:
       - { id: 5, count: 200 }
       - { id: 200106, count: 1 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 80 }
 spriteGroups:
-  Icon: "Items/Equipments/ICN_Equip_Head.png"
+  Icon: "assets/items/equipment/helmet_magic.png"

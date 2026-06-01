@@ -1,0 +1,23 @@
+id: 600109
+name: "포자초원 3회 돌파"
+type: Normal
+tags: [Wave]
+order: 109
+initialOpen: true
+clientAchievement: false
+condition: WinWave
+conditionValue1: 500101
+conditionValue2: 0
+targetProgress: 3
+initialProgress: 0
+repeatable: false
+autoReward: true
+popupArgs:
+  WaveDisplayType: Elite
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 900 }
+      - { itemDataId: 6, count: 90 }
+      - { itemDataId: 200103, count: 3 }

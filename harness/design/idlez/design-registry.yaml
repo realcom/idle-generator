@@ -42,5 +42,54 @@ concepts:
       - motion-juice.yaml
       - critique-rubric.yaml
       - ../../unity/recipes/ingame/hamster_growth_dock.yaml
+  hamster_growth_dock_overlay_mock_v1:
+    status: approved
+    kind: transparent_unity_overlay_mock
+    image: concepts/hamster_growth_dock_overlay_mock_v1.png
+    note: concepts/hamster_growth_dock_overlay_mock_v1.md
+    source: concepts/hamster_growth_dock_overlay_mock_v1.html
+    summary: 1080x1920 transparent PNG overlay used as a design gate before uGUI atom decomposition.
+  hamster_button_skin_sheet_v1:
+    status: candidate
+    kind: button_skin_sheet
+    image: concepts/hamster_button_skin_sheet_v1.png
+    note: concepts/hamster_button_skin_sheet_v1.md
+    parent: hamster_portrait_combat_growth_dock_d
+    summary: Button atom family for reward CTA, upgrade pills, side utilities, tabs, and currency chips.
+  hamster_button_blank_atlas_v1:
+    status: candidate
+    kind: runtime_button_atlas
+    image: concepts/hamster_button_blank_atlas_v1_magenta.png
+    note: concepts/hamster_button_blank_atlas_v1.md
+    parent: hamster_button_skin_sheet_v1
+    summary: Textless button bodies extracted into transparent runtime PNG assets for Phaser/CSS.
+  hamster_bottom_tab_blank_atlas_v1:
+    status: candidate
+    kind: runtime_button_atlas
+    image: concepts/hamster_bottom_tab_blank_atlas_v1_magenta.png
+    note: concepts/hamster_bottom_tab_blank_atlas_v1.md
+    parent: hamster_button_skin_sheet_v1
+    summary: Dedicated compact bottom navigation tab bodies for six-wide mobile Phaser layout.
+  hamster_mercenary_map_combat_a:
+    status: candidate
+    kind: portrait_map_combat
+    image: concepts/hamster_mercenary_map_combat_concept_a.png
+    note: concepts/hamster_mercenary_map_combat_concept_a.md
+    summary: Vertical 2D map-combat concept with a small hamster mercenary swarm, field resources, joystick, and compact HUD.
+  hamster_mercenary_map_combat_default_hamster_b:
+    status: candidate
+    kind: portrait_map_combat
+    image: concepts/hamster_mercenary_map_combat_default_hamster_b.png
+    note: concepts/hamster_mercenary_map_combat_default_hamster_b.md
+    parent: hamster_mercenary_map_combat_a
+    summary: Map-combat concept regenerated with the project default hamster atlas as the character identity reference.
+  hamster_mercenary_map_combat_unit110101_c:
+    status: candidate
+    kind: portrait_map_combat
+    image: concepts/hamster_mercenary_map_combat_unit110101_c.png
+    note: concepts/hamster_mercenary_map_combat_unit110101_c.md
+    parent: hamster_mercenary_map_combat_a
+    source_reference: ../../examples/patchresources/UIAssets/Images/unit_110101.png
+    summary: Map-combat concept using the example patchresources unit_110101 image as the primary hamster identity reference.
 
-current_target: hamster_portrait_combat_growth_dock_d
+current_target: hamster_mercenary_map_combat_unit110101_c

@@ -100,7 +100,8 @@ public class PurchaseProductButton : CustomButton
         var purchasableAt = MyPlayer.GetItemByDataID(m_Product.Id)?.Option?.ProductOption?.ReprocessableAt.ToOffsetSeconds() ?? 0;
         interactor.Update(TimeSystem.offsetTime >= purchasableAt, "PurchasableTimeNotYet".L());
         var productMaterial = m_Product.GetProductMaterial();
-        interactor.Update(MyPlayer.HasEnoughMaterial(productMaterial, m_PurchaseUnit), () => { productMaterial?.ShowAcquisitionablePopup(); });
+        interactor.Update(MyPlayer.HasEnoughMaterial(productMaterial, m_PurchaseUnit,
+            m_Product.GetProductMaterialPriceMultiplier(m_PurchaseUnit)), () => { productMaterial?.ShowAcquisitionablePopup(); });
         interactor.Update(m_Product.CheckExclusiveAchievements(out var exclusiveAchievementMessage), exclusiveAchievementMessage);
         interactor.Update(m_Product.CheckRequiredAchievements(out var requiredAchievementMessage), requiredAchievementMessage);
         

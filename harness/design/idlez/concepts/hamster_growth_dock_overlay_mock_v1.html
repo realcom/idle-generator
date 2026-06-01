@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1080, initial-scale=1">
+  <title>Hamster Growth Dock Overlay Mock v1</title>
+  <style>
+    :root {
+      --wood-dark: #3a1c0d;
+      --wood: #6f3513;
+      --wood-light: #a85d20;
+      --cream: #fff0c8;
+      --parchment: #f5d79e;
+      --ink: #3b1d0c;
+      --green: #75b944;
+      --gold: #f8a826;
+      --heart: #f4535e;
+      --line: #241007;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 1080px;
+      height: 1920px;
+      margin: 0;
+      overflow: hidden;
+      background: transparent;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      font-weight: 900;
+      color: white;
+    }
+
+    .screen {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+      background: transparent;
+    }
+
+    .top-hud {
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      top: 36px;
+      height: 118px;
+      border: 9px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(#8f4b1d, #4b230f);
+      box-shadow: 0 8px 0 rgba(0, 0, 0, 0.28), inset 0 7px 0 rgba(255, 214, 130, 0.24);
+      display: grid;
+      grid-template-columns: 1.28fr 1fr 1fr;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .counter {
+      min-width: 0;
+      border-radius: 16px;
+      background: linear-gradient(#4b220e, #2a1207);
+      border: 4px solid rgba(28, 11, 5, 0.8);
+      display: grid;
+      grid-template-columns: 74px 1fr;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 14px;
+    }
+
+    .counter-icon {
+      width: 66px;
+      height: 66px;
+      border: 5px solid #321507;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff8c8, var(--gold) 48%, #a75a12 100%);
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      font-size: 30px;
+      text-shadow: none;
+    }
+
+    .counter.heart .counter-icon {
+      background: radial-gradient(circle at 35% 30%, #ffb0b7, var(--heart) 56%, #9e1726 100%);
+      color: white;
+    }
+
+    .counter-label {
+      font-size: 22px;
+      line-height: 1;
+      color: #ffe6b0;
+      text-shadow: 0 3px 0 #000;
+      white-space: nowrap;
+    }
+
+    .counter-value {
+      margin-top: 4px;
+      font-size: 36px;
+      line-height: 1;
+      color: white;
+      text-shadow: 0 4px 0 #000, 3px 0 0 #000, -3px 0 0 #000;
+      white-space: nowrap;
+    }
+
+    .stage-pill {
+      position: absolute;
+      left: 335px;
+      top: 176px;
+      width: 410px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(45, 21, 8, 0.86);
+      border: 5px solid rgba(20, 9, 4, 0.85);
+      display: grid;
+      place-items: center;
+      font-size: 25px;
+      text-shadow: 0 4px 0 #000;
+    }
+
+    .mission {
+      position: absolute;
+      left: 34px;
+      bottom: 676px;
+      width: 302px;
+      height: 118px;
+      border: 6px solid #13270f;
+      border-radius: 14px;
+      background: rgba(18, 65, 30, 0.92);
+      padding: 15px 18px;
+      text-shadow: 0 3px 0 #000;
+    }
+
+    .mission-title {
+      font-size: 23px;
+      line-height: 1;
+    }
+
+    .mission-text {
+      margin-top: 5px;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .mission-bar {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 13px;
+      height: 16px;
+      background: #071006;
+    }
+
+    .mission-bar::after {
+      content: "";
+      display: block;
+      width: 42%;
+      height: 100%;
+      background: #8ce05a;
+    }
+
+    .damage {
+      position: absolute;
+      right: 54px;
+      bottom: 1010px;
+      padding: 13px 18px;
+      border-radius: 13px;
+      background: rgba(154, 70, 23, 0.9);
+      color: white;
+      font-size: 30px;
+      text-shadow: 0 4px 0 #000, 3px 0 0 #000, -3px 0 0 #000;
+    }
+
+    .dock {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 705px;
+      border-top: 10px solid var(--line);
+      background: linear-gradient(#8b4518 0, #6b3212 18%, #4a220e 100%);
+      box-shadow: 0 -8px 0 rgba(0, 0, 0, 0.25), inset 0 7px 0 rgba(255, 222, 143, 0.2);
+      padding: 22px 28px 24px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      height: 410px;
+    }
+
+    .stat-card {
+      position: relative;
+      border: 6px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(#fff4cf, var(--parchment));
+      box-shadow: inset 0 5px 0 rgba(255, 255, 255, 0.55), 0 6px 0 rgba(0, 0, 0, 0.2);
+      padding: 18px 18px 14px 126px;
+      color: var(--ink);
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      left: -12px;
+      top: -32px;
+      width: 142px;
+      height: 142px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .level {
+      position: absolute;
+      left: 18px;
+      top: 15px;
+      width: 92px;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .medal {
+      position: absolute;
+      left: 22px;
+      top: 54px;
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      border: 6px solid #7d3d10;
+      background: radial-gradient(circle at 35% 28%, #fffbd0, #ffba2c 52%, #d47715 100%);
+      display: grid;
+      place-items: center;
+      font-size: 40px;
+      color: var(--ink);
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.22);
+    }
+
+    .stat-name {
+      font-size: 32px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 34px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .upgrade {
+      position: absolute;
+      left: 126px;
+      right: 18px;
+      bottom: 15px;
+      height: 54px;
+      border-radius: 18px;
+      border: 5px solid #315516;
+      background: linear-gradient(#9ddd53, #55a42d);
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      align-items: center;
+      padding: 0 14px;
+      color: white;
+      font-size: 28px;
+      text-shadow: 0 4px 0 #16330b;
+    }
+
+    .coin-mini {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 4px solid #8d4c0e;
+      background: radial-gradient(circle, #fff7a8, #ffba26 62%, #d77413);
+    }
+
+    .reward-row {
+      display: grid;
+      grid-template-columns: 2.25fr 1fr;
+      gap: 16px;
+      height: 126px;
+      margin-top: 18px;
+    }
+
+    .reward,
+    .auto {
+      border: 7px solid var(--line);
+      border-radius: 28px;
+      box-shadow: inset 0 7px 0 rgba(255, 255, 255, 0.28), 0 6px 0 rgba(0, 0, 0, 0.24);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      text-shadow: 0 5px 0 rgba(0, 0, 0, 0.55);
+    }
+
+    .reward {
+      background: linear-gradient(#ffc44e, #ef8d18);
+      grid-template-columns: 110px 1fr;
+      font-size: 42px;
+      line-height: 1.04;
+    }
+
+    .hamster-face {
+      width: 82px;
+      height: 68px;
+      border: 6px solid var(--line);
+      border-radius: 42px 42px 32px 32px;
+      background: #ffc331;
+      margin-left: 18px;
+      position: relative;
+    }
+
+    .hamster-face::before,
+    .hamster-face::after {
+      content: "";
+      position: absolute;
+      top: 20px;
+      width: 10px;
+      height: 20px;
+      border-radius: 50%;
+      background: #331507;
+    }
+
+    .hamster-face::before {
+      left: 24px;
+    }
+
+    .hamster-face::after {
+      right: 24px;
+    }
+
+    .reward small {
+      display: block;
+      margin-top: 6px;
+      font-size: 33px;
+    }
+
+    .auto {
+      background: linear-gradient(#6fc947, #348b27);
+      font-size: 34px;
+    }
+
+    .tabs {
+      height: 96px;
+      margin-top: 18px;
+      border: 7px solid var(--line);
+      border-radius: 18px;
+      background: #2d1509;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      padding: 8px;
+      gap: 8px;
+    }
+
+    .tab {
+      border-radius: 14px;
+      background: #45200d;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 23px;
+      text-shadow: 0 3px 0 #000;
+    }
+
+    .tab.active {
+      background: linear-gradient(#b8661e, #7c3f13);
+      color: #ffe9b2;
+    }
+  </style>
+</head>
+<body>
+  <main class="screen" aria-label="Hamster Growth Dock transparent overlay">
+    <section class="top-hud">
+      <div class="counter">
+        <div class="counter-icon">⚔</div>
+        <div>
+          <div class="counter-label">전투력</div>
+          <div class="counter-value">125.8A</div>
+        </div>
+      </div>
+      <div class="counter">
+        <div class="counter-icon">●</div>
+        <div>
+          <div class="counter-label">골드</div>
+          <div class="counter-value">23.4A</div>
+        </div>
+      </div>
+      <div class="counter heart">
+        <div class="counter-icon">♥</div>
+        <div>
+          <div class="counter-label">하트</div>
+          <div class="counter-value">1.23A</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="stage-pill">Stage 12-8  버섯 숲 전투 중</div>
+
+    <aside class="mission">
+      <div class="mission-title">오늘의 전투</div>
+      <div class="mission-text">버섯 병정 42 / 100</div>
+      <div class="mission-bar"></div>
+    </aside>
+
+    <div class="damage">CRIT&nbsp; 18.7A</div>
+
+    <section class="dock">
+      <div class="card-grid">
+        <article class="stat-card">
+          <div class="level">Lv.245</div>
+          <div class="medal">⚔</div>
+          <div class="stat-name">공격력</div>
+          <div class="stat-value">24.5A</div>
+          <div class="upgrade"><span class="coin-mini"></span><span>3.21A</span></div>
+        </article>
+        <article class="stat-card">
+          <div class="level">Lv.230</div>
+          <div class="medal">♥</div>
+          <div class="stat-name">체력</div>
+          <div class="stat-value">18.7A</div>
+          <div class="upgrade"><span class="coin-mini"></span><span>2.14A</span></div>
+        </article>
+        <article class="stat-card">
+          <div class="level">Lv.210</div>
+          <div class="medal">●</div>
+          <div class="stat-name">골드 획득</div>
+          <div class="stat-value">6.45A</div>
+          <div class="upgrade"><span class="coin-mini"></span><span>1.89A</span></div>
+        </article>
+        <article class="stat-card">
+          <div class="level">Lv.205</div>
+          <div class="medal">↟</div>
+          <div class="stat-name">성장속도</div>
+          <div class="stat-value">5.32A</div>
+          <div class="upgrade"><span class="coin-mini"></span><span>1.77A</span></div>
+        </article>
+      </div>
+
+      <div class="reward-row">
+        <div class="reward">
+          <div class="hamster-face"></div>
+          <div>성장 보상 받기<small>89.32A</small></div>
+        </div>
+        <div class="auto">자동 강화</div>
+      </div>
+
+      <nav class="tabs">
+        <div class="tab active">성장</div>
+        <div class="tab">동료</div>
+        <div class="tab">장비</div>
+        <div class="tab">펫</div>
+        <div class="tab">모험</div>
+        <div class="tab">길드</div>
+      </nav>
+    </section>
+  </main>
+</body>
+</html>

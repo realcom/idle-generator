@@ -12,15 +12,17 @@ docker compose -f docker-compose.local.yml up --build
 ## 접속
 
 - Postgres: `localhost:15432`
-- WorldServer TCP: `localhost:11177`
+- WorldServer TCP/WebSocket: `localhost:11177`
 - ApiServer HTTP: `http://localhost:15000`
 - Swagger: `http://localhost:15000/swagger`
 
 기본 호스트 포트는 환경변수로 바꿀 수 있습니다.
 
 - Postgres: `IDLEZ_LOCAL_PG_PORT` 기본값 `15432`
-- WorldServer: `IDLEZ_LOCAL_WORLD_PORT` 기본값 `11177`
+- WorldServer TCP/WebSocket: `IDLEZ_LOCAL_WORLD_PORT` 기본값 `11177`
 - ApiServer: `IDLEZ_LOCAL_API_PORT` 기본값 `15000`
+
+`WorldProtocol` 기본값은 `TcpAndWebSocket` 입니다. 단일 프로토콜로만 띄워야 하면 `Tcp` 또는 `WebSocket` 으로 바꿀 수 있습니다.
 
 ## 초기화
 

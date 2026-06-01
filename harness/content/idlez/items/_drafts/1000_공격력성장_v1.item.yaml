@@ -1,0 +1,14 @@
+id: 1000
+name: "공격력 성장"
+category: Stat
+tab: -1
+priority: 1
+tags: [HamsterGrowthStat, GrowthAttack]
+initialCreate: true
+initialCreateCount: 1
+initialCreateLevel: 1
+addStats:
+  - { type: Attack, value: [0.0] }
+levelUpGoldCost: { levels: 1..80, base: 40, step: 25 }
+spriteGroups:
+  Icon: "Items/Goods/ICN_Goods_Gold.png"

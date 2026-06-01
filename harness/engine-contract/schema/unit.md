@@ -35,6 +35,7 @@
 ## 작성 규칙
 
 - `id`는 게임 프로필의 ID 대역 규칙을 따른다 (예: idlez 캐릭터 `1101xx`).
+- 전투 화면에 등장하는 유닛은 `ScalePercent`를 명시한다. `ScalePercent -60`은 원본 prefab의 40% 크기이며, 게임별 타입 규약은 `harness/game-profiles/<game>.profile.yaml`의 `unit_visual_scale`을 따른다.
 - 스탯 성장은 `addStats[].value`를 손으로 채우지 말고 `growth/*.growth.md` 식으로 생성 → `bind`로 이 유닛에 머지. (몬스터를 스테이지별로 강하게 하려면 value[]를 길게 쓰거나 맵 레벨/스케일 버프.)
 - 행동은 `triggers[]`에 트리거 이름을 넣고, 해당 `*.behavior.yaml`을 작성.
 - 적 유닛이면 `dropAddItemGroups`로 드롭을, `armorType`으로 상성을 지정.

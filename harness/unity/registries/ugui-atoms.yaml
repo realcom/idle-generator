@@ -55,9 +55,7 @@ atoms:
     required_children:
       - Panel_Frame
       - StatCardGrid
-      - Btn_GrowthReward
-      - Btn_AutoEnhance
-      - BottomTabBar
+      - EquipmentPanel
 
   GrowthStatCard:
     status: generated
@@ -89,6 +87,24 @@ atoms:
     required_children:
       - Icon_HamsterOrMushroom
       - Text_Label
+    required_components:
+      - CustomButton
+      - Image
+
+  EquipmentPanel:
+    status: generated
+    required_children:
+      - Text_Title
+      - Text_Summary
+      - Text_SoulValue
+      - EquipmentSlotGrid
+
+  EquipmentSummonButton:
+    status: generated
+    required_children:
+      - Icon_Lamp
+      - Text_Label
+      - Text_Cost
     required_components:
       - CustomButton
       - Image

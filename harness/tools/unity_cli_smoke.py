@@ -48,6 +48,7 @@ BUILD_OUTPUTS = [
 BOOTSTRAP_USINGS = "Commons,Commons.Resources,Commons.Types.Players"
 STATE_USINGS = "Commons.Game,Commons.Types.Units"
 UPGRADE_USINGS = "Commons.Types.Units"
+GROWTH_DOCK_USINGS = "Commons.Types.Units,System.Reflection"
 
 BOOTSTRAP_CODE = r"""
 Utility.ResetMissingResources();
@@ -90,7 +91,9 @@ MyPlayer.CacheAvatar(new PlayerAvatar
     },
 });
 
-var homeMap = MyPlayer.GetCurrentHomeMap() ?? ResourceMap.Get(ResourceMap.Global.DataId.TutorialMap);
+var homeMap = ResourceMap.Get(__EXPECTED_MAP_ID__);
+if (homeMap == null)
+    homeMap = ResourceMap.Get(ResourceMap.Global.DataId.TutorialMap);
 if (homeMap == null)
     return "failed: no home map";
 
@@ -124,6 +127,35 @@ method?.Invoke(mode, new object[] { "Attack" });
 return $"gold={player?.Gold}|attack={unit?.Attack}|baseAttack={player?.ItemStat[(int)UnitStatType.Attack]}";
 """
 
+GROWTH_DOCK_CODE = r"""
+var gbm = GameBoardManager.Get();
+var gb = gbm?.gameBoard;
+var player = gb?.GetPlayerById(MyPlayer.Player.Id);
+var unit = gb?.GetUnitByPlayerId(MyPlayer.Player.Id);
+var presenter = UnityEngine.Object.FindFirstObjectByType<HamsterGrowthDockPresenter>();
+var beforeItem = MyPlayer.GetItemByDataID(1001, checkCount:false, checkTimeValid:false, checkDeprecated:false);
+var beforeLevel = beforeItem?.Level ?? 0;
+var beforeGold = player?.Gold ?? 0;
+var beforeHpStat = player != null && player.ItemStat.Count > (int)UnitStatType.Hp ? player.ItemStat[(int)UnitStatType.Hp] : 0f;
+var beforeMaxHp = unit?.MaxHp ?? 0;
+var method = typeof(HamsterGrowthDockPresenter).GetMethod("TryGrowCheapestAffordable", BindingFlags.Instance | BindingFlags.NonPublic);
+method?.Invoke(presenter, null);
+var afterItem = MyPlayer.GetItemByDataID(1001, checkCount:false, checkTimeValid:false, checkDeprecated:false);
+var afterHpStat = player != null && player.ItemStat.Count > (int)UnitStatType.Hp ? player.ItemStat[(int)UnitStatType.Hp] : 0f;
+var afterMaxHp = unit?.MaxHp ?? 0;
+return $"{{\"presenter\":{(presenter != null ? "true" : "false")},\"goldBefore\":{beforeGold},\"goldAfter\":{player?.Gold ?? 0},\"hpItemLevelBefore\":{beforeLevel},\"hpItemLevelAfter\":{afterItem?.Level ?? 0},\"hpStatBefore\":{beforeHpStat},\"hpStatAfter\":{afterHpStat},\"maxHpBefore\":{beforeMaxHp},\"maxHpAfter\":{afterMaxHp}}}";
+"""
+
+GROWTH_DOCK_STATE_CODE = r"""
+var gbm = GameBoardManager.Get();
+var gb = gbm?.gameBoard;
+var player = gb?.GetPlayerById(MyPlayer.Player.Id);
+var unit = gb?.GetUnitByPlayerId(MyPlayer.Player.Id);
+var item = MyPlayer.GetItemByDataID(1001, checkCount:false, checkTimeValid:false, checkDeprecated:false);
+var hpStat = player != null && player.ItemStat.Count > (int)UnitStatType.Hp ? player.ItemStat[(int)UnitStatType.Hp] : 0f;
+return $"{{\"gold\":{player?.Gold ?? 0},\"hpItemLevel\":{item?.Level ?? 0},\"hpStat\":{hpStat},\"maxHp\":{unit?.MaxHp ?? 0}}}";
+"""
+
 
 def parse_args() -> argparse.Namespace:
     default_cli = os.environ.get("UNITY_CLI_BIN") or os.environ.get("UNITY_CLI") or "/private/tmp/unity-cli"
@@ -140,6 +172,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--skip-build-sync", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--skip-unity-compile", action="store_true", help="Skip Unity refresh --compile.")
     parser.add_argument("--upgrade-smoke", action="store_true", help="Invoke Mushroomer attack upgrade once.")
+    parser.add_argument("--growth-dock-smoke", action="store_true", help="Invoke HamsterGrowthDock growth once and validate Stat item state.")
     parser.add_argument("--keep-playing", action="store_true", help="Leave Unity in play mode after the smoke.")
     return parser.parse_args()
 
@@ -245,7 +278,8 @@ def main() -> int:
         print(run_cli(["editor", "play", "--wait"], timeout_ms=120000))
         time.sleep(0.5)
         run_cli(["console", "--clear"], timeout_ms=30000)
-        print(unity_exec(BOOTSTRAP_CODE, usings=BOOTSTRAP_USINGS, timeout_ms=60000))
+        bootstrap_code = BOOTSTRAP_CODE.replace("__EXPECTED_MAP_ID__", str(args.expected_map))
+        print(unity_exec(bootstrap_code, usings=BOOTSTRAP_USINGS, timeout_ms=60000))
         time.sleep(args.settle_seconds)
 
         state = parse_state(unity_exec(STATE_CODE, usings=STATE_USINGS, timeout_ms=30000))
@@ -265,6 +299,23 @@ def main() -> int:
                 raise RuntimeError("upgrade smoke did not spend gold")
             if float(upgraded_state.get("attack", 0)) <= float(state.get("attack", 0)):
                 raise RuntimeError("upgrade smoke did not increase attack")
+
+        if args.growth_dock_smoke:
+            growth_state = parse_state(unity_exec(GROWTH_DOCK_CODE, usings=GROWTH_DOCK_USINGS, timeout_ms=30000))
+            print(json.dumps(growth_state, ensure_ascii=False, indent=2))
+            time.sleep(1.0)
+            growth_after_tick = parse_state(unity_exec(GROWTH_DOCK_STATE_CODE, usings=GROWTH_DOCK_USINGS, timeout_ms=30000))
+            print(json.dumps(growth_after_tick, ensure_ascii=False, indent=2))
+            if not growth_state.get("presenter"):
+                raise RuntimeError("growth dock presenter not found")
+            if float(growth_state.get("goldAfter", 0)) >= float(growth_state.get("goldBefore", 0)):
+                raise RuntimeError("growth dock smoke did not spend board gold")
+            if int(growth_state.get("hpItemLevelAfter", 0)) <= int(growth_state.get("hpItemLevelBefore", 0)):
+                raise RuntimeError("growth dock smoke did not level Stat item 1001")
+            if float(growth_state.get("hpStatAfter", 0)) <= float(growth_state.get("hpStatBefore", 0)):
+                raise RuntimeError("growth dock smoke did not update PlayerItemStat Hp")
+            if float(growth_after_tick.get("maxHp", 0)) <= float(growth_state.get("maxHpBefore", 0)):
+                raise RuntimeError("growth dock smoke did not update runtime unit MaxHp")
 
         console_entries = read_console()
         if console_entries:

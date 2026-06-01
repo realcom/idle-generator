@@ -5,6 +5,7 @@ using DotNetty.Buffers;
 using DotNetty.Codecs.Http.WebSockets;
 using DotNetty.Transport.Channels.Embedded;
 using Server.Codecs;
+using System.Text;
 using Xunit;
 
 namespace Server.Tests;
@@ -128,6 +129,60 @@ public sealed class PacketCodecTests
     }
 
     [Fact]
+    public void ProtocolSwitch_detects_websocket_upgrade_prefix()
+    {
+        var request = Encoding.ASCII.GetBytes(
+            "GET / HTTP/1.1\r\n" +
+            "Host: localhost\r\n" +
+            "Upgrade: websocket\r\n" +
+            "Connection: Upgrade\r\n" +
+            "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n" +
+            "Sec-WebSocket-Version: 13\r\n\r\n");
+        var buffer = Unpooled.WrappedBuffer(request);
+
+        try
+        {
+            Assert.Equal(ServerProtocol.WebSocket, DetectProtocol(buffer));
+        }
+        finally
+        {
+            buffer.Release();
+        }
+    }
+
+    [Fact]
+    public void ProtocolSwitch_detects_binary_packet_as_tcp()
+    {
+        var outbound = new EmbeddedChannel(new PacketEncoder());
+        outbound.WriteOutbound(Packet.Pop(0x65, new LeaveBoardRequest()));
+        var encoded = Assert.IsAssignableFrom<IByteBuffer>(outbound.ReadOutbound<IByteBuffer>());
+
+        try
+        {
+            Assert.Equal(ServerProtocol.Tcp, DetectProtocol(encoded));
+        }
+        finally
+        {
+            encoded.Release();
+        }
+    }
+
+    [Fact]
+    public void ProtocolSwitch_waits_for_partial_websocket_prefix_before_selecting_protocol()
+    {
+        var buffer = Unpooled.WrappedBuffer(new[] { (byte)'G' });
+
+        try
+        {
+            Assert.Null(DetectProtocol(buffer));
+        }
+        finally
+        {
+            buffer.Release();
+        }
+    }
+
+    [Fact]
     public void Packet_round_trip_preserves_update_payload_fields()
     {
         var packet = Packet.Pop(0x55, new PlayerDisconnectedUpdate
@@ -157,5 +212,11 @@ public sealed class PacketCodecTests
         {
             parsed.Dispose();
         }
+    }
+
+    private static ServerProtocol? DetectProtocol(IByteBuffer buffer)
+    {
+        return global::Server.Server<global::WorldServer.WorldServer, global::WorldServer.WorldPlayer.WorldPlayer>
+            .ProtocolSwitchHandler.DetectProtocol(buffer);
     }
 }

@@ -1,0 +1,23 @@
+flowchart LR
+    subgraph A["일반 AI 게임 도구 개발사"]
+        A1[외부 게임 빌림]
+        A2[가상 시나리오]
+        A3[검증 한계]
+        A1 --> A3
+        A2 --> A3
+    end
+    subgraph B["IDLE Forge (당사)"]
+        B1["닌자키우기<br/>100만 DL"]
+        B2["닌자 서바이벌<br/>70만 DL"]
+        B3["월 5천만원<br/>3인 AI 운영"]
+        B4["라이브 데이터<br/>실시간 검증"]
+        B1 --> B4
+        B2 --> B4
+        B3 --> B4
+    end
+    A3 -.대비.-> B4
+    B4 --> C["2025 실증<br/>리텐션 +5%p<br/>수익 +5%"]
+
+    style A fill:#FFE6E6
+    style B fill:#E6F3FF
+    style C fill:#E6FFE6

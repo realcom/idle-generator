@@ -266,6 +266,76 @@ public sealed class ItemManagerTests
     }
 
     [Fact]
+    public void BuyItem_applies_progressive_material_price()
+    {
+        const int materialId = 1001;
+        const int rewardId = 1002;
+        const int productId = 1003;
+
+        using var resources = new TestResourceScope(
+            items:
+            [
+                CreateItem(materialId, category: ResourceItem.Types.Category.Material),
+                CreateItem(rewardId, category: ResourceItem.Types.Category.Material),
+                new ResourceItem
+                {
+                    Id = productId,
+                    Category = ResourceItem.Types.Category.Product,
+                    RegenPeriod = 5,
+                    RegenCount = 5,
+                    ProductMaterialItemGroups =
+                    {
+                        new MaterialItemGroup
+                        {
+                            ShouldAllValid = true,
+                            MaterialItems =
+                            {
+                                new MaterialItem { Id = materialId, Count = 10 },
+                            }
+                        },
+                    },
+                    AddItemGroups =
+                    {
+                        new AddItemGroup
+                        {
+                            ShouldAddAll = true,
+                            AddItems =
+                            {
+                                new AddItem { ItemDataId = rewardId, Count = 1 },
+                            }
+                        },
+                    },
+                },
+            ]);
+
+        var harness = new WorldPlayerTestHarness(sentLoginResponse: true);
+        harness.Manager.AddItem(materialId, 100);
+
+        for (var i = 0; i < 5; i++)
+        {
+            var consumed = new List<PlayerItemMessage>();
+            Assert.Equal(StatusCode.Ok, harness.Manager.BuyItem(productId, 1, out _, consumed));
+            Assert.Single(consumed);
+            Assert.Equal(10, consumed[0].Count);
+        }
+
+        var sixthConsumed = new List<PlayerItemMessage>();
+        Assert.Equal(StatusCode.Ok, harness.Manager.BuyItem(productId, 1, out _, sixthConsumed));
+        Assert.Single(sixthConsumed);
+        Assert.Equal(15, sixthConsumed[0].Count);
+
+        var material = Assert.Single(harness.Manager.GetItemsByDataId(materialId));
+        Assert.Equal(35, material.count);
+
+        var reward = Assert.Single(harness.Manager.GetItemsByDataId(rewardId));
+        Assert.Equal(6, reward.count);
+
+        var product = Assert.Single(harness.Manager.GetItemsByDataId(productId));
+        using var optionScope = product.GetOptionScope();
+        Assert.Equal(6, optionScope.Option.ProductOption?.MultiplyBonusCount);
+    }
+
+    [Fact]
     public void UseItem_add_stamina_utility_caps_target_unit_and_consumes_item()
     {
         const int unitItemDataId = 1001;
@@ -417,6 +487,64 @@ public sealed class ItemManagerTests
 
         Assert.Equal(4, equipment.level);
         Assert.Equal(7, Assert.Single(harness.Manager.Avatar.Equipments).Level);
+    }
+
+    [Fact]
+    public void AddItem_rolls_initial_options_for_unstackable_equipment()
+    {
+        const int equipmentItemDataId = 1001;
+        const int firstOptionId = 9001;
+        const int secondOptionId = 9002;
+
+        using var resources = new TestResourceScope(
+            items:
+            [
+                new ResourceItem
+                {
+                    Id = equipmentItemDataId,
+                    Category = ResourceItem.Types.Category.Equipment,
+                    Type = ResourceItem.Types.Type.Head,
+                    Unstackable = true,
+                    OptionCounts = { 2 },
+                    Options =
+                    {
+                        new ItemOptionGroup
+                        {
+                            Options =
+                            {
+                                new ItemOption
+                                {
+                                    Id = firstOptionId,
+                                    MinLevel = 2,
+                                    MaxLevel = 2,
+                                },
+                                new ItemOption
+                                {
+                                    Id = secondOptionId,
+                                    MinLevel = 2,
+                                    MaxLevel = 2,
+                                },
+                            },
+                        },
+                    },
+                },
+            ]);
+
+        var harness = new WorldPlayerTestHarness();
+
+        Assert.Equal(StatusCode.Ok, harness.Manager.AddItem(equipmentItemDataId, 1));
+
+        var equipment = Assert.Single(harness.Manager.GetItemsByDataId(equipmentItemDataId));
+        using var optionScope = equipment.GetOptionScope();
+        var rolledOptions = optionScope.Option.RerollOptions;
+
+        Assert.Equal(2, rolledOptions.Count);
+        Assert.All(rolledOptions, option =>
+        {
+            Assert.Contains(option.Id, new[] { firstOptionId, secondOptionId });
+            Assert.Equal(2, option.Level);
+            Assert.Equal(1, option.PoolId);
+        });
     }
 
     [Fact]

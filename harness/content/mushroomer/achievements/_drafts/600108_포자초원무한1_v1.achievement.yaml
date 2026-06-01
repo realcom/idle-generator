@@ -1,0 +1,22 @@
+id: 600108
+name: "포자초원 1회 돌파"
+type: Normal
+tags: [Wave]
+order: 108
+initialOpen: true
+clientAchievement: false
+condition: WinWave
+conditionValue1: 500101
+conditionValue2: 0
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+popupArgs:
+  WaveDisplayType: Normal
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 300 }
+      - { itemDataId: 6, count: 30 }

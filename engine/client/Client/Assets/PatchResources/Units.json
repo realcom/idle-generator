@@ -299,7 +299,8 @@
    "uiOffset": {
     "x": 0.0,
     "y": 0.15
-   }
+   },
+   "hitDropItemSize": 40.0
   },
   {
    "id": 110201,
@@ -605,6 +606,16 @@
        "weight": 100.0
       }
      ]
+    },
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 200108,
+       "count": "5"
+      }
+     ]
     }
    ],
    "prefab": "Units/Monsters/large_melee_slime_green.prefab",
@@ -808,6 +819,16 @@
        "group": 1,
        "pityGroup": 5,
        "weight": 30.0
+      }
+     ]
+    },
+    {
+     "shouldAddAll": true,
+     "probPercent": 100.0,
+     "addItems": [
+      {
+       "itemDataId": 200108,
+       "count": "50"
       }
      ]
     }

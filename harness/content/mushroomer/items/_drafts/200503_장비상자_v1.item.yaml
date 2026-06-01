@@ -1,12 +1,15 @@
 id: 200503
-name: "장비 상자"
+name: "마혼 램프"
 category: Product
 type: Product
 grade: 1
 productMaterialItemGroups:
   - shouldAllValid: true
     materialItems:
-      - { id: 4, count: 80 }
+      - { id: 200108, count: 10 }
+summonCostScaling:
+  everyPurchases: 5
+  addMaterialCount: 5
 addItemGroups:
   - shouldAddAll: false
     probPercent: 100

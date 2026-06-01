@@ -11,7 +11,7 @@ deadDestroyDelaySeconds: 0.45
 addStats:
   - { type: Hp, value: [60.0] }
   - { type: Attack, value: [4.0] }
-  - { type: Defense, value: [0.0] }
+  - { type: Defense, value: [1.0] }
   - { type: MoveSpeed, value: [3.1] }
 
 triggers:
@@ -28,6 +28,10 @@ dropAddItemGroups:
     probPercent: 45
     addItems:
       - { itemDataId: 200101, count: 1, weight: 100, group: 1 }
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200108, count: 5 }
 
 prefab: "Units/Monsters/large_melee_slime_green.prefab"
 sprite: "Units/Monsters/Assets/large_melee_slime.png"

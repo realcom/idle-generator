@@ -45,6 +45,21 @@ vars:
 
 ---
 
+name: MushroomFieldWave4
+domain: map
+
+vars:
+  wave4_unit:  { type: int, default: 110201 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+
+---
+
 name: MushroomFieldBossWave
 domain: map
 
@@ -68,66 +83,100 @@ vars:
   sporeling_unit: { type: int, default: 110201 }
   boss_unit: { type: int, default: 110501 }
   enemy_spawn: { type: int, default: 1 }
+  wave1_target: { type: int, default: 10 }
+  wave2_target: { type: int, default: 14 }
+  wave3_target: { type: int, default: 18 }
+  wave4_target: { type: int, default: 24 }
+  wave5_target: { type: int, default: 13 }
+  transition_enemy_tail: { type: int, default: 2 }
   wave_transition_pending: { type: int, default: 603 }
   wave_spawned: { type: int, default: 604 }
 
 "on":
   - event: update
-    every: 1s
+    every: 0.5s
     do:
       - when: "waveTransitionPending == 1"
         SetBoardVariable: { key: $wave_transition_pending, value: 0 }
 
       - GetUnitCountByTeam: { team: $enemy_team }
-      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned >= 10 and return == 0"
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned >= $wave1_target and return <= $transition_enemy_tail"
         SetBoardVariable: { key: $wave_transition_pending, value: 1 }
         SetWave: { value: 2 }
         SendWaveQueuedEvent: { name: MAP_ONSTART_MUSHROOMFIELDWAVE2 }
 
       - GetUnitCountByTeam: { team: $enemy_team }
-      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned >= 10 and return == 0"
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned >= $wave2_target and return <= $transition_enemy_tail"
         SetBoardVariable: { key: $wave_transition_pending, value: 1 }
         SetWave: { value: 3 }
         SendWaveQueuedEvent: { name: MAP_ONSTART_MUSHROOMFIELDWAVE3 }
 
       - GetUnitCountByTeam: { team: $enemy_team }
-      - when: "waveTransitionPending == 0 and wave == 3 and waveSpawned >= 10 and return == 0"
+      - when: "waveTransitionPending == 0 and wave == 3 and waveSpawned >= $wave3_target and return <= $transition_enemy_tail"
         SetBoardVariable: { key: $wave_transition_pending, value: 1 }
         SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_MUSHROOMFIELDWAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and waveSpawned >= $wave4_target and return <= $transition_enemy_tail"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
         SendWaveQueuedEvent: { name: MAP_ONSTART_MUSHROOMFIELDBOSSWAVE }
 
       - GetUnitCountByTeam: { team: $enemy_team }
-      - when: "waveTransitionPending == 0 and wave == 4 and waveSpawned >= 1 and return == 0"
+      - when: "waveTransitionPending == 0 and wave == 5 and waveSpawned >= $wave5_target and return == 0"
         EndGame: { result: win }
 
-      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned < 10"
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned < $wave1_target and tick % 30 == 0"
         AddUnit:
           unitDataId: $sporeling_unit
           count: 1
+          level: enemyLevel
           team: $enemy_team
           locationId: $enemy_spawn
         SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
 
-      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned < 10"
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned < $wave2_target"
         AddUnit:
           unitDataId: $sporeling_unit
           count: 1
+          level: "enemyLevel + 1"
           team: $enemy_team
           locationId: $enemy_spawn
         SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
 
-      - when: "waveTransitionPending == 0 and wave == 3 and waveSpawned < 10"
+      - when: "waveTransitionPending == 0 and wave == 3 and waveSpawned < $wave3_target"
         AddUnit:
           unitDataId: $sporeling_unit
-          count: 1
+          count: 2
+          level: "enemyLevel + 2"
           team: $enemy_team
           locationId: $enemy_spawn
-        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 2" }
 
-      - when: "waveTransitionPending == 0 and wave == 4 and waveSpawned < 1"
+      - when: "waveTransitionPending == 0 and wave == 4 and waveSpawned < $wave4_target"
+        AddUnit:
+          unitDataId: $sporeling_unit
+          count: 3
+          level: "enemyLevel + 4"
+          team: $enemy_team
+          locationId: $enemy_spawn
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 3" }
+
+      - when: "waveTransitionPending == 0 and wave == 5 and waveSpawned == 0"
         AddUnit:
           unitDataId: $boss_unit
           count: 1
+          level: "bossLevel + 5"
           team: $enemy_team
           locationId: $enemy_spawn
         SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+
+      - when: "waveTransitionPending == 0 and wave == 5 and waveSpawned < $wave5_target"
+        AddUnit:
+          unitDataId: $sporeling_unit
+          count: 2
+          level: "enemyLevel + 5"
+          team: $enemy_team
+          locationId: $enemy_spawn
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 2" }

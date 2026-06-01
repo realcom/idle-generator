@@ -5,7 +5,6 @@ using Commons;
 using Commons.Game;
 using Commons.Game.Events;
 using Commons.Utility;
-using Commons.Types.Units;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -17,7 +16,8 @@ public class ModeManagerMushroom : ZModeManagerBattle
     public const string AbilityPageAddressKey = nameof(Page_Ability);
     public const string ShopPageAddressKey = "Page_Shop_New";
 
-    private const string HamsterGrowthDockPreviewName = "HamsterGrowthDockPreview";
+    private const string HamsterGrowthDockPreviewNamePrefix = "HamsterGrowthDockPreview";
+    private const string HamsterGrowthDockPreviewName = "HamsterGrowthDockPreview_v2";
     private const string HamsterGrowthDockPreviewResource = "HarnessPreview/HamsterGrowthDock";
     private const string PauseRequestKey = "ModeManagerMushroomOverlay";
     private const float MushroomCameraFov = 9.25f;
@@ -55,12 +55,11 @@ public class ModeManagerMushroom : ZModeManagerBattle
 
     private readonly struct UpgradeSpec
     {
-        public UpgradeSpec(string id, string label, UnitStatType statType, float statGain, long baseCost, long costStep, string gainText)
+        public UpgradeSpec(string id, string label, int itemDataId, long baseCost, long costStep, string gainText)
         {
             Id = id;
             Label = label;
-            StatType = statType;
-            StatGain = statGain;
+            ItemDataId = itemDataId;
             BaseCost = baseCost;
             CostStep = costStep;
             GainText = gainText;
@@ -68,8 +67,7 @@ public class ModeManagerMushroom : ZModeManagerBattle
 
         public string Id { get; }
         public string Label { get; }
-        public UnitStatType StatType { get; }
-        public float StatGain { get; }
+        public int ItemDataId { get; }
         public long BaseCost { get; }
         public long CostStep { get; }
         public string GainText { get; }
@@ -83,13 +81,13 @@ public class ModeManagerMushroom : ZModeManagerBattle
 
     private static readonly UpgradeSpec[] UpgradeSpecs =
     {
-        new("Attack", "공격 강화", UnitStatType.Attack, 5f, 40, 25, "공격 +5"),
-        new("Hp", "체력 강화", UnitStatType.Hp, 45f, 35, 20, "체력 +45"),
-        new("Skill", "스킬 강화", UnitStatType.GameplaySkillScalePercent, 8f, 60, 35, "스킬 피해 +8%"),
+        new("Attack", "공격력", 1000, 40, 25, "공격력 +5"),
+        new("Hp", "체력", 1001, 35, 20, "체력 +45"),
+        new("AttackSpeed", "공격속도", 1002, 55, 30, "공속 +4%"),
+        new("CriticalDamage", "크리티컬 데미지", 1003, 60, 35, "치피 +10%"),
     };
 
     private readonly Dictionary<string, Button> _dockButtons = new();
-    private readonly Dictionary<string, int> _upgradeLevels = new();
     private readonly Dictionary<string, List<Button>> _upgradeButtons = new();
 
     private RectTransform _hudRoot;
@@ -115,7 +113,9 @@ public class ModeManagerMushroom : ZModeManagerBattle
     private Button _battleButton;
     private Button _overlayCloseButton;
     private GameObject _hamsterGrowthDockPreview;
+    private HamsterGrowthDockPresenter _hamsterGrowthDockPresenter;
     private bool _hasLoggedHamsterGrowthDockPreviewMissing;
+    private bool _isHarnessPreviewMode;
     private bool _isOverlayOpen;
     private bool _isCameraLayoutQueued;
     private string _currentPanelId;
@@ -271,6 +271,22 @@ public class ModeManagerMushroom : ZModeManagerBattle
     {
         if (_hamsterGrowthDockPreview != null)
         {
+            if (_hamsterGrowthDockPreview.name != HamsterGrowthDockPreviewName)
+            {
+                Object.Destroy(_hamsterGrowthDockPreview);
+                _hamsterGrowthDockPreview = null;
+            }
+            else
+            {
+                ConfigureHamsterGrowthDockPreview();
+                return;
+            }
+        }
+
+        DestroyStaleHamsterGrowthDockPreviewChildren();
+
+        if (_hamsterGrowthDockPreview != null)
+        {
             ConfigureHamsterGrowthDockPreview();
             return;
         }
@@ -313,9 +329,14 @@ public class ModeManagerMushroom : ZModeManagerBattle
         if (canvasGroup != null)
         {
             canvasGroup.alpha = 1f;
-            canvasGroup.blocksRaycasts = false;
-            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = true;
+            canvasGroup.interactable = true;
         }
+
+        _hamsterGrowthDockPresenter = _hamsterGrowthDockPreview.GetOrAdd<HamsterGrowthDockPresenter>();
+        _hamsterGrowthDockPresenter.RefreshFromRuntime();
+
+        SetHarnessPreviewMode(true);
 
         if (!_isOverlayOpen)
             _hamsterGrowthDockPreview.transform.SetAsLastSibling();
@@ -323,10 +344,71 @@ public class ModeManagerMushroom : ZModeManagerBattle
 
     private void CleanupHamsterGrowthDockPreview()
     {
+        SetHarnessPreviewMode(false);
+
         if (_hamsterGrowthDockPreview != null)
             Object.Destroy(_hamsterGrowthDockPreview);
 
         _hamsterGrowthDockPreview = null;
+        _hamsterGrowthDockPresenter = null;
+    }
+
+    private void DestroyStaleHamsterGrowthDockPreviewChildren()
+    {
+        for (var i = transform.childCount - 1; i >= 0; i--)
+        {
+            var child = transform.GetChild(i);
+            if (child.name == HamsterGrowthDockPreviewName)
+                continue;
+            if (!child.name.StartsWith(HamsterGrowthDockPreviewNamePrefix, StringComparison.Ordinal))
+                continue;
+
+            Object.Destroy(child.gameObject);
+        }
+    }
+
+    private void SetHarnessPreviewMode(bool active)
+    {
+        _isHarnessPreviewMode = active;
+
+        var gameBoardManager = GameBoardManager.Get();
+        gameBoardManager?.BlockShowGameResult(active);
+
+        if (active)
+            SuppressHarnessPreviewPopups();
+
+        SetManagedRootVisible(_hudRoot, !active);
+        SetManagedRootVisible(_bottomUiRoot, !active);
+        SetManagedRootVisible(_quickGrowthRoot, !active);
+        SetManagedRootVisible(_dockRoot, !active);
+        SetManagedRootVisible(_overlayRoot, !active && _isOverlayOpen);
+    }
+
+    private void LateUpdate()
+    {
+        if (!_isHarnessPreviewMode)
+            return;
+
+        SuppressHarnessPreviewPopups();
+
+        if (_hamsterGrowthDockPreview != null && !_isOverlayOpen)
+            _hamsterGrowthDockPreview.transform.SetAsLastSibling();
+    }
+
+    private static void SuppressHarnessPreviewPopups()
+    {
+        var gameManager = GameManager.Get();
+        if (gameManager == null)
+            return;
+
+        gameManager.HideAllPopups<Popup_GameResults>();
+        gameManager.HideAllPopups<Popup_Alert>();
+    }
+
+    private static void SetManagedRootVisible(Component root, bool visible)
+    {
+        if (root != null)
+            root.gameObject.SetActive(visible);
     }
 
     private void EnsureMushroomHud()
@@ -562,7 +644,8 @@ public class ModeManagerMushroom : ZModeManagerBattle
 
         CreateDockButton("QuickAttackButton", _quickGrowthRoot, string.Empty);
         CreateDockButton("QuickHpButton", _quickGrowthRoot, string.Empty);
-        CreateDockButton("QuickSkillButton", _quickGrowthRoot, string.Empty);
+        CreateDockButton("QuickAttackSpeedButton", _quickGrowthRoot, string.Empty);
+        CreateDockButton("QuickCriticalDamageButton", _quickGrowthRoot, string.Empty);
     }
 
     private void EnsureFeedbackText()
@@ -659,7 +742,8 @@ public class ModeManagerMushroom : ZModeManagerBattle
     {
         RegisterQuickButton("Attack", "QuickAttackButton");
         RegisterQuickButton("Hp", "QuickHpButton");
-        RegisterQuickButton("Skill", "QuickSkillButton");
+        RegisterQuickButton("AttackSpeed", "QuickAttackSpeedButton");
+        RegisterQuickButton("CriticalDamage", "QuickCriticalDamageButton");
     }
 
     private void RegisterQuickButton(string upgradeId, string buttonName)
@@ -761,53 +845,17 @@ public class ModeManagerMushroom : ZModeManagerBattle
         if (spec == null)
             return;
 
-        var cost = GetUpgradeCost(spec.Value);
-        if (!TrySpendGold(cost))
+        if (_hamsterGrowthDockPresenter == null)
         {
-            ShowFeedback($"골드 부족: {cost}G", false);
+            ShowFeedback("전투 입장 후 가능", false);
             return;
         }
 
-        _upgradeLevels[upgradeId] = GetUpgradeLevel(upgradeId) + 1;
-        ApplyUpgradeStat(spec.Value);
-        ShowFeedback($"{spec.Value.Label} +1  {spec.Value.GainText}", true);
+        var upgraded = _hamsterGrowthDockPresenter.TryUpgradeById(upgradeId, out var feedback);
+        ShowFeedback(feedback, upgraded);
         UpdateMushroomControlLabels();
         RefreshMushroomHud();
         RefreshMushroomHudAfterStatUpdate().Forget();
-        GameManager.Get()?.PlayFX("click");
-    }
-
-    private void ApplyUpgradeStat(UpgradeSpec spec)
-    {
-        var boardPlayer = GetMyBoardPlayer();
-        var myUnit = GetMyBoardUnit();
-        if (boardPlayer == null || myUnit == null)
-            return;
-
-        EnsurePlayerStatBuffer(boardPlayer.ItemStat, myUnit);
-
-        var statIndex = (int)spec.StatType;
-        boardPlayer.ItemStat[statIndex] += spec.StatGain;
-
-        myUnit.BaseStat.Clear();
-        myUnit.BaseStat.AddRange(boardPlayer.ItemStat);
-        myUnit.SetStatDirty();
-    }
-
-    private static void EnsurePlayerStatBuffer(IList<float> stats, Commons.Game.GameUnit sourceUnit)
-    {
-        if (stats.Count == (int)UnitStatType.Count)
-            return;
-
-        stats.Clear();
-        if (sourceUnit != null)
-        {
-            for (var i = 0; i < sourceUnit.BaseStat.Count && stats.Count < (int)UnitStatType.Count; i++)
-                stats.Add(sourceUnit.BaseStat[i]);
-        }
-
-        while (stats.Count < (int)UnitStatType.Count)
-            stats.Add(0f);
     }
 
     private async UniTaskVoid RefreshMushroomHudAfterStatUpdate()
@@ -834,30 +882,11 @@ public class ModeManagerMushroom : ZModeManagerBattle
         GameManager.Get()?.PlayFX("click");
     }
 
-    private bool TrySpendGold(long cost)
-    {
-        var boardPlayer = GetMyBoardPlayer();
-        if (boardPlayer == null || boardPlayer.Gold < cost)
-            return false;
-
-        boardPlayer.Gold -= cost;
-        boardPlayer.HandleGoldChange(-cost);
-        MyPlayer.HandleBoardPlayer(boardPlayer);
-        return true;
-    }
-
     private Commons.Types.Players.BoardPlayerMessage GetMyBoardPlayer()
     {
         var gameBoard = GameBoardManager.Get()?.gameBoard;
         var player = MyPlayer.Player;
         return player == null ? null : gameBoard?.GetPlayerById(player.Id);
-    }
-
-    private Commons.Game.GameUnit GetMyBoardUnit()
-    {
-        var gameBoard = GameBoardManager.Get()?.gameBoard;
-        var player = MyPlayer.Player;
-        return player == null ? null : gameBoard?.GetUnitByPlayerId(player.Id);
     }
 
     private void UpdateMushroomControlLabels()
@@ -899,12 +928,17 @@ public class ModeManagerMushroom : ZModeManagerBattle
 
     private int GetUpgradeLevel(string upgradeId)
     {
-        return _upgradeLevels.GetValueOrDefault(upgradeId);
+        var spec = GetUpgradeSpec(upgradeId);
+        if (spec == null)
+            return 1;
+
+        var item = MyPlayer.GetItemByDataID(spec.Value.ItemDataId, checkCount: false, checkTimeValid: false, checkDeprecated: false);
+        return Math.Max(1, item?.Level ?? 1);
     }
 
     private long GetUpgradeCost(UpgradeSpec spec)
     {
-        return spec.BaseCost + spec.CostStep * GetUpgradeLevel(spec.Id);
+        return spec.BaseCost + spec.CostStep * Math.Max(0, GetUpgradeLevel(spec.Id) - 1);
     }
 
     private static UpgradeSpec? GetUpgradeSpec(string upgradeId)

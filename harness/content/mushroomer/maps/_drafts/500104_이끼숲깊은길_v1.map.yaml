@@ -1,13 +1,21 @@
 id: 500104
-group: 500100
+group: 500104
 name: "이끼숲 깊은길"
 type: Dungeon
-tags: [Main]
+tags: [InfiniteWaves]
 scene: "PFB_MAP_Meadow_Day_Chapter"
 sprite: "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png"
-popupArgs: { ClientModeManager: ModeManagerMushroom, ClientHomeMapDataId: self }
+popupArgs:
+  ClientModeManager: ModeManagerMushroom
+  ClientHomeMapDataId: self
+  ClientAutoAdvance: true
+  ClientNextMapDataId: 500105
+  ClientRetryMapDataId: self
+initVariables:
+  - { callerKey: 605, value: 4 }
+  - { callerKey: 606, value: 4 }
 boardConstants: { levelUpChoiceCount: 3 }
-initLevel: 12
+initLevel: 4
 initGold: 640
 enableUnitExp: true
 locations:

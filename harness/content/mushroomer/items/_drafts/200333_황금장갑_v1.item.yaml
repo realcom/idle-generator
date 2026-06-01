@@ -27,7 +27,7 @@ options:
         weight: 32
         minLevel: 3
         maxLevel: 4
-        addStats:
+        equipAddStats:
           - { type: AttackPercent, value: [2.325, 3.875, 6.2, 9.61, 13.95] }
       - id: 2003332
         grade: 3
@@ -35,7 +35,7 @@ options:
         weight: 26
         minLevel: 3
         maxLevel: 4
-        addStats:
+        equipAddStats:
           - { type: CriticalPercent, value: [1.24, 2.015, 3.1, 4.65, 6.975] }
       - id: 2003333
         grade: 3
@@ -43,7 +43,7 @@ options:
         weight: 22
         minLevel: 3
         maxLevel: 4
-        addStats:
+        equipAddStats:
           - { type: CriticalDamagePercent, value: [6.2, 10.075, 15.5, 23.25, 34.1] }
       - id: 2003334
         grade: 3
@@ -51,7 +51,7 @@ options:
         weight: 20
         minLevel: 3
         maxLevel: 4
-        addStats:
+        equipAddStats:
           - { type: AttackSpeedPercent, value: [1.55, 2.79, 4.34, 6.51, 9.3] }
 rerollMaterialItemGroups:
   - level: 1
@@ -59,5 +59,10 @@ rerollMaterialItemGroups:
     materialItems:
       - { id: 5, count: 1800 }
       - { id: 200106, count: 4 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 650 }
 spriteGroups:
-  Icon: "Items/Equipments/ICN_Equip_Gloves.png"
+  Icon: "assets/items/equipment/gloves_hero.png"

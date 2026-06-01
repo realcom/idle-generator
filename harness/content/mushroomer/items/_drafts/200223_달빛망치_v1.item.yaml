@@ -15,5 +15,53 @@ levelUpMaterialItemGroups:
     materialItems:
       - { id: 5, count: 420 }
       - { id: 200103, count: 5 }
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [2]
+options:
+  - options:
+      - id: 2002231
+        grade: 2
+        group: 1
+        weight: 30
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: AttackPercent, value: [1.5, 2.5, 4, 6.25, 9.375] }
+      - id: 2002232
+        grade: 2
+        group: 1
+        weight: 30
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: CriticalDamagePercent, value: [6.25, 10.625, 16.25, 25, 37.5] }
+      - id: 2002233
+        grade: 2
+        group: 1
+        weight: 20
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: BossDamageEfficiencyPercent, value: [1.875, 3.25, 5.25, 8.125, 11.875] }
+      - id: 2002234
+        grade: 2
+        group: 1
+        weight: 20
+        minLevel: 2
+        maxLevel: 3
+        equipAddStats:
+          - { type: MonsterDamageEfficiencyPercent, value: [1.25, 2.25, 3.75, 6, 8.75] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 600 }
+      - { id: 200106, count: 2 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 360 }
 spriteGroups:
   Icon: "Items/Icons/ICN_Weapon_Hammer.png"

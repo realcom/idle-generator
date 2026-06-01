@@ -34,7 +34,15 @@ await WorldManager.ReloadWorldModels();
 WorldServer.WorldServer? server = null;
 try
 {
-    server = await new WorldServer.WorldServer(Config.Server.WorldPort).Start(Config.Server.WorldWebSocket).ConfigureAwait(false);
+    var protocol = ServerProtocol.TcpAndWebSocket;
+    if (!string.IsNullOrWhiteSpace(Config.Server.WorldProtocol) &&
+        !Enum.TryParse(Config.Server.WorldProtocol, true, out protocol))
+    {
+        Config.LogError($"Invalid WorldProtocol: {Config.Server.WorldProtocol}");
+        protocol = ServerProtocol.TcpAndWebSocket;
+    }
+
+    server = await new WorldServer.WorldServer(Config.Server.WorldPort).Start(protocol).ConfigureAwait(false);
     BoardManager.Server = server;
     ChatManager.Server = server;
     Console.CancelKeyPress += (_, e) =>

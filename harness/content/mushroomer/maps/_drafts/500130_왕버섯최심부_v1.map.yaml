@@ -1,0 +1,39 @@
+id: 500130
+group: 500130
+name: "왕버섯 최심부"
+type: Dungeon
+tags: [Boss, InfiniteWaves]
+scene: "PFB_MAP_Meadow_Day_Chapter"
+sprite: "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png"
+popupArgs:
+  ClientModeManager: ModeManagerMushroom
+  ClientHomeMapDataId: self
+  ClientAutoAdvance: true
+  ClientNextMapDataId: 500101
+  ClientRetryMapDataId: self
+initVariables:
+  - { callerKey: 605, value: 30 }
+  - { callerKey: 606, value: 30 }
+boardConstants: { levelUpChoiceCount: 3 }
+initLevel: 30
+initGold: 25320
+enableUnitExp: true
+locations:
+  - { id: -1, position: { x: -7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 0.75 } }] }
+  - { id: 1, position: { x: 7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 1.75 } }] }
+terrains:
+  - vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+  - type: Skill
+    vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+triggers: [MAP_ONSTART_MUSHROOMFIELDWAVE1, MAP_ONUPDATE_MUSHROOMFIELDUPDATE]
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 39740, maxCount: 54841, isCore: true }
+      - { itemDataId: 6, count: 2080 }
+      - { itemDataId: 200103, count: 42 }
+      - { itemDataId: 200104, count: 21 }
+      - { itemDataId: 200503, count: 1 }

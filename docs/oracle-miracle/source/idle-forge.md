@@ -10,7 +10,7 @@
 |---|---|---|---|
 | 콘텐츠 생성 속도 | 1x | 2~3x | **5x+** (검증·컴파일·핫패치 자동화 포함) |
 | 엔진 안정성 | 보유 | 외부 의존 | **자체 4년 검증 엔진(idlez)** |
-| 글로벌 라이브 운영 | 가능 (N명 인력) | 부분 | **다국어 CS·KPI 자동화로 5인 미만 운영 가능** |
+| 글로벌 라이브 운영 | 가능 (N명 인력) | 부분 | **다국어 CS·KPI 자동화로 8인 이하 운영 가능** |
 | 멀티 타이틀 확장 | 어려움 | 도구 학습 비용 | **하네스 재사용 → 신규 IP 3개월 내 출시** |
 
 "AI 콘텐츠 도구"는 시장에 많지만, **엔진·콘텐츠·운영까지 단일 코드베이스로 결합**된 플랫폼은 희소.
@@ -25,7 +25,7 @@
 - 콘텐츠 일관성·밸런스 자동 검증 에이전트 (`content-reviewer`, `balance-review`)
 - 컴파일러: YAML/MD → JSON (엔진 로딩 가능 형태)
 
-**→ Oracle Miracle 핵심**: 이 레이어를 **OCI Enterprise AI** (Generative AI Service + Generative AI Agents + Data Science) **+ Database 23ai AI Vector Search**로 클라우드 네이티브 전환
+**→ Oracle Miracle 핵심**: 이 레이어를 **OCI Generative AI + Generative AI Agents + Data Science + Oracle AI Database/Vector Search**로 클라우드 네이티브 전환
 
 ### 2. 엔진 레이어 — idlez Engine
 
@@ -63,7 +63,7 @@
 
 ## 협약기간 내 IDLE Forge 자체 목표
 
-- IDLE Forge 코어 워크플로우 OCI 네이티브 전환 완료
+- IDLE Forge 코어 워크플로우 OCI 핵심 영역 운영 전환
 - 닌자 서바이벌 2 베타 출시로 플랫폼 실증
 - 다국어 CS·운영 자동화 PoC 완료 (5+개 언어)
 - IDLE Forge 기술 자산 정리 (B2B 공급용 문서·SDK 초안)

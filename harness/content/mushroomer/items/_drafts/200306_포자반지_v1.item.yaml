@@ -26,7 +26,7 @@ options:
         weight: 30
         minLevel: 1
         maxLevel: 2
-        addStats:
+        equipAddStats:
           - { type: CriticalDamagePercent, value: [5, 8.5, 13, 20, 30] }
       - id: 2003062
         grade: 1
@@ -34,7 +34,7 @@ options:
         weight: 28
         minLevel: 1
         maxLevel: 2
-        addStats:
+        equipAddStats:
           - { type: BossDamageEfficiencyPercent, value: [1.5, 2.6, 4.2, 6.5, 9.5] }
       - id: 2003063
         grade: 1
@@ -42,7 +42,7 @@ options:
         weight: 22
         minLevel: 1
         maxLevel: 2
-        addStats:
+        equipAddStats:
           - { type: MonsterDamageEfficiencyPercent, value: [1.5, 2.6, 4.2, 6.5, 9.5] }
       - id: 2003064
         grade: 1
@@ -50,7 +50,7 @@ options:
         weight: 20
         minLevel: 1
         maxLevel: 2
-        addStats:
+        equipAddStats:
           - { type: AttackPercent, value: [1.2, 2, 3.2, 5, 7.5] }
 rerollMaterialItemGroups:
   - level: 1
@@ -58,5 +58,10 @@ rerollMaterialItemGroups:
     materialItems:
       - { id: 5, count: 200 }
       - { id: 200106, count: 1 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 80 }
 spriteGroups:
-  Icon: "Items/Equipments/ICN_Equip_Ring.png"
+  Icon: "assets/items/equipment/ring_magic.png"

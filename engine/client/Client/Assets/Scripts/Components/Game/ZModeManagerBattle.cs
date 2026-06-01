@@ -106,6 +106,9 @@ public class ZModeManagerBattle : ZModeManagerBase
     public UIElementContainer<BuffCell> buffContainer = new();
 
     private int stageLevel;
+    private bool _autoAdvancingAfterGameEnded;
+    private int _autoAdvanceEndGameAckMapId;
+    private UniTaskCompletionSource<bool> _autoAdvanceEndGameAck;
     
     public void GoToLobby()
     {
@@ -126,8 +129,11 @@ public class ZModeManagerBattle : ZModeManagerBase
         }
     }
 
-    public async UniTask ShowGameFailure(PlayerRankingMessage prevRanking = null, PlayerRankingMessage currentRanking = null)
+    public async UniTask ShowGameFailure(PlayerRankingMessage prevRanking = null, PlayerRankingMessage currentRanking = null, bool allowAutoRetry = false)
     {
+        if (allowAutoRetry && await TryAutoRetryAfterGameFailure())
+            return;
+
         var leaveBoardPacket = Packet.Pop(0, new LeaveBoardRequest());
         var response = await ZWorldClient.Get().SendPacket(leaveBoardPacket);
 
@@ -203,26 +209,145 @@ public class ZModeManagerBattle : ZModeManagerBase
 
     private async UniTask RequestSkip()
     {
-        btnSkip.interactable = false;
+        if (_autoAdvancingAfterGameEnded)
+            return;
 
         var gameBoardManager = GameBoardManager.Get();
+        var gameBoard = gameBoardManager?.gameBoard;
+        if (gameBoard == null || gameBoard.State != GameBoard.Types.State.Playing)
+            return;
+
+        btnSkip.interactable = false;
         gameBoardManager.BlockShowGameResult(true);
-        
-        var response = await ZWorldClient.Get().SendPacket<AutoPlayToTickBoardRequest.Types.Response>(Packet.Pop(0, new AutoPlayToTickBoardRequest { ToTick = 0 }));
 
-        if (this)
-            btnSkip.interactable = true;
-
-        if (response.Status.IsSuccess())
+        var shouldReleaseResultBlock = true;
+        try
         {
+            var response = await ZWorldClient.Get().SendPacket<AutoPlayToTickBoardRequest.Types.Response>(Packet.Pop(0, new AutoPlayToTickBoardRequest { ToTick = 0 }));
+            if (!response.Status.IsSuccess())
+                return;
+
             MyPlayer.SetGameBoard(response.CompressedBoard.Decompress<GameBoard>());
             gameBoardManager.SetShouldForceUpdateGameBoard(true);
+            shouldReleaseResultBlock = false;
             gameBoardManager.Run(() =>
             {
                 gameBoardManager.BlockShowGameResult(false);
                 gameBoardManager.ShowGameResult(myPreviousRanking, myCurrentRanking).Forget();
             }, 0.5f);
         }
+        finally
+        {
+            if (this)
+                btnSkip.interactable = true;
+
+            if (shouldReleaseResultBlock)
+                gameBoardManager.BlockShowGameResult(false);
+        }
+    }
+
+    private bool TryAutoAdvanceAfterGameEnded()
+    {
+        if (_autoAdvancingAfterGameEnded)
+            return true;
+
+        var gameBoardManager = GameBoardManager.Get();
+        var gameBoard = gameBoardManager?.gameBoard;
+        if (gameBoard?.ResMap == null || !ClientMapFlowResolver.ShouldAutoAdvance(gameBoard.ResMap))
+            return false;
+
+        _autoAdvancingAfterGameEnded = true;
+        gameBoardManager.BlockShowGameResult(true);
+        AutoAdvanceAfterGameEnded().Forget();
+        return true;
+    }
+
+    private async UniTask<bool> TryAutoRetryAfterGameFailure()
+    {
+        if (_autoAdvancingAfterGameEnded)
+            return true;
+
+        var gameBoardManager = GameBoardManager.Get();
+        var resMap = gameBoardManager?.gameBoard?.ResMap;
+        var retryMap = ClientMapFlowResolver.ResolveAutoAdvanceMap(resMap, playerWon: false);
+        if (retryMap == null)
+            return false;
+
+        _autoAdvancingAfterGameEnded = true;
+        gameBoardManager.BlockShowGameResult(true);
+
+        try
+        {
+            await gameBoardManager.GoToMapLocalToNet(retryMap.Id);
+            return true;
+        }
+        finally
+        {
+            _autoAdvancingAfterGameEnded = false;
+        }
+    }
+
+    private async UniTask AutoAdvanceAfterGameEnded()
+    {
+        var gameBoardManager = GameBoardManager.Get();
+
+        try
+        {
+            var settledBoard = gameBoardManager.gameBoard;
+            var resMap = settledBoard?.ResMap;
+            var playerWon = DidPlayerWin(settledBoard);
+            var nextMap = ClientMapFlowResolver.ResolveAutoAdvanceMap(resMap, playerWon);
+            if (nextMap == null)
+            {
+                gameBoardManager.BlockShowGameResult(false);
+                await gameBoardManager.ShowGameResult(myPreviousRanking, myCurrentRanking);
+                return;
+            }
+
+            if (NetworkSystem.enableSocketConnection && playerWon && resMap != null)
+            {
+                _autoAdvanceEndGameAckMapId = resMap.Id;
+                _autoAdvanceEndGameAck = new UniTaskCompletionSource<bool>();
+                await UniTask.WhenAny(
+                    _autoAdvanceEndGameAck.Task,
+                    UniTask.Delay(TimeSpan.FromSeconds(1.2f)));
+            }
+            else
+            {
+                await UniTask.Yield();
+            }
+
+            if (!this)
+                return;
+
+            gameBoardManager.BlockShowGameResult(false);
+            await gameBoardManager.GoToMapLocalToNet(nextMap.Id);
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+            if (gameBoardManager != null)
+            {
+                gameBoardManager.BlockShowGameResult(false);
+                await gameBoardManager.ShowGameResult(myPreviousRanking, myCurrentRanking);
+            }
+        }
+        finally
+        {
+            _autoAdvanceEndGameAckMapId = 0;
+            _autoAdvanceEndGameAck = null;
+            _autoAdvancingAfterGameEnded = false;
+        }
+    }
+
+    private static bool DidPlayerWin(GameBoard gameBoard)
+    {
+        if (gameBoard == null)
+            return false;
+
+        var displayWinningTeam = (int)gameBoard.Variables.Get(BoardVariableId.Map.displayWinningTeam);
+        var winningTeam = displayWinningTeam > 0 ? displayWinningTeam : gameBoard.WinningTeam;
+        return winningTeam == GameBoard.Team.Player;
     }
     
     
@@ -445,6 +570,9 @@ public class ZModeManagerBattle : ZModeManagerBase
                 GameManager.Get().HideAllPopups<Popup_GameResults>();
                 GameManager.Get().HideAllPopups<Popup_Rebirth>();
 
+                if (TryAutoAdvanceAfterGameEnded())
+                    break;
+
                 GameBoardManager.Get().ShowGameResult(myPreviousRanking, myCurrentRanking).Forget();  
              
                 break;
@@ -482,7 +610,12 @@ public class ZModeManagerBattle : ZModeManagerBase
                             var popupGameResults = GameManager.Get().GetPopup<Popup_GameResults>();
                             popupGameResults?.AppendResultRewards(MyPlayer.ResultRewardItems);
                         }
-                        
+
+                        if (update.Type == PlayerAcquiredItemsUpdate.Types.Type.EndGame &&
+                            update.MapDataId == _autoAdvanceEndGameAckMapId)
+                        {
+                            _autoAdvanceEndGameAck?.TrySetResult(true);
+                        }
                         
 
                         break;
@@ -701,7 +834,7 @@ public class ZModeManagerBattle : ZModeManagerBase
                     }
                     else
                     {
-                        ShowGameFailure();
+                        ShowGameFailure(allowAutoRetry: true).Forget();
                     }
                 }
 

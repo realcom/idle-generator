@@ -30,6 +30,10 @@ dropAddItemGroups:
     addItems:
       - { itemDataId: 200101, count: 2, weight: 70, group: 1 }
       - { itemDataId: 200102, count: 1, weight: 30, group: 1, pityGroup: 5 }
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200108, count: 50 }
 
 prefab: "Units/Monsters/finalboss_melee_slime_boss_green.prefab"
 sprite: "Units/Monsters/Assets/finalboss_melee_slime_boss.png"

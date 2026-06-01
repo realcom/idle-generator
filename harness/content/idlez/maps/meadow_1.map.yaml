@@ -10,9 +10,20 @@ type: Dungeon                  # Map.Type: Dungeon
 tags: [ContainPlayerInventory]
 scene: "PFB_MAP_Meadow_Day_Chapter"
 prefab: "Maps/Prefabs/PFB_MAP_Meadow_Day_Chapter.prefab"
+targetCameraPivot: { x: 0.5, y: 0.58 }
+fov: 9.25
+
+popupArgs:
+  ClientModeManager: ModeManagerMushroom
+  ClientHomeMapDataId: self
 
 boardConstants:
   levelUpChoiceCount: 3        # 레벨업 선택지 수 (기본값)
+
+initLevel: 1
+initGold: 180
+enableUnitExp: true
+playerUnitCount: 0
 
 # 웨이브 트리거 — 맵에는 각 타입당 하나만 직접 연결하고, 다음 웨이브는 trigger 내부에서 연쇄 실행.
 triggers:
@@ -21,11 +32,17 @@ triggers:
 
 locations:
   - id: -1
-    position: { x: -4.0, y: 0.0 }
+    position: { x: 0.0, y: 0.0 }
     geometries:
       - circle:
           center: { x: 0.0, y: 0.0 }
           radius: 1.25
+  - id: 101
+    position: { x: 3.15, y: 0.0 }
+    geometries:
+      - circle:
+          center: { x: 0.0, y: 0.0 }
+          radius: 0.65
 
 terrains:
   - vertices:

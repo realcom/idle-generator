@@ -13,7 +13,7 @@ namespace Core
     public static class SlackMessageSender
     {
         //노예 1호기
-        const string SLACK_BOT_TOKEN = "xoxb-907631150854-9532573773815-ttndeTWi32L0S3WRWfM3Xiko";
+        const string SLACK_BOT_TOKEN = "";
         //채널 version_log
         const string VERSION_LOG_CHANNEL_ID = "C022Z30R4RJ";
         
@@ -38,6 +38,9 @@ namespace Core
 
         private static async Task SendMessageToSlackAsync(string botToken, string channelID, string str)
         {
+            if (string.IsNullOrWhiteSpace(botToken) || string.IsNullOrWhiteSpace(channelID))
+                return;
+
             using var httpClient = new HttpClient();
             var postData = new StringContent(
                 $"{{\"channel\":\"{channelID}\", \"text\":\"{str}\"}}",

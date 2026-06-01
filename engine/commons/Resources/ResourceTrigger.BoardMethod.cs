@@ -38,6 +38,7 @@ namespace Commons.Resources
                     var positionY = state.GetParameter(board, PositionY);
                     var unitDataId = state.GetIntParameter(board, UnitDataId);
                     var offset = state.GetIntParameter(board, Offset);
+                    var level = Math.Max(1, state.GetIntParameter(board, Types.Expression.Types.Operand.Types.Variable.Types.Parameter.Types.Type.Level, 1));
                     
                     IEnumerable<FixedVector2> positions;
                     if (locationId == 0)
@@ -55,6 +56,7 @@ namespace Commons.Resources
                             Direction = (Vector2Message)(direction ?? GeometricMath.AngleToUnitVector2(FixedFloatMath.TwoPi * board.RandomFloat())),
                             Velocity = new Vector2Message(),
                             Team = team,
+                            Level = level,
                         });
                     }
                     break;

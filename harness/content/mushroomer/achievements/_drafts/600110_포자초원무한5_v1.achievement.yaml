@@ -1,0 +1,23 @@
+id: 600110
+name: "포자초원 5회 돌파"
+type: Normal
+tags: [Wave]
+order: 110
+initialOpen: true
+clientAchievement: false
+condition: WinWave
+conditionValue1: 500101
+conditionValue2: 0
+targetProgress: 5
+initialProgress: 0
+repeatable: false
+autoReward: true
+popupArgs:
+  WaveDisplayType: Elite
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 1600 }
+      - { itemDataId: 6, count: 150 }
+      - { itemDataId: 200103, count: 6 }

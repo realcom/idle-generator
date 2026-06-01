@@ -12,7 +12,7 @@ IDLE Forge 3-레이어 (콘텐츠 생성 / 엔진 / 게임) **모두**에 OCI가
 
 ## OCI Enterprise AI 우산 (2026 GA)
 
-2026년 OCI는 Generative AI Service · Generative AI Agents · Data Science를 **OCI Enterprise AI**라는 단일 우산으로 통합 GA 발표. IDLE Forge는 이 Enterprise AI 스택을 **게임 도메인에 맞게 특화한 인디 게임 스튜디오용 워크플로우**.
+OCI Generative AI · Generative AI Agents · Data Science를 게임 도메인에 맞게 조합해 인디 게임 스튜디오용 워크플로우로 전환한다.
 
 ## 리전 운용 전략
 
@@ -31,7 +31,7 @@ IDLE Forge 3-레이어 (콘텐츠 생성 / 엔진 / 게임) **모두**에 OCI가
 - **역할**: 게임 콘텐츠(아이템·스킬·유닛·맵·트리거) 자동 생성
 - **현재 상태**: Claude API 기반 `gen-*` 스킬 30+개 운영 중
 - **OCI 전환 가치**:
-  - Cohere Command A, xAI Grok 4.1 Fast, OpenAI gpt-oss 등 다양한 LLM 단일 API
+  - Cohere Command A, OpenAI gpt-oss, xAI Grok 계열 등 OCI에서 제공하는 다양한 LLM 활용
   - **Model Import**으로 우리가 파인튜닝한 게임 도메인 모델 가져오기 가능
   - 엔터프라이즈 보안 + 비용 예측 + 데이터 주권 + 한국 인접 리전 선택
 - **닌자서바이벌2 활용**:
@@ -44,15 +44,14 @@ IDLE Forge 3-레이어 (콘텐츠 생성 / 엔진 / 게임) **모두**에 OCI가
 - **역할**: 콘텐츠 자동 검증·밸런스 시뮬·일관성 검사 멀티스텝 에이전트
 - **현재 상태**: `content-reviewer`, `balance-review` 에이전트 운영 중
 - **OCI 전환 가치**:
-  - RAG · observability · evaluations · audit logs **내장**
-  - MCP · Function Calling · Code Interpreter · File Search · Containers API 지원
-  - 멀티스텝 워크플로우 (생성 → 스키마 검증 → 밸런스 시뮬 → 리뷰)를 단일 Agent로 통합
+  - RAG · SQL Tool · Agent as a tool · Function/API calling 기반 워크플로우 구성
+  - 멀티스텝 워크플로우 (생성 → 스키마 검증 → 밸런스 시뮬 → 리뷰)를 Agent 중심으로 통합
   - 운용 리전: 오사카 (한국 최근접)
 - **닌자서바이벌2 활용**: 신규 콘텐츠가 기존 200+개 아이템·스킬과 밸런스·톤 충돌하는지 자동 검증
 
-### A-3. Oracle Database 23ai · AI Vector Search
+### A-3. Oracle AI Database · AI Vector Search
 
-- **포지셔닝**: 별도 서비스 아님 — **DB 23ai 내부 네이티브 기능** (VECTOR 데이터 타입)
+- **포지셔닝**: Oracle AI Database 계열의 벡터 검색 기능 활용
 - **역할**: 기존 콘텐츠 임베딩 → RAG로 톤·밸런스 일관성 유지
 - **OCI 전환 가치**:
   - 정확/근사 검색 인덱스 + SQL 시맨틱 검색 결합
@@ -110,8 +109,8 @@ IDLE Forge 3-레이어 (콘텐츠 생성 / 엔진 / 게임) **모두**에 OCI가
 
 - **역할**: 다국어 CS 자동 응대 + 게임 내 텍스트 자동 로컬라이징
 - **OCI 가치**:
-  - **30개 언어 번역** 지원
-  - **Custom Glossary**로 IP 고유 용어(닌자 캐릭터명·스킬명·아이템명) 일관 유지
+  - 다국어 번역 API 지원
+  - RAG 기반 사내 용어집으로 IP 고유 용어(닌자 캐릭터명·스킬명·아이템명) 일관 유지
   - Real-time Translation + Async Document Translation (Word/PPT/Excel/HTML/JSON/CSV/SRT)
   - GenAI Agent와 결합 → 단순 번역이 아닌 문맥·톤 유지 응대
 - **현재 계획**: ChatGPT/Claude 기반 CS 자동화 예정 → **OCI로 정식 구현**
@@ -152,15 +151,15 @@ IDLE Forge 3-레이어 (콘텐츠 생성 / 엔진 / 게임) **모두**에 OCI가
 | '26.06 ~ '26.07 | OCI GenAI Service + Agents로 콘텐츠 양산 파이프라인 전환 | A-1, A-2 |
 | '26.08 ~ '26.09 | Vector Search RAG, Language CS 자동화, Functions 파이프라인 | A-3, C-1, C-2 |
 | '26.10 | APM·Data Science 운영 KPI 대시보드, 인게임 NPC Agents | B-3, D-1, D-2 |
-| '26.11 | **Oracle AI World 2026** (라스베가스, 10/26~29) 참여, 글로벌 베타 출시 | - |
+| '26.11 | **Oracle AI World 2026** (라스베가스, 10/25~28) 참여, 글로벌 베타 출시 | - |
 
 ---
 
 ## 협업으로 창출되는 핵심 가치 (5-2 골자)
 
-1. **콘텐츠 생산성**: 전통 방식 대비 5x+, 신규 IP 출시 주기 3개월 이내
-2. **운영 효율**: 전통 방식 대비 운영 원가 70% 절감 (인력 + 인프라)
-3. **글로벌 확장**: 멀티 리전 자동 배포 + 다국어 CS 자동화 → 5인 미만 조직으로 글로벌 라이브 운영
+1. **콘텐츠 생산성**: 반복 제작 업무 자동화로 신규 IP 출시 주기 단축
+2. **운영 효율**: 인력·인프라 반복 업무 절감
+3. **글로벌 확장**: 멀티 리전 자동 배포 + 다국어 CS 자동화 → 8인 이하 조직으로 글로벌 라이브 운영
 4. **B2B 스케일업**: '28년부터 IDLE Forge SaaS로 외부 인디 게임사 공급 — **OCI Marketplace 등록**
 
 ---
@@ -171,4 +170,4 @@ IDLE Forge 3-레이어 (콘텐츠 생성 / 엔진 / 게임) **모두**에 OCI가
 - '27 정식 출시 후 IDLE Forge로 신규 IP 1~2종 추가 (멀티 타이틀)
 - '28~ **OCI Marketplace를 통한 SaaS 형태 외부 공급** (월 구독 + 매출 분배)
 - Oracle for Startups / AI World 커뮤니티 네트워크 활용한 글로벌 인디 생태계 형성
-- 한국 인디 게임의 AI 네이티브 전환을 IDLE Forge가 선도 — Oracle의 한국 게임 산업 진출 레퍼런스
+- 한국 인디 게임의 AI 네이티브 전환 사례를 IDLE Forge로 축적

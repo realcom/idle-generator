@@ -95,6 +95,12 @@ public partial class CashItemManager
                 AddItemPostProcessPet(item, count, level, duration, addedItems, addedItemStuffs);
                 break;
             }
+            case Weapon:
+            case Equipment:
+            {
+                AddItemPostProcessEquipment(item);
+                break;
+            }
             case Product:
             {
                 AddItemPostProcessProduct(item, count, level, duration, addedItems, addedItemStuffs);

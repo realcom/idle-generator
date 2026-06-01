@@ -14,15 +14,17 @@ vars:
   wave1_unit:  { type: int,   default: 110201 }
   wave1_count: { type: int,   default: 5 }
   enemy_team:  { type: int,   default: 4 }
+  enemy_spawn: { type: int,   default: 101 }
 
 "on":
   - event: start
     do:
-      - SetBoardState: { value: 1 }
+      - SetWave: { value: 1 }
       - SendWaveStartedEvent: {}
       - AddUnit:
           unitDataId: $wave1_unit
           count: $wave1_count
+          locationId: $enemy_spawn
           team: $enemy_team
 
 ---
@@ -35,6 +37,7 @@ vars:
   wave2_unit:  { type: int, default: 110201 }
   wave2_count: { type: int, default: 3 }
   enemy_team:  { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
 
 "on":
   - event: start
@@ -43,6 +46,7 @@ vars:
       - AddUnit:
           unitDataId: $wave2_unit
           count: $wave2_count
+          locationId: $enemy_spawn
           team: $enemy_team
 
 ---
@@ -55,6 +59,7 @@ vars:
   wave3_boss:   { type: int, default: 110501 }
   wave3_minion: { type: int, default: 110201 }
   enemy_team:   { type: int, default: 4 }
+  enemy_spawn:  { type: int, default: 101 }
 
 "on":
   - event: start
@@ -63,10 +68,12 @@ vars:
       - AddUnit:
           unitDataId: $wave3_boss
           count: 1
+          locationId: $enemy_spawn
           team: $enemy_team
       - AddUnit:
           unitDataId: $wave3_minion
           count: 2
+          locationId: $enemy_spawn
           team: $enemy_team
 
 ---
@@ -83,16 +90,16 @@ vars:
     every: 3s
     do:
       - GetUnitCountByTeam: { team: $enemy_team }
-      - when: "board.GetBoardState() == 1 and return == 0"
-        SetBoardState: { value: 2 }
+      - when: "wave == 1 and return == 0"
+        SetWave: { value: 2 }
         SendWaveQueuedEvent: { name: MAP_ONSTART_MEADOW1WAVE2 }
 
       - GetUnitCountByTeam: { team: $enemy_team }
-      - when: "board.GetBoardState() == 2 and return == 0"
-        SetBoardState: { value: 3 }
+      - when: "wave == 2 and return == 0"
+        SetWave: { value: 3 }
         SendWaveQueuedEvent: { name: MAP_ONSTART_MEADOW1WAVE3 }
 
       - GetUnitCountByTeam: { team: $enemy_team }
-      - when: "board.GetBoardState() == 3 and return == 0"
-        SetBoardState: { value: 9 }
+      - when: "wave == 3 and return == 0"
+        SetWave: { value: 9 }
         EndGame: { result: win }

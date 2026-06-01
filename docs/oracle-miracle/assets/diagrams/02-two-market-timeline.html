@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>IDLE Forge 두 목표시장의 시간축 진입 구조</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', AppleGothic, 'Malgun Gothic', sans-serif; background: #FFFFFF; padding: 40px; color: #1A1A1A; }
+  .container { width: 1280px; margin: 0 auto; }
+  .title { font-size: 26px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+  .subtitle { font-size: 13px; color: #6B7280; text-align: center; margin-bottom: 36px; }
+  .timeline-grid { position: relative; }
+  .year-axis { display: grid; grid-template-columns: 140px repeat(5, 1fr); align-items: center; padding-bottom: 8px; border-bottom: 2px solid #1A1A1A; margin-bottom: 0; }
+  .axis-label { font-size: 12px; font-weight: 700; color: #1A1A1A; }
+  .axis-year { font-size: 14px; font-weight: 700; color: #1A1A1A; text-align: center; padding: 4px 0; }
+  .track { display: grid; grid-template-columns: 140px repeat(5, 1fr); align-items: stretch; margin-top: 16px; }
+  .track-name { display: flex; flex-direction: column; justify-content: center; padding-right: 16px; }
+  .track-tag { font-size: 10.5px; font-weight: 700; color: #FFFFFF; padding: 3px 8px; border-radius: 4px; align-self: flex-start; letter-spacing: 0.3px; margin-bottom: 6px; }
+  .track-title { font-size: 14px; font-weight: 700; color: #1A1A1A; line-height: 1.35; }
+  .track-desc { font-size: 11px; color: #6B7280; margin-top: 2px; }
+  .stage { background: var(--bg); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 6px; padding: 12px 14px; margin: 0 4px; display: flex; flex-direction: column; }
+  .stage-title { font-size: 12.5px; font-weight: 700; color: #1F2937; margin-bottom: 4px; }
+  .stage-desc { font-size: 11px; color: #6B7280; line-height: 1.45; }
+  .stage.t1a { --bg: #FEF7EF; --border: #F3D9B5; --accent: #C97A2A; }
+  .stage.t1b { --bg: #FDF1E1; --border: #ECC893; --accent: #C97A2A; }
+  .stage.t2a { --bg: #F1EFF7; --border: #D6CCE6; --accent: #6B4F8C; }
+  .stage.t2b { --bg: #E9E5F2; --border: #C3B7D9; --accent: #6B4F8C; }
+  .track-1 .track-tag { background: #C97A2A; }
+  .track-2 .track-tag { background: #6B4F8C; }
+  .legend { margin-top: 28px; display: flex; gap: 24px; justify-content: center; font-size: 12px; color: #4B5563; }
+  .legend-item { display: flex; align-items: center; gap: 8px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+  .footer { margin-top: 24px; text-align: center; font-size: 11.5px; color: #9CA3AF; padding-top: 12px; border-top: 1px solid #F3F4F6; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">IDLE Forge 두 목표시장의 시간축 진입 구조</div>
+  <div class="subtitle">1차 자체 게임 매출(단기) + 2차 B2B SaaS 공급(중장기) 듀얼 BM</div>
+
+  <div class="timeline-grid">
+    <div class="year-axis">
+      <div class="axis-label">트랙</div>
+      <div class="axis-year">'26 협약</div>
+      <div class="axis-year">'27</div>
+      <div class="axis-year">'28</div>
+      <div class="axis-year">'29</div>
+      <div class="axis-year">'30~</div>
+    </div>
+
+    <div class="track track-1">
+      <div class="track-name">
+        <div class="track-tag">1차 시장</div>
+        <div class="track-title">자체 게임</div>
+        <div class="track-desc">닌자 서바이벌 2</div>
+      </div>
+      <div class="stage t1a">
+        <div class="stage-title">플랫폼 + 베타</div>
+        <div class="stage-desc">IDLE Forge OCI 전환, 글로벌 베타 출시</div>
+      </div>
+      <div class="stage t1a">
+        <div class="stage-title">정식 출시·안정화</div>
+        <div class="stage-desc">Base 연 7~9억, 안정화 월 0.75억</div>
+      </div>
+      <div class="stage t1b">
+        <div class="stage-title">4X 글로벌 확장</div>
+        <div class="stage-desc">Stretch 전환, 약 18~36억</div>
+      </div>
+      <div class="stage t1b">
+        <div class="stage-title">시즌 운영 안정기</div>
+        <div class="stage-desc">월 5억 도달, 연 50~60억</div>
+      </div>
+      <div class="stage t1b">
+        <div class="stage-title">신작 추가</div>
+        <div class="stage-desc">멀티 타이틀 (IP 1~2종)</div>
+      </div>
+    </div>
+
+    <div class="track track-2">
+      <div class="track-name">
+        <div class="track-tag">2차 시장</div>
+        <div class="track-title">B2B SaaS</div>
+        <div class="track-desc">IDLE Forge 외부 공급</div>
+      </div>
+      <div class="stage t2a">
+        <div class="stage-title">PoC 워크플로우</div>
+        <div class="stage-desc">사내 도구, 라이브 검증 중</div>
+      </div>
+      <div class="stage t2a">
+        <div class="stage-title">공급 준비</div>
+        <div class="stage-desc">SDK·문서·라이선스 계약 정비</div>
+      </div>
+      <div class="stage t2b">
+        <div class="stage-title">1호 라이선시</div>
+        <div class="stage-desc">셋업+분배 7%, 약 0.5억</div>
+      </div>
+      <div class="stage t2b">
+        <div class="stage-title">5~7개 라이선시</div>
+        <div class="stage-desc">B2B 매출 약 2~3억</div>
+      </div>
+      <div class="stage t2b">
+        <div class="stage-title">10개 이상</div>
+        <div class="stage-desc">B2B 약 7~12억+, 비중 확대</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#C97A2A;"></div><span>1차 시장 — 모바일 4X 게임 (자체 매출)</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6B4F8C;"></div><span>2차 시장 — 인디 게임사 B2B (매출 분배)</span></div>
+  </div>
+
+  <div class="footer">'29년 이후 두 트랙 비중이 교차하며 B2B 분배 매출 비중 확대</div>
+</div>
+</body>
+</html>

@@ -52,7 +52,15 @@
    "name": "포자초원 입구",
    "type": "Dungeon",
    "tags": [
-    "Main"
+    "Main",
+    "InfiniteWaves"
+   ],
+   "referenceAchievementDataIds": [
+    600108,
+    600109,
+    600110,
+    600111,
+    600112
    ],
    "scene": "PFB_MAP_Meadow_Day_Chapter",
    "sprite": "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png",
@@ -63,8 +71,21 @@
    "fov": 9.25,
    "popupArgs": {
     "ClientModeManager": "ModeManagerMushroom",
-    "ClientHomeMapDataId": "self"
+    "ClientHomeMapDataId": "self",
+    "ClientAutoAdvance": "true",
+    "ClientNextMapDataId": "500102",
+    "ClientRetryMapDataId": "self"
    },
+   "initVariables": [
+    {
+     "callerKey": 605,
+     "value": 1
+    },
+    {
+     "callerKey": 606,
+     "value": 1
+    }
+   ],
    "boardConstants": {
     "levelUpChoiceCount": 3
    },
@@ -243,18 +264,31 @@
   },
   {
    "id": 500102,
-   "group": 500100,
+   "group": 500102,
    "name": "포자초원 깊은길",
    "type": "Dungeon",
    "tags": [
-    "Main"
+    "InfiniteWaves"
    ],
    "scene": "PFB_MAP_Meadow_Day_Chapter",
    "sprite": "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png",
    "popupArgs": {
     "ClientModeManager": "ModeManagerMushroom",
-    "ClientHomeMapDataId": "self"
+    "ClientHomeMapDataId": "self",
+    "ClientAutoAdvance": "true",
+    "ClientNextMapDataId": "500103",
+    "ClientRetryMapDataId": "self"
    },
+   "initVariables": [
+    {
+     "callerKey": 605,
+     "value": 4
+    },
+    {
+     "callerKey": 606,
+     "value": 4
+    }
+   ],
    "boardConstants": {
     "levelUpChoiceCount": 3
    },
@@ -437,18 +471,31 @@
   },
   {
    "id": 500103,
-   "group": 500100,
+   "group": 500103,
    "name": "이끼숲 입구",
    "type": "Dungeon",
    "tags": [
-    "Main"
+    "InfiniteWaves"
    ],
    "scene": "PFB_MAP_Meadow_Day_Chapter",
    "sprite": "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png",
    "popupArgs": {
     "ClientModeManager": "ModeManagerMushroom",
-    "ClientHomeMapDataId": "self"
+    "ClientHomeMapDataId": "self",
+    "ClientAutoAdvance": "true",
+    "ClientNextMapDataId": "500104",
+    "ClientRetryMapDataId": "self"
    },
+   "initVariables": [
+    {
+     "callerKey": 605,
+     "value": 8
+    },
+    {
+     "callerKey": 606,
+     "value": 8
+    }
+   ],
    "boardConstants": {
     "levelUpChoiceCount": 3
    },
@@ -617,18 +664,31 @@
   },
   {
    "id": 500104,
-   "group": 500100,
+   "group": 500104,
    "name": "이끼숲 깊은길",
    "type": "Dungeon",
    "tags": [
-    "Main"
+    "InfiniteWaves"
    ],
    "scene": "PFB_MAP_Meadow_Day_Chapter",
    "sprite": "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png",
    "popupArgs": {
     "ClientModeManager": "ModeManagerMushroom",
-    "ClientHomeMapDataId": "self"
+    "ClientHomeMapDataId": "self",
+    "ClientAutoAdvance": "true",
+    "ClientNextMapDataId": "500105",
+    "ClientRetryMapDataId": "self"
    },
+   "initVariables": [
+    {
+     "callerKey": 605,
+     "value": 12
+    },
+    {
+     "callerKey": 606,
+     "value": 12
+    }
+   ],
    "boardConstants": {
     "levelUpChoiceCount": 3
    },
@@ -797,19 +857,32 @@
   },
   {
    "id": 500105,
-   "group": 500100,
+   "group": 500105,
    "name": "포자대왕 둥지",
    "type": "Dungeon",
    "tags": [
-    "Main",
-    "Boss"
+    "Boss",
+    "InfiniteWaves"
    ],
    "scene": "PFB_MAP_Meadow_Day_Chapter",
    "sprite": "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png",
    "popupArgs": {
     "ClientModeManager": "ModeManagerMushroom",
-    "ClientHomeMapDataId": "self"
+    "ClientHomeMapDataId": "self",
+    "ClientAutoAdvance": "true",
+    "ClientNextMapDataId": "500101",
+    "ClientRetryMapDataId": "self"
    },
+   "initVariables": [
+    {
+     "callerKey": 605,
+     "value": 16
+    },
+    {
+     "callerKey": 606,
+     "value": 16
+    }
+   ],
    "boardConstants": {
     "levelUpChoiceCount": 3
    },

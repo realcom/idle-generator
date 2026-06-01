@@ -1,0 +1,14 @@
+id: 1003
+name: "치명타 피해 성장"
+category: Stat
+tab: -1
+priority: 4
+tags: [HamsterGrowthStat, GrowthCriticalDamage]
+initialCreate: true
+initialCreateCount: 1
+initialCreateLevel: 1
+addStats:
+  - { type: CriticalDamagePercent, value: [0.0] }
+levelUpGoldCost: { levels: 1..80, base: 60, step: 35 }
+spriteGroups:
+  Icon: "Items/Goods/ICN_Goods_Gold.png"

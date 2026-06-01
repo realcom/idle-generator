@@ -1,13 +1,21 @@
 id: 500103
-group: 500100
+group: 500103
 name: "이끼숲 입구"
 type: Dungeon
-tags: [Main]
+tags: [InfiniteWaves]
 scene: "PFB_MAP_Meadow_Day_Chapter"
 sprite: "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png"
-popupArgs: { ClientModeManager: ModeManagerMushroom, ClientHomeMapDataId: self }
+popupArgs:
+  ClientModeManager: ModeManagerMushroom
+  ClientHomeMapDataId: self
+  ClientAutoAdvance: true
+  ClientNextMapDataId: 500104
+  ClientRetryMapDataId: self
+initVariables:
+  - { callerKey: 605, value: 3 }
+  - { callerKey: 606, value: 3 }
 boardConstants: { levelUpChoiceCount: 3 }
-initLevel: 8
+initLevel: 3
 initGold: 420
 enableUnitExp: true
 locations:

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>닌자 서바이벌 2 — 3단계 융합 루프</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', AppleGothic, 'Malgun Gothic', sans-serif; background: #FFFFFF; padding: 40px; color: #1A1A1A; }
+  .container { width: 1280px; margin: 0 auto; }
+  .title { font-size: 26px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+  .subtitle { font-size: 13px; color: #6B7280; text-align: center; margin-bottom: 36px; }
+  .layout { display: grid; grid-template-columns: 1fr 280px; gap: 24px; align-items: stretch; }
+  .funnel { display: flex; flex-direction: column; gap: 12px; }
+  .stage { background: #FFFFFF; border: 1px solid #E5E7EB; border-left: 6px solid var(--accent); border-radius: 10px; padding: 22px 28px; position: relative; }
+  .stage.s1 { --accent: #2C5FA8; }
+  .stage.s2 { --accent: #C97A2A; }
+  .stage.s3 { --accent: #6B4F8C; }
+  .stage.s1 { width: 100%; }
+  .stage.s2 { width: 85%; margin: 0 auto; }
+  .stage.s3 { width: 70%; margin: 0 auto; }
+  .s-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .s-num { background: var(--accent); color: #FFFFFF; font-size: 12px; font-weight: 700; padding: 5px 11px; border-radius: 5px; }
+  .s-name { font-size: 17px; font-weight: 700; color: #1A1A1A; }
+  .s-role { margin-left: auto; font-size: 11.5px; color: #6B7280; font-weight: 600; }
+  .s-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+  .s-item { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 5px; padding: 9px 11px; }
+  .s-item-title { font-size: 11.5px; font-weight: 700; color: #1F2937; margin-bottom: 2px; }
+  .s-item-desc { font-size: 10.5px; color: #6B7280; line-height: 1.4; }
+  .arrow-flow { text-align: center; color: #9CA3AF; font-size: 14px; }
+  .ltv-box { background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 6px solid #3C8F5C; border-radius: 10px; padding: 24px 22px; display: flex; flex-direction: column; }
+  .ltv-tag { background: #3C8F5C; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 4px; align-self: flex-start; margin-bottom: 12px; }
+  .ltv-title { font-size: 15px; font-weight: 700; color: #1A1A1A; margin-bottom: 16px; }
+  .ltv-metric { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 6px; padding: 12px 14px; margin-bottom: 8px; }
+  .ltv-metric-label { font-size: 11px; color: #6B7280; margin-bottom: 3px; }
+  .ltv-metric-value { font-size: 16px; font-weight: 700; color: #1A1A1A; }
+  .ltv-stretch { font-size: 12px; font-weight: 700; color: #3C8F5C; }
+  .ltv-base { font-size: 12px; color: #6B7280; }
+  .ltv-formula { margin-top: auto; padding-top: 14px; border-top: 1px dashed #D1D5DB; font-size: 10.5px; color: #6B7280; line-height: 1.55; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">닌자 서바이벌 2 — 3단계 융합 루프</div>
+  <div class="subtitle">Survival(유입) → Housing(체류) → 4X(결제)의 단계적 깔때기로 LTV 극대화</div>
+
+  <div class="layout">
+    <div class="funnel">
+      <div class="stage s1">
+        <div class="s-head">
+          <div class="s-num">S1</div>
+          <div class="s-name">서바이벌 (뱀서류 액션)</div>
+          <div class="s-role">유입 단계</div>
+        </div>
+        <div class="s-body">
+          <div class="s-item"><div class="s-item-title">캐주얼 유입</div><div class="s-item-desc">짧은 플레이 호흡, CPI 절감</div></div>
+          <div class="s-item"><div class="s-item-title">액션 쾌감</div><div class="s-item-desc">뱀서류 핵심 재미</div></div>
+          <div class="s-item"><div class="s-item-title">광고 보상</div><div class="s-item-desc">IAA 매출 하한선</div></div>
+        </div>
+      </div>
+
+      <div class="arrow-flow">▼</div>
+
+      <div class="stage s2">
+        <div class="s-head">
+          <div class="s-num">S2</div>
+          <div class="s-name">하우징 (영지 건설)</div>
+          <div class="s-role">체류·리텐션</div>
+        </div>
+        <div class="s-body">
+          <div class="s-item"><div class="s-item-title">자원 누적</div><div class="s-item-desc">서바이벌 보상 활용</div></div>
+          <div class="s-item"><div class="s-item-title">장기 체류</div><div class="s-item-desc">D7 리텐션 상승</div></div>
+          <div class="s-item"><div class="s-item-title">하우징 결제</div><div class="s-item-desc">한정판 스킨·가속권</div></div>
+        </div>
+      </div>
+
+      <div class="arrow-flow">▼</div>
+
+      <div class="stage s3">
+        <div class="s-head">
+          <div class="s-num">S3</div>
+          <div class="s-name">4X (연맹 점령전)</div>
+          <div class="s-role">결제·LTV</div>
+        </div>
+        <div class="s-body">
+          <div class="s-item"><div class="s-item-title">연맹 가입</div><div class="s-item-desc">사회적 결속</div></div>
+          <div class="s-item"><div class="s-item-title">고액 결제</div><div class="s-item-desc">전쟁 병과·버프</div></div>
+          <div class="s-item"><div class="s-item-title">글로벌 경쟁</div><div class="s-item-desc">ARPPU 극대화</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ltv-box">
+      <div class="ltv-tag">RESULT</div>
+      <div class="ltv-title">유저 1인당 생애가치 (LTV) 극대화</div>
+
+      <div class="ltv-metric">
+        <div class="ltv-metric-label">DAU</div>
+        <div class="ltv-metric-value">4만 <span class="ltv-base">(Base)</span> → <span class="ltv-stretch">8만 (Stretch)</span></div>
+      </div>
+      <div class="ltv-metric">
+        <div class="ltv-metric-label">결제 유저 비율</div>
+        <div class="ltv-metric-value">3% <span class="ltv-base">(Base)</span> → <span class="ltv-stretch">5% (Stretch)</span></div>
+      </div>
+      <div class="ltv-metric">
+        <div class="ltv-metric-label">ARPPU (월)</div>
+        <div class="ltv-metric-value">$40 <span class="ltv-base">(Base)</span> → <span class="ltv-stretch">$80 (Stretch)</span></div>
+      </div>
+      <div class="ltv-metric">
+        <div class="ltv-metric-label">월 매출 (목표)</div>
+        <div class="ltv-metric-value">0.75억 <span class="ltv-base">(Base)</span> → <span class="ltv-stretch">5억 (Stretch)</span></div>
+      </div>
+
+      <div class="ltv-formula">
+        '27 Base 시나리오 (출시 안정화) → '28~ Stretch 시나리오 (4X 글로벌 확장 안정기)<br/>
+        환율 1,400원/USD 적용
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

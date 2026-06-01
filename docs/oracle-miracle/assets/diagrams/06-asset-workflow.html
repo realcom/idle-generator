@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>에셋 제작 워크플로우와 OCI 통합 구조</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', AppleGothic, 'Malgun Gothic', sans-serif; background: #FFFFFF; padding: 40px; color: #1A1A1A; }
+  .container { width: 1280px; margin: 0 auto; }
+  .title { font-size: 26px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+  .subtitle { font-size: 13px; color: #6B7280; text-align: center; margin-bottom: 32px; }
+  .pipeline { display: grid; grid-template-columns: 1fr 24px 1fr 24px 1fr; align-items: stretch; gap: 0; }
+  .stage { background: #FFFFFF; border: 1px solid #E5E7EB; border-top: 5px solid var(--accent); border-radius: 8px; padding: 18px 18px; }
+  .stage.create { --accent: #C97A2A; }
+  .stage.oci { --accent: #2C5FA8; }
+  .stage.deliver { --accent: #3C8F5C; }
+  .stage-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #F3F4F6; }
+  .stage-num { background: var(--accent); color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 4px; letter-spacing: 0.4px; }
+  .stage-name { font-size: 14px; font-weight: 700; color: #1A1A1A; }
+  .stage-items { display: flex; flex-direction: column; gap: 8px; }
+  .item { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 5px; padding: 9px 11px; }
+  .item-title { font-size: 12px; font-weight: 700; color: #1F2937; margin-bottom: 2px; }
+  .item-desc { font-size: 10.5px; color: #6B7280; line-height: 1.4; }
+  .arrow-col { display: flex; align-items: center; justify-content: center; }
+  .arrow { font-size: 22px; color: #9CA3AF; font-weight: 300; }
+  .calendar { margin-top: 24px; background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 5px solid #6B4F8C; border-radius: 8px; padding: 16px 22px; }
+  .cal-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .cal-tag { background: #6B4F8C; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 4px; }
+  .cal-title { font-size: 14px; font-weight: 700; color: #1A1A1A; }
+  .cal-text { font-size: 12px; color: #4B5563; line-height: 1.6; }
+  .scale { margin-top: 18px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .scale-item { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 6px; padding: 10px 12px; text-align: center; }
+  .scale-value { font-size: 14px; font-weight: 700; color: #2C5FA8; }
+  .scale-label { font-size: 10.5px; color: #6B7280; margin-top: 3px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">에셋 제작 워크플로우와 OCI 통합 구조</div>
+  <div class="subtitle">콘텐츠 양·깊이 장벽을 5인 미만 조직에서 처리 — 월간 양산 목표 + OCI 자동화</div>
+
+  <div class="pipeline">
+    <div class="stage create">
+      <div class="stage-head">
+        <div class="stage-num">생성</div>
+        <div class="stage-name">AI 양산 (4종)</div>
+      </div>
+      <div class="stage-items">
+        <div class="item">
+          <div class="item-title">비주얼</div>
+          <div class="item-desc">Midjourney · LayerAI · 닌자 IP LoRA / 200~300개/월</div>
+        </div>
+        <div class="item">
+          <div class="item-title">음향·BGM</div>
+          <div class="item-desc">Suno · Udio · ElevenLabs SFX / BGM 10~15 + SFX 100~150/월</div>
+        </div>
+        <div class="item">
+          <div class="item-title">텍스트·다국어</div>
+          <div class="item-desc">외부 LLM + OCI Language / 500~800개 · 5~7개국어</div>
+        </div>
+        <div class="item">
+          <div class="item-title">애니메이션</div>
+          <div class="item-desc">사내 + 프레임 보간 AI / 20~30개/월</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-col"><div class="arrow">›</div></div>
+
+    <div class="stage oci">
+      <div class="stage-head">
+        <div class="stage-num">OCI 통합</div>
+        <div class="stage-name">검증·관리·최적화 (5종)</div>
+      </div>
+      <div class="stage-items">
+        <div class="item">
+          <div class="item-title">GenAI Agents</div>
+          <div class="item-desc">다단계 자동 검증 (IP 톤·금지·라이선스)</div>
+        </div>
+        <div class="item">
+          <div class="item-title">Database 23ai Vector Search</div>
+          <div class="item-desc">유사도·중복·재사용 자산 탐지</div>
+        </div>
+        <div class="item">
+          <div class="item-title">Object Storage</div>
+          <div class="item-desc">표준 보관·버전 관리</div>
+        </div>
+        <div class="item">
+          <div class="item-title">Functions</div>
+          <div class="item-desc">변환·아틀라스·빌드 자동</div>
+        </div>
+        <div class="item">
+          <div class="item-title">Data Science</div>
+          <div class="item-desc">A/B 테스트·최적안 선정</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-col"><div class="arrow">›</div></div>
+
+    <div class="stage deliver">
+      <div class="stage-head">
+        <div class="stage-num">배포</div>
+        <div class="stage-name">게임 통합·운영</div>
+      </div>
+      <div class="stage-items">
+        <div class="item">
+          <div class="item-title">콘텐츠 캘린더</div>
+          <div class="item-desc">시즌·이벤트·패치 일괄 발주</div>
+        </div>
+        <div class="item">
+          <div class="item-title">OCI CDN 글로벌 배포</div>
+          <div class="item-desc">빌드 시점 핫 패치 무인 진행</div>
+        </div>
+        <div class="item">
+          <div class="item-title">검증 사례 게임</div>
+          <div class="item-desc">닌자 서바이벌 2</div>
+        </div>
+        <div class="item">
+          <div class="item-title">B2B 라이선시 게임</div>
+          <div class="item-desc">'28~ 인디 게임사 공급</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calendar">
+    <div class="cal-head">
+      <div class="cal-tag">통합 운영</div>
+      <div class="cal-title">콘텐츠 캘린더 자동화</div>
+    </div>
+    <div class="cal-text">기획자가 "연맹 시즌 2 콘텐츠 패키지" 정의 → 비주얼·음향·텍스트·애니메이션 양산 일괄 발주 → 검증·관리·테스트 자동 통과 → 빌드·CDN 배포까지 무인 진행. 동일 매출 규모의 전통 게임사 콘텐츠팀 약 20~30인 → 당사 3~5인 + AI 워크플로우로 동등 양산.</div>
+  </div>
+
+  <div class="scale">
+    <div class="scale-item"><div class="scale-value">전통 20~30인</div><div class="scale-label">동일 매출 콘텐츠팀</div></div>
+    <div class="scale-item"><div class="scale-value">→ 3~5인</div><div class="scale-label">당사 콘텐츠팀</div></div>
+    <div class="scale-item"><div class="scale-value">월 1,000+개</div><div class="scale-label">콘텐츠 양산 목표</div></div>
+    <div class="scale-item"><div class="scale-value">5~7개국어</div><div class="scale-label">자동 로컬라이징</div></div>
+  </div>
+</div>
+</body>
+</html>

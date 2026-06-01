@@ -16,6 +16,7 @@ addStats:
   - { type: Attack,    value: [12.0] }
   - { type: Defense,   value: [4.0] }
   - { type: MoveSpeed, value: [3.0] }
+  - { type: ScalePercent, value: [-62.0] }
 
 # (유닛은 requiredExps 미사용 — 필드 자체를 두지 않음)
 
@@ -28,8 +29,8 @@ dropAddItemGroups:
   - $ref: rewards/meadow_slime_drops.reward.yaml#green_slime
 
 # 표현(아트 키 — idlez 에선 PatchResources 의 prefab/sprite/animation 키)
-prefab: "Units/Slime/slime_green.prefab"
-sprite: "Units/Slime/slime_green.png"
+prefab: "Units/Monsters/large_melee_slime_green.prefab"
+sprite: "Units/Monsters/Assets/large_melee_slime.png"
 uiScale: 1.0
 animations:
   idle: "slime_green_idle"

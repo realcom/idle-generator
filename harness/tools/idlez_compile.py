@@ -316,6 +316,49 @@ def compile_groups(groups, game):
     return out
 
 
+def expand_level_up_gold_cost(raw):
+    spec = raw.pop("levelUpGoldCost", None)
+    if not spec:
+        return
+
+    levels = str(spec.get("levels", "1..1"))
+    lo, hi = map(int, levels.split(".."))
+    base = int(spec.get("base", 0))
+    step = int(spec.get("step", 0))
+    item_data_id = int(spec.get("itemDataId", 5))
+
+    groups = raw.setdefault("levelUpMaterialItemGroups", [])
+    for level in range(lo, hi + 1):
+        groups.append(
+            {
+                "level": level,
+                "shouldAllValid": True,
+                "materialItems": [
+                    {
+                        "id": item_data_id,
+                        "count": base + step * (level - lo),
+                    }
+                ],
+            }
+        )
+
+
+def expand_summon_cost_scaling(raw):
+    spec = raw.pop("summonCostScaling", None)
+    if not spec:
+        return
+
+    every_purchases = int(spec.get("everyPurchases", 0))
+    add_material_count = int(spec.get("addMaterialCount", 0))
+    if every_purchases <= 0 or add_material_count <= 0:
+        return
+
+    # Engine storage uses existing ResourceItem fields; source YAML keeps the
+    # summon-specific meaning explicit.
+    raw["regenPeriod"] = every_purchases
+    raw["regenCount"] = add_material_count
+
+
 def load_anchor(game, ref):
     fp, anchor = ref.split("#")
     doc = load_yaml(f"{ROOT}/content/{game}/{fp}")
@@ -386,6 +429,9 @@ def compile_entry(src, tname, spec, game, growth, errors, source_path):
     raw = copy.deepcopy(src)
     if tname == "unit":
         normalize_unit_scalars(raw, source_path, errors)
+    if tname == "item":
+        expand_level_up_gold_cost(raw)
+        expand_summon_cost_scaling(raw)
 
     gmap = {}
     for meta, arrays in growth:
@@ -554,6 +600,10 @@ BOARD_VARIABLES = {
     "wave_transition_pending": 603,
     "wavespawned": 604,
     "wave_spawned": 604,
+    "enemylevel": 605,
+    "enemy_level": 605,
+    "bosslevel": 606,
+    "boss_level": 606,
 }
 UNIT_VARIABLES = {
     "dataid": "DataId",
@@ -927,6 +977,18 @@ def make_assignment(value, parameter_type, vars_, errors, ctx):
     }
 
 
+def make_parameter_assignment(value, parameter_type, vars_, errors, ctx, *, allow_expression=False):
+    expression = (
+        expr_postfix(value, vars_, errors, ctx)
+        if allow_expression and isinstance(value, str)
+        else {"postfix": [{"operand": {"constant": {"value": _resolve_behavior_var(value, vars_, errors, ctx)}}}]}
+    )
+    return {
+        "expression": expression,
+        "variable": {"parameter": {"type": parameter_type}},
+    }
+
+
 def default_call_caller(owner_domain, method_domain):
     if owner_domain == "unit":
         return method_domain == "unitMethod"
@@ -991,7 +1053,7 @@ def build_behavior_calls(akey, args, vars_, errors, ctx, owner_domain=None):
         validate_action_args(
             akey,
             args,
-            {"unitDataId", "count", "locationId", "positionX", "positionY", "angle", "offset", "team", "rank"},
+            {"unitDataId", "count", "locationId", "positionX", "positionY", "angle", "offset", "team", "rank", "level"},
             errors,
             ctx,
         )
@@ -1004,6 +1066,7 @@ def build_behavior_calls(akey, args, vars_, errors, ctx, owner_domain=None):
             ("positionY", "PositionY"),
             ("angle", "Angle"),
             ("offset", "Offset"),
+            ("level", "Level"),
         ):
             if raw_key in args:
                 normalized[raw_key] = (args[raw_key], parameter_type)
@@ -1021,7 +1084,14 @@ def build_behavior_calls(akey, args, vars_, errors, ctx, owner_domain=None):
                 "call": {
                     "method": {"boardMethod": {"type": "AddUnit"}},
                     "assignments": [
-                        make_assignment(value, parameter_type, vars_, errors, ctx)
+                        make_parameter_assignment(
+                            value,
+                            parameter_type,
+                            vars_,
+                            errors,
+                            ctx,
+                            allow_expression=parameter_type == "Level",
+                        )
                         for value, parameter_type in normalized.values()
                     ],
                 }
@@ -1186,6 +1256,87 @@ def required_item_bindings(profile):
     return bindings
 
 
+def _iter_entry_stats(tname, entry):
+    for stat_field in SPECS[tname]["stat"]:
+        for stat in entry.get(stat_field, []):
+            yield stat_field, stat.get("type", "Hp"), stat.get("value", [])
+
+
+def _as_float(value, ctx, errors):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        errors.append(f"{ctx}: 숫자 값이 아님 ({value!r})")
+        return None
+
+
+def validate_stat_guardrails(profile, tname, entry, errors):
+    guardrails = profile.get("stats", {}).get("guardrails", {}) or {}
+    if not guardrails:
+        return
+
+    for stat_field, stat_type, values in _iter_entry_stats(tname, entry):
+        rule = guardrails.get(stat_type)
+        if not rule:
+            continue
+        min_value = rule.get("min")
+        max_value = rule.get("max")
+        for idx, raw_value in enumerate(values):
+            ctx = f"{tname} {entry.get('id')}.{stat_field}.{stat_type}[{idx}]"
+            value = _as_float(raw_value, ctx, errors)
+            if value is None:
+                continue
+            if min_value is not None and value < float(min_value):
+                errors.append(f"{ctx}: {value} < min {min_value}")
+            if max_value is not None and value > float(max_value):
+                errors.append(f"{ctx}: {value} > max {max_value}")
+
+
+def _unit_stat_values(unit, stat_type):
+    for stat in unit.get("addStats", []):
+        if stat.get("type", "Hp") == stat_type:
+            return stat.get("value", [])
+    return None
+
+
+def validate_unit_visual_scale(profile, bundles, errors):
+    config = profile.get("unit_visual_scale", {}) or {}
+    rules = config.get("classes", {}) or {}
+    if not rules:
+        return
+
+    stat_type = config.get("stat", "ScalePercent")
+    for unit in bundles.get("unit", []):
+        unit_type = unit.get("type", "Normal")
+        rule = rules.get(unit_type)
+        if not rule:
+            continue
+
+        values = _unit_stat_values(unit, stat_type)
+        if not values:
+            errors.append(
+                f"unit {unit.get('id')}: {stat_type} 누락 "
+                f"(unit_visual_scale.{unit_type}.target={rule.get('target')})"
+            )
+            continue
+
+        min_value = rule.get("min")
+        max_value = rule.get("max")
+        for idx, raw_value in enumerate(values):
+            ctx = f"unit {unit.get('id')}.{stat_type}[{idx}]"
+            value = _as_float(raw_value, ctx, errors)
+            if value is None:
+                continue
+            if min_value is not None and value < float(min_value):
+                errors.append(
+                    f"{ctx}: {value} < unit_visual_scale.{unit_type}.min {min_value}"
+                )
+            if max_value is not None and value > float(max_value):
+                errors.append(
+                    f"{ctx}: {value} > unit_visual_scale.{unit_type}.max {max_value}"
+                )
+
+
 # ============================================================
 # 검증
 # ============================================================
@@ -1210,6 +1361,7 @@ def validate(game, bundles, triggers, globals_out, warns, errors):
 
     for tname, entries in bundles.items():
         for entry in entries:
+            validate_stat_guardrails(profile, tname, entry, errors)
             for stat_field in SPECS[tname]["stat"]:
                 for stat in entry.get(stat_field, []):
                     stype = stat.get("type", "Hp")
@@ -1221,6 +1373,8 @@ def validate(game, bundles, triggers, globals_out, warns, errors):
             for item_id in walk_item_refs(entry):
                 if item_id not in item_ids:
                     warns.append(f"{tname} {entry.get('id')}: itemDataId {item_id} 미정의")
+
+    validate_unit_visual_scale(profile, bundles, errors)
 
     item_global = globals_out["itemGlobal"]
     map_global = globals_out["mapGlobal"]

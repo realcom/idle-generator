@@ -5,7 +5,14 @@
       "name": "Resource Visualizer",
       "runtimeExecutable": "python3",
       "runtimeArgs": ["tools/serve_visualizer.py"],
-      "port": 8080
+      "port": 8080,
+      "autoPort": true
+    },
+    {
+      "name": "warband-topdown",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8011", "--directory", "/Users/yangjinhwan/Projects/idle-game-generator-warband/harness"],
+      "port": 8011
     }
   ]
 }

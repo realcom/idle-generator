@@ -3,7 +3,7 @@ game: idlez
 status: draft
 target: GameScene
 backend: ugui
-source_concept: ../../../design/idlez/concepts/hamster_portrait_combat_growth_dock_concept_d.md
+source_concept: ../../../design/idlez/concepts/hamster_growth_dock_overlay_mock_v1.md
 design_sources:
   art_direction: ../../../design/idlez/art-direction.yaml
   layout_tokens: ../../../design/idlez/layout-tokens.yaml
@@ -44,11 +44,15 @@ regions:
     atom: GrowthDockRoot
     anchor: bottom_safe_area_stretch
     height_ratio: 0.38
+  equipment_summon_button:
+    atom: EquipmentSummonButton
+    anchor: combat_dock_center
+    height_ratio: 0.00
 
 growth_dock:
   stat_cards:
     atom: GrowthStatCard
-    layout: grid_2x2
+    layout: compact_grid_2x2_left_half
     data:
       - key: attack
         icon: Icon_AttackSword
@@ -78,38 +82,17 @@ growth_dock:
         value_binding: player.growth.speed.value
         cost_binding: player.growth.speed.cost
         action: UpgradeGrowthSpeed
-  reward_button:
-    atom: GrowthRewardButton
-    label_key: ui.growth.claimReward
-    amount_binding: player.growth.pendingReward
-    action: ClaimGrowthReward
-  auto_enhance_button:
-    atom: AutoEnhanceButton
-    label_key: ui.growth.autoEnhance
-    state_binding: player.growth.autoEnhanceEnabled
-    action: ToggleAutoEnhance
-  tabs:
-    atom: BottomTabBar
-    selected: growth
-    items:
-      - key: growth
-        icon: Icon_TabGrowthHamster
-        action: OpenGrowth
-      - key: companion
-        icon: Icon_TabMushroom
-        action: OpenCompanion
-      - key: equipment
-        icon: Icon_TabGear
-        action: OpenEquipment
-      - key: pet
-        icon: Icon_TabPetHamster
-        action: OpenPet
-      - key: adventure
-        icon: Icon_TabAdventure
-        action: OpenAdventure
-      - key: locked_guild
-        icon: Icon_TabLocked
-        action: ShowLockedGuild
+  equipment_panel:
+    atom: EquipmentPanel
+    layout: right_half_preview
+    title_key: ui.equipment.title
+    soul_binding: player.inventory.monsterSoul
+    preview_binding: player.equipment.recentOrEquipped
+  equipment_summon_button:
+    atom: EquipmentSummonButton
+    label_key: ui.equipment.summonLamp
+    cost_binding: player.inventory.monsterSoul
+    action: BuyEquipmentLamp
 
 validation:
   required_viewports:
@@ -124,4 +107,4 @@ validation:
     - no_text_overflow
     - no_combat_dock_overlap
     - stat_cards_repeatable
-    - safe_area_tab_bar
+    - summon_button_between_combat_and_dock

@@ -2,7 +2,8 @@ id: 500101
 group: 500101
 name: "포자초원 입구"
 type: Dungeon
-tags: [Main]
+tags: [Main, InfiniteWaves]
+referenceAchievementDataIds: [600108, 600109, 600110, 600111, 600112]
 
 scene: "PFB_MAP_Meadow_Day_Chapter"
 sprite: "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png"
@@ -12,6 +13,13 @@ fov: 9.25
 popupArgs:
   ClientModeManager: ModeManagerMushroom
   ClientHomeMapDataId: self
+  ClientAutoAdvance: true
+  ClientNextMapDataId: 500102
+  ClientRetryMapDataId: self
+
+initVariables:
+  - { callerKey: 605, value: 1 }
+  - { callerKey: 606, value: 1 }
 
 boardConstants:
   levelUpChoiceCount: 3

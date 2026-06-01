@@ -1,0 +1,31 @@
+flowchart TB
+    CLIENT["모바일 게임 클라이언트<br/>(닌자 서바이벌 2)"]
+    subgraph SEOUL["OCI Seoul · Chuncheon 리전"]
+        LB["Load Balancer"]
+        OKE["OKE 클러스터<br/>(idlez .NET 서버)"]
+        DB["Autonomous Database"]
+        OS["Object Storage<br/>(콘텐츠·에셋)"]
+        CDN["OCI CDN"]
+    end
+    subgraph OSAKA["OCI Osaka 리전 (Japan East)"]
+        AG["Generative AI Agents<br/>(인게임 NPC·이벤트)"]
+        VS["Database 23ai<br/>Vector Search (RAG)"]
+    end
+    subgraph AUTO["운영 자동화 레이어"]
+        FN["OCI Functions<br/>(빌드·배포 파이프라인)"]
+        LANG["OCI Language<br/>(다국어 CS)"]
+        APM["OCI APM<br/>+ Logging Analytics<br/>(KPI·이상 탐지)"]
+    end
+    CLIENT --> CDN
+    CDN --> LB --> OKE
+    OKE --> DB
+    OKE --> OS
+    OKE -.비동기·캐싱·prefetch.-> AG
+    AG --> VS
+    OS --> FN
+    OKE --> APM
+    OKE --> LANG
+
+    style SEOUL fill:#E6F3FF
+    style OSAKA fill:#FFE6F0
+    style AUTO fill:#FFF4E6

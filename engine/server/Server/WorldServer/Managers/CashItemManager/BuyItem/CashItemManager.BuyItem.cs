@@ -40,7 +40,8 @@ public partial class CashItemManager
                 return (StatusCode.ItemNotBuyable, []);
         }
         
-        status = TryConsumeMaterials(out var selectedMaterialItemModels, resProductItem.ProductMaterialItemGroups, selectedMaterialItems, count);
+        var (materialItemGroups, materialCount) = GetProductMaterialItemGroupsForBuy(resProductItem, count);
+        status = TryConsumeMaterials(out var selectedMaterialItemModels, materialItemGroups, selectedMaterialItems, materialCount);
         if (!status.IsSuccess())
             return (status, []);
 
@@ -72,6 +73,8 @@ public partial class CashItemManager
         if (!status.IsSuccess())
             return status;
 
+        IncreaseProgressiveProductPurchaseCount(resProductItem, count);
+
         var updateMultiplier = multiplier;
         Player.SendAcquiredItemsUpdate(addedItemStuffs.ToPlayerItemMessages(),
             PlayerAcquiredItemsUpdate.Types.Type.BuyProduct,
@@ -79,6 +82,66 @@ public partial class CashItemManager
             handleUpdateAction: update => { update.Multiplier = updateMultiplier; });
 
         return StatusCode.Ok;
+    }
+
+    private (IEnumerable<MaterialItemGroup> materialItemGroups, int count) GetProductMaterialItemGroupsForBuy(ResourceItem resProductItem, int count)
+    {
+        if (!UsesProgressiveProductPrice(resProductItem) || count <= 0)
+            return (resProductItem.ProductMaterialItemGroups, count);
+
+        var purchasedBefore = GetProgressiveProductPurchaseCount(resProductItem);
+        var scaledGroups = new List<MaterialItemGroup>();
+        foreach (var materialItemGroup in resProductItem.ProductMaterialItemGroups)
+        {
+            var scaledGroup = materialItemGroup.Clone();
+            foreach (var materialItem in scaledGroup.MaterialItems)
+            {
+                materialItem.Count = GetProgressiveProductMaterialCount(
+                    materialItem.Count,
+                    purchasedBefore,
+                    count,
+                    resProductItem.RegenPeriod,
+                    resProductItem.RegenCount);
+            }
+            scaledGroups.Add(scaledGroup);
+        }
+
+        return (scaledGroups, 1);
+    }
+
+    private static bool UsesProgressiveProductPrice(ResourceItem resProductItem)
+    {
+        return resProductItem.Category == ResourceItem.Types.Category.Product
+               && resProductItem.RegenPeriod > 0
+               && resProductItem.RegenCount > 0
+               && resProductItem.ProductMaterialItemGroups.Count > 0;
+    }
+
+    private int GetProgressiveProductPurchaseCount(ResourceItem resProductItem)
+    {
+        var productItemDataId = resProductItem.ProductItemDataId != 0 ? resProductItem.ProductItemDataId : resProductItem.Id;
+        var productItem = GetItemByDataId(productItemDataId, checkCount: false, checkUntilAt: false);
+        return productItem?.ToMessage().Option?.ProductOption?.MultiplyBonusCount ?? 0;
+    }
+
+    private void IncreaseProgressiveProductPurchaseCount(ResourceItem resProductItem, int count)
+    {
+        if (!UsesProgressiveProductPrice(resProductItem) || count <= 0)
+            return;
+
+        var productItemDataId = resProductItem.ProductItemDataId != 0 ? resProductItem.ProductItemDataId : resProductItem.Id;
+        var productItem = GetOrCreateItem(productItemDataId, out _, 0);
+        using var optionScope = productItem.GetOptionScope();
+        var productOption = optionScope.Option.GetProductOption();
+        productOption.MultiplyBonusCount += count;
+    }
+
+    private static int GetProgressiveProductMaterialCount(int baseCount, int purchasedBefore, int buyCount, int stepInterval, int stepAdd)
+    {
+        var totalCount = 0;
+        for (var i = 0; i < buyCount; i++)
+            totalCount += baseCount + ((purchasedBefore + i) / stepInterval) * stepAdd;
+        return totalCount;
     }
 
     public StatusCode ProcessBuyItem(ResourceItem resProductItem, int count, out int multiplier,

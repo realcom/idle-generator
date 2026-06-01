@@ -1,0 +1,25 @@
+flowchart LR
+    subgraph IN["자연어 정의 입력"]
+        IN1["트리거 자연어<br/>(스폰·사망·이벤트)"]
+        IN2["맵 자연어<br/>(지형·오브젝트·포인트)"]
+        IN3["게임 모드 정의<br/>(서바이벌·하우징·4X·방치형)"]
+    end
+    subgraph MACHINES["IDLE Forge 핵심 협업 머신 3종"]
+        M1["Trigger AI 협업 머신<br/>(이벤트·AI 행동 로직)"]
+        M2["맵·레벨 에디터<br/>AI 협업 머신"]
+        M3["다중 모드 지원<br/>패키지"]
+    end
+    subgraph OUT["검증된 게임 데이터·로직"]
+        OUT1["행동 트리거"]
+        OUT2["맵·레벨 초안"]
+        OUT3["모드별 콘텐츠"]
+    end
+    IN1 --> M1 --> OUT1
+    IN2 --> M2 --> OUT2
+    IN3 --> M3 --> OUT3
+    OUT1 & OUT2 & OUT3 --> POST["사내 디자이너<br/>후처리·확정"]
+    POST --> GAME["닌자 서바이벌 2<br/>+ B2B 라이선시 게임"]
+
+    style MACHINES fill:#FFF4E6
+    style POST fill:#E6F3FF
+    style GAME fill:#E6FFE6

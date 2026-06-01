@@ -15,5 +15,53 @@ levelUpMaterialItemGroups:
     materialItems:
       - { id: 5, count: 18000 }
       - { id: 200103, count: 75 }
+unstackable: true
+targetItemDataIds: [200106]
+optionCounts: [4]
+options:
+  - options:
+      - id: 2002511
+        grade: 5
+        group: 1
+        weight: 34
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: AttackPercent, value: [2.94, 4.9, 7.84, 12.25, 18.375] }
+      - id: 2002512
+        grade: 5
+        group: 1
+        weight: 28
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: CooldownPercent, value: [1.47, 2.45, 3.92, 5.88, 8.33] }
+      - id: 2002513
+        grade: 5
+        group: 1
+        weight: 18
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: ExpPercent, value: [2.45, 4.41, 6.86, 9.8, 14.21] }
+      - id: 2002514
+        grade: 5
+        group: 1
+        weight: 20
+        minLevel: 5
+        maxLevel: 5
+        equipAddStats:
+          - { type: MonsterDamageEfficiencyPercent, value: [2.45, 4.41, 7.35, 11.76, 17.15] }
+rerollMaterialItemGroups:
+  - level: 1
+    shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 15000 }
+      - { id: 200106, count: 16 }
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 6200 }
 spriteGroups:
   Icon: "Items/Icons/ICN_Weapon_Staff.png"

@@ -74,3 +74,17 @@ popupArgs:
 
 - `ClientModeManager`: `GameScene` 안에서 붙일 모드 매니저 Addressable key
 - `ClientHomeMapDataId`: 로그인 후 진입/전투 이탈 시 돌아갈 홈 맵. `self`면 현재 맵 유지
+
+자동 반복/다음 맵 진행은 `group` 스캔에 기대지 말고 명시 edge를 둔다.
+
+```yaml
+tags: [Main, InfiniteWaves]
+popupArgs:
+  ClientAutoAdvance: true
+  ClientNextMapDataId: self
+  ClientRetryMapDataId: self
+```
+
+- `ClientAutoAdvance`: `GameEnded` 후 결과 팝업 대신 다음 맵으로 자동 진입
+- `ClientNextMapDataId`: 승리 시 이동할 map id. `self`면 같은 맵 반복
+- `ClientRetryMapDataId`: 패배 시 재시작할 map id. 생략 시 현재 맵

@@ -25,6 +25,7 @@ stats:
     - AttackSpeed
     - AttackSpeedPercent
     - MoveSpeed
+    - ScalePercent
     - CooldownPercent
     - ExpPercent
     - ItemDropPercent
@@ -34,9 +35,20 @@ stats:
   guardrails:
     CriticalPercent:       { min: 0, max: 100 }
     CriticalDamagePercent: { min: 0, max: 100000 }
+    ScalePercent:          { min: -70, max: -20 }
     # flat 스탯은 키우기 특성상 큰 수 — 상한은 곡선(growth)에서 관리
     Attack: { min: 1 }
     Hp:     { min: 1 }
+
+unit_visual_scale:
+  stat: ScalePercent
+  note: "전투 화면 기준 시각 스케일. ScalePercent -60 = 원본 prefab의 40%."
+  classes:
+    Player:  { target: -60, min: -65, max: -50 }
+    Normal:  { target: -62, min: -68, max: -52 }
+    Elite:   { target: -62, min: -68, max: -52 }
+    MidBoss: { target: -54, min: -62, max: -42 }
+    Boss:    { target: -48, min: -58, max: -35 }
 
 # 출처: Items.json itemGlobal.dataId (실제 값)
 currencies:

@@ -1,13 +1,21 @@
 id: 500105
-group: 500100
+group: 500105
 name: "포자대왕 둥지"
 type: Dungeon
-tags: [Main, Boss]
+tags: [Boss, InfiniteWaves]
 scene: "PFB_MAP_Meadow_Day_Chapter"
 sprite: "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png"
-popupArgs: { ClientModeManager: ModeManagerMushroom, ClientHomeMapDataId: self }
+popupArgs:
+  ClientModeManager: ModeManagerMushroom
+  ClientHomeMapDataId: self
+  ClientAutoAdvance: true
+  ClientNextMapDataId: 500106
+  ClientRetryMapDataId: self
+initVariables:
+  - { callerKey: 605, value: 5 }
+  - { callerKey: 606, value: 5 }
 boardConstants: { levelUpChoiceCount: 3 }
-initLevel: 16
+initLevel: 5
 initGold: 900
 enableUnitExp: true
 locations:

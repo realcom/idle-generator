@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>자체 IP 자산 위에서의 플랫폼 검증 구조</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', AppleGothic, 'Malgun Gothic', sans-serif; background: #FFFFFF; padding: 40px; color: #1A1A1A; }
+  .container { width: 1280px; margin: 0 auto; }
+  .title { font-size: 26px; font-weight: 700; text-align: center; margin-bottom: 6px; color: #1A1A1A; letter-spacing: -0.3px; }
+  .subtitle { font-size: 13px; color: #6B7280; text-align: center; margin-bottom: 32px; }
+  .comparison { display: grid; grid-template-columns: 1fr 24px 1fr; gap: 0; align-items: stretch; }
+  .vs-bar { display: flex; align-items: center; justify-content: center; }
+  .vs-label { background: #1F2937; color: #FFFFFF; font-size: 12px; font-weight: 700; padding: 6px 0; width: 24px; text-align: center; letter-spacing: 1px; writing-mode: vertical-rl; transform: rotate(180deg); }
+  .card { background: #FFFFFF; border: 1px solid #E5E7EB; border-left: 6px solid var(--accent); border-radius: 10px; padding: 24px 26px; }
+  .card.weak { --accent: #9CA3AF; }
+  .card.strong { --accent: #2C5FA8; }
+  .card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #F3F4F6; }
+  .badge { background: var(--accent); color: #FFFFFF; font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 5px; letter-spacing: 0.4px; }
+  .card-title { font-size: 17px; font-weight: 700; color: #1A1A1A; }
+  .card-items { display: flex; flex-direction: column; gap: 10px; }
+  .item { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 6px; padding: 12px 14px; }
+  .item-title { font-weight: 700; font-size: 13.5px; color: #1F2937; margin-bottom: 3px; }
+  .item-desc { color: #6B7280; font-size: 12px; line-height: 1.5; }
+  .result-box { margin-top: 24px; background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 6px solid #3C8F5C; border-radius: 10px; padding: 22px 26px; }
+  .result-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .result-badge { background: #3C8F5C; color: #FFFFFF; font-size: 11.5px; font-weight: 700; padding: 5px 10px; border-radius: 5px; letter-spacing: 0.3px; }
+  .result-title { font-size: 16px; font-weight: 700; color: #1A1A1A; }
+  .result-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 8px; }
+  .metric { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 6px; padding: 12px; text-align: center; }
+  .metric-value { font-size: 18px; font-weight: 700; color: #3C8F5C; margin-bottom: 4px; }
+  .metric-label { font-size: 11px; color: #6B7280; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">자체 IP 자산 위에서의 플랫폼 검증 구조</div>
+  <div class="subtitle">일반 AI 게임 도구 회사 대비 IDLE Forge의 검증 메커니즘 차별성</div>
+
+  <div class="comparison">
+    <div class="card weak">
+      <div class="card-head">
+        <div class="badge">일반</div>
+        <div class="card-title">AI 게임 도구 개발사</div>
+      </div>
+      <div class="card-items">
+        <div class="item">
+          <div class="item-title">외부 게임 의존</div>
+          <div class="item-desc">자사 라이브 게임 부재, 도구 검증을 외부 파트너에 의존</div>
+        </div>
+        <div class="item">
+          <div class="item-title">가상 시나리오 테스트</div>
+          <div class="item-desc">합성 데이터·데모 환경에서만 검증, 실제 유저 반응 미확보</div>
+        </div>
+        <div class="item">
+          <div class="item-title">ROI 입증 한계</div>
+          <div class="item-desc">도구가 운영 효율을 실제 만든다는 라이브 데이터 부재</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vs-bar"><div class="vs-label">VS</div></div>
+
+    <div class="card strong">
+      <div class="card-head">
+        <div class="badge">IDLE Forge</div>
+        <div class="card-title">자체 IP 라이브 자산 보유</div>
+      </div>
+      <div class="card-items">
+        <div class="item">
+          <div class="item-title">닌자키우기 100만+ DL</div>
+          <div class="item-desc">5년 운영, 글로벌 방치형 RPG 라이브 데이터</div>
+        </div>
+        <div class="item">
+          <div class="item-title">닌자 서바이벌 70만+ DL</div>
+          <div class="item-desc">3년+ 운영, 뱀서류 액션 라이브 데이터</div>
+        </div>
+        <div class="item">
+          <div class="item-title">월 매출 5,000만원 / 3인 AI 운영</div>
+          <div class="item-desc">동일 매출 규모 전통 게임사 10~20인 대비 큰 폭 효율</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-box">
+    <div class="result-head">
+      <div class="result-badge">2025 실증</div>
+      <div class="result-title">사내 도구로 운영 게임에 신규 모드 추가 후 측정</div>
+    </div>
+    <div class="result-metrics">
+      <div class="metric">
+        <div class="metric-value">+5%p</div>
+        <div class="metric-label">D7 리텐션 절대 상승</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">+5%</div>
+        <div class="metric-label">ARPDAU 상대 상승</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">1만+</div>
+        <div class="metric-label">A/B 코호트 표본</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">p &lt; 0.05</div>
+        <div class="metric-label">통계적 유의</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

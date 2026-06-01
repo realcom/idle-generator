@@ -20,21 +20,21 @@ targets:
 
 | param | value |
 | --- | --- |
-| base | 1800 |
-| growth | 1.105 |
+| base | 900 |
+| growth | 1.0 |
 
 ## attack(level)
 `value = base * pow(growth, level - 1)`
 
 | param | value |
 | --- | --- |
-| base | 90 |
-| growth | 1.095 |
+| base | 80 |
+| growth | 1.0 |
 
 ## defense(level)
 `value = base * pow(growth, level - 1)`
 
 | param | value |
 | --- | --- |
-| base | 2 |
-| growth | 1.085 |
+| base | 1 |
+| growth | 1.0 |

@@ -17,6 +17,7 @@ addStats:
   - { type: Attack,    value: [80.0]   }
   - { type: Defense,   value: [30.0]   }
   - { type: MoveSpeed, value: [1.5]    }
+  - { type: ScalePercent, value: [-48.0] }
 
 # (유닛은 requiredExps 미사용 — 필드 자체를 두지 않음)
 
@@ -42,8 +43,8 @@ dropAddItemGroups:
       - { itemDataId: 200103, count: 1, weight: 15, group: 1, pityGroup: 5 }  # 희귀(천장5)
 
 # 표현(아트 키 — asset-producer 담당)
-prefab: "Units/Slime/slime_boss.prefab"
-sprite: "Units/Slime/slime_boss.png"
+prefab: "Units/Monsters/finalboss_melee_slime_boss_green.prefab"
+sprite: "Units/Monsters/Assets/finalboss_melee_slime_boss.png"
 uiScale: 2.0
 uiOffset: { x: 0.0, y: 0.3 }
 collideSize: { x: 1.8, y: 1.8 }

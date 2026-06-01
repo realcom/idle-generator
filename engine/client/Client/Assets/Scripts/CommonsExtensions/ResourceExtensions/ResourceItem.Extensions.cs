@@ -287,10 +287,46 @@ namespace Commons.Resources
             if (!IsValidByRequiredAndExclusive())
                 return false;
 
-            if (!MyPlayer.HasEnoughMaterial(productMaterialItemGroups_.FirstOrDefault(), GetPurchaseUnit()).hasEnoughMaterial)
+            if (!MyPlayer.HasEnoughMaterial(productMaterialItemGroups_.FirstOrDefault(), GetPurchaseUnit(),
+                    GetProductMaterialPriceMultiplier(GetPurchaseUnit())).hasEnoughMaterial)
                 return false;
 
             return true;
+        }
+
+        public float GetProductMaterialPriceMultiplier(int count = 1)
+        {
+            var productMaterial = GetProductMaterial();
+            if (productMaterial == null)
+                return 1.0f;
+
+            var baseCount = productMaterial.Count * Math.Max(count, 1);
+            if (baseCount <= 0)
+                return 1.0f;
+
+            return GetProductMaterialRequiredCount(productMaterial, count) / (float)baseCount;
+        }
+
+        public int GetProductMaterialRequiredCount(MaterialItem materialItem, int count = 1)
+        {
+            count = Math.Max(count, 1);
+            if (!UsesProgressiveProductPrice())
+                return materialItem.Count * count;
+
+            var productItem = MyPlayer.GetItemByDataID(Id, checkCount: false, checkTimeValid: false, checkDeprecated: false);
+            var purchasedBefore = productItem?.Option?.ProductOption?.MultiplyBonusCount ?? 0;
+            var totalCount = 0;
+            for (var i = 0; i < count; i++)
+                totalCount += materialItem.Count + ((purchasedBefore + i) / regenPeriod_) * regenCount_;
+            return totalCount;
+        }
+
+        private bool UsesProgressiveProductPrice()
+        {
+            return category_ == Types.Category.Product
+                   && regenPeriod_ > 0
+                   && regenCount_ > 0
+                   && productMaterialItemGroups_.Count > 0;
         }
 
         public bool IsMaterialInRecipeRange(List<int> materialIds)
@@ -542,7 +578,8 @@ namespace Commons.Resources
         public string GetProductMaterialString(string format = null, Func<MaterialItem, bool> predicate = null, Func<MaterialItemGroup, bool> groupPredicate = null)
         {
             var productMaterial = GetProductMaterial(predicate, groupPredicate);
-            return productMaterial.ToStringWithIcon();
+            return productMaterial.ToStringWithIconFormat(format ?? "{0} {2}",
+                priceMultiplier: GetProductMaterialPriceMultiplier(GetPurchaseUnit()));
         }
         
         public Sprite GetDamageTypeIcon(out int damageType)
@@ -592,7 +629,8 @@ namespace Commons.Resources
                     return material.ToStringWithIconFormat(GetLocalizedString("MaterialFormat", "{0} {7}")); 
                 
                 //기본적으로는 필요량에 미보유 시에만 색깔 덮기
-                return material.ToStringWithIconFormat(GetLocalizedString("MaterialFormat", "{0} {8}"), GetPurchaseUnit());
+                return material.ToStringWithIconFormat(GetLocalizedString("MaterialFormat", "{0} {8}"),
+                    GetPurchaseUnit(), GetProductMaterialPriceMultiplier(GetPurchaseUnit()));
             }
 
             if (type_ == Types.Type.MaterialAd)
