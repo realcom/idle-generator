@@ -7,7 +7,7 @@ import { IdlezWsClient, shouldAutoConnectNetwork } from './network/idlez-ws-clie
 import { IdlezSessionStore } from './network/session-store.js?v=mushroomer2';
 import { IdlezPhaserScene } from './phaser-scene.js?v=map-sky1';
 import { IdlezSpineLayer } from './spine-layer.js?v=weekday4';
-import { attachModalSystem } from './modal-system.js?v=modaltext1';
+import { attachModalSystem } from './modal-system.js?v=shopicons1';
 import { applyLanguagePreference, resolveSettings } from './settings-store.js?v=settings1';
 
 const GAME_ID = 'mushroomer';

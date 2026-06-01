@@ -107,6 +107,15 @@ const SHOP_FALLBACK_PRODUCTS = {
   ],
 };
 
+const SHOP_ICON_PATHS = {
+  201501: 'assets/ui/icons/shop/shop_icon_ruby_400.png',
+  201502: 'assets/ui/icons/shop/shop_icon_ruby_1200.png',
+  201503: 'assets/ui/icons/shop/shop_icon_ruby_3000.png',
+  201504: 'assets/ui/icons/shop/shop_icon_equipment_booster.png',
+  201505: 'assets/ui/icons/shop/shop_icon_ad_removal.png',
+  201506: 'assets/ui/icons/shop/shop_icon_speed_pass.png',
+};
+
 const WEEKDAY_BANNER_KEYS = {
   degulRock: 'weekday-banner-degul-rock',
   slimeQueen: 'weekday-banner-slime-queen',
@@ -258,6 +267,10 @@ export function preloadModalAssets(scene) {
     if (!scene.textures.exists(key)) scene.load.image(key, path);
   }
   for (const [key, path] of Object.entries(WEEKDAY_BANNER_PATHS)) {
+    if (!scene.textures.exists(key)) scene.load.image(key, path);
+  }
+  for (const [productId, path] of Object.entries(SHOP_ICON_PATHS)) {
+    const key = shopIconTextureKey(productId);
     if (!scene.textures.exists(key)) scene.load.image(key, path);
   }
   for (const path of SKILL_ICON_PATHS) {
@@ -1080,6 +1093,11 @@ function formatInteger(value) {
   return number.toLocaleString('ko-KR');
 }
 
+function shopIconTextureKey(productId) {
+  const id = String(productId || '').trim();
+  return id ? `shop-product-icon-${id}` : '';
+}
+
 class FeatureListModal extends ListModal {
   resolveActions() {
     return [
@@ -1479,13 +1497,19 @@ class ShopModal extends BaseModal {
     this.body.add(title);
 
     const compactCard = height < 130;
-    this.#drawRubyOfferGraphic(
-      g,
-      product,
-      x + width / 2,
-      y + Math.round(height * (compactCard ? 0.38 : 0.46)),
-      compactCard ? 0.62 : (width < 120 ? 0.78 : 0.9),
-    );
+    const iconX = x + width / 2;
+    const iconY = y + Math.round(height * (compactCard ? 0.4 : 0.46));
+    const iconSize = compactCard ? 64 : 78;
+    const hasIcon = this.#drawProductIcon(product, iconX, iconY, iconSize);
+    if (!hasIcon) {
+      this.#drawRubyOfferGraphic(
+        g,
+        product,
+        iconX,
+        iconY,
+        compactCard ? 0.62 : (width < 120 ? 0.78 : 0.9),
+      );
+    }
 
     if (product.badge) {
       g.fillStyle(0xb92c25, 1);
@@ -1616,7 +1640,13 @@ class ShopModal extends BaseModal {
     })).setOrigin(0.5, 0);
     this.body.add(title);
 
-    this.#drawLimitedIcon(g, product, x + width / 2, y + Math.round(height * 0.42), width < 120 ? 0.72 : 0.84);
+    const iconX = x + width / 2;
+    const iconY = y + Math.round(height * 0.42);
+    const iconSize = width < 120 ? 70 : 78;
+    const hasIcon = this.#drawProductIcon(product, iconX, iconY, iconSize);
+    if (!hasIcon) {
+      this.#drawLimitedIcon(g, product, iconX, iconY, width < 120 ? 0.72 : 0.84);
+    }
 
     const lines = this.#limitedLines(product).slice(0, height < 146 ? 1 : 2);
     const bulletText = makeText(this.scene, x + 12, y + height - (height < 146 ? 57 : 65), lines.map(line => `• ${line}`).join('\n'), modalTextStyle('rowBody', {
@@ -1650,6 +1680,16 @@ class ShopModal extends BaseModal {
       return;
     }
     this.#drawBoosterIcon(g, cx, cy, scale);
+  }
+
+  #drawProductIcon(product, x, y, size) {
+    const key = shopIconTextureKey(product.id);
+    if (!key || !this.scene.textures.exists(key)) return false;
+    const image = makeImage(this.scene, x, y, key)
+      .setDisplaySize(size, size)
+      .setOrigin(0.5);
+    this.body.add(image);
+    return true;
   }
 
   #drawBoosterIcon(g, cx, cy, scale = 1) {

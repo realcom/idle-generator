@@ -18,4 +18,5 @@ WORKDIR /srv
 
 COPY harness/runtime/ /srv/
 COPY --from=content-build /app/harness/build/mushroomer/ /srv/build/mushroomer/
+COPY engine/commons/ /srv/engine/commons/
 COPY harness/deploy/railway/phaser/Caddyfile /etc/caddy/Caddyfile

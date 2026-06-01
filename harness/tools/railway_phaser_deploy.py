@@ -48,6 +48,7 @@ def prepare_staging(stage: Path) -> None:
     copy_tree(ROOT / "harness" / "content", stage / "harness" / "content")
     copy_tree(ROOT / "harness" / "game-profiles", stage / "harness" / "game-profiles")
     copy_tree(ROOT / "harness" / "engine-contract", stage / "harness" / "engine-contract")
+    copy_tree(ROOT / "engine" / "commons", stage / "engine" / "commons")
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> None:
