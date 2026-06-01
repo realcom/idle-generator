@@ -129,6 +129,8 @@ public static class MyPlayer
 
     public static long PlayerRuby => PlayerPurchasedRuby + PlayerFreeRuby;
 
+    public static float GameSpeedMultiplier { get; private set; } = ResourceItem.MinGameSpeedMultiplier;
+
     public static long PlayerPurchasedRuby
     {
         get => _playerPurchasedRuby;
@@ -494,6 +496,31 @@ public static class MyPlayer
         {
             GameManager.Get().DispatchEvent(GameEvent.Get(GameEventType.MyPlayerItemUpdated, items));
         }
+
+        RefreshGameSpeedMultiplier();
+    }
+
+    public static float RefreshGameSpeedMultiplier()
+    {
+        var multiplier = ResourceItem.MinGameSpeedMultiplier;
+        foreach (var item in _items.Values)
+        {
+            if (!item.IsValid())
+                continue;
+
+            var resItem = item.GetData();
+            if (resItem == null)
+                continue;
+
+            multiplier = Math.Max(multiplier, resItem.GetGameSpeedMultiplier());
+        }
+
+        GameSpeedMultiplier = multiplier;
+        var gameBoardManager = GameBoardManager.Get();
+        if (gameBoardManager != null)
+            gameBoardManager.GameSpeedScale = multiplier;
+
+        return multiplier;
     }
 
     private static void PreHandleGlobalItems(PlayerItemMessage item, ResourceItem resItem = null)

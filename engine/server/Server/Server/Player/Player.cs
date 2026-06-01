@@ -157,6 +157,7 @@ public abstract partial class Player<TServer, TPlayer>(TServer server, Session<T
     public abstract PlayerItemModel? GetItemByDataId(int dataId);
     public virtual float MaxStaminaBoostRatio => 1f;
     public virtual float StaminaRegenBoostRatio => 1f;
+    public virtual float GameSpeedMultiplier => 1f;
     public abstract PlayerAchievementModel? GetAchievementByDataId(int dataId);
 
     public abstract Task SaveAsync(IDbConnection? db = null, IDbTransaction? transaction = null, bool destroyIfFailed = true);

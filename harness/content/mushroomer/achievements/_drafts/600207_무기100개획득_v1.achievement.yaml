@@ -1,0 +1,21 @@
+id: 600207
+name: "무기 100개 획득"
+type: Normal
+tags: []
+order: 207
+initialOpen: true
+clientAchievement: false
+condition: AcquireWeaponItemAny
+conditionValue1: 0
+conditionValue2: 0
+targetProgress: 100
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200103, count: 85 }
+      - { itemDataId: 200106, count: 10 }
+      - { itemDataId: 4, count: 20 }

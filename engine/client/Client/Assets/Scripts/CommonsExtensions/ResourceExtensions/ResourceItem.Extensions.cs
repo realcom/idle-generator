@@ -313,6 +313,9 @@ namespace Commons.Resources
             if (!UsesProgressiveProductPrice())
                 return materialItem.Count * count;
 
+            if (UsesAchievementProgressiveProductPrice())
+                return (materialItem.Count + GetProgressiveProductCompletedAchievementCount() * regenCount_) * count;
+
             var productItem = MyPlayer.GetItemByDataID(Id, checkCount: false, checkTimeValid: false, checkDeprecated: false);
             var purchasedBefore = productItem?.Option?.ProductOption?.MultiplyBonusCount ?? 0;
             var totalCount = 0;
@@ -321,12 +324,39 @@ namespace Commons.Resources
             return totalCount;
         }
 
+        public int GetProgressiveProductLevel()
+        {
+            if (!UsesProgressiveProductPrice())
+                return 1;
+
+            if (UsesAchievementProgressiveProductPrice())
+                return GetProgressiveProductCompletedAchievementCount() + 1;
+
+            if (regenPeriod_ <= 0)
+                return 1;
+
+            var productItem = MyPlayer.GetItemByDataID(Id, checkCount: false, checkTimeValid: false, checkDeprecated: false);
+            var purchasedBefore = productItem?.Option?.ProductOption?.MultiplyBonusCount ?? 0;
+            return purchasedBefore / regenPeriod_ + 1;
+        }
+
         private bool UsesProgressiveProductPrice()
         {
             return category_ == Types.Category.Product
-                   && regenPeriod_ > 0
                    && regenCount_ > 0
+                   && (regenPeriod_ > 0 || targetAchievementDataIds_.Count > 0)
                    && productMaterialItemGroups_.Count > 0;
+        }
+
+        private bool UsesAchievementProgressiveProductPrice()
+        {
+            return targetAchievementDataIds_.Count > 0;
+        }
+
+        private int GetProgressiveProductCompletedAchievementCount()
+        {
+            return targetAchievementDataIds_.Count(achievementDataId =>
+                MyPlayer.GetAchievementByDataID(achievementDataId)?.IsAchievementCompletedOrRewarded() == true);
         }
 
         public bool IsMaterialInRecipeRange(List<int> materialIds)

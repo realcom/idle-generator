@@ -1,0 +1,31 @@
+id: 200416
+name: "쳇바퀴 회오리 학습"
+category: Recipe
+grade: 2
+rarity: 3
+group: 200401
+order: 5
+targetItemDataIds: [200408]
+requiredItemDataIds: [200402, 200404]
+requiredAchievementDataIds: [600116]
+exclusiveItemDataIds: [200408]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200107, count: 5 }
+      - { id: 200104, count: 10 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200408, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Mushroomer"
+  UnlockSkillItemDataId: "200408"
+  RequiredSkillItemDataIds: "200402,200404"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "30"
+  UnlockCostLevelPoint: "5"
+  LevelPointItemDataId: "200107"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_wheel_whirlwind.png"

@@ -336,6 +336,83 @@ public sealed class ItemManagerTests
     }
 
     [Fact]
+    public void BuyItem_applies_achievement_progressive_material_price()
+    {
+        const int materialId = 1001;
+        const int rewardId = 1002;
+        const int productId = 1003;
+        const int firstPriceStepAchievementId = 600001;
+        const int secondPriceStepAchievementId = 600002;
+
+        using var resources = new TestResourceScope(
+            items:
+            [
+                CreateItem(materialId, category: ResourceItem.Types.Category.Material),
+                CreateItem(rewardId, category: ResourceItem.Types.Category.Material),
+                new ResourceItem
+                {
+                    Id = productId,
+                    Category = ResourceItem.Types.Category.Product,
+                    RegenCount = 5,
+                    TargetAchievementDataIds = { firstPriceStepAchievementId, secondPriceStepAchievementId },
+                    ProductMaterialItemGroups =
+                    {
+                        new MaterialItemGroup
+                        {
+                            ShouldAllValid = true,
+                            MaterialItems =
+                            {
+                                new MaterialItem { Id = materialId, Count = 10 },
+                            }
+                        },
+                    },
+                    AddItemGroups =
+                    {
+                        new AddItemGroup
+                        {
+                            ShouldAddAll = true,
+                            AddItems =
+                            {
+                                new AddItem { ItemDataId = rewardId, Count = 1 },
+                            }
+                        },
+                    },
+                },
+            ],
+            achievements:
+            [
+                CreateBuyProductAchievement(firstPriceStepAchievementId, productId, targetProgress: 1),
+                CreateBuyProductAchievement(secondPriceStepAchievementId, productId, targetProgress: 2),
+            ]);
+
+        var harness = new WorldPlayerTestHarness(sentLoginResponse: true);
+        harness.Manager.AddItem(materialId, 100);
+
+        var firstConsumed = new List<PlayerItemMessage>();
+        Assert.Equal(StatusCode.Ok, harness.Manager.BuyItem(productId, 1, out _, firstConsumed));
+        Assert.Single(firstConsumed);
+        Assert.Equal(10, firstConsumed[0].Count);
+        Assert.True(harness.Player.AchievementManager.IsAchievementCompleted(firstPriceStepAchievementId));
+
+        var secondConsumed = new List<PlayerItemMessage>();
+        Assert.Equal(StatusCode.Ok, harness.Manager.BuyItem(productId, 1, out _, secondConsumed));
+        Assert.Single(secondConsumed);
+        Assert.Equal(15, secondConsumed[0].Count);
+        Assert.True(harness.Player.AchievementManager.IsAchievementCompleted(secondPriceStepAchievementId));
+
+        var thirdConsumed = new List<PlayerItemMessage>();
+        Assert.Equal(StatusCode.Ok, harness.Manager.BuyItem(productId, 1, out _, thirdConsumed));
+        Assert.Single(thirdConsumed);
+        Assert.Equal(20, thirdConsumed[0].Count);
+
+        var material = Assert.Single(harness.Manager.GetItemsByDataId(materialId));
+        Assert.Equal(55, material.count);
+
+        var reward = Assert.Single(harness.Manager.GetItemsByDataId(rewardId));
+        Assert.Equal(3, reward.count);
+    }
+
+    [Fact]
     public void UseItem_add_stamina_utility_caps_target_unit_and_consumes_item()
     {
         const int unitItemDataId = 1001;
@@ -792,5 +869,18 @@ public sealed class ItemManagerTests
             item.Tags.Add(tags);
 
         return item;
+    }
+
+    private static ResourceAchievement CreateBuyProductAchievement(int id, int productId, int targetProgress)
+    {
+        return new ResourceAchievement
+        {
+            Id = id,
+            Type = ResourceAchievement.Types.Type.Normal,
+            InitialOpen = true,
+            Condition = ResourceAchievement.Types.Condition.BuyItemProduct,
+            ConditionValue1 = productId,
+            TargetProgress = targetProgress,
+        };
     }
 }

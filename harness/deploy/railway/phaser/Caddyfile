@@ -1,0 +1,17 @@
+:{$PORT:8080} {
+	root * /srv
+	encode gzip zstd
+
+	@health path /healthz
+	respond @health "ok" 200
+
+	@root path /
+	rewrite @root /idlez-phaser.html
+
+	header /build/* Cache-Control "no-store"
+	header /src/* Cache-Control "public, max-age=60"
+	header /assets/* Cache-Control "public, max-age=3600"
+	header /vendor/* Cache-Control "public, max-age=3600"
+
+	file_server
+}

@@ -284,7 +284,8 @@ public partial class CashItemManager(WorldPlayer.WorldPlayer constructorPlayer) 
                 if (!statDirty && hasAddStats)
                     statDirty = true;
                 
-                if (!boostDirty && item.Data.Category == ResourceItem.Types.Category.Boost)
+                if (!boostDirty && (item.Data.Category == ResourceItem.Types.Category.Boost ||
+                                   item.Data.GetGameSpeedMultiplier() > ResourceItem.MinGameSpeedMultiplier))
                     boostDirty = true;
             }
         }

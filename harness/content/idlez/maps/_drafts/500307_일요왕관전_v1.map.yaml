@@ -1,0 +1,42 @@
+id: 500307
+group: 500307
+stage: 1
+name: "일요 왕관전"
+type: Dungeon
+tags: [WeekdayDungeon, Sunday, Boss]
+scene: "PFB_MAP_SlimeQueen_Sunset_DailyDungeon"
+prefab: "Maps/Prefabs/PFB_MAP_SlimeQueen_Sunset_DailyDungeon.prefab"
+sprite: "Maps/Map_SlimeQueen/Img_Map_SlimeQueen_0.png"
+targetCameraPivot: { x: 0.5, y: 0.58 }
+fov: 9.25
+popupArgs: { ClientModeManager: ModeManagerMushroom, ClientHomeMapDataId: 500101 }
+initLevel: 14
+enableUnitExp: true
+initVariables:
+  - { callerKey: 605, value: 14 }
+  - { callerKey: 606, value: 15 }
+boardConstants: { levelUpChoiceCount: 3 }
+locations:
+  - { id: -1, position: { x: -7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 0.75 } }] }
+  - { id: 1, position: { x: 7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 1.25 } }] }
+terrains:
+  - vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+  - type: Skill
+    vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+triggers: [MAP_ONSTART_WEEKDAYSUNDAYCROWNWAVE1, MAP_ONUPDATE_WEEKDAYSUNDAYCROWNUPDATE]
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 1500, maxCount: 2200 }
+      - { itemDataId: 6, count: 720 }
+      - { itemDataId: 4, count: 20, isCore: true }
+  - shouldAddAll: false
+    probPercent: 100
+    addItems:
+      - { itemDataId: 1000, count: 1, weight: 25, group: 1 }
+      - { itemDataId: 1001, count: 1, weight: 25, group: 1 }
+      - { itemDataId: 1002, count: 1, weight: 25, group: 1 }
+      - { itemDataId: 1003, count: 1, weight: 25, group: 1, pityGroup: 4 }

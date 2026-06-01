@@ -1,4 +1,5 @@
-﻿using Commons.Types.Players;
+﻿using Commons.Resources;
+using Commons.Types.Players;
 using Commons.Utility;
 using Server.Models;
 using Server.Stuffs;
@@ -14,5 +15,8 @@ public partial class CashItemManager
         using var optionScope = item.GetOptionScope();
         optionScope.Option.ProductOption ??= new();
         optionScope.Option.ProductOption.PityCounts.ResizeAndFillNew(item.Data.BonusCounts.Count);
+
+        if (item.Data.GetGameSpeedMultiplier() > ResourceItem.MinGameSpeedMultiplier)
+            RefreshBoosts();
     }
 }

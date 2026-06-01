@@ -1,0 +1,38 @@
+id: 500302
+group: 500302
+stage: 1
+name: "화요 강철제련소"
+type: Dungeon
+tags: [WeekdayDungeon, Tuesday, EquipmentMaterial]
+scene: "PFB_MAP_DegulRock_Day_DailyDungeon"
+prefab: "Maps/Prefabs/PFB_MAP_DegulRock_Day_DailyDungeon.prefab"
+sprite: "Maps/Map_DegulRock_Day/Img_Map_DegulRock_Day_Ground.png"
+targetCameraPivot: { x: 0.5, y: 0.58 }
+fov: 9.25
+popupArgs: { ClientModeManager: ModeManagerMushroom, ClientHomeMapDataId: 500101 }
+initLevel: 9
+enableUnitExp: true
+initVariables:
+  - { callerKey: 605, value: 9 }
+  - { callerKey: 606, value: 10 }
+boardConstants: { levelUpChoiceCount: 3 }
+locations:
+  - { id: -1, position: { x: -7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 0.75 } }] }
+  - { id: 1, position: { x: 7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 1.4 } }] }
+terrains:
+  - vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+  - type: Skill
+    vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+triggers: [MAP_ONSTART_WEEKDAYTUESDAYSTEELWAVE1, MAP_ONUPDATE_WEEKDAYTUESDAYSTEELUPDATE]
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200101, count: 28, isCore: true }
+      - { itemDataId: 200102, count: 8 }
+  - shouldAddAll: false
+    probPercent: 35
+    addItems:
+      - { itemDataId: 200103, count: 1, weight: 100, group: 1, pityGroup: 6 }

@@ -1,5 +1,5 @@
 id: 200404
-name: "포자 각성서"
+name: "간식 각성서"
 category: Skill
 type: PlayerUnitActiveSkill
 grade: 1
@@ -11,37 +11,36 @@ parentId: 200401
 skillDataId: 300104
 unstackable: true
 requiredItemDataIds: [200402, 200403]
+requiredAchievementDataIds: [600115]
+targetItemDataIds: [200408, 200409]
 levelUpMaterialItemGroups:
   - shouldAllValid: true
     level: 1
     materialItems:
-      - { id: 200107, count: 4 }
-      - { id: 200104, count: 8 }
+      - { id: 200107, count: 1 }
   - shouldAllValid: true
     level: 2
     materialItems:
-      - { id: 200107, count: 5 }
-      - { id: 200104, count: 12 }
+      - { id: 200107, count: 1 }
   - shouldAllValid: true
     level: 3
     materialItems:
-      - { id: 200107, count: 6 }
-      - { id: 200104, count: 16 }
+      - { id: 200107, count: 1 }
   - shouldAllValid: true
     level: 4
     materialItems:
-      - { id: 200107, count: 8 }
-      - { id: 200104, count: 22 }
+      - { id: 200107, count: 1 }
 popupArgs:
   SkillTree: "Mushroomer"
   SkillTreeNode: "Buff"
-  ChildrenSkillItemDataIds: ""
+  ChildrenSkillItemDataIds: "200408,200409"
   UnlockRecipeItemDataId: "200407"
-  UnlockCostLevelPoint: "4"
+  UnlockCostLevelPoint: "1"
   LevelPointItemDataId: "200107"
   RequiredSkillItemDataIds: "200402,200403"
   RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "12"
   MaxSkillLevel: "5"
   AutoUsePriority: "4"
 spriteGroups:
-  Icon: "UIAssets/Images/ingame_icn_start.png"
+  Icon: "assets/ui/icons/skills/skill_ham_snack_awakening.png"

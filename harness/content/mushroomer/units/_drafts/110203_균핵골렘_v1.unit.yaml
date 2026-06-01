@@ -1,0 +1,48 @@
+id: 110203
+name: "균핵 골렘"
+type: Elite
+tags: [Monster, Mushroomer, Main, Bulky]
+armorType: NormalArmor
+warmupDelay: 1.3
+targetMode: Chaser
+targetAwareDistance: 24.0
+targetResetDistance: 30.0
+deadDestroyDelaySeconds: 0.7
+
+addStats:
+  - { type: Hp, value: [260.0] }
+  - { type: Attack, value: [18.0] }
+  - { type: Defense, value: [8.0] }
+  - { type: AttackSpeed, value: [0.62] }
+  - { type: MoveSpeed, value: [1.55] }
+
+triggers:
+  - UNIT_ONSTART_FUNGUSBULWARKADVANCE
+  - UNIT_ONUPDATE_FUNGUSBULWARKSLAM
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 52, maxCount: 78, isCore: true }
+      - { itemDataId: 6, count: 20 }
+  - shouldAddAll: false
+    probPercent: 45
+    addItems:
+      - { itemDataId: 200102, count: 1, weight: 70, group: 1 }
+      - { itemDataId: 200103, count: 1, weight: 30, group: 1, pityGroup: 7 }
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200108, count: 14 }
+
+prefab: "Units/Monsters/large_melee_wood_golem_green.prefab"
+sprite: "Units/Monsters/Assets/large_melee_wood_golem.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 1.18
+collideSize: { x: 1.3, y: 1.3 }
+hitSize: { x: 1.45, y: 1.45 }

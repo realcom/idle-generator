@@ -1,6 +1,11 @@
 import { IdlezProtoRegistry } from './proto-registry.js';
 import { PACKET_TYPE, PacketKey, PacketStreamDecoder, encodePacket } from './packet-codec.js';
 import { toNumber } from './session-store.js';
+import {
+  getOrCreateDeviceId,
+  getOrCreateLocalPlayerId,
+  preferredLanguage,
+} from '../settings-store.js?v=settings1';
 
 const REQUEST_CASES = [
   'pingRequest',
@@ -379,11 +384,11 @@ export function resolveWorldSocketUrl(search = globalThis.location?.search || ''
 }
 
 function createGuestLoginPayload(overrides = {}) {
-  const snsId = overrides.snsId || getOrCreateLocalId('idlez.phaser.guestSnsId', 'Guest_');
-  const deviceId = overrides.deviceId || getOrCreateLocalId('idlez.phaser.deviceId', 'Web_');
+  const snsId = overrides.snsId || getOrCreateLocalPlayerId();
+  const deviceId = overrides.deviceId || getOrCreateDeviceId();
   return {
     snsId,
-    language: overrides.language || navigator.language?.split('-')[0] || 'ko',
+    language: overrides.language || preferredLanguage(),
     clientVersion: Number(overrides.clientVersion || 1),
     country: overrides.country || '',
     deviceId,
@@ -393,15 +398,6 @@ function createGuestLoginPayload(overrides = {}) {
     commonsCommitHash: overrides.commonsCommitHash || '',
     loginKey: overrides.loginKey || '',
   };
-}
-
-function getOrCreateLocalId(key, prefix) {
-  const existing = localStorage.getItem(key);
-  if (existing) return existing;
-
-  const value = `${prefix}${crypto.randomUUID?.().replace(/-/g, '') || Math.random().toString(16).slice(2)}`;
-  localStorage.setItem(key, value);
-  return value;
 }
 
 function findCase(message, cases) {

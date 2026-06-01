@@ -1,0 +1,24 @@
+id: 600199
+name: "소환 레벨 10"
+type: Normal
+tags: []
+order: 199
+initialOpen: true
+clientAchievement: false
+condition: BuyItemProduct
+conditionValue1: 200503
+conditionValue2: 0
+targetProgress: 45
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200108, count: 50 }
+      - { itemDataId: 4, count: 18 }
+popupArgs:
+  Source: "EquipmentSummonMilestone"
+  ProductItemDataId: "200503"
+  SummonLevel: "10"

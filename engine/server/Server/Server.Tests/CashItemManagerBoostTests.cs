@@ -10,6 +10,35 @@ namespace Server.Tests;
 public sealed class CashItemManagerBoostTests
 {
     [Fact]
+    public void AddItem_applies_game_speed_multiplier_from_active_item_popup_arg()
+    {
+        const int speedPassItemId = 1001;
+
+        using var resources = new TestResourceScope(
+            items:
+            [
+                new ResourceItem
+                {
+                    Id = speedPassItemId,
+                    Category = ResourceItem.Types.Category.Product,
+                    Type = ResourceItem.Types.Type.MaterialRealPrice,
+                    Unstackable = true,
+                    PopupArgs =
+                    {
+                        [ResourceItem.GameSpeedMultiplierPopupArg] = "2",
+                    },
+                },
+            ]);
+
+        var harness = new WorldPlayerTestHarness();
+
+        harness.Manager.AddItem(speedPassItemId, duration: TimeSpan.FromDays(7));
+
+        Assert.Equal(2f, harness.Manager.GameSpeedMultiplier, 3);
+        Assert.Equal(2f, harness.Player.GameSpeedMultiplier, 3);
+    }
+
+    [Fact]
     public void DayReset_applies_regen_boosts_from_shared_boost_state()
     {
         const int regenItemId = 1001;

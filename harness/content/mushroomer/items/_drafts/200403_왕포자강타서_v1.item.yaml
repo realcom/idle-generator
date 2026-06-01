@@ -1,5 +1,5 @@
 id: 200403
-name: "왕포자 강타서"
+name: "앞니 강타서"
 category: Skill
 type: PlayerUnitActiveSkill
 grade: 1
@@ -11,38 +11,36 @@ parentId: 200401
 skillDataId: 300103
 unstackable: true
 requiredItemDataIds: [200401]
+requiredAchievementDataIds: [600114]
 targetItemDataIds: [200404]
 levelUpMaterialItemGroups:
   - shouldAllValid: true
     level: 1
     materialItems:
-      - { id: 200107, count: 2 }
-      - { id: 200104, count: 4 }
+      - { id: 200107, count: 1 }
   - shouldAllValid: true
     level: 2
     materialItems:
-      - { id: 200107, count: 2 }
-      - { id: 200104, count: 6 }
+      - { id: 200107, count: 1 }
   - shouldAllValid: true
     level: 3
     materialItems:
-      - { id: 200107, count: 3 }
-      - { id: 200104, count: 8 }
+      - { id: 200107, count: 1 }
   - shouldAllValid: true
     level: 4
     materialItems:
-      - { id: 200107, count: 4 }
-      - { id: 200104, count: 12 }
+      - { id: 200107, count: 1 }
 popupArgs:
   SkillTree: "Mushroomer"
   SkillTreeNode: "Boss"
   ChildrenSkillItemDataIds: "200404"
   UnlockRecipeItemDataId: "200406"
-  UnlockCostLevelPoint: "2"
+  UnlockCostLevelPoint: "1"
   LevelPointItemDataId: "200107"
   RequiredSkillItemDataIds: "200401"
   RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "8"
   MaxSkillLevel: "5"
   AutoUsePriority: "3"
 spriteGroups:
-  Icon: "UIAssets/Images/ingame_icn_start.png"
+  Icon: "assets/ui/icons/skills/skill_ham_front_teeth_slam.png"

@@ -52,13 +52,9 @@ namespace Commons.Game
                 if (tick - tick_ > MaxQueuedUpdateTickGap)
                     throw new InvalidOperationException(
                         $"{ToDebugString()} {update.GetType()}.Tick - tick_ > MaxQueuedUpdateTickGap ({tick} - {tick_} > {MaxQueuedUpdateTickGap})");
-                if (CreatedAt != null)
-                {
-                    var elapsedSeconds = TicksToTime(tick);
-                    if (DateTime.UtcNow - CreatedAt.ToDateTime() < TimeSpan.FromSeconds((float)elapsedSeconds - 60f))
-                        throw new InvalidOperationException(
-                            $"{ToDebugString()} {update.GetType()}.Tick {tick} is in the future ({elapsedSeconds} s)");
-                }
+                if (IsTickInFuture(tick, DateTime.UtcNow))
+                    throw new InvalidOperationException(
+                        $"{ToDebugString()} {update.GetType()}.Tick {tick} is in the future ({TicksToTime(tick)} s, speed={GetEffectiveGameSpeedMultiplier()})");
                 
                 if (tick > LastUnhandledTick)
                     LastUnhandledTick = tick;
@@ -130,4 +126,3 @@ namespace Commons.Game
         partial void PostHandleUpdatesInternal();
     }
 }
-

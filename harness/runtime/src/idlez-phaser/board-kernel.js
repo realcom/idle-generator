@@ -12,7 +12,17 @@ import { TriggerVM } from './trigger-vm.js';
 
 const GOLD_ITEM_ID = 5;
 const EXP_ITEM_ID = 6;
+const PLAYER_LEVEL_ITEM_ID = 1;
+const LEVEL_POINT_ITEM_ID = 200107;
 const DEFAULT_SKILL_ID = 300101;
+const SKILL_TREE_ID = 'Mushroomer';
+const SKILL_LEVEL_DAMAGE_BONUS = 0.16;
+const SKILL_SLOT_UNLOCKS = [
+  { slots: 1, level: 1, achievementId: 0 },
+  { slots: 2, level: 5, achievementId: 600113 },
+  { slots: 3, level: 12, achievementId: 600115 },
+  { slots: 4, level: 40, achievementId: 600117 },
+];
 const AUTO_ADVANCE_DELAY_MS = 450;
 const BOARD_KEY_WAVE = 601;
 const WORLD_ORIGIN_X = 390;
@@ -29,10 +39,39 @@ export class IdlezBoard extends EventBus {
     this.itemLevels = new Map();
     this.boardVariables = new Map();
     this.warnings = new Set();
+    this.completedAchievements = new Set();
+    this.productBuyCounts = new Map();
+    this.productBuyActions = new Map();
+    this.itemAcquireCounts = new Map();
+    this.unitKillCounts = new Map();
+    this.mapWinCounts = new Map();
+    this.mapWaveWinCounts = new Map();
+    this.skillUseCounts = new Map();
+    this.skillSlots = [];
+    this.skillCooldownTimers = new Map();
+    this.autoSkillsEnabled = true;
+    this.lastGrantedPlayerLevel = 1;
+    this.lastSkillSlotCount = 1;
+    this.refreshingAchievements = false;
+    this.progressInitialized = false;
     this.reset();
   }
 
-  reset() {
+  reset({ preserveProgress = false } = {}) {
+    const savedInventory = preserveProgress ? new Map(this.inventory) : null;
+    const savedItemLevels = preserveProgress ? new Map(this.itemLevels) : null;
+    const savedAchievements = preserveProgress ? new Set(this.completedAchievements) : null;
+    const savedProductBuyCounts = preserveProgress ? new Map(this.productBuyCounts) : null;
+    const savedProductBuyActions = preserveProgress ? new Map(this.productBuyActions) : null;
+    const savedItemAcquireCounts = preserveProgress ? new Map(this.itemAcquireCounts) : null;
+    const savedUnitKillCounts = preserveProgress ? new Map(this.unitKillCounts) : null;
+    const savedMapWinCounts = preserveProgress ? new Map(this.mapWinCounts) : null;
+    const savedMapWaveWinCounts = preserveProgress ? new Map(this.mapWaveWinCounts) : null;
+    const savedSkillUseCounts = preserveProgress ? new Map(this.skillUseCounts) : null;
+    const savedSkillSlots = preserveProgress ? [...this.skillSlots] : null;
+    const savedLastGrantedPlayerLevel = preserveProgress ? this.lastGrantedPlayerLevel : 1;
+    const savedLastSkillSlotCount = preserveProgress ? this.lastSkillSlotCount : 1;
+
     this.map = null;
     this.tick = 0;
     this.accumulatorMs = 0;
@@ -43,19 +82,36 @@ export class IdlezBoard extends EventBus {
     this.activeSkills = new Map();
     this.gameEnded = false;
     this.winningTeam = null;
+    this.completedAchievements = savedAchievements || new Set();
+    this.productBuyCounts = savedProductBuyCounts || new Map();
+    this.productBuyActions = savedProductBuyActions || new Map();
+    this.itemAcquireCounts = savedItemAcquireCounts || new Map();
+    this.unitKillCounts = savedUnitKillCounts || new Map();
+    this.mapWinCounts = savedMapWinCounts || new Map();
+    this.mapWaveWinCounts = savedMapWaveWinCounts || new Map();
+    this.skillUseCounts = savedSkillUseCounts || new Map();
+    this.skillSlots = savedSkillSlots || new Array(this.maxSkillSlots).fill(null);
+    this.skillCooldownTimers.clear();
+    this.lastGrantedPlayerLevel = savedLastGrantedPlayerLevel;
+    this.lastSkillSlotCount = savedLastSkillSlotCount;
     if (this.autoAdvanceTimer) {
       clearTimeout(this.autoAdvanceTimer);
       this.autoAdvanceTimer = null;
     }
     this.boardVariables.clear();
-    this.inventory.clear();
-    this.itemLevels.clear();
-    this.#seedInitialItems();
+    this.inventory = savedInventory || new Map();
+    this.itemLevels = savedItemLevels || new Map();
+    this.#seedInitialItems({ preserveExisting: preserveProgress });
+    this.#syncPlayerLevelProgress({ silent: true });
+    this.#refreshAchievements({ silent: true });
+    this.#refreshSkillSlots({ silent: true });
     this.triggerVM.reset();
+    if (!preserveProgress) this.progressInitialized = false;
   }
 
-  start(mapId) {
-    this.reset();
+  start(mapId, options = {}) {
+    const preserveProgress = options.preserveProgress ?? this.progressInitialized;
+    this.reset({ preserveProgress });
     this.map = mapId ? this.store.getMap(mapId) : this.store.getFirstMap();
     if (!this.map) throw new Error('No map found in ResourceStore');
 
@@ -70,11 +126,13 @@ export class IdlezBoard extends EventBus {
         x: 190,
         y: 610,
         targetX: 190,
+        level: this.playerLevel,
         state: 'combat',
       });
     }
 
     this.triggerVM.bootstrapMap(this.map);
+    this.progressInitialized = true;
     this.emit('boardStarted', this.snapshot());
   }
 
@@ -102,6 +160,18 @@ export class IdlezBoard extends EventBus {
       inventory: new Map(this.inventory),
       itemLevels: new Map(this.itemLevels),
       boardVariables: new Map(this.boardVariables),
+      completedAchievements: new Set(this.completedAchievements),
+      productBuyCounts: new Map(this.productBuyCounts),
+      productBuyActions: new Map(this.productBuyActions),
+      itemAcquireCounts: new Map(this.itemAcquireCounts),
+      unitKillCounts: new Map(this.unitKillCounts),
+      mapWinCounts: new Map(this.mapWinCounts),
+      mapWaveWinCounts: new Map(this.mapWaveWinCounts),
+      skillUseCounts: new Map(this.skillUseCounts),
+      skillSlots: [...this.skillSlots],
+      skillCooldownTimers: new Map(this.skillCooldownTimers),
+      skillSlotCount: this.skillSlotCount,
+      autoSkillsEnabled: this.autoSkillsEnabled,
     };
   }
 
@@ -161,15 +231,34 @@ export class IdlezBoard extends EventBus {
   }
 
   SendWaveQueuedEvent({ name } = {}) {
+    const mapDataId = this.map?.id;
+    this.#recordMapWaveWin(mapDataId);
+    this.#refreshAchievements();
     this.emit('waveQueued', { name, boardState: this.boardState });
+    this.emit('waveWon', { mapDataId, name, boardState: this.boardState });
     return this.boardState;
   }
 
   EndGame({ team, result } = {}) {
+    if (this.gameEnded) return this.winningTeam ?? TEAM.PLAYER;
+
     this.gameEnded = true;
     this.winningTeam = asNumber(team ?? result, TEAM.PLAYER);
+    if (this.winningTeam === TEAM.PLAYER) {
+      this.#recordMapWin(this.map?.id);
+      this.#recordMapWaveWin(this.map?.id);
+      this.#refreshAchievements();
+    }
+    const clearRewards = this.winningTeam === TEAM.PLAYER
+      ? this.#grantMapRewards(this.map)
+      : [];
     const nextMap = this.#resolveAutoAdvanceMap(this.winningTeam === TEAM.PLAYER);
-    this.emit('gameEnded', { winningTeam: this.winningTeam, nextMap });
+    this.emit('gameEnded', {
+      winningTeam: this.winningTeam,
+      nextMap,
+      map: this.map,
+      rewards: clearRewards,
+    });
     if (nextMap) this.#scheduleAutoAdvance(nextMap.id, this.map?.id);
     return this.winningTeam;
   }
@@ -205,7 +294,7 @@ export class IdlezBoard extends EventBus {
     this.autoAdvanceTimer = setTimeout(() => {
       this.autoAdvanceTimer = null;
       if (!this.gameEnded || this.map?.id !== sourceMapId) return;
-      this.start(mapId);
+      this.start(mapId, { preserveProgress: true });
     }, AUTO_ADVANCE_DELAY_MS);
   }
 
@@ -237,14 +326,305 @@ export class IdlezBoard extends EventBus {
     return skill.id;
   }
 
+  get playerLevel() {
+    const player = this.playerUnit;
+    return Math.max(
+      1,
+      Math.floor(asNumber(this.itemLevels.get(PLAYER_LEVEL_ITEM_ID), 1)),
+      Math.floor(asNumber(player?.level, 1)),
+      Math.floor(asNumber(this.boardState, 1)),
+    );
+  }
+
+  get maxSkillSlots() {
+    return Math.max(...SKILL_SLOT_UNLOCKS.map(entry => entry.slots));
+  }
+
+  get skillSlotCount() {
+    let count = 1;
+    for (const unlock of SKILL_SLOT_UNLOCKS) {
+      if (!unlock.achievementId || this.hasAchievement(unlock.achievementId)) count = Math.max(count, unlock.slots);
+    }
+    return clamp(count, 1, this.maxSkillSlots);
+  }
+
+  setAutoSkillsEnabled(enabled) {
+    const next = Boolean(enabled);
+    if (this.autoSkillsEnabled === next) return this.autoSkillsEnabled;
+    this.autoSkillsEnabled = next;
+    this.emit('autoSkillsChanged', { enabled: next });
+    this.emit('tick', this.snapshot());
+    return next;
+  }
+
+  hasAchievement(achievementDataId) {
+    const id = Number(achievementDataId);
+    if (!id) return true;
+    if (this.completedAchievements.has(id)) return true;
+    const achievement = this.store.getAchievement?.(id);
+    return achievement ? this.#isAchievementSatisfied(achievement) : false;
+  }
+
+  countCompletedAchievements(achievementDataIds = []) {
+    return achievementDataIds.reduce((count, achievementDataId) => (
+      this.hasAchievement(achievementDataId) ? count + 1 : count
+    ), 0);
+  }
+
+  getProductBuyCount(productItemDataId) {
+    return this.productBuyCounts.get(Number(productItemDataId)) || 0;
+  }
+
+  getItemAcquireCount(itemDataId) {
+    const id = Number(itemDataId);
+    if (!id) return [...this.itemAcquireCounts.values()].reduce((sum, count) => sum + count, 0);
+    return this.itemAcquireCounts.get(id) || 0;
+  }
+
+  getUnitKillCount(unitDataId) {
+    const id = Number(unitDataId);
+    if (!id) return [...this.unitKillCounts.values()].reduce((sum, count) => sum + count, 0);
+    return this.unitKillCounts.get(id) || 0;
+  }
+
+  getMapWinCount(mapDataId) {
+    const id = Number(mapDataId);
+    if (!id) return [...this.mapWinCounts.values()].reduce((sum, count) => sum + count, 0);
+    return this.mapWinCounts.get(id) || 0;
+  }
+
+  getMapWaveWinCount(mapDataId) {
+    const id = Number(mapDataId);
+    if (!id) return [...this.mapWaveWinCounts.values()].reduce((sum, count) => sum + count, 0);
+    return this.mapWaveWinCounts.get(id) || 0;
+  }
+
+  getSkillUseCount(skillDataId) {
+    const id = Number(skillDataId);
+    if (!id) return [...this.skillUseCounts.values()].reduce((sum, count) => sum + count, 0);
+    return this.skillUseCounts.get(id) || 0;
+  }
+
+  getAchievementProgress(achievement) {
+    const target = this.#achievementProgressTarget(achievement);
+    const completed = this.completedAchievements.has(Number(achievement?.id));
+    const rawProgress = completed ? target : this.#achievementProgressValue(achievement);
+    const progress = clamp(Math.floor(asNumber(rawProgress, 0)), 0, target);
+    return {
+      progress,
+      target,
+      completed: completed || progress >= target,
+      ratio: target > 0 ? clamp(progress / target, 0, 1) : 0,
+    };
+  }
+
+  getAchievementSummary({ predicate = null } = {}) {
+    const achievements = [...(this.store.achievements?.values?.() || [])]
+      .filter(achievement => (predicate ? predicate(achievement) : true));
+    const total = achievements.length;
+    const completed = achievements.filter(achievement => this.getAchievementProgress(achievement).completed).length;
+    return { total, completed, remaining: Math.max(0, total - completed) };
+  }
+
+  recordProductBuy(productItemDataId, count = 1) {
+    const id = Number(productItemDataId);
+    const amount = Math.max(1, Math.floor(asNumber(count, 1)));
+    if (!id) return { ok: false, reason: 'missing_product' };
+
+    const previousCount = this.getProductBuyCount(id);
+    const nextCount = previousCount + amount;
+    this.productBuyCounts.set(id, nextCount);
+    this.productBuyActions.set(id, (this.productBuyActions.get(id) || 0) + 1);
+    this.#refreshAchievements();
+    this.emit('productBought', { productItemDataId: id, count: amount, previousCount, totalCount: nextCount });
+    this.emit('tick', this.snapshot());
+    return { ok: true, productItemDataId: id, count: amount, previousCount, totalCount: nextCount };
+  }
+
+  getSkillTreeState(treeId = SKILL_TREE_ID) {
+    this.#syncPlayerLevelProgress({ silent: true });
+    this.#refreshAchievements({ silent: true });
+    this.#refreshSkillSlots({ silent: true });
+
+    const slots = this.getSkillSlotStates();
+    const skillItems = this.#skillTreeItems(treeId).map(item => this.#skillItemState(item, slots));
+    const selectedLevelPointItemId = skillItems.find(entry => entry.levelPointItemDataId)?.levelPointItemDataId || LEVEL_POINT_ITEM_ID;
+    return {
+      treeId,
+      playerLevel: this.playerLevel,
+      levelPointItemDataId: selectedLevelPointItemId,
+      levelPoints: this.inventory.get(selectedLevelPointItemId) || 0,
+      autoSkillsEnabled: this.autoSkillsEnabled,
+      slotCount: this.skillSlotCount,
+      maxSlots: this.maxSkillSlots,
+      slotUnlocks: SKILL_SLOT_UNLOCKS.map(entry => ({
+        ...entry,
+        unlocked: entry.slots <= this.skillSlotCount,
+        achieved: !entry.achievementId || this.hasAchievement(entry.achievementId),
+      })),
+      slots,
+      skills: skillItems,
+    };
+  }
+
+  getSkillSlotStates() {
+    this.#refreshSkillSlots({ silent: true });
+    return Array.from({ length: this.maxSkillSlots }, (_, index) => {
+      const itemDataId = Number(this.skillSlots[index] || 0);
+      const item = itemDataId ? this.store.getItem(itemDataId) : null;
+      const skill = item?.skillDataId ? this.store.getSkill(item.skillDataId) : null;
+      const cooldown = this.skillCooldownTimers.get(itemDataId) || 0;
+      return {
+        index,
+        unlocked: index < this.skillSlotCount,
+        unlock: SKILL_SLOT_UNLOCKS.find(entry => entry.slots === index + 1) || null,
+        itemDataId,
+        item,
+        skill,
+        level: item ? this.getItemLevel(item.id) : 0,
+        cooldownTicks: cooldown,
+        cooldownSeconds: cooldown / TICKS_PER_SECOND,
+        ready: itemDataId > 0 && cooldown <= 0,
+      };
+    });
+  }
+
+  equipSkill(slotIndex, itemDataId) {
+    const index = Math.floor(asNumber(slotIndex, -1));
+    if (index < 0 || index >= this.maxSkillSlots) {
+      return { ok: false, reason: 'bad_slot', message: '스킬 슬롯이 올바르지 않습니다' };
+    }
+    if (index >= this.skillSlotCount) {
+      return { ok: false, reason: 'locked_slot', message: `Lv.${this.#slotUnlockLevel(index)} 슬롯 잠김` };
+    }
+
+    const item = this.store.getItem(itemDataId);
+    if (!this.#isSkillTreeSkill(item)) {
+      return { ok: false, reason: 'not_skill', message: '장착 가능한 스킬이 아닙니다' };
+    }
+    if (!this.#ownsItem(item.id)) {
+      return { ok: false, reason: 'not_owned', message: `${item.name} 미습득` };
+    }
+
+    this.skillSlots = this.skillSlots.map(id => Number(id) === Number(item.id) ? null : id);
+    this.skillSlots[index] = Number(item.id);
+    this.emit('skillEquipped', { slotIndex: index, itemDataId: item.id, item });
+    this.emit('skillSlotsChanged', { slots: this.getSkillSlotStates() });
+    this.emit('tick', this.snapshot());
+    return { ok: true, slotIndex: index, itemDataId: item.id, item };
+  }
+
+  unequipSkill(slotIndex) {
+    const index = Math.floor(asNumber(slotIndex, -1));
+    if (index < 0 || index >= this.maxSkillSlots) {
+      return { ok: false, reason: 'bad_slot', message: '스킬 슬롯이 올바르지 않습니다' };
+    }
+
+    const itemDataId = Number(this.skillSlots[index] || 0);
+    if (!itemDataId) return { ok: false, reason: 'empty_slot', message: '비어 있는 슬롯입니다' };
+
+    const item = this.store.getItem(itemDataId);
+    this.skillSlots[index] = null;
+    this.emit('skillUnequipped', { slotIndex: index, itemDataId, item });
+    this.emit('skillSlotsChanged', { slots: this.getSkillSlotStates() });
+    this.emit('tick', this.snapshot());
+    return { ok: true, slotIndex: index, itemDataId, item };
+  }
+
+  unlockSkillItem(itemDataId) {
+    const item = this.store.getItem(itemDataId);
+    const check = this.canUnlockSkillItem(item);
+    if (!check.ok) return check;
+
+    const cost = this.#skillUnlockCost(item);
+    if (cost.count > 0) this.spendItem(cost.itemDataId, cost.count, `skill_unlock:${item.id}`);
+    this.addItem(item.id, 1, `skill_unlock:${item.id}`);
+    this.itemLevels.set(item.id, Math.max(1, asNumber(item.initialCreateLevel, 1)));
+    this.#refreshSkillSlots();
+
+    const emptySlot = this.getSkillSlotStates().find(slot => slot.unlocked && !slot.itemDataId);
+    if (emptySlot) this.equipSkill(emptySlot.index, item.id);
+
+    this.emit('skillUnlocked', { itemDataId: item.id, item, cost });
+    this.emit('tick', this.snapshot());
+    return { ok: true, itemDataId: item.id, item, cost, message: `${item.name} 해금` };
+  }
+
+  canUnlockSkillItem(itemOrId) {
+    const item = typeof itemOrId === 'object' ? itemOrId : this.store.getItem(itemOrId);
+    if (!this.#isSkillTreeSkill(item)) return { ok: false, reason: 'not_skill', message: '스킬 아이템이 아닙니다' };
+    if (this.#ownsItem(item.id)) return { ok: false, reason: 'owned', item, message: `${item.name} 이미 습득` };
+
+    const missingAchievement = (item.requiredAchievementDataIds || []).find(id => !this.hasAchievement(id));
+    if (missingAchievement) {
+      return { ok: false, reason: 'achievement', item, achievementDataId: missingAchievement, message: `업적 ${missingAchievement} 필요` };
+    }
+
+    const requiredLevel = this.#popupInt(item, 'RequiredPlayerLevel', 1);
+    if (this.playerLevel < requiredLevel) {
+      return { ok: false, reason: 'player_level', item, requiredLevel, message: `플레이어 Lv.${requiredLevel} 필요` };
+    }
+
+    const requiredSkillLevel = this.#popupInt(item, 'RequiredSkillLevel', 0);
+    const requiredSkills = parseCsvNumbers(item.popupArgs?.RequiredSkillItemDataIds);
+    for (const requiredItemDataId of requiredSkills) {
+      if (!this.#ownsItem(requiredItemDataId)) {
+        const requiredItem = this.store.getItem(requiredItemDataId);
+        return { ok: false, reason: 'required_skill', item, requiredItemDataId, message: `${requiredItem?.name || requiredItemDataId} 필요` };
+      }
+      if (requiredSkillLevel > 0 && this.getItemLevel(requiredItemDataId) < requiredSkillLevel) {
+        const requiredItem = this.store.getItem(requiredItemDataId);
+        return { ok: false, reason: 'required_skill_level', item, requiredItemDataId, requiredSkillLevel, message: `${requiredItem?.name || requiredItemDataId} Lv.${requiredSkillLevel} 필요` };
+      }
+    }
+
+    const cost = this.#skillUnlockCost(item);
+    if ((this.inventory.get(cost.itemDataId) || 0) < cost.count) {
+      return { ok: false, reason: 'cost', item, cost, message: `레벨 포인트 ${cost.count} 필요` };
+    }
+
+    return { ok: true, item, cost, message: `${item.name} 해금 가능` };
+  }
+
+  levelUpSkillItem(itemDataId) {
+    const item = this.store.getItem(itemDataId);
+    if (!this.#isSkillTreeSkill(item)) return { ok: false, reason: 'not_skill', message: '스킬 아이템이 아닙니다' };
+    if (!this.#ownsItem(item.id)) return { ok: false, reason: 'not_owned', item, message: `${item.name} 미습득` };
+
+    const level = this.getItemLevel(item.id);
+    const maxLevel = this.getItemMaxLevel(item.id);
+    if (level >= maxLevel) return { ok: false, reason: 'max_level', item, level, maxLevel, message: `${item.name} MAX` };
+
+    const group = this.#levelUpGroup(item, level);
+    if (!group) return { ok: false, reason: 'missing_cost', item, level, maxLevel, message: `${item.name} 비용 없음` };
+
+    const missing = this.#missingMaterials(group.materialItems || []);
+    if (missing) return { ok: false, reason: 'not_enough_material', item, level, missing, cost: group.materialItems || [], message: `${missing.item?.name || missing.itemDataId} 부족 ${missing.current}/${missing.count}` };
+
+    for (const material of group.materialItems || []) {
+      this.spendItem(material.id ?? material.itemDataId, material.count, `skill_levelup:${item.id}`);
+    }
+
+    const nextLevel = level + 1;
+    this.itemLevels.set(item.id, nextLevel);
+    this.#refreshAchievements();
+    this.#refreshSkillSlots();
+    this.emit('skillLevelUp', { itemDataId: item.id, item, previousLevel: level, level: nextLevel, cost: group.materialItems || [] });
+    this.emit('itemLevelUp', { itemDataId: item.id, item, previousLevel: level, level: nextLevel, cost: 0, source: 'skillTree' });
+    this.emit('tick', this.snapshot());
+    return { ok: true, item, previousLevel: level, level: nextLevel, maxLevel, cost: group.materialItems || [], message: `${item.name} Lv.${nextLevel}` };
+  }
+
   addItem(itemDataId, count, reason = 'drop') {
     const id = Number(itemDataId);
     const amount = Math.max(0, Math.floor(asNumber(count, 0)));
     if (!id || amount <= 0) return 0;
 
     this.inventory.set(id, (this.inventory.get(id) || 0) + amount);
+    this.itemAcquireCounts.set(id, (this.itemAcquireCounts.get(id) || 0) + amount);
     const item = this.store.getItem(id);
     this.emit('itemGained', { itemDataId: id, item, count: amount, reason });
+    if (!this.refreshingAchievements) this.#refreshAchievements();
     return amount;
   }
 
@@ -309,6 +689,9 @@ export class IdlezBoard extends EventBus {
     const nextLevel = level + 1;
     this.itemLevels.set(id, nextLevel);
     this.#refreshPlayerStats();
+    this.#syncPlayerLevelProgress();
+    this.#refreshAchievements();
+    this.#refreshSkillSlots();
     this.emit('itemLevelUp', { itemDataId: id, item, previousLevel: level, level: nextLevel, cost });
     return { ok: true, item, previousLevel: level, level: nextLevel, cost, maxLevel };
   }
@@ -321,18 +704,324 @@ export class IdlezBoard extends EventBus {
     return this.inventory.get(EXP_ITEM_ID) || 0;
   }
 
-  #seedInitialItems() {
+  #seedInitialItems({ preserveExisting = false } = {}) {
     for (const item of this.store.items?.values?.() || []) {
       const id = Number(item.id);
       if (!id || !item.initialCreate) continue;
 
       const count = Math.max(0, Math.floor(asNumber(item.initialCreateCount, 0)));
-      if (count > 0) this.inventory.set(id, count);
+      if (count > 0 && (!preserveExisting || !this.inventory.has(id))) {
+        this.inventory.set(id, count);
+      }
 
-      if (item.initialCreateLevel != null) {
+      if (item.initialCreateLevel != null && (!preserveExisting || !this.itemLevels.has(id))) {
         this.itemLevels.set(id, Math.max(1, Math.floor(asNumber(item.initialCreateLevel, 1))));
       }
     }
+  }
+
+  #syncPlayerLevelProgress({ silent = false } = {}) {
+    const nextLevel = Math.max(1, Math.floor(Math.max(
+      asNumber(this.itemLevels.get(PLAYER_LEVEL_ITEM_ID), 1),
+      asNumber(this.playerUnit?.level, 1),
+      asNumber(this.boardState, 1),
+    )));
+    const previousLevel = Math.max(1, Math.floor(asNumber(this.itemLevels.get(PLAYER_LEVEL_ITEM_ID), 1)));
+    if (nextLevel <= previousLevel) return previousLevel;
+
+    this.itemLevels.set(PLAYER_LEVEL_ITEM_ID, nextLevel);
+    const grantFrom = Math.max(this.lastGrantedPlayerLevel, previousLevel);
+    for (let level = grantFrom + 1; level <= nextLevel; level += 1) {
+      this.addItem(LEVEL_POINT_ITEM_ID, 1, `player_level:${level}`);
+    }
+    this.lastGrantedPlayerLevel = Math.max(this.lastGrantedPlayerLevel, nextLevel);
+
+    if (!silent) {
+      this.emit('playerLevelChanged', { previousLevel, level: nextLevel });
+      this.emit('itemLevelUp', {
+        itemDataId: PLAYER_LEVEL_ITEM_ID,
+        item: this.store.getItem(PLAYER_LEVEL_ITEM_ID),
+        previousLevel,
+        level: nextLevel,
+        cost: 0,
+        source: 'playerLevel',
+      });
+    }
+
+    return nextLevel;
+  }
+
+  #refreshAchievements({ silent = false } = {}) {
+    if (this.refreshingAchievements) return false;
+
+    this.refreshingAchievements = true;
+    let changed = false;
+    try {
+      for (const achievement of this.store.achievements?.values?.() || []) {
+        const id = Number(achievement.id);
+        if (!id || this.completedAchievements.has(id)) continue;
+        if (!this.#isAchievementSatisfied(achievement)) continue;
+
+        this.completedAchievements.add(id);
+        changed = true;
+        if (!silent) {
+          this.emit('achievementCompleted', { achievementDataId: id, achievement });
+          this.#grantAchievementRewards(achievement);
+        }
+      }
+    } finally {
+      this.refreshingAchievements = false;
+    }
+
+    if (changed) this.#refreshSkillSlots({ silent });
+    return changed;
+  }
+
+  #isAchievementSatisfied(achievement) {
+    const condition = achievement?.condition;
+    if (condition === 'HasItemLevel') {
+      return this.getItemLevel(achievement.conditionValue1) >= asNumber(achievement.conditionValue2, 1);
+    }
+    if (condition === 'HasItem') {
+      return (this.inventory.get(Number(achievement.conditionValue1)) || 0) >= asNumber(achievement.conditionValue2, achievement.targetProgress || 1);
+    }
+    if (condition === 'WinGame') {
+      return this.getMapWinCount(achievement.conditionValue1) >= asNumber(achievement.targetProgress, 1);
+    }
+    if (condition === 'WinWave') {
+      return this.getMapWaveWinCount(achievement.conditionValue1) >= asNumber(achievement.targetProgress, 1);
+    }
+    if (condition === 'KillUnitAny') {
+      return this.getUnitKillCount(achievement.conditionValue1) >= asNumber(achievement.targetProgress, 1);
+    }
+    if (condition === 'UseSkill') {
+      return this.getSkillUseCount(achievement.conditionValue1) >= asNumber(achievement.targetProgress, 1);
+    }
+    if (condition === 'BuyItemProduct') {
+      return this.getProductBuyCount(achievement.conditionValue1) >= asNumber(achievement.targetProgress, 1);
+    }
+    if (condition === 'BuyItemProductAction') {
+      return (this.productBuyActions.get(Number(achievement.conditionValue1)) || 0) >= asNumber(achievement.targetProgress, 1);
+    }
+    if (condition === 'AcquireItemAny') {
+      return this.getItemAcquireCount(0) >= asNumber(achievement.targetProgress, 1);
+    }
+    if (condition === 'AcquireItem') {
+      return this.#acquireCountForItem(achievement.conditionValue1) >= asNumber(achievement.targetProgress, 1);
+    }
+    if (condition === 'AcquireWeaponItemAny') {
+      return this.#acquireCountByItemMatch(item => item?.category === 'Weapon') >= asNumber(achievement.targetProgress, 1);
+    }
+    if (condition === 'AcquireEquipmentItemAny') {
+      return this.#acquireCountByItemMatch(item => item?.category === 'Equipment') >= asNumber(achievement.targetProgress, 1);
+    }
+    return false;
+  }
+
+  #achievementProgressValue(achievement) {
+    const condition = achievement?.condition;
+    if (condition === 'HasItemLevel') return this.getItemLevel(achievement.conditionValue1);
+    if (condition === 'HasItem') return this.inventory.get(Number(achievement.conditionValue1)) || 0;
+    if (condition === 'WinGame') return this.getMapWinCount(achievement.conditionValue1);
+    if (condition === 'WinWave') return this.getMapWaveWinCount(achievement.conditionValue1);
+    if (condition === 'KillUnitAny') return this.getUnitKillCount(achievement.conditionValue1);
+    if (condition === 'UseSkill') return this.getSkillUseCount(achievement.conditionValue1);
+    if (condition === 'BuyItemProduct') return this.getProductBuyCount(achievement.conditionValue1);
+    if (condition === 'BuyItemProductAction') return this.productBuyActions.get(Number(achievement.conditionValue1)) || 0;
+    if (condition === 'AcquireItemAny') return this.getItemAcquireCount(0);
+    if (condition === 'AcquireItem') return this.#acquireCountForItem(achievement.conditionValue1);
+    if (condition === 'AcquireWeaponItemAny') return this.#acquireCountByItemMatch(item => item?.category === 'Weapon');
+    if (condition === 'AcquireEquipmentItemAny') return this.#acquireCountByItemMatch(item => item?.category === 'Equipment');
+    return 0;
+  }
+
+  #achievementProgressTarget(achievement) {
+    if (achievement?.condition === 'HasItemLevel') {
+      return Math.max(1, Math.floor(asNumber(achievement.conditionValue2, 1)));
+    }
+    if (achievement?.condition === 'HasItem') {
+      return Math.max(1, Math.floor(asNumber(achievement.conditionValue2, achievement.targetProgress || 1)));
+    }
+    return Math.max(1, Math.floor(asNumber(achievement?.targetProgress, 1)));
+  }
+
+  #acquireCountForItem(itemDataId) {
+    const target = Number(itemDataId);
+    if (!target) return 0;
+    return this.#acquireCountByItemMatch(item => this.#achievementItemDataId(item) === target);
+  }
+
+  #acquireCountByItemMatch(match) {
+    let count = 0;
+    for (const [itemDataId, amount] of this.itemAcquireCounts.entries()) {
+      const item = this.store.getItem(itemDataId);
+      if (match(item)) count += amount;
+    }
+    return count;
+  }
+
+  #achievementItemDataId(item) {
+    return Number(item?.achievementItemDataId || item?.id || 0);
+  }
+
+  #recordUnitKill(unitDataId) {
+    const id = Number(unitDataId);
+    if (!id) return;
+    this.unitKillCounts.set(id, (this.unitKillCounts.get(id) || 0) + 1);
+  }
+
+  #recordMapWin(mapDataId) {
+    const id = Number(mapDataId);
+    if (!id) return;
+    this.mapWinCounts.set(id, (this.mapWinCounts.get(id) || 0) + 1);
+  }
+
+  #recordMapWaveWin(mapDataId) {
+    const id = Number(mapDataId);
+    if (!id) return;
+    this.mapWaveWinCounts.set(id, (this.mapWaveWinCounts.get(id) || 0) + 1);
+  }
+
+  #recordSkillUse(skillDataId) {
+    const id = Number(skillDataId);
+    if (!id) return;
+    this.skillUseCounts.set(id, (this.skillUseCounts.get(id) || 0) + 1);
+  }
+
+  #grantAchievementRewards(achievement) {
+    if (!achievement?.autoReward) return;
+    for (const group of achievement.rewardAddItemGroups || []) {
+      if (Math.random() * 100 > asNumber(group.probPercent, 100)) continue;
+      for (const addItem of group.addItems || []) {
+        this.addItem(addItem.itemDataId, addItem.count ?? 1, `achievement:${achievement.id}`);
+      }
+    }
+  }
+
+  #refreshSkillSlots({ silent = false } = {}) {
+    const previousCount = this.lastSkillSlotCount || 1;
+    while (this.skillSlots.length < this.maxSkillSlots) this.skillSlots.push(null);
+    if (this.skillSlots.length > this.maxSkillSlots) this.skillSlots.length = this.maxSkillSlots;
+
+    const ownedSkills = this.#ownedSkillTreeItems();
+    const equipped = new Set(this.skillSlots.filter(Boolean).map(Number));
+    for (let i = 0; i < this.skillSlotCount; i += 1) {
+      const currentItem = this.store.getItem(this.skillSlots[i]);
+      if (currentItem && this.#ownsItem(currentItem.id)) continue;
+
+      const next = ownedSkills.find(item => !equipped.has(Number(item.id)));
+      this.skillSlots[i] = next?.id || null;
+      if (next) equipped.add(Number(next.id));
+    }
+
+    for (let i = this.skillSlotCount; i < this.maxSkillSlots; i += 1) {
+      if (this.skillSlots[i] && !this.#ownsItem(this.skillSlots[i])) this.skillSlots[i] = null;
+    }
+
+    const nextCount = this.skillSlotCount;
+    this.lastSkillSlotCount = nextCount;
+    if (!silent && nextCount !== previousCount) {
+      this.emit('skillSlotCountChanged', { previousCount, count: nextCount });
+    }
+    if (!silent) this.emit('skillSlotsChanged', { slots: this.getSkillSlotStates() });
+  }
+
+  #ownedSkillTreeItems() {
+    return this.#skillTreeItems().filter(item => this.#ownsItem(item.id));
+  }
+
+  #skillTreeItems(treeId = SKILL_TREE_ID) {
+    return [...(this.store.items?.values?.() || [])]
+      .filter(item => this.#isSkillTreeSkill(item, treeId))
+      .sort((a, b) => (
+        this.#popupInt(a, 'AutoUsePriority', 999) - this.#popupInt(b, 'AutoUsePriority', 999)
+        || asNumber(a.order, 9999) - asNumber(b.order, 9999)
+        || Number(a.id) - Number(b.id)
+      ));
+  }
+
+  #skillItemState(item, slots = this.getSkillSlotStates()) {
+    const level = this.getItemLevel(item.id);
+    const maxLevel = this.getItemMaxLevel(item.id);
+    const owned = this.#ownsItem(item.id);
+    const equippedSlot = slots.find(slot => Number(slot.itemDataId) === Number(item.id));
+    const unlock = this.canUnlockSkillItem(item);
+    const levelUp = owned ? this.#canLevelUpSkillItem(item) : { ok: false, reason: 'not_owned', message: `${item.name} 미습득` };
+    const requiredLevel = this.#popupInt(item, 'RequiredPlayerLevel', 1);
+    const requiredSkills = parseCsvNumbers(item.popupArgs?.RequiredSkillItemDataIds)
+      .map(id => this.store.getItem(id)?.name || String(id));
+    return {
+      itemDataId: item.id,
+      item,
+      skill: this.store.getSkill(item.skillDataId),
+      owned,
+      level: owned ? level : 0,
+      maxLevel,
+      equippedSlotIndex: equippedSlot?.index ?? -1,
+      unlock,
+      levelUp,
+      canUnlock: unlock.ok,
+      canLevelUp: levelUp.ok,
+      requiredLevel,
+      requiredSkills,
+      node: item.popupArgs?.SkillTreeNode || '',
+      priority: this.#popupInt(item, 'AutoUsePriority', 999),
+      levelPointItemDataId: this.#popupInt(item, 'LevelPointItemDataId', LEVEL_POINT_ITEM_ID),
+      unlockCost: this.#skillUnlockCost(item),
+    };
+  }
+
+  #canLevelUpSkillItem(item) {
+    const level = this.getItemLevel(item.id);
+    const maxLevel = this.getItemMaxLevel(item.id);
+    if (level >= maxLevel) return { ok: false, reason: 'max_level', item, level, maxLevel, message: 'MAX' };
+    const group = this.#levelUpGroup(item, level);
+    if (!group) return { ok: false, reason: 'missing_cost', item, level, maxLevel, message: '비용 없음' };
+    const missing = this.#missingMaterials(group.materialItems || []);
+    if (missing) return { ok: false, reason: 'not_enough_material', item, level, missing, cost: group.materialItems || [], message: `${missing.item?.name || missing.itemDataId} 부족` };
+    return { ok: true, item, level, maxLevel, cost: group.materialItems || [], message: `Lv.${level + 1}` };
+  }
+
+  #levelUpGroup(item, level) {
+    return (item?.levelUpMaterialItemGroups || []).find(entry => Number(entry.level) === Number(level));
+  }
+
+  #missingMaterials(materials) {
+    for (const material of materials || []) {
+      const itemDataId = Number(material.id ?? material.itemDataId);
+      const count = Math.max(0, Math.floor(asNumber(material.count, 0)));
+      const current = this.inventory.get(itemDataId) || 0;
+      if (current < count) {
+        return { itemDataId, item: this.store.getItem(itemDataId), count, current };
+      }
+    }
+    return null;
+  }
+
+  #skillUnlockCost(item) {
+    return {
+      itemDataId: this.#popupInt(item, 'LevelPointItemDataId', LEVEL_POINT_ITEM_ID),
+      count: Math.max(0, this.#popupInt(item, 'UnlockCostLevelPoint', 0)),
+    };
+  }
+
+  #isSkillTreeSkill(item, treeId = SKILL_TREE_ID) {
+    return item?.category === 'Skill'
+      && item?.skillDataId
+      && (item.popupArgs?.SkillTree || SKILL_TREE_ID) === treeId;
+  }
+
+  #ownsItem(itemDataId) {
+    return (this.inventory.get(Number(itemDataId)) || 0) > 0;
+  }
+
+  #popupInt(item, key, fallback = 0) {
+    return Math.floor(asNumber(item?.popupArgs?.[key], fallback));
+  }
+
+  #slotUnlockLevel(slotIndex) {
+    const unlock = SKILL_SLOT_UNLOCKS.find(entry => entry.slots === slotIndex + 1);
+    return unlock?.level || 1;
   }
 
   #refreshPlayerStats() {
@@ -344,6 +1033,9 @@ export class IdlezBoard extends EventBus {
     if (this.gameEnded) return;
 
     this.tick += 1;
+    this.#syncPlayerLevelProgress();
+    this.#refreshAchievements();
+    this.#refreshSkillSlots();
     this.#updateRevives();
     this.triggerVM.tick();
     this.#updateMovement();
@@ -376,12 +1068,7 @@ export class IdlezBoard extends EventBus {
     const enemies = this.enemyUnits.filter(unit => unit.state === 'combat');
     if (enemies.length === 0) return;
 
-    player.skillTimer -= 1;
-    if (player.skillTimer <= 0) {
-      const skill = this.store.getSkill(DEFAULT_SKILL_ID);
-      if (skill) this.#startSkill(player, skill, [enemies[0]]);
-      player.skillTimer = ticksFromSeconds(skill?.cooldown || 1.5);
-    }
+    this.#updateAutoSkills(player, enemies);
 
     for (const enemy of enemies) {
       enemy.attackTimer -= 1;
@@ -394,7 +1081,57 @@ export class IdlezBoard extends EventBus {
     }
   }
 
-  #startSkill(owner, skillDef, targets) {
+  #updateAutoSkills(player, enemies) {
+    for (const [itemDataId, ticks] of [...this.skillCooldownTimers.entries()]) {
+      if (ticks <= 1) this.skillCooldownTimers.delete(itemDataId);
+      else this.skillCooldownTimers.set(itemDataId, ticks - 1);
+    }
+
+    if (!this.autoSkillsEnabled) return;
+
+    const equipped = this.getSkillSlotStates()
+      .filter(slot => slot.unlocked && slot.item && slot.skill && slot.cooldownTicks <= 0)
+      .sort((a, b) => a.index - b.index);
+
+    for (const slot of equipped) {
+      const targets = this.#targetsForSkill(slot.skill, enemies);
+      if (targets.length === 0) continue;
+
+      this.#startSkill(player, slot.skill, targets, {
+        slotIndex: slot.index,
+        skillItemDataId: slot.item.id,
+        skillItem: slot.item,
+        skillLevel: slot.level,
+      });
+
+      this.skillCooldownTimers.set(slot.item.id, this.#cooldownTicksForSkill(slot.skill));
+      this.emit('skillAutoUsed', {
+        slotIndex: slot.index,
+        itemDataId: slot.item.id,
+        item: slot.item,
+        skillDataId: slot.skill.id,
+        skill: slot.skill,
+        level: slot.level,
+      });
+    }
+  }
+
+  #targetsForSkill(skillDef, enemies) {
+    const maxHit = Math.max(1, ...((skillDef.timelines || [])
+      .map(timeline => asNumber(timeline.hit?.maxHit, 1))));
+    return enemies
+      .filter(unit => unit.alive)
+      .sort((a, b) => a.x - b.x)
+      .slice(0, maxHit);
+  }
+
+  #cooldownTicksForSkill(skillDef) {
+    const cooldownPercent = this.getItemStat('CooldownPercent');
+    const seconds = Math.max(0.45, asNumber(skillDef?.cooldown, 1.5) * Math.max(0.25, 1 - cooldownPercent / 100));
+    return ticksFromSeconds(seconds, 1);
+  }
+
+  #startSkill(owner, skillDef, targets, metadata = {}) {
     const skill = {
       id: this.nextSkillId++,
       dataId: skillDef.id,
@@ -402,10 +1139,17 @@ export class IdlezBoard extends EventBus {
       owner,
       targets: targets.filter(Boolean),
       startTick: this.tick,
+      slotIndex: metadata.slotIndex ?? null,
+      skillItemDataId: metadata.skillItemDataId ?? null,
+      skillItem: metadata.skillItem || null,
+      skillLevel: Math.max(1, asNumber(metadata.skillLevel, 1)),
+      powerMultiplier: Math.max(1, 1 + (Math.max(1, asNumber(metadata.skillLevel, 1)) - 1) * SKILL_LEVEL_DAMAGE_BONUS),
       executed: new Set(),
       destroyed: false,
     };
     this.activeSkills.set(skill.id, skill);
+    this.#recordSkillUse(skillDef.id);
+    this.#refreshAchievements();
     this.emit('unitAttack', { unit: owner, target: skill.targets[0], skill });
     this.emit('skillSpawned', skill);
     return skill;
@@ -442,7 +1186,7 @@ export class IdlezBoard extends EventBus {
       const ratio = ratios.reduce((sum, value) => sum + asNumber(value, 0), 0);
 
       for (const target of targets) {
-        const raw = skill.owner.attack * ratio;
+        const raw = skill.owner.attack * ratio * (skill.powerMultiplier || 1);
         const damage = Math.max(1, Math.round(raw - target.defense));
         target.takeDamage(damage, skill.owner, skill);
       }
@@ -466,6 +1210,8 @@ export class IdlezBoard extends EventBus {
       this.emit('playerDefeated', { unit, reviveAtTick: unit.reviveAtTick });
       return;
     }
+    this.#recordUnitKill(unit.dataId);
+    this.#refreshAchievements();
     this.#grantDrops(unit);
   }
 
@@ -491,6 +1237,28 @@ export class IdlezBoard extends EventBus {
         this.addItem(addItem.itemDataId, count, `drop:${unit.dataId}`);
       }
     }
+  }
+
+  #grantMapRewards(map) {
+    const rewards = [];
+    for (const group of map?.rewardAddItemGroups || []) {
+      if (Math.random() * 100 > asNumber(group.probPercent, 100)) continue;
+      const addItems = group.addItems || [];
+      const chosen = group.shouldAddAll ? addItems : [weightedPick(addItems)];
+      for (const addItem of chosen.filter(Boolean)) {
+        const count = rollCount(addItem);
+        const itemDataId = Number(addItem.itemDataId);
+        const granted = this.addItem(itemDataId, count, `map_clear:${map.id}`);
+        if (granted <= 0) continue;
+        rewards.push({
+          itemDataId,
+          item: this.store.getItem(itemDataId),
+          count: granted,
+          isCore: Boolean(addItem.isCore),
+        });
+      }
+    }
+    return rewards;
   }
 
   get playerUnit() {
@@ -661,6 +1429,14 @@ function weightedPick(items) {
     if (roll <= 0) return item;
   }
   return items[items.length - 1];
+}
+
+function parseCsvNumbers(value) {
+  if (Array.isArray(value)) return value.map(Number).filter(Number.isFinite);
+  return String(value || '')
+    .split(',')
+    .map(part => Number(part.trim()))
+    .filter(Number.isFinite);
 }
 
 function worldToScreenX(value) {

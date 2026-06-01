@@ -44,9 +44,9 @@ model: sonnet
      ```
      | tier | name       | damage_type | base_dmg | cooldown | hit_buff | next_skill |
      | ---- | ---------- | ----------- | -------- | -------- | -------- | ---------- |
-     | 1    | 베기       | Physical    | 50       | 2.0      | -        | -          |
-     | 2    | 강한 베기  | Physical    | 120      | 1.8      | -        | -          |
-     | 3    | 회전 베기  | Physical    | 280      | 1.5      | 300101   | -          |
+     | 1    | 베기       | Physical    | 50       | 1.0      | -        | -          |
+     | 2    | 강한 베기  | Physical    | 120      | 2.2      | -        | -          |
+     | 3    | 회전 베기  | Physical    | 280      | 3.0      | 300101   | -          |
      | ...  | ...        | ...         | ...      | ...      | ...      | ...        |
      ```
 3. **ID 일괄 할당**: `profile.id_ranges.skill` 대역 → 연속.
@@ -71,6 +71,8 @@ model: sonnet
 
 ## 원칙
 - **공통 timeline 1회, 곡선 식 1회**.
+- 쿨다운 곡선은 짧은 기본 체감을 우선한다. 초반 단일타 0.8~1.2초, 초반 광역/보스 2.0~3.2초, 중반 핵심 3.0~5.0초, 궁극기/대형 연출 5.5~8.0초를 기본 구간으로 삼고 8초 초과는 예외로 둔다.
+- 버프 스킬은 `duration` 이하 또는 `duration + 1`초 이내를 기본으로 해서 초반에 긴 빈 구간이 생기지 않게 한다.
 - 연계 체인은 표 단계에서 ID 사전 합의.
 - damageType ↔ 대상 armorType 상성은 unitGlobal.DamageCoefficient 따름.
 - 단순 효과(주기 골드 등)는 skill보다 trigger — `gen-triggers` 추천.

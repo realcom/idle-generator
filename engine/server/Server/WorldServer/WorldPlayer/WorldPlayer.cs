@@ -131,6 +131,7 @@ public partial class WorldPlayer : Server.Player.Player<WorldServer, WorldPlayer
 
     public override float MaxStaminaBoostRatio => CashItemManager.MaxStaminaBoostRatio;
     public override float StaminaRegenBoostRatio => CashItemManager.StaminaRegenBoostRatio;
+    public override float GameSpeedMultiplier => CashItemManager.GameSpeedMultiplier;
 
     public override PlayerAchievementModel? GetAchievementByDataId(int dataId)
     {

@@ -12,6 +12,9 @@ public partial class WorldPlayer
     {
         if (await base.HandlePacket(packet).ConfigureAwait(false))
             return true;
+
+        if (Board != null)
+            Board.GameSpeedMultiplier = GameSpeedMultiplier;
         
         switch (packet.PacketType)
         {

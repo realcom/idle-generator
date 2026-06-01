@@ -1,4 +1,5 @@
 using Commons.Resources;
+using Server.Models;
 
 namespace WorldServer.Managers.CashItemManager;
 
@@ -9,6 +10,7 @@ public partial class CashItemManager
         public float MineBoostEfficiency { get; set; } = 1f;
         public float MaxStaminaBoostRatio { get; set; } = 1f;
         public float StaminaRegenBoostRatio { get; set; } = 1f;
+        public float GameSpeedMultiplier { get; set; } = ResourceItem.MinGameSpeedMultiplier;
         public DateTime? RefreshAt { get; set; }
 
         public Dictionary<int, int> RegenMaxCountBonusByItemDataId { get; } = new();
@@ -40,6 +42,7 @@ public partial class CashItemManager
     public float MineBoostEfficiency { get; private set; } = 1f;
     public float MaxStaminaBoostRatio { get; private set; } = 1f;
     public float StaminaRegenBoostRatio { get; private set; } = 1f;
+    public float GameSpeedMultiplier { get; private set; } = ResourceItem.MinGameSpeedMultiplier;
     
     public DateTime? RefreshBoostsAt { get; private set; }
 
@@ -80,11 +83,45 @@ public partial class CashItemManager
         foreach (var item in GetItemsByTag(Tag.BoostScoutMaxMinutes, checkCount: true, checkUntilAt: true, checkDeprecated: true))
             AddBoostValue(boostState.ScoutMaxMinutesBonusByMapGroup, item.Data.MapGroup, item.Data.BoostScoutMaxMinutes);
 
+        foreach (var item in GetActiveCachedItems())
+        {
+            var speedMultiplier = item.Data.GetGameSpeedMultiplier();
+            if (speedMultiplier > boostState.GameSpeedMultiplier)
+                boostState.GameSpeedMultiplier = speedMultiplier;
+
+            if (speedMultiplier > ResourceItem.MinGameSpeedMultiplier &&
+                item.until_at != null &&
+                (refreshAt == null || item.until_at < refreshAt))
+            {
+                refreshAt = item.until_at;
+            }
+        }
+
         boostState.MineBoostEfficiency = 1f + mineBoostEfficiencyPercent / 100f;
         boostState.MaxStaminaBoostRatio = 1f + maxStaminaBoostPercent / 100f;
         boostState.StaminaRegenBoostRatio = 1f + staminaRegenBoostPercent / 100f;
         boostState.RefreshAt = refreshAt;
         return boostState;
+    }
+
+    private IEnumerable<PlayerItemModel> GetActiveCachedItems()
+    {
+        var now = DateTime.UtcNow;
+        foreach (var item in _itemsByDataId.Values.SelectMany(items => items))
+        {
+            if (item.deleted)
+                continue;
+            if (item.count <= 0)
+                continue;
+            if (item.until_at != null && item.until_at < now)
+                continue;
+            if (!item.Data.IsValidNow())
+                continue;
+            if (item.Data.ContainsTag(Tag.Deprecated))
+                continue;
+
+            yield return item;
+        }
     }
 
     private static void AddBoostValue(Dictionary<int, int> bonuses, int key, int value)
@@ -109,6 +146,7 @@ public partial class CashItemManager
         MineBoostEfficiency = boostState.MineBoostEfficiency;
         MaxStaminaBoostRatio = boostState.MaxStaminaBoostRatio;
         StaminaRegenBoostRatio = boostState.StaminaRegenBoostRatio;
+        GameSpeedMultiplier = boostState.GameSpeedMultiplier;
         RefreshBoostsAt = boostState.RefreshAt;
     }
 }

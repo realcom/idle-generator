@@ -1,0 +1,22 @@
+version: 1
+game: mushroomer
+purpose: Track Mushroomer UI concepts, approval state, and downstream extraction targets.
+
+statuses:
+  draft: Exploratory image or note.
+  candidate: Promising direction, not yet binding.
+  selected: Current visual target for implementation.
+  extracted: Tokens or recipes were derived from this concept.
+  approved: Human-approved production design source.
+  superseded: Kept for history, no longer a target.
+
+concepts:
+  mushroomer_skill_tree_modal_a:
+    status: candidate
+    kind: skill_tree_modal
+    image: concepts/mushroomer_skill_tree_modal_concept_a.png
+    note: concepts/mushroomer_skill_tree_modal_concept_a.md
+    parent_style: ../idlez/design-registry.yaml#hamster_portrait_combat_growth_dock_d
+    summary: Portrait Phaser skill-tree modal with equip slots, skill point summary, branching skill cards, and auto/level/equip CTAs.
+
+current_target: mushroomer_skill_tree_modal_a

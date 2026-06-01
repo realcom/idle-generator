@@ -1,0 +1,24 @@
+id: 300109
+name: "볼따구 분노"
+tags: [UseToTarget, TargetPosition, Boss, Buff, SkillTree]
+cooldown: 5.8
+priority: 9
+targetRefreshType: HighestHp
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "assets/ui/icons/skills/skill_ham_cheek_rage.png"
+itemDataId: 200412
+selfAddBuffs:
+  - { buffDataId: 400101, level: 1, duration: 10.0 }
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - { time: 0.1, unitCharge: { duration: 0.22, distance: 1.0, adjustDistanceToTarget: true } }
+  - time: 0.36
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.4
+      maxHit: 1
+      addDamage: { damagePercent: [680.0] }
+  - { time: 1.05, destroy: {} }

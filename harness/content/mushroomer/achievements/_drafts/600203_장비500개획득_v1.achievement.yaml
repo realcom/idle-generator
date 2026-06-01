@@ -1,0 +1,21 @@
+id: 600203
+name: "장비 500개 획득"
+type: Normal
+tags: []
+order: 203
+initialOpen: true
+clientAchievement: false
+condition: AcquireEquipmentItemAny
+conditionValue1: 0
+conditionValue2: 0
+targetProgress: 500
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200103, count: 300 }
+      - { itemDataId: 200106, count: 30 }
+      - { itemDataId: 4, count: 50 }

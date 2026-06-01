@@ -1,0 +1,21 @@
+id: 600202
+name: "장비 200개 획득"
+type: Normal
+tags: []
+order: 202
+initialOpen: true
+clientAchievement: false
+condition: AcquireEquipmentItemAny
+conditionValue1: 0
+conditionValue2: 0
+targetProgress: 200
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200103, count: 140 }
+      - { itemDataId: 200106, count: 14 }
+      - { itemDataId: 4, count: 25 }

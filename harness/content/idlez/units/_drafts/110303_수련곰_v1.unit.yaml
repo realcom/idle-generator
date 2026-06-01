@@ -1,0 +1,40 @@
+id: 110303
+name: "수련 곰"
+type: Elite
+tags: [Monster]
+armorType: NormalArmor
+warmupDelay: 1.2
+targetMode: Chaser
+targetAwareDistance: 24.0
+targetResetDistance: 30.0
+deadDestroyDelaySeconds: 0.55
+
+addStats:
+  - { type: Hp, value: [680.0] }
+  - { type: Attack, value: [72.0] }
+  - { type: Defense, value: [25.0] }
+  - { type: AttackSpeed, value: [0.9] }
+  - { type: MoveSpeed, value: [2.4] }
+  - { type: ScalePercent, value: [-56.0] }
+
+triggers:
+  - UNIT_ONSTART_WEEKDAYTRAININGBEARSTART
+  - UNIT_ONUPDATE_WEEKDAYTRAININGBEARATTACK
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 6, count: 55, isCore: true }
+      - { itemDataId: 5, minCount: 30, maxCount: 55 }
+
+prefab: "Units/Monsters/large_melee_bear_brown.prefab"
+sprite: "Units/Monsters/Assets/large_melee_bear.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 1.08
+collideSize: { x: 1.25, y: 1.25 }
+hitSize: { x: 1.35, y: 1.35 }

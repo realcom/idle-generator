@@ -15,6 +15,8 @@ namespace WorldServer.Managers.CashItemManager;
 
 public partial class CashItemManager
 {
+    private const float AchievementProgressiveSummonTierWeightBonusPerLevel = 0.22f;
+
     public StatusCode BuyItem(int productItemDataId, int count, out int multiplier, IList<PlayerItemMessage> consumedItemMessages, List<PlayerItemModel>? selectedMaterialItems = null, IList<AddedItemStuff>? addedItemStuffs = null)
     {
         var resProductItem = ResourceItem.Get(productItemDataId);
@@ -89,8 +91,22 @@ public partial class CashItemManager
         if (!UsesProgressiveProductPrice(resProductItem) || count <= 0)
             return (resProductItem.ProductMaterialItemGroups, count);
 
-        var purchasedBefore = GetProgressiveProductPurchaseCount(resProductItem);
         var scaledGroups = new List<MaterialItemGroup>();
+        if (UsesAchievementProgressiveProductPrice(resProductItem))
+        {
+            var completedTierCount = GetProgressiveProductCompletedAchievementCount(resProductItem);
+            foreach (var materialItemGroup in resProductItem.ProductMaterialItemGroups)
+            {
+                var scaledGroup = materialItemGroup.Clone();
+                foreach (var materialItem in scaledGroup.MaterialItems)
+                    materialItem.Count = (materialItem.Count + completedTierCount * resProductItem.RegenCount) * count;
+                scaledGroups.Add(scaledGroup);
+            }
+
+            return (scaledGroups, 1);
+        }
+
+        var purchasedBefore = GetProgressiveProductPurchaseCount(resProductItem);
         foreach (var materialItemGroup in resProductItem.ProductMaterialItemGroups)
         {
             var scaledGroup = materialItemGroup.Clone();
@@ -112,9 +128,24 @@ public partial class CashItemManager
     private static bool UsesProgressiveProductPrice(ResourceItem resProductItem)
     {
         return resProductItem.Category == ResourceItem.Types.Category.Product
-               && resProductItem.RegenPeriod > 0
                && resProductItem.RegenCount > 0
+               && (resProductItem.RegenPeriod > 0 || resProductItem.TargetAchievementDataIds.Count > 0)
                && resProductItem.ProductMaterialItemGroups.Count > 0;
+    }
+
+    private static bool UsesAchievementProgressiveProductPrice(ResourceItem resProductItem)
+    {
+        return resProductItem.TargetAchievementDataIds.Count > 0;
+    }
+
+    private int GetProgressiveProductCompletedAchievementCount(ResourceItem resProductItem)
+    {
+        return resProductItem.TargetAchievementDataIds.Count(Player.AchievementManager.IsAchievementCompleted);
+    }
+
+    private int GetAchievementProgressiveSummonLevel(ResourceItem resProductItem)
+    {
+        return GetProgressiveProductCompletedAchievementCount(resProductItem) + 1;
     }
 
     private int GetProgressiveProductPurchaseCount(ResourceItem resProductItem)
@@ -126,7 +157,7 @@ public partial class CashItemManager
 
     private void IncreaseProgressiveProductPurchaseCount(ResourceItem resProductItem, int count)
     {
-        if (!UsesProgressiveProductPrice(resProductItem) || count <= 0)
+        if (!UsesProgressiveProductPrice(resProductItem) || UsesAchievementProgressiveProductPrice(resProductItem) || count <= 0)
             return;
 
         var productItemDataId = resProductItem.ProductItemDataId != 0 ? resProductItem.ProductItemDataId : resProductItem.Id;
@@ -181,6 +212,7 @@ public partial class CashItemManager
             levelReferenceItemDataId = resProductItem.AddItemLevelReferenceItemDataId;
 
         var baseAddItemGroups = resProductItem.AddItemGroups.FilterByLevel(GetItemLevelWithBonusLevel, levelReferenceItemDataId).ToList();
+        baseAddItemGroups = ApplyAchievementProgressiveSummonWeights(resProductItem, baseAddItemGroups);
         if (resProductItem.ContainsTag(Tag.Pity))
         {
             // 천장 체크를 baseAddItemGroups.Count * count * multiplier 만큼 하게되므로 의도와 다르게 동작하게 됨.
@@ -232,6 +264,53 @@ public partial class CashItemManager
                 }.SaveAsync);
 
         return StatusCode.Ok;
+    }
+
+    private List<AddItemGroup> ApplyAchievementProgressiveSummonWeights(ResourceItem resProductItem, List<AddItemGroup> addItemGroups)
+    {
+        if (!UsesAchievementProgressiveProductPrice(resProductItem) || addItemGroups.Count == 0)
+            return addItemGroups;
+
+        var summonLevel = GetAchievementProgressiveSummonLevel(resProductItem);
+        if (summonLevel <= 1)
+            return addItemGroups;
+
+        var hasEquipmentReward = addItemGroups.Any(addItemGroup =>
+            addItemGroup.AddItems.Any(addItem => ResourceItem.Get(addItem.ItemDataId)?.Category == ResourceItem.Types.Category.Equipment));
+        if (!hasEquipmentReward)
+            return addItemGroups;
+
+        var scaledGroups = new List<AddItemGroup>(addItemGroups.Count);
+        foreach (var addItemGroup in addItemGroups)
+        {
+            var scaledGroup = addItemGroup.Clone();
+            foreach (var addItem in scaledGroup.AddItems)
+            {
+                var resItem = ResourceItem.Get(addItem.ItemDataId);
+                if (resItem?.Category != ResourceItem.Types.Category.Equipment)
+                    continue;
+
+                addItem.Weight = GetAchievementProgressiveSummonWeight(addItem.Weight, resItem, summonLevel);
+            }
+            scaledGroups.Add(scaledGroup);
+        }
+
+        return scaledGroups;
+    }
+
+    private static float GetAchievementProgressiveSummonWeight(float baseWeight, ResourceItem resItem, int summonLevel)
+    {
+        if (baseWeight <= 0f || summonLevel <= 1)
+            return baseWeight;
+
+        var tierRank = resItem.Tier > 0 ? resItem.Tier :
+            resItem.Grade > 0 ? resItem.Grade :
+            resItem.Rarity > 0 ? resItem.Rarity : 1;
+        var tierLift = Math.Max(0, tierRank - 1);
+        if (tierLift == 0)
+            return baseWeight;
+
+        return baseWeight * (1f + (summonLevel - 1) * tierLift * AchievementProgressiveSummonTierWeightBonusPerLevel);
     }
 
     private StatusCode ProcessBuyPity(ResourceItem resProductItem, List<AddItemGroup> addItemGroups, IList<AddedItemStuff>? addedItemStuffs = null)

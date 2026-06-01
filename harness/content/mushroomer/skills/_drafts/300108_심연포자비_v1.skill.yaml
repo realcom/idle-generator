@@ -1,0 +1,29 @@
+id: 300108
+name: "톱밥 소나기"
+tags: [UseToTarget, TargetPosition, AoE, SkillTree]
+cooldown: 4.2
+priority: 8
+targetRefreshType: Random
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "assets/ui/icons/skills/skill_ham_bedding_rain.png"
+itemDataId: 200411
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - time: 0.24
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 4.2
+      maxHit: 12
+      addDamage: { damagePercent: [260.0] }
+  - time: 0.54
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 4.2
+      maxHit: 12
+      addDamage: { damagePercent: [260.0] }
+  - { time: 1.05, destroy: {} }

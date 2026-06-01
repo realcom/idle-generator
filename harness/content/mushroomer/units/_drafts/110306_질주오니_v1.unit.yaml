@@ -1,0 +1,44 @@
+id: 110306
+name: "질주 오니 총잡이"
+type: Elite
+tags: [Monster, WeekdayDungeon, Saturday, Speed]
+armorType: NormalArmor
+warmupDelay: 0.5
+targetMode: Chaser
+targetAwareDistance: 28.0
+targetResetDistance: 34.0
+deadDestroyDelaySeconds: 0.35
+
+addStats:
+  - { type: Hp, value: [430.0] }
+  - { type: Attack, value: [42.0] }
+  - { type: Defense, value: [8.0] }
+  - { type: CriticalPercent, value: [24.0] }
+  - { type: AttackSpeed, value: [1.65] }
+  - { type: MoveSpeed, value: [4.8] }
+
+triggers:
+  - UNIT_ONSTART_WEEKDAYNINJAONISTART
+  - UNIT_ONUPDATE_WEEKDAYNINJAONIATTACK
+
+dropAddItemGroups:
+  - shouldAddAll: false
+    probPercent: 30
+    addItems:
+      - { itemDataId: 1002, count: 1, weight: 60, group: 1 }
+      - { itemDataId: 1003, count: 1, weight: 40, group: 1, pityGroup: 9 }
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 6, count: 30 }
+
+prefab: "Units/Monsters/ranged_oni_cowboy_red.prefab"
+sprite: "Units/Monsters/Assets/ranged_oni_cowboy.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 0.95
+collideSize: { x: 0.9, y: 0.9 }
+hitSize: { x: 1.0, y: 1.0 }

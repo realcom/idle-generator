@@ -1,0 +1,24 @@
+id: 600196
+name: "소환 레벨 6"
+type: Normal
+tags: []
+order: 196
+initialOpen: true
+clientAchievement: false
+condition: BuyItemProduct
+conditionValue1: 200503
+conditionValue2: 0
+targetProgress: 25
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200108, count: 30 }
+      - { itemDataId: 200106, count: 4 }
+popupArgs:
+  Source: "EquipmentSummonMilestone"
+  ProductItemDataId: "200503"
+  SummonLevel: "6"

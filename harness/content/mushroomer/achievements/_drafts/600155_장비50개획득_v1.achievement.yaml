@@ -1,0 +1,21 @@
+id: 600155
+name: "장비 50개 획득"
+type: Normal
+tags: []
+order: 155
+initialOpen: true
+clientAchievement: false
+condition: AcquireEquipmentItemAny
+conditionValue1: 0
+conditionValue2: 0
+targetProgress: 50
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200103, count: 50 }
+      - { itemDataId: 200106, count: 5 }
+      - { itemDataId: 4, count: 10 }

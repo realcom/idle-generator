@@ -122,6 +122,7 @@ public static class BoardManager
             DataId = mapDataId,
             TickSeconds = BoardServerUpdateIntervalSeconds,
             AutoProgress = ResolveBoardAutoProgress(resMap),
+            GameSpeedMultiplier = player?.GameSpeedMultiplier ?? 1f,
             Creator = player
         }.Init();
 
@@ -215,6 +216,7 @@ public static class BoardManager
             return canJoinBoard;
 
         board.JoinPlayer(board.Tick, player);
+        board.GameSpeedMultiplier = Math.Max(board.GameSpeedMultiplier, player.GameSpeedMultiplier);
         
         if (Config.IsDebug)
             Logger.Info($"{player} joined {board.ToDebugString()}");

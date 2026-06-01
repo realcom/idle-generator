@@ -1,0 +1,50 @@
+id: 200408
+name: "쳇바퀴 회오리서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 2
+rarity: 3
+group: 200401
+constantDamageRatio: 1.0
+order: 5
+parentId: 200401
+skillDataId: 300105
+unstackable: true
+requiredItemDataIds: [200402, 200404]
+requiredAchievementDataIds: [600116]
+targetItemDataIds: [200410]
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200107, count: 4 }
+      - { id: 200104, count: 10 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200107, count: 5 }
+      - { id: 200104, count: 14 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200107, count: 6 }
+      - { id: 200104, count: 18 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200107, count: 8 }
+      - { id: 200104, count: 24 }
+popupArgs:
+  SkillTree: "Mushroomer"
+  SkillTreeNode: "AoE2"
+  ChildrenSkillItemDataIds: "200410"
+  UnlockRecipeItemDataId: "200416"
+  UnlockCostLevelPoint: "5"
+  LevelPointItemDataId: "200107"
+  RequiredSkillItemDataIds: "200402,200404"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "30"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "5"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_wheel_whirlwind.png"

@@ -1,0 +1,468 @@
+name: WeekdayMondayGoldWave1
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110301 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 10, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayMondayGoldWave2
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110301 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 14, level: "enemyLevel + 1", team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayMondayGoldWave3
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110301 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 18, level: "enemyLevel + 2", team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayMondayGoldUpdate
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+"on":
+  - event: update
+    every: 1s
+    do:
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 1 and return == 0"
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYMONDAYGOLDWAVE2 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 2 and return == 0"
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYMONDAYGOLDWAVE3 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 3 and return == 0"
+        SetWave: { value: 9 }
+        EndGame: { result: win }
+
+---
+
+name: WeekdayTuesdaySteelWave1
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110302 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 2, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayTuesdaySteelWave2
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110302 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 3, level: "enemyLevel + 1", team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayTuesdaySteelWave3
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110302 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 4, level: "enemyLevel + 2", team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayTuesdaySteelUpdate
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+"on":
+  - event: update
+    every: 1s
+    do:
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 1 and return == 0"
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYTUESDAYSTEELWAVE2 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 2 and return == 0"
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYTUESDAYSTEELWAVE3 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 3 and return == 0"
+        SetWave: { value: 9 }
+        EndGame: { result: win }
+
+---
+
+name: WeekdayWednesdayTrainingWave1
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110303 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 3, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayWednesdayTrainingWave2
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110303 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 4, level: "enemyLevel + 1", team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayWednesdayTrainingWave3
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110303 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 5, level: "enemyLevel + 2", team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayWednesdayTrainingUpdate
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+"on":
+  - event: update
+    every: 1s
+    do:
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 1 and return == 0"
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYWEDNESDAYTRAININGWAVE2 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 2 and return == 0"
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYWEDNESDAYTRAININGWAVE3 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 3 and return == 0"
+        SetWave: { value: 9 }
+        EndGame: { result: win }
+
+---
+
+name: WeekdayThursdayMysticWave1
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110304 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 3, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayThursdayMysticWave2
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110304 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 4, level: "enemyLevel + 1", team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayThursdayMysticWave3
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110304 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 5, level: "enemyLevel + 2", team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayThursdayMysticUpdate
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+"on":
+  - event: update
+    every: 1s
+    do:
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 1 and return == 0"
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYTHURSDAYMYSTICWAVE2 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 2 and return == 0"
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYTHURSDAYMYSTICWAVE3 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 3 and return == 0"
+        SetWave: { value: 9 }
+        EndGame: { result: win }
+
+---
+
+name: WeekdayFridayJellyWave1
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110305 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 6, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayFridayJellyWave2
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110305 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 8, level: "enemyLevel + 1", team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayFridayJellyWave3
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110305 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 10, level: "enemyLevel + 2", team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdayFridayJellyUpdate
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+"on":
+  - event: update
+    every: 1s
+    do:
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 1 and return == 0"
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYFRIDAYJELLYWAVE2 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 2 and return == 0"
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYFRIDAYJELLYWAVE3 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 3 and return == 0"
+        SetWave: { value: 9 }
+        EndGame: { result: win }
+
+---
+
+name: WeekdaySaturdayNinjaWave1
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110306 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 4, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdaySaturdayNinjaWave2
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110306 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 6, level: "enemyLevel + 1", team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdaySaturdayNinjaWave3
+domain: map
+vars:
+  enemy_unit: { type: int, default: 110306 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $enemy_unit, count: 8, level: "enemyLevel + 2", team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdaySaturdayNinjaUpdate
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+"on":
+  - event: update
+    every: 1s
+    do:
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 1 and return == 0"
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYSATURDAYNINJAWAVE2 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 2 and return == 0"
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYSATURDAYNINJAWAVE3 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 3 and return == 0"
+        SetWave: { value: 9 }
+        EndGame: { result: win }
+
+---
+
+name: WeekdaySundayCrownWave1
+domain: map
+vars:
+  gold_unit: { type: int, default: 110301 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $gold_unit, count: 6, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdaySundayCrownWave2
+domain: map
+vars:
+  steel_unit: { type: int, default: 110302 }
+  ninja_unit: { type: int, default: 110306 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $steel_unit, count: 2, level: "enemyLevel + 1", team: $enemy_team, locationId: $enemy_spawn }
+      - AddUnit: { unitDataId: $ninja_unit, count: 2, level: "enemyLevel + 1", team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdaySundayCrownWave3
+domain: map
+vars:
+  boss_unit: { type: int, default: 110307 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: $boss_unit, count: 1, level: bossLevel, team: $enemy_team, locationId: $enemy_spawn }
+
+---
+
+name: WeekdaySundayCrownUpdate
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+"on":
+  - event: update
+    every: 1s
+    do:
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 1 and return == 0"
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYSUNDAYCROWNWAVE2 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 2 and return == 0"
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_WEEKDAYSUNDAYCROWNWAVE3 }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "wave == 3 and return == 0"
+        SetWave: { value: 9 }
+        EndGame: { result: win }

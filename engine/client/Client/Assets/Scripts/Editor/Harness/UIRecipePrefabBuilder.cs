@@ -36,6 +36,9 @@ public static class UIRecipePrefabBuilder
     private static readonly Color GreenBottom = HtmlColor("55A42D");
     private static readonly Color GoldTop = HtmlColor("FFC44E");
     private static readonly Color GoldBottom = HtmlColor("EF8D18");
+    private static readonly Color LockedButtonTint = HtmlColor("8F877A");
+    private static readonly Color LockedOverlay = new(0.08f, 0.04f, 0.02f, 0.48f);
+    private static readonly Color LockedBadgeText = HtmlColor("FFE09B");
 
     private enum IconKind
     {
@@ -50,6 +53,7 @@ public static class UIRecipePrefabBuilder
         Adventure,
         Lock,
         Lamp,
+        Shop,
     }
 
     [MenuItem("Tools/IdleZ/Harness/Rebuild Hamster Growth Dock Preview")]
@@ -140,7 +144,9 @@ public static class UIRecipePrefabBuilder
         var button = CreateButton(surface, "Btn_EquipmentSummon", 342f, 1144f, 396f, 96f, "button-gold");
         AddGeneratedIcon(button.GetComponent<RectTransform>(), "Icon_Lamp", "icon-lamp", 24f, 18f, 60f, 60f,
             refWidth: 396f, refHeight: 96f);
-        AddText(button.GetComponent<RectTransform>(), "Text_Label", "장비 소환", 34f, Color.white, 94f, 10f, 278f, 42f,
+        AddText(button.GetComponent<RectTransform>(), "Text_Label", "장비 소환", 31f, Color.white, 94f, 10f, 188f, 42f,
+            TextAlignmentOptions.Left, shadow: true, refWidth: 396f, refHeight: 96f);
+        AddText(button.GetComponent<RectTransform>(), "Text_Level", "Lv.1", 23f, Color.white, 282f, 13f, 90f, 34f,
             TextAlignmentOptions.Center, shadow: true, refWidth: 396f, refHeight: 96f);
         AddText(button.GetComponent<RectTransform>(), "Text_Cost", "혼 10", 25f, Color.white, 94f, 50f, 278f, 34f,
             TextAlignmentOptions.Center, shadow: true, refWidth: 396f, refHeight: 96f);
@@ -246,20 +252,22 @@ public static class UIRecipePrefabBuilder
             TextAlignmentOptions.Center, shadow: true, refWidth: 698f, refHeight: 126f);
         AddText(reward.GetComponent<RectTransform>(), "Text_RewardAmount", "89.32A", 33f, Color.white, 120f, 69f, 548f, 40f,
             TextAlignmentOptions.Center, shadow: true, refWidth: 698f, refHeight: 126f);
+        SetButtonLocked(reward, 698f, 126f, "준비 중", 24f, 500f, 10f, 168f, 30f);
 
         var auto = CreateButton(dock, "Btn_AutoEnhance", 742f, 450f, 310f, 126f, "button-green", refHeight: 705f);
         AddGeneratedIcon(auto.GetComponent<RectTransform>(), "Icon_Mushroom", "icon-mushroom", 28f, 34f, 58f, 58f,
             refWidth: 310f, refHeight: 126f);
         AddText(auto.GetComponent<RectTransform>(), "Text_Label", "자동 강화", 34f, Color.white, 92f, 0f, 196f, 126f,
             TextAlignmentOptions.Center, shadow: true, refWidth: 310f, refHeight: 126f);
+        SetButtonLocked(auto, 310f, 126f, "잠김", 22f, 218f, 10f, 72f, 28f);
     }
 
     private static void CreateBottomTabs(RectTransform dock)
     {
         var tabs = CreateSpritePanel(dock, "BottomTabBar", 28f, 594f, 1024f, 96f, "tabs-bg", refHeight: 705f);
-        var ids = new[] { "Growth", "Companion", "Equipment", "Pet", "Adventure", "LockedGuild" };
-        var labels = new[] { "성장", "동료", "장비", "펫", "모험", "길드" };
-        var icons = new[] { "icon-hamster", "icon-mushroom", "icon-gear", "icon-pet", "icon-adventure", "icon-lock" };
+        var ids = new[] { "Growth", "Companion", "Equipment", "Pet", "Adventure", "Shop" };
+        var labels = new[] { "성장", "동료", "장비", "펫", "모험", "상점" };
+        var icons = new[] { "icon-hamster", "icon-mushroom", "icon-gear", "icon-pet", "icon-adventure", "icon-shop" };
         var tabWidth = (1024f - 16f - 40f) / 6f;
 
         for (var i = 0; i < labels.Length; i++)
@@ -272,7 +280,24 @@ public static class UIRecipePrefabBuilder
             AddText(tab.GetComponent<RectTransform>(), "Text_Label", labels[i], 23f,
                 selected ? HtmlColor("FFE9B2") : Color.white, 0f, 0f, tabWidth, 80f,
                 TextAlignmentOptions.Bottom, shadow: true, refWidth: tabWidth, refHeight: 80f);
+
+            var unlocked = selected || ids[i] == "Shop";
+            if (!unlocked)
+                SetButtonLocked(tab, tabWidth, 80f, "잠김", 14f, tabWidth - 54f, 5f, 48f, 20f);
         }
+    }
+
+    private static void SetButtonLocked(Button button, float width, float height, string badgeText, float badgeFontSize,
+        float badgeX, float badgeY, float badgeWidth, float badgeHeight)
+    {
+        button.interactable = false;
+        if (button.targetGraphic != null)
+            button.targetGraphic.color = LockedButtonTint;
+
+        var rect = button.GetComponent<RectTransform>();
+        CreateSolidPanel(rect, "Panel_LockedVeil", 0f, 0f, width, height, LockedOverlay, refWidth: width, refHeight: height);
+        AddText(rect, "Text_Lock", badgeText, badgeFontSize, LockedBadgeText, badgeX, badgeY, badgeWidth, badgeHeight,
+            TextAlignmentOptions.Center, shadow: true, refWidth: width, refHeight: height);
     }
 
     private static void CreateProgressBar(RectTransform parent, string name, float x, float y, float width, float height, float fill)
@@ -482,6 +507,7 @@ public static class UIRecipePrefabBuilder
         WriteIconSprite("icon-adventure", IconKind.Adventure);
         WriteIconSprite("icon-lock", IconKind.Lock);
         WriteIconSprite("icon-lamp", IconKind.Lamp);
+        WriteIconSprite("icon-shop", IconKind.Shop);
 
         AssetDatabase.Refresh();
     }
@@ -529,6 +555,9 @@ public static class UIRecipePrefabBuilder
                 break;
             case IconKind.Lamp:
                 DrawLampIcon(texture);
+                break;
+            case IconKind.Shop:
+                DrawShopIcon(texture);
                 break;
         }
 
@@ -722,6 +751,29 @@ public static class UIRecipePrefabBuilder
         DrawThickLine(texture, new Vector2(58f, 25f), new Vector2(74f, 49f), 9f, outline);
         DrawThickLine(texture, new Vector2(39f, 27f), new Vector2(25f, 49f), 5f, gold);
         DrawThickLine(texture, new Vector2(57f, 27f), new Vector2(71f, 49f), 5f, gold);
+    }
+
+    private static void DrawShopIcon(Texture2D texture)
+    {
+        var outline = HtmlColor("5B2A0E");
+        var pouch = HtmlColor("A85A22");
+        var pouchLight = HtmlColor("D89425");
+        var ruby = HtmlColor("E63E45");
+        var rubyLight = HtmlColor("FF9A92");
+        var stringColor = HtmlColor("FFE28A");
+
+        FillCircle(texture, 48f, 52f, 33f, outline);
+        FillCircle(texture, 48f, 50f, 26f, pouch);
+        FillRect(texture, 25, 23, 46, 18, outline);
+        FillRect(texture, 31, 26, 34, 11, pouchLight);
+        DrawThickLine(texture, new Vector2(31f, 37f), new Vector2(65f, 37f), 7f, stringColor);
+        FillTriangle(texture, new Vector2(48f, 76f), new Vector2(25f, 47f), new Vector2(71f, 47f), pouch);
+
+        FillTriangle(texture, new Vector2(48f, 29f), new Vector2(32f, 48f), new Vector2(64f, 48f), outline);
+        FillTriangle(texture, new Vector2(48f, 32f), new Vector2(37f, 46f), new Vector2(59f, 46f), ruby);
+        FillTriangle(texture, new Vector2(37f, 46f), new Vector2(59f, 46f), new Vector2(48f, 63f), outline);
+        FillTriangle(texture, new Vector2(40f, 48f), new Vector2(56f, 48f), new Vector2(48f, 58f), ruby);
+        FillTriangle(texture, new Vector2(48f, 32f), new Vector2(42f, 45f), new Vector2(54f, 45f), rubyLight);
     }
 
     private static void DrawThickLine(Texture2D texture, Vector2 start, Vector2 end, float thickness, Color color)

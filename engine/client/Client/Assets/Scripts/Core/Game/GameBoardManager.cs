@@ -172,14 +172,26 @@ public partial class GameBoardManager : WrappedEventBehaviour
     private double _serverSyncTimer;
 
     private float _boardUpdateScale = 1f;
+    private float _gameSpeedScale = 1f;
+    private double _nextGameSpeedScaleRefreshTime;
 
     public float BoardUpdateScale
     {
-        get => _boardUpdateScale;
+        get => _boardUpdateScale * _gameSpeedScale;
         set
         {
             _boardUpdateScale = value == 0 ? 1f : value;
             _syncTimer = BoardUpdateTick; // reset tick according to new scale
+        }
+    }
+
+    public float GameSpeedScale
+    {
+        get => _gameSpeedScale;
+        set
+        {
+            _gameSpeedScale = ResourceItem.NormalizeGameSpeedMultiplier(value);
+            _syncTimer = BoardUpdateTick;
         }
     }
 
@@ -402,6 +414,12 @@ public partial class GameBoardManager : WrappedEventBehaviour
         // Can be null LoginScene to directly go to InGame
         if (_gameBoard == null)
             return;
+
+        if (TimeSystem.time >= _nextGameSpeedScaleRefreshTime)
+        {
+            _nextGameSpeedScaleRefreshTime = TimeSystem.time + 1d;
+            MyPlayer.RefreshGameSpeedMultiplier();
+        }
 
         //UpdateDpad();
 //

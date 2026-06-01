@@ -1,0 +1,25 @@
+id: 201506
+name: "배속권"
+category: Product
+type: MaterialRealPrice
+grade: 1
+iapIdentifier: "idlez.limited.speed_pass_7d"
+priceUsd: 4.99
+priceWon: 5500
+startAt: "2026-06-01T00:00:00Z"
+untilAt: "2026-06-30T23:59:59Z"
+unstackable: true
+disposable: false
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 201506, count: 1, days: 7, isCore: true }
+spriteGroups:
+  Icon: "Items/Shops/shop_banner_speed_pass.png"
+popupArgs:
+  ShopSection: "Limited"
+  ProductKind: "SpeedPass"
+  GameSpeedMultiplier: "2"
+  DurationDays: "7"
+  Summary: "7일간 전투 속도 2배"

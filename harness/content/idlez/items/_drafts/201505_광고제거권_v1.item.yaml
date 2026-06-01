@@ -1,0 +1,24 @@
+id: 201505
+name: "광고 제거권"
+category: Product
+type: MaterialRealPrice
+grade: 1
+iapIdentifier: "idlez.limited.remove_ads"
+priceUsd: 5.99
+priceWon: 6600
+startAt: "2026-06-01T00:00:00Z"
+untilAt: "2026-06-30T23:59:59Z"
+unstackable: true
+disposable: false
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 201505, count: 1, isCore: true }
+spriteGroups:
+  Icon: "Items/Shops/shop_banner_remove_ads.png"
+popupArgs:
+  ShopSection: "Limited"
+  ProductKind: "AdRemoval"
+  Entitlement: "Permanent"
+  Summary: "모든 광고 즉시 제거"

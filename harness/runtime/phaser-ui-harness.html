@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phaser UI Harness</title>
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+<style>
+:root {
+  --bg: #23150e;
+  --panel: #4d2a14;
+  --panel-dark: #2b1609;
+  --line: #1d0d04;
+  --cream: #fff1c8;
+  --gold: #f7b63d;
+  --green: #72c843;
+  --muted: #d8b681;
+}
+* { box-sizing: border-box; }
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(111, 67, 34, .82), transparent 48%),
+    linear-gradient(90deg, #160b05, #3a2114 32%, #201008);
+  color: var(--cream);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  letter-spacing: 0;
+}
+button {
+  appearance: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.harness-shell {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(272px, 340px) minmax(360px, 1fr);
+  gap: 18px;
+  padding: 18px;
+}
+.tool-panel {
+  min-width: 0;
+  align-self: start;
+  display: grid;
+  gap: 12px;
+}
+.panel-band {
+  border: 3px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 240, 184, .13), transparent 34%),
+    linear-gradient(180deg, #6f3716, var(--panel));
+  box-shadow: inset 0 0 0 2px rgba(255, 213, 110, .22), 0 12px 0 rgba(0, 0, 0, .18);
+  padding: 12px;
+}
+.panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 30px;
+  font-size: 17px;
+  font-weight: 900;
+  text-shadow: 0 2px 0 #2b1206;
+}
+.status-pill {
+  flex: 0 0 auto;
+  max-width: 132px;
+  border: 2px solid #2b1206;
+  border-radius: 999px;
+  padding: 4px 9px;
+  background: #2f7e20;
+  color: #f5ffe6;
+  font-size: 11px;
+  font-weight: 900;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.status-pill.is-error { background: #9f2f21; }
+.modal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.preview-tab,
+.size-button {
+  min-height: 42px;
+  border: 3px solid #2b1206;
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 246, 196, .42), transparent 38%),
+    linear-gradient(180deg, #a85f25, #6f3513);
+  color: #fff7dd;
+  font-weight: 900;
+  text-shadow: 0 2px 0 #2b1206;
+  box-shadow: inset 0 -4px 0 rgba(58, 24, 6, .42);
+}
+.preview-tab.active,
+.size-button.active {
+  background:
+    linear-gradient(180deg, rgba(255, 250, 202, .58), transparent 38%),
+    linear-gradient(180deg, #ffd65d, #cf6f12);
+  color: #321708;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .65);
+}
+.size-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.preview-log {
+  display: grid;
+  gap: 7px;
+  min-height: 116px;
+  max-height: 180px;
+  overflow: auto;
+}
+.log-row {
+  border: 2px solid rgba(43, 18, 6, .84);
+  border-radius: 8px;
+  padding: 7px 8px;
+  background: rgba(255, 241, 200, .92);
+  color: #3a1b08;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+.log-row strong {
+  display: block;
+  font-size: 13px;
+  color: #2b1206;
+}
+.phone-wrap {
+  min-width: 0;
+  display: grid;
+  place-items: start center;
+}
+.phone {
+  position: relative;
+  width: min(100%, 420px);
+  height: min(100dvh - 36px, 860px);
+  min-height: 640px;
+  overflow: hidden;
+  border: 5px solid #251106;
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(48, 27, 15, .46) 0 8px, transparent 8px calc(100% - 8px), rgba(48, 27, 15, .46) calc(100% - 8px)),
+    linear-gradient(180deg, rgba(255, 255, 255, .08), transparent 12%),
+    linear-gradient(180deg, #65c6ec 0 30%, #7acb66 30% 56%, #102719 56% 100%);
+  box-shadow:
+    inset 0 0 0 5px rgba(43, 23, 13, .52),
+    inset 0 0 0 1px rgba(255, 219, 137, .14),
+    0 18px 0 rgba(0, 0, 0, .22);
+}
+.phone[data-size="compact"] {
+  width: min(100%, 390px);
+  height: min(100dvh - 36px, 760px);
+}
+.phone[data-size="wide"] {
+  width: min(100%, 760px);
+  height: min(100dvh - 36px, 720px);
+}
+.mock-hud {
+  position: absolute;
+  inset: 8px 8px auto;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.mock-badge {
+  min-height: 44px;
+  border: 3px solid #2b1206;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #8d4619, #4b1e09);
+  display: grid;
+  align-content: center;
+  padding: 5px 10px;
+  color: #fff7dd;
+  font-weight: 900;
+  text-shadow: 0 2px 0 #2b1206;
+}
+.mock-badge span {
+  color: #ffe26c;
+  font-size: 12px;
+}
+.mock-field {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 78px;
+  height: 46%;
+  border: 3px solid rgba(43, 18, 6, .46);
+  border-radius: 8px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 72% 16%, #4ca85b 0 34px, transparent 35px),
+    radial-gradient(circle at 28% 22%, #55b866 0 42px, transparent 43px),
+    linear-gradient(180deg, #7ad6f4 0 42%, #e9d270 42% 100%);
+}
+.mock-dock {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 12px;
+  height: 31%;
+  border: 4px solid #2b1206;
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 238, 177, .18), transparent 24%),
+    linear-gradient(180deg, #8a4318, #4c1f0a);
+}
+.modal-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+.modal-stage.is-active {
+  pointer-events: auto;
+}
+.modal-stage canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+@media (max-width: 820px) {
+  .harness-shell {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+  .tool-panel {
+    order: 2;
+  }
+  .phone-wrap {
+    order: 1;
+  }
+  .phone {
+    height: min(74dvh, 780px);
+    min-height: 540px;
+  }
+  .modal-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .modal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+</style>
+</head>
+<body>
+<main class="harness-shell">
+  <section class="tool-panel">
+    <div class="panel-band">
+      <div class="panel-title">
+        <span>Phaser UI Harness</span>
+        <span id="previewStatus" class="status-pill">Booting</span>
+      </div>
+    </div>
+
+    <div class="panel-band">
+      <div class="modal-grid" id="modalButtons">
+        <button class="preview-tab tab active" data-modal-id="skills">스킬</button>
+        <button class="preview-tab tab" data-modal-id="achievements">업적</button>
+        <button class="preview-tab tab" data-modal-id="weekdayDungeon">던전</button>
+        <button class="preview-tab tab" data-modal-id="shop">상점</button>
+        <button class="preview-tab tab" data-modal-id="rewards">보상</button>
+        <button class="preview-tab tab" data-modal-id="settings">설정</button>
+        <button class="preview-tab tab" data-modal-id="quests">퀘스트</button>
+        <button class="preview-tab tab" data-modal-id="equipment">장비</button>
+        <button class="preview-tab tab" data-modal-id="pet">펫</button>
+        <button class="preview-tab tab" data-modal-id="guild">길드</button>
+      </div>
+    </div>
+
+    <div class="panel-band">
+      <div class="size-row">
+        <button class="size-button" data-preview-size="compact">390</button>
+        <button class="size-button active" data-preview-size="portrait">420</button>
+        <button class="size-button" data-preview-size="wide">Wide</button>
+      </div>
+    </div>
+
+    <div class="panel-band">
+      <div id="previewLog" class="preview-log" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="phone-wrap">
+    <div id="previewPhone" class="phone" data-size="portrait">
+      <div class="mock-hud">
+        <div class="mock-badge">햄찌주인 <span>Lv.18</span></div>
+        <div class="mock-badge">골드 <span>150,000</span></div>
+      </div>
+      <div class="mock-field"></div>
+      <div class="mock-dock"></div>
+      <div id="modalStage" class="modal-stage" aria-hidden="true"></div>
+    </div>
+  </section>
+</main>
+<script type="module" src="src/idlez-phaser/ui-harness.js"></script>
+</body>
+</html>

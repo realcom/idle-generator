@@ -1,0 +1,20 @@
+id: 600173
+name: "체력 5 달성"
+type: Normal
+tags: []
+order: 173
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1001
+conditionValue2: 5
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 600 }
+      - { itemDataId: 200103, count: 1 }

@@ -1,15 +1,21 @@
 id: 500301
-group: 500300
+group: 500301
 name: "월요 골드 던전"
 type: Dungeon
-tags: [WeekdayDungeon, Monday]
-scene: "PFB_MAP_Meadow_Day_Chapter"
-popupArgs: { ClientModeManager: ModeManagerMushroom, ClientHomeMapDataId: 500101 }
+tags: [WeekdayDungeon, Monday, Gold]
+scene: "PFB_MAP_DegulRock_Day_DailyDungeon"
+sprite: "Maps/Map_DegulRock_Day/Img_Map_DegulRock_Day_FarObject.png"
+popupArgs:
+  ClientModeManager: ModeManagerMushroom
+  ClientHomeMapDataId: 500101
+  ClientPhaserBackground: weekday_degul_rock
+  ClientClearReturnDelayMs: 3000
+  ClientWaveCount: 2
 initLevel: 10
 locations:
   - { id: -1, position: { x: -7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 0.75 } }] }
   - { id: 1, position: { x: 7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 1.75 } }] }
-triggers: [MAP_ONSTART_MUSHROOMFIELDWAVE1, MAP_ONUPDATE_MUSHROOMFIELDUPDATE]
+triggers: [MAP_ONSTART_WEEKDAYMONDAYGOLDDUNGEON, MAP_ONUPDATE_WEEKDAYMONDAYGOLDDUNGEON]
 rewardAddItemGroups:
   - shouldAddAll: true
     probPercent: 100

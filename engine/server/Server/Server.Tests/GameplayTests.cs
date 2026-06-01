@@ -3,6 +3,7 @@ using Commons.Packets.Requests;
 using Commons.Resources;
 using Commons.Types;
 using Commons.Types.Players;
+using Google.Protobuf.WellKnownTypes;
 using Server.Managers;
 using Server.Player;
 using Server.Tests.TestSupport;
@@ -32,6 +33,36 @@ public sealed class GameplayTests
         Assert.Equal((uint)30, GameBoard.TimeToTicks((FixedFloat)1));
         Assert.Equal((uint)1, GameBoard.TimeToTicksDuration((FixedFloat)0.001));
         Assert.InRange((float)GameBoard.TicksToTime(75), 2.5f, 2.501f);
+    }
+
+    [Fact]
+    public void ResourceItem_game_speed_multiplier_uses_popup_arg()
+    {
+        var item = new ResourceItem();
+        item.PopupArgs.Add(ResourceItem.GameSpeedMultiplierPopupArg, "2");
+
+        Assert.True(item.TryGetGameSpeedMultiplier(out var multiplier));
+        Assert.Equal(2f, multiplier, 3);
+
+        item.PopupArgs[ResourceItem.GameSpeedMultiplierPopupArg] = "999";
+        Assert.Equal(ResourceItem.MaxGameSpeedMultiplier, item.GetGameSpeedMultiplier(), 3);
+    }
+
+    [Fact]
+    public void GameBoard_future_tick_validation_uses_game_speed_multiplier()
+    {
+        var now = DateTime.UtcNow;
+        var board = new GameBoard
+        {
+            CreatedAt = Timestamp.FromDateTime(now.AddSeconds(-70)),
+            GameSpeedMultiplier = 1f,
+        };
+        var tick = GameBoard.TimeToTicks((FixedFloat)150);
+
+        Assert.True(board.IsTickInFuture(tick, now));
+
+        board.GameSpeedMultiplier = 2f;
+        Assert.False(board.IsTickInFuture(tick, now));
     }
 
     [Fact]

@@ -1,0 +1,23 @@
+id: 300107
+name: "달빛 쳇바퀴"
+tags: [UseToTarget, TargetPosition, AoE, Buff, SkillTree]
+cooldown: 4.6
+priority: 7
+targetRefreshType: Nearest
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "assets/ui/icons/skills/skill_ham_moon_wheel.png"
+itemDataId: 200410
+selfAddBuffs:
+  - { buffDataId: 400101, level: 1, duration: 6.0 }
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - time: 0.32
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 4.0
+      maxHit: 10
+      addDamage: { damagePercent: [380.0] }
+  - { time: 0.9, destroy: {} }

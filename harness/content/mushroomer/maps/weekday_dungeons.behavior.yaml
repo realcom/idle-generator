@@ -1,0 +1,326 @@
+name: WeekdayMondayGoldDungeon
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_spawned: { type: int, default: 604 }
+  wave_transition_pending: { type: int, default: 603 }
+  wave1_target: { type: int, default: 8 }
+  wave2_target: { type: int, default: 4 }
+  wave1_unit: { type: int, default: 110301 }
+  wave2_unit: { type: int, default: 110305 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+      - SendWaveStartedEvent: {}
+  - event: update
+    every: 0.25s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned >= $wave1_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SetBoardVariable: { key: $wave_spawned, value: 0 }
+        SendWaveStartedEvent: {}
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned >= $wave2_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 9 }
+        EndGame: { result: win }
+
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned < $wave1_target and tick % 8 == 0"
+        AddUnit: { unitDataId: $wave1_unit, count: 1, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned < $wave2_target and tick % 10 == 0"
+        AddUnit: { unitDataId: $wave2_unit, count: 1, level: "enemyLevel + 1", team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+
+---
+
+name: WeekdayTuesdayEquipmentDungeon
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_spawned: { type: int, default: 604 }
+  wave_transition_pending: { type: int, default: 603 }
+  wave1_target: { type: int, default: 2 }
+  wave2_target: { type: int, default: 1 }
+  wave1_unit: { type: int, default: 110302 }
+  wave2_unit: { type: int, default: 110302 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+      - SendWaveStartedEvent: {}
+  - event: update
+    every: 0.25s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned >= $wave1_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SetBoardVariable: { key: $wave_spawned, value: 0 }
+        SendWaveStartedEvent: {}
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned >= $wave2_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 9 }
+        EndGame: { result: win }
+
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned < $wave1_target and tick % 16 == 0"
+        AddUnit: { unitDataId: $wave1_unit, count: 1, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned < $wave2_target and tick % 22 == 0"
+        AddUnit: { unitDataId: $wave2_unit, count: 1, level: "enemyLevel + 3", team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+
+---
+
+name: WeekdayWednesdaySkillDungeon
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_spawned: { type: int, default: 604 }
+  wave_transition_pending: { type: int, default: 603 }
+  wave1_target: { type: int, default: 3 }
+  wave2_target: { type: int, default: 3 }
+  wave1_unit: { type: int, default: 110304 }
+  wave2_unit: { type: int, default: 110304 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+      - SendWaveStartedEvent: {}
+  - event: update
+    every: 0.25s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned >= $wave1_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SetBoardVariable: { key: $wave_spawned, value: 0 }
+        SendWaveStartedEvent: {}
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned >= $wave2_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 9 }
+        EndGame: { result: win }
+
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned < $wave1_target and tick % 12 == 0"
+        AddUnit: { unitDataId: $wave1_unit, count: 1, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned < $wave2_target and tick % 12 == 0"
+        AddUnit: { unitDataId: $wave2_unit, count: 1, level: "enemyLevel + 2", team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+
+---
+
+name: WeekdayThursdayExpDungeon
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_spawned: { type: int, default: 604 }
+  wave_transition_pending: { type: int, default: 603 }
+  wave1_target: { type: int, default: 3 }
+  wave2_target: { type: int, default: 2 }
+  wave1_unit: { type: int, default: 110303 }
+  wave2_unit: { type: int, default: 110303 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+      - SendWaveStartedEvent: {}
+  - event: update
+    every: 0.25s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned >= $wave1_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SetBoardVariable: { key: $wave_spawned, value: 0 }
+        SendWaveStartedEvent: {}
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned >= $wave2_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 9 }
+        EndGame: { result: win }
+
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned < $wave1_target and tick % 20 == 0"
+        AddUnit: { unitDataId: $wave1_unit, count: 1, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned < $wave2_target and tick % 24 == 0"
+        AddUnit: { unitDataId: $wave2_unit, count: 1, level: "enemyLevel + 2", team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+
+---
+
+name: WeekdayFridayChestDungeon
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_spawned: { type: int, default: 604 }
+  wave_transition_pending: { type: int, default: 603 }
+  wave1_target: { type: int, default: 5 }
+  wave2_target: { type: int, default: 3 }
+  wave1_unit: { type: int, default: 110305 }
+  wave2_unit: { type: int, default: 110301 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+      - SendWaveStartedEvent: {}
+  - event: update
+    every: 0.25s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned >= $wave1_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SetBoardVariable: { key: $wave_spawned, value: 0 }
+        SendWaveStartedEvent: {}
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned >= $wave2_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 9 }
+        EndGame: { result: win }
+
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned < $wave1_target and tick % 8 == 0"
+        AddUnit: { unitDataId: $wave1_unit, count: 1, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned < $wave2_target and tick % 10 == 0"
+        AddUnit: { unitDataId: $wave2_unit, count: 1, level: "enemyLevel + 1", team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+
+---
+
+name: WeekdaySaturdayMixedDungeon
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_spawned: { type: int, default: 604 }
+  wave_transition_pending: { type: int, default: 603 }
+  wave1_target: { type: int, default: 3 }
+  wave2_target: { type: int, default: 4 }
+  wave1_unit: { type: int, default: 110306 }
+  wave2_unit: { type: int, default: 110304 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+      - SendWaveStartedEvent: {}
+  - event: update
+    every: 0.25s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned >= $wave1_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SetBoardVariable: { key: $wave_spawned, value: 0 }
+        SendWaveStartedEvent: {}
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned >= $wave2_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 9 }
+        EndGame: { result: win }
+
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned < $wave1_target and tick % 10 == 0"
+        AddUnit: { unitDataId: $wave1_unit, count: 1, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned < $wave2_target and tick % 12 == 0"
+        AddUnit: { unitDataId: $wave2_unit, count: 1, level: "enemyLevel + 1", team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+
+---
+
+name: WeekdaySundayBonusDungeon
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_spawned: { type: int, default: 604 }
+  wave_transition_pending: { type: int, default: 603 }
+  wave1_target: { type: int, default: 2 }
+  wave2_target: { type: int, default: 1 }
+  wave1_unit: { type: int, default: 110302 }
+  wave2_unit: { type: int, default: 110307 }
+  enemy_spawn: { type: int, default: 1 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+      - SendWaveStartedEvent: {}
+  - event: update
+    every: 0.25s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned >= $wave1_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SetBoardVariable: { key: $wave_spawned, value: 0 }
+        SendWaveStartedEvent: {}
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned >= $wave2_target and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 9 }
+        EndGame: { result: win }
+
+      - when: "waveTransitionPending == 0 and wave == 1 and waveSpawned < $wave1_target and tick % 16 == 0"
+        AddUnit: { unitDataId: $wave1_unit, count: 1, level: enemyLevel, team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }
+      - when: "waveTransitionPending == 0 and wave == 2 and waveSpawned < $wave2_target and tick % 16 == 0"
+        AddUnit: { unitDataId: $wave2_unit, count: 1, level: "enemyLevel + 3", team: $enemy_team, locationId: $enemy_spawn }
+        SetBoardVariable: { key: $wave_spawned, value: "waveSpawned + 1" }

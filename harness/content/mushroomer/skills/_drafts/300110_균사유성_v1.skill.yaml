@@ -1,0 +1,21 @@
+id: 300110
+name: "별사탕 유성"
+tags: [UseToTarget, TargetPosition, AoE, Boss, SkillTree]
+cooldown: 5.2
+priority: 10
+targetRefreshType: HighestHp
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "assets/ui/icons/skills/skill_ham_star_candy_meteor.png"
+itemDataId: 200413
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - time: 0.5
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 3.4
+      maxHit: 6
+      addDamage: { damagePercent: [820.0] }
+  - { time: 1.16, destroy: {} }

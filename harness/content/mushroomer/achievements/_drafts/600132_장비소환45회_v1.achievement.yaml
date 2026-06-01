@@ -1,0 +1,19 @@
+id: 600132
+name: "장비 소환 45회"
+type: Normal
+tags: [HideDisplay, EquipmentSummonLevel, EquipmentSummonPrice]
+order: 132
+initialOpen: true
+clientAchievement: false
+condition: BuyItemProduct
+conditionValue1: 200503
+conditionValue2: 0
+targetProgress: 45
+initialProgress: 0
+repeatable: false
+autoReward: false
+popupArgs:
+  Source: EquipmentSummonLevel
+  ProductItemDataId: "200503"
+  PriceStep: "9"
+  SummonLevel: "10"

@@ -1,0 +1,20 @@
+id: 600168
+name: "공격 40 달성"
+type: Normal
+tags: []
+order: 168
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1000
+conditionValue2: 40
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 5200 }
+      - { itemDataId: 200103, count: 8 }

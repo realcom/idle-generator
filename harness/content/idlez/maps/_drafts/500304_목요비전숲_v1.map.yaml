@@ -1,0 +1,40 @@
+id: 500304
+group: 500304
+stage: 1
+name: "목요 비전숲"
+type: Dungeon
+tags: [WeekdayDungeon, Thursday, StatGrowth]
+scene: "PFB_MAP_Jungle_Day_Chapter"
+prefab: "Maps/Prefabs/PFB_MAP_Jungle_Day_Chapter.prefab"
+sprite: "Maps/Map_Jungle_Day/Img_Map_Jungle_Day_BG.png"
+targetCameraPivot: { x: 0.5, y: 0.58 }
+fov: 9.25
+popupArgs: { ClientModeManager: ModeManagerMushroom, ClientHomeMapDataId: 500101 }
+initLevel: 11
+enableUnitExp: true
+initVariables:
+  - { callerKey: 605, value: 11 }
+  - { callerKey: 606, value: 12 }
+boardConstants: { levelUpChoiceCount: 3 }
+locations:
+  - { id: -1, position: { x: -7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 0.75 } }] }
+  - { id: 1, position: { x: 7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 1.6 } }] }
+terrains:
+  - vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+  - type: Skill
+    vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+triggers: [MAP_ONSTART_WEEKDAYTHURSDAYMYSTICWAVE1, MAP_ONUPDATE_WEEKDAYTHURSDAYMYSTICUPDATE]
+rewardAddItemGroups:
+  - shouldAddAll: false
+    probPercent: 100
+    addItems:
+      - { itemDataId: 1000, count: 1, weight: 32, group: 1, isCore: true }
+      - { itemDataId: 1001, count: 1, weight: 28, group: 1, isCore: true }
+      - { itemDataId: 1002, count: 1, weight: 22, group: 1, isCore: true }
+      - { itemDataId: 1003, count: 1, weight: 18, group: 1, pityGroup: 5, isCore: true }
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 6, count: 280 }

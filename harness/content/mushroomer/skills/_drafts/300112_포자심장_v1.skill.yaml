@@ -1,0 +1,23 @@
+id: 300112
+name: "황금 볼주머니"
+tags: [UseToTarget, TargetPosition, AoE, Boss, Ultimate, SkillTree]
+cooldown: 7.2
+priority: 12
+targetRefreshType: HighestHp
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "assets/ui/icons/skills/skill_ham_golden_cheek_pouch.png"
+itemDataId: 200415
+selfAddBuffs:
+  - { buffDataId: 400101, level: 1, duration: 12.0 }
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - time: 0.72
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 5.2
+      maxHit: 20
+      addDamage: { damagePercent: [1500.0] }
+  - { time: 1.55, destroy: {} }

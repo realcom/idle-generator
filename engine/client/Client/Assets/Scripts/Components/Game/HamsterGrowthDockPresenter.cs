@@ -19,6 +19,16 @@ public class HamsterGrowthDockPresenter : MonoBehaviour
     private const int EquipmentSummonProductId = 200503;
     private const int MonsterSoulItemId = 200108;
     private const float RefreshInterval = 0.2f;
+    private static readonly Color LockedPreviewTint = new(0.58f, 0.56f, 0.52f, 0.88f);
+    private static readonly string[] PreviewOnlyButtonNames =
+    {
+        "Btn_GrowthReward",
+        "Btn_AutoEnhance",
+        "Tab_Companion",
+        "Tab_Equipment",
+        "Tab_Pet",
+        "Tab_Adventure",
+    };
 
     private readonly struct GrowthCardSpec
     {
@@ -110,6 +120,7 @@ public class HamsterGrowthDockPresenter : MonoBehaviour
     private TextMeshProUGUI _stageProgress;
     private TextMeshProUGUI _equipmentSummary;
     private TextMeshProUGUI _soulValue;
+    private TextMeshProUGUI _summonLevel;
     private TextMeshProUGUI _summonCost;
     private Button _summonButton;
     private Image _summonButtonImage;
@@ -163,6 +174,7 @@ public class HamsterGrowthDockPresenter : MonoBehaviour
         _equipmentSummary = FindText("EquipmentPanel", "Text_Summary");
         _soulValue = FindText("EquipmentPanel", "Text_SoulValue");
         _summonButton = FindButton(transform, "Btn_EquipmentSummon");
+        _summonLevel = FindText("Btn_EquipmentSummon", "Text_Level");
         _summonCost = FindText("Btn_EquipmentSummon", "Text_Cost");
         _summonButtonImage = _summonButton != null ? _summonButton.GetComponent<Image>() : null;
 
@@ -225,6 +237,46 @@ public class HamsterGrowthDockPresenter : MonoBehaviour
         {
             _summonButton.onClick.RemoveAllListeners();
             _summonButton.onClick.AddListener(() => TrySummonEquipment().Forget());
+        }
+
+        var shopTabButton = FindButton(transform, "Tab_Shop");
+        if (shopTabButton != null)
+        {
+            shopTabButton.onClick.RemoveAllListeners();
+            shopTabButton.onClick.AddListener(OpenShopTab);
+        }
+
+        LockPreviewOnlyButtons();
+    }
+
+    private void OpenShopTab()
+    {
+        if (GameBoardManager.Get()?.modeManager is ModeManagerMushroom modeManager &&
+            modeManager.TryOpenPredefinedPage(ModeManagerMushroom.ShopPageAddressKey, Array.Empty<string>()))
+            return;
+
+        GameManager.Get()?.ShowPopupAsync(ModeManagerMushroom.ShopPageAddressKey).Forget();
+    }
+
+    private void LockPreviewOnlyButtons()
+    {
+        foreach (var buttonName in PreviewOnlyButtonNames)
+        {
+            var button = FindButton(transform, buttonName);
+            if (button == null)
+                continue;
+
+            button.onClick.RemoveAllListeners();
+            button.interactable = false;
+
+            var colors = button.colors;
+            colors.disabledColor = LockedPreviewTint;
+            button.colors = colors;
+
+            foreach (var graphic in button.GetComponentsInChildren<Graphic>(true))
+            {
+                graphic.color = LockedPreviewTint;
+            }
         }
     }
 
@@ -337,6 +389,9 @@ public class HamsterGrowthDockPresenter : MonoBehaviour
         var product = ResourceItem.Get(EquipmentSummonProductId);
         var material = product?.GetProductMaterial();
         var canBuy = product?.IsProductBuyable() == true;
+
+        if (_summonLevel != null)
+            _summonLevel.text = product != null ? $"Lv.{product.GetProgressiveProductLevel()}" : "Lv.1";
 
         if (_summonCost != null)
         {

@@ -1,8 +1,10 @@
 # idle-game-generator
 
-기획자와 AI가 함께 방치형 RPG 콘텐츠를 빠르게 만들고, 검증된 `idlez` 엔진(Unity 클라이언트 + .NET 서버)에 올려 실행하는 제작 하네스입니다.
+기획자와 AI가 함께 방치형 RPG 콘텐츠를 빠르게 만들고, Phaser 브라우저 런타임에서 바로 실행하며 검증하는 제작 하네스입니다.
 
-핵심은 단순합니다. 기획자는 자연어, 표, 수식, YAML로 콘텐츠 의도를 남기고, AI와 도구가 이를 엔진이 읽는 JSON 번들로 컴파일합니다. 엔진 코드를 매번 고치는 방식이 아니라, `profile + content`를 갈아끼워 여러 게임을 실험하는 구조입니다.
+핵심은 단순합니다. 기획자는 자연어, 표, 수식, YAML로 콘텐츠 의도를 남기고, AI와 도구가 이를 Phaser 런타임이 읽는 JSON 번들로 컴파일합니다. 엔진 코드를 매번 고치는 방식이 아니라, `profile + content`를 갈아끼워 여러 게임을 실험하는 구조입니다.
+
+이 공개용 lightweight 스냅샷은 Phaser 작업 경로를 중심으로 공유됩니다. Unity/.NET 기반 `idlez` 엔진은 레거시 검증 경로이며, 보통의 콘텐츠 제작자나 게임 디자이너가 작업하는 데 필요하지 않습니다.
 
 ## 한눈에 보기
 
@@ -17,17 +19,17 @@ flowchart LR
     Source --> Compiler
     Compiler --> Build["빌드 산출물\nharness/build/{game}/*.json"]
     Build --> Runtime["Phaser 실행 타깃\nharness/runtime"]
-    Build --> Patch["Unity PatchResources\nengine/client/.../PatchResources"]
-    Patch --> Engine["idlez 엔진\nUnity 클라 + .NET 서버"]
+    Build -. 선택적 레거시 검증 .-> Engine["Unity/.NET idlez 엔진"]
 ```
 
-이 저장소는 크게 세 덩어리입니다.
+이 저장소는 Phaser 제작 흐름 기준으로 크게 두 덩어리입니다.
 
 | 영역 | 위치 | 설명 | 주 사용자 |
 | --- | --- | --- | --- |
-| 엔진 | `engine/` | 이미 검증된 `idlez` 클라이언트/서버/공유 라이브러리 | 엔지니어 |
 | 제작 하네스 | `harness/` | 기획 데이터, 게임 프로필, 컴파일러, 검증기, Phaser 런타임 | 기획자 + AI + 엔지니어 |
 | AI 작업 계층 | `.agents/`, `.claude/` | 콘텐츠 생성/리뷰/밸런스/디자인 작업 절차 | AI 작업자 |
+
+내부 전체 스냅샷에는 `engine/`도 존재하지만, 공개 작업자는 보통 `harness/content/`, `harness/game-profiles/`, `harness/runtime/`만 보면 됩니다.
 
 ## 왜 이런 구조인가
 
@@ -38,8 +40,8 @@ flowchart LR
 ```mermaid
 flowchart TB
     A["사람이 읽는 원본\nYAML / growth.md / behavior.yaml"] --> B["컴파일"]
-    B --> C["엔진이 읽는 산출물\nUnits.json / Items.json / Maps.json / Triggers.json ..."]
-    C --> D["Unity 클라이언트와 서버"]
+    B --> C["런타임이 읽는 산출물\nUnits.json / Items.json / Maps.json / Triggers.json ..."]
+    C --> D["Phaser 브라우저 런타임"]
 
     A2["기획 의도\n테마, 수치감, 드롭 정책"] --> A
     A3["검증 규칙\n스탯 범위, ID 대역, 참조 무결성"] --> B
@@ -111,19 +113,14 @@ flowchart LR
 
 ```text
 idle-game-generator/
-├── engine/
-│   ├── client/                  # Unity 클라이언트(idlez 레거시)
-│   ├── server/                  # .NET 서버(idlez 레거시)
-│   └── commons/                 # 클라/서버 공유 라이브러리
 ├── harness/
 │   ├── engine-contract/         # 공통 스키마, 스탯, 행동 어휘
 │   ├── game-profiles/           # 게임별 룰북
 │   ├── content/<game>/          # 기획 원본 데이터
 │   ├── design/<game>/           # UI 시안, 디자인 토큰, 컴포넌트 스킨
-│   ├── unity/recipes/           # Unity uGUI prefab 생성 레시피
-│   ├── tools/                   # 컴파일러, 검증기, sync 도구
+│   ├── unity/recipes/           # 선택적 Unity uGUI prefab 생성 레시피
+│   ├── tools/                   # 컴파일러, 검증기, 보조 도구
 │   ├── runtime/                 # Phaser 기반 브라우저 실행 타깃
-│   ├── examples/patchresources/ # Unity PatchResources 예시/seed
 │   └── build/<game>/            # 컴파일 산출물(gitignored)
 ├── .agents/skills/              # Codex/agent용 작업 스킬
 ├── .claude/agents/              # Claude 호환 에이전트 정의
@@ -137,7 +134,7 @@ idle-game-generator/
 
 ### 먼저 기억할 것: 기획자는 터미널을 직접 다루지 않아도 됩니다
 
-이 문서에는 Python, Docker, Unity sync 명령이 나오지만, 기획자가 매번 직접 실행하라는 뜻은 아닙니다. 실제 운영에서는 기획자가 AI에게 목표를 말하고, AI가 필요한 파일 확인, 콘텐츠 작성, 컴파일, 검증, 결과 요약을 수행합니다.
+이 문서에는 Python과 Phaser 실행 명령이 나오지만, 기획자가 매번 직접 실행하라는 뜻은 아닙니다. 실제 운영에서는 기획자가 AI에게 목표를 말하고, AI가 필요한 파일 확인, 콘텐츠 작성, 컴파일, Phaser 검증, 결과 요약을 수행합니다.
 
 기획자 입장에서 가장 중요한 입력은 "무엇을 만들고 싶은지"입니다.
 
@@ -160,7 +157,7 @@ flowchart LR
     F -->|예| S["변경 파일, 수치 의도, 검증 결과 보고"]
 ```
 
-따라서 아래 명령어들은 주로 AI나 엔지니어가 확인용으로 실행하는 내부 절차입니다. 기획자는 필요할 때 "컴파일 검증까지 해줘", "Phaser로 실행 확인해줘", "Unity에 반영 가능한 상태로 sync해줘"처럼 요청하면 됩니다.
+따라서 아래 명령어들은 주로 AI나 엔지니어가 확인용으로 실행하는 내부 절차입니다. 기획자는 필요할 때 "컴파일 검증까지 해줘", "Phaser로 실행 확인해줘"처럼 요청하면 됩니다.
 
 ### 1. 콘텐츠 컴파일
 
@@ -222,7 +219,22 @@ python3 -m http.server 8765
 http://127.0.0.1:8765/harness/runtime/idlez-phaser.html
 ```
 
+반복 확인은 전용 smoke 하네스로 실행할 수 있습니다.
+
+```bash
+python3 harness/tools/phaser_smoke.py mushroomer --no-browser
+python3 harness/tools/phaser_smoke.py mushroomer --screenshot /private/tmp/idlez-phaser-smoke.png
+```
+
+`--no-browser`는 컴파일과 로컬 HTTP 연결만 확인합니다. 브라우저 smoke는 headless Chrome을 띄워 Phaser context, canvas, board tick 진행을 확인합니다. 세부 분리는 [harness/runtime/PHASER_HARNESS.md](harness/runtime/PHASER_HARNESS.md)에 정리되어 있습니다.
+
 현재 `idlez-phaser.html`은 `mushroomer` 중심으로 연결되어 있습니다. 이 경로는 검증 게임을 가장 빠르게 실행하는 기본 루트입니다.
+
+UI와 모달만 빠르게 볼 때는 별도 preview 하네스를 엽니다.
+
+```text
+http://127.0.0.1:8765/harness/runtime/phaser-ui-harness.html
+```
 
 확인할 것:
 
@@ -232,9 +244,9 @@ http://127.0.0.1:8765/harness/runtime/idlez-phaser.html
 - 골드, 성장 버튼, 보상 흐름이 수치적으로 어색하지 않은가
 - 브라우저 콘솔에 리소스 로드 실패나 런타임 에러가 없는가
 
-### 3. Unity로 추가 검증하기
+### 3. 선택: Unity로 추가 검증하기
 
-Unity 검증은 엔진 연동, `PatchResources`, Addressables/프리팹, 서버 연결까지 확인할 때 사용합니다. Phaser가 기본 실행 경로라면, Unity는 실제 idlez 엔진 위에서 같은 콘텐츠가 문제없이 로드되는지 보는 추가 검증 경로입니다.
+Unity 검증은 내부 전체 스냅샷에서 엔진 연동, `PatchResources`, Addressables/프리팹, 서버 연결까지 확인할 때 사용합니다. 공개용 lightweight 스냅샷에는 `engine/`과 `harness/examples/patchresources/`가 포함되지 않을 수 있으며, Phaser 작업만 하는 사람에게는 필요하지 않습니다.
 
 기획자는 보통 이렇게 요청합니다.
 
@@ -263,7 +275,7 @@ python3 harness/tools/sync_patchresources_seed.py mushroomer
 
 주의: `harness/examples/patchresources/`는 참고/seed용입니다. 직접 진실 원본으로 삼지 말고, 콘텐츠 원본은 계속 `harness/content/<game>/`에서 관리합니다.
 
-### 4. Unity용 로컬 서버 실행
+### 4. 선택: Unity용 로컬 서버 실행
 
 Unity 클라이언트를 로컬 서버에 붙여 확인할 때 사용합니다.
 

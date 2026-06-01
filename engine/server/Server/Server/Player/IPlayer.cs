@@ -45,6 +45,7 @@ public interface IPlayer : IServerEventPublisher, IServerEventSubscriber
     public PlayerItemModel? GetItemByDataId(int dataId);
     public float MaxStaminaBoostRatio { get; }
     public float StaminaRegenBoostRatio { get; }
+    public float GameSpeedMultiplier { get; }
     public PlayerAchievementModel? GetAchievementByDataId(int dataId);
 
     public Task SaveAsync(IDbConnection? db = null, IDbTransaction? transaction = null, bool destroyIfFailed = true);

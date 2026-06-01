@@ -1,0 +1,20 @@
+id: 600154
+name: "장비 20개 획득"
+type: Normal
+tags: []
+order: 154
+initialOpen: true
+clientAchievement: false
+condition: AcquireEquipmentItemAny
+conditionValue1: 0
+conditionValue2: 0
+targetProgress: 20
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200103, count: 20 }
+      - { itemDataId: 200106, count: 2 }

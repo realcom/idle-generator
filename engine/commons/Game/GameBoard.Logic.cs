@@ -21,6 +21,7 @@ namespace Commons.Game
         
         public bool AutoProgress = true;
         public uint LastUnhandledTick;
+        public float GameSpeedMultiplier { get; set; } = ResourceItem.MinGameSpeedMultiplier;
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint TimeToTicks(FixedFloat time)
@@ -38,6 +39,24 @@ namespace Commons.Game
         public static FixedFloat TicksToTime(uint ticks)
         {
             return ticks * FixedFloatTickDuration;
+        }
+
+        public float GetEffectiveGameSpeedMultiplier()
+        {
+            return ResourceItem.NormalizeGameSpeedMultiplier(GameSpeedMultiplier);
+        }
+
+        public TimeSpan GetRealTimeForTick(uint tick)
+        {
+            return TimeSpan.FromSeconds((float)TicksToTime(tick) / GetEffectiveGameSpeedMultiplier());
+        }
+
+        public bool IsTickInFuture(uint tick, DateTime now, float graceSeconds = 60f)
+        {
+            if (CreatedAt == null)
+                return false;
+
+            return now - CreatedAt.ToDateTime() < GetRealTimeForTick(tick) - TimeSpan.FromSeconds(graceSeconds);
         }
 
         private bool _inited;

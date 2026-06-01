@@ -42,6 +42,8 @@
 
 ## 작성 규칙
 
+- 쿨다운 저작 기본선은 **짧고 자주 발동되는 자동 스킬**이다. `cooldown`을 생략하면 컴파일러가 1.0초를 넣는다.
+- 권장 구간: 기본/초기 단일타 0.8~1.2초, 초반 광역/보스 스킬 2.0~3.2초, 중반 핵심 스킬 3.0~5.0초, 버프 스킬은 `duration` 이하 또는 `duration + 1`초 이내, 궁극기/대형 연출은 5.5~8.0초. 8초 초과는 보스 원샷급 연출처럼 명확한 이유가 있을 때만 쓴다.
 - 단순 효과(주기 골드, 버프 부여 등)는 `triggers` + `*.behavior.yaml`로.
 - 타격형 스킬은 `timelines`로 시점별 Hit/연출을 구성. Hit.addDamage/addBuffs는 ID 참조 무결성 검증 대상.
 - `damageType` ↔ 대상 `armorType` 상성은 `ResourceUnit.Global.StatConstants.DamageCoefficient`를 따른다.

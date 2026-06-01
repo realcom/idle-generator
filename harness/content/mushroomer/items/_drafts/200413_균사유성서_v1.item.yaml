@@ -1,0 +1,50 @@
+id: 200413
+name: "별사탕 유성서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 4
+rarity: 4
+group: 200401
+constantDamageRatio: 1.0
+order: 10
+parentId: 200401
+skillDataId: 300110
+unstackable: true
+requiredItemDataIds: [200411, 200412]
+requiredAchievementDataIds: [600121]
+targetItemDataIds: [200414]
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200107, count: 8 }
+      - { id: 200104, count: 24 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200107, count: 10 }
+      - { id: 200104, count: 32 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200107, count: 12 }
+      - { id: 200104, count: 42 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200107, count: 15 }
+      - { id: 200104, count: 54 }
+popupArgs:
+  SkillTree: "Mushroomer"
+  SkillTreeNode: "Meteor"
+  ChildrenSkillItemDataIds: "200414"
+  UnlockRecipeItemDataId: "200421"
+  UnlockCostLevelPoint: "10"
+  LevelPointItemDataId: "200107"
+  RequiredSkillItemDataIds: "200411,200412"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "80"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "10"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_star_candy_meteor.png"

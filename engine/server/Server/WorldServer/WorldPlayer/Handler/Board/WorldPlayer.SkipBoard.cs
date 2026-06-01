@@ -55,10 +55,10 @@ public partial class WorldPlayer
 
             if (board.CreatedAt != null)
             {
-                var elapsedSeconds = GameBoard.TicksToTime(request.Tick);
-                if (DateTime.UtcNow - board.CreatedAt.ToDateTime() < TimeSpan.FromSeconds((float)elapsedSeconds - 60f))
+                board.GameSpeedMultiplier = GameSpeedMultiplier;
+                if (board.IsTickInFuture(request.Tick, DateTime.UtcNow))
                     throw new InvalidOperationException(
-                        $"{board.ToDebugString()} SkipBoardRequest.Tick {request.Tick} is in the future ({elapsedSeconds} s)");
+                        $"{board.ToDebugString()} SkipBoardRequest.Tick {request.Tick} is in the future ({GameBoard.TicksToTime(request.Tick)} s, speed={board.GetEffectiveGameSpeedMultiplier()})");
             }
             board.LastUnhandledTick = request.Tick;
         }

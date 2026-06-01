@@ -1,0 +1,31 @@
+id: 200417
+name: "호두 분쇄 학습"
+category: Recipe
+grade: 2
+rarity: 3
+group: 200401
+order: 6
+targetItemDataIds: [200409]
+requiredItemDataIds: [200403, 200404]
+requiredAchievementDataIds: [600117]
+exclusiveItemDataIds: [200409]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200107, count: 5 }
+      - { id: 200104, count: 10 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200409, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Mushroomer"
+  UnlockSkillItemDataId: "200409"
+  RequiredSkillItemDataIds: "200403,200404"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "40"
+  UnlockCostLevelPoint: "5"
+  LevelPointItemDataId: "200107"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_walnut_crush.png"

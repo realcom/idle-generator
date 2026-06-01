@@ -1,0 +1,31 @@
+id: 200422
+name: "햄찌 대질주 학습"
+category: Recipe
+grade: 4
+rarity: 5
+group: 200401
+order: 11
+targetItemDataIds: [200414]
+requiredItemDataIds: [200413]
+requiredAchievementDataIds: [600122]
+exclusiveItemDataIds: [200414]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200107, count: 12 }
+      - { id: 200104, count: 32 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200414, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Mushroomer"
+  UnlockSkillItemDataId: "200414"
+  RequiredSkillItemDataIds: "200413"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "90"
+  UnlockCostLevelPoint: "12"
+  LevelPointItemDataId: "200107"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_stampede.png"

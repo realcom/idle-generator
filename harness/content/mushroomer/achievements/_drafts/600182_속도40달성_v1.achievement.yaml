@@ -1,0 +1,20 @@
+id: 600182
+name: "속도 40 달성"
+type: Normal
+tags: []
+order: 182
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1002
+conditionValue2: 40
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 6000 }
+      - { itemDataId: 200103, count: 9 }

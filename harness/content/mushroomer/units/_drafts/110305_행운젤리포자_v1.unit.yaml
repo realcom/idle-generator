@@ -1,0 +1,44 @@
+id: 110305
+name: "행운 젤리해파리"
+type: Normal
+tags: [Monster, WeekdayDungeon, Friday, Drop]
+armorType: NormalArmor
+warmupDelay: 0.7
+targetMode: Chaser
+targetAwareDistance: 24.0
+targetResetDistance: 30.0
+deadDestroyDelaySeconds: 0.4
+
+addStats:
+  - { type: Hp, value: [155.0] }
+  - { type: Attack, value: [14.0] }
+  - { type: Defense, value: [3.0] }
+  - { type: AttackSpeed, value: [1.45] }
+  - { type: MoveSpeed, value: [3.9] }
+
+triggers:
+  - UNIT_ONSTART_WEEKDAYLUCKYJELLYSTART
+  - UNIT_ONUPDATE_WEEKDAYLUCKYJELLYATTACK
+
+dropAddItemGroups:
+  - shouldAddAll: false
+    probPercent: 75
+    addItems:
+      - { itemDataId: 200102, count: 1, weight: 55, group: 1 }
+      - { itemDataId: 200106, count: 1, weight: 30, group: 1 }
+      - { itemDataId: 200503, count: 1, weight: 15, group: 1, pityGroup: 6 }
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 35, maxCount: 70 }
+
+prefab: "Units/Monsters/melee_jellyfish_yellow.prefab"
+sprite: "Units/Monsters/Assets/melee_jellyfish.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 0.9
+collideSize: { x: 0.8, y: 0.8 }
+hitSize: { x: 0.9, y: 0.9 }

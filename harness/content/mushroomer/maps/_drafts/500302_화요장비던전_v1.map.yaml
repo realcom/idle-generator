@@ -1,15 +1,21 @@
 id: 500302
-group: 500300
+group: 500302
 name: "화요 장비 던전"
 type: Dungeon
-tags: [WeekdayDungeon, Tuesday]
-scene: "PFB_MAP_Meadow_Day_Chapter"
-popupArgs: { ClientModeManager: ModeManagerMushroom, ClientHomeMapDataId: 500101 }
+tags: [WeekdayDungeon, Tuesday, EquipmentMaterial]
+scene: "PFB_MAP_HotragonNest_Day_DailyDungeon"
+sprite: "Maps/Map_Hotragon/Img_Map_Dungeon_Hotragon_Mid.png"
+popupArgs:
+  ClientModeManager: ModeManagerMushroom
+  ClientHomeMapDataId: 500101
+  ClientPhaserBackground: weekday_hotragon
+  ClientClearReturnDelayMs: 3000
+  ClientWaveCount: 2
 initLevel: 10
 locations:
   - { id: -1, position: { x: -7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 0.75 } }] }
   - { id: 1, position: { x: 7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 1.75 } }] }
-triggers: [MAP_ONSTART_MUSHROOMFIELDWAVE1, MAP_ONUPDATE_MUSHROOMFIELDUPDATE]
+triggers: [MAP_ONSTART_WEEKDAYTUESDAYEQUIPMENTDUNGEON, MAP_ONUPDATE_WEEKDAYTUESDAYEQUIPMENTDUNGEON]
 rewardAddItemGroups:
   - shouldAddAll: true
     probPercent: 100
