@@ -16,6 +16,78 @@ const SPINE_ASSETS = {
     png: 'assets/melee_slime3_pirate.png',
     scale: 0.18,
   },
+  DegulRock: {
+    skel: 'assets/monsters/DegulRock.skel.bytes',
+    atlas: 'assets/monsters/DegulRock.atlas.txt',
+    png: 'assets/monsters/DegulRock.png',
+    scale: 0.16,
+  },
+  large_melee_slime: {
+    skel: 'assets/monsters/large_melee_slime.skel.bytes',
+    atlas: 'assets/monsters/large_melee_slime.atlas.txt',
+    png: 'assets/monsters/large_melee_slime.png',
+    scale: 0.18,
+  },
+  large_melee_wood_golem: {
+    skel: 'assets/monsters/large_melee_wood_golem.skel.bytes',
+    atlas: 'assets/monsters/large_melee_wood_golem.atlas.txt',
+    png: 'assets/monsters/large_melee_wood_golem.png',
+    scale: 0.18,
+  },
+  large_melee_bear: {
+    skel: 'assets/monsters/large_melee_bear.skel.bytes',
+    atlas: 'assets/monsters/large_melee_bear.atlas.txt',
+    png: 'assets/monsters/large_melee_bear.png',
+    scale: 0.18,
+  },
+  large_melee_oni_shield: {
+    skel: 'assets/monsters/large_melee_oni_shield.skel.bytes',
+    atlas: 'assets/monsters/large_melee_oni_shield.atlas.txt',
+    png: 'assets/monsters/large_melee_oni_shield.png',
+    scale: 0.18,
+  },
+  elite_midboss_melee_ghost_female: {
+    skel: 'assets/monsters/elite_midboss_melee_ghost_female.skel.bytes',
+    atlas: 'assets/monsters/elite_midboss_melee_ghost_female.atlas.txt',
+    png: 'assets/monsters/elite_midboss_melee_ghost_female.png',
+    scale: 0.18,
+  },
+  ranged_ghost_bow: {
+    skel: 'assets/monsters/ranged_ghost_bow.skel.bytes',
+    atlas: 'assets/monsters/ranged_ghost_bow.atlas.txt',
+    png: 'assets/monsters/ranged_ghost_bow.png',
+    scale: 0.18,
+  },
+  melle_slime3: {
+    skel: 'assets/monsters/melle_slime3.skel.bytes',
+    atlas: 'assets/monsters/melle_slime3.atlas.txt',
+    png: 'assets/monsters/melle_slime3.png',
+    scale: 0.18,
+  },
+  melee_jellyfish: {
+    skel: 'assets/monsters/melee_jellyfish.skel.bytes',
+    atlas: 'assets/monsters/melee_jellyfish.atlas.txt',
+    png: 'assets/monsters/melee_jellyfish.png',
+    scale: 0.18,
+  },
+  ranged_pine_cone: {
+    skel: 'assets/monsters/ranged_pine_cone.skel.bytes',
+    atlas: 'assets/monsters/ranged_pine_cone.atlas.txt',
+    png: 'assets/monsters/ranged_pine_cone.png',
+    scale: 0.18,
+  },
+  ranged_oni_cowboy: {
+    skel: 'assets/monsters/ranged_oni_cowboy.skel.bytes',
+    atlas: 'assets/monsters/ranged_oni_cowboy.atlas.txt',
+    png: 'assets/monsters/ranged_oni_cowboy.png',
+    scale: 0.17,
+  },
+  finalboss_melee_oni_pirate_boss: {
+    skel: 'assets/monsters/finalboss_melee_oni_pirate_boss.skel.bytes',
+    atlas: 'assets/monsters/finalboss_melee_oni_pirate_boss.atlas.txt',
+    png: 'assets/monsters/finalboss_melee_oni_pirate_boss.png',
+    scale: 0.16,
+  },
   Slimequeen: {
     skel: 'assets/Slimequeen.skel.bytes',
     atlas: 'assets/Slimequeen.atlas.txt',
@@ -79,6 +151,35 @@ export class IdlezSpineLayer {
     this.#syncLiveUnits();
     this.#draw(delta);
     requestAnimationFrame(this.render);
+  }
+
+  getUnitWorldBounds(unit) {
+    const inst = this.#ensureUnit(unit);
+    if (!inst || !this.canvas.width || !this.canvas.height) return null;
+
+    const pos = this.#toSpineCanvasPosition(unit.x, unit.y);
+    inst.skeleton.x = pos.x;
+    inst.skeleton.y = pos.y;
+    inst.state.apply(inst.skeleton);
+    inst.skeleton.updateWorldTransform(spine.Physics?.update);
+
+    const offset = new spine.Vector2();
+    const size = new spine.Vector2();
+    inst.skeleton.getBounds(offset, size);
+    if (!Number.isFinite(size.x) || !Number.isFinite(size.y) || size.x <= 0 || size.y <= 0) return null;
+
+    const left = (offset.x / this.canvas.width) * WORLD_WIDTH;
+    const right = ((offset.x + size.x) / this.canvas.width) * WORLD_WIDTH;
+    const top = WORLD_HEIGHT - ((offset.y + size.y) / this.canvas.height) * WORLD_HEIGHT;
+    const bottom = WORLD_HEIGHT - (offset.y / this.canvas.height) * WORLD_HEIGHT;
+    return {
+      left,
+      right,
+      top,
+      bottom,
+      width: right - left,
+      height: bottom - top,
+    };
   }
 
   #bindBoard() {
@@ -195,6 +296,8 @@ export class IdlezSpineLayer {
 
   #resolveSpineKey(unit) {
     if (unit.team === TEAM.PLAYER) return 'Ninster';
+    const spriteName = basenameWithoutExtension(unit.def?.sprite);
+    if (spriteName && SPINE_ASSETS[spriteName]) return spriteName;
     if (unit.type === 'Boss') return 'Slimequeen';
     return 'melee_slime3_pirate';
   }
@@ -279,6 +382,11 @@ export class IdlezSpineLayer {
     }
     return names[0] || null;
   }
+}
+
+function basenameWithoutExtension(path) {
+  const filename = String(path || '').split('/').pop() || '';
+  return filename.replace(/\.[^.]+$/, '');
 }
 
 function loadImage(src) {

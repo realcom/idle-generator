@@ -219,6 +219,15 @@ python3 -m http.server 8765
 http://127.0.0.1:8765/harness/runtime/idlez-phaser.html
 ```
 
+반복 확인은 전용 smoke 하네스로 실행할 수 있습니다.
+
+```bash
+python3 harness/tools/phaser_smoke.py mushroomer --no-browser
+python3 harness/tools/phaser_smoke.py mushroomer --screenshot /private/tmp/idlez-phaser-smoke.png
+```
+
+`--no-browser`는 컴파일과 로컬 HTTP 연결만 확인합니다. 브라우저 smoke는 headless Chrome을 띄워 Phaser context, canvas, board tick 진행을 확인합니다. 세부 분리는 [harness/runtime/PHASER_HARNESS.md](harness/runtime/PHASER_HARNESS.md)에 정리되어 있습니다.
+
 현재 `idlez-phaser.html`은 `mushroomer` 중심으로 연결되어 있습니다. 이 경로는 검증 게임을 가장 빠르게 실행하는 기본 루트입니다.
 
 확인할 것:

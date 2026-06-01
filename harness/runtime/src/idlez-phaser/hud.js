@@ -1,13 +1,21 @@
 import { TEAM, clamp, formatNumber } from './constants.js';
 
 const GOLD_ITEM_ID = 5;
+const RUBY_ITEM_ID = 3;
+const FREE_RUBY_ITEM_ID = 4;
 const EXP_ITEM_ID = 6;
 const RESOURCE_REACTION_DELAY_MS = 120;
 const RESOURCE_REACTION_CLASS_MS = 620;
+const UPGRADE_HOLD_START_MS = 280;
+const UPGRADE_HOLD_REPEAT_START_MS = 92;
+const UPGRADE_HOLD_REPEAT_MIN_MS = 48;
 const MISSION_TARGET = 30;
 const MONSTER_SOUL_ITEM_ID = 200108;
 const EQUIPMENT_SUMMON_PRODUCT_ID = 200503;
 const DEFAULT_EQUIPMENT_SUMMON_COST = 10;
+const EQUIPMENT_SUMMON_TIER_WEIGHT_BONUS_PER_LEVEL = 0.22;
+const SKILL_TREE_MODAL_ID = 'skills';
+const ACHIEVEMENT_MODAL_ID = 'achievements';
 const GROWTH_CARDS = [
   { id: 1000, levelId: 'attackLevel', valueId: 'attackStatValue', costId: 'attackCost', statType: 'Attack', label: '공격력', fallbackIcon: '⚔' },
   { id: 1001, levelId: 'hpLevel', valueId: 'hpStatValue', costId: 'hpCost', statType: 'Hp', label: '체력', fallbackIcon: '♥' },
@@ -61,8 +69,8 @@ export function attachHud(board, store, options = {}) {
   const resourceGainTimers = new Map();
   let killCount = 0;
   let localAvatar = null;
-  let localSummonCount = 0;
   let pendingEquipmentChoice = null;
+  const unseenAchievements = new Set();
 
   function text(id, value) {
     const node = el(id);
@@ -72,6 +80,11 @@ export function attachHud(board, store, options = {}) {
   function width(id, pct) {
     const node = el(id);
     if (node) node.style.width = `${clamp(pct, 0, 1) * 100}%`;
+  }
+
+  function playSfx(name, sfxOptions = {}) {
+    const audio = options.audio || globalThis.__MUSHROOMER_PHASER_AUDIO__ || globalThis.__IDLEZ_PHASER_AUDIO__;
+    return audio?.play?.(name, sfxOptions) ?? false;
   }
 
   function log(message, type = 'info') {
@@ -111,7 +124,7 @@ export function attachHud(board, store, options = {}) {
 
   function reactToResourceGain(itemDataId, amount) {
     const host = itemDataId === GOLD_ITEM_ID
-      ? document.querySelector('.hud-gold')
+      ? document.querySelector('.top-gold')
       : el('expHud');
     if (!host) return;
 
@@ -133,12 +146,19 @@ export function attachHud(board, store, options = {}) {
     const player = board.playerUnit;
     const enemies = board.enemyUnits;
     const mapName = board.map?.name || '-';
+    const mainStageNo = store.getMainStageNumber?.(board.map);
+    const mainStageLabel = Number.isFinite(mainStageNo) ? `${String(mainStageNo).padStart(2, '0')}단계` : null;
+    const displayMapName = mainStageLabel ? `${mainStageLabel} · ${mapName}` : mapName;
     const state = Math.max(1, board.boardState || 1);
-    const stageStep = ((state - 1) % 10) + 1;
+    const waveMax = Math.max(1, Math.floor(Number(board.map?.popupArgs?.ClientWaveCount) || 10));
+    const stageStep = clamp(state, 1, waveMax);
+    const stageCode = board.map?.tags?.includes('WeekdayDungeon')
+      ? `D-${stageStep}`
+      : `${mainStageNo || 1}-${stageStep}`;
     const playerLevel = player ? Math.max(player.level, state) : state;
     const exp = board.exp;
     const expPct = (exp % 100) / 100;
-    const wavePct = stageStep / 10;
+    const wavePct = stageStep / waveMax;
     const combatPower = player
       ? Math.round(player.attack * 12 + player.maxHp * 0.42 + player.defense * 18)
       : 0;
@@ -146,15 +166,16 @@ export function attachHud(board, store, options = {}) {
     const missionPct = killCount / MISSION_TARGET;
     const missionDone = killCount >= MISSION_TARGET;
 
-    text('mapName', mapName);
+    text('mapName', displayMapName);
     text('levelValue', playerLevel);
-    text('stageCode', `1-${stageStep}`);
-    text('waveProgress', `${stageStep} / 10`);
+    text('stageCode', stageCode);
+    text('waveProgress', `${stageStep} / ${waveMax}`);
     text('tickValue', board.tick);
     text('stateValue', board.boardState);
     text('goldValue', formatNumber(board.gold));
     text('dockGoldValue', formatNumber(board.gold));
-    text('expValue', formatNumber(exp));
+    text('expValue', `${Math.floor(expPct * 100)}%`);
+    text('gemValue', formatNumber((board.inventory.get(RUBY_ITEM_ID) || 0) + (board.inventory.get(FREE_RUBY_ITEM_ID) || 0)));
     text('enemyValue', enemies.length);
     text('hpValue', hpText);
     text('dockHpValue', player ? formatNumber(player.hp) : '-');
@@ -170,7 +191,9 @@ export function attachHud(board, store, options = {}) {
     width('waveBarFill', wavePct);
 
     renderGrowthCards(board, player, store);
-    renderEquipmentSummon(board, store, localSummonCount);
+    renderSkillQuickbar(board);
+    renderAchievementButton(board, store, unseenAchievements);
+    renderEquipmentSummon(board, store);
     renderEquipmentSlots(store, currentAvatar());
     renderEquipmentChoice(pendingEquipmentChoice);
     renderUnitTable(board);
@@ -229,6 +252,32 @@ export function attachHud(board, store, options = {}) {
     log(`${item.name} Lv.${level}`, 'loot');
     render();
   });
+  board.on('skillUnlocked', ({ item }) => {
+    log(`${item.name} 해금`, 'loot');
+    render();
+  });
+  board.on('skillEquipped', ({ item, slotIndex }) => {
+    log(`${slotIndex + 1}번 슬롯 · ${item.name}`, 'loot');
+    render();
+  });
+  board.on('skillSlotCountChanged', ({ count }) => {
+    log(`스킬 슬롯 ${count}개 해금`, 'loot');
+    render();
+  });
+  board.on('achievementCompleted', ({ achievement }) => {
+    if (achievement?.tags?.includes('EquipmentSummonPrice')) {
+      log(`장비 소환 Lv.${equipmentSummonLevel(board, store.getItem(EQUIPMENT_SUMMON_PRODUCT_ID))} 도달`, 'loot');
+    } else if (isVisibleAchievement(achievement)) {
+      unseenAchievements.add(Number(achievement.id));
+      playSfx('reward', { volume: 0.66 });
+      log(`업적 완료 · ${achievement.name}`, 'loot');
+    }
+    render();
+  });
+  board.on('autoSkillsChanged', ({ enabled }) => {
+    log(enabled ? '자동 스킬 ON' : '자동 스킬 OFF', enabled ? 'boot' : 'warn');
+    render();
+  });
   board.on('gameEnded', ({ winningTeam }) => {
     log(`전투 종료 · 승리 팀 ${winningTeam}`, 'clear');
     render();
@@ -238,14 +287,14 @@ export function attachHud(board, store, options = {}) {
 
   el('equipmentSummonBtn')?.addEventListener('click', () => {
     if (pendingEquipmentChoice) {
+      playSfx('uiError');
       log('먼저 장비를 선택해 주세요', 'warn');
       render();
       return;
     }
 
-    const result = summonEquipment(board, store, ensureAvatar(), localSummonCount);
+    const result = summonEquipment(board, store, ensureAvatar());
     if (result.ok) {
-      localSummonCount += 1;
       if (result.choice) {
         pendingEquipmentChoice = result.choice;
         log(`${result.item.name} 선택 필요`, 'loot');
@@ -253,6 +302,7 @@ export function attachHud(board, store, options = {}) {
         log(`${result.item.name} 장착`, 'loot');
       }
     } else {
+      playSfx('uiError');
       log(result.message, 'warn');
     }
     render();
@@ -265,52 +315,303 @@ export function attachHud(board, store, options = {}) {
     const choice = pendingEquipmentChoice;
     pendingEquipmentChoice = null;
     const result = resolveEquipmentChoice(board, choice, action);
+    playSfx('reward', { volume: 0.72 });
     log(result.message, 'loot');
     render();
   });
-  document.querySelectorAll('[data-upgrade-item-id]').forEach(node => {
+  el('skillQuickbar')?.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-skill-slot-index]');
+    if (!button) return;
+    const slotIndex = Number(button.dataset.skillSlotIndex || 0);
+    globalThis.dispatchEvent(new CustomEvent('mushroomer:open-modal', {
+      detail: { id: SKILL_TREE_MODAL_ID, payload: { slotIndex } },
+    }));
+  });
+  document.querySelectorAll(`[data-modal-id="${ACHIEVEMENT_MODAL_ID}"]`).forEach(node => {
     node.addEventListener('click', () => {
-      const itemDataId = Number(node.dataset.upgradeItemId);
-      const upgrade = options.onUpgradeItem || (id => board.levelUpItem(id));
-      Promise.resolve(upgrade(itemDataId))
-        .then(result => {
-          if (result?.ok === false) log(result.message, 'warn');
+      unseenAchievements.clear();
+      renderAchievementButton(board, store, unseenAchievements);
+    });
+  });
+
+  const upgrade = options.onUpgradeItem || (id => board.levelUpItem(id));
+  document.querySelectorAll('[data-upgrade-item-id]').forEach(node => {
+    bindHoldRepeatUpgrade(node, {
+      canRepeatUpgrade: () => node.classList.contains('is-affordable') && !node.classList.contains('is-maxed'),
+      performUpgrade: async ({ repeat = false } = {}) => {
+        const itemDataId = Number(node.dataset.upgradeItemId);
+        try {
+          const result = await Promise.resolve(upgrade(itemDataId));
+          if (isUpgradeFailure(result)) {
+            if (!repeat || !isExpectedRepeatStop(result)) {
+              playSfx('uiError');
+              log(upgradeFailureMessage(result), 'warn');
+            }
+            render();
+            return false;
+          }
           render();
-        })
-        .catch(error => {
+          return true;
+        } catch (error) {
+          playSfx('uiError');
           log(error?.message || String(error), 'warn');
           render();
-        });
+          return false;
+        }
+      },
     });
   });
   render();
 }
 
-function renderEquipmentSummon(board, store, summonCount = 0) {
+function bindHoldRepeatUpgrade(node, { performUpgrade, canRepeatUpgrade }) {
+  let holdTimer = 0;
+  let repeatTimer = 0;
+  let pointerId = null;
+  let pressing = false;
+  let holding = false;
+  let pending = false;
+  let suppressNextClick = false;
+  let repeatCount = 0;
+  let actionToken = 0;
+
+  const clearTimers = () => {
+    if (holdTimer) globalThis.clearTimeout(holdTimer);
+    if (repeatTimer) globalThis.clearTimeout(repeatTimer);
+    holdTimer = 0;
+    repeatTimer = 0;
+  };
+
+  const stop = ({ keepClickSuppressed = false } = {}) => {
+    actionToken += 1;
+    clearTimers();
+    pressing = false;
+    holding = false;
+    pending = false;
+    repeatCount = 0;
+    node.classList.remove('is-pressing', 'is-holding');
+    if (!keepClickSuppressed) suppressNextClick = false;
+    if (pointerId !== null && node.hasPointerCapture?.(pointerId)) {
+      try {
+        node.releasePointerCapture(pointerId);
+      } catch {
+        // Pointer capture can already be gone after browser-level cancellation.
+      }
+    }
+    pointerId = null;
+  };
+
+  const runUpgrade = async ({ repeat = false } = {}) => {
+    if (pending) return;
+    if (repeat && !canRepeatUpgrade()) {
+      stop({ keepClickSuppressed: true });
+      return;
+    }
+
+    const token = actionToken;
+    pending = true;
+    const ok = await performUpgrade({ repeat });
+    if (token !== actionToken) return;
+    pending = false;
+
+    if (!ok) {
+      stop({ keepClickSuppressed: true });
+      return;
+    }
+
+    if (!holding || !pressing) return;
+    repeatCount += 1;
+    repeatTimer = globalThis.setTimeout(
+      () => runUpgrade({ repeat: true }),
+      holdRepeatDelay(repeatCount),
+    );
+  };
+
+  const startHolding = () => {
+    if (!pressing || holding) return;
+    holding = true;
+    suppressNextClick = true;
+    repeatCount = 0;
+    node.classList.add('is-holding');
+    runUpgrade({ repeat: false });
+  };
+
+  node.addEventListener('pointerdown', event => {
+    if (event.button !== undefined && event.button !== 0) return;
+    stop({ keepClickSuppressed: false });
+    pressing = true;
+    pointerId = event.pointerId;
+    node.classList.add('is-pressing');
+    node.setPointerCapture?.(event.pointerId);
+    holdTimer = globalThis.setTimeout(startHolding, UPGRADE_HOLD_START_MS);
+  });
+
+  node.addEventListener('pointerup', event => {
+    if (pointerId !== null && event.pointerId !== pointerId) return;
+    stop({ keepClickSuppressed: holding || suppressNextClick });
+  });
+
+  node.addEventListener('pointercancel', event => {
+    if (pointerId !== null && event.pointerId !== pointerId) return;
+    stop({ keepClickSuppressed: false });
+  });
+
+  node.addEventListener('contextmenu', event => {
+    if (!pressing && !holding) return;
+    event.preventDefault();
+  });
+
+  node.addEventListener('click', event => {
+    if (suppressNextClick) {
+      suppressNextClick = false;
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    runUpgrade({ repeat: false });
+  });
+
+  node.addEventListener('keydown', event => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    runUpgrade({ repeat: false });
+  });
+}
+
+function holdRepeatDelay(repeatCount) {
+  return Math.max(
+    UPGRADE_HOLD_REPEAT_MIN_MS,
+    UPGRADE_HOLD_REPEAT_START_MS - Math.floor(Math.max(0, repeatCount - 1) / 4) * 10,
+  );
+}
+
+function isUpgradeFailure(result) {
+  if (!result) return false;
+  if (result.ok === false) return true;
+  if (Object.prototype.hasOwnProperty.call(result, 'status')) {
+    const status = Number(result.status);
+    return Number.isFinite(status) && status !== 0;
+  }
+  return false;
+}
+
+function isExpectedRepeatStop(result) {
+  const reason = String(result?.reason || '');
+  return reason === 'not_enough_gold' || reason === 'max_level' || reason === 'missing_cost';
+}
+
+function upgradeFailureMessage(result) {
+  if (result?.message) return result.message;
+  const status = Number(result?.status);
+  if (Number.isFinite(status)) return `강화 실패: ${status}`;
+  return '강화 실패';
+}
+
+function renderSkillQuickbar(board) {
+  const root = document.getElementById('skillQuickbar');
+  if (!root || !board.getSkillSlotStates) return;
+
+  const slots = board.getSkillSlotStates();
+  root.classList.toggle('is-auto-off', !board.autoSkillsEnabled);
+  root.setAttribute('aria-label', `스킬 슬롯 ${board.skillSlotCount}/${board.maxSkillSlots}`);
+  setHtml('skillQuickbar', slots.map(slot => skillSlotHtml(slot)).join(''));
+}
+
+function renderAchievementButton(board, store, unseenAchievements = new Set()) {
+  const button = document.querySelector(`[data-modal-id="${ACHIEVEMENT_MODAL_ID}"]`);
+  if (!button) return;
+
+  const achievements = visibleAchievements(store);
+  const total = achievements.length;
+  const completed = achievements.filter(achievement => (
+    board?.getAchievementProgress?.(achievement)?.completed
+  )).length;
+  const hasUnseen = [...unseenAchievements].some(id => Number.isFinite(id) && id > 0);
+
+  button.classList.toggle('is-alert', hasUnseen);
+  button.setAttribute('aria-label', hasUnseen
+    ? `업적 열기 새 완료 ${completed}/${total}`
+    : `업적 열기 ${completed}/${total}`);
+  button.title = `업적 ${completed}/${total}`;
+}
+
+function skillSlotHtml(slot) {
+  const locked = !slot.unlocked;
+  const item = slot.item;
+  const skill = slot.skill;
+  const cooldownPct = slot.cooldownTicks > 0 && skill?.cooldown
+    ? clamp(slot.cooldownSeconds / Number(skill.cooldown || 1), 0, 1)
+    : 0;
+  const unlockLevel = slot.unlock?.level || 1;
+  const label = locked
+    ? `Lv.${unlockLevel}`
+    : item
+      ? compactSkillName(item.name)
+      : '빈 슬롯';
+  const meta = locked
+    ? '잠김'
+    : item
+      ? `Lv.${slot.level}`
+      : '장착';
+  const icon = item ? skillIconHtml(item) : (locked ? '🔒' : '+');
+
+  return `
+    <button class="skill-slot${locked ? ' is-locked' : ''}${item ? ' is-equipped' : ' is-empty'}${slot.cooldownTicks > 0 ? ' is-cooldown' : ''}" type="button" data-skill-slot-index="${slot.index}" aria-label="${escapeHtml(label)} ${escapeHtml(meta)}">
+      <span class="skill-slot-icon">${icon}</span>
+      <span class="skill-slot-copy">
+        <b>${escapeHtml(label)}</b>
+        <small>${escapeHtml(meta)}</small>
+      </span>
+      <span class="skill-cooldown-mask" style="transform: scaleY(${cooldownPct})"></span>
+    </button>
+  `;
+}
+
+function compactSkillName(name) {
+  const cleaned = String(name || '스킬').replace(/\s+/g, '');
+  return cleaned.length > 5 ? cleaned.slice(0, 5) : cleaned;
+}
+
+function skillIconHtml(item) {
+  const src = itemSpriteUrl(item);
+  if (src) return `<img class="skill-icon-img" src="${escapeHtml(src)}" alt="" loading="lazy" decoding="async">`;
+  return escapeHtml(skillInitial(item?.name));
+}
+
+function skillInitial(name) {
+  const chars = String(name || '스').replace(/\s+/g, '');
+  return chars.slice(0, 1) || '스';
+}
+
+function renderEquipmentSummon(board, store) {
   const souls = board.inventory.get(MONSTER_SOUL_ITEM_ID) || 0;
-  const cost = equipmentSummonCost(store, summonCount);
+  const product = store.getItem(EQUIPMENT_SUMMON_PRODUCT_ID);
+  const cost = equipmentSummonCost(board, store, product);
+  const summonLevel = equipmentSummonLevel(board, product);
   const canSummon = souls >= cost;
   const button = document.getElementById('equipmentSummonBtn');
   const pill = document.getElementById('equipmentSummonPrice');
 
+  setText('equipmentSummonLevel', `Lv.${summonLevel}`);
   setText('monsterSoulValue', formatNumber(souls));
   setText('equipmentSummonCost', formatNumber(cost));
   button?.classList.toggle('is-affordable', canSummon);
-  button?.setAttribute('aria-label', `장비 소환 ${formatNumber(souls)}/${formatNumber(cost)}`);
+  button?.setAttribute('aria-label', `장비 소환 Lv.${summonLevel} ${formatNumber(souls)}/${formatNumber(cost)}`);
   pill?.classList.toggle('is-affordable', canSummon);
 }
 
-function summonEquipment(board, store, avatar, summonCount = 0) {
+function summonEquipment(board, store, avatar) {
   const product = store.getItem(EQUIPMENT_SUMMON_PRODUCT_ID);
   if (!product) return { ok: false, message: '장비 소환 상품 없음' };
 
-  const cost = equipmentSummonCost(store, summonCount);
+  const cost = equipmentSummonCost(board, store, product);
+  const summonLevel = equipmentSummonLevel(board, product);
   const souls = board.inventory.get(MONSTER_SOUL_ITEM_ID) || 0;
   if (souls < cost) {
     return { ok: false, message: `몬스터의 혼 부족 ${formatNumber(souls)}/${formatNumber(cost)}` };
   }
 
-  const reward = pickEquipmentSummonReward(product, store);
+  const reward = pickEquipmentSummonReward(product, store, summonLevel);
   if (!reward) return { ok: false, message: '소환 가능한 장비 없음' };
 
   const item = store.getItem(reward.itemDataId);
@@ -319,24 +620,58 @@ function summonEquipment(board, store, avatar, summonCount = 0) {
   if (spent < cost) return { ok: false, message: `몬스터의 혼 부족 ${formatNumber(souls)}/${formatNumber(cost)}` };
 
   board.addItem(item.id, count, `summon:${EQUIPMENT_SUMMON_PRODUCT_ID}`);
+  board.recordProductBuy?.(EQUIPMENT_SUMMON_PRODUCT_ID, 1);
   const equipResult = equipAvatarItem(avatar, store, item, { deferConflict: true });
   if (equipResult.choice) return { ok: true, item, count, cost, choice: equipResult.choice };
   return { ok: true, item, count, cost };
 }
 
-function equipmentSummonCost(store, summonCount = 0) {
-  const product = store.getItem(EQUIPMENT_SUMMON_PRODUCT_ID);
+function equipmentSummonLevel(board, product) {
+  const targetAchievementDataIds = productTargetAchievementDataIds(product);
+  if (targetAchievementDataIds.length > 0) {
+    return 1 + board.countCompletedAchievements(targetAchievementDataIds);
+  }
+
+  const scaling = product?.summonCostScaling || product?.SummonCostScaling;
+  const everyPurchases = Math.floor(Number(scaling?.everyPurchases || scaling?.EveryPurchases || 0));
+  if (everyPurchases > 0) {
+    const summonCount = board.getProductBuyCount?.(EQUIPMENT_SUMMON_PRODUCT_ID) || 0;
+    return 1 + Math.floor(Math.max(0, summonCount) / everyPurchases);
+  }
+
+  return 1;
+}
+
+function equipmentSummonCost(board, store, product = null) {
+  product ??= store.getItem(EQUIPMENT_SUMMON_PRODUCT_ID);
   const material = firstProductMaterial(product, MONSTER_SOUL_ITEM_ID);
   const baseCost = Math.max(1, Math.floor(Number(material?.count || DEFAULT_EQUIPMENT_SUMMON_COST)));
   const scaling = product?.summonCostScaling || product?.SummonCostScaling;
   const everyPurchases = Math.floor(Number(scaling?.everyPurchases || scaling?.EveryPurchases || 0));
-  const addMaterialCount = Math.floor(Number(scaling?.addMaterialCount || scaling?.AddMaterialCount || 0));
+  const addMaterialCount = equipmentSummonCostStep(product, scaling);
+  const targetAchievementDataIds = productTargetAchievementDataIds(product);
+
+  if (targetAchievementDataIds.length > 0 && addMaterialCount > 0) {
+    return baseCost + board.countCompletedAchievements(targetAchievementDataIds) * addMaterialCount;
+  }
 
   if (everyPurchases > 0 && addMaterialCount > 0) {
+    const summonCount = board.getProductBuyCount?.(EQUIPMENT_SUMMON_PRODUCT_ID) || 0;
     return baseCost + Math.floor(Math.max(0, summonCount) / everyPurchases) * addMaterialCount;
   }
 
   return baseCost;
+}
+
+function productTargetAchievementDataIds(product) {
+  const ids = product?.targetAchievementDataIds || product?.TargetAchievementDataIds || [];
+  return Array.isArray(ids) ? ids : [];
+}
+
+function equipmentSummonCostStep(product, scaling = null) {
+  return Math.max(0, Math.floor(Number(
+    product?.regenCount ?? product?.RegenCount ?? scaling?.addMaterialCount ?? scaling?.AddMaterialCount ?? 0
+  )));
 }
 
 function firstProductMaterial(product, itemDataId) {
@@ -348,22 +683,48 @@ function firstProductMaterial(product, itemDataId) {
   return null;
 }
 
-function pickEquipmentSummonReward(product, store) {
+function pickEquipmentSummonReward(product, store, summonLevel = 1) {
   const groups = product.addItemGroups || product.AddItemGroups || [];
-  const group = groups.find(entry => Number(entry.probPercent ?? entry.ProbPercent ?? 100) > 0) || groups[0];
+  const rewardGroups = equipmentSummonRewardGroups(groups, summonLevel);
+  const group = rewardGroups.find(entry => Number(entry.probPercent ?? entry.ProbPercent ?? 100) > 0) || rewardGroups[0];
   const rewards = (group?.addItems || group?.AddItems || [])
     .map(entry => ({ ...entry, itemDataId: Number(entry.itemDataId ?? entry.ItemDataId) }))
-    .filter(entry => store.getItem(entry.itemDataId)?.category === 'Equipment');
+    .filter(entry => store.getItem(entry.itemDataId)?.category === 'Equipment')
+    .map(entry => ({
+      ...entry,
+      effectiveWeight: equipmentSummonRewardWeight(entry, store.getItem(entry.itemDataId), summonLevel),
+    }));
 
   if (rewards.length === 0) return null;
 
-  const totalWeight = rewards.reduce((sum, entry) => sum + Math.max(0, Number(entry.weight ?? entry.Weight ?? 1)), 0);
+  const totalWeight = rewards.reduce((sum, entry) => sum + entry.effectiveWeight, 0);
   let roll = Math.random() * (totalWeight || rewards.length);
   for (const reward of rewards) {
-    roll -= totalWeight ? Math.max(0, Number(reward.weight ?? reward.Weight ?? 1)) : 1;
+    roll -= totalWeight ? reward.effectiveWeight : 1;
     if (roll <= 0) return reward;
   }
   return rewards[rewards.length - 1];
+}
+
+function equipmentSummonRewardGroups(groups, summonLevel) {
+  const exactLevelGroups = groups.filter(group => Math.floor(Number(group.level ?? group.Level ?? 0)) === summonLevel);
+  if (exactLevelGroups.length > 0) return exactLevelGroups;
+
+  const baseGroups = groups.filter(group => Math.floor(Number(group.level ?? group.Level ?? 0)) === 0);
+  return baseGroups.length > 0 ? baseGroups : groups;
+}
+
+function equipmentSummonRewardWeight(entry, item, summonLevel) {
+  const baseWeight = Math.max(0, Number(entry.weight ?? entry.Weight ?? 1));
+  const tierLift = Math.max(0, equipmentSummonTierRank(item) - 1);
+  const levelLift = Math.max(0, Math.floor(Number(summonLevel || 1)) - 1);
+  return baseWeight * (1 + levelLift * tierLift * EQUIPMENT_SUMMON_TIER_WEIGHT_BONUS_PER_LEVEL);
+}
+
+function equipmentSummonTierRank(item) {
+  return Math.max(1, Math.floor(Number(
+    item?.tier || item?.Tier || item?.grade || item?.Grade || item?.rarity || item?.Rarity || 1
+  )));
 }
 
 function equipAvatarItem(avatar, store, item, { deferConflict = false } = {}) {
@@ -439,11 +800,16 @@ function renderEquipmentChoice(choice) {
   root.hidden = !choice;
   if (!choice) {
     setText('equipmentChoiceSubtitle', '');
-    setHtml('equipmentChoiceCards', '');
+    root.dataset.choiceKey = '';
+    const cardsNode = document.getElementById('equipmentChoiceCards');
+    if (cardsNode?.innerHTML) cardsNode.innerHTML = '';
     return;
   }
 
   setText('equipmentChoiceSubtitle', `${choice.slotLabel} 슬롯에 이미 장착 중`);
+  const choiceKey = equipmentChoiceKey(choice);
+  if (root.dataset.choiceKey === choiceKey) return;
+  root.dataset.choiceKey = choiceKey;
   setHtml('equipmentChoiceCards', [
     equipmentChoiceCardHtml({
       action: 'current',
@@ -467,6 +833,16 @@ function renderEquipmentChoice(choice) {
       isNew: true,
     }),
   ].join(''));
+}
+
+function equipmentChoiceKey(choice) {
+  return [
+    choice.slotIndex,
+    playerItemDataId(choice.currentMessage),
+    choice.currentMessage?.id || choice.currentMessage?.Id || 0,
+    playerItemDataId(choice.newMessage),
+    choice.newMessage?.id || choice.newMessage?.Id || 0,
+  ].join(':');
 }
 
 function equipmentChoiceCardHtml({ action, badge, item, message, otherItem, otherMessage, sellItem, note, isNew = false }) {
@@ -720,6 +1096,19 @@ function renderGrowthCardIcon(spec, item) {
     iconNode.dataset.iconSrc = '';
     iconNode.textContent = spec.fallbackIcon || '';
   }
+}
+
+function visibleAchievements(store) {
+  return [...(store?.achievements?.values?.() || [])].filter(isVisibleAchievement);
+}
+
+function isVisibleAchievement(achievement) {
+  return Boolean(achievement?.name && achievement?.condition)
+    && !achievementTags(achievement).includes('HideDisplay');
+}
+
+function achievementTags(achievement) {
+  return Array.isArray(achievement?.tags) ? achievement.tags : [];
 }
 
 function renderUnitTable(board) {

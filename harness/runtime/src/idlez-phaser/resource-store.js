@@ -19,11 +19,13 @@ export class ResourceStore {
     this.gameId = null;
     this.bundles = {};
     this.maps = new Map();
+    this.mainStageByMapId = new Map();
     this.units = new Map();
     this.items = new Map();
     this.skills = new Map();
     this.buffs = new Map();
     this.triggers = new Map();
+    this.achievements = new Map();
   }
 
   async loadGame(gameId = 'mushroomer') {
@@ -41,11 +43,13 @@ export class ResourceStore {
   indexBundles(bundles) {
     this.bundles = bundles;
     this.maps = this.#indexById(bundles.Maps?.maps);
+    this.mainStageByMapId = this.#indexMainStageNumbers();
     this.units = this.#indexById(bundles.Units?.units);
     this.items = this.#indexById(bundles.Items?.items);
     this.skills = this.#indexById(bundles.Skills?.skills);
     this.buffs = this.#indexById(bundles.Buffs?.buffs);
     this.triggers = new Map((bundles.Triggers?.triggers || []).map(t => [t.name, t]));
+    this.achievements = this.#indexById(bundles.Achievements?.achievements);
     return this;
   }
 
@@ -53,12 +57,64 @@ export class ResourceStore {
     return new Map(list.map(item => [item.id, item]));
   }
 
+  #indexMainStageNumbers() {
+    const stageById = new Map();
+    const starts = [...this.maps.values()].filter(map => map?.tags?.includes('Main'));
+
+    starts.forEach(start => this.#walkMainStageChain(start, stageById));
+    if (stageById.size > 0) return stageById;
+
+    return new Map(
+      [...this.maps.values()]
+        .filter(map => this.#isMainProgressMap(map))
+        .sort((a, b) => Number(a.id) - Number(b.id))
+        .map((map, index) => [Number(map.id), index + 1])
+    );
+  }
+
+  #walkMainStageChain(start, stageById) {
+    let map = start;
+    let stageNo = 1;
+    const visited = new Set();
+
+    while (map && !visited.has(Number(map.id))) {
+      const mapId = Number(map.id);
+      visited.add(mapId);
+      if (!this.#isMainProgressMap(map)) break;
+      if (!stageById.has(mapId)) stageById.set(mapId, stageNo);
+
+      const nextMap = this.#nextMainMap(map);
+      if (!nextMap || Number(nextMap.id) === Number(start.id)) break;
+      map = nextMap;
+      stageNo += 1;
+    }
+  }
+
+  #nextMainMap(map) {
+    const raw = map?.popupArgs?.ClientNextMapDataId;
+    if (raw == null || raw === '') return null;
+    if (String(raw).trim().toLowerCase() === 'self') return null;
+    return this.getMap(raw) || null;
+  }
+
+  #isMainProgressMap(map) {
+    const tags = map?.tags || [];
+    return tags.includes('InfiniteWaves')
+      && !tags.includes('WeekdayDungeon')
+      && !tags.includes('MaterialDungeon');
+  }
+
   getMap(id) { return this.maps.get(Number(id)); }
+  getMainStageNumber(mapOrId) {
+    const id = Number(typeof mapOrId === 'object' ? mapOrId?.id : mapOrId);
+    return this.mainStageByMapId.get(id) || null;
+  }
   getUnit(id) { return this.units.get(Number(id)); }
   getItem(id) { return this.items.get(Number(id)); }
   getSkill(id) { return this.skills.get(Number(id)); }
   getBuff(id) { return this.buffs.get(Number(id)); }
   getTrigger(name) { return this.triggers.get(name); }
+  getAchievement(id) { return this.achievements.get(Number(id)); }
 
   getFirstMap() {
     return this.maps.values().next().value;
