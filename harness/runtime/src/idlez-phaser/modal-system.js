@@ -87,10 +87,6 @@ const FEATURE_MODAL_ROWS = {
     { icon: 'M', title: '모험 지도', body: '던전, 이벤트, 랭킹 맵 진입 모달로 확장할 수 있습니다.', meta: 'Map' },
     { icon: '!', title: '입장 조건', body: '티켓/전투력/선행 클리어 조건을 공통 Row로 표시합니다.', meta: 'Gate' },
   ],
-  guild: [
-    { icon: 'G', title: '길드', body: '잠긴 기능도 같은 모달 껍데기로 미리보기 처리합니다.', meta: 'Lock' },
-    { icon: '+', title: '협동 보상', body: '기여도, 출석, 레이드 보상 리스트를 재사용합니다.', meta: 'Plan' },
-  ],
 };
 
 const SHOP_PRODUCT_IDS = {
@@ -109,6 +105,15 @@ const SHOP_FALLBACK_PRODUCTS = {
     { id: 201505, icon: 'AD', title: '광고 제거권', body: '모든 광고 즉시 제거', priceWon: 6600 },
     { id: 201506, icon: '2x', title: '배속권', body: '7일간 전투 속도 2배', priceWon: 5500 },
   ],
+};
+
+const SHOP_ICON_PATHS = {
+  201501: 'assets/ui/icons/shop/shop_icon_ruby_400.png',
+  201502: 'assets/ui/icons/shop/shop_icon_ruby_1200.png',
+  201503: 'assets/ui/icons/shop/shop_icon_ruby_3000.png',
+  201504: 'assets/ui/icons/shop/shop_icon_equipment_booster.png',
+  201505: 'assets/ui/icons/shop/shop_icon_ad_removal.png',
+  201506: 'assets/ui/icons/shop/shop_icon_speed_pass.png',
 };
 
 const WEEKDAY_BANNER_KEYS = {
@@ -262,6 +267,10 @@ export function preloadModalAssets(scene) {
     if (!scene.textures.exists(key)) scene.load.image(key, path);
   }
   for (const [key, path] of Object.entries(WEEKDAY_BANNER_PATHS)) {
+    if (!scene.textures.exists(key)) scene.load.image(key, path);
+  }
+  for (const [productId, path] of Object.entries(SHOP_ICON_PATHS)) {
+    const key = shopIconTextureKey(productId);
     if (!scene.textures.exists(key)) scene.load.image(key, path);
   }
   for (const path of SKILL_ICON_PATHS) {
@@ -419,12 +428,18 @@ export class ModalManager {
     });
     this.register('shop', ShopModal, {
       title: '상점',
-      kicker: '루비와 한정 상품',
-      heightRatio: 0.9,
-      minHeight: 650,
-      maxHeight: 860,
-      verticalMarginMin: 12,
-      verticalMarginMax: 24,
+      kicker: '',
+      variant: 'shopSheet',
+      anchor: 'bottom',
+      backdropAlpha: 0.28,
+      heightRatio: 0.6,
+      minHeight: 520,
+      maxHeight: 560,
+      bottomMargin: 74,
+      footerHeight: 0,
+      headerBodyOffset: 80,
+      verticalMarginMin: 8,
+      verticalMarginMax: 18,
     });
     this.register('settings', SettingsModal, {
       title: '설정',
@@ -447,12 +462,22 @@ export class ModalManager {
 }
 
 class DesignButton extends PhaserContainer {
-  constructor(scene, { x = 0, y = 0, width = 160, height = 52, label = 'OK', style = 'wood', onClick = null } = {}) {
+  constructor(scene, {
+    x = 0,
+    y = 0,
+    width = 160,
+    height = 52,
+    label = 'OK',
+    style = 'wood',
+    fontSize = null,
+    onClick = null,
+  } = {}) {
     super(scene, x, y);
     this.buttonWidth = width;
     this.buttonHeight = height;
     this.label = label;
     this.style = style;
+    this.fontSize = fontSize;
     this.onClick = onClick;
     this.isPressed = false;
 
@@ -496,7 +521,7 @@ class DesignButton extends PhaserContainer {
     this.labelText
       .setText(this.label)
       .setStyle(modalTextStyle(this.style === 'close' ? 'close' : 'button', {
-        fontSize: this.buttonHeight < 44 ? '14px' : '16px',
+        fontSize: this.fontSize || (this.buttonHeight < 44 ? '14px' : '16px'),
         wordWrap: { width: this.buttonWidth - 26, useAdvancedWrap: true },
       }))
       .setPosition(0, -2);
@@ -805,21 +830,28 @@ class BaseModal extends PhaserContainer {
     const sideMargin = Math.round(clamp(width * 0.055, config.minSideMargin, config.maxSideMargin));
     const maxModalWidth = Math.max(1, Math.min(config.maxWidth, width - sideMargin * 2));
     const minModalWidth = Math.min(config.minWidth, maxModalWidth);
-    const modalWidth = Math.round(clamp(width * config.widthRatio, minModalWidth, maxModalWidth));
+    const modalWidth = Math.round(clamp(width * (this.options.widthRatio ?? config.widthRatio), minModalWidth, maxModalWidth));
     const verticalMargin = Math.round(clamp(
       height * (this.options.verticalMarginRatio ?? 0.055),
       this.options.verticalMarginMin ?? 28,
       this.options.verticalMarginMax ?? 48,
     ));
-    const maxModalHeight = Math.max(1, Math.min(this.options.maxHeight ?? 580, height - verticalMargin * 2));
+    const bottomMargin = Math.round(this.options.bottomMargin ?? verticalMargin);
+    const availableHeight = this.options.anchor === 'bottom'
+      ? height - verticalMargin - bottomMargin
+      : height - verticalMargin * 2;
+    const maxModalHeight = Math.max(1, Math.min(this.options.maxHeight ?? 580, availableHeight));
     const minModalHeight = Math.min(this.options.minHeight ?? 420, maxModalHeight);
     const modalHeight = Math.round(clamp(height * (this.options.heightRatio ?? 0.7), minModalHeight, maxModalHeight));
     const x = Math.round((width - modalWidth) / 2);
-    const y = Math.round((height - modalHeight) / 2);
+    const y = this.options.anchor === 'bottom'
+      ? Math.round(height - modalHeight - bottomMargin)
+      : Math.round((height - modalHeight) / 2);
     const contentInset = Math.round(clamp(modalWidth * 0.065, config.contentInsetMin, config.contentInsetMax));
     const panelInset = Math.max(16, contentInset - 6);
-    const headerBottom = y + 112;
-    const footerTop = y + modalHeight - PHASER_DESIGN.modal.footerHeight - 10;
+    const footerHeight = this.options.footerHeight ?? PHASER_DESIGN.modal.footerHeight;
+    const headerBottom = y + (this.options.headerBodyOffset ?? 112);
+    const footerTop = y + modalHeight - footerHeight - 10;
 
     return {
       sceneWidth: width,
@@ -843,8 +875,16 @@ class BaseModal extends PhaserContainer {
     const g = this.frame;
     const r = PHASER_DESIGN.modal.radius;
 
-    this.backdrop.setDisplaySize(metrics.sceneWidth, metrics.sceneHeight);
+    this.backdrop
+      .setFillStyle(0x120601, this.options.backdropAlpha ?? 0.58)
+      .setDisplaySize(metrics.sceneWidth, metrics.sceneHeight);
     g.clear();
+
+    if (this.options.variant === 'shopSheet') {
+      this.#drawShopSheetShell(metrics, g, colors);
+      return;
+    }
+
     g.fillStyle(colors.shadow, 0.5);
     g.fillRoundedRect(metrics.x + 9, metrics.y + 12, metrics.width, metrics.height, r);
     g.fillStyle(colors.outlineBrown, 1);
@@ -883,6 +923,69 @@ class BaseModal extends PhaserContainer {
     this.closeButton.setLayout({
       x: metrics.x + metrics.width - Math.max(36, metrics.contentInset + 12),
       y: metrics.y + 42,
+      width: closeSize,
+      height: closeSize,
+    });
+  }
+
+  #drawShopSheetShell(metrics, g, colors) {
+    const r = 24;
+    const panelX = metrics.x + 15;
+    const panelY = metrics.y + 76;
+    const panelWidth = metrics.width - 30;
+    const panelHeight = metrics.height - 88;
+    const shellY = Math.max(metrics.y, panelY - 46);
+    const shellHeight = metrics.y + metrics.height - shellY;
+    const topRailHeight = 62;
+
+    g.fillStyle(colors.shadow, 0.48);
+    g.fillRoundedRect(metrics.x + 7, shellY + 9, metrics.width, shellHeight, r);
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillRoundedRect(metrics.x, shellY, metrics.width, shellHeight, r);
+    g.fillStyle(colors.woodDark, 1);
+    g.fillRoundedRect(metrics.x + 5, shellY + 5, metrics.width - 10, shellHeight - 10, r - 4);
+
+    g.fillStyle(colors.woodMid, 1);
+    g.fillRoundedRect(metrics.x + 8, shellY + 8, metrics.width - 16, topRailHeight, 17);
+    g.fillStyle(colors.woodLight, 0.52);
+    g.fillRoundedRect(metrics.x + 18, shellY + 15, metrics.width - 36, 17, 9);
+    g.lineStyle(4, colors.line, 0.62);
+    g.strokeRoundedRect(metrics.x + 8, shellY + 8, metrics.width - 16, topRailHeight, 17);
+
+    g.fillStyle(colors.shadow, 0.36);
+    g.fillRoundedRect(panelX, panelY + 6, panelWidth, panelHeight, 24);
+    g.fillStyle(colors.parchment, 1);
+    g.fillRoundedRect(panelX, panelY, panelWidth, panelHeight, 24);
+    g.fillStyle(0xfff6dc, 0.82);
+    g.fillRoundedRect(panelX + 10, panelY + 8, panelWidth - 20, Math.max(28, panelHeight * 0.08), 15);
+    g.lineStyle(5, colors.line, 0.55);
+    g.strokeRoundedRect(panelX, panelY, panelWidth, panelHeight, 24);
+    g.lineStyle(3, colors.parchmentShadow, 0.76);
+    g.strokeRoundedRect(panelX + 8, panelY + 8, panelWidth - 16, panelHeight - 16, 18);
+
+    const titlePillWidth = Math.round(clamp(metrics.width * 0.43, 176, 220));
+    const titlePillHeight = 52;
+    const titlePillX = Math.round(metrics.x + (metrics.width - titlePillWidth) / 2);
+    const titlePillY = shellY + 10;
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillRoundedRect(titlePillX - 7, titlePillY - 4, titlePillWidth + 14, titlePillHeight + 8, 21);
+    g.fillStyle(colors.woodDark, 1);
+    g.fillRoundedRect(titlePillX - 1, titlePillY + 2, titlePillWidth + 2, titlePillHeight + 2, 18);
+    g.fillStyle(colors.woodMid, 1);
+    g.fillRoundedRect(titlePillX + 5, titlePillY + 6, titlePillWidth - 10, titlePillHeight - 10, 15);
+    g.fillStyle(colors.goldHighlight, 0.28);
+    g.fillRoundedRect(titlePillX + 22, titlePillY + 11, titlePillWidth - 44, 12, 8);
+
+    this.titleText
+      .setText(this.options.title)
+      .setStyle(modalTextStyle('title', { fontSize: '26px', strokeThickness: 5 }))
+      .setPosition(metrics.x + metrics.width / 2, titlePillY + titlePillHeight / 2 + 2);
+    this.kickerText.setVisible(false);
+
+    const closeSize = 48;
+    this.closeButton.setLayout({
+      x: metrics.x + metrics.width - 34,
+      y: shellY + 36,
       width: closeSize,
       height: closeSize,
     });
@@ -988,6 +1091,11 @@ function formatInteger(value) {
   const number = Number(value || 0);
   if (!Number.isFinite(number)) return '0';
   return number.toLocaleString('ko-KR');
+}
+
+function shopIconTextureKey(productId) {
+  const id = String(productId || '').trim();
+  return id ? `shop-product-icon-${id}` : '';
 }
 
 class FeatureListModal extends ListModal {
@@ -1273,35 +1381,43 @@ class ShopModal extends BaseModal {
     const g = makeGraphics(this.scene);
     this.body.add(g);
 
-    const segmentY = metrics.innerY + 2;
-    this.#drawSegmentedHeader(g, metrics.innerX, segmentY, metrics.innerWidth, 46);
+    const compact = metrics.sceneHeight < 900;
+    const segmentHeight = compact ? 36 : 40;
+    const segmentY = metrics.innerY;
+    this.#drawSegmentedHeader(g, metrics.innerX, segmentY, metrics.innerWidth, segmentHeight);
 
-    const rubyTitleY = segmentY + 62;
+    const rubyTitleY = segmentY + segmentHeight + (compact ? 14 : 21);
     this.#drawSectionTitle(g, metrics.innerX, rubyTitleY, metrics.innerWidth, '루비');
-    this.#drawRubyCards(g, products.ruby, metrics.innerX, rubyTitleY + 34, metrics.innerWidth);
+    const rubyCardsY = rubyTitleY + (compact ? 26 : 32);
+    const rubyCardHeight = compact ? 120 : 146;
+    this.#drawGroupFrame(g, metrics.innerX - 6, rubyCardsY - 10, metrics.innerWidth + 12, rubyCardHeight + 20);
+    this.#drawRubyCards(g, products.ruby, metrics.innerX, rubyCardsY, metrics.innerWidth, rubyCardHeight);
 
-    const limitedY = rubyTitleY + 204;
+    const limitedY = rubyCardsY + rubyCardHeight + (compact ? 20 : 30);
     this.#drawSectionTitle(g, metrics.innerX, limitedY, metrics.innerWidth, '한정 상품');
-    this.#drawLimitedProducts(g, products.limited, metrics.innerX, limitedY + 32, metrics.innerWidth, metrics.footerTop - limitedY - 42);
+    const limitedCardsY = limitedY + (compact ? 27 : 34);
+    const availableLimited = Math.max(118, metrics.footerTop - limitedCardsY - 12);
+    const limitedCardHeight = Math.round(clamp(availableLimited, compact ? 132 : 142, compact ? 148 : 164));
+    this.#drawLimitedProducts(g, products.limited, metrics.innerX, limitedCardsY, metrics.innerWidth, limitedCardHeight);
   }
 
   resolveActions() {
-    return [
-      { label: '닫기', style: 'wood', onClick: () => this.close() },
-    ];
+    return [];
   }
 
   #drawSegmentedHeader(g, x, y, width, height) {
     const { colors } = PHASER_DESIGN;
-    const gap = 10;
+    const gap = 12;
     const tabWidth = Math.floor((width - gap) / 2);
     g.fillStyle(colors.outlineBrown, 0.18);
-    g.fillRoundedRect(x, y + 3, width, height, 15);
-    g.fillStyle(colors.cream, 1);
-    g.fillRoundedRect(x, y, width, height, 15);
+    g.fillRoundedRect(x, y + 3, width, height, 14);
+    g.fillStyle(0xfff2cf, 1);
+    g.fillRoundedRect(x, y, width, height, 14);
+    g.lineStyle(2, colors.parchmentShadow, 0.7);
+    g.strokeRoundedRect(x + 1, y + 1, width - 2, height - 2, 13);
 
-    this.#drawSegmentTab(g, x + 5, y + 5, tabWidth - 5, height - 10, '◆ 루비', true);
-    this.#drawSegmentTab(g, x + tabWidth + gap, y + 5, tabWidth - 5, height - 10, '◷ 한정 상품', false);
+    this.#drawSegmentTab(g, x + 5, y + 5, tabWidth - 5, height - 10, '◆  루비', true);
+    this.#drawSegmentTab(g, x + tabWidth + gap, y + 5, tabWidth - 5, height - 10, '◷  한정 상품', false);
   }
 
   #drawSegmentTab(g, x, y, width, height, label, active) {
@@ -1314,9 +1430,11 @@ class ShopModal extends BaseModal {
     g.fillRoundedRect(x + 3, y + 3, width - 6, height - 6, 10);
     g.fillStyle(highlight, 0.65);
     g.fillRoundedRect(x + 9, y + 7, width - 18, 12, 6);
+    g.lineStyle(2, active ? 0x741711 : 0xb17b36, 0.82);
+    g.strokeRoundedRect(x + 3, y + 3, width - 6, height - 6, 10);
 
     const text = makeText(this.scene, x + width / 2, y + height / 2 + 1, label, modalTextStyle('button', {
-      fontSize: '16px',
+      fontSize: '15px',
       color: textColor,
       strokeThickness: active ? 4 : 0,
     })).setOrigin(0.5);
@@ -1326,15 +1444,25 @@ class ShopModal extends BaseModal {
   #drawSectionTitle(g, x, y, width, label) {
     const { colors } = PHASER_DESIGN;
     g.fillStyle(colors.parchmentShadow, 1);
-    g.fillRect(x + width * 0.18, y + 12, width * 0.64, 3);
+    g.fillRect(x + width * 0.17, y + 12, width * 0.66, 3);
     g.fillStyle(colors.woodMid, 1);
-    this.#drawSmallDiamond(g, x + width * 0.34, y + 13, 6);
-    this.#drawSmallDiamond(g, x + width * 0.66, y + 13, 6);
+    this.#drawSmallDiamond(g, x + width * 0.34, y + 13, 5);
+    this.#drawSmallDiamond(g, x + width * 0.66, y + 13, 5);
     const title = makeText(this.scene, x + width / 2, y, label, modalTextStyle('rowTitle', {
-      fontSize: '22px',
+      fontSize: '20px',
       align: 'center',
     })).setOrigin(0.5, 0);
     this.body.add(title);
+  }
+
+  #drawGroupFrame(g, x, y, width, height) {
+    const { colors } = PHASER_DESIGN;
+    g.fillStyle(colors.outlineBrown, 0.16);
+    g.fillRoundedRect(x, y + 4, width, height, 20);
+    g.fillStyle(0xfff6dc, 0.78);
+    g.fillRoundedRect(x, y, width, height, 20);
+    g.lineStyle(3, colors.parchmentShadow, 0.68);
+    g.strokeRoundedRect(x + 2, y + 2, width - 4, height - 4, 18);
   }
 
   #drawSmallDiamond(g, cx, cy, radius) {
@@ -1342,10 +1470,9 @@ class ShopModal extends BaseModal {
     g.fillTriangle(cx, cy - radius, cx - radius, cy, cx, cy + radius);
   }
 
-  #drawRubyCards(g, products, x, y, width) {
+  #drawRubyCards(g, products, x, y, width, cardHeight) {
     const gap = 10;
     const cardWidth = Math.floor((width - gap * 2) / 3);
-    const cardHeight = 154;
     products.slice(0, 3).forEach((product, index) => {
       const cardX = x + index * (cardWidth + gap);
       this.#drawRubyCard(g, product, cardX, y, cardWidth, cardHeight);
@@ -1358,21 +1485,38 @@ class ShopModal extends BaseModal {
     g.fillRoundedRect(x, y + 4, width, height, 16);
     g.fillStyle(0xffefc7, 1);
     g.fillRoundedRect(x, y, width, height, 16);
+    g.fillStyle(0xffffff, 0.2);
+    g.fillRoundedRect(x + 8, y + 7, width - 16, Math.max(14, height * 0.22), 10);
     g.lineStyle(3, colors.parchmentShadow, 0.75);
     g.strokeRoundedRect(x + 2, y + 2, width - 4, height - 4, 14);
 
     const title = makeText(this.scene, x + width / 2, y + 12, product.title, modalTextStyle('rowTitle', {
-      fontSize: width < 120 ? '14px' : '16px',
+      fontSize: width < 120 ? '13px' : '15px',
       align: 'center',
     })).setOrigin(0.5, 0);
     this.body.add(title);
 
-    this.#drawRubyPile(g, x + width / 2, y + 67, width < 120 ? 0.78 : 0.9);
+    const compactCard = height < 130;
+    const iconX = x + width / 2;
+    const iconY = y + Math.round(height * (compactCard ? 0.4 : 0.46));
+    const iconSize = compactCard ? 64 : 78;
+    const hasIcon = this.#drawProductIcon(product, iconX, iconY, iconSize);
+    if (!hasIcon) {
+      this.#drawRubyOfferGraphic(
+        g,
+        product,
+        iconX,
+        iconY,
+        compactCard ? 0.62 : (width < 120 ? 0.78 : 0.9),
+      );
+    }
 
     if (product.badge) {
       g.fillStyle(0xb92c25, 1);
-      g.fillCircle(x + width - 22, y + 49, 18);
-      const badge = makeText(this.scene, x + width - 22, y + 47, product.badge.replace(' ', '\n'), modalTextStyle('button', {
+      g.fillCircle(x + width - 21, y + 50, 18);
+      g.fillStyle(0xf05a42, 1);
+      g.fillCircle(x + width - 21, y + 48, 15);
+      const badge = makeText(this.scene, x + width - 21, y + 47, product.badge.replace(' ', '\n'), modalTextStyle('button', {
         fontSize: '10px',
         strokeThickness: 2,
         align: 'center',
@@ -1380,7 +1524,7 @@ class ShopModal extends BaseModal {
       this.body.add(badge);
     }
 
-    const priceText = makeText(this.scene, x + width / 2, y + height - 55, formatWon(product.priceWon), modalTextStyle('rowBody', {
+    const priceText = makeText(this.scene, x + width / 2, y + height - (compactCard ? 49 : 55), formatWon(product.priceWon), modalTextStyle('rowBody', {
       fontSize: '14px',
       fontStyle: 'bold',
       color: '#5b2a0e',
@@ -1395,9 +1539,22 @@ class ShopModal extends BaseModal {
       height: 34,
       label: '구매',
       style: 'green',
+      fontSize: '15px',
       onClick: () => this.#handleBuy(product),
     });
     this.body.add(button);
+  }
+
+  #drawRubyOfferGraphic(g, product, cx, cy, scale = 1) {
+    if (product.id === 201502) {
+      this.#drawRubyPouch(g, cx, cy + 5 * scale, scale);
+      return;
+    }
+    if (product.id === 201503) {
+      this.#drawRubyChest(g, cx, cy + 7 * scale, scale);
+      return;
+    }
+    this.#drawRubyPile(g, cx, cy + 5 * scale, scale);
   }
 
   #drawRubyPile(g, cx, cy, scale = 1) {
@@ -1412,6 +1569,39 @@ class ShopModal extends BaseModal {
     }
   }
 
+  #drawRubyPouch(g, cx, cy, scale = 1) {
+    const { colors } = PHASER_DESIGN;
+    g.fillStyle(0x5b3518, 1);
+    g.fillEllipse(cx, cy + 12 * scale, 54 * scale, 42 * scale);
+    g.fillStyle(0x9b642b, 1);
+    g.fillEllipse(cx, cy + 8 * scale, 48 * scale, 35 * scale);
+    g.fillStyle(0x5b3518, 1);
+    g.fillRoundedRect(cx - 20 * scale, cy - 8 * scale, 40 * scale, 12 * scale, 5 * scale);
+    g.lineStyle(3 * scale, colors.gold, 0.9);
+    g.strokeEllipse(cx, cy + 6 * scale, 38 * scale, 18 * scale);
+    this.#drawRuby(g, cx - 16 * scale, cy - 2 * scale, 10 * scale);
+    this.#drawRuby(g, cx + 1 * scale, cy - 7 * scale, 12 * scale);
+    this.#drawRuby(g, cx + 17 * scale, cy - 1 * scale, 9 * scale);
+    this.#drawRuby(g, cx - 30 * scale, cy + 24 * scale, 9 * scale);
+  }
+
+  #drawRubyChest(g, cx, cy, scale = 1) {
+    const { colors } = PHASER_DESIGN;
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillRoundedRect(cx - 33 * scale, cy - 6 * scale, 66 * scale, 42 * scale, 8 * scale);
+    g.fillStyle(0x9f651f, 1);
+    g.fillRoundedRect(cx - 29 * scale, cy - 2 * scale, 58 * scale, 34 * scale, 6 * scale);
+    g.fillStyle(colors.gold, 1);
+    g.fillRect(cx - 29 * scale, cy + 7 * scale, 58 * scale, 8 * scale);
+    g.fillStyle(0xffd96a, 1);
+    g.fillRoundedRect(cx - 8 * scale, cy + 4 * scale, 16 * scale, 16 * scale, 4 * scale);
+    this.#drawRuby(g, cx - 22 * scale, cy - 14 * scale, 9 * scale);
+    this.#drawRuby(g, cx - 5 * scale, cy - 17 * scale, 11 * scale);
+    this.#drawRuby(g, cx + 13 * scale, cy - 13 * scale, 9 * scale);
+    this.#drawRuby(g, cx + 29 * scale, cy + 28 * scale, 8 * scale);
+    this.#drawRuby(g, cx - 35 * scale, cy + 28 * scale, 8 * scale);
+  }
+
   #drawRuby(g, cx, cy, radius) {
     g.fillStyle(0x5b1d16, 1);
     g.fillTriangle(cx, cy - radius, cx + radius, cy, cx, cy + radius);
@@ -1423,52 +1613,157 @@ class ShopModal extends BaseModal {
     g.fillTriangle(cx, cy - radius * 0.7, cx - radius * 0.28, cy - radius * 0.02, cx + radius * 0.24, cy - radius * 0.02);
   }
 
-  #drawLimitedProducts(g, products, x, y, width, availableHeight) {
-    const gap = 9;
-    const rowHeight = Math.max(70, Math.min(84, Math.floor((availableHeight - gap * 2) / 3)));
+  #drawLimitedProducts(g, products, x, y, width, cardHeight) {
+    const gap = 10;
+    const cardWidth = Math.floor((width - gap * 2) / 3);
     products.slice(0, 3).forEach((product, index) => {
-      this.#drawLimitedRow(g, product, x, y + index * (rowHeight + gap), width, rowHeight);
+      const cardX = x + index * (cardWidth + gap);
+      this.#drawLimitedCard(g, product, cardX, y, cardWidth, cardHeight);
     });
   }
 
-  #drawLimitedRow(g, product, x, y, width, height) {
+  #drawLimitedCard(g, product, x, y, width, height) {
     const { colors } = PHASER_DESIGN;
     g.fillStyle(colors.outlineBrown, 0.22);
-    g.fillRoundedRect(x, y + 3, width, height, 16);
+    g.fillRoundedRect(x, y + 4, width, height, 16);
     g.fillStyle(0xffedc3, 1);
     g.fillRoundedRect(x, y, width, height, 16);
+    g.fillStyle(0xffffff, 0.22);
+    g.fillRoundedRect(x + 8, y + 7, width - 16, Math.max(14, height * 0.18), 9);
     g.lineStyle(3, colors.parchmentShadow, 0.7);
     g.strokeRoundedRect(x + 2, y + 2, width - 4, height - 4, 14);
 
-    g.fillStyle(colors.outlineBrown, 1);
-    g.fillCircle(x + 34, y + height / 2, 24);
-    g.fillStyle(product.id === 201505 ? 0xd83831 : product.id === 201506 ? colors.gold : colors.woodMid, 1);
-    g.fillCircle(x + 34, y + height / 2, 19);
+    const title = makeText(this.scene, x + width / 2, y + 11, product.title, modalTextStyle('rowTitle', {
+      fontSize: width < 120 ? '12px' : '14px',
+      align: 'center',
+      wordWrap: { width: width - 14, useAdvancedWrap: true },
+    })).setOrigin(0.5, 0);
+    this.body.add(title);
 
-    const icon = makeText(this.scene, x + 34, y + height / 2 - 1, product.icon || '*', modalTextStyle('button', {
-      fontSize: '13px',
-      strokeThickness: 3,
-    })).setOrigin(0.5);
-    const title = makeText(this.scene, x + 68, y + 11, product.title, modalTextStyle('rowTitle', {
-      fontSize: '17px',
-    }));
-    const body = makeText(this.scene, x + 68, y + 38, product.body, modalTextStyle('rowBody', {
-      fontSize: '13px',
-      wordWrap: { width: Math.max(110, width - 190), useAdvancedWrap: true },
-    }));
-    this.body.add([icon, title, body]);
+    const iconX = x + width / 2;
+    const iconY = y + Math.round(height * 0.42);
+    const iconSize = width < 120 ? 70 : 78;
+    const hasIcon = this.#drawProductIcon(product, iconX, iconY, iconSize);
+    if (!hasIcon) {
+      this.#drawLimitedIcon(g, product, iconX, iconY, width < 120 ? 0.72 : 0.84);
+    }
 
-    const buttonWidth = Math.min(112, Math.max(84, width * 0.28));
+    const lines = this.#limitedLines(product).slice(0, height < 146 ? 1 : 2);
+    const bulletText = makeText(this.scene, x + 12, y + height - (height < 146 ? 57 : 65), lines.map(line => `• ${line}`).join('\n'), modalTextStyle('rowBody', {
+      fontSize: width < 120 ? '9px' : '10px',
+      lineSpacing: 2,
+      color: '#4f2a0d',
+      wordWrap: { width: width - 24, useAdvancedWrap: true },
+    }));
+    this.body.add(bulletText);
+
     const button = new DesignButton(this.scene, {
-      x: x + width - buttonWidth / 2 - 13,
-      y: y + height / 2,
-      width: buttonWidth,
-      height: 40,
+      x: x + width / 2,
+      y: y + height - 20,
+      width: width - 18,
+      height: 34,
       label: formatWon(product.priceWon),
       style: 'green',
+      fontSize: width < 120 ? '12px' : '13px',
       onClick: () => this.#handleBuy(product),
     });
     this.body.add(button);
+  }
+
+  #drawLimitedIcon(g, product, cx, cy, scale = 1) {
+    if (product.id === 201505) {
+      this.#drawAdFreeIcon(g, cx, cy, scale);
+      return;
+    }
+    if (product.id === 201506) {
+      this.#drawSpeedIcon(g, cx, cy, scale);
+      return;
+    }
+    this.#drawBoosterIcon(g, cx, cy, scale);
+  }
+
+  #drawProductIcon(product, x, y, size) {
+    const key = shopIconTextureKey(product.id);
+    if (!key || !this.scene.textures.exists(key)) return false;
+    const image = makeImage(this.scene, x, y, key)
+      .setDisplaySize(size, size)
+      .setOrigin(0.5);
+    this.body.add(image);
+    return true;
+  }
+
+  #drawBoosterIcon(g, cx, cy, scale = 1) {
+    const { colors } = PHASER_DESIGN;
+    this.#drawSpark(g, cx - 37 * scale, cy - 18 * scale, 10 * scale);
+    this.#drawSpark(g, cx + 35 * scale, cy - 12 * scale, 8 * scale);
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillRoundedRect(cx - 28 * scale, cy - 8 * scale, 56 * scale, 30 * scale, 7 * scale);
+    g.fillStyle(0x9f651f, 1);
+    g.fillRoundedRect(cx - 24 * scale, cy - 4 * scale, 48 * scale, 23 * scale, 6 * scale);
+    g.fillStyle(colors.gold, 1);
+    g.fillRect(cx - 24 * scale, cy + 2 * scale, 48 * scale, 6 * scale);
+    g.lineStyle(4 * scale, 0xb7bdc8, 1);
+    g.lineBetween(cx - 41 * scale, cy + 22 * scale, cx - 17 * scale, cy - 2 * scale);
+    g.fillStyle(0xf7f7f7, 1);
+    g.fillTriangle(cx - 45 * scale, cy + 26 * scale, cx - 33 * scale, cy + 8 * scale, cx - 24 * scale, cy + 17 * scale);
+    g.fillStyle(0x858b96, 1);
+    g.fillRoundedRect(cx - 5 * scale, cy + 22 * scale, 22 * scale, 16 * scale, 5 * scale);
+    g.fillStyle(colors.gold, 1);
+    g.fillCircle(cx + 28 * scale, cy + 28 * scale, 9 * scale);
+  }
+
+  #drawAdFreeIcon(g, cx, cy, scale = 1) {
+    const { colors } = PHASER_DESIGN;
+    this.#drawSpark(g, cx - 36 * scale, cy + 14 * scale, 8 * scale);
+    this.#drawSpark(g, cx + 34 * scale, cy + 13 * scale, 7 * scale);
+    g.fillStyle(colors.gold, 1);
+    g.fillCircle(cx, cy, 38 * scale);
+    g.fillStyle(0xfff0bd, 1);
+    g.fillCircle(cx, cy, 31 * scale);
+    g.lineStyle(5 * scale, colors.outlineBrown, 1);
+    g.strokeCircle(cx, cy, 31 * scale);
+    g.fillStyle(0xffffff, 1);
+    g.fillRoundedRect(cx - 21 * scale, cy - 19 * scale, 42 * scale, 38 * scale, 7 * scale);
+    const adText = makeText(this.scene, cx, cy - 11 * scale, 'AD', modalTextStyle('rowTitle', {
+      fontSize: `${Math.round(18 * scale)}px`,
+      align: 'center',
+      color: '#2b1206',
+    })).setOrigin(0.5, 0);
+    this.body.add(adText);
+    g.lineStyle(7 * scale, 0xce271f, 1);
+    g.lineBetween(cx - 22 * scale, cy + 21 * scale, cx + 22 * scale, cy - 21 * scale);
+  }
+
+  #drawSpeedIcon(g, cx, cy, scale = 1) {
+    const { colors } = PHASER_DESIGN;
+    g.lineStyle(4 * scale, 0xffffff, 0.72);
+    g.lineBetween(cx - 48 * scale, cy - 12 * scale, cx - 20 * scale, cy - 12 * scale);
+    g.lineBetween(cx - 54 * scale, cy, cx - 22 * scale, cy);
+    g.lineBetween(cx - 48 * scale, cy + 12 * scale, cx - 20 * scale, cy + 12 * scale);
+    g.fillStyle(colors.gold, 1);
+    g.fillRoundedRect(cx - 7 * scale, cy - 49 * scale, 14 * scale, 11 * scale, 4 * scale);
+    g.fillStyle(0xf7e7bf, 1);
+    g.fillCircle(cx, cy, 35 * scale);
+    g.lineStyle(6 * scale, 0xa56b20, 1);
+    g.strokeCircle(cx, cy, 35 * scale);
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillTriangle(cx - 7 * scale, cy - 15 * scale, cx - 7 * scale, cy + 15 * scale, cx + 10 * scale, cy);
+    g.fillTriangle(cx + 10 * scale, cy - 15 * scale, cx + 10 * scale, cy + 15 * scale, cx + 27 * scale, cy);
+  }
+
+  #drawSpark(g, cx, cy, radius) {
+    g.fillStyle(0xfff0aa, 0.95);
+    g.fillTriangle(cx, cy - radius, cx + radius * 0.22, cy - radius * 0.22, cx + radius, cy);
+    g.fillTriangle(cx + radius, cy, cx + radius * 0.22, cy + radius * 0.22, cx, cy + radius);
+    g.fillTriangle(cx, cy + radius, cx - radius * 0.22, cy + radius * 0.22, cx - radius, cy);
+    g.fillTriangle(cx - radius, cy, cx - radius * 0.22, cy - radius * 0.22, cx, cy - radius);
+  }
+
+  #limitedLines(product) {
+    if (product.id === 201504) return ['장비 강화 재료 대량 지급', '전설 장비 확정 상자 포함'];
+    if (product.id === 201505) return ['모든 광고 즉시 제거', '보상 2배 광고 없이 수령'];
+    if (product.id === 201506) return ['게임 속도 2배', '모든 콘텐츠 적용'];
+    return [product.body || '한정 혜택 지급'];
   }
 
   #handleBuy(product) {
@@ -2535,7 +2830,6 @@ function featureTitle(id) {
     equipment: '장비',
     pet: '펫',
     adventure: '모험',
-    guild: '길드',
     settings: '설정',
   })[id] || '메뉴';
 }

@@ -169,6 +169,11 @@ const DEFAULT_SKILL_EFFECT = {
   radiusScale: 0.72,
   duration: 340,
 };
+const SKILL_FX_RADIUS_MULTIPLIER = 1.9;
+const SKILL_FX_CAST_MULTIPLIER = 1.65;
+const SKILL_FX_STROKE_MULTIPLIER = 1.45;
+const SKILL_FX_MOTE_MULTIPLIER = 1.45;
+const SKILL_FX_DENSITY_MULTIPLIER = 1.25;
 
 function shouldSuppressBackgroundMusic() {
   if (isAudioExplicitlyEnabled() || isParamEnabled('bgm', 'music')) return false;
@@ -931,15 +936,15 @@ export class IdlezPhaserScene extends PhaserScene {
     this.#drawCastFlareFx(origin.x, origin.y, effect);
 
     if (effect.cast === 'aura' || effect.cast === 'rage' || effect.cast === 'ultimate') {
-      this.#drawAuraFx(origin.x, origin.y, effect, effect.cast === 'ultimate' ? 82 : 56);
-      if (effect.cast === 'rage') this.#drawCheekPulseFx(origin.x, origin.y, effect, 42);
-      if (effect.cast === 'ultimate') this.#drawGoldenOrbitFx(origin.x, origin.y, effect, 74);
+      this.#drawAuraFx(origin.x, origin.y, effect, (effect.cast === 'ultimate' ? 82 : 56) * SKILL_FX_CAST_MULTIPLIER);
+      if (effect.cast === 'rage') this.#drawCheekPulseFx(origin.x, origin.y, effect, 42 * SKILL_FX_CAST_MULTIPLIER);
+      if (effect.cast === 'ultimate') this.#drawGoldenOrbitFx(origin.x, origin.y, effect, 74 * SKILL_FX_CAST_MULTIPLIER);
       return;
     }
 
     if (effect.cast === 'rune') {
-      this.#drawRuneFx(origin.x, origin.y, effect, 54);
-      this.#drawMoonCrescentFx(origin.x, origin.y, effect, 48);
+      this.#drawRuneFx(origin.x, origin.y, effect, 54 * SKILL_FX_CAST_MULTIPLIER);
+      this.#drawMoonCrescentFx(origin.x, origin.y, effect, 48 * SKILL_FX_CAST_MULTIPLIER);
       this.#drawTravelFx(origin, destination, effect, { arcs: 2, sparks: 5 });
       return;
     }
@@ -955,8 +960,8 @@ export class IdlezPhaserScene extends PhaserScene {
     }
 
     if (effect.cast === 'spiral') {
-      this.#drawSpiralFx(origin.x, origin.y, effect, 48);
-      this.#drawWheelGlyphFx(origin.x, origin.y, effect, 42);
+      this.#drawSpiralFx(origin.x, origin.y, effect, 48 * SKILL_FX_CAST_MULTIPLIER);
+      this.#drawWheelGlyphFx(origin.x, origin.y, effect, 42 * SKILL_FX_CAST_MULTIPLIER);
       this.#drawTravelFx(origin, destination, effect, { arcs: 1, sparks: 4 });
       return;
     }
@@ -1070,7 +1075,7 @@ export class IdlezPhaserScene extends PhaserScene {
       }
     }
     const worldRadius = Math.max(1.8, ...radii);
-    return clamp(worldRadius * 18 * (effect.radiusScale || 1), 34, 142);
+    return clamp(worldRadius * 18 * (effect.radiusScale || 1) * SKILL_FX_RADIUS_MULTIPLIER, 58, 260);
   }
 
   #unitFxPoint(unit) {
@@ -1087,8 +1092,9 @@ export class IdlezPhaserScene extends PhaserScene {
     const layer = this.#fxLayer(0, 0, 1350, { additive: true });
     const g = this.add.graphics();
     layer.add(g);
+    const stroke = SKILL_FX_STROKE_MULTIPLIER;
 
-    g.lineStyle(heavy ? 11 : 7, effect.accent, heavy ? 0.22 : 0.18);
+    g.lineStyle((heavy ? 11 : 7) * stroke, effect.accent, heavy ? 0.24 : 0.2);
     g.beginPath();
     g.moveTo(origin.x, origin.y);
     const midX = (origin.x + destination.x) / 2;
@@ -1097,14 +1103,14 @@ export class IdlezPhaserScene extends PhaserScene {
     g.lineTo(destination.x, destination.y);
     g.strokePath();
 
-    g.lineStyle(heavy ? 6 : 3, effect.primary, 0.86);
+    g.lineStyle((heavy ? 6 : 3) * stroke, effect.primary, 0.88);
     g.beginPath();
     g.moveTo(origin.x, origin.y);
     g.lineTo(midX, midY);
     g.lineTo(destination.x, destination.y);
     g.strokePath();
 
-    g.lineStyle(heavy ? 2 : 1, effect.tertiary || 0xffffff, 0.72);
+    g.lineStyle((heavy ? 2 : 1) * stroke, effect.tertiary || 0xffffff, 0.74);
     g.beginPath();
     g.moveTo(origin.x, origin.y - 3);
     g.lineTo(midX, midY - 5);
@@ -1112,7 +1118,7 @@ export class IdlezPhaserScene extends PhaserScene {
     g.strokePath();
 
     if (arcs > 0) {
-      g.lineStyle(2, effect.secondary, 0.58);
+      g.lineStyle(2 * stroke, effect.secondary, 0.62);
       for (let i = 0; i < arcs; i += 1) {
         const offset = (i - (arcs - 1) / 2) * 14;
         g.beginPath();
@@ -1128,7 +1134,7 @@ export class IdlezPhaserScene extends PhaserScene {
       const x = origin.x + (destination.x - origin.x) * t;
       const y = origin.y + (destination.y - origin.y) * t - Math.sin(t * Math.PI) * 28;
       g.fillStyle(i % 2 ? effect.secondary : effect.primary, 0.9);
-      g.fillCircle(x, y, heavy ? 4 : 3);
+      g.fillCircle(x, y, (heavy ? 4 : 3) * SKILL_FX_MOTE_MULTIPLIER);
     }
 
     this.#drawTrailMotesFx(origin, destination, effect, { count: sparks + 2, shape: motif, heavy });
@@ -1146,19 +1152,20 @@ export class IdlezPhaserScene extends PhaserScene {
     const layer = this.#fxLayer(x, y, 1365, { additive: true });
     const g = this.add.graphics();
     layer.add(g);
+    const s = SKILL_FX_CAST_MULTIPLIER;
 
-    g.lineStyle(3, effect.primary, 0.72);
-    g.strokeEllipse(0, 0, 46, 20);
-    g.lineStyle(2, effect.secondary, 0.58);
-    g.strokeCircle(0, 0, 20);
+    g.lineStyle(3 * SKILL_FX_STROKE_MULTIPLIER, effect.primary, 0.76);
+    g.strokeEllipse(0, 0, 46 * s, 20 * s);
+    g.lineStyle(2 * SKILL_FX_STROKE_MULTIPLIER, effect.secondary, 0.64);
+    g.strokeCircle(0, 0, 20 * s);
     g.fillStyle(effect.accent, 0.18);
-    g.fillCircle(0, 0, 18);
+    g.fillCircle(0, 0, 18 * s);
 
     const colors = [effect.primary, effect.secondary, effect.tertiary || 0xffffff];
     for (let i = 0; i < 6; i += 1) {
       const angle = Math.PI * 2 * i / 6;
-      const px = Math.cos(angle) * 25;
-      const py = Math.sin(angle) * 13;
+      const px = Math.cos(angle) * 25 * s;
+      const py = Math.sin(angle) * 13 * s;
       this.#drawMoteShape(g, i % 2 ? 'seed' : 'spark', px, py, 5, colors[i % colors.length], effect.accent, 0.86);
     }
 
@@ -1175,8 +1182,9 @@ export class IdlezPhaserScene extends PhaserScene {
 
   #drawTrailMotesFx(origin, destination, effect, { count = 6, shape = 'spark', heavy = false } = {}) {
     const colors = [effect.primary, effect.secondary, effect.tertiary || 0xffffff, effect.accent];
-    for (let i = 0; i < count; i += 1) {
-      const t = (i + 1) / (count + 1);
+    const total = Math.ceil(count * SKILL_FX_DENSITY_MULTIPLIER);
+    for (let i = 0; i < total; i += 1) {
+      const t = (i + 1) / (total + 1);
       const wave = Math.sin(t * Math.PI);
       const x = origin.x + (destination.x - origin.x) * t;
       const y = origin.y + (destination.y - origin.y) * t - wave * (heavy ? 14 : 30);
@@ -1211,8 +1219,9 @@ export class IdlezPhaserScene extends PhaserScene {
     spreadY = 0.72,
   } = {}) {
     const colors = [effect.primary, effect.secondary, effect.tertiary || 0xffffff, effect.accent];
-    for (let i = 0; i < count; i += 1) {
-      const angle = Math.PI * 2 * i / count + Math.random() * 0.32;
+    const total = Math.ceil(count * SKILL_FX_DENSITY_MULTIPLIER);
+    for (let i = 0; i < total; i += 1) {
+      const angle = Math.PI * 2 * i / total + Math.random() * 0.32;
       const dist = radius * (0.28 + Math.random() * 0.82);
       const mote = this.add.graphics()
         .setPosition(x, y)
@@ -1245,6 +1254,8 @@ export class IdlezPhaserScene extends PhaserScene {
   }
 
   #drawMoteShape(g, shape, x, y, size, color, accent = 0xffffff, alpha = 0.9) {
+    size *= SKILL_FX_MOTE_MULTIPLIER;
+
     if (shape === 'seed') {
       g.fillStyle(color, alpha);
       g.fillEllipse(x, y, size * 1.1, size * 1.7);
@@ -1395,9 +1406,9 @@ export class IdlezPhaserScene extends PhaserScene {
     const layer = this.#fxLayer(x, y, 1430, { additive: true });
     const g = this.add.graphics();
     layer.add(g);
-    g.lineStyle(5, effect.primary, 0.78);
+    g.lineStyle(5 * SKILL_FX_STROKE_MULTIPLIER, effect.primary, 0.78);
     g.strokeCircle(0, 0, radius);
-    g.lineStyle(3, effect.secondary, 0.72);
+    g.lineStyle(3 * SKILL_FX_STROKE_MULTIPLIER, effect.secondary, 0.72);
     g.strokeCircle(0, 0, radius * 0.58);
     for (let i = 0; i < 8; i += 1) {
       const angle = Math.PI * 2 * i / 8;
@@ -1463,7 +1474,7 @@ export class IdlezPhaserScene extends PhaserScene {
     layer.add(g);
     g.fillStyle(effect.accent, 0.84);
     this.#drawStarShape(g, 0, 0, radius * 0.42, radius * 0.18, 5);
-    g.lineStyle(3, effect.secondary, 0.72);
+    g.lineStyle(3 * SKILL_FX_STROKE_MULTIPLIER, effect.secondary, 0.72);
     g.strokeCircle(0, 0, radius * 0.55);
 
     this.tweens.add({
@@ -1527,9 +1538,9 @@ export class IdlezPhaserScene extends PhaserScene {
     const layer = this.#fxLayer(x, y, 1445, { additive: true });
     const g = this.add.graphics();
     layer.add(g);
-    g.lineStyle(3, effect.secondary, 0.82);
+    g.lineStyle(3 * SKILL_FX_STROKE_MULTIPLIER, effect.secondary, 0.82);
     g.strokeEllipse(0, 0, radius * 1.55, radius * 0.72);
-    g.lineStyle(2, effect.primary, 0.62);
+    g.lineStyle(2 * SKILL_FX_STROKE_MULTIPLIER, effect.primary, 0.62);
     g.strokeEllipse(0, 0, radius * 1.18, radius * 0.52);
     for (let i = 0; i < 8; i += 1) {
       const angle = Math.PI * 2 * i / 8;
@@ -1563,7 +1574,7 @@ export class IdlezPhaserScene extends PhaserScene {
     g.fillStyle(effect.tertiary || effect.primary, 0.28);
     g.fillEllipse(-radius * 0.42, -radius * 0.02, radius * 0.62, radius * 0.4);
     g.fillEllipse(radius * 0.42, -radius * 0.02, radius * 0.62, radius * 0.4);
-    g.lineStyle(3, effect.primary, 0.78);
+    g.lineStyle(3 * SKILL_FX_STROKE_MULTIPLIER, effect.primary, 0.78);
     g.strokeEllipse(-radius * 0.42, -radius * 0.02, radius * 0.72, radius * 0.46);
     g.strokeEllipse(radius * 0.42, -radius * 0.02, radius * 0.72, radius * 0.46);
 
@@ -1582,16 +1593,16 @@ export class IdlezPhaserScene extends PhaserScene {
     const g = this.add.graphics();
     layer.add(g);
 
-    g.lineStyle(4, effect.primary, 0.86);
+    g.lineStyle(4 * SKILL_FX_STROKE_MULTIPLIER, effect.primary, 0.86);
     g.strokeCircle(0, 0, radius);
-    g.lineStyle(2, effect.secondary, 0.72);
+    g.lineStyle(2 * SKILL_FX_STROKE_MULTIPLIER, effect.secondary, 0.72);
     g.strokeCircle(0, 0, radius * 0.68);
     g.fillStyle(effect.primary, 0.18);
     g.fillCircle(0, 0, radius * 0.92);
     for (let i = 0; i < 10; i += 1) {
       const angle = (Math.PI * 2 * i) / 10;
       g.fillStyle(i % 2 ? effect.secondary : effect.primary, 0.95);
-      g.fillCircle(Math.cos(angle) * radius * 0.86, Math.sin(angle) * radius * 0.44, 4);
+      g.fillCircle(Math.cos(angle) * radius * 0.86, Math.sin(angle) * radius * 0.44, 4 * SKILL_FX_MOTE_MULTIPLIER);
     }
 
     this.tweens.add({
@@ -1611,7 +1622,7 @@ export class IdlezPhaserScene extends PhaserScene {
     layer.add(g);
 
     for (let i = 0; i < rings; i += 1) {
-      g.lineStyle(4 - i, i % 2 ? effect.secondary : effect.primary, 0.86 - i * 0.2);
+      g.lineStyle((4 - i) * SKILL_FX_STROKE_MULTIPLIER, i % 2 ? effect.secondary : effect.primary, 0.86 - i * 0.2);
       g.strokeCircle(0, 0, radius * (0.48 + i * 0.32));
     }
     g.fillStyle(effect.accent, 0.2);
@@ -1621,7 +1632,7 @@ export class IdlezPhaserScene extends PhaserScene {
       const angle = (Math.PI * 2 * i) / spores + Math.random() * 0.2;
       const dist = radius * (0.35 + Math.random() * 0.65);
       g.fillStyle(i % 2 ? effect.secondary : effect.primary, 0.92);
-      g.fillCircle(Math.cos(angle) * dist, Math.sin(angle) * dist * 0.72, 3 + Math.random() * 3);
+      g.fillCircle(Math.cos(angle) * dist, Math.sin(angle) * dist * 0.72, (3 + Math.random() * 3) * SKILL_FX_MOTE_MULTIPLIER);
     }
 
     this.tweens.add({
@@ -1639,14 +1650,14 @@ export class IdlezPhaserScene extends PhaserScene {
     const g = this.add.graphics();
     layer.add(g);
 
-    g.lineStyle(7, effect.primary, 0.92);
+    g.lineStyle(7 * SKILL_FX_STROKE_MULTIPLIER, effect.primary, 0.92);
     g.beginPath();
     g.moveTo(-radius * 0.7, radius * 0.22);
     g.lineTo(-radius * 0.18, -radius * 0.34);
     g.lineTo(radius * 0.2, radius * 0.05);
     g.lineTo(radius * 0.74, -radius * 0.44);
     g.strokePath();
-    g.lineStyle(3, effect.secondary, 0.84);
+    g.lineStyle(3 * SKILL_FX_STROKE_MULTIPLIER, effect.secondary, 0.84);
     for (const dir of [-1, 1]) {
       g.beginPath();
       g.moveTo(0, 0);
@@ -1674,7 +1685,7 @@ export class IdlezPhaserScene extends PhaserScene {
 
     for (let i = 0; i < 4; i += 1) {
       const r = radius * (0.35 + i * 0.16);
-      g.lineStyle(4 - i * 0.35, i % 2 ? effect.secondary : effect.primary, 0.9 - i * 0.12);
+      g.lineStyle((4 - i * 0.35) * SKILL_FX_STROKE_MULTIPLIER, i % 2 ? effect.secondary : effect.primary, 0.9 - i * 0.12);
       g.beginPath();
       g.arc(0, 0, r, -0.4 + i * 0.8, 2.1 + i * 0.8);
       g.strokePath();
@@ -1696,7 +1707,7 @@ export class IdlezPhaserScene extends PhaserScene {
     layer.add(g);
 
     for (let i = 0; i < 3; i += 1) {
-      g.lineStyle(3, i % 2 ? effect.secondary : effect.primary, 0.82);
+      g.lineStyle(3 * SKILL_FX_STROKE_MULTIPLIER, i % 2 ? effect.secondary : effect.primary, 0.82);
       g.beginPath();
       g.arc(0, 0, radius * (0.42 + i * 0.18), i * 1.2, i * 1.2 + 3.9);
       g.strokePath();
@@ -1717,15 +1728,15 @@ export class IdlezPhaserScene extends PhaserScene {
     const g = this.add.graphics();
     layer.add(g);
 
-    g.lineStyle(4, effect.primary, 0.88);
+    g.lineStyle(4 * SKILL_FX_STROKE_MULTIPLIER, effect.primary, 0.88);
     g.strokeCircle(0, 0, radius);
-    g.lineStyle(2, effect.secondary, 0.78);
+    g.lineStyle(2 * SKILL_FX_STROKE_MULTIPLIER, effect.secondary, 0.78);
     g.strokeCircle(0, 0, radius * 0.64);
     for (let i = 0; i < 6; i += 1) {
       const angle = (Math.PI * 2 * i) / 6;
       const x1 = Math.cos(angle) * radius * 0.74;
       const y1 = Math.sin(angle) * radius * 0.74;
-      g.lineStyle(2, effect.accent, 0.7);
+      g.lineStyle(2 * SKILL_FX_STROKE_MULTIPLIER, effect.accent, 0.7);
       g.beginPath();
       g.moveTo(x1, y1);
       g.lineTo(-x1 * 0.45, -y1 * 0.45);
@@ -1744,20 +1755,22 @@ export class IdlezPhaserScene extends PhaserScene {
   }
 
   #drawRainCueFx(x, y, effect) {
-    const layer = this.#fxLayer(x, y - 96, 1360);
+    const s = SKILL_FX_CAST_MULTIPLIER;
+    const layer = this.#fxLayer(x, y - 96 * s, 1360);
     const g = this.add.graphics();
     layer.add(g);
-    for (let i = 0; i < 9; i += 1) {
-      const px = -72 + i * 18;
-      g.lineStyle(3, i % 2 ? effect.secondary : effect.primary, 0.78);
+    const total = Math.ceil(9 * SKILL_FX_DENSITY_MULTIPLIER);
+    for (let i = 0; i < total; i += 1) {
+      const px = -72 * s + i * 18 * s;
+      g.lineStyle(3 * SKILL_FX_STROKE_MULTIPLIER, i % 2 ? effect.secondary : effect.primary, 0.78);
       g.beginPath();
-      g.moveTo(px, -36 - (i % 3) * 8);
-      g.lineTo(px - 12, 8 + (i % 2) * 10);
+      g.moveTo(px, (-36 - (i % 3) * 8) * s);
+      g.lineTo(px - 12 * s, (8 + (i % 2) * 10) * s);
       g.strokePath();
     }
     this.tweens.add({
       targets: layer,
-      y: y - 48,
+      y: y - 48 * s,
       alpha: 0,
       duration: 420,
       ease: 'Cubic.easeIn',
@@ -1772,10 +1785,10 @@ export class IdlezPhaserScene extends PhaserScene {
     layer.add(g);
     for (let i = 0; i < 8; i += 1) {
       const px = -radius * 0.7 + i * radius * 0.2;
-      g.lineStyle(2, effect.primary, 0.7);
+      g.lineStyle(2 * SKILL_FX_STROKE_MULTIPLIER, effect.primary, 0.7);
       g.beginPath();
       g.moveTo(px, -radius * 0.62);
-      g.lineTo(px - 16, radius * 0.28);
+      g.lineTo(px - 16 * SKILL_FX_CAST_MULTIPLIER, radius * 0.28);
       g.strokePath();
     }
     this.tweens.add({
@@ -1789,21 +1802,22 @@ export class IdlezPhaserScene extends PhaserScene {
   }
 
   #drawMeteorCueFx(x, y, effect) {
-    const layer = this.#fxLayer(x - 110, y - 170, 1360);
+    const s = SKILL_FX_CAST_MULTIPLIER;
+    const layer = this.#fxLayer(x - 110 * s, y - 170 * s, 1360);
     const g = this.add.graphics();
     layer.add(g);
-    g.lineStyle(8, effect.primary, 0.88);
+    g.lineStyle(8 * SKILL_FX_STROKE_MULTIPLIER, effect.primary, 0.88);
     g.beginPath();
     g.moveTo(0, 0);
-    g.lineTo(110, 130);
+    g.lineTo(110 * s, 130 * s);
     g.strokePath();
-    g.lineStyle(4, effect.secondary, 0.78);
+    g.lineStyle(4 * SKILL_FX_STROKE_MULTIPLIER, effect.secondary, 0.78);
     g.beginPath();
-    g.moveTo(-20, -8);
-    g.lineTo(118, 128);
+    g.moveTo(-20 * s, -8 * s);
+    g.lineTo(118 * s, 128 * s);
     g.strokePath();
     g.fillStyle(effect.primary, 0.96);
-    g.fillCircle(122, 138, 10);
+    g.fillCircle(122 * s, 138 * s, 10 * SKILL_FX_MOTE_MULTIPLIER);
     this.tweens.add({
       targets: layer,
       x,

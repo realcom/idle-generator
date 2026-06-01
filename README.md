@@ -230,6 +230,12 @@ python3 harness/tools/phaser_smoke.py mushroomer --screenshot /private/tmp/idlez
 
 현재 `idlez-phaser.html`은 `mushroomer` 중심으로 연결되어 있습니다. 이 경로는 검증 게임을 가장 빠르게 실행하는 기본 루트입니다.
 
+UI와 모달만 빠르게 볼 때는 별도 preview 하네스를 엽니다.
+
+```text
+http://127.0.0.1:8765/harness/runtime/phaser-ui-harness.html
+```
+
 확인할 것:
 
 - 화면이 정상적으로 뜨는가

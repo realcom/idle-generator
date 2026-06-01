@@ -260,8 +260,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--port", type=int, default=8765, help="Preferred local static server port.")
     parser.add_argument("--strict-port", action="store_true", help="Fail instead of choosing the next free port.")
     parser.add_argument("--skip-compile", action="store_true", help="Use the existing harness/build bundle.")
+    parser.add_argument("--python-bin", default=os.environ.get("PHASER_SMOKE_PYTHON"), help="Python executable used for idlez_compile.py.")
     parser.add_argument("--serve-only", action="store_true", help="Compile, serve, print the URL, and block.")
     parser.add_argument("--no-browser", action="store_true", help="Only run compile and HTTP probes.")
+    parser.add_argument("--expect", choices=["app", "ui"], default="app", help="Browser readiness contract to verify.")
     parser.add_argument("--chrome-bin", default=os.environ.get("CHROME_BIN"), help="Chrome/Chromium executable.")
     parser.add_argument("--cdp-port", type=int, default=9333, help="Preferred Chrome DevTools port.")
     parser.add_argument("--headful", action="store_true", help="Launch a visible browser instead of headless Chrome.")
@@ -280,7 +282,7 @@ def main() -> int:
         return 2
 
     if not args.skip_compile:
-        run_compile(args.game)
+        run_compile(args.game, args.python_bin)
 
     port = choose_port(args.host, args.port, args.strict_port)
     server = start_server(args.host, port)
@@ -306,10 +308,38 @@ def main() -> int:
         server.server_close()
 
 
-def run_compile(game: str) -> None:
-    cmd = [sys.executable, str(ROOT / "harness" / "tools" / "idlez_compile.py"), game]
+def run_compile(game: str, python_bin: str | None = None) -> None:
+    cmd = [find_compile_python(python_bin), str(ROOT / "harness" / "tools" / "idlez_compile.py"), game]
     print("+", " ".join(cmd), flush=True)
     subprocess.run(cmd, cwd=ROOT, check=True)
+
+
+def find_compile_python(explicit: str | None = None) -> str:
+    candidates = [
+        explicit,
+        os.environ.get("PHASER_SMOKE_PYTHON"),
+        sys.executable,
+        shutil.which("python3"),
+        str(Path.home() / "opt" / "anaconda3" / "bin" / "python3"),
+    ]
+    seen: set[str] = set()
+    fallback = sys.executable
+    for candidate in candidates:
+        if not candidate or candidate in seen:
+            continue
+        seen.add(candidate)
+        path = Path(candidate)
+        if not path.exists() and not shutil.which(candidate):
+            continue
+        probe = subprocess.run(
+            [candidate, "-c", "import yaml"],
+            cwd=ROOT,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        if probe.returncode == 0:
+            return candidate
+    return fallback
 
 
 def choose_port(host: str, preferred: int, strict: bool) -> int:
@@ -404,7 +434,10 @@ def run_browser_smoke(args: argparse.Namespace, runtime_url: str) -> dict[str, o
             client.send("Network.enable")
             client.send("Page.enable")
             client.send("Page.navigate", {"url": runtime_url})
-            value = evaluate_runtime_ready(client, args.timeout)
+            if args.expect == "ui":
+                value = evaluate_ui_ready(client, args.timeout)
+            else:
+                value = evaluate_runtime_ready(client, args.timeout)
             if screenshot:
                 capture = client.send("Page.captureScreenshot", {"format": "png", "captureBeyondViewport": False}, timeout=10)
                 screenshot.parent.mkdir(parents=True, exist_ok=True)
@@ -412,12 +445,15 @@ def run_browser_smoke(args: argparse.Namespace, runtime_url: str) -> dict[str, o
                 value["screenshot"] = str(screenshot)
 
             errors = unique_errors(client.errors)
-            ok = (
-                bool(value.get("ok"))
-                and value.get("finalContextReady") is True
-                and value.get("tickAdvanced") is True
-                and not errors
-            )
+            if args.expect == "ui":
+                ok = bool(value.get("ok")) and value.get("uiHarnessReady") is True and not errors
+            else:
+                ok = (
+                    bool(value.get("ok"))
+                    and value.get("finalContextReady") is True
+                    and value.get("tickAdvanced") is True
+                    and not errors
+                )
             value["ok"] = ok
             value["errors"] = errors
             value["url"] = runtime_url
@@ -480,6 +516,52 @@ def evaluate_runtime_ready(client: DevToolsClient, timeout: float) -> dict[str, 
     stageHeight: stageRect?.height ?? null,
     units: ctx.board?.units?.length ?? null,
     enemies: ctx.board?.enemies?.length ?? null
+  }};
+}})()
+"""
+    result = client.send(
+        "Runtime.evaluate",
+        {"expression": expression, "awaitPromise": True, "returnByValue": True},
+        timeout=timeout + 5,
+    )
+    if "exceptionDetails" in result:
+        return {"ok": False, "reason": result["exceptionDetails"]}
+    remote = result.get("result") or {}
+    if isinstance(remote, dict) and isinstance(remote.get("value"), dict):
+        return remote["value"]
+    return {"ok": False, "reason": f"Unexpected Runtime.evaluate result: {result}"}
+
+
+def evaluate_ui_ready(client: DevToolsClient, timeout: float) -> dict[str, object]:
+    timeout_ms = int(timeout * 1000)
+    expression = f"""
+(async () => {{
+  const deadline = Date.now() + {timeout_ms};
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const isReady = () => document.documentElement.dataset.uiHarnessReady === 'true';
+  const isBootError = () => document.getElementById('previewStatus')?.classList.contains('is-error') || false;
+  while (!isReady() && !isBootError() && Date.now() < deadline) {{
+    await sleep(100);
+  }}
+  await sleep(350);
+  const ctx = globalThis.__idlezPhaserUiHarness || null;
+  const status = document.getElementById('previewStatus')?.textContent || null;
+  const modalStage = document.getElementById('modalStage');
+  const activeButton = document.querySelector('[data-modal-id].active');
+  const canvas = modalStage?.querySelector('canvas');
+  const rect = canvas?.getBoundingClientRect?.();
+  return {{
+    ok: Boolean(ctx && modalStage?.classList.contains('is-active') && canvas),
+    uiHarnessReady: Boolean(ctx && isReady()),
+    gameId: ctx?.gameId || null,
+    status,
+    activeModal: activeButton?.dataset?.modalId || null,
+    modalStageActive: modalStage?.classList.contains('is-active') || false,
+    modalButtons: document.querySelectorAll('[data-modal-id]').length,
+    canvasCount: document.querySelectorAll('canvas').length,
+    stageWidth: rect?.width ?? null,
+    stageHeight: rect?.height ?? null,
+    logRows: document.querySelectorAll('.log-row').length,
   }};
 }})()
 """

@@ -7,7 +7,7 @@ import { IdlezWsClient, shouldAutoConnectNetwork } from './network/idlez-ws-clie
 import { IdlezSessionStore } from './network/session-store.js?v=mushroomer2';
 import { IdlezPhaserScene } from './phaser-scene.js?v=map-sky1';
 import { IdlezSpineLayer } from './spine-layer.js?v=weekday4';
-import { attachModalSystem } from './modal-system.js?v=modaltext1';
+import { attachModalSystem } from './modal-system.js?v=shopicons1';
 import { applyLanguagePreference, resolveSettings } from './settings-store.js?v=settings1';
 
 const GAME_ID = 'mushroomer';
@@ -181,13 +181,15 @@ function installWeekdayDungeonClearFlow({ board, store, messages }) {
     if (event.winningTeam !== TEAM.PLAYER) return;
 
     const delayMs = Math.max(0, asNumber(map.popupArgs?.ClientClearReturnDelayMs, 3000));
-    const homeMapId = map.popupArgs?.ClientHomeMapDataId || START_MAP_ID;
+    const homeMapId = resolveWeekdayReturnMapId({ board, map, store });
+    const returnMap = store?.getMap?.(homeMapId);
+    const returnName = returnMap?.name || '메인맵';
     const rewards = summarizeRewards(event.rewards || [], store);
     messages?.push({
       type: 'clear',
       icon: 'OK',
       title: `${map.name || '요일 던전'} 클리어`,
-      body: `${rewards || '보상 정산 완료'} · ${Math.ceil(delayMs / 1000)}초 후 메인맵`,
+      body: `${rewards || '보상 정산 완료'} · ${Math.ceil(delayMs / 1000)}초 후 ${returnName}`,
       duration: Math.max(2200, delayMs),
     });
 
@@ -199,6 +201,50 @@ function installWeekdayDungeonClearFlow({ board, store, messages }) {
     }, delayMs);
     timers.set(map.id, timer);
   });
+}
+
+function resolveWeekdayReturnMapId({ board, map, store }) {
+  const achievementMapId = resolveMainMapIdFromAchievementProgress({ board, store });
+  if (achievementMapId) return achievementMapId;
+
+  const homeMap = store?.getMap?.(map?.popupArgs?.ClientHomeMapDataId);
+  if (isMainProgressMap(store, homeMap)) return Number(homeMap.id);
+
+  const startMap = store?.getMap?.(START_MAP_ID);
+  if (isMainProgressMap(store, startMap)) return START_MAP_ID;
+
+  const firstMainMap = [...(store?.maps?.values?.() || [])].find(candidate => isMainProgressMap(store, candidate));
+  return Number(firstMainMap?.id || START_MAP_ID);
+}
+
+function resolveMainMapIdFromAchievementProgress({ board, store }) {
+  const mainMaps = [...(store?.maps?.values?.() || [])]
+    .filter(map => isMainProgressMap(store, map))
+    .sort((a, b) => store.getMainStageNumber(a) - store.getMainStageNumber(b));
+
+  if (!mainMaps.length) return null;
+
+  const targetMap = mainMaps.find(map => !isMainMapClearedByAchievements({ board, store, map }));
+  return Number((targetMap || mainMaps[mainMaps.length - 1]).id);
+}
+
+function isMainMapClearedByAchievements({ board, store, map }) {
+  const mapId = Number(map?.id);
+  if (!mapId) return false;
+  if ((board?.getMapWinCount?.(mapId) || 0) > 0) return true;
+
+  return [...(store?.achievements?.values?.() || [])].some(achievement => (
+    achievement?.condition === 'WinGame'
+    && Number(achievement.conditionValue1) === mapId
+    && asNumber(achievement.targetProgress, 1) <= 1
+    && board?.hasAchievement?.(achievement.id)
+  ));
+}
+
+function isMainProgressMap(store, map) {
+  if (!map?.id) return false;
+  const stageNo = store?.getMainStageNumber?.(map);
+  return Number.isFinite(stageNo);
 }
 
 function summarizeRewards(rewards, store) {

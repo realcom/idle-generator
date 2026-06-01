@@ -40,13 +40,39 @@ headless Chrome에서 Spine asset preload가 느린 머신은 `--timeout`을 늘
 
 목표: HUD, 성장, 장비, 스킬, 던전 같은 화면 상태를 전투 진입 없이 재현한다.
 
-예정 대상:
+실행:
+
+```bash
+python3 harness/tools/phaser_smoke.py mushroomer --no-browser
+python3 -m http.server 8765
+```
+
+브라우저 smoke:
+
+```bash
+python3 harness/tools/phaser_smoke.py mushroomer --skip-compile --runtime harness/runtime/phaser-ui-harness.html --expect ui --screenshot /private/tmp/idlez-phaser-ui-harness.png
+```
+
+URL:
+
+```text
+http://127.0.0.1:8765/harness/runtime/phaser-ui-harness.html
+http://127.0.0.1:8765/harness/runtime/phaser-ui-harness.html?modal=achievements
+http://127.0.0.1:8765/harness/runtime/phaser-ui-harness.html?modal=weekdayDungeon
+```
+
+현재 대상:
 
 - `src/idlez-phaser/hud.js`
 - `src/idlez-phaser/modal-system.js`
 - `src/idlez-phaser/design-system.js`
-- `harness/runtime/phaser-ui-harness.html`
+- `phaser-ui-harness.html`
+
+예정 확장:
+
 - `harness/runtime/scenarios/<game>/*.json`
+- HUD 단독 fixture
+- 모달별 golden screenshot
 
 ## 4. Asset Audit
 
