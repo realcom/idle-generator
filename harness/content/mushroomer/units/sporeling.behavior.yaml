@@ -5,10 +5,10 @@ domain: unit
   - event: start
     do:
       - moveRandom:
-          x: 2.4
+          x: -0.85
           y: 0.0
-          xRange: 0.25
-          yRange: 1.6
+          xRange: 0.12
+          yRange: 0.55
 
 ---
 
@@ -16,7 +16,7 @@ name: SporelingAttack
 domain: unit
 
 vars:
-  attack_range: { type: float, default: 4.8 }
+  attack_range: { type: float, default: 1.25 }
 
 "on":
   - event: update
@@ -24,10 +24,84 @@ vars:
     do:
       - when: "targetDistance > $attack_range"
         moveRandom:
-          x: 2.4
+          x: -0.85
           y: 0.0
-          xRange: 0.25
-          yRange: 1.6
+          xRange: 0.12
+          yRange: 0.55
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget:
+          skillDataId: 300101
+
+---
+
+name: SporeRangerTakePosition
+domain: unit
+
+"on":
+  - event: start
+    do:
+      - moveRandom:
+          x: 1.15
+          y: 0.0
+          xRange: 0.35
+          yRange: 1.45
+
+---
+
+name: SporeRangerVolley
+domain: unit
+
+vars:
+  attack_range: { type: float, default: 3.25 }
+
+"on":
+  - event: update
+    every: 1.4s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom:
+          x: 1.15
+          y: 0.0
+          xRange: 0.35
+          yRange: 1.45
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget:
+          skillDataId: 300101
+
+---
+
+name: FungusBulwarkAdvance
+domain: unit
+
+"on":
+  - event: start
+    do:
+      - moveRandom:
+          x: -0.65
+          y: 0.0
+          xRange: 0.1
+          yRange: 0.45
+
+---
+
+name: FungusBulwarkSlam
+domain: unit
+
+vars:
+  attack_range: { type: float, default: 1.45 }
+
+"on":
+  - event: update
+    every: 2.2s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom:
+          x: -0.65
+          y: 0.0
+          xRange: 0.1
+          yRange: 0.45
       - when: "hasTarget == 1 and targetDistance <= $attack_range"
         stop: {}
         useSkillToTarget:

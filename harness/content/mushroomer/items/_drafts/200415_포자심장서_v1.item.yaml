@@ -1,0 +1,49 @@
+id: 200415
+name: "황금 볼주머니서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 5
+rarity: 5
+group: 200401
+constantDamageRatio: 1.0
+order: 12
+parentId: 200401
+skillDataId: 300112
+unstackable: true
+requiredItemDataIds: [200414]
+requiredAchievementDataIds: [600123]
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200107, count: 12 }
+      - { id: 200104, count: 42 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200107, count: 15 }
+      - { id: 200104, count: 54 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200107, count: 18 }
+      - { id: 200104, count: 70 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200107, count: 22 }
+      - { id: 200104, count: 90 }
+popupArgs:
+  SkillTree: "Mushroomer"
+  SkillTreeNode: "Ultimate"
+  ChildrenSkillItemDataIds: ""
+  UnlockRecipeItemDataId: "200423"
+  UnlockCostLevelPoint: "15"
+  LevelPointItemDataId: "200107"
+  RequiredSkillItemDataIds: "200414"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "100"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "12"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_golden_cheek_pouch.png"

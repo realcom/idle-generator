@@ -1,0 +1,31 @@
+id: 200420
+name: "볼따구 분노 학습"
+category: Recipe
+grade: 3
+rarity: 4
+group: 200401
+order: 9
+targetItemDataIds: [200412]
+requiredItemDataIds: [200410]
+requiredAchievementDataIds: [600120]
+exclusiveItemDataIds: [200412]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200107, count: 8 }
+      - { id: 200104, count: 18 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200412, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Mushroomer"
+  UnlockSkillItemDataId: "200412"
+  RequiredSkillItemDataIds: "200410"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "70"
+  UnlockCostLevelPoint: "8"
+  LevelPointItemDataId: "200107"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_cheek_rage.png"

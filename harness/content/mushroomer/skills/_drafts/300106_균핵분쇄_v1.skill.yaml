@@ -1,0 +1,22 @@
+id: 300106
+name: "호두 분쇄"
+tags: [UseToTarget, TargetPosition, Boss, SkillTree]
+cooldown: 3.4
+priority: 6
+targetRefreshType: HighestHp
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "assets/ui/icons/skills/skill_ham_walnut_crush.png"
+itemDataId: 200409
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Attack" } }
+  - { time: 0.0, unitCharge: { duration: 0.18, distance: 0.85, adjustDistanceToTarget: true } }
+  - time: 0.2
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.1
+      maxHit: 1
+      addDamage: { damagePercent: [520.0] }
+  - { time: 0.78, destroy: {} }

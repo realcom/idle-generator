@@ -1,0 +1,172 @@
+name: WeekdayGoldSwarmStart
+domain: unit
+"on":
+  - event: start
+    do:
+      - moveRandom: { x: -0.9, y: 0.0, xRange: 0.18, yRange: 0.7 }
+
+---
+
+name: WeekdayGoldSwarmAttack
+domain: unit
+vars:
+  attack_range: { type: float, default: 1.2 }
+"on":
+  - event: update
+    every: 0.8s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom: { x: -0.9, y: 0.0, xRange: 0.18, yRange: 0.7 }
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget: { skillDataId: 300101 }
+
+---
+
+name: WeekdaySteelGuardStart
+domain: unit
+"on":
+  - event: start
+    do:
+      - moveRandom: { x: -0.55, y: 0.0, xRange: 0.08, yRange: 0.45 }
+
+---
+
+name: WeekdaySteelGuardAttack
+domain: unit
+vars:
+  attack_range: { type: float, default: 1.55 }
+"on":
+  - event: update
+    every: 2.4s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom: { x: -0.55, y: 0.0, xRange: 0.08, yRange: 0.45 }
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget: { skillDataId: 300101 }
+
+---
+
+name: WeekdayTrainingBearStart
+domain: unit
+"on":
+  - event: start
+    do:
+      - moveRandom: { x: -0.7, y: 0.0, xRange: 0.12, yRange: 0.55 }
+
+---
+
+name: WeekdayTrainingBearAttack
+domain: unit
+vars:
+  attack_range: { type: float, default: 1.55 }
+"on":
+  - event: update
+    every: 1.8s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom: { x: -0.7, y: 0.0, xRange: 0.12, yRange: 0.55 }
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget: { skillDataId: 300101 }
+
+---
+
+name: WeekdayMysticGhostStart
+domain: unit
+"on":
+  - event: start
+    do:
+      - moveRandom: { x: 1.2, y: 0.0, xRange: 0.35, yRange: 1.55 }
+
+---
+
+name: WeekdayMysticGhostAttack
+domain: unit
+vars:
+  attack_range: { type: float, default: 3.35 }
+"on":
+  - event: update
+    every: 1.2s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom: { x: 1.2, y: 0.0, xRange: 0.35, yRange: 1.55 }
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget: { skillDataId: 300101 }
+
+---
+
+name: WeekdayLuckyJellyStart
+domain: unit
+"on":
+  - event: start
+    do:
+      - moveRandom: { x: -0.85, y: 0.0, xRange: 0.2, yRange: 1.0 }
+
+---
+
+name: WeekdayLuckyJellyAttack
+domain: unit
+vars:
+  attack_range: { type: float, default: 1.25 }
+"on":
+  - event: update
+    every: 0.85s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom: { x: -0.85, y: 0.0, xRange: 0.2, yRange: 1.0 }
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget: { skillDataId: 300101 }
+
+---
+
+name: WeekdayNinjaOniStart
+domain: unit
+"on":
+  - event: start
+    do:
+      - moveRandom: { x: 1.0, y: 0.0, xRange: 0.55, yRange: 1.9 }
+
+---
+
+name: WeekdayNinjaOniAttack
+domain: unit
+vars:
+  attack_range: { type: float, default: 3.1 }
+"on":
+  - event: update
+    every: 0.7s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom: { x: 1.0, y: 0.0, xRange: 0.55, yRange: 1.9 }
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget: { skillDataId: 300101 }
+
+---
+
+name: WeekdayCrownGuardianStart
+domain: unit
+"on":
+  - event: start
+    do:
+      - moveRandom: { x: 0.35, y: 0.0, xRange: 0.18, yRange: 0.65 }
+
+---
+
+name: WeekdayCrownGuardianAttack
+domain: unit
+vars:
+  attack_range: { type: float, default: 2.45 }
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom: { x: 0.35, y: 0.0, xRange: 0.18, yRange: 0.65 }
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget: { skillDataId: 300101 }

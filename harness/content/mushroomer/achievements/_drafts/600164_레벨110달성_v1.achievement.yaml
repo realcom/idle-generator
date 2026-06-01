@@ -1,0 +1,20 @@
+id: 600164
+name: "레벨 110 달성"
+type: Normal
+tags: []
+order: 164
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1
+conditionValue2: 110
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 60000 }
+      - { itemDataId: 4, count: 35 }

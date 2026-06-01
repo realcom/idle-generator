@@ -1,0 +1,29 @@
+id: 300111
+name: "햄찌 대질주"
+tags: [UseToTarget, TargetPosition, AoE, SkillTree]
+cooldown: 5.8
+priority: 11
+targetRefreshType: Nearest
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "assets/ui/icons/skills/skill_ham_stampede.png"
+itemDataId: 200414
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - time: 0.35
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 4.7
+      maxHit: 14
+      addDamage: { damagePercent: [520.0] }
+  - time: 0.78
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 4.7
+      maxHit: 14
+      addDamage: { damagePercent: [520.0] }
+  - { time: 1.28, destroy: {} }

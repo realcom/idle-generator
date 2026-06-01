@@ -1,0 +1,50 @@
+id: 200411
+name: "톱밥 소나기서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 3
+rarity: 4
+group: 200401
+constantDamageRatio: 1.0
+order: 8
+parentId: 200401
+skillDataId: 300108
+unstackable: true
+requiredItemDataIds: [200410]
+requiredAchievementDataIds: [600119]
+targetItemDataIds: [200413]
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200107, count: 6 }
+      - { id: 200104, count: 18 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200107, count: 8 }
+      - { id: 200104, count: 24 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200107, count: 10 }
+      - { id: 200104, count: 32 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200107, count: 12 }
+      - { id: 200104, count: 42 }
+popupArgs:
+  SkillTree: "Mushroomer"
+  SkillTreeNode: "Rain"
+  ChildrenSkillItemDataIds: "200413"
+  UnlockRecipeItemDataId: "200419"
+  UnlockCostLevelPoint: "8"
+  LevelPointItemDataId: "200107"
+  RequiredSkillItemDataIds: "200410"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "60"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "8"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_bedding_rain.png"

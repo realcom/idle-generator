@@ -1,5 +1,5 @@
 id: 200407
-name: "포자 각성 학습"
+name: "간식 각성 학습"
 category: Recipe
 grade: 1
 rarity: 3
@@ -7,12 +7,12 @@ group: 200401
 order: 4
 targetItemDataIds: [200404]
 requiredItemDataIds: [200402, 200403]
+requiredAchievementDataIds: [600115]
 exclusiveItemDataIds: [200404]
 materialItemGroups:
   - shouldAllValid: true
     materialItems:
-      - { id: 200107, count: 4 }
-      - { id: 200104, count: 8 }
+      - { id: 200107, count: 1 }
 addItemGroups:
   - shouldAddAll: true
     probPercent: 100
@@ -23,7 +23,8 @@ popupArgs:
   UnlockSkillItemDataId: "200404"
   RequiredSkillItemDataIds: "200402,200403"
   RequiredSkillLevel: "3"
-  UnlockCostLevelPoint: "4"
+  RequiredPlayerLevel: "12"
+  UnlockCostLevelPoint: "1"
   LevelPointItemDataId: "200107"
 spriteGroups:
-  Icon: "UIAssets/Images/ingame_icn_start.png"
+  Icon: "assets/ui/icons/skills/skill_ham_snack_awakening.png"

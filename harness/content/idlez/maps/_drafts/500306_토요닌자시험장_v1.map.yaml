@@ -1,0 +1,39 @@
+id: 500306
+group: 500306
+stage: 1
+name: "토요 닌자시험장"
+type: Dungeon
+tags: [WeekdayDungeon, Saturday, Speed]
+scene: "PFB_MAP_Jungle_Sunset_Chapter"
+prefab: "Maps/Prefabs/PFB_MAP_Jungle_Sunset_Chapter.prefab"
+sprite: "Maps/Map_Jungle_Sunset/Img_Map_Jungle_Sunset_Sky.png"
+targetCameraPivot: { x: 0.5, y: 0.58 }
+fov: 9.25
+popupArgs: { ClientModeManager: ModeManagerMushroom, ClientHomeMapDataId: 500101 }
+initLevel: 12
+enableUnitExp: true
+initVariables:
+  - { callerKey: 605, value: 12 }
+  - { callerKey: 606, value: 13 }
+boardConstants: { levelUpChoiceCount: 3 }
+locations:
+  - { id: -1, position: { x: -7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 0.75 } }] }
+  - { id: 1, position: { x: 7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 2.0 } }] }
+terrains:
+  - vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+  - type: Skill
+    vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+triggers: [MAP_ONSTART_WEEKDAYSATURDAYNINJAWAVE1, MAP_ONUPDATE_WEEKDAYSATURDAYNINJAUPDATE]
+rewardAddItemGroups:
+  - shouldAddAll: false
+    probPercent: 100
+    addItems:
+      - { itemDataId: 1002, count: 1, weight: 55, group: 1, isCore: true }
+      - { itemDataId: 1003, count: 1, weight: 45, group: 1, isCore: true }
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 6, count: 360 }
+      - { itemDataId: 200102, count: 4 }

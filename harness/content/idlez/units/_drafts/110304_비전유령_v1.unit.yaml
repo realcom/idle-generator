@@ -1,0 +1,43 @@
+id: 110304
+name: "비전 유령"
+type: Elite
+tags: [Monster]
+armorType: NormalArmor
+warmupDelay: 1.0
+targetMode: Chaser
+targetAwareDistance: 25.0
+targetResetDistance: 32.0
+deadDestroyDelaySeconds: 0.55
+
+addStats:
+  - { type: Hp, value: [520.0] }
+  - { type: Attack, value: [46.0] }
+  - { type: Defense, value: [15.0] }
+  - { type: CriticalPercent, value: [10.0] }
+  - { type: AttackSpeed, value: [1.05] }
+  - { type: MoveSpeed, value: [2.9] }
+  - { type: ScalePercent, value: [-58.0] }
+
+triggers:
+  - UNIT_ONSTART_WEEKDAYMYSTICGHOSTSTART
+  - UNIT_ONUPDATE_WEEKDAYMYSTICGHOSTATTACK
+
+dropAddItemGroups:
+  - shouldAddAll: false
+    probPercent: 35
+    addItems:
+      - { itemDataId: 1000, count: 1, weight: 35, group: 1 }
+      - { itemDataId: 1001, count: 1, weight: 30, group: 1 }
+      - { itemDataId: 1002, count: 1, weight: 20, group: 1 }
+      - { itemDataId: 1003, count: 1, weight: 15, group: 1, pityGroup: 10 }
+
+prefab: "Units/Monsters/elite_midboss_melee_ghost_female_blue.prefab"
+sprite: "Units/Monsters/Assets/elite_midboss_melee_ghost_female.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 1.0
+collideSize: { x: 1.0, y: 1.0 }
+hitSize: { x: 1.15, y: 1.15 }

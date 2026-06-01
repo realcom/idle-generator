@@ -1,0 +1,45 @@
+id: 110306
+name: "닌자 오니"
+type: Elite
+tags: [Monster]
+armorType: NormalArmor
+warmupDelay: 0.5
+targetMode: Chaser
+targetAwareDistance: 28.0
+targetResetDistance: 34.0
+deadDestroyDelaySeconds: 0.35
+
+addStats:
+  - { type: Hp, value: [360.0] }
+  - { type: Attack, value: [95.0] }
+  - { type: Defense, value: [10.0] }
+  - { type: CriticalPercent, value: [25.0] }
+  - { type: AttackSpeed, value: [1.8] }
+  - { type: MoveSpeed, value: [4.2] }
+  - { type: ScalePercent, value: [-61.0] }
+
+triggers:
+  - UNIT_ONSTART_WEEKDAYNINJAONISTART
+  - UNIT_ONUPDATE_WEEKDAYNINJAONIATTACK
+
+dropAddItemGroups:
+  - shouldAddAll: false
+    probPercent: 30
+    addItems:
+      - { itemDataId: 1002, count: 1, weight: 60, group: 1 }
+      - { itemDataId: 1003, count: 1, weight: 40, group: 1, pityGroup: 9 }
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 6, count: 30 }
+
+prefab: "Units/Monsters/temp/boss_oni_ninja.prefab"
+sprite: "Units/Monsters/Assets/finalboss_melee_oni_pirate_boss.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 0.95
+collideSize: { x: 0.95, y: 0.95 }
+hitSize: { x: 1.05, y: 1.05 }

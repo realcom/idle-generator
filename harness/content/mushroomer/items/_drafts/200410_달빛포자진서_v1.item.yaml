@@ -1,0 +1,50 @@
+id: 200410
+name: "달빛 쳇바퀴서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 3
+rarity: 3
+group: 200401
+constantDamageRatio: 1.0
+order: 7
+parentId: 200401
+skillDataId: 300107
+unstackable: true
+requiredItemDataIds: [200408, 200409]
+requiredAchievementDataIds: [600118]
+targetItemDataIds: [200411, 200412]
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200107, count: 5 }
+      - { id: 200104, count: 14 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200107, count: 6 }
+      - { id: 200104, count: 18 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200107, count: 8 }
+      - { id: 200104, count: 24 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200107, count: 10 }
+      - { id: 200104, count: 32 }
+popupArgs:
+  SkillTree: "Mushroomer"
+  SkillTreeNode: "Merge"
+  ChildrenSkillItemDataIds: "200411,200412"
+  UnlockRecipeItemDataId: "200418"
+  UnlockCostLevelPoint: "7"
+  LevelPointItemDataId: "200107"
+  RequiredSkillItemDataIds: "200408,200409"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "50"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "7"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_moon_wheel.png"

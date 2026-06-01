@@ -1,15 +1,21 @@
 id: 500305
-group: 500300
+group: 500305
 name: "금요 장비 상자 던전"
 type: Dungeon
-tags: [WeekdayDungeon, Friday]
-scene: "PFB_MAP_Meadow_Day_Chapter"
-popupArgs: { ClientModeManager: ModeManagerMushroom, ClientHomeMapDataId: 500101 }
+tags: [WeekdayDungeon, Friday, EquipmentBox]
+scene: "PFB_MAP_Beach_Dawn_Chapter"
+sprite: "Maps/Map_Beach_Dawn/Img_Map_Beach_Dawn_Sky.png"
+popupArgs:
+  ClientModeManager: ModeManagerMushroom
+  ClientHomeMapDataId: 500101
+  ClientPhaserBackground: weekday_beach_dawn
+  ClientClearReturnDelayMs: 3000
+  ClientWaveCount: 2
 initLevel: 12
 locations:
   - { id: -1, position: { x: -7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 0.75 } }] }
   - { id: 1, position: { x: 7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 1.75 } }] }
-triggers: [MAP_ONSTART_MUSHROOMFIELDWAVE1, MAP_ONUPDATE_MUSHROOMFIELDUPDATE]
+triggers: [MAP_ONSTART_WEEKDAYFRIDAYCHESTDUNGEON, MAP_ONUPDATE_WEEKDAYFRIDAYCHESTDUNGEON]
 rewardAddItemGroups:
   - shouldAddAll: true
     probPercent: 100

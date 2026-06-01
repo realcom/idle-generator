@@ -1,15 +1,21 @@
 id: 500306
-group: 500300
+group: 500306
 name: "토요 종합 던전"
 type: Dungeon
-tags: [WeekdayDungeon, Saturday]
-scene: "PFB_MAP_Meadow_Day_Chapter"
-popupArgs: { ClientModeManager: ModeManagerMushroom, ClientHomeMapDataId: 500101 }
+tags: [WeekdayDungeon, Saturday, Mixed]
+scene: "PFB_MAP_InfiniteTrain_Day_InfiniteDungeon"
+sprite: "Maps/Map_InfiniteTrain_Day/Img_Map_InfiniteTrain_Day_Main.png"
+popupArgs:
+  ClientModeManager: ModeManagerMushroom
+  ClientHomeMapDataId: 500101
+  ClientPhaserBackground: weekday_train_day
+  ClientClearReturnDelayMs: 3000
+  ClientWaveCount: 2
 initLevel: 12
 locations:
   - { id: -1, position: { x: -7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 0.75 } }] }
   - { id: 1, position: { x: 7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 1.75 } }] }
-triggers: [MAP_ONSTART_MUSHROOMFIELDWAVE1, MAP_ONUPDATE_MUSHROOMFIELDUPDATE]
+triggers: [MAP_ONSTART_WEEKDAYSATURDAYMIXEDDUNGEON, MAP_ONUPDATE_WEEKDAYSATURDAYMIXEDDUNGEON]
 rewardAddItemGroups:
   - shouldAddAll: true
     probPercent: 100

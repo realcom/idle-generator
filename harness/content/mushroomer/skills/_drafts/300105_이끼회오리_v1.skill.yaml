@@ -1,0 +1,29 @@
+id: 300105
+name: "쳇바퀴 회오리"
+tags: [UseToTarget, TargetPosition, AoE, SkillTree]
+cooldown: 3.0
+priority: 5
+targetRefreshType: Nearest
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "assets/ui/icons/skills/skill_ham_wheel_whirlwind.png"
+itemDataId: 200408
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Attack" } }
+  - time: 0.18
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 3.3
+      maxHit: 8
+      addDamage: { damagePercent: [130.0] }
+  - time: 0.38
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 3.3
+      maxHit: 8
+      addDamage: { damagePercent: [130.0] }
+  - { time: 0.75, destroy: {} }

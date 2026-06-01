@@ -1,0 +1,43 @@
+id: 110301
+name: "황금 슬라임"
+type: Normal
+tags: [Monster]
+armorType: NormalArmor
+warmupDelay: 0.6
+targetMode: Chaser
+targetAwareDistance: 24.0
+targetResetDistance: 30.0
+deadDestroyDelaySeconds: 0.35
+
+addStats:
+  - { type: Hp, value: [85.0] }
+  - { type: Attack, value: [8.0] }
+  - { type: Defense, value: [1.0] }
+  - { type: AttackSpeed, value: [1.35] }
+  - { type: MoveSpeed, value: [3.8] }
+  - { type: ScalePercent, value: [-64.0] }
+
+triggers:
+  - UNIT_ONSTART_WEEKDAYGOLDSWARMSTART
+  - UNIT_ONUPDATE_WEEKDAYGOLDSWARMATTACK
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 80, maxCount: 140, isCore: true }
+  - shouldAddAll: false
+    probPercent: 18
+    addItems:
+      - { itemDataId: 200111, count: 1, weight: 100, group: 1 }
+
+prefab: "Units/Monsters/large_melee_slime_orange.prefab"
+sprite: "Units/Monsters/Assets/large_melee_slime.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 0.92
+collideSize: { x: 0.8, y: 0.8 }
+hitSize: { x: 0.9, y: 0.9 }

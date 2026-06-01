@@ -1,0 +1,20 @@
+id: 600140
+name: "공격 10 달성"
+type: Normal
+tags: []
+order: 140
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1000
+conditionValue2: 10
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 1200 }
+      - { itemDataId: 200103, count: 2 }

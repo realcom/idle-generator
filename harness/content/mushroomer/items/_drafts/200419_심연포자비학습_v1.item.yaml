@@ -1,0 +1,31 @@
+id: 200419
+name: "톱밥 소나기 학습"
+category: Recipe
+grade: 3
+rarity: 4
+group: 200401
+order: 8
+targetItemDataIds: [200411]
+requiredItemDataIds: [200410]
+requiredAchievementDataIds: [600119]
+exclusiveItemDataIds: [200411]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200107, count: 8 }
+      - { id: 200104, count: 18 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200411, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Mushroomer"
+  UnlockSkillItemDataId: "200411"
+  RequiredSkillItemDataIds: "200410"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "60"
+  UnlockCostLevelPoint: "8"
+  LevelPointItemDataId: "200107"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_bedding_rain.png"

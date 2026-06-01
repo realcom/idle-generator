@@ -1,0 +1,31 @@
+id: 200418
+name: "달빛 쳇바퀴 학습"
+category: Recipe
+grade: 3
+rarity: 3
+group: 200401
+order: 7
+targetItemDataIds: [200410]
+requiredItemDataIds: [200408, 200409]
+requiredAchievementDataIds: [600118]
+exclusiveItemDataIds: [200410]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200107, count: 7 }
+      - { id: 200104, count: 14 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200410, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Mushroomer"
+  UnlockSkillItemDataId: "200410"
+  RequiredSkillItemDataIds: "200408,200409"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "50"
+  UnlockCostLevelPoint: "7"
+  LevelPointItemDataId: "200107"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_moon_wheel.png"

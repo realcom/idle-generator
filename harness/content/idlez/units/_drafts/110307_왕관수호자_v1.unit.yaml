@@ -1,0 +1,50 @@
+id: 110307
+name: "왕관 수호자"
+type: Boss
+tags: [Monster]
+armorType: BossArmor
+warmupDelay: 2.0
+targetMode: Chaser
+targetAwareDistance: 30.0
+targetResetDistance: 36.0
+deadDestroyDelaySeconds: 0.9
+
+addStats:
+  - { type: Hp, value: [6500.0] }
+  - { type: Attack, value: [140.0] }
+  - { type: Defense, value: [55.0] }
+  - { type: CriticalPercent, value: [15.0] }
+  - { type: AttackSpeed, value: [0.9] }
+  - { type: MoveSpeed, value: [1.9] }
+  - { type: ScalePercent, value: [-45.0] }
+
+triggers:
+  - UNIT_ONSTART_WEEKDAYCROWNGUARDIANSTART
+  - UNIT_ONUPDATE_WEEKDAYCROWNGUARDIANATTACK
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 1000, maxCount: 1500, isCore: true }
+      - { itemDataId: 6, count: 420 }
+      - { itemDataId: 200103, count: 2 }
+  - shouldAddAll: false
+    probPercent: 65
+    addItems:
+      - { itemDataId: 1000, count: 1, weight: 30, group: 1 }
+      - { itemDataId: 1001, count: 1, weight: 30, group: 1 }
+      - { itemDataId: 1002, count: 1, weight: 20, group: 1 }
+      - { itemDataId: 1003, count: 1, weight: 20, group: 1, pityGroup: 5 }
+
+prefab: "Units/Monsters/dungeonboss_ranged_SlimeQueen.prefab"
+sprite: "Units/Monsters/Assets/Slimequeen.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 1.5
+uiOffset: { x: 0.0, y: 0.3 }
+collideSize: { x: 1.7, y: 1.7 }
+hitSize: { x: 1.9, y: 1.9 }

@@ -1,0 +1,21 @@
+id: 600177
+name: "체력 60 달성"
+type: Normal
+tags: []
+order: 177
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1001
+conditionValue2: 60
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 7800 }
+      - { itemDataId: 200103, count: 12 }
+      - { itemDataId: 200106, count: 1 }

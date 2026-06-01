@@ -22,6 +22,7 @@ import yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TICKS_PER_SECOND = 30
+DEFAULT_SKILL_COOLDOWN_SECONDS = 1.0
 
 
 def i64(v):
@@ -429,6 +430,8 @@ def compile_entry(src, tname, spec, game, growth, errors, source_path):
     raw = copy.deepcopy(src)
     if tname == "unit":
         normalize_unit_scalars(raw, source_path, errors)
+    if tname == "skill" and raw.get("cooldown") is None:
+        raw["cooldown"] = DEFAULT_SKILL_COOLDOWN_SECONDS
     if tname == "item":
         expand_level_up_gold_cost(raw)
         expand_summon_cost_scaling(raw)
@@ -1337,6 +1340,456 @@ def validate_unit_visual_scale(profile, bundles, errors):
                 )
 
 
+def _int_or_none(value, ctx, errors):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        errors.append(f"{ctx}: 정수 값이 아님 ({value!r})")
+        return None
+
+
+def _popup_int(entry, key, ctx, errors, *, required=True):
+    popup_args = entry.get("popupArgs") or {}
+    if key not in popup_args:
+        if required:
+            errors.append(f"{ctx}: popupArgs.{key} 누락")
+        return None
+    return _int_or_none(popup_args[key], f"{ctx}.popupArgs.{key}", errors)
+
+
+def _parse_csv_ints(raw, ctx, errors):
+    if raw is None or raw == "":
+        return []
+    if isinstance(raw, list):
+        values = raw
+    else:
+        values = [part.strip() for part in str(raw).split(",") if part.strip()]
+    out = []
+    for value in values:
+        parsed = _int_or_none(value, ctx, errors)
+        if parsed is not None:
+            out.append(parsed)
+    return out
+
+
+def _add_item_total(groups, item_id):
+    total = 0
+    for group in groups or []:
+        for item in group.get("addItems", []):
+            if int(item.get("itemDataId", 0)) != item_id:
+                continue
+            total += int(item.get("count", 1))
+    return total
+
+
+def _material_item_total(groups, item_id):
+    total = 0
+    for group in groups or []:
+        for item in group.get("materialItems", []):
+            if int(item.get("id", 0)) != item_id:
+                continue
+            total += int(item.get("count", 1))
+    return total
+
+
+def _require_ids_exist(owner_ctx, label, ids, known_ids, errors):
+    for data_id in ids:
+        if data_id not in known_ids:
+            errors.append(f"{owner_ctx}: {label} {data_id} 리소스 누락")
+
+
+def _popup_int_value(entry, key, default=0):
+    try:
+        return int((entry.get("popupArgs") or {}).get(key, default))
+    except (TypeError, ValueError):
+        return default
+
+
+def _skill_tree_item_max_level(item):
+    stat_max = 1
+    for stat in item.get("addStats", []) or []:
+        value = stat.get("value")
+        if isinstance(value, list):
+            stat_max = max(stat_max, len(value))
+
+    material_max = 1
+    for group in item.get("levelUpMaterialItemGroups", []) or []:
+        try:
+            material_max = max(material_max, int(group.get("level", 0)) + 1)
+        except (TypeError, ValueError):
+            continue
+
+    return max(stat_max, material_max)
+
+
+def _level_point_cost_only(materials, level_point_item_id):
+    total = 0
+    for material in materials or []:
+        try:
+            item_id = int(material.get("id", material.get("itemDataId", 0)))
+            count = int(material.get("count", 1))
+        except (TypeError, ValueError):
+            return None
+        if item_id != level_point_item_id and count > 0:
+            return None
+        total += max(0, count)
+    return total
+
+
+def _skill_tree_level_up_cost(item, level, level_point_item_id):
+    for group in item.get("levelUpMaterialItemGroups", []) or []:
+        try:
+            group_level = int(group.get("level", -1))
+        except (TypeError, ValueError):
+            continue
+        if group_level != level:
+            continue
+        return _level_point_cost_only(group.get("materialItems", []), level_point_item_id)
+    return None
+
+
+def _skill_tree_required_item_ids(item):
+    raw = (item.get("popupArgs") or {}).get("RequiredSkillItemDataIds")
+    if raw is None or raw == "":
+        return []
+    if isinstance(raw, list):
+        values = raw
+    else:
+        values = [part.strip() for part in str(raw).split(",") if part.strip()]
+
+    out = []
+    for value in values:
+        try:
+            out.append(int(value))
+        except (TypeError, ValueError):
+            continue
+    return out
+
+
+def _skill_tree_requirements_met(item, player_level, owned_levels):
+    if player_level < _popup_int_value(item, "RequiredPlayerLevel", 1):
+        return False
+
+    required_skill_level = _popup_int_value(item, "RequiredSkillLevel", 0)
+    for required_item_id in _skill_tree_required_item_ids(item):
+        required_level = required_skill_level if required_skill_level > 0 else 1
+        if owned_levels.get(required_item_id, 0) < required_level:
+            return False
+    return True
+
+
+def _skill_tree_available_spends(skill_tree_items, player_level, owned_levels, points, level_point_item_id):
+    actions = []
+    for item in skill_tree_items:
+        item_id = item["id"]
+        owned_level = owned_levels.get(item_id, 0)
+        if owned_level > 0:
+            if owned_level >= _skill_tree_item_max_level(item):
+                continue
+            cost = _skill_tree_level_up_cost(item, owned_level, level_point_item_id)
+            if cost is not None and cost <= points:
+                actions.append(("level_up", item_id, cost))
+            continue
+
+        if not _skill_tree_requirements_met(item, player_level, owned_levels):
+            continue
+        cost = max(0, _popup_int_value(item, "UnlockCostLevelPoint", 0))
+        if cost <= points:
+            actions.append(("unlock", item_id, cost))
+
+    return sorted(actions, key=lambda action: (action[2], action[0] != "unlock", action[1]))
+
+
+def _validate_skill_tree_early_spend(
+    tree_id,
+    skill_tree_items,
+    level_point_item_id,
+    grant_per_level,
+    early_until_level,
+    errors,
+):
+    if early_until_level < 2:
+        return
+
+    item_by_id = {item["id"]: item for item in skill_tree_items}
+    initial_levels = {}
+    for item in skill_tree_items:
+        if not item.get("initialCreate"):
+            continue
+        try:
+            count = int(item.get("initialCreateCount", 1))
+            level = int(item.get("initialCreateLevel", 1))
+        except (TypeError, ValueError):
+            continue
+        if count > 0:
+            initial_levels[item["id"]] = max(1, level)
+
+    if not initial_levels:
+        errors.append(f"skill_tree {tree_id}: 초반 스킬트리 시작 스킬(initialCreate)이 없음")
+        return
+
+    memo = {}
+
+    def search(player_level, points, owned_levels):
+        if player_level > early_until_level:
+            return True
+
+        next_points = points + grant_per_level
+        key = (player_level, next_points, tuple(sorted(owned_levels.items())))
+        if key in memo:
+            return memo[key]
+
+        actions = _skill_tree_available_spends(
+            skill_tree_items,
+            player_level,
+            owned_levels,
+            next_points,
+            level_point_item_id,
+        )
+        for action, item_id, cost in actions:
+            next_levels = dict(owned_levels)
+            if action == "unlock":
+                next_levels[item_id] = max(1, int(item_by_id[item_id].get("initialCreateLevel", 1)))
+            else:
+                next_levels[item_id] = next_levels[item_id] + 1
+            if search(player_level + 1, next_points - cost, next_levels):
+                memo[key] = True
+                return True
+
+        memo[key] = False
+        return False
+
+    if search(2, 0, initial_levels):
+        return
+
+    points = 0
+    owned_levels = dict(initial_levels)
+    for player_level in range(2, early_until_level + 1):
+        points += grant_per_level
+        actions = _skill_tree_available_spends(
+            skill_tree_items,
+            player_level,
+            owned_levels,
+            points,
+            level_point_item_id,
+        )
+        if not actions:
+            errors.append(
+                f"skill_tree {tree_id}: Lv.{player_level} 초반 스킬 선택지가 없음 "
+                f"(보유 레벨 포인트 {points})"
+            )
+            return
+        action, item_id, cost = actions[0]
+        points -= cost
+        if action == "unlock":
+            owned_levels[item_id] = max(1, int(item_by_id[item_id].get("initialCreateLevel", 1)))
+        else:
+            owned_levels[item_id] += 1
+
+
+def validate_skill_tree(profile, bundles, errors):
+    config = (profile.get("progression", {}) or {}).get("skill_tree")
+    if not config:
+        return
+
+    items = bundles.get("item", [])
+    achievements = bundles.get("achievement", [])
+    skills = bundles.get("skill", [])
+    item_by_id = {entry.get("id"): entry for entry in items}
+    achievement_by_id = {entry.get("id"): entry for entry in achievements}
+    skill_ids = {entry.get("id") for entry in skills}
+
+    tree_id = str(
+        config.get("tree_id")
+        or profile.get("game", {}).get("name")
+        or profile.get("game", {}).get("id")
+        or ""
+    )
+    level_point_item_id = _int_or_none(
+        config.get("level_point_item_id"),
+        "progression.skill_tree.level_point_item_id",
+        errors,
+    )
+    grant_config = config.get("level_point_grant", {}) or {}
+    player_level_item_id = _int_or_none(
+        config.get("player_level_item_id")
+        or grant_config.get("player_level_item_id")
+        or profile.get("reserved_ids", {}).get("playerLevel"),
+        "progression.skill_tree.player_level_item_id",
+        errors,
+    )
+    if level_point_item_id is None or player_level_item_id is None:
+        return
+    if level_point_item_id not in item_by_id:
+        errors.append(f"skill_tree: level_point_item_id {level_point_item_id} 아이템 누락")
+    if player_level_item_id not in item_by_id:
+        errors.append(f"skill_tree: player_level_item_id {player_level_item_id} 아이템 누락")
+
+    grant_per_level = _int_or_none(
+        grant_config.get("grant_per_player_level_up", 1),
+        "progression.skill_tree.level_point_grant.grant_per_player_level_up",
+        errors,
+    )
+    if grant_per_level is None:
+        return
+
+    if grant_config.get("via") == "achievement":
+        achievement_id = _int_or_none(
+            grant_config.get("achievement_id"),
+            "progression.skill_tree.level_point_grant.achievement_id",
+            errors,
+        )
+        achievement = achievement_by_id.get(achievement_id)
+        ctx = f"skill_tree grant achievement {achievement_id}"
+        if achievement is None:
+            errors.append(f"{ctx}: 업적 리소스 누락")
+        else:
+            if achievement.get("condition") != grant_config.get("condition", "LevelUpItem"):
+                errors.append(f"{ctx}: condition은 LevelUpItem이어야 함")
+            if achievement.get("conditionValue1") != player_level_item_id:
+                errors.append(f"{ctx}: conditionValue1은 player_level_item_id여야 함")
+            if achievement.get("targetProgress") != 1:
+                errors.append(f"{ctx}: targetProgress는 1이어야 함")
+            if not achievement.get("repeatable"):
+                errors.append(f"{ctx}: repeatable=true 필요")
+            if not achievement.get("autoReward"):
+                errors.append(f"{ctx}: autoReward=true 필요")
+            reward_count = _add_item_total(
+                achievement.get("rewardAddItemGroups", []),
+                level_point_item_id,
+            )
+            if reward_count < grant_per_level:
+                errors.append(
+                    f"{ctx}: 레벨 포인트 {level_point_item_id} 보상이 "
+                    f"{grant_per_level}개 이상이어야 함"
+                )
+
+    gate_by_level = {}
+    for gate in config.get("level_gate_achievements", []) or []:
+        player_level = _int_or_none(gate.get("player_level"), "skill_tree.level_gate.player_level", errors)
+        achievement_id = _int_or_none(gate.get("achievement_id"), "skill_tree.level_gate.achievement_id", errors)
+        if player_level is None or achievement_id is None:
+            continue
+        gate_by_level[player_level] = achievement_id
+        achievement = achievement_by_id.get(achievement_id)
+        ctx = f"skill_tree level gate {achievement_id}"
+        if achievement is None:
+            errors.append(f"{ctx}: 업적 리소스 누락")
+            continue
+        if achievement.get("condition") != "HasItemLevel":
+            errors.append(f"{ctx}: condition은 HasItemLevel이어야 함")
+        if achievement.get("conditionValue1") != player_level_item_id:
+            errors.append(f"{ctx}: conditionValue1은 player_level_item_id여야 함")
+        if achievement.get("conditionValue2") != player_level:
+            errors.append(f"{ctx}: conditionValue2는 요구 플레이어 레벨이어야 함")
+        if achievement.get("targetProgress") != 1:
+            errors.append(f"{ctx}: targetProgress는 1이어야 함")
+        if not achievement.get("initialOpen"):
+            errors.append(f"{ctx}: initialOpen=true 필요")
+        if not achievement.get("autoReward"):
+            errors.append(f"{ctx}: autoReward=true 필요")
+        if "HideDisplay" not in (achievement.get("tags") or []):
+            errors.append(f"{ctx}: tags에 HideDisplay 필요")
+
+    skill_tree_items = [
+        item for item in items
+        if item.get("category") == "Skill"
+        and (item.get("popupArgs") or {}).get("SkillTree") == tree_id
+    ]
+    if not skill_tree_items:
+        errors.append(f"skill_tree {tree_id}: SkillTree popupArgs를 가진 Skill 아이템이 없음")
+        return
+
+    skill_tree_item_ids = {item["id"] for item in skill_tree_items}
+    for item in skill_tree_items:
+        item_id = item["id"]
+        ctx = f"skill_tree item {item_id}"
+        skill_data_id = item.get("skillDataId")
+        if skill_data_id not in skill_ids:
+            errors.append(f"{ctx}: skillDataId {skill_data_id} 스킬 리소스 누락")
+        if _popup_int(item, "LevelPointItemDataId", ctx, errors) != level_point_item_id:
+            errors.append(f"{ctx}: LevelPointItemDataId가 프로필과 다름")
+        required_player_level = _popup_int(item, "RequiredPlayerLevel", ctx, errors)
+        if required_player_level is not None and required_player_level < 1:
+            errors.append(f"{ctx}: RequiredPlayerLevel은 1 이상이어야 함")
+        max_skill_level = _popup_int(item, "MaxSkillLevel", ctx, errors)
+        if max_skill_level is not None and max_skill_level < 1:
+            errors.append(f"{ctx}: MaxSkillLevel은 1 이상이어야 함")
+
+        required_skill_ids = _parse_csv_ints(
+            (item.get("popupArgs") or {}).get("RequiredSkillItemDataIds"),
+            f"{ctx}.RequiredSkillItemDataIds",
+            errors,
+        )
+        child_skill_ids = _parse_csv_ints(
+            (item.get("popupArgs") or {}).get("ChildrenSkillItemDataIds"),
+            f"{ctx}.ChildrenSkillItemDataIds",
+            errors,
+        )
+        _require_ids_exist(ctx, "RequiredSkillItemDataIds", required_skill_ids, skill_tree_item_ids, errors)
+        _require_ids_exist(ctx, "ChildrenSkillItemDataIds", child_skill_ids, skill_tree_item_ids, errors)
+        missing_required_items = sorted(set(required_skill_ids) - set(item.get("requiredItemDataIds", [])))
+        if missing_required_items:
+            errors.append(
+                f"{ctx}: requiredItemDataIds에 선행 스킬 {missing_required_items} 누락"
+            )
+
+        if _material_item_total(item.get("levelUpMaterialItemGroups", []), level_point_item_id) <= 0:
+            errors.append(f"{ctx}: 스킬 강화 비용에 레벨 포인트 {level_point_item_id}가 없음")
+
+        gate_id = None
+        if required_player_level and required_player_level > 1:
+            gate_id = gate_by_level.get(required_player_level)
+            if gate_id is None:
+                errors.append(f"{ctx}: RequiredPlayerLevel {required_player_level} 게이트 업적 누락")
+            elif gate_id not in item.get("requiredAchievementDataIds", []):
+                errors.append(f"{ctx}: requiredAchievementDataIds에 레벨 게이트 {gate_id} 누락")
+
+        recipe_id = _popup_int(item, "UnlockRecipeItemDataId", ctx, errors, required=False)
+        if not recipe_id:
+            continue
+        recipe = item_by_id.get(recipe_id)
+        recipe_ctx = f"skill_tree recipe {recipe_id}"
+        if recipe is None:
+            errors.append(f"{ctx}: UnlockRecipeItemDataId {recipe_id} 리소스 누락")
+            continue
+        if recipe.get("category") != "Recipe":
+            errors.append(f"{recipe_ctx}: category는 Recipe여야 함")
+        unlock_skill_id = _popup_int(recipe, "UnlockSkillItemDataId", recipe_ctx, errors)
+        if unlock_skill_id != item_id:
+            errors.append(f"{recipe_ctx}: UnlockSkillItemDataId가 스킬 아이템 {item_id}와 다름")
+        recipe_required_level = _popup_int(recipe, "RequiredPlayerLevel", recipe_ctx, errors)
+        if required_player_level != recipe_required_level:
+            errors.append(f"{recipe_ctx}: RequiredPlayerLevel이 스킬 아이템과 다름")
+        if _popup_int(recipe, "LevelPointItemDataId", recipe_ctx, errors) != level_point_item_id:
+            errors.append(f"{recipe_ctx}: LevelPointItemDataId가 프로필과 다름")
+        if gate_id and gate_id not in recipe.get("requiredAchievementDataIds", []):
+            errors.append(f"{recipe_ctx}: requiredAchievementDataIds에 레벨 게이트 {gate_id} 누락")
+        if item_id not in recipe.get("targetItemDataIds", []):
+            errors.append(f"{recipe_ctx}: targetItemDataIds에 {item_id} 누락")
+        if _add_item_total(recipe.get("addItemGroups", []), item_id) <= 0:
+            errors.append(f"{recipe_ctx}: addItemGroups가 스킬 아이템 {item_id}를 지급하지 않음")
+        if _material_item_total(recipe.get("materialItemGroups", []), level_point_item_id) <= 0:
+            errors.append(f"{recipe_ctx}: 해금 비용에 레벨 포인트 {level_point_item_id}가 없음")
+
+    early_until_level = config.get("early_spend_each_level_until")
+    if early_until_level is not None:
+        early_until_level = _int_or_none(
+            early_until_level,
+            "progression.skill_tree.early_spend_each_level_until",
+            errors,
+        )
+        if early_until_level is not None:
+            _validate_skill_tree_early_spend(
+                tree_id,
+                skill_tree_items,
+                level_point_item_id,
+                grant_per_level,
+                early_until_level,
+                errors,
+            )
+
+
 # ============================================================
 # 검증
 # ============================================================
@@ -1375,6 +1828,7 @@ def validate(game, bundles, triggers, globals_out, warns, errors):
                     warns.append(f"{tname} {entry.get('id')}: itemDataId {item_id} 미정의")
 
     validate_unit_visual_scale(profile, bundles, errors)
+    validate_skill_tree(profile, bundles, errors)
 
     item_global = globals_out["itemGlobal"]
     map_global = globals_out["mapGlobal"]

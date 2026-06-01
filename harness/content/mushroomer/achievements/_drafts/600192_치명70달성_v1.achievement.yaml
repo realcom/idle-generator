@@ -1,0 +1,21 @@
+id: 600192
+name: "치명 70 달성"
+type: Normal
+tags: []
+order: 192
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1003
+conditionValue2: 70
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 15500 }
+      - { itemDataId: 200103, count: 20 }
+      - { itemDataId: 200106, count: 1 }

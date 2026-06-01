@@ -1,0 +1,31 @@
+id: 200423
+name: "황금 볼주머니 학습"
+category: Recipe
+grade: 5
+rarity: 5
+group: 200401
+order: 12
+targetItemDataIds: [200415]
+requiredItemDataIds: [200414]
+requiredAchievementDataIds: [600123]
+exclusiveItemDataIds: [200415]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200107, count: 15 }
+      - { id: 200104, count: 42 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200415, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Mushroomer"
+  UnlockSkillItemDataId: "200415"
+  RequiredSkillItemDataIds: "200414"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "100"
+  UnlockCostLevelPoint: "15"
+  LevelPointItemDataId: "200107"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_golden_cheek_pouch.png"

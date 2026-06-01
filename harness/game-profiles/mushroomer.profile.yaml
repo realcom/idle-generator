@@ -82,10 +82,10 @@ id_ranges:
   reward:      { start: 700000, end: 799999 }
 
 theme:
-  tone: "귀엽고 단순한 버섯 판타지"
-  setting: "작은 버섯 용사가 숲과 동굴을 돌파하는 캐주얼 키우기 RPG"
+  tone: "귀엽고 경쾌한 햄스터 장난감 판타지"
+  setting: "작은 햄스터 영웅이 정원, 쳇바퀴, 간식 창고를 돌파하는 캐주얼 키우기 RPG"
   naming_style: "한글 2~10자, 짧고 읽기 쉬운 이름"
-  motifs: [버섯, 포자, 숲, 동굴, 이끼]
+  motifs: [햄스터, 해바라기씨, 볼주머니, 쳇바퀴, 톱밥, 간식]
 
 balance:
   level_cap: 120
@@ -99,6 +99,8 @@ balance:
 
 progression:
   skill_tree:
+    tree_id: Mushroomer
+    player_level_item_id: 1
     level_point_item_id: 200107
     level_point_grant:
       via: achievement
@@ -106,6 +108,19 @@ progression:
       condition: LevelUpItem
       player_level_item_id: 1
       grant_per_player_level_up: 1
+    early_spend_each_level_until: 20
+    level_gate_achievements:
+      - { player_level: 5, achievement_id: 600113 }
+      - { player_level: 8, achievement_id: 600114 }
+      - { player_level: 12, achievement_id: 600115 }
+      - { player_level: 30, achievement_id: 600116 }
+      - { player_level: 40, achievement_id: 600117 }
+      - { player_level: 50, achievement_id: 600118 }
+      - { player_level: 60, achievement_id: 600119 }
+      - { player_level: 70, achievement_id: 600120 }
+      - { player_level: 80, achievement_id: 600121 }
+      - { player_level: 90, achievement_id: 600122 }
+      - { player_level: 100, achievement_id: 600123 }
 
 shop:
   product_costs:

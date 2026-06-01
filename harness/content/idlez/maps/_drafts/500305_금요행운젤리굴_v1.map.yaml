@@ -1,0 +1,38 @@
+id: 500305
+group: 500305
+stage: 1
+name: "금요 행운젤리굴"
+type: Dungeon
+tags: [WeekdayDungeon, Friday, Drop]
+scene: "PFB_MAP_SlimeQueen_Day_DailyDungeon"
+prefab: "Maps/Prefabs/PFB_MAP_SlimeQueen_Day_DailyDungeon.prefab"
+sprite: "Maps/Map_SlimeQueen/Img_Map_SlimeQueen_1.png"
+targetCameraPivot: { x: 0.5, y: 0.58 }
+fov: 9.25
+popupArgs: { ClientModeManager: ModeManagerMushroom, ClientHomeMapDataId: 500101 }
+initLevel: 10
+enableUnitExp: true
+initVariables:
+  - { callerKey: 605, value: 10 }
+  - { callerKey: 606, value: 11 }
+boardConstants: { levelUpChoiceCount: 3 }
+locations:
+  - { id: -1, position: { x: -7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 0.75 } }] }
+  - { id: 1, position: { x: 7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 1.8 } }] }
+terrains:
+  - vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+  - type: Skill
+    vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+triggers: [MAP_ONSTART_WEEKDAYFRIDAYJELLYWAVE1, MAP_ONUPDATE_WEEKDAYFRIDAYJELLYUPDATE]
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200111, count: 18 }
+      - { itemDataId: 200112, count: 8, isCore: true }
+  - shouldAddAll: false
+    probPercent: 50
+    addItems:
+      - { itemDataId: 200113, count: 1, weight: 100, group: 1, pityGroup: 4 }

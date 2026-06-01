@@ -1,0 +1,26 @@
+id: 201504
+name: "장비 부스터 팩"
+category: Product
+type: MaterialRealPrice
+grade: 1
+iapIdentifier: "idlez.limited.equipment_booster"
+priceUsd: 9.99
+priceWon: 11000
+startAt: "2026-06-01T00:00:00Z"
+untilAt: "2026-06-30T23:59:59Z"
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200201, count: 1, level: 1, isCore: true }
+      - { itemDataId: 200101, count: 30 }
+      - { itemDataId: 200102, count: 15 }
+      - { itemDataId: 200103, count: 5 }
+      - { itemDataId: 5, count: 12000 }
+spriteGroups:
+  Icon: "Items/Shops/shop_banner_equipment_booster.png"
+popupArgs:
+  ShopSection: "Limited"
+  ProductKind: "EquipmentBooster"
+  Badge: "한정"
+  Summary: "장비와 강화 재료를 즉시 지급"

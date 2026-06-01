@@ -1,0 +1,20 @@
+id: 600156
+name: "레벨 2 달성"
+type: Normal
+tags: []
+order: 156
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1
+conditionValue2: 2
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 500 }
+      - { itemDataId: 6, count: 100 }

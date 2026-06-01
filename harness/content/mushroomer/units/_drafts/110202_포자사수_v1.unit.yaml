@@ -1,0 +1,48 @@
+id: 110202
+name: "포자 사수"
+type: Normal
+tags: [Monster, Mushroomer, Main, Ranged]
+armorType: NormalArmor
+warmupDelay: 0.9
+targetMode: Chaser
+targetAwareDistance: 28.0
+targetResetDistance: 34.0
+deadDestroyDelaySeconds: 0.45
+
+addStats:
+  - { type: Hp, value: [90.0] }
+  - { type: Attack, value: [7.0] }
+  - { type: Defense, value: [1.0] }
+  - { type: AttackSpeed, value: [0.85] }
+  - { type: MoveSpeed, value: [2.5] }
+
+triggers:
+  - UNIT_ONSTART_SPORERANGERTAKEPOSITION
+  - UNIT_ONUPDATE_SPORERANGERVOLLEY
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 24, maxCount: 38, isCore: true }
+      - { itemDataId: 6, count: 10 }
+  - shouldAddAll: false
+    probPercent: 35
+    addItems:
+      - { itemDataId: 200101, count: 1, weight: 80, group: 1 }
+      - { itemDataId: 200102, count: 1, weight: 20, group: 1, pityGroup: 8 }
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200108, count: 7 }
+
+prefab: "Units/Monsters/ranged_pine_cone_brown.prefab"
+sprite: "Units/Monsters/Assets/ranged_pine_cone.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 0.94
+collideSize: { x: 0.85, y: 0.85 }
+hitSize: { x: 0.95, y: 0.95 }

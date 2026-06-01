@@ -1,0 +1,44 @@
+id: 110302
+name: "강철 방패 오니"
+type: Elite
+tags: [Monster, WeekdayDungeon, Tuesday, EquipmentMaterial]
+armorType: NormalArmor
+warmupDelay: 1.2
+targetMode: Chaser
+targetAwareDistance: 24.0
+targetResetDistance: 30.0
+deadDestroyDelaySeconds: 0.65
+
+addStats:
+  - { type: Hp, value: [420.0] }
+  - { type: Attack, value: [24.0] }
+  - { type: Defense, value: [16.0] }
+  - { type: AttackSpeed, value: [0.65] }
+  - { type: MoveSpeed, value: [1.65] }
+
+triggers:
+  - UNIT_ONSTART_WEEKDAYSTEELGUARDSTART
+  - UNIT_ONUPDATE_WEEKDAYSTEELGUARDATTACK
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 45, maxCount: 80 }
+      - { itemDataId: 200103, count: 2, isCore: true }
+  - shouldAddAll: false
+    probPercent: 30
+    addItems:
+      - { itemDataId: 200102, count: 1, weight: 75, group: 1 }
+      - { itemDataId: 200106, count: 1, weight: 25, group: 1, pityGroup: 8 }
+
+prefab: "Units/Monsters/large_melee_oni_shield_red.prefab"
+sprite: "Units/Monsters/Assets/large_melee_oni_shield.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 1.18
+collideSize: { x: 1.35, y: 1.35 }
+hitSize: { x: 1.55, y: 1.55 }

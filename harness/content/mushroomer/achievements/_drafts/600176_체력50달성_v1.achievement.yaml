@@ -1,0 +1,20 @@
+id: 600176
+name: "체력 50 달성"
+type: Normal
+tags: []
+order: 176
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1001
+conditionValue2: 50
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 6000 }
+      - { itemDataId: 200103, count: 10 }

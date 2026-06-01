@@ -1,0 +1,19 @@
+id: 600152
+name: "장비 첫 획득"
+type: Normal
+tags: []
+order: 152
+initialOpen: true
+clientAchievement: false
+condition: AcquireEquipmentItemAny
+conditionValue1: 0
+conditionValue2: 0
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200103, count: 3 }

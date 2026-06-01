@@ -1,0 +1,20 @@
+id: 600200
+name: "장비 10개 획득"
+type: Normal
+tags: []
+order: 200
+initialOpen: true
+clientAchievement: false
+condition: AcquireEquipmentItemAny
+conditionValue1: 0
+conditionValue2: 0
+targetProgress: 10
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200103, count: 12 }
+      - { itemDataId: 200106, count: 1 }

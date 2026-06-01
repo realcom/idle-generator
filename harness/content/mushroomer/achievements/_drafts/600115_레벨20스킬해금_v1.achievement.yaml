@@ -1,0 +1,18 @@
+id: 600115
+name: "레벨 12 스킬 해금"
+type: Normal
+tags: [HideDisplay, SkillTree]
+order: 115
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1
+conditionValue2: 12
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+popupArgs:
+  Source: SkillTreeLevelGate
+  SkillTree: Mushroomer
+  RequiredPlayerLevel: "12"

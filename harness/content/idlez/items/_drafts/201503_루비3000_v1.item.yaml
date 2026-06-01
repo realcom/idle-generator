@@ -1,0 +1,20 @@
+id: 201503
+name: "루비 3000"
+category: Product
+type: MaterialRealPrice
+grade: 1
+iapIdentifier: "idlez.ruby.3000"
+priceUsd: 19.99
+priceWon: 22000
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 3, count: 3000, isCore: true }
+spriteGroups:
+  Icon: "Items/Shops/shop_banner_ruby_large.png"
+popupArgs:
+  ShopSection: "Ruby"
+  DisplayCurrencyName: "루비"
+  BonusBadge: "33% 추가"
+  PriceTier: "3"

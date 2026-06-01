@@ -1,0 +1,50 @@
+id: 200414
+name: "햄찌 대질주서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 4
+rarity: 5
+group: 200401
+constantDamageRatio: 1.0
+order: 11
+parentId: 200401
+skillDataId: 300111
+unstackable: true
+requiredItemDataIds: [200413]
+requiredAchievementDataIds: [600122]
+targetItemDataIds: [200415]
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200107, count: 10 }
+      - { id: 200104, count: 32 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200107, count: 12 }
+      - { id: 200104, count: 42 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200107, count: 15 }
+      - { id: 200104, count: 54 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200107, count: 18 }
+      - { id: 200104, count: 70 }
+popupArgs:
+  SkillTree: "Mushroomer"
+  SkillTreeNode: "Overrun"
+  ChildrenSkillItemDataIds: "200415"
+  UnlockRecipeItemDataId: "200422"
+  UnlockCostLevelPoint: "12"
+  LevelPointItemDataId: "200107"
+  RequiredSkillItemDataIds: "200413"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "90"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "11"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_stampede.png"

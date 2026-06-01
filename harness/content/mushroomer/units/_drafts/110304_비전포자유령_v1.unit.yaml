@@ -1,0 +1,41 @@
+id: 110304
+name: "비전 유령 궁수"
+type: Elite
+tags: [Monster, WeekdayDungeon, Wednesday, Skill]
+armorType: NormalArmor
+warmupDelay: 0.9
+targetMode: Chaser
+targetAwareDistance: 25.0
+targetResetDistance: 32.0
+deadDestroyDelaySeconds: 0.55
+
+addStats:
+  - { type: Hp, value: [260.0] }
+  - { type: Attack, value: [27.0] }
+  - { type: Defense, value: [5.0] }
+  - { type: CriticalPercent, value: [16.0] }
+  - { type: AttackSpeed, value: [1.15] }
+  - { type: MoveSpeed, value: [3.1] }
+
+triggers:
+  - UNIT_ONSTART_WEEKDAYMYSTICGHOSTSTART
+  - UNIT_ONUPDATE_WEEKDAYMYSTICGHOSTATTACK
+
+dropAddItemGroups:
+  - shouldAddAll: false
+    probPercent: 35
+    addItems:
+      - { itemDataId: 200104, count: 1, weight: 60, group: 1, isCore: true }
+      - { itemDataId: 1000, count: 1, weight: 20, group: 1 }
+      - { itemDataId: 1003, count: 1, weight: 20, group: 1, pityGroup: 10 }
+
+prefab: "Units/Monsters/ranged_ghost_bow_blue.prefab"
+sprite: "Units/Monsters/Assets/ranged_ghost_bow.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 0.96
+collideSize: { x: 0.9, y: 0.9 }
+hitSize: { x: 1.05, y: 1.05 }

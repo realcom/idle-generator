@@ -1,0 +1,20 @@
+id: 600138
+name: "레벨 80 달성"
+type: Normal
+tags: []
+order: 138
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1
+conditionValue2: 80
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 32000 }
+      - { itemDataId: 4, count: 20 }

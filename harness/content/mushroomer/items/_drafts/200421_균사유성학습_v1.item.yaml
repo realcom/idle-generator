@@ -1,0 +1,31 @@
+id: 200421
+name: "별사탕 유성 학습"
+category: Recipe
+grade: 4
+rarity: 4
+group: 200401
+order: 10
+targetItemDataIds: [200413]
+requiredItemDataIds: [200411, 200412]
+requiredAchievementDataIds: [600121]
+exclusiveItemDataIds: [200413]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200107, count: 10 }
+      - { id: 200104, count: 24 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200413, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Mushroomer"
+  UnlockSkillItemDataId: "200413"
+  RequiredSkillItemDataIds: "200411,200412"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "80"
+  UnlockCostLevelPoint: "10"
+  LevelPointItemDataId: "200107"
+spriteGroups:
+  Icon: "assets/ui/icons/skills/skill_ham_star_candy_meteor.png"

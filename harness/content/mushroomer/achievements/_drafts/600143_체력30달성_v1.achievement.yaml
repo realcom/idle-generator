@@ -1,0 +1,20 @@
+id: 600143
+name: "체력 30 달성"
+type: Normal
+tags: []
+order: 143
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1001
+conditionValue2: 30
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 3000 }
+      - { itemDataId: 200103, count: 6 }

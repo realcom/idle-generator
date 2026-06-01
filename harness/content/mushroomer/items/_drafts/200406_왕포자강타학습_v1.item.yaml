@@ -1,5 +1,5 @@
 id: 200406
-name: "왕포자 강타 학습"
+name: "앞니 강타 학습"
 category: Recipe
 grade: 1
 rarity: 2
@@ -7,12 +7,12 @@ group: 200401
 order: 3
 targetItemDataIds: [200403]
 requiredItemDataIds: [200401]
+requiredAchievementDataIds: [600114]
 exclusiveItemDataIds: [200403]
 materialItemGroups:
   - shouldAllValid: true
     materialItems:
-      - { id: 200107, count: 2 }
-      - { id: 200104, count: 4 }
+      - { id: 200107, count: 1 }
 addItemGroups:
   - shouldAddAll: true
     probPercent: 100
@@ -23,7 +23,8 @@ popupArgs:
   UnlockSkillItemDataId: "200403"
   RequiredSkillItemDataIds: "200401"
   RequiredSkillLevel: "3"
-  UnlockCostLevelPoint: "2"
+  RequiredPlayerLevel: "8"
+  UnlockCostLevelPoint: "1"
   LevelPointItemDataId: "200107"
 spriteGroups:
-  Icon: "UIAssets/Images/ingame_icn_start.png"
+  Icon: "assets/ui/icons/skills/skill_ham_front_teeth_slam.png"
