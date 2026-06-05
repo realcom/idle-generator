@@ -16,6 +16,7 @@ Purpose: convert a reviewed UI recipe into generated Unity uGUI prefabs.
 - The recipe file under `harness/unity/recipes/`.
 - `harness/unity/registries/ugui-atoms.yaml`.
 - `harness/design/<game>/component-skins.yaml`.
+- `harness/design/<game>/asset-plan.yaml`.
 - `engine/client/Client/Assets/Scripts/Components/UI/UIElement.cs` naming and auto-binding rules.
 - Existing Editor builder/prefab if updating an already generated UI.
 
@@ -25,12 +26,13 @@ Purpose: convert a reviewed UI recipe into generated Unity uGUI prefabs.
 2. If the Editor builder does not exist, create/update it under `engine/client/Client/Assets/Scripts/Editor/Harness/` or the repo's existing Editor folder pattern.
 3. Generate prefabs only through Unity Editor APIs. Do not hand-write prefab YAML.
 4. Use uGUI elements as the real structure: `RectTransform`, `Image`, `Button`, `TextMeshProUGUI`, `CanvasGroup`, `AspectRatioFitter`, layout components when appropriate.
-5. Follow `UIElement.FillReference` naming conventions: `Text_`, `Btn_`, `Icon`, `Panel_`, and field-prefix-compatible names.
-6. Compile/refresh Unity through the existing unity-cli flow when available.
-7. Run the builder through Unity Editor APIs, then run the recipe validator again.
-8. Run a real Play Mode smoke when the prefab is intended to appear in `GameScene`.
-9. Capture and inspect the actual Unity Game view after meaningful visual changes.
-10. Report generated prefab paths, generated sprite paths, visual QA result, and any blocked verification.
+5. Use asset paths from `asset-plan.yaml` for `platforms: [unity]` or shared assets; do not invent bypass paths.
+6. Follow `UIElement.FillReference` naming conventions: `Text_`, `Btn_`, `Icon`, `Panel_`, and field-prefix-compatible names.
+7. Compile/refresh Unity through the existing unity-cli flow when available.
+8. Run the builder through Unity Editor APIs, then run the recipe validator again.
+9. Run a real Play Mode smoke when the prefab is intended to appear in `GameScene`.
+10. Capture and inspect the actual Unity Game view after meaningful visual changes.
+11. Report generated prefab paths, generated sprite paths, visual QA result, and any blocked verification.
 
 ## 9-slice skin rules
 
@@ -65,6 +67,7 @@ Purpose: convert a reviewed UI recipe into generated Unity uGUI prefabs.
 ## Rules
 
 - Do not modify engine runtime systems unless the recipe cannot be represented by existing uGUI atoms.
+- Do not implement Phaser DOM/canvas UI in this skill.
 - Generated prefab paths should live under a clearly marked generated folder.
 - If a prefab already exists and is hand-authored, ask before replacing it.
 - Include newly generated sprites and `.meta` files with the prefab change; otherwise Unity references will break.

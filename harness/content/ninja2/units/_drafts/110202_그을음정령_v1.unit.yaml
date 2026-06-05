@@ -1,0 +1,43 @@
+id: 110202
+name: "그을음 정령"
+type: Elite
+tags: [Monster]
+armorType: NormalArmor
+warmupDelay: 1.0
+targetMode: Chaser
+targetAwareDistance: 24.0
+targetResetDistance: 30.0
+deadDestroyDelaySeconds: 0.45
+
+addStats:
+  - { type: Hp, value: [58.0, 69.0, 82.0, 98.0, 116.0, 138.0, 164.0, 195.0, 232.0, 276.0, 328.0, 390.0, 464.0, 552.0, 657.0, 782.0, 931.0, 1108.0, 1319.0, 1570.0] }
+  - { type: Attack, value: [7.0, 8.0, 10.0, 12.0, 14.0, 17.0, 20.0, 24.0, 29.0, 35.0, 42.0, 50.0, 60.0, 72.0, 86.0, 103.0, 124.0, 149.0, 179.0, 215.0] }
+  - { type: Defense, value: [1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10.0, 11.0, 13.0, 15.0, 18.0] }
+  - { type: MoveSpeed, value: [3.7] }
+  - { type: ScalePercent, value: [-64.0] }
+
+triggers:
+  - UNIT_ONSTART_BAMBOOBANDITWANDER
+  - UNIT_ONUPDATE_BAMBOOBANDITATTACK
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 18, maxCount: 30, isCore: true }
+      - { itemDataId: 6, count: 9 }
+  - shouldAddAll: false
+    probPercent: 58
+    addItems:
+      - { itemDataId: 200101, count: 1, weight: 65, group: 1 }
+      - { itemDataId: 200102, count: 1, weight: 35, group: 1 }
+
+prefab: "Units/Monsters/PFB_NINJA2_SootSpirit.prefab"
+sprite: "Units/Monsters/Assets/enemy_soot_spirit.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 1.0
+

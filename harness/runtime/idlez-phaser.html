@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mushroomer Phaser Client</title>
-<script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/phaser@4.1.0/dist/phaser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/protobufjs@7.4.0/dist/protobuf.min.js"></script>
 <script src="vendor/spine-webgl.min.js"></script>
 <style>
@@ -3150,6 +3150,966 @@ button.tab,
 	    font-size: 9px;
 	  }
 	}
+
+/* Keep the upper HUD inside the battle scene instead of reserving a separate sky band. */
+.app {
+  gap: 0;
+  grid-template-rows: minmax(0, 1fr) auto;
+  background:
+    linear-gradient(90deg, rgba(48, 27, 15, .58) 0 8px, transparent 8px calc(100% - 8px), rgba(48, 27, 15, .58) calc(100% - 8px)),
+    linear-gradient(180deg, rgba(255, 255, 255, .06), transparent 10%),
+    linear-gradient(180deg, #37200f 0%, #1e1008 100%);
+}
+
+.top-hud {
+  position: absolute;
+  top: 7px;
+  left: 12px;
+  right: 12px;
+  z-index: 34;
+  min-height: 54px;
+  margin: 0;
+  pointer-events: auto;
+}
+
+.top-profile-card {
+  min-height: 52px;
+  grid-template-columns: 45px minmax(0, 1fr);
+  padding: 4px 11px 6px 5px;
+  border-radius: 20px;
+}
+
+.top-profile-card::before {
+  inset: 6px 10px 7px 40px;
+}
+
+.top-profile-portrait {
+  width: 37px;
+  height: 37px;
+}
+
+.top-profile-name {
+  font-size: 12px;
+}
+
+.top-profile-level {
+  font-size: 10px;
+}
+
+.top-profile-card .xp-hud {
+  min-height: 9px;
+  grid-template-columns: minmax(0, 1fr) 28px;
+  gap: 4px;
+}
+
+.top-profile-card .xp-track {
+  height: 8px;
+}
+
+.top-profile-card .xp-hud-value {
+  font-size: 9px;
+}
+
+.top-currency {
+  height: 32px;
+  grid-template-columns: 25px minmax(0, 1fr) 11px;
+  padding: 4px 5px 5px 4px;
+}
+
+.top-currency::before {
+  left: 28px;
+  right: 15px;
+  top: 8px;
+  bottom: 8px;
+}
+
+.top-currency .hud-value {
+  font-size: 12px;
+}
+
+.top-currency-icon {
+  width: 21px;
+  height: 21px;
+}
+
+.top-gold-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.top-ruby-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.top-currency .plus-dot {
+  width: 11px;
+  height: 11px;
+}
+
+.top-menu-button {
+  width: 40px;
+  height: 48px;
+}
+
+.top-menu-icon {
+  width: 26px;
+  height: 26px;
+}
+
+.stage-banner {
+  position: absolute;
+  top: 61px;
+  left: 50%;
+  z-index: 30;
+  width: min(54%, 216px);
+  min-height: 46px;
+  margin: 0;
+  padding: 6px 15px 7px;
+  border-radius: 14px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.stage-name {
+  font-size: 11px;
+}
+
+.stage-code {
+  font-size: 15px;
+}
+
+.wave-label {
+  font-size: 9px;
+}
+
+.combat-shell {
+  grid-row: 1;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+}
+
+.stage-frame {
+  height: 100%;
+  border-radius: 8px 8px 0 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .08), transparent 24%, rgba(13, 42, 23, .16) 80%, rgba(8, 31, 17, .42)),
+    var(--map-sky-color);
+}
+
+#gameStage canvas {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+}
+
+.stage-frame::after {
+  box-shadow:
+    inset 0 78px 52px rgba(255, 255, 255, .035),
+    inset 0 -34px 28px rgba(5, 31, 16, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .18);
+}
+
+.side-stack.left {
+  top: 132px;
+}
+
+.side-stack.right {
+  top: 88px;
+}
+
+.mission-card {
+  top: 136px;
+}
+
+.skill-quickbar {
+  bottom: 12px;
+}
+
+.summon-rail,
+.growth-dock {
+  grid-row: auto;
+}
+
+.growth-dock {
+  margin-top: -8px;
+}
+
+@media (max-width: 380px) {
+  .top-hud {
+    left: 10px;
+    right: 10px;
+    grid-template-columns: minmax(120px, 1.14fr) minmax(82px, .94fr) minmax(54px, .7fr) 38px;
+  }
+
+  .stage-banner {
+    top: 60px;
+    width: min(56%, 210px);
+  }
+
+  .side-stack.left {
+    top: 130px;
+  }
+
+  .side-stack.right {
+    top: 86px;
+  }
+
+  .mission-card {
+    top: 134px;
+  }
+}
+
+/* Final visual pass: align borders, spacing, and palette to the Phaser wood UI tokens. */
+:root {
+  --ui-line-soft: #3a2416;
+  --ui-line-deep: #241006;
+  --ui-wood-top: #8a4a1b;
+  --ui-wood-mid: #613015;
+  --ui-wood-low: #2f1408;
+  --ui-wood-panel: #4a230f;
+  --ui-parchment: #fff1c8;
+  --ui-parchment-low: #e8bd79;
+  --ui-gold-top: #ffd96a;
+  --ui-gold-mid: #ef9d25;
+  --ui-shadow-soft: rgba(23, 8, 2, .34);
+  --ui-highlight: rgba(255, 231, 151, .28);
+}
+
+html,
+body {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(128, 83, 45, .34), transparent 46%),
+    linear-gradient(90deg, #1e130c, #3d2518 24%, #27180f 50%, #3d2518 76%, #1e130c);
+}
+
+.app {
+  padding: 5px 6px 0;
+  background:
+    linear-gradient(90deg, rgba(36, 20, 11, .54) 0 4px, transparent 4px calc(100% - 4px), rgba(36, 20, 11, .54) calc(100% - 4px)),
+    linear-gradient(180deg, rgba(255, 244, 184, .05), transparent 18%),
+    linear-gradient(180deg, #243e20 0%, #263719 63%, #261408 63%, #1b0c05 100%);
+  box-shadow:
+    inset 0 0 0 3px rgba(41, 24, 13, .72),
+    inset 0 0 0 1px rgba(255, 219, 137, .18);
+}
+
+.top-hud {
+  top: 6px;
+  left: 10px;
+  right: 10px;
+  grid-template-columns: minmax(132px, 1.08fr) minmax(86px, .86fr) minmax(60px, .66fr) 38px;
+  gap: 5px;
+  min-height: 50px;
+}
+
+.top-profile-card,
+.top-currency,
+.top-menu-button,
+.stage-banner,
+.mission-card,
+.growth-dock,
+.equipment-panel,
+.equipment-choice-panel {
+  border: 2px solid var(--ui-line-soft);
+  box-shadow:
+    inset 0 2px 0 var(--ui-highlight),
+    inset 0 -2px 0 rgba(25, 8, 2, .34),
+    0 2px 0 var(--ui-shadow-soft);
+}
+
+.top-profile-card,
+.top-currency,
+.top-menu-button,
+.stage-banner {
+  background:
+    linear-gradient(180deg, rgba(255, 218, 126, .22), transparent 33%),
+    repeating-linear-gradient(0deg, rgba(255, 229, 148, .035) 0 1px, transparent 1px 7px),
+    linear-gradient(180deg, var(--ui-wood-top) 0%, var(--ui-wood-mid) 52%, var(--ui-wood-low) 100%);
+}
+
+.top-profile-card {
+  min-height: 50px;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 5px;
+  padding: 4px 9px 5px 5px;
+  border-radius: 18px;
+}
+
+.top-profile-card::before {
+  inset: 6px 9px 7px 38px;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 183, 80, .14), transparent 45%),
+    linear-gradient(#5a2b12, #2b1207);
+}
+
+.top-profile-portrait {
+  width: 34px;
+  height: 34px;
+}
+
+.top-profile-name {
+  font-size: 11px;
+}
+
+.top-profile-level {
+  font-size: 9px;
+}
+
+.top-profile-card .xp-hud {
+  min-height: 8px;
+  grid-template-columns: minmax(0, 1fr) 26px;
+  gap: 4px;
+}
+
+.top-profile-card .xp-track {
+  height: 7px;
+  background: #221006;
+}
+
+.top-profile-card .xp-hud-value {
+  font-size: 8px;
+}
+
+.top-currency {
+  height: 30px;
+  grid-template-columns: 23px minmax(0, 1fr) 10px;
+  gap: 2px;
+  padding: 4px 5px;
+  border-radius: 16px;
+}
+
+.top-currency::before {
+  left: 26px;
+  right: 14px;
+  top: 7px;
+  bottom: 7px;
+  background: linear-gradient(#5a2b12, #2a1106);
+}
+
+.top-currency-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.top-gold-icon {
+  width: 17px;
+  height: 17px;
+}
+
+.top-ruby-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.top-currency .hud-value {
+  font-size: 11px;
+  text-shadow: 0 1px 0 #120602;
+}
+
+.top-currency .plus-dot {
+  width: 10px;
+  height: 10px;
+}
+
+.top-menu-button {
+  width: 38px;
+  height: 46px;
+  border-radius: 13px;
+}
+
+.top-menu-button::before {
+  inset: 5px;
+  border-radius: 9px;
+  background: linear-gradient(#744019, #3a1707);
+}
+
+.top-menu-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.stage-banner {
+  top: 57px;
+  width: min(50%, 202px);
+  min-height: 42px;
+  padding: 5px 13px 6px;
+  border-radius: 13px;
+}
+
+.stage-banner::before {
+  inset: 7px 12px 8px;
+  border-radius: 10px;
+}
+
+.stage-title-row {
+  gap: 6px;
+}
+
+.stage-name {
+  font-size: 10px;
+}
+
+.stage-code {
+  font-size: 14px;
+}
+
+.wave-label {
+  font-size: 8px;
+}
+
+.wave-track {
+  height: 4px;
+}
+
+.stage-frame {
+  border-radius: 6px 6px 0 0;
+}
+
+.side-stack {
+  gap: 7px;
+}
+
+.side-stack.left {
+  left: 11px;
+  top: 124px;
+}
+
+.side-stack.right {
+  right: 10px;
+  top: 82px;
+}
+
+.side-button {
+  width: 44px;
+  min-height: 52px;
+  padding: 6px 4px;
+  border: 0;
+  background: transparent url("assets/ui/buttons/btn_side_wood_vertical.png") center / 100% 100% no-repeat;
+  box-shadow: none;
+  font-size: 8px;
+}
+
+.side-button .symbol {
+  height: 19px;
+  font-size: 18px;
+}
+
+.mission-card {
+  right: 54px;
+  top: 130px;
+  width: min(34%, 136px);
+  padding: 8px 9px;
+  border-color: var(--ui-line-soft);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 231, .58), transparent 34%),
+    linear-gradient(180deg, var(--ui-parchment), var(--ui-parchment-low));
+}
+
+.mission-title {
+  font-size: 12px;
+}
+
+.mission-copy,
+.reward-mini-row {
+  font-size: 9px;
+}
+
+.skill-quickbar {
+  left: 56px;
+  right: 56px;
+  bottom: 7px;
+  gap: 5px;
+}
+
+.skill-slot {
+  min-height: 46px;
+  padding: 4px 5px;
+  border: 2px solid var(--ui-line-soft);
+  border-radius: 9px;
+  background:
+    linear-gradient(180deg, rgba(255, 238, 170, .18), transparent 38%),
+    linear-gradient(#6f3917, #351607);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 225, 145, .18),
+    0 2px 0 rgba(18, 6, 1, .3);
+}
+
+.summon-rail {
+  min-height: 34px;
+  margin: -18px 0 -10px;
+}
+
+.equip-summon-button {
+  min-width: 196px;
+  min-height: 48px;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 7px;
+  padding: 5px 11px 6px 5px;
+  border: 2px solid var(--ui-line-soft);
+  background:
+    linear-gradient(180deg, rgba(255, 247, 197, .44), transparent 38%),
+    linear-gradient(var(--ui-gold-top), var(--ui-gold-mid) 58%, #bc6417);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 248, 187, .38),
+    inset 0 -2px 0 rgba(131, 57, 6, .36),
+    0 2px 0 rgba(27, 9, 1, .34);
+}
+
+.summon-icon,
+.summon-icon-img {
+  width: 40px;
+  height: 40px;
+}
+
+.summon-level {
+  min-width: 32px;
+  padding: 2px 6px 3px;
+}
+
+.summon-price-pill {
+  min-height: 22px;
+  border: 2px solid var(--ui-line-soft);
+}
+
+.equipment-choice {
+  left: 8px;
+  right: 8px;
+  bottom: 147px;
+}
+
+.equipment-choice-panel {
+  padding: 8px;
+  border-color: var(--ui-line-soft);
+  background:
+    linear-gradient(180deg, rgba(255, 229, 150, .16), transparent 34%),
+    linear-gradient(#603117, #251006);
+}
+
+.equipment-choice-options {
+  gap: 7px;
+}
+
+.equipment-choice-card {
+  min-height: 88px;
+  padding: 6px;
+  border: 2px solid var(--ui-line-soft);
+  border-radius: 9px;
+}
+
+.growth-dock {
+  margin-top: -6px;
+  padding: 7px 7px max(6px, env(safe-area-inset-bottom));
+  border-width: 2px;
+  border-color: var(--ui-line-soft);
+  border-radius: 14px 14px 0 0;
+  background:
+    linear-gradient(90deg, rgba(255, 210, 110, .08), transparent 20% 80%, rgba(255, 210, 110, .08)),
+    linear-gradient(#744019 0, #4c220d 38%, #281006 100%);
+}
+
+.dock-split {
+  gap: 7px;
+}
+
+.card-grid {
+  gap: 5px;
+}
+
+.stat-card {
+  min-height: 64px;
+  padding: 5px;
+  border: 2px solid var(--ui-line-soft);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 231, .6), transparent 36%),
+    linear-gradient(180deg, var(--ui-parchment), #f0cb89);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 230, .56),
+    0 2px 0 rgba(37, 17, 5, .28);
+}
+
+.stat-card::before {
+  opacity: .28;
+}
+
+.card-icon {
+  width: 25px;
+  height: 25px;
+  border: 2px solid #995312;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 248, 187, .42),
+    0 1px 0 rgba(37, 17, 5, .34);
+}
+
+.stat-name {
+  color: #5a2a10;
+  font-size: 9px;
+}
+
+.stat-value {
+  color: #2b1206;
+  font-size: 12px;
+}
+
+.upgrade-button {
+  min-height: 18px;
+  border: 1px solid #2b6319;
+  box-shadow:
+    inset 0 1px 0 rgba(246, 255, 198, .42),
+    0 1px 0 rgba(19, 49, 8, .38);
+  font-size: 9px;
+}
+
+.equipment-panel {
+  gap: 6px;
+  padding: 7px;
+  border-color: var(--ui-line-soft);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 236, 166, .14), transparent 36%),
+    linear-gradient(#5a2a10, #2b1207);
+}
+
+.equipment-title {
+  font-size: 12px;
+}
+
+.equipment-slots {
+  gap: 5px;
+}
+
+.equipment-slot {
+  min-height: 45px;
+  border: 1px solid var(--ui-line-soft);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 235, 166, .13), transparent 38%),
+    linear-gradient(#784017, #3c1908);
+  box-shadow: inset 0 1px 0 rgba(255, 211, 116, .17);
+}
+
+.equipment-slot.is-equipped {
+  background:
+    linear-gradient(180deg, rgba(255, 245, 191, .28), transparent 38%),
+    linear-gradient(#d8932f, #7c3d11);
+}
+
+.equipment-icon {
+  width: 23px;
+  height: 23px;
+}
+
+.equipment-name {
+  font-size: 8px;
+}
+
+.tabs {
+  height: 58px;
+  margin-top: 7px;
+  padding: 4px;
+  gap: 3px;
+  border-radius: 12px 12px 10px 10px;
+  background:
+    linear-gradient(90deg, rgba(255, 209, 112, .08), transparent 20% 80%, rgba(255, 209, 112, .08)),
+    linear-gradient(#4d250e, #2a1106 68%, #160704);
+}
+
+.tab {
+  min-height: 47px;
+  padding: 4px 2px;
+}
+
+.tab.active {
+  min-height: 52px;
+  transform: translateY(-3px);
+  filter: saturate(1.02) brightness(1);
+}
+
+.tab-main {
+  grid-template-rows: 27px 12px;
+}
+
+.tab .tab-icon {
+  width: 25px;
+  height: 25px;
+}
+
+.tab.active .tab-icon {
+  width: 29px;
+  height: 29px;
+}
+
+.tab-label {
+  font-size: 9px;
+}
+
+.growth-dock {
+  background:
+    linear-gradient(90deg, rgba(255, 218, 124, .11), transparent 20% 80%, rgba(255, 218, 124, .1)),
+    linear-gradient(#8a491d 0, #633017 44%, #351708 100%);
+}
+
+.equipment-panel {
+  background:
+    linear-gradient(180deg, rgba(255, 236, 166, .17), transparent 36%),
+    linear-gradient(#6c3718, #351708);
+}
+
+.equipment-slot {
+  background:
+    linear-gradient(180deg, rgba(255, 235, 166, .16), transparent 38%),
+    linear-gradient(#8b491c, #51230e);
+}
+
+.equipment-slot.is-equipped {
+  background:
+    linear-gradient(180deg, rgba(255, 245, 191, .3), transparent 38%),
+    linear-gradient(#e0a13a, #8a491c);
+}
+
+.tabs {
+  background:
+    linear-gradient(90deg, rgba(255, 218, 124, .09), transparent 20% 80%, rgba(255, 218, 124, .09)),
+    linear-gradient(#5c2e12, #351607 68%, #1d0b04);
+}
+
+@media (max-width: 380px) {
+  .top-hud {
+    left: 8px;
+    right: 8px;
+    grid-template-columns: minmax(122px, 1.08fr) minmax(76px, .82fr) minmax(52px, .62fr) 36px;
+    gap: 4px;
+  }
+
+  .stage-banner {
+    top: 56px;
+    width: min(52%, 194px);
+  }
+
+  .side-stack.left {
+    top: 120px;
+  }
+
+  .side-stack.right {
+    top: 80px;
+  }
+
+  .mission-card {
+    top: 126px;
+  }
+
+  .dock-split {
+    gap: 5px;
+  }
+}
+
+/* Thin-frame pass: reduce the heavy arcade outlines without changing layout. */
+:root {
+  --ui-line-soft: #5a3418;
+  --ui-line-deep: #3a2112;
+  --ui-shadow-soft: rgba(22, 9, 3, .22);
+  --ui-highlight: rgba(255, 231, 151, .2);
+}
+
+.app {
+  padding: 3px 4px 0;
+  background:
+    linear-gradient(90deg, rgba(38, 22, 12, .38) 0 2px, transparent 2px calc(100% - 2px), rgba(38, 22, 12, .38) calc(100% - 2px)),
+    linear-gradient(180deg, rgba(255, 244, 184, .04), transparent 18%),
+    linear-gradient(180deg, #243e20 0%, #263719 63%, #29170b 63%, #1b0c05 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 219, 137, .16),
+    inset 0 0 0 2px rgba(41, 24, 13, .36);
+}
+
+.top-profile-card,
+.top-currency,
+.top-menu-button,
+.stage-banner,
+.mission-card,
+.growth-dock,
+.equipment-panel,
+.equipment-choice-panel,
+.equipment-choice-card,
+.stat-card,
+.skill-slot,
+.equip-summon-button {
+  border-width: 1px;
+  box-shadow:
+    inset 0 1px 0 var(--ui-highlight),
+    inset 0 -1px 0 rgba(25, 8, 2, .22),
+    0 1px 0 var(--ui-shadow-soft);
+}
+
+.top-profile-card::before,
+.top-currency::before,
+.top-menu-button::before,
+.stage-banner::before {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 213, 107, .13),
+    inset 0 -1px 0 rgba(15, 4, 1, .24);
+}
+
+.top-hud {
+  left: 8px;
+  right: 8px;
+  gap: 5px;
+}
+
+.top-profile-card {
+  border-radius: 16px;
+}
+
+.top-currency {
+  border-radius: 14px;
+}
+
+.top-menu-button {
+  border-radius: 12px;
+}
+
+.stage-banner {
+  border-radius: 12px;
+}
+
+.side-button {
+  width: 40px;
+  min-height: 48px;
+  border: 1px solid var(--ui-line-soft);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 222, 132, .2), transparent 35%),
+    linear-gradient(#97551f, #673315 56%, #341607);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 231, 151, .22),
+    0 1px 0 rgba(22, 9, 3, .26);
+}
+
+.side-button .symbol {
+  height: 17px;
+  font-size: 16px;
+}
+
+.side-stack.left {
+  left: 10px;
+}
+
+.side-stack.right {
+  right: 9px;
+}
+
+.mission-card {
+  border-radius: 10px;
+}
+
+.skill-slot {
+  border-radius: 8px;
+}
+
+.equip-summon-button {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 187, .32),
+    inset 0 -1px 0 rgba(131, 57, 6, .24),
+    0 1px 0 rgba(27, 9, 1, .25);
+}
+
+.summon-price-pill {
+  border-width: 1px;
+}
+
+.growth-dock {
+  border-radius: 12px 12px 0 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 231, 151, .14),
+    0 -1px 0 rgba(255, 218, 124, .08);
+}
+
+.stat-card {
+  border-radius: 7px;
+}
+
+.card-icon {
+  border-width: 1px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 187, .34),
+    0 1px 0 rgba(37, 17, 5, .22);
+}
+
+.upgrade-button {
+  border-width: 1px;
+  box-shadow:
+    inset 0 1px 0 rgba(246, 255, 198, .34),
+    0 1px 0 rgba(19, 49, 8, .24);
+}
+
+.equipment-panel {
+  border-radius: 9px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 231, 151, .16),
+    inset 0 -1px 0 rgba(25, 8, 2, .22);
+}
+
+.equipment-slot {
+  border-color: rgba(90, 52, 24, .86);
+  box-shadow: inset 0 1px 0 rgba(255, 211, 116, .12);
+}
+
+.tabs {
+  height: 56px;
+  border-radius: 10px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 218, 126, .12),
+    inset 0 -1px 0 rgba(16, 5, 1, .32);
+}
+
+.tab {
+  min-height: 45px;
+  border: 1px solid rgba(90, 52, 24, .82);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 218, 126, .14), transparent 36%),
+    linear-gradient(#744019, #4a220d 58%, #281006);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 218, 126, .16),
+    0 1px 0 rgba(17, 6, 2, .22);
+}
+
+.tab.active {
+  min-height: 49px;
+  border-color: rgba(135, 74, 25, .92);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 218, .32), transparent 38%),
+    linear-gradient(#ffd96a, #ef9d25 58%, #bc6417);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 187, .36),
+    0 1px 0 rgba(37, 17, 5, .18);
+  transform: translateY(-2px);
+}
+
+.tab:active,
+.tab.active:active {
+  background-image: none;
+}
+
+.tab.is-locked:active,
+.tab:disabled:active {
+  background-image: none;
+}
+
+@media (max-width: 380px) {
+  .app {
+    padding-inline: 3px;
+  }
+
+  .top-hud {
+    left: 7px;
+    right: 7px;
+  }
+}
 </style>
 </head>
 <body>
@@ -3323,6 +4283,6 @@ button.tab,
   <span hidden id="atkValue">-</span>
   <span hidden id="defValue">-</span>
 </main>
-<script type="module" src="src/idlez-phaser/app.js?v=shopicons1"></script>
+<script type="module" src="src/idlez-phaser/app.js?v=stagefit1"></script>
 </body>
 </html>

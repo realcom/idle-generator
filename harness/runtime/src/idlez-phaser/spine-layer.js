@@ -1,7 +1,7 @@
 import { TEAM } from './constants.js';
 
 const WORLD_WIDTH = 920;
-const WORLD_HEIGHT = 840;
+const WORLD_HEIGHT = 960;
 
 const SPINE_ASSETS = {
   Ninster: {

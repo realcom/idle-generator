@@ -1,0 +1,30 @@
+id: 300106
+name: "번개 쿠나이"
+tags: [UseToTarget, TargetPosition]
+damageType: Spell
+projectileType: Target
+cooldown: 3.2
+priority: 6
+targetRefreshType: Random
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_lightning_kunai.png"
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - time: 0.14
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.4
+      maxHit: 5
+      addDamage: { damagePercent: [140.0, 168.0, 202.0, 242.0, 290.0] }
+  - time: 0.38
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.4
+      maxHit: 5
+      addDamage: { damagePercent: [140.0, 168.0, 202.0, 242.0, 290.0] }
+  - { time: 0.88, destroy: {} }

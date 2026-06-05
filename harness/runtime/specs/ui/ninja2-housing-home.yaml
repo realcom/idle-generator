@@ -1,0 +1,109 @@
+version: "1.0"
+game: ninja2
+slug: ninja2-housing-home
+status: implemented
+
+target_runtime:
+  page: harness/runtime/survivor-runtime.html
+  entrypoint: harness/runtime/src/survivor/survivor-app.js
+  implementation_mode: dom_overlay_with_phaser_nineslice_contract
+  fixture_urls:
+    - harness/runtime/survivor-runtime.html?game=ninja2
+
+source_design:
+  concepts:
+    - harness/design/ninja2/concepts/ninja2_rulelocked_housing_home_a.md
+    - harness/design/ninja2/concepts/ninja2_housing_top_bottom_tabs_arcade_a.md
+  tokens:
+    - harness/design/ninja2/art-direction.yaml
+    - harness/design/ninja2/layout-tokens.yaml
+    - harness/design/ninja2/component-skins.yaml
+    - harness/design/ninja2/asset-plan.yaml
+
+screen:
+  orientation: portrait_9_16
+  target_reference_size_px: { width: 440, height: 782 }
+  responsive_policy:
+    shell_width: "max 440px; full viewport height"
+    board_clearance: "top HUD and bottom panel must leave the owned hex board readable"
+  safe_area_policy: "Top and bottom UI include env(safe-area-inset-*) padding."
+
+accepted_nineslice_skins:
+  - key: ninja2.ui.topbar.cluster_skins
+    file: harness/runtime/assets/ninja2/ui/topbar/top_resource_board.png
+    surface: home resource board and battle resource ledger board
+    target_sizes_px:
+      home: { width: 256, height: 94 }
+      battle: { width: 112, height: 104 }
+    slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+    phaser_usage: phaser_nineslice
+    phaser_call: "scene.add.nineslice(x, y, key, null, width, height, 24, 24, 24, 24)"
+    unity_usage: sliced_sprite
+    reason: "Rectangular frame only; no baked text, numbers, icons, prices, or progress."
+  - key: ninja2.ui.topbar.cluster_skins
+    file: harness/runtime/assets/ninja2/ui/topbar/top_resource_chip.png
+    surface: home resource rows and battle ledger rows
+    target_sizes_px:
+      home: { width: 113, height: 31 }
+      battle: { width: 92, height: 24 }
+    slice_hints: { left: 18, right: 18, top: 14, bottom: 14 }
+    phaser_usage: phaser_nineslice
+    phaser_call: "scene.add.nineslice(x, y, key, null, width, height, 18, 18, 14, 14)"
+    unity_usage: sliced_sprite
+    reason: "Pill frame only; center can stretch while icon/value/gain text stay native."
+  - key: ninja2.ui.panel.parchment_9slice
+    file: harness/runtime/assets/ninja2/ui/panel_parchment_9slice.png
+    surface: selected building panel and reusable parchment cards/modals
+    target_sizes_px:
+      home_panel: { width: 424, height: 112 }
+      level_choice_card: { width: 122, height: 258 }
+    slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+    phaser_usage: phaser_nineslice
+    phaser_call: "scene.add.nineslice(x, y, key, null, width, height, 28, 28, 28, 28)"
+    unity_usage: sliced_sprite
+    reason: "Clean parchment panel with stable corner and edge caps; no baked text or symbols."
+
+rejected_nineslice_candidates:
+  - key: ninja2.ui.button.sortie_orange
+    file: harness/runtime/assets/ninja2/ui/button_sortie_orange.png
+    use_instead: image_sprite
+    reason: "Hexagonal/faceted silhouette with baked crossed-sword emblem and sparkle accents; stretching would warp the icon and angled caps."
+  - key: ninja2.ui.topbar.fixed_atoms.top_profile_card
+    file: harness/runtime/assets/ninja2/ui/topbar/top_profile_card.png
+    use_instead: image_sprite
+    reason: "Fixed HUD card with baked portrait slot and ornaments; it is not reused at multiple aspect ratios."
+  - key: ninja2.ui.topbar.fixed_atoms.top_status_card
+    file: harness/runtime/assets/ninja2/ui/topbar/top_status_card.png
+    use_instead: image_sprite
+    reason: "Fixed status plaque composition with baked slot/progress ornament; progress and values remain native runtime layers."
+  - key: ninja2.home.hex_tile_set.forest_sanctuary
+    use_instead: state_specific_image
+    reason: "Hex tiles are non-rectangular board tiles, explicitly outside the Phaser 9-slice policy."
+  - key: ninja2.home.background.forest_sanctuary
+    use_instead: background_image_cover
+    reason: "Scene background is opaque environment art, not a reusable UI frame."
+  - key: ninja2.home.building_atlas.lantern_sanctuary
+    use_instead: individual_sprites
+    reason: "Buildings are content sprites/atlas regions, not rectangular UI skins."
+  - key: ninja2.ui.profile.guardian_avatar
+    use_instead: image_sprite
+    reason: "Portrait is character art, not a stretchable UI frame."
+
+runtime_notes:
+  phaser_contract: "When HousingHome moves from DOM overlay to Phaser UI, accepted skins must use Phaser 4.1 scene.add.nineslice with the exact slice_hints above."
+  dom_preview: "survivor-runtime.html may use CSS border-image/background as a DOM preview fallback only; it must not add slice_hints for rejected fixed sprites."
+  native_layers:
+    - "Korean labels, resource values, rates, progress bars, timers, and badges stay live text/DOM or Phaser text."
+    - "Resource icons and sortie emblem are image sprites, not 9-slice center art."
+
+validation:
+  static:
+    - "python3 harness/tools/phaser_nineslice_audit.py ninja2"
+  smoke:
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --no-browser"
+    - "Open http://127.0.0.1:8765/harness/runtime/survivor-runtime.html?game=ninja2 and capture /tmp/ninja2-housing-home.png for visual QA"
+  checks:
+    - "audit accepts top_resource_board, top_resource_chip, and panel_parchment_9slice only"
+    - "sortie button remains a fixed sprite and keeps native text readable"
+    - "home resource board/chips and bottom panel render without warped corners"
+    - "background, hex tiles, buildings, portraits, and icons are not marked as 9-slice"

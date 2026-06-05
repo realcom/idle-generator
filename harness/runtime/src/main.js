@@ -103,7 +103,7 @@ const MAP_ID = 500101; // meadow_1
     // 6) Phaser 게임 생성
     overlay.textContent = 'Phaser 초기화...';
     const phaserConfig = {
-      type: Phaser.CANVAS,
+      type: Phaser.WEBGL,
       parent: 'phaserContainer',
       width: 720,
       height: 360,

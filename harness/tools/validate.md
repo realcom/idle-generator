@@ -8,7 +8,7 @@
 > - **behavior → Triggers.json** (call statement / postfix expression / method+parameter — 실제 idlez AST, action-vocabulary.md 시그니처)
 > - 드롭/보상 $ref → AddItemGroup, 참조무결성(drop itemDataId ∈ items)
 > - AddItemGroup 정규화: `addItems` 정본, `adds` legacy alias 허용. 맵 보상은 `rewardAddItemGroups` 정본, `clearAddItemGroups` legacy alias 허용.
-> - 검증: 스탯 가드레일, 트리거 참조, 드롭 ID, 타입별 구조 대조, `AddUnit` 참조/geometry, unknown `runTrigger`, unknown action args
+> - 검증: 스탯 가드레일, 트리거 참조, 드롭 ID, 타입별 구조 대조, `AddUnit` 참조/geometry, unknown `runTrigger`, unknown action args, **ID 대역/중복(§6)**, **보상 weight·probPercent(§7)**
 > - 실행: `python3 tools/idlez_compile.py <game> <실제 PatchResources 디렉토리>` → `build/<game>/*.json` 생성 + 6/6 구조 PASS
 > - 확장 지점: when 조건/변수 로컬키, timelines/boardConstants 중첩 전용 처리, Strings/Achievements/Audios 타입.
 >
@@ -51,12 +51,14 @@
 - `AddUnit.UnitDataId`가 실재하는 Unit.id인가, `Count >= 1`인가
 - `AddUnit.LocationId`가 map trigger에 쓰이면 해당 map location과 geometry가 존재하는가
 
-### 6. ID 대역 (profile.id_ranges)
-- 새 콘텐츠 id가 타입별 대역 안에 있는가, 중복 없는가
+### 6. ID 대역 (profile.id_ranges) — ✅ 구현됨
+- 새 콘텐츠 id가 타입별 대역 안에 있는가(WARN), 타입 내 중복 없는가(ERROR)
+- `reserved_ids`/`currencies` id 는 의도적 예외(예: defaultCharacter)로 대역 검사 제외
 
-### 7. 보상/확률 검산 (reward.md)
-- `itemDataId` 무결성, weight 합·probPercent 범위
-- 기대 획득률·pity 천장 시뮬 산출 (밸런스 리포트)
+### 7. 보상/확률 검산 (reward.md) — 🟡 부분 구현
+- ✅ AddItemGroup `probPercent` 0~100 범위(ERROR), `weight` 혼재 경고(WARN)·합>0(ERROR)
+- ⬜ `itemDataId` 무결성은 §2 참조무결성에서 처리
+- ⬜ 기대 획득률·pity 천장 시뮬 (밸런스 리포트) — `/balance-review` 스킬 영역, 미구현
 
 ## 출력
 

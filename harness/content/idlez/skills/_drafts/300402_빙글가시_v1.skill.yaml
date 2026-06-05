@@ -1,0 +1,25 @@
+id: 300402
+name: "빙글 가시"
+damageType: Pierce
+projectileType: Relative
+targetRefreshType: Nearest
+cooldown: 2.4
+priority: 20
+maxHit: 8
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/VFX_OrbitThorn_Start.prefab" } }
+  - time: 0.1
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.35 }
+      addDamage: { damagePercent: [74.0] }
+  - time: 0.55
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.35 }
+      addDamage: { damagePercent: [74.0] }
+  - { time: 0.85, destroy: {} }

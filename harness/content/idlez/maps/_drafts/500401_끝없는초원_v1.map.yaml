@@ -1,0 +1,97 @@
+# 뱀서라이크 생존 맵 draft — engine-contract/schema/map.md
+# 목표: 10분 생존형 메인 전투 루프. 스폰 디렉터는 companion behavior에 분리.
+
+id: 500401
+name: "끝없는 초원"
+type: RespawnDungeon
+tags: [ContainPlayerInventory]
+scene: "PFB_MAP_Meadow_Day_Chapter"
+prefab: "Maps/Prefabs/PFB_MAP_Meadow_Day_Chapter.prefab"
+targetCameraPivot: { x: 0.5, y: 0.56 }
+fov: 10.5
+
+popupArgs:
+  ClientModeManager: ModeManagerMushroom
+  ClientHomeMapDataId: self
+  ClientAutoAdvance: false
+  ClientNextMapDataId: self
+  ClientRetryMapDataId: self
+  ClientRuntimePrototype: survivor
+  ClientRuntimeEntry: survivor-runtime.html
+  ClientSurvivalSeconds: 600
+
+boardConstants:
+  levelUpChoiceCount: 3
+  fixX: 0
+  fixY: 0
+
+initLevel: 1
+initGold: 0
+enableUnitExp: true
+playerUnitCount: 0
+
+initVariables:
+  - { callerKey: 601, value: 1 } # wave
+  - { callerKey: 605, value: 1 } # enemy_level
+
+triggers:
+  - MAP_ONSTART_SURVIVORMEADOWSTART
+  - MAP_ONUPDATE_SURVIVORMEADOWDIRECTOR
+
+locations:
+  - id: -1
+    position: { x: 0.0, y: 0.0 }
+    geometries:
+      - circle:
+          center: { x: 0.0, y: 0.0 }
+          radius: 1.25
+  - id: 401
+    position: { x: 5.6, y: 0.0 }
+    geometries:
+      - circle:
+          center: { x: 0.0, y: 0.0 }
+          radius: 2.5
+  - id: 402
+    position: { x: -5.6, y: 0.0 }
+    geometries:
+      - circle:
+          center: { x: 0.0, y: 0.0 }
+          radius: 2.5
+  - id: 403
+    position: { x: 0.0, y: 4.4 }
+    geometries:
+      - circle:
+          center: { x: 0.0, y: 0.0 }
+          radius: 2.1
+  - id: 404
+    position: { x: 0.0, y: -4.4 }
+    geometries:
+      - circle:
+          center: { x: 0.0, y: 0.0 }
+          radius: 2.1
+
+terrains:
+  - vertices:
+      - { position: { x: -16.0, y: -10.0 }, height: 0.0 }
+      - { position: { x: 16.0, y: -10.0 }, height: 0.0 }
+      - { position: { x: 16.0, y: 10.0 }, height: 0.0 }
+      - { position: { x: -16.0, y: 10.0 }, height: 0.0 }
+    triangles:
+      - { v1: 0, v2: 1, v3: 2 }
+      - { v1: 0, v2: 2, v3: 3 }
+  - type: Skill
+    vertices:
+      - { position: { x: -16.0, y: -10.0 }, height: 0.0 }
+      - { position: { x: 16.0, y: -10.0 }, height: 0.0 }
+      - { position: { x: 16.0, y: 10.0 }, height: 0.0 }
+      - { position: { x: -16.0, y: 10.0 }, height: 0.0 }
+    triangles:
+      - { v1: 0, v2: 1, v3: 2 }
+      - { v1: 0, v2: 2, v3: 3 }
+
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 300, maxCount: 600, isCore: true }
+      - { itemDataId: 6, count: 160 }

@@ -1,0 +1,31 @@
+id: 110402
+name: "날개 박쥐"
+type: Elite
+tags: [Monster]
+armorType: NormalArmor
+
+addStats:
+  - { type: Hp, value: [72.0, 82.0, 94.0, 108.0, 124.0, 142.0, 164.0, 188.0, 216.0, 248.0] }
+  - { type: Attack, value: [11.0, 13.0, 15.0, 17.0, 20.0, 23.0, 27.0, 31.0, 36.0, 41.0] }
+  - { type: Defense, value: [1.0, 1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0, 5.0, 6.0] }
+  - { type: MoveSpeed, value: [4.9] }
+  - { type: ScalePercent, value: [-68.0] }
+
+triggers:
+  - UNIT_ONSTART_SURVIVORBATSTART
+  - UNIT_ONUPDATE_SURVIVORBATDIVE
+
+dropAddItemGroups:
+  - shouldAddAll: false
+    probPercent: 86
+    addItems:
+      - { itemDataId: 6, count: 3, weight: 100, group: 1 }
+      - { itemDataId: 5, minCount: 5, maxCount: 11, weight: 45, group: 1 }
+
+prefab: "Units/Monsters/melee_bat.prefab"
+sprite: "Units/Monsters/Assets/melee_bat.png"
+uiScale: 0.92
+animations:
+  idle: "survivor_bat_idle"
+  move: "survivor_bat_move"
+  dead: "survivor_bat_dead"

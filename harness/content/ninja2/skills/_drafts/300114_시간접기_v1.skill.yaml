@@ -1,0 +1,13 @@
+id: 300114
+name: "시간 접기"
+cooldown: 8.0
+priority: 14
+targetRefreshType: NoRefresh
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_time_fold.png"
+selfAddBuffs:
+  - { buffDataId: 400104, level: 1, duration: 6.0 }
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - { time: 0.5, destroy: {} }

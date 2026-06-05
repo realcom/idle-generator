@@ -1,0 +1,38 @@
+id: 300107
+name: "화염 두루마리"
+tags: [UseToTarget, TargetPosition]
+damageType: Explosive
+projectileType: Target
+cooldown: 4.0
+priority: 7
+targetRefreshType: Nearest
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_fire_scroll.png"
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - time: 0.24
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 3.8
+      maxHit: 12
+      addDamage: { damagePercent: [105.0, 126.0, 151.0, 181.0, 217.0] }
+  - time: 0.54
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 3.8
+      maxHit: 12
+      addDamage: { damagePercent: [105.0, 126.0, 151.0, 181.0, 217.0] }
+  - time: 0.84
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 3.8
+      maxHit: 12
+      addDamage: { damagePercent: [105.0, 126.0, 151.0, 181.0, 217.0] }
+  - { time: 1.28, destroy: {} }

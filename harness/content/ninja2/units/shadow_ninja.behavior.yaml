@@ -1,0 +1,21 @@
+name: ShadowNinjaOpening
+domain: unit
+
+"on":
+  - event: start
+    do:
+      - moveTo:
+          x: -1.8
+          y: 0.0
+
+---
+
+name: ShadowNinjaAttack
+domain: unit
+
+"on":
+  - event: update
+    every: 0.9s
+    do:
+      - useSkill:
+          skillDataId: 300101

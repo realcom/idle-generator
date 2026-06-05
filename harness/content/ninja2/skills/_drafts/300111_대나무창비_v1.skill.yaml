@@ -1,0 +1,46 @@
+id: 300111
+name: "대나무 창비"
+tags: [UseToTarget, TargetPosition]
+damageType: Pierce
+projectileType: Parabolic
+cooldown: 5.6
+priority: 11
+targetRefreshType: Random
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_bamboo_spear_rain.png"
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - time: 0.24
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.8
+      maxHit: 8
+      addDamage: { damagePercent: [190.0, 228.0, 274.0, 329.0, 395.0] }
+  - time: 0.46
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.8
+      maxHit: 8
+      addDamage: { damagePercent: [190.0, 228.0, 274.0, 329.0, 395.0] }
+  - time: 0.68
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.8
+      maxHit: 8
+      addDamage: { damagePercent: [190.0, 228.0, 274.0, 329.0, 395.0] }
+  - time: 0.9
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.8
+      maxHit: 8
+      addDamage: { damagePercent: [190.0, 228.0, 274.0, 329.0, 395.0] }
+  - { time: 1.32, destroy: {} }

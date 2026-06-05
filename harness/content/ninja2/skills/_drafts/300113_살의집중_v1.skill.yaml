@@ -1,0 +1,13 @@
+id: 300113
+name: "살의 집중"
+cooldown: 6.0
+priority: 13
+targetRefreshType: NoRefresh
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_killing_focus.png"
+selfAddBuffs:
+  - { buffDataId: 400103, level: 1, duration: 6.5 }
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - { time: 0.45, destroy: {} }

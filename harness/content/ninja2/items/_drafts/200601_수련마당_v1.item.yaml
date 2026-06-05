@@ -1,0 +1,34 @@
+id: 200601
+name: "수련마당"
+category: Mine
+type: Mine
+grade: 1
+power: 12
+efficiencyPercents: [100.0, 112.0, 126.0, 141.0, 158.0]
+maxStamina: 60
+staminaRegenPerSecond: 0.0167
+sellPrice: 0
+requiredExps: [0, 80, 160, 300, 520]
+
+levelUpMaterialItemGroups:
+  - level: 2
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 12 }
+      - { id: 5, count: 500 }
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 24 }
+      - { id: 200102, count: 4 }
+      - { id: 5, count: 1200 }
+
+sellAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 6, minCount: 24, maxCount: 32, isCore: true }
+
+spriteGroups:
+  Icon: "Items/Ninja2/housing_training_yard_icon.png"
+  Building: "Housing/Ninja2/training_yard.png"

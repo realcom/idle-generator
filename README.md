@@ -236,6 +236,13 @@ UI와 모달만 빠르게 볼 때는 별도 preview 하네스를 엽니다.
 http://127.0.0.1:8765/harness/runtime/phaser-ui-harness.html
 ```
 
+Phaser 런타임 asset 참조만 빠르게 점검할 때는 audit 도구를 실행합니다.
+
+```bash
+python3 harness/tools/phaser_asset_audit.py mushroomer
+python3 harness/tools/asset_registry_audit.py mushroomer --release
+```
+
 확인할 것:
 
 - 화면이 정상적으로 뜨는가
@@ -516,12 +523,16 @@ rewardAddItemGroups:
 
 ## 디자인/UI 제작 흐름
 
-이 저장소는 데이터 콘텐츠뿐 아니라 인게임 UI를 Unity prefab으로 가져가는 흐름도 갖고 있습니다.
+이 저장소는 데이터 콘텐츠뿐 아니라 인게임 UI를 Phaser 런타임과 Unity prefab 양쪽으로 가져가는 흐름도 갖고 있습니다.
 
 ```mermaid
 flowchart LR
     Concept["UI 시안\nharness/design/{game}/concepts"] --> Tokens["디자인 토큰\nart-direction / layout / skins"]
-    Tokens --> Recipe["Unity recipe\nharness/unity/recipes"]
+    Tokens --> Assets["asset-plan + genimg assets"]
+    Assets --> PhaserSpec["Phaser UI spec\nharness/runtime/specs/ui"]
+    Assets --> Recipe["Unity recipe\nharness/unity/recipes"]
+    PhaserSpec --> PhaserRuntime["Phaser runtime\nharness/runtime/src"]
+    PhaserRuntime --> PhaserQA["Browser smoke/screenshot QA"]
     Recipe --> Validator["recipe 검증\nui_prefab_validate.py"]
     Validator --> Builder["Unity Editor builder"]
     Builder --> Prefab["uGUI prefab\nengine/client/.../HarnessPreview"]
@@ -533,8 +544,11 @@ flowchart LR
 | 스킬 | 용도 |
 | --- | --- |
 | `/gen-ui-concept` | UI 시안 생성 |
-| `/extract-design-system` | 시안에서 토큰/스킨 추출 |
-| `/gen-ingame-ui-recipe` | HUD, 전투 UI, 성장 도크 recipe 작성 |
+| `/extract-design-system` | 시안에서 토큰/스킨/asset-plan 추출 |
+| `/gen-ui-assets` | asset-plan 기반 genimg UI 에셋 생성 |
+| `/gen-phaser-ui-spec` | Phaser/HTML 런타임용 UI 구현 명세 작성 |
+| `/build-phaser-ui-runtime` | Phaser UI spec을 런타임 코드로 반영 |
+| `/gen-unity-ui-recipe` | HUD, 전투 UI, 성장 도크 Unity recipe 작성 |
 | `/build-unity-ui-prefab` | recipe를 Unity uGUI prefab으로 생성 |
 | `/design-review` | 모바일성, 전투 가시성, 구현 가능성 리뷰 |
 

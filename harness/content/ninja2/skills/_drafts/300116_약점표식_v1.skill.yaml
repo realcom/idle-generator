@@ -1,0 +1,24 @@
+id: 300116
+name: "약점 표식"
+tags: [UseToTarget, TargetPosition]
+damageType: Spell
+projectileType: Target
+cooldown: 4.2
+priority: 16
+targetRefreshType: HighestHp
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_weakness_mark.png"
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - time: 0.18
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.2
+      maxHit: 3
+      addDamage: { damagePercent: [65.0, 78.0, 94.0, 113.0, 136.0] }
+      addBuffs:
+        - { buffDataId: 400106, level: 1, duration: 4.5 }
+  - { time: 0.72, destroy: {} }

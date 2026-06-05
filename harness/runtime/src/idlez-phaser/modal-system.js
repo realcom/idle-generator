@@ -142,6 +142,48 @@ const SKILL_ICON_PATHS = [
   'assets/ui/icons/skills/skill_ham_golden_cheek_pouch.png',
 ];
 
+const SKILL_TREE_NODE_LAYOUT = {
+  Root: { x: 0.5, y: 0.1, tier: 'core' },
+  AoE: { x: 0.18, y: 0.27, tier: 'attack' },
+  Boss: { x: 0.82, y: 0.27, tier: 'attack' },
+  Buff: { x: 0.5, y: 0.4, tier: 'support' },
+  AoE2: { x: 0.16, y: 0.52, tier: 'attack' },
+  Boss2: { x: 0.84, y: 0.52, tier: 'attack' },
+  Merge: { x: 0.5, y: 0.63, tier: 'merge' },
+  Rain: { x: 0.22, y: 0.73, tier: 'rare' },
+  Rage: { x: 0.78, y: 0.73, tier: 'rare' },
+  Meteor: { x: 0.5, y: 0.86, tier: 'ultimate' },
+  Overrun: { x: 0.24, y: 1.0, tier: 'rare' },
+  Ultimate: { x: 0.76, y: 1.0, tier: 'ultimate' },
+};
+
+const SKILL_TREE_FALLBACK_LAYOUT = [
+  { x: 0.5, y: 0.1, tier: 'core' },
+  { x: 0.2, y: 0.27, tier: 'attack' },
+  { x: 0.8, y: 0.27, tier: 'attack' },
+  { x: 0.5, y: 0.4, tier: 'support' },
+  { x: 0.18, y: 0.52, tier: 'normal' },
+  { x: 0.82, y: 0.52, tier: 'normal' },
+  { x: 0.5, y: 0.65, tier: 'merge' },
+  { x: 0.22, y: 0.76, tier: 'rare' },
+  { x: 0.78, y: 0.76, tier: 'rare' },
+  { x: 0.5, y: 1.0, tier: 'ultimate' },
+];
+
+const SKILL_TREE_PRIMARY_PARENT_NODE = {
+  AoE: 'Root',
+  Boss: 'Root',
+  Buff: 'Root',
+  AoE2: 'AoE',
+  Boss2: 'Boss',
+  Merge: 'Buff',
+  Rain: 'Merge',
+  Rage: 'Merge',
+  Meteor: 'Merge',
+  Overrun: 'Meteor',
+  Ultimate: 'Rage',
+};
+
 const ACHIEVEMENT_STAT_ITEM_IDS = new Set([1000, 1001, 1002, 1003]);
 const ACHIEVEMENT_EQUIPMENT_SUMMON_PRODUCT_ID = 200503;
 const ACHIEVEMENT_CATEGORIES = [
@@ -410,12 +452,15 @@ export class ModalManager {
     });
     this.register('skills', SkillTreeModal, {
       title: '스킬',
-      kicker: '레벨 업적 해금 · 장착 슬롯 자동 사용',
-      heightRatio: 0.9,
-      minHeight: 620,
-      maxHeight: 840,
-      verticalMarginMin: 14,
-      verticalMarginMax: 24,
+      kicker: '',
+      variant: 'skillTreeSheet',
+      heightRatio: 0.985,
+      minHeight: 640,
+      maxHeight: 940,
+      footerHeight: 10,
+      headerBodyOffset: 84,
+      verticalMarginMin: 4,
+      verticalMarginMax: 10,
     });
     this.register('achievements', AchievementModal, {
       title: '업적',
@@ -432,12 +477,18 @@ export class ModalManager {
       variant: 'shopSheet',
       anchor: 'bottom',
       backdropAlpha: 0.28,
-      heightRatio: 0.6,
-      minHeight: 520,
-      maxHeight: 560,
-      bottomMargin: 74,
+      widthRatio: 0.985,
+      minSideMargin: 6,
+      maxSideMargin: 10,
+      contentInsetRatio: 0.042,
+      contentInsetMin: 16,
+      contentInsetMax: 22,
+      heightRatio: 0.66,
+      minHeight: 548,
+      maxHeight: 590,
+      bottomMargin: 76,
       footerHeight: 0,
-      headerBodyOffset: 80,
+      headerBodyOffset: 88,
       verticalMarginMin: 8,
       verticalMarginMax: 18,
     });
@@ -662,6 +713,124 @@ class DesignButton extends PhaserContainer {
   }
 }
 
+class ShopPurchaseButton extends PhaserContainer {
+  constructor(scene, {
+    x = 0,
+    y = 0,
+    width = 96,
+    height = 34,
+    label = '구매',
+    fontSize = null,
+    onClick = null,
+  } = {}) {
+    super(scene, x, y);
+    this.buttonWidth = width;
+    this.buttonHeight = height;
+    this.label = label;
+    this.fontSize = fontSize;
+    this.onClick = onClick;
+    this.isPressed = false;
+
+    this.bg = makeGraphics(scene);
+    this.medallionText = makeText(scene, 0, 0, '₩', modalTextStyle('button', {
+      fontSize: '10px',
+      strokeThickness: 2,
+    })).setOrigin(0.5);
+    this.labelText = makeText(scene, 0, 0, label, modalTextStyle('button')).setOrigin(0.5);
+    this.hitTarget = makeRectangle(scene, -width / 2, -height / 2, width, height, 0xffffff, 0.001)
+      .setOrigin(0);
+    this.add([this.bg, this.medallionText, this.labelText, this.hitTarget]);
+
+    this.#bindInput();
+    this.redraw();
+  }
+
+  redraw() {
+    const Phaser = globalThis.Phaser;
+    const { colors } = PHASER_DESIGN;
+    const width = this.buttonWidth;
+    const height = this.buttonHeight;
+    const x = -width / 2;
+    const y = -height / 2;
+    const radius = Math.min(14, Math.floor(height / 2));
+    const showMedallion = false;
+
+    this.bg.clear();
+    this.bg.fillStyle(colors.shadow, 0.36);
+    this.bg.fillRoundedRect(x + 2, y + 4, width, height, radius);
+    this.bg.fillStyle(colors.outlineBrown, 1);
+    this.bg.fillRoundedRect(x, y, width, height, radius);
+    this.bg.fillStyle(colors.gold, 1);
+    this.bg.fillRoundedRect(x + 3, y + 3, width - 6, height - 6, Math.max(1, radius - 2));
+    this.bg.fillStyle(colors.greenDark, 1);
+    this.bg.fillRoundedRect(x + 6, y + 6, width - 12, height - 12, Math.max(1, radius - 5));
+    this.bg.fillStyle(0x73bd36, 1);
+    this.bg.fillRoundedRect(x + 8, y + 7, width - 16, height - 16, Math.max(1, radius - 7));
+    this.bg.fillStyle(0xb8ef65, 0.78);
+    this.bg.fillRoundedRect(x + 13, y + 8, width - 26, Math.max(7, height * 0.28), 8);
+    this.bg.lineStyle(2, 0x234f13, 0.85);
+    this.bg.strokeRoundedRect(x + 6, y + 6, width - 12, height - 12, Math.max(1, radius - 5));
+
+    if (showMedallion) {
+      const cx = x + medallionRadius + 8;
+      this.bg.fillStyle(colors.outlineBrown, 1);
+      this.bg.fillCircle(cx, -1, medallionRadius + 2);
+      this.bg.fillStyle(colors.goldHighlight, 1);
+      this.bg.fillCircle(cx, -1, medallionRadius);
+      this.bg.fillStyle(colors.gold, 0.72);
+      this.bg.fillCircle(cx - 2, -3, Math.max(3, medallionRadius - 4));
+      this.medallionText
+        .setVisible(true)
+        .setPosition(cx, -2);
+    } else {
+      this.medallionText.setVisible(false);
+    }
+
+    this.labelText
+      .setText(this.label)
+      .setStyle(modalTextStyle('button', {
+        fontSize: this.fontSize || (this.label.length > 4 ? '12px' : '14px'),
+        strokeThickness: 3,
+        wordWrap: { width: width + 20, useAdvancedWrap: false },
+      }))
+      .setPosition(showMedallion ? 8 : 0, -2);
+
+    this.hitTarget
+      .setPosition(-width / 2, -height / 2)
+      .setSize(width, height)
+      .setDisplaySize(width, height);
+
+    if (Phaser?.Geom?.Rectangle) {
+      this.hitTarget.setInteractive(
+        new Phaser.Geom.Rectangle(0, 0, width, height),
+        Phaser.Geom.Rectangle.Contains,
+      );
+    }
+  }
+
+  #bindInput() {
+    this.hitTarget.on('pointerdown', () => this.#press());
+    this.hitTarget.on('pointerout', () => this.#release(false));
+    this.hitTarget.on('pointerup', () => this.#release(true));
+  }
+
+  #press() {
+    if (this.isPressed) return;
+    playSfx('uiClick');
+    this.isPressed = true;
+    this.y += 2;
+    this.redraw();
+  }
+
+  #release(activate) {
+    if (!this.isPressed) return;
+    this.isPressed = false;
+    this.y -= 2;
+    this.redraw();
+    if (activate) this.onClick?.();
+  }
+}
+
 class ModalListRow extends PhaserContainer {
   constructor(scene, { x, y, width, height = 62, icon = '*', title = '', body = '', meta = '' }) {
     super(scene, x, y);
@@ -827,7 +996,11 @@ class BaseModal extends PhaserContainer {
     const width = this.scene.scale.width;
     const height = this.scene.scale.height;
     const config = PHASER_DESIGN.modal;
-    const sideMargin = Math.round(clamp(width * 0.055, config.minSideMargin, config.maxSideMargin));
+    const sideMargin = Math.round(clamp(
+      width * (this.options.sideMarginRatio ?? 0.055),
+      this.options.minSideMargin ?? config.minSideMargin,
+      this.options.maxSideMargin ?? config.maxSideMargin,
+    ));
     const maxModalWidth = Math.max(1, Math.min(config.maxWidth, width - sideMargin * 2));
     const minModalWidth = Math.min(config.minWidth, maxModalWidth);
     const modalWidth = Math.round(clamp(width * (this.options.widthRatio ?? config.widthRatio), minModalWidth, maxModalWidth));
@@ -847,7 +1020,11 @@ class BaseModal extends PhaserContainer {
     const y = this.options.anchor === 'bottom'
       ? Math.round(height - modalHeight - bottomMargin)
       : Math.round((height - modalHeight) / 2);
-    const contentInset = Math.round(clamp(modalWidth * 0.065, config.contentInsetMin, config.contentInsetMax));
+    const contentInset = Math.round(clamp(
+      modalWidth * (this.options.contentInsetRatio ?? 0.065),
+      this.options.contentInsetMin ?? config.contentInsetMin,
+      this.options.contentInsetMax ?? config.contentInsetMax,
+    ));
     const panelInset = Math.max(16, contentInset - 6);
     const footerHeight = this.options.footerHeight ?? PHASER_DESIGN.modal.footerHeight;
     const headerBottom = y + (this.options.headerBodyOffset ?? 112);
@@ -882,6 +1059,10 @@ class BaseModal extends PhaserContainer {
 
     if (this.options.variant === 'shopSheet') {
       this.#drawShopSheetShell(metrics, g, colors);
+      return;
+    }
+    if (this.options.variant === 'skillTreeSheet') {
+      this.#drawSkillTreeSheetShell(metrics, g, colors);
       return;
     }
 
@@ -928,64 +1109,139 @@ class BaseModal extends PhaserContainer {
     });
   }
 
-  #drawShopSheetShell(metrics, g, colors) {
-    const r = 24;
-    const panelX = metrics.x + 15;
+  #drawSkillTreeSheetShell(metrics, g, colors) {
+    const r = PHASER_DESIGN.modal.radius;
     const panelY = metrics.y + 76;
-    const panelWidth = metrics.width - 30;
-    const panelHeight = metrics.height - 88;
-    const shellY = Math.max(metrics.y, panelY - 46);
-    const shellHeight = metrics.y + metrics.height - shellY;
-    const topRailHeight = 62;
+    const panelHeight = metrics.height - 92;
 
-    g.fillStyle(colors.shadow, 0.48);
-    g.fillRoundedRect(metrics.x + 7, shellY + 9, metrics.width, shellHeight, r);
+    g.fillStyle(colors.shadow, 0.5);
+    g.fillRoundedRect(metrics.x + 9, metrics.y + 12, metrics.width, metrics.height, r);
     g.fillStyle(colors.outlineBrown, 1);
-    g.fillRoundedRect(metrics.x, shellY, metrics.width, shellHeight, r);
-    g.fillStyle(colors.woodDark, 1);
-    g.fillRoundedRect(metrics.x + 5, shellY + 5, metrics.width - 10, shellHeight - 10, r - 4);
-
+    g.fillRoundedRect(metrics.x, metrics.y, metrics.width, metrics.height, r);
     g.fillStyle(colors.woodMid, 1);
-    g.fillRoundedRect(metrics.x + 8, shellY + 8, metrics.width - 16, topRailHeight, 17);
-    g.fillStyle(colors.woodLight, 0.52);
-    g.fillRoundedRect(metrics.x + 18, shellY + 15, metrics.width - 36, 17, 9);
-    g.lineStyle(4, colors.line, 0.62);
-    g.strokeRoundedRect(metrics.x + 8, shellY + 8, metrics.width - 16, topRailHeight, 17);
-
-    g.fillStyle(colors.shadow, 0.36);
-    g.fillRoundedRect(panelX, panelY + 6, panelWidth, panelHeight, 24);
+    g.fillRoundedRect(metrics.x + 8, metrics.y + 8, metrics.width - 16, metrics.height - 16, r - 5);
+    g.fillStyle(colors.woodDark, 0.82);
+    g.fillRoundedRect(metrics.x + metrics.panelInset - 7, panelY - 3, metrics.width - (metrics.panelInset - 7) * 2, panelHeight + 6, 23);
     g.fillStyle(colors.parchment, 1);
-    g.fillRoundedRect(panelX, panelY, panelWidth, panelHeight, 24);
-    g.fillStyle(0xfff6dc, 0.82);
-    g.fillRoundedRect(panelX + 10, panelY + 8, panelWidth - 20, Math.max(28, panelHeight * 0.08), 15);
-    g.lineStyle(5, colors.line, 0.55);
-    g.strokeRoundedRect(panelX, panelY, panelWidth, panelHeight, 24);
-    g.lineStyle(3, colors.parchmentShadow, 0.76);
-    g.strokeRoundedRect(panelX + 8, panelY + 8, panelWidth - 16, panelHeight - 16, 18);
+    g.fillRoundedRect(metrics.x + metrics.panelInset, panelY + 5, metrics.width - metrics.panelInset * 2, panelHeight - 8, 19);
+    g.fillStyle(0xfff7dd, 0.72);
+    g.fillRoundedRect(metrics.x + metrics.panelInset + 10, panelY + 13, metrics.width - metrics.panelInset * 2 - 20, 25, 14);
+    g.lineStyle(4, colors.line, 0.55);
+    g.strokeRoundedRect(metrics.x + metrics.panelInset, panelY + 5, metrics.width - metrics.panelInset * 2, panelHeight - 8, 19);
 
-    const titlePillWidth = Math.round(clamp(metrics.width * 0.43, 176, 220));
-    const titlePillHeight = 52;
+    const titlePillWidth = Math.round(clamp(metrics.width * 0.54, 172, 244));
+    const titlePillHeight = 50;
     const titlePillX = Math.round(metrics.x + (metrics.width - titlePillWidth) / 2);
-    const titlePillY = shellY + 10;
+    const titlePillY = metrics.y + 18;
     g.fillStyle(colors.outlineBrown, 1);
-    g.fillRoundedRect(titlePillX - 7, titlePillY - 4, titlePillWidth + 14, titlePillHeight + 8, 21);
-    g.fillStyle(colors.woodDark, 1);
-    g.fillRoundedRect(titlePillX - 1, titlePillY + 2, titlePillWidth + 2, titlePillHeight + 2, 18);
-    g.fillStyle(colors.woodMid, 1);
-    g.fillRoundedRect(titlePillX + 5, titlePillY + 6, titlePillWidth - 10, titlePillHeight - 10, 15);
-    g.fillStyle(colors.goldHighlight, 0.28);
-    g.fillRoundedRect(titlePillX + 22, titlePillY + 11, titlePillWidth - 44, 12, 8);
+    g.fillRoundedRect(titlePillX - 7, titlePillY - 5, titlePillWidth + 14, titlePillHeight + 10, 22);
+    g.fillStyle(colors.gold, 1);
+    g.fillRoundedRect(titlePillX, titlePillY, titlePillWidth, titlePillHeight, 21);
+    g.fillStyle(colors.goldHighlight, 0.72);
+    g.fillRoundedRect(titlePillX + 15, titlePillY + 7, titlePillWidth - 30, 18, 11);
+    g.lineStyle(4, colors.line, 0.72);
+    g.strokeRoundedRect(titlePillX, titlePillY, titlePillWidth, titlePillHeight, 21);
 
     this.titleText
       .setText(this.options.title)
-      .setStyle(modalTextStyle('title', { fontSize: '26px', strokeThickness: 5 }))
+      .setStyle(modalTextStyle('title', { fontSize: '25px', strokeThickness: 5 }))
       .setPosition(metrics.x + metrics.width / 2, titlePillY + titlePillHeight / 2 + 2);
     this.kickerText.setVisible(false);
 
-    const closeSize = 48;
+    const closeSize = Math.round(clamp(metrics.width * 0.1, 38, 42));
     this.closeButton.setLayout({
-      x: metrics.x + metrics.width - 34,
-      y: shellY + 36,
+      x: metrics.x + metrics.width - Math.max(36, metrics.contentInset + 12),
+      y: metrics.y + 42,
+      width: closeSize,
+      height: closeSize,
+    });
+  }
+
+  #drawShopSheetShell(metrics, g, colors) {
+    const r = 20;
+    const panelX = metrics.x + 9;
+    const panelY = metrics.y + 75;
+    const panelWidth = metrics.width - 18;
+    const panelHeight = metrics.height - 86;
+    const shellY = Math.max(metrics.y, panelY - 36);
+    const shellHeight = metrics.y + metrics.height - shellY;
+    const topRailHeight = 51;
+
+    g.fillStyle(colors.shadow, 0.42);
+    g.fillRoundedRect(metrics.x + 5, shellY + 8, metrics.width, shellHeight, r);
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillRoundedRect(metrics.x, shellY, metrics.width, shellHeight, r);
+    g.fillStyle(0x4a230c, 1);
+    g.fillRoundedRect(metrics.x + 5, shellY + 5, metrics.width - 10, shellHeight - 10, r - 4);
+
+    g.fillStyle(colors.woodMid, 1);
+    g.fillRoundedRect(metrics.x + 8, shellY + 8, metrics.width - 16, topRailHeight, 14);
+    g.fillStyle(colors.woodLight, 0.52);
+    g.fillRoundedRect(metrics.x + 19, shellY + 15, metrics.width - 38, 13, 7);
+    g.lineStyle(2, colors.line, 0.5);
+    g.strokeRoundedRect(metrics.x + 8, shellY + 8, metrics.width - 16, topRailHeight, 14);
+
+    g.fillStyle(colors.shadow, 0.26);
+    g.fillRoundedRect(panelX, panelY + 5, panelWidth, panelHeight, 22);
+    g.fillStyle(colors.parchment, 1);
+    g.fillRoundedRect(panelX, panelY, panelWidth, panelHeight, 22);
+    g.fillStyle(0xfff6dc, 0.82);
+    g.fillRoundedRect(panelX + 8, panelY + 7, panelWidth - 16, Math.max(26, panelHeight * 0.07), 14);
+    g.lineStyle(3, colors.line, 0.44);
+    g.strokeRoundedRect(panelX, panelY, panelWidth, panelHeight, 22);
+    g.lineStyle(2, colors.parchmentShadow, 0.66);
+    g.strokeRoundedRect(panelX + 7, panelY + 7, panelWidth - 14, panelHeight - 14, 17);
+
+    const shellBottom = shellY + shellHeight;
+    const panelBottom = panelY + panelHeight;
+    const bottomShelfY = shellBottom - 34;
+    g.fillStyle(colors.shadow, 0.46);
+    g.fillRoundedRect(metrics.x + 24, shellBottom + 8, metrics.width - 48, 14, 7);
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillRoundedRect(metrics.x + 17, bottomShelfY, metrics.width - 34, 29, 12);
+    g.fillStyle(0x8a4d20, 1);
+    g.fillRoundedRect(metrics.x + 23, bottomShelfY + 4, metrics.width - 46, 20, 9);
+    g.fillStyle(colors.woodLight, 0.86);
+    g.fillRoundedRect(metrics.x + 31, bottomShelfY + 6, metrics.width - 62, 8, 5);
+    g.fillStyle(colors.goldHighlight, 0.62);
+    g.fillRoundedRect(metrics.x + 54, bottomShelfY + 8, metrics.width - 108, 4, 2);
+    g.lineStyle(3, 0xfff0bd, 0.72);
+    g.lineBetween(metrics.x + 35, shellBottom - 10, metrics.x + metrics.width - 35, shellBottom - 10);
+    g.lineStyle(2, colors.line, 0.66);
+    g.lineBetween(metrics.x + 30, shellBottom - 5, metrics.x + metrics.width - 30, shellBottom - 5);
+    g.lineStyle(2, 0xfff0bd, 0.52);
+    g.lineBetween(panelX + 28, panelBottom - 9, panelX + panelWidth - 28, panelBottom - 9);
+    g.fillStyle(0xffefc7, 0.94);
+    g.fillRoundedRect(metrics.x + 24, shellBottom + 1, metrics.width - 48, 6, 4);
+    g.fillStyle(colors.goldHighlight, 0.58);
+    g.fillRoundedRect(metrics.x + 46, shellBottom + 2, metrics.width - 92, 3, 2);
+
+    const titlePillWidth = Math.round(clamp(metrics.width * 0.42, 188, 228));
+    const titlePillHeight = 44;
+    const titlePillX = Math.round(metrics.x + (metrics.width - titlePillWidth) / 2);
+    const titlePillY = shellY + 8;
+    g.fillStyle(colors.shadow, 0.36);
+    g.fillRoundedRect(titlePillX + 3, titlePillY + 5, titlePillWidth, titlePillHeight, 17);
+    g.fillStyle(0x4a230c, 1);
+    g.fillRoundedRect(titlePillX, titlePillY, titlePillWidth, titlePillHeight, 17);
+    g.fillStyle(colors.woodMid, 1);
+    g.fillRoundedRect(titlePillX + 5, titlePillY + 5, titlePillWidth - 10, titlePillHeight - 10, 13);
+    g.fillStyle(colors.woodLight, 0.34);
+    g.fillRoundedRect(titlePillX + 18, titlePillY + 9, titlePillWidth - 36, 10, 6);
+    g.lineStyle(2, colors.line, 0.62);
+    g.strokeRoundedRect(titlePillX + 1, titlePillY + 1, titlePillWidth - 2, titlePillHeight - 2, 16);
+
+    this.titleText
+      .setText(this.options.title)
+      .setStyle(modalTextStyle('title', { fontSize: '24px', strokeThickness: 3, letterSpacing: 0 }))
+      .setPosition(metrics.x + metrics.width / 2, titlePillY + titlePillHeight / 2 + 1);
+    this.titleText.setPadding?.(8, 6, 8, 6);
+    this.kickerText.setVisible(false);
+
+    const closeSize = 40;
+    this.closeButton.setLayout({
+      x: metrics.x + metrics.width - 28,
+      y: shellY + 30,
       width: closeSize,
       height: closeSize,
     });
@@ -1382,22 +1638,22 @@ class ShopModal extends BaseModal {
     this.body.add(g);
 
     const compact = metrics.sceneHeight < 900;
-    const segmentHeight = compact ? 36 : 40;
+    const segmentHeight = compact ? 34 : 38;
     const segmentY = metrics.innerY;
     this.#drawSegmentedHeader(g, metrics.innerX, segmentY, metrics.innerWidth, segmentHeight);
 
-    const rubyTitleY = segmentY + segmentHeight + (compact ? 14 : 21);
+    const rubyTitleY = segmentY + segmentHeight + (compact ? 15 : 18);
     this.#drawSectionTitle(g, metrics.innerX, rubyTitleY, metrics.innerWidth, '루비');
-    const rubyCardsY = rubyTitleY + (compact ? 26 : 32);
-    const rubyCardHeight = compact ? 120 : 146;
+    const rubyCardsY = rubyTitleY + (compact ? 29 : 32);
+    const rubyCardHeight = compact ? 142 : 154;
     this.#drawGroupFrame(g, metrics.innerX - 6, rubyCardsY - 10, metrics.innerWidth + 12, rubyCardHeight + 20);
     this.#drawRubyCards(g, products.ruby, metrics.innerX, rubyCardsY, metrics.innerWidth, rubyCardHeight);
 
-    const limitedY = rubyCardsY + rubyCardHeight + (compact ? 20 : 30);
+    const limitedY = rubyCardsY + rubyCardHeight + (compact ? 22 : 28);
     this.#drawSectionTitle(g, metrics.innerX, limitedY, metrics.innerWidth, '한정 상품');
-    const limitedCardsY = limitedY + (compact ? 27 : 34);
+    const limitedCardsY = limitedY + (compact ? 31 : 34);
     const availableLimited = Math.max(118, metrics.footerTop - limitedCardsY - 12);
-    const limitedCardHeight = Math.round(clamp(availableLimited, compact ? 132 : 142, compact ? 148 : 164));
+    const limitedCardHeight = Math.round(clamp(availableLimited, compact ? 158 : 164, compact ? 176 : 188));
     this.#drawLimitedProducts(g, products.limited, metrics.innerX, limitedCardsY, metrics.innerWidth, limitedCardHeight);
   }
 
@@ -1407,38 +1663,75 @@ class ShopModal extends BaseModal {
 
   #drawSegmentedHeader(g, x, y, width, height) {
     const { colors } = PHASER_DESIGN;
-    const gap = 12;
+    const gap = 10;
     const tabWidth = Math.floor((width - gap) / 2);
-    g.fillStyle(colors.outlineBrown, 0.18);
-    g.fillRoundedRect(x, y + 3, width, height, 14);
+    g.fillStyle(colors.outlineBrown, 0.14);
+    g.fillRoundedRect(x, y + 2, width, height, 13);
     g.fillStyle(0xfff2cf, 1);
-    g.fillRoundedRect(x, y, width, height, 14);
-    g.lineStyle(2, colors.parchmentShadow, 0.7);
-    g.strokeRoundedRect(x + 1, y + 1, width - 2, height - 2, 13);
+    g.fillRoundedRect(x, y, width, height, 13);
+    g.lineStyle(2, colors.parchmentShadow, 0.58);
+    g.strokeRoundedRect(x + 1, y + 1, width - 2, height - 2, 12);
 
-    this.#drawSegmentTab(g, x + 5, y + 5, tabWidth - 5, height - 10, '◆  루비', true);
-    this.#drawSegmentTab(g, x + tabWidth + gap, y + 5, tabWidth - 5, height - 10, '◷  한정 상품', false);
+    this.#drawSegmentTab(g, x + 5, y + 5, tabWidth - 5, height - 10, '루비', true, 'ruby');
+    this.#drawSegmentTab(g, x + tabWidth + gap, y + 5, tabWidth - 5, height - 10, '한정 상품', false, 'clock');
   }
 
-  #drawSegmentTab(g, x, y, width, height, label, active) {
-    const fill = active ? 0xb92c25 : 0xf2d39a;
-    const highlight = active ? 0xe8544a : 0xffefc2;
+  #drawSegmentTab(g, x, y, width, height, label, active, iconType) {
+    const fill = active ? 0xc4332b : 0xf4dba6;
+    const highlight = active ? 0xeb5b50 : 0xfff0c8;
     const textColor = active ? '#fff7dd' : '#4b2108';
-    g.fillStyle(0x5b2a0e, 1);
-    g.fillRoundedRect(x, y, width, height, 12);
+    g.fillStyle(0x5b2a0e, 0.9);
+    g.fillRoundedRect(x, y, width, height, 11);
     g.fillStyle(fill, 1);
-    g.fillRoundedRect(x + 3, y + 3, width - 6, height - 6, 10);
-    g.fillStyle(highlight, 0.65);
-    g.fillRoundedRect(x + 9, y + 7, width - 18, 12, 6);
-    g.lineStyle(2, active ? 0x741711 : 0xb17b36, 0.82);
-    g.strokeRoundedRect(x + 3, y + 3, width - 6, height - 6, 10);
+    g.fillRoundedRect(x + 2, y + 2, width - 4, height - 4, 9);
+    g.fillStyle(highlight, active ? 0.5 : 0.78);
+    g.fillRoundedRect(x + 9, y + 6, width - 18, 9, 5);
+    g.lineStyle(2, active ? 0x7c1812 : 0xbd853b, active ? 0.62 : 0.52);
+    g.strokeRoundedRect(x + 2, y + 2, width - 4, height - 4, 9);
 
-    const text = makeText(this.scene, x + width / 2, y + height / 2 + 1, label, modalTextStyle('button', {
-      fontSize: '15px',
+    const iconRadius = 6;
+    const textWidthEstimate = iconType === 'clock' ? 66 : 30;
+    const groupGap = 8;
+    const groupWidth = iconRadius * 2 + groupGap + textWidthEstimate;
+    const iconX = Math.round(x + width / 2 - groupWidth / 2 + iconRadius);
+    const centerY = Math.round(y + height / 2);
+    const textX = iconX + iconRadius + groupGap + textWidthEstimate / 2;
+    this.#drawSegmentIcon(g, iconX, centerY, iconRadius, iconType, active);
+
+    const text = makeText(this.scene, textX, centerY, label, modalTextStyle('button', {
+      fontSize: '14px',
       color: textColor,
-      strokeThickness: active ? 4 : 0,
+      strokeThickness: active ? 3 : 0,
+      letterSpacing: 0,
+      align: 'center',
     })).setOrigin(0.5);
     this.body.add(text);
+  }
+
+  #drawSegmentIcon(g, cx, cy, radius, iconType, active) {
+    if (iconType === 'ruby') {
+      g.fillStyle(0x5b1a14, active ? 0.72 : 0.36);
+      this.#drawSmallDiamond(g, cx, cy + 1, radius + 3);
+      g.fillStyle(active ? 0xfff7dd : 0x8b4f18, 1);
+      this.#drawSmallDiamond(g, cx, cy, radius + 1);
+      g.fillStyle(active ? 0xffffff : 0xfff0c8, active ? 0.62 : 0.72);
+      this.#drawSmallDiamond(g, cx - 1, cy - 2, Math.max(3, radius - 3));
+      return;
+    }
+
+    g.fillStyle(0x5b2a0e, active ? 0.52 : 0.28);
+    g.fillCircle(cx, cy + 1, radius + 2);
+    g.fillStyle(active ? 0xfff4cc : 0x8b4f18, 1);
+    g.fillCircle(cx, cy, radius + 1);
+    g.lineStyle(2, active ? 0x7b1a12 : 0xffedbd, active ? 0.76 : 0.9);
+    g.strokeCircle(cx, cy, radius + 1);
+    g.lineStyle(2, active ? 0x7b1a12 : 0xffedbd, 1);
+    g.beginPath();
+    g.moveTo(cx, cy);
+    g.lineTo(cx, cy - radius + 2);
+    g.moveTo(cx, cy);
+    g.lineTo(cx + radius - 1, cy + 2);
+    g.strokePath();
   }
 
   #drawSectionTitle(g, x, y, width, label) {
@@ -1498,8 +1791,8 @@ class ShopModal extends BaseModal {
 
     const compactCard = height < 130;
     const iconX = x + width / 2;
-    const iconY = y + Math.round(height * (compactCard ? 0.4 : 0.46));
-    const iconSize = compactCard ? 64 : 78;
+    const iconY = y + Math.round(height * (compactCard ? 0.43 : 0.47));
+    const iconSize = compactCard ? 54 : 82;
     const hasIcon = this.#drawProductIcon(product, iconX, iconY, iconSize);
     if (!hasIcon) {
       this.#drawRubyOfferGraphic(
@@ -1524,22 +1817,13 @@ class ShopModal extends BaseModal {
       this.body.add(badge);
     }
 
-    const priceText = makeText(this.scene, x + width / 2, y + height - (compactCard ? 49 : 55), formatWon(product.priceWon), modalTextStyle('rowBody', {
-      fontSize: '14px',
-      fontStyle: 'bold',
-      color: '#5b2a0e',
-      align: 'center',
-    })).setOrigin(0.5, 0);
-    this.body.add(priceText);
-
-    const button = new DesignButton(this.scene, {
+    const button = new ShopPurchaseButton(this.scene, {
       x: x + width / 2,
-      y: y + height - 21,
-      width: width - 18,
-      height: 34,
-      label: '구매',
-      style: 'green',
-      fontSize: '15px',
+      y: y + height - 23,
+      width: width - 16,
+      height: 38,
+      label: formatWon(product.priceWon),
+      fontSize: width < 120 ? '12px' : '14px',
       onClick: () => this.#handleBuy(product),
     });
     this.body.add(button);
@@ -1641,30 +1925,31 @@ class ShopModal extends BaseModal {
     this.body.add(title);
 
     const iconX = x + width / 2;
-    const iconY = y + Math.round(height * 0.42);
-    const iconSize = width < 120 ? 70 : 78;
+    const compactCard = height < 150 || width < 120;
+    const iconY = y + Math.round(height * (compactCard ? 0.37 : 0.4));
+    const iconSize = compactCard ? 74 : 88;
     const hasIcon = this.#drawProductIcon(product, iconX, iconY, iconSize);
     if (!hasIcon) {
-      this.#drawLimitedIcon(g, product, iconX, iconY, width < 120 ? 0.72 : 0.84);
+      this.#drawLimitedIcon(g, product, iconX, iconY, compactCard ? 0.58 : 0.78);
     }
 
-    const lines = this.#limitedLines(product).slice(0, height < 146 ? 1 : 2);
-    const bulletText = makeText(this.scene, x + 12, y + height - (height < 146 ? 57 : 65), lines.map(line => `• ${line}`).join('\n'), modalTextStyle('rowBody', {
-      fontSize: width < 120 ? '9px' : '10px',
-      lineSpacing: 2,
+    const lines = this.#limitedLines(product).slice(0, 2);
+    const summaryText = makeText(this.scene, x + 13, y + height - 68, lines.map(line => `• ${line}`).join('\n'), modalTextStyle('rowBody', {
+      fontSize: width < 120 ? '8px' : '9px',
+      lineSpacing: 1,
+      align: 'left',
       color: '#4f2a0d',
-      wordWrap: { width: width - 24, useAdvancedWrap: true },
-    }));
-    this.body.add(bulletText);
+      wordWrap: { width: width - 26, useAdvancedWrap: true },
+    })).setOrigin(0, 0);
+    this.body.add(summaryText);
 
-    const button = new DesignButton(this.scene, {
+    const button = new ShopPurchaseButton(this.scene, {
       x: x + width / 2,
       y: y + height - 20,
-      width: width - 18,
-      height: 34,
+      width: width - 16,
+      height: 36,
       label: formatWon(product.priceWon),
-      style: 'green',
-      fontSize: width < 120 ? '12px' : '13px',
+      fontSize: width < 120 ? '11px' : '13px',
       onClick: () => this.#handleBuy(product),
     });
     this.body.add(button);
@@ -1760,10 +2045,17 @@ class ShopModal extends BaseModal {
   }
 
   #limitedLines(product) {
-    if (product.id === 201504) return ['장비 강화 재료 대량 지급', '전설 장비 확정 상자 포함'];
-    if (product.id === 201505) return ['모든 광고 즉시 제거', '보상 2배 광고 없이 수령'];
+    if (product.id === 201504) return ['장비 재료 대량 지급', '전설 상자 포함'];
+    if (product.id === 201505) return ['모든 광고 즉시 제거', '보상 바로 수령'];
     if (product.id === 201506) return ['게임 속도 2배', '모든 콘텐츠 적용'];
     return [product.body || '한정 혜택 지급'];
+  }
+
+  #limitedSummary(product) {
+    if (product.id === 201504) return '재료+장비상자';
+    if (product.id === 201505) return '광고 없이 보상';
+    if (product.id === 201506) return '속도 2배 적용';
+    return this.#limitedLines(product)[0] || '한정 혜택';
   }
 
   #handleBuy(product) {
@@ -2192,6 +2484,23 @@ class SkillTreeModal extends BaseModal {
     this.selectedSlotIndex = 0;
     this.selectedItemDataId = 0;
     this.latestState = null;
+    this.treeScrollY = 0;
+    this.treeScrollMax = 0;
+    this.treeViewport = null;
+    this.treeScrollContent = null;
+    this.treeScrollThumb = null;
+    this.treeScrollTrack = null;
+    this.treeDrag = null;
+    this.treeClickSuppressed = false;
+    this.activeTreeLayer = null;
+    this.treeWheelHandler = (pointer, _gameObjects, _deltaX, deltaY) => this.#handleTreeWheel(pointer, deltaY);
+    this.treePointerDownHandler = pointer => this.#handleTreePointerDown(pointer);
+    this.treePointerMoveHandler = pointer => this.#handleTreePointerMove(pointer);
+    this.treePointerUpHandler = () => this.#handleTreePointerUp();
+    this.scene.input.on('wheel', this.treeWheelHandler);
+    this.scene.input.on('pointerdown', this.treePointerDownHandler);
+    this.scene.input.on('pointermove', this.treePointerMoveHandler);
+    this.scene.input.on('pointerup', this.treePointerUpHandler);
   }
 
   buildBody(metrics) {
@@ -2204,64 +2513,33 @@ class SkillTreeModal extends BaseModal {
     const g = makeGraphics(this.scene);
     this.body.add(g);
 
-    const topY = metrics.innerY + 2;
-    const summaryHeight = 36;
-    const slotsHeight = metrics.bodyHeight > 430 ? 78 : 68;
-    const sectionGap = metrics.bodyHeight > 430 ? 10 : 8;
+    const compact = metrics.bodyHeight < 590;
+    const topY = metrics.innerY;
+    const sectionGap = compact ? 4 : 6;
+    const treeDetailGap = compact ? 9 : 12;
+    const summaryHeight = compact ? 32 : 38;
+    const slotsHeight = compact ? 50 : 56;
+    const detailHeight = Math.round(clamp(metrics.bodyHeight * 0.255, compact ? 142 : 152, compact ? 160 : 174));
+    const treeY = topY + summaryHeight + sectionGap + slotsHeight + sectionGap;
+    const detailY = metrics.innerY + metrics.bodyHeight - detailHeight;
+    const treeHeight = Math.max(1, detailY - treeY - treeDetailGap);
+
     this.#drawSummary(g, state, metrics.innerX, topY, metrics.innerWidth, summaryHeight);
     this.#drawSlots(g, state, metrics.innerX, topY + summaryHeight + sectionGap, metrics.innerWidth, slotsHeight);
-
-    const skills = state.skills.slice(0, 12);
-    const gap = 8;
-    const columns = metrics.innerWidth >= 250 ? 2 : 1;
-    const rows = Math.max(1, Math.ceil(skills.length / columns));
-    const gridY = topY + summaryHeight + sectionGap + slotsHeight + sectionGap + 6;
-    const available = Math.max(132, metrics.innerY + metrics.bodyHeight - gridY);
-    const cardWidth = Math.floor((metrics.innerWidth - gap * (columns - 1)) / columns);
-    const cardHeight = Math.max(44, Math.min(68, Math.floor((available - gap * (rows - 1)) / rows)));
-
-    skills.forEach((skill, index) => {
-      const col = index % columns;
-      const row = Math.floor(index / columns);
-      this.#drawSkillCard(
-        g,
-        skill,
-        metrics.innerX + col * (cardWidth + gap),
-        gridY + row * (cardHeight + gap),
-        cardWidth,
-        cardHeight,
-        colors,
-      );
-    });
+    this.#drawTreeMap(g, state.skills.slice(0, 12), metrics.innerX, treeY, metrics.innerWidth, treeHeight, colors);
+    this.#drawDetailPanel(g, state, metrics.innerX, detailY, metrics.innerWidth, detailHeight, colors);
   }
 
   resolveActions() {
-    const board = this.manager.context.board;
-    const state = this.latestState || board?.getSkillTreeState?.() || emptySkillTreeState();
-    const selected = this.#selectedSkill(state);
-    const slot = state.slots[this.selectedSlotIndex];
-    const equippedHere = selected && Number(slot?.itemDataId) === Number(selected.itemDataId);
-    const investLabel = this.#investLabel(selected);
-    return [
-      {
-        label: state.autoSkillsEnabled ? '자동\nOFF' : '자동\nON',
-        style: 'wood',
-        onClick: () => {
-          board?.setAutoSkillsEnabled?.(!state.autoSkillsEnabled);
-          this.rebuild();
-        },
-      },
-      {
-        label: investLabel,
-        style: 'primary',
-        onClick: () => this.#handleInvest(),
-      },
-      {
-        label: equippedHere ? '해제' : '장착',
-        style: 'green',
-        onClick: () => this.#handleEquip(),
-      },
-    ];
+    return [];
+  }
+
+  destroy(fromScene) {
+    this.scene.input.off('wheel', this.treeWheelHandler);
+    this.scene.input.off('pointerdown', this.treePointerDownHandler);
+    this.scene.input.off('pointermove', this.treePointerMoveHandler);
+    this.scene.input.off('pointerup', this.treePointerUpHandler);
+    super.destroy(fromScene);
   }
 
   #resolveSelection(state) {
@@ -2290,42 +2568,69 @@ class SkillTreeModal extends BaseModal {
     g.fillStyle(0xffffff, 0.28);
     g.fillRoundedRect(x + 10, y + 5, width - 20, Math.max(8, height * 0.32), 11);
 
-    const left = makeText(this.scene, x + 14, y + 10, `Lv.${state.playerLevel} · 슬롯 ${state.slotCount}/${state.maxSlots}`, modalTextStyle('rowTitle', {
-      fontSize: '14px',
+    const left = makeText(this.scene, x + 14, y + 9, `Lv.${state.playerLevel} · 슬롯 ${state.slotCount}/${state.maxSlots}`, modalTextStyle('rowTitle', {
+      fontSize: height < 46 ? '13px' : '14px',
       color: '#3a1b08',
     }));
-    const right = makeText(this.scene, x + width - 14, y + 10, `레벨 포인트 ${formatNumber(state.levelPoints)} · ${state.autoSkillsEnabled ? 'AUTO ON' : 'AUTO OFF'}`, modalTextStyle('rowBody', {
-      fontSize: '13px',
+    const pointText = makeText(this.scene, x + width - 98, y + 9, `잎 ${formatNumber(state.levelPoints)}`, modalTextStyle('rowBody', {
+      fontSize: height < 46 ? '12px' : '13px',
       align: 'right',
-      color: state.autoSkillsEnabled ? '#2f7e20' : '#8f3925',
+      color: '#2f7e20',
     })).setOrigin(1, 0);
-    this.body.add([left, right]);
+    const auto = new DesignButton(this.scene, {
+      x: x + width - 39,
+      y: y + height / 2,
+      width: 74,
+      height: Math.min(34, height - 8),
+      label: state.autoSkillsEnabled ? 'AUTO\nON' : 'AUTO\nOFF',
+      style: state.autoSkillsEnabled ? 'green' : 'wood',
+      fontSize: '11px',
+      onClick: () => {
+        const board = this.manager.context.board;
+        board?.setAutoSkillsEnabled?.(!state.autoSkillsEnabled);
+        this.rebuild();
+      },
+    });
+    this.body.add([left, pointText, auto]);
   }
 
   #drawSlots(g, state, x, y, width, height) {
     const { colors } = PHASER_DESIGN;
-    const gap = 7;
-    const slotWidth = Math.floor((width - gap * (state.maxSlots - 1)) / state.maxSlots);
+    g.fillStyle(colors.outlineBrown, 0.16);
+    g.fillRoundedRect(x, y + 4, width, height, 18);
+    g.fillStyle(0xfff3cf, 1);
+    g.fillRoundedRect(x, y, width, height, 18);
+    g.lineStyle(3, colors.parchmentShadow, 0.72);
+    g.strokeRoundedRect(x + 1, y + 1, width - 2, height - 2, 17);
+
+    const label = makeText(this.scene, x + 12, y + 7, '장착', modalTextStyle('rowTitle', {
+      fontSize: height < 64 ? '12px' : '13px',
+      color: '#5b2a0e',
+    }));
+    this.body.add(label);
+
+    const gap = 8;
+    const railX = x + (width < 330 ? 58 : 70);
+    const railWidth = Math.max(1, width - (width < 330 ? 66 : 80));
+    const slotWidth = Math.floor((railWidth - gap * (state.maxSlots - 1)) / state.maxSlots);
 
     state.slots.forEach(slot => {
-      const sx = x + slot.index * (slotWidth + gap);
+      const sx = railX + slot.index * (slotWidth + gap);
       const selected = slot.index === this.selectedSlotIndex;
       const locked = !slot.unlocked;
       const fill = locked ? 0x765236 : selected ? 0xffe36a : 0xffefd0;
       const line = selected ? colors.greenDark : locked ? 0x5a351d : colors.parchmentShadow;
+      const cardY = y + 8;
+      const cardHeight = height - 14;
 
       g.fillStyle(colors.outlineBrown, selected ? 0.36 : 0.2);
-      g.fillRoundedRect(sx, y + 5, slotWidth, height, 18);
+      g.fillRoundedRect(sx, cardY + 4, slotWidth, cardHeight, 15);
       g.fillStyle(fill, 1);
-      g.fillRoundedRect(sx, y, slotWidth, height, 18);
-      if (!locked) {
-        g.fillStyle(0xffffff, selected ? 0.24 : 0.2);
-        g.fillRoundedRect(sx + 8, y + 6, Math.max(8, slotWidth - 16), 12, 8);
-      }
+      g.fillRoundedRect(sx, cardY, slotWidth, cardHeight, 15);
       g.lineStyle(selected ? 4 : 3, line, selected ? 0.95 : 0.82);
-      g.strokeRoundedRect(sx + 1, y + 1, slotWidth - 2, height - 2, 17);
+      g.strokeRoundedRect(sx + 1, cardY + 1, slotWidth - 2, cardHeight - 2, 14);
 
-      const hit = makeRectangle(this.scene, sx, y, slotWidth, height, 0xffffff, 0.001)
+      const hit = makeRectangle(this.scene, sx, cardY, slotWidth, cardHeight, 0xffffff, 0.001)
         .setOrigin(0)
         .setInteractive({ useHandCursor: true })
         .on('pointerup', () => {
@@ -2335,80 +2640,659 @@ class SkillTreeModal extends BaseModal {
           this.rebuild();
         });
 
-      const title = slot.item
-        ? compactModalName(skillDisplayName(slot.item.name), 4)
-        : locked
-          ? `Lv.${slot.unlock?.level || 1}`
-          : '빈 슬롯';
-      const meta = slot.item ? `Lv.${slot.level}` : locked ? '잠김' : '장착';
+      const meta = slot.item && slot.cooldownSeconds > 0 ? `${Math.ceil(slot.cooldownSeconds)}s` : slot.item ? `Lv.${slot.level}` : locked ? `Lv.${slot.unlock?.level || 1}` : '장착';
+      const iconY = cardY + Math.round(cardHeight * 0.38);
       const icon = slot.item
-        ? this.#makeSkillIcon(slot.item, sx + slotWidth / 2, y + 20, height > 72 ? 30 : 26)
-        : makeText(this.scene, sx + slotWidth / 2, y + 16, locked ? 'L' : '+', modalTextStyle('button', {
+        ? this.#makeSkillIcon(slot.item, sx + slotWidth / 2, iconY, height > 56 ? 30 : 26)
+        : makeText(this.scene, sx + slotWidth / 2, iconY, locked ? 'L' : '+', modalTextStyle('button', {
           fontSize: locked ? '17px' : '19px',
           strokeThickness: 3,
           color: locked ? '#fff1c8' : '#ffffff',
         })).setOrigin(0.5);
-      const titleText = makeText(this.scene, sx + slotWidth / 2, y + Math.round(height * 0.48), title, modalTextStyle('rowTitle', {
-        fontSize: slotWidth < 74 ? '10px' : '11px',
-        align: 'center',
-        color: locked ? '#2b1206' : '#3a1b08',
-      })).setOrigin(0.5, 0);
-      const metaText = makeText(this.scene, sx + slotWidth / 2, y + Math.round(height * 0.72), meta, modalTextStyle('rowBody', {
+      const metaText = makeText(this.scene, sx + slotWidth / 2, cardY + cardHeight - 14, meta, modalTextStyle('rowBody', {
         fontSize: slotWidth < 74 ? '9px' : '10px',
         align: 'center',
         color: locked ? '#4b250d' : '#8a4f21',
       })).setOrigin(0.5, 0);
-      this.body.add([hit, icon, titleText, metaText]);
+      this.body.add([hit, icon, metaText]);
     });
   }
 
-  #drawSkillCard(g, skill, x, y, width, height, colors) {
+  #drawTreeMap(g, skills, x, y, width, height, colors) {
+    this.treeViewport = null;
+    this.treeScrollContent = null;
+    this.treeScrollThumb = null;
+    this.treeScrollTrack = null;
+    this.activeTreeLayer = null;
+
+    g.fillStyle(colors.outlineBrown, 0.24);
+    g.fillRoundedRect(x, y + 6, width, height, 22);
+    g.fillStyle(0x6b3b1a, 0.72);
+    g.fillRoundedRect(x - 2, y - 1, width + 4, height + 4, 22);
+    g.fillStyle(0xfff2cf, 1);
+    g.fillRoundedRect(x + 4, y + 4, width - 8, height - 8, 19);
+    g.fillStyle(0xfffbeb, 0.54);
+    g.fillRoundedRect(x + 13, y + 12, width - 26, Math.max(24, height * 0.11), 15);
+    g.fillStyle(0xd7a563, 0.16);
+    for (let i = 0; i < 5; i += 1) {
+      const swirlX = x + 34 + i * Math.max(42, width / 5.5);
+      const swirlY = y + 58 + (i % 2) * Math.max(30, height * 0.14);
+      g.fillCircle(swirlX, swirlY, 12 + (i % 3) * 4);
+      g.fillCircle(swirlX + 17, swirlY + 13, 5 + (i % 2) * 3);
+    }
+    g.lineStyle(5, colors.line, 0.48);
+    g.strokeRoundedRect(x + 1, y + 1, width - 2, height - 2, 21);
+    g.lineStyle(2, colors.parchmentShadow, 0.44);
+    g.strokeRoundedRect(x + 10, y + 10, width - 20, height - 20, 15);
+
+    if (!skills.length) {
+      const empty = makeText(this.scene, x + width / 2, y + height / 2 - 10, '스킬 노드가 없습니다', modalTextStyle('rowTitle', {
+        fontSize: '16px',
+        align: 'center',
+        color: '#5b2a0e',
+      })).setOrigin(0.5);
+      this.body.add(empty);
+      return;
+    }
+
+    const viewport = {
+      x: x + 10,
+      y: y + 36,
+      width: Math.max(1, width - 34),
+      height: Math.max(1, height - 50),
+    };
+    const contentHeight = Math.round(clamp(viewport.height * 2.35, viewport.height + 330, 920));
+    this.treeViewport = viewport;
+    this.treeScrollMax = Math.max(0, contentHeight - viewport.height);
+    this.treeScrollY = Math.round(clamp(this.treeScrollY, 0, this.treeScrollMax));
+
+    const maskShape = makeGraphics(this.scene);
+    maskShape.fillStyle(0xffffff, 1);
+    maskShape.fillRoundedRect(viewport.x, viewport.y, viewport.width, viewport.height, 16);
+    maskShape.setVisible(false);
+    this.body.add(maskShape);
+
+    const contentLayer = makeContainer(this.scene, 0, -this.treeScrollY);
+    const mask = maskShape.createGeometryMask?.();
+    if (mask) contentLayer.setMask(mask);
+    this.body.add(contentLayer);
+    this.treeScrollContent = contentLayer;
+    this.activeTreeLayer = contentLayer;
+
+    const treeGraphics = makeGraphics(this.scene);
+    contentLayer.add(treeGraphics);
+
+    const layouts = this.#resolveTreeLayouts(skills, x, viewport.y, width, contentHeight);
+    this.#drawTreeConnectors(treeGraphics, layouts, colors);
+
+    for (const layout of layouts) {
+      this.#drawSkillNode(treeGraphics, layout, colors);
+    }
+    this.activeTreeLayer = null;
+
+    this.#drawTreeScrollSpine(g, x + width - 19, viewport.y, viewport.height, viewport.height, contentHeight, colors);
+    this.#drawLaneBadges(g, x + 13, y + 10, width - 50, colors);
+  }
+
+  #drawLaneBadges(g, x, y, width, colors) {
+    const badges = [
+      { x: x + width * 0.18, label: '공격', color: 0xf08a2a },
+      { x: x + width * 0.5, label: '보조', color: colors.green },
+      { x: x + width * 0.82, label: '궁극', color: colors.purple },
+    ];
+    for (const badge of badges) {
+      const badgeWidth = 42;
+      const badgeHeight = 22;
+      g.fillStyle(colors.outlineBrown, 0.88);
+      g.fillRoundedRect(badge.x - badgeWidth / 2, y, badgeWidth, badgeHeight, 10);
+      g.fillStyle(badge.color, 1);
+      g.fillRoundedRect(badge.x - badgeWidth / 2 + 3, y + 3, badgeWidth - 6, badgeHeight - 6, 8);
+      g.fillStyle(0xffffff, 0.2);
+      g.fillRoundedRect(badge.x - badgeWidth / 2 + 7, y + 4, badgeWidth - 14, 6, 4);
+      const text = makeText(this.scene, badge.x, y + badgeHeight / 2 + 1, badge.label, modalTextStyle('button', {
+        fontSize: '11px',
+        strokeThickness: 3,
+      })).setOrigin(0.5);
+      this.body.add(text);
+    }
+  }
+
+  #resolveTreeLayouts(skills, x, y, width, height) {
+    const compactTree = height < 285;
+    const spineWidth = width >= 318 ? 24 : 16;
+    const areaX = x + 8;
+    const areaY = y + (compactTree ? 34 : 40);
+    const areaWidth = Math.max(1, width - spineWidth - 20);
+    const areaHeight = Math.max(1, height - (compactTree ? 92 : 108));
+    const baseRadius = Math.round(clamp(
+      Math.min(areaWidth * 0.058, areaHeight * 0.064),
+      compactTree ? 14 : 15,
+      compactTree ? 18 : 20,
+    ));
+
+    return skills.map((skill, index) => {
+      const node = skillNodeKey(skill);
+      const spec = SKILL_TREE_NODE_LAYOUT[node] || SKILL_TREE_FALLBACK_LAYOUT[index % SKILL_TREE_FALLBACK_LAYOUT.length];
+      const selected = Number(skill.itemDataId) === Number(this.selectedItemDataId);
+      const tierBonus = spec.tier === 'core' || spec.tier === 'ultimate'
+        ? (compactTree ? 1 : 2)
+        : spec.tier === 'rare'
+          ? (compactTree ? 0 : 1)
+          : 0;
+      return {
+        skill,
+        node,
+        x: Math.round(areaX + areaWidth * spec.x),
+        y: Math.round(areaY + areaHeight * spec.y),
+        radius: baseRadius + tierBonus,
+        tier: spec.tier || 'normal',
+        showName: areaHeight >= 210 || selected,
+      };
+    });
+  }
+
+  #drawTreeConnectors(g, layouts, colors) {
+    const byId = new Map(layouts.map(layout => [Number(layout.skill.itemDataId), layout]));
+    const byNode = new Map(layouts.map(layout => [layout.node, layout]));
+    const primaryLinks = [];
+    const secondaryLinks = [];
+
+    for (const layout of layouts) {
+      const required = skillRequiredItemIds(layout.skill);
+      const primaryParentNode = SKILL_TREE_PRIMARY_PARENT_NODE[layout.node];
+      let primaryFrom = primaryParentNode ? byNode.get(primaryParentNode) : null;
+      if (!primaryFrom && required.length) primaryFrom = byId.get(Number(required[0]));
+      if (primaryFrom) primaryLinks.push({ from: primaryFrom, to: layout });
+
+      const selected = Number(layout.skill.itemDataId) === Number(this.selectedItemDataId);
+      for (const requiredId of required) {
+        const from = byId.get(Number(requiredId));
+        if (!from) continue;
+        const isPrimary = primaryFrom && Number(from.skill.itemDataId) === Number(primaryFrom.skill.itemDataId);
+        const selectedPrereq = selected || Number(from.skill.itemDataId) === Number(this.selectedItemDataId);
+        if (!isPrimary && selectedPrereq) secondaryLinks.push({ from, to: layout });
+      }
+    }
+
+    for (const { from, to } of secondaryLinks) {
+      this.#drawVinePath(g, from.x, from.y + from.radius * 0.6, to.x, to.y - to.radius * 0.66, {
+        color: 0x8f642f,
+        alpha: 0.22,
+        width: 2,
+        shadowColor: colors.outlineBrown,
+        decorated: false,
+      });
+    }
+
+    for (const { from, to } of primaryLinks) {
+      const selectedPath = Number(from.skill.itemDataId) === Number(this.selectedItemDataId)
+        || Number(to.skill.itemDataId) === Number(this.selectedItemDataId);
+      const active = from.skill.owned && to.skill.owned;
+      const ready = from.skill.owned && to.skill.canUnlock;
+      const color = selectedPath ? colors.goldHighlight : active ? colors.green : ready ? colors.gold : 0x8f642f;
+      const alpha = selectedPath ? 0.98 : active ? 0.88 : ready ? 0.72 : 0.34;
+      const width = selectedPath ? 6 : active ? 4 : ready ? 4 : 3;
+
+      this.#drawVinePath(g, from.x, from.y + from.radius * 0.68, to.x, to.y - to.radius * 0.72, {
+        color,
+        alpha,
+        width,
+        shadowColor: colors.outlineBrown,
+      });
+    }
+  }
+
+  #drawVinePath(g, x1, y1, x2, y2, { color, alpha, width, shadowColor, decorated = true }) {
+    const dy = y2 - y1;
+    const lateral = x2 - x1;
+    const bendSign = lateral === 0 ? (x1 < this.metrics.x + this.metrics.width / 2 ? -1 : 1) : Math.sign(lateral);
+    const bend = Math.max(18, Math.min(42, Math.abs(lateral) * 0.32 + 10));
+    const c1x = x1 + bend * bendSign;
+    const c1y = y1 + dy * 0.28;
+    const c2x = x2 - bend * bendSign;
+    const c2y = y1 + dy * 0.74;
+
+    g.lineStyle(width + 6, shadowColor, alpha * 0.25);
+    this.#drawSegmentedCurve(g, x1, y1, c1x, c1y, c2x, c2y, x2, y2);
+
+    g.lineStyle(width + 4, 0x6f431d, Math.min(0.78, alpha + 0.05));
+    this.#drawSegmentedCurve(g, x1, y1, c1x, c1y, c2x, c2y, x2, y2);
+
+    g.lineStyle(Math.max(2, width - 1), color, alpha);
+    this.#drawSegmentedCurve(g, x1, y1, c1x, c1y, c2x, c2y, x2, y2);
+
+    if (decorated) {
+      g.lineStyle(2, 0xfff3a5, alpha * 0.38);
+      this.#drawSegmentedCurve(g, x1 + 1, y1 - 1, c1x + 1, c1y - 1, c2x + 1, c2y - 1, x2 + 1, y2 - 1);
+
+      this.#drawVineLeaves(g, { x1, y1, c1x, c1y, c2x, c2y, x2, y2 }, Math.max(2, width * 0.45), alpha);
+    }
+  }
+
+  #drawVineLeaves(g, curve, size, alpha) {
+    for (const t of [0.34, 0.66]) {
+      const point = this.#curvePoint(curve, t);
+      const flip = t < 0.5 ? -1 : 1;
+      g.fillStyle(0x3f8f2a, alpha * 0.78);
+      g.fillCircle(point.x + flip * size * 1.2, point.y - size * 0.5, size);
+      g.fillStyle(0xb8ef65, alpha * 0.68);
+      g.fillCircle(point.x + flip * size * 1.05, point.y - size * 0.78, Math.max(1.5, size * 0.55));
+    }
+  }
+
+  #curvePoint({ x1, y1, c1x, c1y, c2x, c2y, x2, y2 }, t) {
+    const inv = 1 - t;
+    return {
+      x: inv * inv * inv * x1
+        + 3 * inv * inv * t * c1x
+        + 3 * inv * t * t * c2x
+        + t * t * t * x2,
+      y: inv * inv * inv * y1
+        + 3 * inv * inv * t * c1y
+        + 3 * inv * t * t * c2y
+        + t * t * t * y2,
+    };
+  }
+
+  #drawSegmentedCurve(g, x1, y1, c1x, c1y, c2x, c2y, x2, y2) {
+    let prevX = x1;
+    let prevY = y1;
+    const steps = 16;
+    for (let i = 1; i <= steps; i += 1) {
+      const t = i / steps;
+      const inv = 1 - t;
+      const nextX = inv * inv * inv * x1
+        + 3 * inv * inv * t * c1x
+        + 3 * inv * t * t * c2x
+        + t * t * t * x2;
+      const nextY = inv * inv * inv * y1
+        + 3 * inv * inv * t * c1y
+        + 3 * inv * t * t * c2y
+        + t * t * t * y2;
+      g.lineBetween(prevX, prevY, nextX, nextY);
+      prevX = nextX;
+      prevY = nextY;
+    }
+  }
+
+  #drawTreeScrollSpine(g, x, y, height, viewportHeight, contentHeight, colors) {
+    g.fillStyle(colors.outlineBrown, 0.32);
+    g.fillRoundedRect(x - 4, y, 8, height, 6);
+    g.fillStyle(0xfff3c2, 0.55);
+    g.fillRoundedRect(x - 2, y + 5, 4, Math.max(1, height - 10), 4);
+    for (let i = 0; i < 5; i += 1) {
+      const dotY = y + 8 + (height - 16) * (i / 4);
+      g.fillStyle(colors.outlineBrown, 1);
+      g.fillCircle(x, dotY, 5);
+      g.fillStyle(0xd7a563, 1);
+      g.fillCircle(x, dotY, 3);
+    }
+
+    this.treeScrollThumb = makeGraphics(this.scene);
+    this.body.add(this.treeScrollThumb);
+    this.treeScrollTrack = { x, y, height, viewportHeight, contentHeight, colors };
+    this.#redrawTreeScrollThumb();
+  }
+
+  #redrawTreeScrollThumb() {
+    const g = this.treeScrollThumb;
+    const track = this.treeScrollTrack;
+    if (!g || !track) return;
+
+    const { x, y, height, viewportHeight, contentHeight, colors } = track;
+    const maxScroll = Math.max(0, contentHeight - viewportHeight);
+    const ratio = contentHeight > 0 ? clamp(viewportHeight / contentHeight, 0.12, 1) : 1;
+    const thumbHeight = Math.round(clamp((height - 8) * ratio, 28, Math.max(28, height - 8)));
+    const travel = Math.max(0, height - 8 - thumbHeight);
+    const thumbY = y + 4 + (maxScroll > 0 ? travel * (this.treeScrollY / maxScroll) : 0);
+
+    g.clear();
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillRoundedRect(x - 8, thumbY - 1, 16, thumbHeight + 2, 8);
+    g.fillStyle(0x72b943, 1);
+    g.fillRoundedRect(x - 5, thumbY + 2, 10, Math.max(1, thumbHeight - 4), 6);
+    g.fillStyle(0xb8ef65, 0.72);
+    g.fillRoundedRect(x - 3, thumbY + 5, 6, Math.max(5, thumbHeight * 0.3), 4);
+  }
+
+  #setTreeScroll(value) {
+    const next = Math.round(clamp(value, 0, this.treeScrollMax));
+    if (next === this.treeScrollY) return;
+    this.treeScrollY = next;
+    this.treeScrollContent?.setY?.(-next);
+    this.#redrawTreeScrollThumb();
+  }
+
+  #handleTreeWheel(pointer, deltaY = 0) {
+    if (!this.visible || !this.#isPointerInsideTree(pointer) || this.treeScrollMax <= 0) return;
+    this.#setTreeScroll(this.treeScrollY + deltaY * 0.35);
+  }
+
+  #handleTreePointerDown(pointer) {
+    if (!this.visible || !this.#isPointerInsideTree(pointer) || this.treeScrollMax <= 0) return;
+    this.treeDrag = {
+      id: pointer.id,
+      startY: pointer.y,
+      startScroll: this.treeScrollY,
+      moved: false,
+    };
+    this.treeClickSuppressed = false;
+  }
+
+  #handleTreePointerMove(pointer) {
+    if (!this.treeDrag || pointer.id !== this.treeDrag.id) return;
+    const dy = pointer.y - this.treeDrag.startY;
+    if (Math.abs(dy) > 4) {
+      this.treeDrag.moved = true;
+      this.treeClickSuppressed = true;
+    }
+    this.#setTreeScroll(this.treeDrag.startScroll - dy);
+  }
+
+  #handleTreePointerUp() {
+    if (this.treeDrag?.moved) {
+      this.treeClickSuppressed = true;
+      globalThis.setTimeout?.(() => {
+        this.treeClickSuppressed = false;
+      }, 0);
+    }
+    this.treeDrag = null;
+  }
+
+  #isPointerInsideTree(pointer) {
+    const viewport = this.treeViewport;
+    if (!viewport || !pointer) return false;
+    return pointer.x >= viewport.x
+      && pointer.x <= viewport.x + viewport.width
+      && pointer.y >= viewport.y
+      && pointer.y <= viewport.y + viewport.height;
+  }
+
+  #addTreeObject(object) {
+    (this.activeTreeLayer || this.body).add(object);
+  }
+
+  #addTreeObjects(objects) {
+    (this.activeTreeLayer || this.body).add(objects);
+  }
+
+  #drawProgressSpine(g, layouts, x, y, height, colors) {
+    if (!layouts.length) return;
+    const selected = layouts.find(layout => Number(layout.skill.itemDataId) === Number(this.selectedItemDataId)) || layouts[0];
+    const minY = Math.min(...layouts.map(layout => layout.y));
+    const maxY = Math.max(...layouts.map(layout => layout.y));
+    const selectedRatio = maxY > minY ? clamp((selected.y - minY) / (maxY - minY), 0, 1) : 0;
+
+    g.fillStyle(colors.outlineBrown, 0.28);
+    g.fillRoundedRect(x - 4, y, 8, height, 6);
+    g.fillStyle(0x8bd45c, 0.75);
+    g.fillRoundedRect(x - 3, y + 4, 6, Math.max(10, (height - 8) * selectedRatio), 5);
+    for (let i = 0; i < 5; i += 1) {
+      const dotY = y + 8 + (height - 16) * (i / 4);
+      g.fillStyle(colors.outlineBrown, 1);
+      g.fillCircle(x, dotY, 5);
+      g.fillStyle(i / 4 <= selectedRatio ? colors.goldHighlight : 0xd7a563, 1);
+      g.fillCircle(x, dotY, 3);
+    }
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillCircle(x, y + 4 + (height - 8) * selectedRatio, 9);
+    g.fillStyle(colors.green, 1);
+    g.fillCircle(x, y + 4 + (height - 8) * selectedRatio, 6);
+  }
+
+  #drawSkillNode(g, layout, colors) {
+    const { skill, x, y, radius, tier } = layout;
     const selected = Number(skill.itemDataId) === Number(this.selectedItemDataId);
     const equipped = skill.equippedSlotIndex >= 0;
     const locked = !skill.owned && !skill.canUnlock;
-    const fill = skill.owned ? 0xfff8e3 : skill.canUnlock ? 0xcdb88b : 0xc5a171;
-    const line = selected ? colors.greenDark : equipped ? colors.gold : locked ? 0xb5844e : colors.parchmentShadow;
+    const canUnlock = !skill.owned && skill.canUnlock;
+    const accent = skillNodeAccent(skill, colors);
+    const fill = locked ? 0x8b6845 : skill.owned ? 0xfff7dd : 0xf0c86f;
+    const inner = locked ? 0x5a351d : tier === 'ultimate' ? 0x382064 : 0x214f23;
+    const ring = selected ? colors.goldHighlight : equipped ? colors.gold : skill.owned ? colors.green : canUnlock ? colors.gold : 0x8b5c2f;
 
-    g.fillStyle(colors.outlineBrown, selected ? 0.38 : 0.18);
-    g.fillRoundedRect(x, y + 4, width, height, 16);
-    g.fillStyle(fill, 1);
-    g.fillRoundedRect(x, y, width, height, 16);
-    if (skill.owned) {
-      g.fillStyle(0xffffff, 0.18);
-      g.fillRoundedRect(x + 8, y + 5, width - 16, Math.max(8, height * 0.28), 9);
+    if (selected) {
+      g.fillStyle(colors.goldHighlight, 0.2);
+      g.fillCircle(x, y, radius + 17);
+      g.lineStyle(5, colors.goldHighlight, 0.84);
+      g.strokeCircle(x, y, radius + 11);
     }
-    g.lineStyle(selected ? 4 : 3, line, selected ? 0.95 : 0.82);
-    g.strokeRoundedRect(x + 1, y + 1, width - 2, height - 2, 15);
 
-    const hit = makeRectangle(this.scene, x, y, width, height, 0xffffff, 0.001)
+    if (tier === 'ultimate') {
+      for (let i = 0; i < 8; i += 1) {
+        const angle = (Math.PI * 2 * i) / 8;
+        const px = x + Math.cos(angle) * (radius + 7);
+        const py = y + Math.sin(angle) * (radius + 7);
+        g.fillStyle(colors.goldHighlight, locked ? 0.32 : 0.86);
+        g.fillCircle(px, py, i % 2 === 0 ? 4 : 3);
+      }
+    } else if (tier === 'core') {
+      g.fillStyle(0x8bd45c, locked ? 0.22 : 0.55);
+      g.fillCircle(x - radius - 5, y - 1, 5);
+      g.fillCircle(x + radius + 5, y - 1, 5);
+    }
+
+    g.fillStyle(colors.outlineBrown, 0.42);
+    g.fillCircle(x + 3, y + 5, radius + 5);
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillCircle(x, y, radius + 5);
+    g.fillStyle(accent, locked ? 0.62 : 1);
+    g.fillCircle(x, y, radius + 1);
+    g.fillStyle(fill, locked ? 0.72 : 1);
+    g.fillCircle(x, y, radius - 3);
+    g.fillStyle(inner, locked ? 0.56 : 0.9);
+    g.fillCircle(x, y, Math.max(8, radius - 9));
+    g.lineStyle(selected ? 5 : 3, ring, selected ? 1 : 0.86);
+    g.strokeCircle(x, y, radius + 1);
+    g.fillStyle(0xffffff, locked ? 0.08 : 0.18);
+    g.fillCircle(x - radius * 0.25, y - radius * 0.34, Math.max(5, radius * 0.32));
+
+    const hit = makeRectangle(this.scene, x - radius - 24, y - radius - 18, (radius + 24) * 2, (radius + 26) * 2, 0xffffff, 0.001)
       .setOrigin(0)
       .setInteractive({ useHandCursor: true })
       .on('pointerup', () => {
+        if (this.treeClickSuppressed) return;
         playSfx('uiClick', { volume: 0.72 });
         this.selectedItemDataId = skill.itemDataId;
         this.rebuild();
       });
 
-    const iconSize = Math.max(24, Math.min(32, height - 22));
-    const icon = this.#makeSkillIcon(skill.item, x + 24, y + height / 2, iconSize);
-    const title = makeText(this.scene, x + 48, y + Math.max(7, Math.round(height * 0.18)), compactModalName(skill.item?.name, 7), modalTextStyle('rowTitle', {
-      fontSize: height < 54 ? '12px' : '14px',
-      color: locked ? '#3f230e' : '#3a1b08',
-    }));
-    title.setWordWrapWidth(Math.max(58, width - 56), true);
+    const icon = this.#makeSkillIcon(skill.item, x, y - 2, Math.max(24, radius * 1.36));
+    if (locked) icon.setAlpha?.(0.48);
 
-    const status = skill.owned
-      ? `${equipped ? `${skill.equippedSlotIndex + 1}번 ` : ''}Lv.${skill.level}/${skill.maxLevel}`
-      : skill.canUnlock
-        ? `레벨 포인트 ${skill.unlockCost.count} 필요`
-        : skill.unlock?.message || `Lv.${skill.requiredLevel}`;
-    const meta = makeText(this.scene, x + 48, y + height - Math.max(22, Math.round(height * 0.38)), status, modalTextStyle('rowBody', {
-      fontSize: height < 54 ? '11px' : '12px',
-      color: skill.owned ? '#2f7e20' : '#8f3925',
-    }));
-    meta.setWordWrapWidth(Math.max(58, width - 56), true);
+    const levelLabel = skill.owned ? `Lv.${skill.level}/${skill.maxLevel}` : canUnlock ? `잎 ${skill.unlockCost?.count || 0}` : `Lv.${skill.requiredLevel}`;
+    const levelPillWidth = Math.round(clamp(levelLabel.length * 6 + 12, 32, 54));
+    const levelPillY = y + radius - 12;
+    g.fillStyle(colors.outlineBrown, 0.86);
+    g.fillRoundedRect(x - levelPillWidth / 2, levelPillY, levelPillWidth, 14, 7);
+    g.fillStyle(locked ? 0x8b5c2f : skill.owned ? 0x2f7e20 : 0xf6b331, 1);
+    g.fillRoundedRect(x - levelPillWidth / 2 + 2, levelPillY + 2, levelPillWidth - 4, 10, 5);
+    const levelText = makeText(this.scene, x, levelPillY + 7, levelLabel, modalTextStyle('rowBody', {
+      fontSize: radius < 19 ? '7px' : '8px',
+      fontStyle: 'bold',
+      color: '#fff7dd',
+      stroke: '#2b1206',
+      strokeThickness: 2,
+      align: 'center',
+    })).setOrigin(0.5);
 
-    this.body.add([hit, icon, title, meta]);
+    let nameText = null;
+    if (layout.showName) {
+      const nameLabel = compactModalName(skillDisplayName(skill.item?.name), radius < 18 ? 4 : 5);
+      const nameY = y + radius + 3;
+      const nameWidth = Math.round(clamp(nameLabel.length * 10 + 16, 48, 72));
+      g.fillStyle(colors.outlineBrown, locked ? 0.6 : 0.82);
+      g.fillRoundedRect(x - nameWidth / 2, nameY, nameWidth, 18, 8);
+      g.fillStyle(locked ? 0xd7a563 : 0xfff8df, locked ? 0.72 : 0.95);
+      g.fillRoundedRect(x - nameWidth / 2 + 2, nameY + 2, nameWidth - 4, 14, 7);
+      nameText = makeText(this.scene, x, nameY + 9, nameLabel, modalTextStyle('rowTitle', {
+        fontSize: radius < 18 ? '9px' : '10px',
+        align: 'center',
+        color: locked ? '#3a2416' : '#3a1b08',
+        stroke: '#fff3cf',
+        strokeThickness: 3,
+      })).setOrigin(0.5);
+      nameText.setWordWrapWidth(Math.max(40, nameWidth - 4), false);
+    }
+
+    if (skill.owned) this.#drawStateBadge(g, x + radius * 0.76, y - radius * 0.74, '✓', colors.green, colors);
+    else if (canUnlock) this.#drawStateBadge(g, x + radius * 0.76, y - radius * 0.74, '+', colors.gold, colors);
+    else this.#drawLockBadge(g, x + radius * 0.72, y - radius * 0.72, colors);
+
+    this.#addTreeObjects([hit, icon, levelText]);
+    if (nameText) this.#addTreeObject(nameText);
+  }
+
+  #drawStateBadge(g, x, y, label, fill, colors) {
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillCircle(x, y, 9);
+    g.fillStyle(fill, 1);
+    g.fillCircle(x, y, 6);
+    const text = makeText(this.scene, x, y - 1, label, modalTextStyle('button', {
+      fontSize: label.length > 1 ? '6px' : '9px',
+      strokeThickness: 2,
+    })).setOrigin(0.5);
+    this.#addTreeObject(text);
+  }
+
+  #drawLockBadge(g, x, y, colors) {
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillRoundedRect(x - 8, y - 6, 16, 15, 5);
+    g.fillStyle(0xd7a563, 1);
+    g.fillRoundedRect(x - 5, y - 2, 10, 9, 3);
+    g.lineStyle(2, 0xd7a563, 1);
+    g.strokeCircle(x, y - 4, 5);
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillCircle(x, y + 2, 2);
+  }
+
+  #drawDetailPanel(g, state, x, y, width, height, colors) {
+    const selected = this.#selectedSkill(state);
+    const slot = state.slots[this.selectedSlotIndex];
+    const equippedHere = selected && Number(slot?.itemDataId) === Number(selected.itemDataId);
+    const compactDetail = height < 144;
+
+    g.fillStyle(colors.outlineBrown, 0.26);
+    g.fillRoundedRect(x, y + 5, width, height, 20);
+    g.fillStyle(0xfff8df, 1);
+    g.fillRoundedRect(x, y, width, height, 20);
+    g.fillStyle(0xffffff, 0.24);
+    g.fillRoundedRect(x + 10, y + 7, width - 20, Math.max(18, height * 0.22), 13);
+    g.lineStyle(4, colors.parchmentShadow, 0.72);
+    g.strokeRoundedRect(x + 1, y + 1, width - 2, height - 2, 19);
+
+    if (!selected) {
+      const empty = makeText(this.scene, x + width / 2, y + height / 2 - 9, '스킬을 선택하세요', modalTextStyle('rowTitle', {
+        fontSize: '16px',
+        align: 'center',
+      })).setOrigin(0.5);
+      this.body.add(empty);
+      return;
+    }
+
+    const iconX = x + 42;
+    const iconY = y + (compactDetail ? 44 : 49);
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillCircle(iconX, iconY, compactDetail ? 32 : 34);
+    g.fillStyle(skillNodeAccent(selected, colors), 1);
+    g.fillCircle(iconX, iconY, compactDetail ? 27 : 29);
+    g.fillStyle(0xfff8df, 1);
+    g.fillCircle(iconX, iconY, compactDetail ? 21 : 23);
+    const icon = this.#makeSkillIcon(selected.item, iconX, iconY, compactDetail ? 38 : 42);
+
+    const title = makeText(this.scene, x + 84, y + 14, skillDisplayName(selected.item?.name), modalTextStyle('rowTitle', {
+      fontSize: compactDetail ? '15px' : '18px',
+      color: '#3a1b08',
+    }));
+    title.setWordWrapWidth(Math.max(120, width - 174), true);
+
+    const chip = this.#detailChip(g, x + width - 82, y + 16, 70, compactDetail ? 22 : 24, skillNodeLabel(selected), skillNodeAccent(selected, colors), colors);
+    const effect = makeText(this.scene, x + 84, y + (compactDetail ? 38 : 45), skillEffectLabel(selected), modalTextStyle('rowBody', {
+      fontSize: compactDetail ? '10px' : '11px',
+      color: '#5b3215',
+    }));
+    effect.setWordWrapWidth(Math.max(120, width - 174), true);
+
+    const pipsY = y + (compactDetail ? 72 : 82);
+    this.#drawLevelPips(g, x + 84, pipsY, selected, colors);
+    let prereq = null;
+    if (!compactDetail) {
+      prereq = makeText(this.scene, x + 84, y + 96, selected.requiredSkills?.length ? `선행 ${selected.requiredSkills.slice(0, 2).join(', ')}` : '기본 노드', modalTextStyle('rowBody', {
+        fontSize: '10px',
+        color: selected.owned || selected.canUnlock ? '#2f7e20' : '#8f3925',
+      }));
+      prereq.setWordWrapWidth(Math.max(110, width - 184), true);
+    }
+
+    const cost = makeText(this.scene, x + width - 16, pipsY - 11, this.#detailCostLabel(selected), modalTextStyle('rowBody', {
+      fontSize: compactDetail ? '11px' : '12px',
+      color: selected.canLevelUp || selected.canUnlock ? '#2f7e20' : '#8f3925',
+      align: 'right',
+    })).setOrigin(1, 0);
+
+    const buttonGap = 12;
+    const buttonHeight = Math.round(clamp(height * 0.27, 38, 46));
+    const buttonWidth = Math.floor((width - 34 - buttonGap) / 2);
+    const buttonY = y + height - buttonHeight / 2 - 13;
+    const equipButton = new DesignButton(this.scene, {
+      x: x + 17 + buttonWidth / 2,
+      y: buttonY,
+      width: buttonWidth,
+      height: buttonHeight,
+      label: equippedHere ? '해제' : selected.owned ? '장착하기' : '미습득',
+      style: selected.owned ? 'green' : 'wood',
+      fontSize: buttonWidth < 145 ? '14px' : '16px',
+      onClick: () => this.#handleEquip(),
+    });
+    const investButton = new DesignButton(this.scene, {
+      x: x + 17 + buttonWidth + buttonGap + buttonWidth / 2,
+      y: buttonY,
+      width: buttonWidth,
+      height: buttonHeight,
+      label: this.#investLabel(selected),
+      style: 'primary',
+      fontSize: buttonWidth < 145 ? '14px' : '16px',
+      onClick: () => this.#handleInvest(),
+    });
+
+    this.body.add([icon, title, chip, effect, cost, equipButton, investButton]);
+    if (prereq) this.body.add(prereq);
+  }
+
+  #detailChip(g, x, y, width, height, label, fill, colors) {
+    g.fillStyle(colors.outlineBrown, 1);
+    g.fillRoundedRect(x, y, width, height, 12);
+    g.fillStyle(fill, 1);
+    g.fillRoundedRect(x + 3, y + 3, width - 6, height - 6, 9);
+    return makeText(this.scene, x + width / 2, y + height / 2 + 1, label, modalTextStyle('button', {
+      fontSize: label.length > 4 ? '9px' : '11px',
+      strokeThickness: 3,
+      align: 'center',
+    })).setOrigin(0.5);
+  }
+
+  #drawLevelPips(g, x, y, skill, colors) {
+    const max = Math.max(1, Math.min(5, Number(skill.maxLevel || 5)));
+    const level = Math.max(0, Number(skill.level || 0));
+    for (let i = 0; i < max; i += 1) {
+      const cx = x + i * 17;
+      g.fillStyle(colors.outlineBrown, 0.88);
+      g.fillCircle(cx, y, 7);
+      g.fillStyle(i < level ? colors.green : 0x7d5a34, 1);
+      g.fillCircle(cx, y, 5);
+      if (i < level) {
+        g.fillStyle(0xb8ef65, 0.72);
+        g.fillCircle(cx - 2, y - 2, 2);
+      }
+    }
+  }
+
+  #detailCostLabel(skill) {
+    if (!skill) return '';
+    if (!skill.owned) return skill.canUnlock ? `필요 잎 ${skill.unlockCost?.count || 0}` : (skill.unlock?.message || '잠김');
+    if (skill.level >= skill.maxLevel) return '최대 레벨';
+    const cost = this.#costLabel(skill.levelUp?.cost);
+    return skill.canLevelUp ? `필요 ${cost}` : `부족 ${cost}`;
   }
 
   #handleInvest() {
@@ -2453,10 +3337,10 @@ class SkillTreeModal extends BaseModal {
     if (!skill) return '선택';
     if (!skill.owned) return skill.canUnlock ? `해금 ${skill.unlockCost?.count || 0}` : '잠김';
     if (skill.level >= skill.maxLevel) return 'MAX';
-    if (skill.canLevelUp) return `찍기 ${this.#costLabel(skill.levelUp?.cost)}`;
+    if (skill.canLevelUp) return '업그레이드';
     return skill.levelUp?.reason === 'not_enough_material'
       ? `부족 ${this.#costLabel(skill.levelUp?.cost)}`
-      : '찍기';
+      : '업그레이드';
   }
 
   #costLabel(cost = []) {
@@ -2732,6 +3616,61 @@ function skillInitial(name) {
   return cleaned.slice(0, 1) || '스';
 }
 
+function skillNodeKey(skill) {
+  return String(skill?.node || skill?.item?.popupArgs?.SkillTreeNode || '').trim();
+}
+
+function skillRequiredItemIds(skill) {
+  return String(skill?.item?.popupArgs?.RequiredSkillItemDataIds || '')
+    .split(',')
+    .map(value => Number(String(value).trim()))
+    .filter(value => Number.isFinite(value) && value > 0);
+}
+
+function skillNodeAccent(skill, colors) {
+  const node = skillNodeKey(skill);
+  if (node === 'Root' || node === 'Buff' || node === 'Merge') return colors.green;
+  if (node === 'Meteor' || node === 'Ultimate') return colors.purple;
+  if (node === 'Rain' || node === 'Rage' || node === 'Overrun') return 0xd86a2a;
+  if (skill?.skill?.tags?.includes?.('Buff')) return colors.green;
+  if (skill?.skill?.tags?.includes?.('AoE')) return colors.purple;
+  return colors.gold;
+}
+
+function skillNodeLabel(skill) {
+  const node = skillNodeKey(skill);
+  if (node === 'Root') return '코어';
+  if (node === 'Buff' || node === 'Merge') return '지원';
+  if (node === 'Meteor' || node === 'Ultimate') return '궁극';
+  if (skill?.skill?.tags?.includes?.('Buff')) return '버프';
+  if (skill?.skill?.tags?.includes?.('AoE')) return '광역';
+  if (skill?.skill?.tags?.includes?.('Boss')) return '보스';
+  return '공격';
+}
+
+function skillEffectLabel(skill) {
+  const def = skill?.skill;
+  const cooldown = Number(def?.cooldown || 0);
+  const hits = (def?.timelines || [])
+    .map(timeline => timeline?.hit)
+    .filter(Boolean);
+  const maxHit = Math.max(1, ...hits.map(hit => Number(hit.maxHit || 1)).filter(Number.isFinite));
+  const damages = hits.flatMap(hit => (
+    hit?.addDamage?.attackPercentDamages
+      || hit?.addDamage?.damagePercent
+      || []
+  ));
+  const damage = damages
+    .map(value => Number(value))
+    .filter(Number.isFinite)
+    .map(value => value > 10 ? value : value * 100)
+    .sort((a, b) => b - a)[0];
+  const target = maxHit > 1 || def?.tags?.includes?.('AoE') ? `광역 ${maxHit}타` : '단일 타격';
+  const power = Number.isFinite(damage) ? `${Math.round(damage)}%` : '특수 효과';
+  const cool = cooldown > 0 ? `쿨 ${cooldown.toFixed(cooldown >= 10 ? 0 : 1)}초` : '자동 발동';
+  return `${target} · ${power} · ${cool}`;
+}
+
 async function createModalOverlayScene(hostId) {
   const element = document.getElementById(hostId) || createModalHost(hostId);
   const bounds = element.getBoundingClientRect();
@@ -2742,7 +3681,7 @@ async function createModalOverlayScene(hostId) {
   });
   const Phaser = globalThis.Phaser;
   const game = new Phaser.Game({
-    type: Phaser.CANVAS,
+    type: Phaser.WEBGL,
     parent: element,
     width,
     height,

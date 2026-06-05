@@ -29,6 +29,12 @@ const WORLD_ORIGIN_X = 390;
 const WORLD_ORIGIN_Y = 610;
 const WORLD_SCALE_X = 100;
 const WORLD_SCALE_Y = 42;
+const SURVIVOR_WORLD_ORIGIN_X = 1500;
+const SURVIVOR_WORLD_ORIGIN_Y = 1000;
+const SURVIVOR_WORLD_SCALE_X = 120;
+const SURVIVOR_WORLD_SCALE_Y = 120;
+const SURVIVOR_WORLD_WIDTH = 3000;
+const SURVIVOR_WORLD_HEIGHT = 2000;
 
 export class IdlezBoard extends EventBus {
   constructor(store) {
@@ -216,11 +222,30 @@ export class IdlezBoard extends EventBus {
     return [...this.units.values()].filter(unit => unit.alive && unit.team === normalized).length;
   }
 
-  AddUnit({ unitDataId, count = 1, team = TEAM.ENEMY, level = null } = {}) {
+  AddUnit({
+    unitDataId,
+    count = 1,
+    team = TEAM.ENEMY,
+    level = null,
+    locationId = null,
+    positionX = null,
+    positionY = null,
+    angle = null,
+    offset = null,
+  } = {}) {
     const n = Math.max(1, Math.floor(asNumber(count, 1)));
     const unitLevel = level == null ? Math.max(1, this.boardState || 1) : Math.max(1, Math.floor(asNumber(level, 1)));
     for (let i = 0; i < n; i += 1) {
-      this.spawnUnit(unitDataId, { team: normalizeTeam(team), level: unitLevel, spawnIndex: i });
+      this.spawnUnit(unitDataId, {
+        team: normalizeTeam(team),
+        level: unitLevel,
+        spawnIndex: i,
+        locationId,
+        positionX,
+        positionY,
+        angle,
+        offset,
+      });
     }
     return n;
   }
@@ -324,6 +349,29 @@ export class IdlezBoard extends EventBus {
     if (!resolvedTarget?.alive) return 0;
     this.#startSkill(owner, skill, [resolvedTarget]);
     return skill.id;
+  }
+
+  startSkill(owner, skillDataId, targets = null, metadata = {}) {
+    if (!owner?.alive) return 0;
+    const skill = this.store.getSkill(skillDataId);
+    if (!skill) {
+      this.warn(`Unknown skillDataId: ${skillDataId}`);
+      return 0;
+    }
+
+    const resolvedTargets = Array.isArray(targets) && targets.length
+      ? targets.filter(unit => unit?.alive)
+      : (skillHasSelfBuff(skill) && !skillHasHit(skill) ? [owner] : this.#targetsForSkill(skill, this.enemyUnits, owner));
+    if (!resolvedTargets.length && !skillHasSelfBuff(skill)) return 0;
+
+    this.#startSkill(owner, skill, resolvedTargets, metadata);
+    return skill.id;
+  }
+
+  UseSkill({ skillDataId, team = TEAM.PLAYER } = {}) {
+    const normalizedTeam = normalizeTeam(team, TEAM.PLAYER);
+    const owner = [...this.units.values()].find(unit => unit.alive && unit.team === normalizedTeam);
+    return this.startSkill(owner, asNumber(skillDataId, DEFAULT_SKILL_ID));
   }
 
   get playerLevel() {
@@ -1037,6 +1085,7 @@ export class IdlezBoard extends EventBus {
     this.#refreshAchievements();
     this.#refreshSkillSlots();
     this.#updateRevives();
+    this.#updateBuffs();
     this.triggerVM.tick();
     this.#updateMovement();
     this.#updateCombat();
@@ -1049,9 +1098,28 @@ export class IdlezBoard extends EventBus {
       if (!unit.alive || !['approaching', 'moving'].includes(unit.state)) continue;
 
       const dx = unit.targetX - unit.x;
+      const dy = unit.targetY - unit.y;
+      if (isSurvivorBoard(this)) {
+        const dist = Math.hypot(dx, dy);
+        const move = unit.moveSpeedPx / TICKS_PER_SECOND;
+        if (dist > move && dist > 0) {
+          unit.x += (dx / dist) * move;
+          unit.y += (dy / dist) * move;
+        } else {
+          unit.x = unit.targetX;
+          unit.y = unit.targetY;
+        }
+
+        if (Math.hypot(unit.x - unit.targetX, unit.y - unit.targetY) < 4) {
+          unit.state = 'combat';
+          this.emit('unitEnteredCombat', unit);
+        }
+        continue;
+      }
+
       const move = Math.sign(dx) * unit.moveSpeedPx / TICKS_PER_SECOND;
       unit.x += Math.abs(move) < Math.abs(dx) ? move : dx;
-      unit.y += (unit.targetY - unit.y) * 0.02;
+      unit.y += dy * 0.02;
 
       if (Math.abs(unit.x - unit.targetX) < 3) {
         unit.x = unit.targetX;
@@ -1094,7 +1162,7 @@ export class IdlezBoard extends EventBus {
       .sort((a, b) => a.index - b.index);
 
     for (const slot of equipped) {
-      const targets = this.#targetsForSkill(slot.skill, enemies);
+      const targets = this.#targetsForSkill(slot.skill, enemies, player);
       if (targets.length === 0) continue;
 
       this.#startSkill(player, slot.skill, targets, {
@@ -1104,7 +1172,7 @@ export class IdlezBoard extends EventBus {
         skillLevel: slot.level,
       });
 
-      this.skillCooldownTimers.set(slot.item.id, this.#cooldownTicksForSkill(slot.skill));
+      this.skillCooldownTimers.set(slot.item.id, this.#cooldownTicksForSkill(slot.skill, player));
       this.emit('skillAutoUsed', {
         slotIndex: slot.index,
         itemDataId: slot.item.id,
@@ -1116,17 +1184,45 @@ export class IdlezBoard extends EventBus {
     }
   }
 
-  #targetsForSkill(skillDef, enemies) {
+  #targetsForSkill(skillDef, enemies, owner = null) {
     const maxHit = Math.max(1, ...((skillDef.timelines || [])
       .map(timeline => asNumber(timeline.hit?.maxHit, 1))));
-    return enemies
-      .filter(unit => unit.alive)
-      .sort((a, b) => a.x - b.x)
+    const candidates = enemies.filter(unit => unit.alive);
+    const mode = skillDef?.targetRefreshType || 'Nearest';
+
+    if (mode === 'Random') {
+      return candidates
+        .map(unit => ({ unit, roll: Math.random() }))
+        .sort((a, b) => a.roll - b.roll)
+        .slice(0, maxHit)
+        .map(entry => entry.unit);
+    }
+
+    if (mode === 'Furthest') {
+      return candidates
+        .sort((a, b) => distanceSq(owner || b, b) - distanceSq(owner || a, a))
+        .slice(0, maxHit);
+    }
+
+    if (mode === 'LowestHp') {
+      return candidates
+        .sort((a, b) => (a.hp / Math.max(1, a.maxHp)) - (b.hp / Math.max(1, b.maxHp)))
+        .slice(0, maxHit);
+    }
+
+    if (mode === 'HighestHp') {
+      return candidates
+        .sort((a, b) => (b.hp / Math.max(1, b.maxHp)) - (a.hp / Math.max(1, a.maxHp)))
+        .slice(0, maxHit);
+    }
+
+    return candidates
+      .sort((a, b) => distanceSq(owner || a, a) - distanceSq(owner || b, b))
       .slice(0, maxHit);
   }
 
-  #cooldownTicksForSkill(skillDef) {
-    const cooldownPercent = this.getItemStat('CooldownPercent');
+  #cooldownTicksForSkill(skillDef, owner = this.playerUnit) {
+    const cooldownPercent = this.getItemStat('CooldownPercent') + (owner?.getBuffStat?.('CooldownPercent') || 0);
     const seconds = Math.max(0.45, asNumber(skillDef?.cooldown, 1.5) * Math.max(0.25, 1 - cooldownPercent / 100));
     return ticksFromSeconds(seconds, 1);
   }
@@ -1148,6 +1244,7 @@ export class IdlezBoard extends EventBus {
       destroyed: false,
     };
     this.activeSkills.set(skill.id, skill);
+    if (skillHasSelfBuff(skillDef)) this.#applyBuffRefs(owner, skillDef.selfAddBuffs, skill);
     this.#recordSkillUse(skillDef.id);
     this.#refreshAchievements();
     this.emit('unitAttack', { unit: owner, target: skill.targets[0], skill });
@@ -1183,12 +1280,18 @@ export class IdlezBoard extends EventBus {
       const maxHit = Math.max(1, Math.floor(asNumber(timeline.hit.maxHit, 1)));
       const targets = skill.targets.filter(unit => unit.alive).slice(0, maxHit);
       const ratios = timeline.hit.addDamage?.attackPercentDamages || [1];
-      const ratio = ratios.reduce((sum, value) => sum + asNumber(value, 0), 0);
+      const ratio = asNumber(levelValue(ratios, skill.skillLevel, ratios[0] ?? 1), 1);
+      const hitBuffRefs = [
+        ...(timeline.hit.addBuffs || []),
+        ...(skill.def.addBuffs || []),
+      ];
 
       for (const target of targets) {
-        const raw = skill.owner.attack * ratio * (skill.powerMultiplier || 1);
+        const damageTakenMultiplier = Math.max(0.1, 1 + (target.getBuffStat?.('DamageTakenEfficiencyPercent') || 0) / 100);
+        const raw = skill.owner.attack * ratio * (skill.powerMultiplier || 1) * damageTakenMultiplier;
         const damage = Math.max(1, Math.round(raw - target.defense));
         target.takeDamage(damage, skill.owner, skill);
+        this.#applyBuffRefs(target, hitBuffRefs, skill);
       }
     }
 
@@ -1201,6 +1304,28 @@ export class IdlezBoard extends EventBus {
     if (!this.activeSkills.has(skill.id)) return;
     this.activeSkills.delete(skill.id);
     this.emit('skillDestroyed', skill);
+  }
+
+  #applyBuffRefs(unit, buffRefs = [], skill = null) {
+    if (!unit?.alive || !Array.isArray(buffRefs) || buffRefs.length === 0) return 0;
+    let applied = 0;
+    for (const buffRef of buffRefs) {
+      const buff = this.store.getBuff(buffRef?.buffDataId);
+      if (!buff) continue;
+      const sourceDurationBonus = skill?.owner?.getBuffStat?.('BuffDurationEfficiencyPercent') || 0;
+      const duration = asNumber(buffRef.duration, 0) * Math.max(0.1, 1 + sourceDurationBonus / 100);
+      const level = Math.max(1, Math.floor(asNumber(buffRef.level ?? skill?.skillLevel, skill?.skillLevel || 1)));
+      if (unit.addBuff({ buff, level, duration, source: skill?.owner || null, skill })) applied += 1;
+    }
+    return applied;
+  }
+
+  #updateBuffs() {
+    for (const unit of this.units.values()) {
+      if (unit.removeExpiredBuffs(this.tick)) {
+        this.emit('buffsChanged', { unit, activeBuffs: unit.activeBuffs });
+      }
+    }
   }
 
   handleUnitDeath(unit, source, skill) {
@@ -1271,7 +1396,7 @@ export class IdlezBoard extends EventBus {
   }
 
   get enemyUnits() {
-    return [...this.units.values()].filter(unit => unit.alive && unit.team === TEAM.ENEMY);
+    return [...this.units.values()].filter(unit => unit.alive && unit.team !== TEAM.PLAYER);
   }
 }
 
@@ -1291,7 +1416,8 @@ export class BoardUnit {
     this.baseDefense = Math.round(board.store.statValue(def, 'Defense', this.level, 0));
     this.baseCriticalPercent = board.store.statValue(def, 'CriticalPercent', this.level, 0);
     this.baseAttackSpeed = Math.max(0.2, board.store.statValue(def, 'AttackSpeed', this.level, 0.8));
-    this.moveSpeed = Math.max(0.1, board.store.statValue(def, 'MoveSpeed', this.level, 2));
+    this.baseMoveSpeed = Math.max(0.1, board.store.statValue(def, 'MoveSpeed', this.level, 2));
+    this.moveSpeed = this.baseMoveSpeed;
     this.maxHp = 1;
     this.hp = 1;
     this.attack = 1;
@@ -1299,16 +1425,18 @@ export class BoardUnit {
     this.criticalPercent = 0;
     this.criticalDamagePercent = 0;
     this.attackSpeed = this.baseAttackSpeed;
+    this.activeBuffs = [];
     this.refreshStatsFromBoard({ healToFull: true });
     this.moveSpeedPx = this.moveSpeed * 28;
 
     this.alive = true;
     this.state = options.state || (this.team === TEAM.ENEMY ? 'approaching' : 'combat');
     const slot = board.enemyUnits.length + asNumber(options.spawnIndex, 0);
-    this.x = asNumber(options.x, this.team === TEAM.PLAYER ? 150 : 760 + slot * 24);
-    this.y = asNumber(options.y, this.team === TEAM.PLAYER ? 610 : 560 + (slot % 5) * 42);
-    this.targetX = asNumber(options.targetX, this.team === TEAM.PLAYER ? this.x : 630 - (slot % 4) * 42);
-    this.targetY = asNumber(options.targetY, this.y);
+    const spawn = resolveSpawnPosition(board, options, slot, this.team);
+    this.x = spawn.x;
+    this.y = spawn.y;
+    this.targetX = asNumber(options.targetX, this.team === TEAM.PLAYER ? this.x : boardWorldToScreenX(board, 0));
+    this.targetY = asNumber(options.targetY, this.team === TEAM.PLAYER ? this.y : boardWorldToScreenY(board, 0));
     this.attackIntervalTicks = ticksFromSeconds(1 / this.attackSpeed, 10);
     this.attackTimer = this.attackIntervalTicks + Math.floor(Math.random() * 20);
     this.skillTimer = ticksFromSeconds(1.0, 1);
@@ -1316,18 +1444,26 @@ export class BoardUnit {
 
   refreshStatsFromBoard({ healToFull = false } = {}) {
     const previousMaxHp = this.maxHp || 0;
-    const hpBonus = this.team === TEAM.PLAYER ? this.board.getItemStat('Hp') : 0;
+    const hpBonus = (this.team === TEAM.PLAYER ? this.board.getItemStat('Hp') : 0) + this.getBuffStat('Hp');
     const attackBonus = this.team === TEAM.PLAYER ? this.board.getItemStat('Attack') : 0;
-    const attackSpeedPercent = this.team === TEAM.PLAYER ? this.board.getItemStat('AttackSpeedPercent') : 0;
-    const criticalDamagePercent = this.team === TEAM.PLAYER ? this.board.getItemStat('CriticalDamagePercent') : 0;
+    const attackPercent = this.getBuffStat('AttackPercent');
+    const defensePercent = this.getBuffStat('DefensePercent');
+    const attackSpeedPercent = (this.team === TEAM.PLAYER ? this.board.getItemStat('AttackSpeedPercent') : 0)
+      + this.getBuffStat('AttackSpeedPercent');
+    const criticalPercent = this.getBuffStat('CriticalPercent');
+    const criticalDamagePercent = (this.team === TEAM.PLAYER ? this.board.getItemStat('CriticalDamagePercent') : 0)
+      + this.getBuffStat('CriticalDamagePercent');
+    const moveSpeedBonus = this.getBuffStat('MoveSpeed');
 
     this.maxHp = Math.max(1, Math.round(this.baseMaxHp + hpBonus));
-    this.attack = Math.max(1, Math.round(this.baseAttack + attackBonus));
-    this.defense = Math.max(0, Math.round(this.baseDefense));
-    this.criticalPercent = this.baseCriticalPercent;
+    this.attack = Math.max(1, Math.round((this.baseAttack + attackBonus) * Math.max(0.1, 1 + attackPercent / 100)));
+    this.defense = Math.max(0, Math.round(this.baseDefense * Math.max(0.1, 1 + defensePercent / 100)));
+    this.criticalPercent = this.baseCriticalPercent + criticalPercent;
     this.criticalDamagePercent = criticalDamagePercent;
     this.attackSpeed = Math.max(0.2, this.baseAttackSpeed * (1 + attackSpeedPercent / 100));
     this.attackIntervalTicks = ticksFromSeconds(1 / this.attackSpeed, 10);
+    this.moveSpeed = Math.max(0.1, this.baseMoveSpeed + moveSpeedBonus);
+    this.moveSpeedPx = this.moveSpeed * 28;
 
     if (healToFull || previousMaxHp <= 0) {
       this.hp = this.maxHp;
@@ -1337,29 +1473,79 @@ export class BoardUnit {
     }
   }
 
+  addBuff({ buff, level = 1, duration = 0, source = null, skill = null } = {}) {
+    if (!buff?.id || duration <= 0) return false;
+    const buffDataId = Number(buff.id);
+    const buffLevel = Math.max(1, Math.floor(asNumber(level, 1)));
+    const expiresAtTick = this.board.tick + ticksFromSeconds(duration, 1);
+
+    this.activeBuffs = this.activeBuffs.filter(active => Number(active.buffDataId) !== buffDataId);
+    const activeBuff = {
+      buffDataId,
+      buff,
+      level: buffLevel,
+      expiresAtTick,
+      source,
+      skill,
+    };
+    this.activeBuffs.push(activeBuff);
+    this.refreshStatsFromBoard();
+    this.board.emit('buffApplied', {
+      unit: this,
+      buff,
+      buffDataId,
+      level: buffLevel,
+      duration,
+      expiresAtTick,
+      source,
+      skill,
+    });
+    return true;
+  }
+
+  removeExpiredBuffs(tick = this.board.tick) {
+    if (!this.activeBuffs.length) return false;
+    const before = this.activeBuffs.length;
+    this.activeBuffs = this.activeBuffs.filter(active => active.expiresAtTick > tick);
+    if (this.activeBuffs.length === before) return false;
+    this.refreshStatsFromBoard();
+    return true;
+  }
+
+  getBuffStat(statType) {
+    return this.activeBuffs.reduce((total, active) => {
+      const stat = (active.buff?.addStats || []).find(entry => entry.type === statType);
+      if (!stat) return total;
+      return total + asNumber(levelValue(stat.value, active.level, 0), 0);
+    }, 0);
+  }
+
   SetMoveRandomDestination({
     positionX,
     positionY,
     positionXrange,
     positionYrange,
   } = {}) {
-    const baseX = asNumber(positionX, screenToWorldX(this.targetX));
-    const baseY = asNumber(positionY, screenToWorldY(this.targetY));
+    const target = isSurvivorBoard(this.board) && this.team !== TEAM.PLAYER ? this.targetUnit : null;
+    const fallbackX = target ? boardScreenToWorldX(this.board, target.x) : boardScreenToWorldX(this.board, this.targetX);
+    const fallbackY = target ? boardScreenToWorldY(this.board, target.y) : boardScreenToWorldY(this.board, this.targetY);
+    const baseX = asNumber(positionX, fallbackX);
+    const baseY = asNumber(positionY, fallbackY);
     const rangeX = Math.max(0, asNumber(positionXrange, 0));
     const rangeY = Math.max(0, asNumber(positionYrange, 0));
     const nextX = baseX + (Math.random() * 2 - 1) * rangeX;
     const nextY = baseY + (Math.random() * 2 - 1) * rangeY;
 
-    this.targetX = worldToScreenX(nextX);
-    this.targetY = worldToScreenY(nextY);
+    this.targetX = boardWorldToScreenX(this.board, nextX);
+    this.targetY = boardWorldToScreenY(this.board, nextY);
     this.state = this.team === TEAM.ENEMY ? 'approaching' : 'moving';
     this.board.emit('unitCommand', { unit: this, command: 'SetMoveRandomDestination' });
     return 0;
   }
 
   SetMoveDestination({ positionX, positionY } = {}) {
-    this.targetX = worldToScreenX(asNumber(positionX, screenToWorldX(this.x)));
-    this.targetY = worldToScreenY(asNumber(positionY, screenToWorldY(this.y)));
+    this.targetX = boardWorldToScreenX(this.board, asNumber(positionX, boardScreenToWorldX(this.board, this.x)));
+    this.targetY = boardWorldToScreenY(this.board, asNumber(positionY, boardScreenToWorldY(this.board, this.y)));
     this.state = this.team === TEAM.ENEMY ? 'approaching' : 'moving';
     this.board.emit('unitCommand', { unit: this, command: 'SetMoveDestination' });
     return 0;
@@ -1377,6 +1563,10 @@ export class BoardUnit {
     return this.board.startSkillToTarget(this, asNumber(skillDataId, DEFAULT_SKILL_ID));
   }
 
+  UseSkill({ skillDataId } = {}) {
+    return this.board.startSkill(this, asNumber(skillDataId, DEFAULT_SKILL_ID));
+  }
+
   getVariable(type) {
     if (type === 'HasTarget') return this.targetUnit ? 1 : 0;
     if (type === 'TargetDistance') return this.targetDistance;
@@ -1386,7 +1576,8 @@ export class BoardUnit {
 
   get targetUnit() {
     const opponents = [...this.board.units.values()]
-      .filter(unit => unit.alive && unit.team !== this.team)
+      .filter(unit => unit.alive)
+      .filter(unit => this.team === TEAM.PLAYER ? unit.team !== TEAM.PLAYER : unit.team === TEAM.PLAYER)
       .sort((a, b) => distanceSq(this, a) - distanceSq(this, b));
     return opponents[0] || null;
   }
@@ -1394,7 +1585,7 @@ export class BoardUnit {
   get targetDistance() {
     const target = this.targetUnit;
     if (!target) return Infinity;
-    return Math.hypot(target.x - this.x, target.y - this.y) / WORLD_SCALE_X;
+    return Math.hypot(target.x - this.x, target.y - this.y) / boardWorldScaleX(this.board);
   }
 
   IncreaseGold({ count } = {}) {
@@ -1439,6 +1630,21 @@ function parseCsvNumbers(value) {
     .filter(Number.isFinite);
 }
 
+function levelValue(value, level = 1, fallback = 0) {
+  if (Array.isArray(value)) {
+    return value[clamp(Math.max(1, Math.floor(asNumber(level, 1))) - 1, 0, value.length - 1)] ?? fallback;
+  }
+  return value ?? fallback;
+}
+
+function skillHasHit(skillDef) {
+  return (skillDef?.timelines || []).some(timeline => timeline.hit);
+}
+
+function skillHasSelfBuff(skillDef) {
+  return Array.isArray(skillDef?.selfAddBuffs) && skillDef.selfAddBuffs.length > 0;
+}
+
 function worldToScreenX(value) {
   return WORLD_ORIGIN_X + asNumber(value, 0) * WORLD_SCALE_X;
 }
@@ -1455,6 +1661,92 @@ function screenToWorldY(value) {
   return (WORLD_ORIGIN_Y - asNumber(value, WORLD_ORIGIN_Y)) / WORLD_SCALE_Y;
 }
 
+function isSurvivorBoard(board) {
+  return String(board?.map?.popupArgs?.ClientRuntimePrototype || '').toLowerCase() === 'survivor';
+}
+
+function boardWorldScaleX(board) {
+  return isSurvivorBoard(board) ? SURVIVOR_WORLD_SCALE_X : WORLD_SCALE_X;
+}
+
+function boardWorldToScreenX(board, value) {
+  if (!isSurvivorBoard(board)) return worldToScreenX(value);
+  return clamp(
+    SURVIVOR_WORLD_ORIGIN_X + asNumber(value, 0) * SURVIVOR_WORLD_SCALE_X,
+    40,
+    SURVIVOR_WORLD_WIDTH - 40,
+  );
+}
+
+function boardWorldToScreenY(board, value) {
+  if (!isSurvivorBoard(board)) return worldToScreenY(value);
+  return clamp(
+    SURVIVOR_WORLD_ORIGIN_Y - asNumber(value, 0) * SURVIVOR_WORLD_SCALE_Y,
+    40,
+    SURVIVOR_WORLD_HEIGHT - 40,
+  );
+}
+
+function boardScreenToWorldX(board, value) {
+  if (!isSurvivorBoard(board)) return screenToWorldX(value);
+  return (asNumber(value, SURVIVOR_WORLD_ORIGIN_X) - SURVIVOR_WORLD_ORIGIN_X) / SURVIVOR_WORLD_SCALE_X;
+}
+
+function boardScreenToWorldY(board, value) {
+  if (!isSurvivorBoard(board)) return screenToWorldY(value);
+  return (SURVIVOR_WORLD_ORIGIN_Y - asNumber(value, SURVIVOR_WORLD_ORIGIN_Y)) / SURVIVOR_WORLD_SCALE_Y;
+}
+
 function distanceSq(a, b) {
   return (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
+}
+
+function resolveSpawnPosition(board, options, slot, team) {
+  if (options.x != null || options.y != null) {
+    return {
+      x: asNumber(options.x, team === TEAM.PLAYER ? 150 : 760 + slot * 24),
+      y: asNumber(options.y, team === TEAM.PLAYER ? 610 : 560 + (slot % 5) * 42),
+    };
+  }
+
+  if (options.positionX != null || options.positionY != null) {
+    return {
+      x: boardWorldToScreenX(board, options.positionX),
+      y: boardWorldToScreenY(board, options.positionY),
+    };
+  }
+
+  const location = findMapLocation(board.map, options.locationId);
+  if (location) {
+    const point = randomPointInLocation(location);
+    return {
+      x: boardWorldToScreenX(board, point.x),
+      y: boardWorldToScreenY(board, point.y),
+    };
+  }
+
+  return {
+    x: team === TEAM.PLAYER ? (isSurvivorBoard(board) ? SURVIVOR_WORLD_ORIGIN_X : 150) : 760 + slot * 24,
+    y: team === TEAM.PLAYER ? (isSurvivorBoard(board) ? SURVIVOR_WORLD_ORIGIN_Y : 610) : 560 + (slot % 5) * 42,
+  };
+}
+
+function findMapLocation(map, locationId) {
+  const id = Number(locationId);
+  if (!Number.isFinite(id) || id === 0) return null;
+  return (map?.locations || []).find(location => Number(location.id) === id) || null;
+}
+
+function randomPointInLocation(location) {
+  const base = location.position || {};
+  const geometry = (location.geometries || [])[0] || {};
+  const circle = geometry.circle || {};
+  const center = circle.center || {};
+  const radius = Math.max(0, asNumber(circle.radius, 0));
+  const angle = Math.random() * Math.PI * 2;
+  const distance = Math.sqrt(Math.random()) * radius;
+  return {
+    x: asNumber(base.x, 0) + asNumber(center.x, 0) + Math.cos(angle) * distance,
+    y: asNumber(base.y, 0) + asNumber(center.y, 0) + Math.sin(angle) * distance,
+  };
 }

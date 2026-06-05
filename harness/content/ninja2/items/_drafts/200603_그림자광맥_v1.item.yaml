@@ -1,0 +1,37 @@
+id: 200603
+name: "그림자광맥"
+category: Mine
+type: Mine
+grade: 2
+power: 18
+efficiencyPercents: [100.0, 115.0, 132.0, 152.0, 175.0]
+maxStamina: 45
+staminaRegenPerSecond: 0.0111
+sellPrice: 0
+requiredExps: [0, 120, 260, 500, 850]
+
+levelUpMaterialItemGroups:
+  - level: 2
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 16 }
+      - { id: 200102, count: 6 }
+      - { id: 5, count: 900 }
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 32 }
+      - { id: 200102, count: 12 }
+      - { id: 200103, count: 2 }
+      - { id: 5, count: 2100 }
+
+sellAddItemGroups:
+  - shouldAddAll: false
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200103, count: 1, weight: 35, group: 1, isCore: true }
+      - { itemDataId: 200102, count: 2, weight: 65, group: 1 }
+
+spriteGroups:
+  Icon: "Items/Ninja2/housing_shadow_mine_icon.png"
+  Building: "Housing/Ninja2/shadow_mine.png"

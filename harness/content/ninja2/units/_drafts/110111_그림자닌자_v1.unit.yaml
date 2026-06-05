@@ -1,0 +1,33 @@
+id: 110111
+name: "그림자 닌자"
+type: Player
+warmupDelay: 1.5
+targetMode: Chaser
+targetAwareDistance: 24.0
+targetResetDistance: 30.0
+
+addStats:
+  - { type: Hp, value: [1700.0] }
+  - { type: Attack, value: [95.0] }
+  - { type: Defense, value: [3.0] }
+  - { type: CriticalPercent, value: [14.0] }
+  - { type: CriticalDamagePercent, value: [150.0] }
+  - { type: AttackSpeed, value: [1.1] }
+  - { type: MoveSpeed, value: [3.7] }
+  - { type: ScalePercent, value: [-58.0] }
+
+triggers:
+  - UNIT_ONSTART_SHADOWNINJAOPENING
+  - UNIT_ONUPDATE_SHADOWNINJAATTACK
+
+prefab: "Units/Characters/PFB_NINJA_Shadow.prefab"
+sprite: "Units/Characters/Assets/ninja2_shadow_ninja.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack
+  Cast: Attack2
+  Dead: Dead
+uiScale: 1.12
+uiOffset: { x: 0.0, y: 0.12 }
+hitDropItemSize: 38.0

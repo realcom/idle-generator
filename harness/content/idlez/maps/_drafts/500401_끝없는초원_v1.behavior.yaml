@@ -1,0 +1,74 @@
+name: SurvivorMeadowStart
+domain: map
+vars:
+  enemy_level_key: { type: int, default: 605 }
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $enemy_level_key, value: 1 }
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110401, count: 8, level: 1, team: enemy, locationId: 401 }
+      - AddUnit: { unitDataId: 110401, count: 8, level: 1, team: enemy, locationId: 402 }
+
+---
+
+name: SurvivorMeadowDirector
+domain: map
+vars:
+  enemy_team: { type: int, default: 4 }
+  enemy_level_key: { type: int, default: 605 }
+"on":
+  - event: update
+    every: 3s
+    do:
+      - SetBoardVariable: { key: $enemy_level_key, value: "1 + tick / 900" }
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "return < 28 and wave == 1"
+        AddUnit: { unitDataId: 110401, count: 5, level: enemy_level, team: enemy, locationId: 401 }
+        AddUnit: { unitDataId: 110401, count: 5, level: enemy_level, team: enemy, locationId: 402 }
+      - when: "tick >= 1800 and wave == 1"
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_SURVIVORMEADOWSWARM2 }
+      - when: "tick >= 3600 and wave == 2"
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_SURVIVORMEADOWSWARM3 }
+      - when: "tick >= 5400 and wave == 3"
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_SURVIVORMEADOWBOSS }
+      - when: "tick >= 18000"
+        EndGame: { result: win }
+
+---
+
+name: SurvivorMeadowSwarm2
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110402, count: 10, level: "enemy_level + 1", team: enemy, locationId: 403 }
+      - AddUnit: { unitDataId: 110401, count: 12, level: "enemy_level + 1", team: enemy, locationId: 404 }
+
+---
+
+name: SurvivorMeadowSwarm3
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110403, count: 8, level: "enemy_level + 2", team: enemy, locationId: 401 }
+      - AddUnit: { unitDataId: 110402, count: 12, level: "enemy_level + 2", team: enemy, locationId: 402 }
+
+---
+
+name: SurvivorMeadowBoss
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110508, count: 1, level: "enemy_level + 4", team: enemy, locationId: 403 }
+      - AddUnit: { unitDataId: 110401, count: 16, level: "enemy_level + 3", team: enemy, locationId: 404 }

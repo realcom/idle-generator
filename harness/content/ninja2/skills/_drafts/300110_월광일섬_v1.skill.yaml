@@ -1,0 +1,22 @@
+id: 300110
+name: "월광 일섬"
+tags: [UseToTarget, TargetPosition]
+damageType: Pierce
+cooldown: 5.2
+priority: 10
+targetRefreshType: HighestHp
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_moon_flash.png"
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Attack" } }
+  - { time: 0.0, unitCharge: { duration: 0.18, distance: 1.0, adjustDistanceToTarget: true } }
+  - time: 0.22
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.0
+      maxHit: 2
+      addDamage: { damagePercent: [620.0, 744.0, 893.0, 1072.0, 1286.0] }
+  - { time: 0.9, destroy: {} }

@@ -28,12 +28,14 @@ Purpose: create visual concepts before prefab or recipe work. Use this when the 
    - composition rules
    - UI direction
    - implementation notes
+   - target runtime notes when Phaser/Unity constraints are already known
    - source image link
 5. Update `harness/design/<game>/design-registry.yaml` with status `draft`, `candidate`, or `selected`.
 
 ## Rules
 
 - Do not jump directly to Unity prefab generation.
+- Do not jump directly to Phaser runtime implementation.
 - Concepts may use pseudo text; exact typography is solved later.
 - If using references from another game, capture composition and gameplay feel only, not exact art, labels, or UI.
 - Preserve project character identity over external references.

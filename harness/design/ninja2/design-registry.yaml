@@ -1,0 +1,326 @@
+version: "1.0"
+updated_at: 2026-06-04T17:18:40+09:00
+
+concepts:
+  - id: ninja2_housing_hex_sortie_concept_a
+    title: "Housing Hex Sortie Concept A"
+    image: concepts/ninja2_housing_hex_sortie_concept_a.png
+    notes: concepts/ninja2_housing_hex_sortie_concept_a.md
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: HousingHome
+    orientation: portrait
+    critique: "닌자성이 강하고 검/복면/전투 CTA가 전면에 나와 캐주얼 하우징 톤보다 유치하게 보일 수 있음."
+    tags: [Ninja2, Housing, HexGrid, EstateExpansion, Sortie, TooNinja]
+  - id: ninja2_housing_hex_casual_concept_b
+    title: "Housing Hex Casual Concept B"
+    image: concepts/ninja2_housing_hex_casual_concept_b.png
+    notes: concepts/ninja2_housing_hex_casual_concept_b.md
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: HousingHome
+    orientation: portrait
+    critique: "헥스 영지와 캐주얼 톤은 좋지만 주인공 캐릭터가 평범하고 매력 앵커가 약함."
+    tags: [Ninja2, Housing, HexGrid, EstateExpansion, Casual]
+  - id: ninja2_housing_hex_hero_concept_c
+    title: "Housing Hex Hero Concept C"
+    image: concepts/ninja2_housing_hex_hero_concept_c.png
+    notes: concepts/ninja2_housing_hex_hero_concept_c.md
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: HousingHome
+    orientation: portrait
+    critique: "초기 캐주얼 하우징 방향 참고용. 현재는 flat_arcade_housing_hex_scene_b가 전투 화면과 더 일관적임."
+    tags: [Ninja2, Housing, HexGrid, EstateExpansion, CasualHero]
+  - id: ninja2_hero_character_concept_a
+    title: "Hero Character Concept A"
+    image: concepts/ninja2_hero_character_concept_a.png
+    notes: concepts/ninja2_hero_character_concept_a.md
+    status: candidate
+    created_at: 2026-06-02T00:00:00Z
+    created_by: imagegen
+    screen: CharacterConcept
+    orientation: portrait
+    tags: [Ninja2, Character, Hero, CasualHero, RedScarf, SelectedDirection]
+  - id: ninja2_cozy_dark_character_style_a
+    title: "Cozy Dark Character Style A"
+    image: concepts/ninja2_cozy_dark_character_style_a.png
+    notes: concepts/ninja2_cozy_dark_character_style_a.md
+    status: candidate
+    created_at: 2026-06-02T00:00:00Z
+    created_by: imagegen
+    screen: CharacterStyle
+    orientation: landscape
+    tags: [Ninja2, PivotCandidate, CozyDark, Sanctuary, Character, Followers]
+  - id: ninja2_cozy_dark_environment_style_a
+    title: "Cozy Dark Environment Style A"
+    image: concepts/ninja2_cozy_dark_environment_style_a.png
+    notes: concepts/ninja2_cozy_dark_environment_style_a.md
+    status: candidate
+    created_at: 2026-06-02T00:00:00Z
+    created_by: imagegen
+    screen: EnvironmentStyle
+    orientation: portrait
+    tags: [Ninja2, PivotCandidate, CozyDark, Sanctuary, HexGrid, ExpeditionForest]
+  - id: ninja2_casual_sanctuary_hero_a
+    title: "Casual Sanctuary Hero A"
+    image: concepts/ninja2_casual_sanctuary_hero_a.png
+    notes: concepts/ninja2_casual_sanctuary_hero_a.md
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: imagegen
+    screen: CharacterConcept
+    orientation: portrait
+    critique: "모바일 캐주얼 톤은 좋지만, 이마 흉터가 없어 보호자 서사와 강한 식별자가 부족함."
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Character, Hero]
+  - id: ninja2_casual_sanctuary_hero_scar_a
+    title: "Casual Sanctuary Hero Scar A"
+    image: concepts/ninja2_casual_sanctuary_hero_scar_a.png
+    notes: concepts/ninja2_casual_sanctuary_hero_scar_a.md
+    status: candidate
+    created_at: 2026-06-02T00:00:00Z
+    created_by: imagegen
+    screen: CharacterConcept
+    orientation: portrait
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Character, Hero, ForeheadScar, SelectedDirection]
+  - id: ninja2_casual_sanctuary_background_a
+    title: "Casual Sanctuary Background A"
+    image: concepts/ninja2_casual_sanctuary_background_a.png
+    notes: concepts/ninja2_casual_sanctuary_background_a.md
+    status: candidate
+    created_at: 2026-06-02T00:00:00Z
+    created_by: imagegen
+    screen: EnvironmentStyle
+    orientation: portrait
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, HexGrid, Housing, SelectedDirection]
+  - id: ninja2_casual_sanctuary_housing_screen_a
+    title: "Casual Sanctuary Housing Screen A"
+    image: concepts/ninja2_casual_sanctuary_housing_screen_a.png
+    notes: concepts/ninja2_casual_sanctuary_housing_screen_a.md
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: HousingHome
+    orientation: portrait
+    critique: "성소 분위기는 좋지만 일러스트형 보드에 가까워, 새 플랫 전투 화면과 맞추려면 scene_b가 더 적합함."
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Housing, HexGrid, MobilePortrait]
+  - id: ninja2_flat_arcade_housing_hex_scene_a
+    title: "Flat Arcade Housing Hex Scene A"
+    image: concepts/ninja2_flat_arcade_housing_hex_scene_a.png
+    notes: concepts/ninja2_flat_arcade_housing_hex_scene_a.md
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: HousingHome
+    orientation: portrait
+    critique: "정보 구조와 CTA는 좋지만 건물이 약간 미니어처처럼 보여 최종 플랫 기준은 scene_b를 우선."
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Housing, HexGrid, Flat2D, Arcade, MobilePortrait]
+  - id: ninja2_flat_arcade_housing_hex_scene_b
+    title: "Flat Arcade Housing Hex Scene B"
+    image: concepts/ninja2_flat_arcade_housing_hex_scene_b.png
+    notes: concepts/ninja2_flat_arcade_housing_hex_scene_b.md
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: HousingHome
+    orientation: portrait
+    critique: "전투 화면과 일관성은 좋지만 하우징의 소유감/업그레이드 매력은 hybrid_spine_3d_housing_scene_d가 더 강함."
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Housing, HexGrid, Flat2D, Arcade, MobilePortrait]
+  - id: ninja2_hybrid_spine_3d_housing_scene_c
+    title: "Hybrid Spine 3D Housing Scene C"
+    image: concepts/ninja2_hybrid_spine_3d_housing_scene_c.png
+    notes: concepts/ninja2_hybrid_spine_3d_housing_scene_c.md
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: HousingHome
+    orientation: portrait
+    critique: "2D 주민과 3D풍 건물 조합은 좋지만 최종 하우징 매력은 scene_d가 더 강함."
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Housing, HexGrid, Hybrid2D3D, SpineCharacters, MobilePortrait]
+  - id: ninja2_hybrid_spine_3d_housing_scene_d
+    title: "Hybrid Spine 3D Housing Scene D"
+    image: concepts/ninja2_hybrid_spine_3d_housing_scene_d.png
+    notes: concepts/ninja2_hybrid_spine_3d_housing_scene_d.md
+    status: candidate
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: HousingHome
+    orientation: portrait
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Housing, HexGrid, Hybrid2D3D, Stylized3DBuildings, SpineCharacters, MobilePortrait, SelectedDirection]
+  - id: ninja2_casual_sanctuary_survival_screen_a
+    title: "Casual Sanctuary Survival Screen A"
+    image: concepts/ninja2_casual_sanctuary_survival_screen_a.png
+    notes: concepts/ninja2_casual_sanctuary_survival_screen_a.md
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: SurvivalBattle
+    orientation: portrait
+    critique: "분위기는 좋지만 탐험 RPG 전투처럼 보이고, 2D survivors-like 자동 전투/픽업/적 밀도 문법이 약함."
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Survival, Combat, MobilePortrait]
+  - id: ninja2_casual_sanctuary_survivors_screen_b
+    title: "Casual Sanctuary Survivors Screen B"
+    image: concepts/ninja2_casual_sanctuary_survivors_screen_b.png
+    notes: concepts/ninja2_casual_sanctuary_survivors_screen_b.md
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: SurvivalBattle
+    orientation: portrait
+    critique: "서바이벌 문법은 잡혔지만 아직 배경/연출이 일러스트에 가까워 strict 2D 인게임 기준은 scene_d로 이동."
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Survival, SurvivorsLike, TopDown2D, MobilePortrait]
+  - id: ninja2_casual_sanctuary_survivors_scene_c
+    title: "Casual Sanctuary Survivors Scene C"
+    image: concepts/ninja2_casual_sanctuary_survivors_scene_c.png
+    notes: concepts/ninja2_casual_sanctuary_survivors_scene_c.md
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: SurvivalBattle
+    orientation: portrait
+    critique: "게임 화면 문법은 좋지만 상단 건물과 배경 밀도가 높아 구현 기준보다는 분위기 참고로 사용."
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Survival, SurvivorsLike, TopDown2D, MobilePortrait]
+  - id: ninja2_casual_sanctuary_survivors_scene_d
+    title: "Casual Sanctuary Survivors Scene D"
+    image: concepts/ninja2_casual_sanctuary_survivors_scene_d.png
+    notes: concepts/ninja2_casual_sanctuary_survivors_scene_d.md
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: SurvivalBattle
+    orientation: portrait
+    critique: "2D 전장 기준은 좋지만 모바일 양산성과 레퍼런스식 플랫 가시성은 flat_arcade_scene_f가 더 강함."
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Survival, SurvivorsLike, Strict2D, TopDown2D, SpriteGame, MobilePortrait]
+  - id: ninja2_flat_arcade_survivors_scene_e
+    title: "Flat Arcade Survivors Scene E"
+    image: concepts/ninja2_flat_arcade_survivors_scene_e.png
+    notes: concepts/ninja2_flat_arcade_survivors_scene_e.md
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: SurvivalBattle
+    orientation: portrait
+    critique: "레퍼런스식 플랫 전장에 가까워졌지만 캐릭터/적 렌더링이 아직 풍부해 scene_f를 우선."
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Survival, SurvivorsLike, Flat2D, Arcade, MobilePortrait]
+  - id: ninja2_flat_arcade_survivors_scene_f
+    title: "Flat Arcade Survivors Scene F"
+    image: concepts/ninja2_flat_arcade_survivors_scene_f.png
+    notes: concepts/ninja2_flat_arcade_survivors_scene_f.md
+    status: candidate
+    created_at: 2026-06-02T00:00:00Z
+    created_by: gen-ui-concept
+    screen: SurvivalBattle
+    orientation: portrait
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Survival, SurvivorsLike, Flat2D, Arcade, SpriteGame, MobilePortrait, SelectedDirection]
+  - id: ninja2_run_levelup_choice_modal_a
+    title: "Run Level-Up Choice Modal A"
+    image: concepts/ninja2_run_levelup_choice_modal_a.png
+    notes: concepts/ninja2_run_levelup_choice_modal_a.md
+    status: selected
+    created_at: 2026-06-04T15:56:24+09:00
+    created_by: gen-ui-concept
+    screen: RunLevelUpChoice
+    orientation: portrait
+    critique: "정보 위계와 터치 안정성이 좋아 첫 Phaser 구현 기준으로 적합. 생성 텍스트는 최종 문구로 쓰지 않고 구조만 참고."
+    tags: [Ninja2, Survival, RunLevelUp, SkillChoice, Modal, ThreeCards, Phaser, MobilePortrait, SelectedDirection]
+  - id: ninja2_run_levelup_choice_overlay_b
+    title: "Run Level-Up Choice Overlay B"
+    image: concepts/ninja2_run_levelup_choice_overlay_b.png
+    notes: concepts/ninja2_run_levelup_choice_overlay_b.md
+    status: draft
+    created_at: 2026-06-04T15:56:24+09:00
+    created_by: gen-ui-concept
+    screen: RunLevelUpChoice
+    orientation: portrait
+    critique: "전투 흐름과 속도감은 좋지만 하단 스킬 버튼/EXP 바와 겹침 위험이 있어 A안 구현 후 빠른 선택 변형으로 검토."
+    tags: [Ninja2, Survival, RunLevelUp, SkillChoice, Overlay, FastChoice, Phaser, MobilePortrait]
+  - id: ninja2_spine_gameplay_character_sheet_a
+    title: "Spine Gameplay Character Sheet A"
+    image: concepts/ninja2_spine_gameplay_character_sheet_a.png
+    notes: concepts/ninja2_spine_gameplay_character_sheet_a.md
+    status: candidate
+    created_at: 2026-06-02T00:00:00Z
+    created_by: imagegen
+    screen: CharacterRigSheet
+    orientation: portrait
+    critique: "매력과 SD 비율은 좋지만 헤어 조각과 장식이 많아 최종 리깅 기준보다는 스타일/표정 보조 시트로 사용."
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Character, Spine, SD, ForeheadScar]
+  - id: ninja2_spine_gameplay_rig_sheet_b
+    title: "Spine Gameplay Rig Sheet B"
+    image: concepts/ninja2_spine_gameplay_rig_sheet_b.png
+    notes: concepts/ninja2_spine_gameplay_rig_sheet_b.md
+    status: candidate
+    created_at: 2026-06-02T00:00:00Z
+    created_by: imagegen
+    screen: CharacterRigSheet
+    orientation: portrait
+    tags: [Ninja2, PivotCandidate, CasualSanctuary, Character, SpineReady, Rigging, Gameplay, ForeheadScar, SelectedDirection]
+  - id: ninja2_rulelocked_housing_home_a
+    title: "Rulelocked Housing Home A"
+    image: concepts/ninja2_rulelocked_housing_home_a.png
+    notes: concepts/ninja2_rulelocked_housing_home_a.md
+    status: extracted
+    created_at: 2026-06-03T00:00:00Z
+    created_by: gen-ui-concept
+    screen: HousingHome
+    orientation: portrait
+    critique: "합의한 룰 기준으로 하우징 소유감과 헥스 판독성을 잘 묶음. 다음 패스에서는 fogged tile 대비와 하단 패널 높이를 조정."
+    tags: [Ninja2, CasualSanctuary, Housing, HexGrid, Hybrid2D3D, Rulelocked, Stylized3DBuildings, SpineCharacters, MobilePortrait, SelectedDirection]
+  - id: ninja2_rulelocked_survival_battle_a
+    title: "Rulelocked Survival Battle A"
+    image: concepts/ninja2_rulelocked_survival_battle_a.png
+    notes: concepts/ninja2_rulelocked_survival_battle_a.md
+    status: extracted
+    created_at: 2026-06-03T00:00:00Z
+    created_by: gen-ui-concept
+    screen: SurvivalBattle
+    orientation: portrait
+    critique: "합의한 룰 기준으로 전투 가시성, 반복 적, 픽업 색상, 가장자리 HUD가 잘 정리됨. 다음 패스에서는 배경 가장자리 장식 밀도를 낮춰 더 플랫하게 조정."
+    tags: [Ninja2, CasualSanctuary, Survival, SurvivorsLike, Flat2D, Arcade, SpriteGame, Rulelocked, MobilePortrait, SelectedDirection]
+  - id: ninja2_housing_top_bottom_tabs_arcade_a
+    title: "Housing Top Bottom Tabs Arcade A"
+    image: concepts/ninja2_housing_top_bottom_tabs_arcade_a.png
+    notes: concepts/ninja2_housing_top_bottom_tabs_arcade_a.md
+    status: candidate
+    created_at: 2026-06-04T00:00:00Z
+    created_by: gen-ui-concept
+    screen: HousingHome
+    orientation: portrait
+    critique: "현재 multi-hex 기지 화면을 유지하면서 예시 이미지식 chunky top resource band, status plaque, large bottom card, orange sortie CTA, and six-tab dock을 적용하는 구현 후보."
+    tags: [Ninja2, CasualSanctuary, Housing, TopTabs, BottomTabs, ArcadeUI, MobilePortrait, CandidateForPhaser]
+  - id: ninja2_survival_topbar_resource_ledger_a
+    title: "Survival Topbar Resource Ledger A"
+    image: concepts/ninja2_survival_topbar_resource_ledger_a.png
+    notes: concepts/ninja2_survival_topbar_resource_ledger_a.md
+    status: candidate
+    created_at: 2026-06-04T14:53:21+09:00
+    created_by: gen-ui-concept
+    screen: SurvivalBattle
+    orientation: portrait
+    critique: "모바일 서바이버 HUD 문법을 따르되 목재/석재/영혼불/코인을 전투 중 수집 장부로 노출해, 하우징/성소 장기 성장 루프와 직접 연결되는 상단바 후보."
+    tags: [Ninja2, CasualSanctuary, Survival, SurvivorsLike, TopHUD, ResourceLedger, LongTermResources, MobilePortrait, CandidateForPhaser]
+  - id: ninja2_building_tech_tree_research_a
+    title: "Building Tech Tree Research A"
+    image: concepts/ninja2_building_tech_tree_research_a.png
+    notes: concepts/ninja2_building_tech_tree_research_a.md
+    status: draft
+    created_at: 2026-06-04T17:18:40+09:00
+    created_by: gen-ui-concept
+    screen: BuildingTechTree
+    orientation: portrait
+    critique: "등불 신전 중심의 세로형 테크 그래프가 진행감과 Ring 게이트를 잘 보여준다. 다만 기존 영지 보드와의 즉시 연결감은 B안보다 약해 연구 전용 화면/확장안으로 보관."
+    tags: [Ninja2, CasualSanctuary, Housing, BuildingTechTree, ResearchTree, RingUnlocks, MobilePortrait, Draft]
+  - id: ninja2_building_tech_tree_board_b
+    title: "Building Tech Tree Board B"
+    image: concepts/ninja2_building_tech_tree_board_b.png
+    notes: concepts/ninja2_building_tech_tree_board_b.md
+    status: candidate
+    created_at: 2026-06-04T17:18:40+09:00
+    created_by: gen-ui-concept
+    screen: BuildingTechTree
+    orientation: portrait
+    critique: "기존 하우징 보드 프리뷰와 카드형 테크 브랜치를 연결해 첫 Phaser 구현 후보로 적합. 생산/성장/방어/주민/탐험 필터와 하단 detail drawer 구조가 안정적."
+    tags: [Ninja2, CasualSanctuary, Housing, BuildingTechTree, BoardPreview, BranchCards, CandidateForPhaser, MobilePortrait, SelectedDirection]

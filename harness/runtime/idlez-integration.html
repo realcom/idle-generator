@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>idlez 하네스 — 실제 에셋 통합 런타임</title>
-<script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/phaser@4.1.0/dist/phaser.js"></script>
 <script src="https://esotericsoftware.com/spine-runtimes/spine.js"></script>
 <style>
 :root{
@@ -109,7 +109,7 @@ body{margin:0;background:var(--bg);color:var(--color-text-primary);font-family:v
         <div class="asset-item-detail">
           원본: idlez-client/Assets<br>
           리소스: Slimequeen.skel + .png<br>
-          런타임: Phaser 3 + Spine.js
+          런타임: Phaser 4 + Spine.js
         </div>
       </div>
     </div>
@@ -417,7 +417,7 @@ class IntegratedGameScene extends Phaser.Scene {
 }
 
 const config = {
-  type: Phaser.AUTO,
+  type: Phaser.WEBGL,
   width: 720,
   height: 400,
   parent: 'gameContainer',

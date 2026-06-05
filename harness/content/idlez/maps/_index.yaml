@@ -1,5 +1,5 @@
 version: "1.0"
-updated_at: 2026-06-01T00:00:00Z
+updated_at: 2026-06-02T00:00:00Z
 
 maps:
   - id: 500101
@@ -95,3 +95,18 @@ maps:
     series: weekday-dungeon
     stage_no: 1
     tags: [WeekdayDungeon, Sunday, Boss, Difficulty1]
+
+  - id: 500401
+    name: "끝없는 초원"
+    file: _drafts/500401_끝없는초원_v1.map.yaml
+    status: draft
+    created_at: 2026-06-02T00:00:00Z
+    created_by: new-content/survivor
+    reviewer: null
+    reviewed_at: null
+    series: survivor-prototype
+    stage_no: 1
+    refs:
+      behavior: _drafts/500401_끝없는초원_v1.behavior.yaml
+      runtime: ../../runtime/survivor-runtime.html
+    tags: [Survivor, InfiniteWaves, Main, Prototype]

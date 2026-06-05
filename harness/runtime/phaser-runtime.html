@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>idlez 하네스 — Phaser 동적 런타임</title>
-<script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/phaser@4.1.0/dist/phaser.js"></script>
 <style>
 :root{
   --color-background-primary:#fff;--color-background-secondary:#efeee8;--color-background-tertiary:#e4e2d9;
@@ -416,7 +416,7 @@ class GameScene extends Phaser.Scene {
 }
 
 const config = {
-  type: Phaser.AUTO,
+  type: Phaser.WEBGL,
   width: 720,
   height: 360,
   parent: 'gameContainer',

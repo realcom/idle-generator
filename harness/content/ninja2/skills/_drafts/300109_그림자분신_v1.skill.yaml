@@ -1,0 +1,38 @@
+id: 300109
+name: "그림자 분신"
+tags: [UseToTarget, TargetPosition]
+damageType: Pierce
+projectileType: Target
+cooldown: 4.8
+priority: 9
+targetRefreshType: Nearest
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_shadow_clone.png"
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - time: 0.16
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.6
+      maxHit: 5
+      addDamage: { damagePercent: [150.0, 180.0, 216.0, 259.0, 311.0] }
+  - time: 0.36
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.6
+      maxHit: 5
+      addDamage: { damagePercent: [150.0, 180.0, 216.0, 259.0, 311.0] }
+  - time: 0.56
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 2.6
+      maxHit: 5
+      addDamage: { damagePercent: [150.0, 180.0, 216.0, 259.0, 311.0] }
+  - { time: 1.0, destroy: {} }

@@ -1,0 +1,11 @@
+id: 400103
+name: "살의 집중"
+tags: [DisplayOnUnit]
+type: UnitBuff
+duration: 6.5
+prefabAttachmentTarget: SkinRoot
+addStats:
+  - { type: AttackPercent, value: [14.0, 18.0, 22.0, 27.0, 32.0] }
+  - { type: CriticalPercent, value: [4.0, 5.0, 6.0, 7.0, 8.0] }
+  - { type: CriticalDamagePercent, value: [18.0, 24.0, 30.0, 38.0, 46.0] }
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"

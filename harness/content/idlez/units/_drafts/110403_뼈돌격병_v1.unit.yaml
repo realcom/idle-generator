@@ -1,0 +1,31 @@
+id: 110403
+name: "뼈 돌격병"
+type: Elite
+tags: [Monster]
+armorType: NormalArmor
+
+addStats:
+  - { type: Hp, value: [180.0, 205.0, 234.0, 268.0, 306.0, 350.0, 400.0, 458.0, 524.0, 600.0] }
+  - { type: Attack, value: [18.0, 21.0, 24.0, 28.0, 32.0, 37.0, 43.0, 50.0, 58.0, 67.0] }
+  - { type: Defense, value: [7.0, 8.0, 9.0, 11.0, 13.0, 15.0, 17.0, 20.0, 23.0, 27.0] }
+  - { type: MoveSpeed, value: [3.05] }
+  - { type: ScalePercent, value: [-58.0] }
+
+triggers:
+  - UNIT_ONSTART_SURVIVORBRUISERSTART
+  - UNIT_ONUPDATE_SURVIVORBRUISERCHASE
+
+dropAddItemGroups:
+  - shouldAddAll: false
+    probPercent: 100
+    addItems:
+      - { itemDataId: 6, count: 6, weight: 100, group: 1 }
+      - { itemDataId: 5, minCount: 9, maxCount: 18, weight: 55, group: 1 }
+
+prefab: "Units/Monsters/melee_skeleton.prefab"
+sprite: "Units/Monsters/Assets/melee_skeleton.png"
+uiScale: 1.0
+animations:
+  idle: "survivor_bruiser_idle"
+  move: "survivor_bruiser_move"
+  dead: "survivor_bruiser_dead"

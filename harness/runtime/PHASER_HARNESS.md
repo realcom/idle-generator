@@ -40,6 +40,16 @@ headless Chrome에서 Spine asset preload가 느린 머신은 `--timeout`을 늘
 
 목표: HUD, 성장, 장비, 스킬, 던전 같은 화면 상태를 전투 진입 없이 재현한다.
 
+제작 순서:
+
+```text
+extract-design-system -> prepare-phaser-nine-slice -> gen-ui-assets -> gen-phaser-ui-spec -> build-phaser-ui-runtime
+```
+
+`prepare-phaser-nine-slice`는 버튼/패널/dock/tab/chip/card 같은 generated UI skin을 Phaser 9-slice로 쓸지 먼저 판정한다. 세부 기준은 `harness/runtime/NINE_SLICE_UI.md`가 단일 출처다.
+
+`gen-phaser-ui-spec`는 `harness/runtime/specs/ui/`에 구현 명세를 먼저 남기고, `build-phaser-ui-runtime`이 그 명세를 기준으로 런타임 JS/HTML/CSS를 수정한다.
+
 실행:
 
 ```bash
@@ -78,12 +88,24 @@ http://127.0.0.1:8765/harness/runtime/phaser-ui-harness.html?modal=weekdayDungeo
 
 목표: 콘텐츠와 런타임 asset 참조가 어긋나는 문제를 배포 전에 잡는다.
 
-예정 확인:
+실행:
+
+```bash
+python3 harness/tools/phaser_asset_audit.py mushroomer
+python3 harness/tools/phaser_nineslice_audit.py mushroomer
+python3 harness/tools/phaser_asset_audit.py mushroomer --json
+python3 harness/tools/asset_registry_audit.py mushroomer --release
+```
+
+확인:
 
 - map `ClientPhaserBackground` 키와 `runtime/assets/maps/**`
 - UI icon/button/banner registry와 실제 PNG
+- UI skin `slice_hints`, `phaser.usage: phaser_nineslice`, Unity sliced sprite 계약
 - audio 정의와 `runtime/assets/audio/**`
 - Spine triple(`.atlas.txt`, `.skel.bytes`, `.png`) 완결성
+- Spine atlas page image 참조
+- `harness/assets/<game>/asset-registry.yaml` coverage/status
 
 ## 5. Deploy
 

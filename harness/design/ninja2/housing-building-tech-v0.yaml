@@ -1,0 +1,396 @@
+version: "0.1"
+game: ninja2
+status: draft
+updated_at: 2026-06-04
+purpose: "Early housing building tech tree, level effects, construction costs/times, footprints, and asset production plan."
+
+schema_notes:
+  construction: "Cost/time to place the building for the first time."
+  level_curve: "Each row describes the effect active at that level."
+  level_up: "For level N rows where N > 1, this is the cost/time required to reach level N from level N-1."
+  costs: "Resource keys use resource_ids names; convert to item ids only at compile/runtime binding time."
+
+source_runtime:
+  phaser_home: harness/runtime/src/survivor/survivor-app.js
+  phaser_runtime_data: harness/runtime/src/survivor/housing-tech.js
+  existing_runtime_building_sprites: harness/runtime/assets/ninja2/home/buildings/
+  asset_plan: harness/design/ninja2/asset-plan.yaml
+  component_skins: harness/design/ninja2/component-skins.yaml
+
+resource_ids:
+  gold: 5
+  exp: 6
+  lantern: 8
+  wood: 200101
+  stone: 200102
+  soulflame: 200103
+  planned:
+    soil: 200104
+    clay: 200105
+    bamboo: 200106
+    iron_ore: 200107
+    herb: 200108
+    food: 200109
+    tool: 200110
+    companion_shard: 200111
+
+resource_names:
+  5: "골드"
+  6: "경험치"
+  8: "등불"
+  200101: "목재"
+  200102: "석재"
+  200103: "영혼불"
+  200104: "흙"
+  200105: "점토"
+  200106: "대나무"
+  200107: "철광석"
+  200108: "허브"
+  200109: "식량"
+  200110: "도구"
+  200111: "동료 조각"
+
+economy_targets:
+  current_stage1_expected_run:
+    assumption: "25 normal kills + 1 boss + map clear reward"
+    rewards:
+      gold: 910
+      exp: 280
+      wood: 21
+      stone: 6.2
+      soulflame: 0.47
+  first_day:
+    first_upgrade_after_runs: "1~2"
+    first_new_building_after_runs: "2~4"
+    first_ring_expansion_after_minutes: "15~25"
+    first_soulflame_bottleneck_after_minutes: "45~90"
+
+footprint_rules:
+  "1x1":
+    hexes: 1
+    use_for: ["watch", "well", "small utility"]
+    visual_size_px: { w: 70, h: 92 }
+  "1x2":
+    hexes: 2
+    use_for: ["production hut", "storage", "workshop"]
+    visual_size_px: { w: 112, h: 96 }
+  "1x3":
+    hexes: 3
+    use_for: ["garden", "training yard", "long outdoor facility"]
+    visual_size_px: { w: 146, h: 84 }
+  "2x2":
+    hexes: 4
+    use_for: ["town center", "central shrine"]
+    visual_size_px: { w: 142, h: 134 }
+
+tech_tree:
+  start:
+    unlocked_buildings: [lantern_shrine, wood_workshop]
+    starting_built: [lantern_shrine, wood_workshop]
+  ring_1:
+    unlock_condition: { lantern_shrine_level: 2 }
+    buildings: [stone_quarry, training_yard, soulflame_well]
+    expansion_costs:
+      - { tile_state: "expandable_to_empty", tile_count: 1, cost: { wood: 35, stone: 6 }, time_seconds: 30 }
+      - { tile_state: "expandable_to_empty", tile_count: 2, cost: { wood: 55, stone: 12 }, time_seconds: 90 }
+      - { tile_state: "expandable_to_empty", tile_count: 3, cost: { wood: 90, stone: 24, soulflame: 1 }, time_seconds: 180 }
+  ring_2:
+    unlock_condition: { lantern_shrine_level: 4 }
+    buildings: [herb_garden, resident_lodge, workshop, guard_lantern, scout_post]
+    expansion_costs:
+      - { tile_state: "fogged_to_expandable", cost: { lantern: 1 }, time_seconds: 0 }
+      - { tile_state: "expandable_to_empty", cost: { wood: 150, stone: 55, soulflame: 2 }, time_seconds: 600 }
+  ring_3:
+    unlock_condition: { lantern_shrine_level: 6 }
+    buildings: [granary, bamboo_grove, iron_mine]
+    note: "D7 이후. D1 데이터에는 비용 방향만 남긴다."
+
+buildings:
+  - key: lantern_shrine
+    content_item_id: 200600
+    name: "등불 신전"
+    tier: core
+    role: town_center
+    category_mapping: "runtime_housing_node"
+    footprint: "2x2"
+    runtime_tiles: [11, 12, 16, 17]
+    runtime_anchor_tile: 12
+    sprite_key: shrine
+    asset_status: existing
+    starts_built: true
+    construction:
+      seconds: 0
+      cost: {}
+    effect_kind: sanctuary_core
+    level_curve:
+      - level: 1
+        effect: { light_radius: 38, max_open_tiles: 5, resident_cap: 6, max_building_level: 2 }
+        level_up: null
+      - level: 2
+        effect: { light_radius: 52, max_open_tiles: 8, resident_cap: 7, max_building_level: 3, unlocks: [stone_quarry, training_yard] }
+        level_up: { seconds: 120, cost: { gold: 1200, wood: 120, stone: 20 } }
+      - level: 3
+        effect: { light_radius: 70, max_open_tiles: 12, resident_cap: 8, max_building_level: 4, unlocks: [soulflame_well] }
+        level_up: { seconds: 600, cost: { gold: 2800, wood: 260, stone: 55, soulflame: 2 } }
+      - level: 4
+        effect: { light_radius: 92, max_open_tiles: 17, resident_cap: 10, max_building_level: 5, unlocks: [herb_garden, resident_lodge] }
+        level_up: { seconds: 1800, cost: { gold: 6200, wood: 560, stone: 130, soulflame: 8 } }
+      - level: 5
+        effect: { light_radius: 120, max_open_tiles: 23, resident_cap: 12, max_building_level: 6, unlocks: [workshop, guard_lantern, scout_post] }
+        level_up: { seconds: 5400, cost: { gold: 14000, wood: 1200, stone: 300, soulflame: 20 } }
+
+  - key: wood_workshop
+    content_item_id: 200602
+    name: "목재 작업장"
+    tier: core
+    role: production
+    category_mapping: "Item.Category=Mine"
+    footprint: "1x2"
+    runtime_tiles: [6, 7]
+    runtime_anchor_tile: 7
+    sprite_key: wood_workshop
+    asset_status: existing
+    starts_built: true
+    construction:
+      seconds: 0
+      cost: {}
+    effect_kind: produce_wood
+    level_curve:
+      - { level: 1, effect: { wood_per_min: 8, storage_minutes: 60 }, level_up: null }
+      - { level: 2, effect: { wood_per_min: 14, storage_minutes: 75 }, level_up: { seconds: 60, cost: { gold: 500, wood: 12 } } }
+      - { level: 3, effect: { wood_per_min: 22, storage_minutes: 90 }, level_up: { seconds: 180, cost: { gold: 1200, wood: 28, stone: 4 } } }
+      - { level: 4, effect: { wood_per_min: 34, storage_minutes: 120 }, level_up: { seconds: 600, cost: { gold: 2800, wood: 60, stone: 12 } } }
+      - { level: 5, effect: { wood_per_min: 52, storage_minutes: 150 }, level_up: { seconds: 1800, cost: { gold: 6500, wood: 130, stone: 28, soulflame: 1 } } }
+
+  - key: stone_quarry
+    content_item_id: 200604
+    name: "채석장"
+    tier: ring_1
+    role: production
+    category_mapping: "Item.Category=Mine"
+    footprint: "1x2"
+    runtime_tiles: [8, 9]
+    runtime_anchor_tile: 8
+    sprite_key: stone_quarry
+    asset_status: planned
+    starts_built: false
+    construction:
+      seconds: 180
+      cost: { gold: 600, wood: 35, stone: 8 }
+    unlock: { lantern_shrine_level: 2 }
+    effect_kind: produce_stone
+    level_curve:
+      - { level: 1, effect: { stone_per_min: 3, storage_minutes: 60 }, level_up: null }
+      - { level: 2, effect: { stone_per_min: 5, storage_minutes: 75 }, level_up: { seconds: 300, cost: { gold: 1200, wood: 50, stone: 14 } } }
+      - { level: 3, effect: { stone_per_min: 8, storage_minutes: 90 }, level_up: { seconds: 900, cost: { gold: 2500, wood: 95, stone: 32, soulflame: 1 } } }
+      - { level: 4, effect: { stone_per_min: 13, storage_minutes: 120 }, level_up: { seconds: 2400, cost: { gold: 5600, wood: 180, stone: 72, soulflame: 3 } } }
+      - { level: 5, effect: { stone_per_min: 20, storage_minutes: 150 }, level_up: { seconds: 7200, cost: { gold: 12000, wood: 360, stone: 150, soulflame: 8 } } }
+
+  - key: training_yard
+    content_item_id: 200601
+    name: "수련마당"
+    tier: ring_1
+    role: growth
+    category_mapping: "Item.Category=Mine"
+    footprint: "1x3"
+    runtime_tiles: [13, 18, 19]
+    runtime_anchor_tile: 18
+    sprite_key: training_yard
+    asset_status: existing
+    starts_built: false
+    construction:
+      seconds: 120
+      cost: { gold: 450, wood: 30, stone: 4 }
+    unlock: { lantern_shrine_level: 2, wood_workshop_level: 2 }
+    effect_kind: produce_exp_and_attack_bonus
+    level_curve:
+      - { level: 1, effect: { exp_per_min: 18, attack_percent: 1 }, level_up: null }
+      - { level: 2, effect: { exp_per_min: 30, attack_percent: 2 }, level_up: { seconds: 120, cost: { gold: 500, wood: 12 } } }
+      - { level: 3, effect: { exp_per_min: 48, attack_percent: 3 }, level_up: { seconds: 360, cost: { gold: 1200, wood: 28, stone: 4 } } }
+      - { level: 4, effect: { exp_per_min: 76, attack_percent: 5 }, level_up: { seconds: 1200, cost: { gold: 3000, wood: 70, stone: 16 } } }
+      - { level: 5, effect: { exp_per_min: 118, attack_percent: 8 }, level_up: { seconds: 3600, cost: { gold: 7600, wood: 150, stone: 40, soulflame: 2 } } }
+
+  - key: soulflame_well
+    content_item_id: 200603
+    name: "영혼광맥"
+    tier: ring_1
+    role: rare_production
+    category_mapping: "Item.Category=Mine"
+    footprint: "1x1"
+    runtime_tiles: [4]
+    runtime_anchor_tile: 4
+    sprite_key: soulflame_well
+    asset_status: existing
+    starts_built: false
+    construction:
+      seconds: 600
+      cost: { gold: 1200, wood: 80, stone: 35, soulflame: 1 }
+    unlock: { lantern_shrine_level: 3, stone_quarry_level: 2 }
+    effect_kind: produce_soulflame
+    level_curve:
+      - { level: 1, effect: { soulflame_per_hour: 0.6, stone_per_min: 1 }, level_up: null }
+      - { level: 2, effect: { soulflame_per_hour: 1.1, stone_per_min: 2 }, level_up: { seconds: 900, cost: { gold: 1800, wood: 60, stone: 30, soulflame: 2 } } }
+      - { level: 3, effect: { soulflame_per_hour: 1.9, stone_per_min: 3 }, level_up: { seconds: 2400, cost: { gold: 4200, wood: 140, stone: 75, soulflame: 5 } } }
+      - { level: 4, effect: { soulflame_per_hour: 3.2, stone_per_min: 5 }, level_up: { seconds: 7200, cost: { gold: 9800, wood: 320, stone: 160, soulflame: 12 } } }
+      - { level: 5, effect: { soulflame_per_hour: 5.0, stone_per_min: 8 }, level_up: { seconds: 14400, cost: { gold: 22000, wood: 720, stone: 360, soulflame: 30 } } }
+
+  - key: herb_garden
+    content_item_id: 200605
+    name: "허브 정원"
+    tier: ring_2
+    role: support_production
+    category_mapping: "Item.Category=Mine"
+    footprint: "1x3"
+    runtime_tiles: [-1, -2, -3]
+    runtime_anchor_tile: -2
+    sprite_key: herb_garden
+    asset_status: existing
+    starts_built: false
+    construction:
+      seconds: 900
+      cost: { gold: 2500, wood: 110, stone: 50, soulflame: 2 }
+    unlock: { lantern_shrine_level: 4 }
+    effect_kind: produce_herb_and_recovery_bonus
+    level_curve:
+      - { level: 1, effect: { herb_per_min: 4, recovery_percent: 1 }, level_up: null }
+      - { level: 2, effect: { herb_per_min: 7, recovery_percent: 2 }, level_up: { seconds: 1200, cost: { gold: 3500, wood: 120, stone: 45, soulflame: 2 } } }
+      - { level: 3, effect: { herb_per_min: 11, recovery_percent: 3 }, level_up: { seconds: 3000, cost: { gold: 7600, wood: 250, stone: 110, soulflame: 6 } } }
+      - { level: 4, effect: { herb_per_min: 17, recovery_percent: 5 }, level_up: { seconds: 9000, cost: { gold: 16000, wood: 520, stone: 260, soulflame: 15 } } }
+      - { level: 5, effect: { herb_per_min: 26, recovery_percent: 8 }, level_up: { seconds: 21600, cost: { gold: 36000, wood: 1100, stone: 560, soulflame: 36 } } }
+
+  - key: resident_lodge
+    content_item_id: 200606
+    name: "주민 숙소"
+    tier: ring_2
+    role: capacity
+    category_mapping: "runtime_housing_node"
+    footprint: "1x2"
+    runtime_tiles: [10, 14]
+    runtime_anchor_tile: 14
+    sprite_key: storage
+    asset_status: existing
+    starts_built: false
+    construction:
+      seconds: 1200
+      cost: { gold: 3200, wood: 140, stone: 60, soulflame: 2 }
+    unlock: { lantern_shrine_level: 4 }
+    effect_kind: resident_cap_and_offline
+    level_curve:
+      - { level: 1, effect: { resident_cap_bonus: 2, offline_cap_hours_bonus: 0.5, all_production_percent: 1 }, level_up: null }
+      - { level: 2, effect: { resident_cap_bonus: 3, offline_cap_hours_bonus: 1.0, all_production_percent: 2 }, level_up: { seconds: 1800, cost: { gold: 4400, wood: 160, stone: 70, soulflame: 3 } } }
+      - { level: 3, effect: { resident_cap_bonus: 4, offline_cap_hours_bonus: 1.5, all_production_percent: 3 }, level_up: { seconds: 5400, cost: { gold: 9800, wood: 340, stone: 160, soulflame: 8 } } }
+      - { level: 4, effect: { resident_cap_bonus: 5, offline_cap_hours_bonus: 2.0, all_production_percent: 5 }, level_up: { seconds: 14400, cost: { gold: 22000, wood: 760, stone: 360, soulflame: 20 } } }
+      - { level: 5, effect: { resident_cap_bonus: 7, offline_cap_hours_bonus: 3.0, all_production_percent: 8 }, level_up: { seconds: 28800, cost: { gold: 50000, wood: 1600, stone: 760, soulflame: 46 } } }
+
+  - key: workshop
+    content_item_id: 200607
+    name: "공방"
+    tier: ring_2
+    role: crafting
+    category_mapping: "runtime_housing_node_or_Item.Category=Mine"
+    footprint: "1x2"
+    runtime_tiles: [2, 5]
+    runtime_anchor_tile: 5
+    sprite_key: workshop
+    asset_status: planned
+    starts_built: false
+    construction:
+      seconds: 1800
+      cost: { gold: 5200, wood: 220, stone: 120, soulflame: 5 }
+    unlock: { lantern_shrine_level: 5, resident_lodge_level: 1 }
+    effect_kind: tools_and_build_speed
+    level_curve:
+      - { level: 1, effect: { tool_per_hour: 1, construction_time_reduction_percent: 2 }, level_up: null }
+      - { level: 2, effect: { tool_per_hour: 2, construction_time_reduction_percent: 4 }, level_up: { seconds: 2400, cost: { gold: 7200, wood: 260, stone: 140, soulflame: 6 } } }
+      - { level: 3, effect: { tool_per_hour: 3, construction_time_reduction_percent: 7 }, level_up: { seconds: 7200, cost: { gold: 16000, wood: 560, stone: 300, soulflame: 14 } } }
+      - { level: 4, effect: { tool_per_hour: 5, construction_time_reduction_percent: 11 }, level_up: { seconds: 18000, cost: { gold: 36000, wood: 1200, stone: 640, soulflame: 32 } } }
+      - { level: 5, effect: { tool_per_hour: 8, construction_time_reduction_percent: 16 }, level_up: { seconds: 43200, cost: { gold: 78000, wood: 2600, stone: 1400, soulflame: 72 } } }
+
+  - key: guard_lantern
+    content_item_id: 200608
+    name: "수호등탑"
+    tier: ring_2
+    role: combat_bonus
+    category_mapping: "runtime_housing_node_or_Item.Category=Stat"
+    footprint: "1x1"
+    runtime_tiles: [3]
+    runtime_anchor_tile: 3
+    sprite_key: guard_lantern
+    asset_status: existing
+    starts_built: false
+    construction:
+      seconds: 1800
+      cost: { gold: 6000, wood: 180, stone: 160, soulflame: 6 }
+    unlock: { lantern_shrine_level: 5 }
+    effect_kind: boss_and_defense_bonus
+    level_curve:
+      - { level: 1, effect: { boss_damage_percent: 2, defense_percent: 1 }, level_up: null }
+      - { level: 2, effect: { boss_damage_percent: 4, defense_percent: 2 }, level_up: { seconds: 3000, cost: { gold: 8500, wood: 220, stone: 180, soulflame: 7 } } }
+      - { level: 3, effect: { boss_damage_percent: 7, defense_percent: 3 }, level_up: { seconds: 9000, cost: { gold: 19000, wood: 480, stone: 420, soulflame: 18 } } }
+      - { level: 4, effect: { boss_damage_percent: 11, defense_percent: 5 }, level_up: { seconds: 21600, cost: { gold: 42000, wood: 1000, stone: 900, soulflame: 40 } } }
+      - { level: 5, effect: { boss_damage_percent: 16, defense_percent: 8 }, level_up: { seconds: 43200, cost: { gold: 92000, wood: 2200, stone: 1900, soulflame: 88 } } }
+
+  - key: scout_post
+    content_item_id: 200609
+    name: "정찰소"
+    tier: ring_2
+    role: farming_control
+    category_mapping: "runtime_housing_node"
+    footprint: "1x1"
+    runtime_tiles: [1]
+    runtime_anchor_tile: 1
+    sprite_key: scout_post
+    asset_status: planned
+    starts_built: false
+    construction:
+      seconds: 2400
+      cost: { gold: 7200, wood: 240, stone: 180, soulflame: 8 }
+    unlock: { lantern_shrine_level: 5, guard_lantern_level: 1 }
+    effect_kind: expedition_preview_and_drop_bonus
+    level_curve:
+      - { level: 1, effect: { resource_expedition_slots: 1, item_drop_percent: 1 }, level_up: null }
+      - { level: 2, effect: { resource_expedition_slots: 1, item_drop_percent: 2 }, level_up: { seconds: 3600, cost: { gold: 9800, wood: 280, stone: 220, soulflame: 9 } } }
+      - { level: 3, effect: { resource_expedition_slots: 2, item_drop_percent: 4 }, level_up: { seconds: 10800, cost: { gold: 22000, wood: 620, stone: 520, soulflame: 22 } } }
+      - { level: 4, effect: { resource_expedition_slots: 2, item_drop_percent: 7 }, level_up: { seconds: 28800, cost: { gold: 48000, wood: 1300, stone: 1100, soulflame: 50 } } }
+      - { level: 5, effect: { resource_expedition_slots: 3, item_drop_percent: 10 }, level_up: { seconds: 57600, cost: { gold: 105000, wood: 2800, stone: 2400, soulflame: 110 } } }
+
+asset_production_plan:
+  existing_pipeline:
+    summary: "Generated transparent atlas -> chroma-key removal -> connected-component crops -> runtime PNGs."
+    source_atlas: harness/design/ninja2/assets/home/building_atlas_lantern_sanctuary.png
+    runtime_folder: harness/runtime/assets/ninja2/home/buildings/
+    existing_runtime_sprites:
+      - shrine
+      - wood_workshop
+      - herb_garden
+      - training_yard
+      - storage
+      - soulflame_well
+      - guard_lantern
+  generation_rules:
+    background: transparent
+    no_baked_text: true
+    style: "2.5D pre-rendered sprite impression, bold dark outline, teal roof, lantern windows, stone base"
+    target_sheet_size: { width: 1536, height: 1024 }
+    crop_mode: "individual transparent PNG per building for Phaser; shared sprite/atlas for Unity"
+    footprint_visibility: "Sprite size must match footprint; large building footprint is data-driven, not only visual scale."
+  extension_atlas_needed:
+    key: ninja2.home.building_atlas.sanctuary_extension_a
+    priority: should
+    variants:
+      - { sprite_key: stone_quarry, footprint: "1x2", note: "stone pit plus small pulley/cart, not a mine cave that reads as combat dungeon" }
+      - { sprite_key: workshop, footprint: "1x2", note: "tool bench, small chimney, wood/iron details" }
+      - { sprite_key: scout_post, footprint: "1x1", note: "watch platform, map board, small lantern" }
+      - { sprite_key: granary, footprint: "1x2", note: "food storage for D7+" }
+      - { sprite_key: bamboo_grove, footprint: "1x3", note: "renewable bamboo production tile" }
+      - { sprite_key: iron_mine, footprint: "1x2", note: "midgame metal source" }
+
+implementation_notes:
+  engine_item_yaml:
+    safe_fields: ["category=Mine", "efficiencyPercents", "maxStamina", "staminaRegenPerSecond", "levelUpMaterialItemGroups", "sellAddItemGroups", "spriteGroups", "popupArgs"]
+    caution: "construction seconds, footprint, tile occupancy, and build cost should stay in housing runtime data or popupArgs until engine contract is extended."
+  phaser_runtime:
+    current_state: "survivor-app.js renders home BUILDINGS from housing-tech.js and tracks built/locked/buildable/constructing states."
+    next_step: "Replace the hand-maintained runtime derivative with generated JSON/JS from this YAML, then add true tile expansion and construction queue UX."
+  unity_runtime:
+    next_step: "Use footprint, sprite_key, foundation kind, and construction timers to build a uGUI/grid prefab recipe."

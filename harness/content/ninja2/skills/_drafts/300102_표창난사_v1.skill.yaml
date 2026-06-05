@@ -1,0 +1,38 @@
+id: 300102
+name: "표창 난사"
+tags: [UseToTarget, TargetPosition, AdditionalAttackPossible]
+damageType: Pierce
+projectileType: Target
+cooldown: 0.85
+priority: 2
+targetRefreshType: Nearest
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_shuriken_barrage.png"
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Attack" } }
+  - time: 0.05
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 0.9
+      maxHit: 1
+      addDamage: { damagePercent: [42.0, 50.0, 60.0, 72.0, 86.0] }
+  - time: 0.16
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 0.9
+      maxHit: 1
+      addDamage: { damagePercent: [42.0, 50.0, 60.0, 72.0, 86.0] }
+  - time: 0.27
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 0.9
+      maxHit: 1
+      addDamage: { damagePercent: [42.0, 50.0, 60.0, 72.0, 86.0] }
+  - { time: 0.48, destroy: {} }

@@ -1,0 +1,13 @@
+id: 300115
+name: "질풍 보법"
+cooldown: 5.4
+priority: 15
+targetRefreshType: NoRefresh
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_gale_steps.png"
+selfAddBuffs:
+  - { buffDataId: 400105, level: 1, duration: 5.8 }
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - { time: 0.4, destroy: {} }

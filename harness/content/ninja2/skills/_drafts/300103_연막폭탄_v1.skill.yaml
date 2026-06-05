@@ -1,0 +1,24 @@
+id: 300103
+name: "연막 폭탄"
+tags: [UseToTarget, TargetPosition]
+damageType: Explosive
+projectileType: Parabolic
+cooldown: 2.1
+priority: 3
+targetRefreshType: Nearest
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_smoke_bomb.png"
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Attack" } }
+  - time: 0.22
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 3.4
+      maxHit: 10
+      addDamage: { damagePercent: [115.0, 138.0, 165.0, 198.0, 235.0] }
+      addBuffs:
+        - { buffDataId: 400102, level: 1, duration: 2.0 }
+  - { time: 0.72, destroy: {} }

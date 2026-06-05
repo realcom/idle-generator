@@ -1,0 +1,74 @@
+version: "1.0"
+game: ninja2
+source_concepts:
+  - ninja2_rulelocked_housing_home_a
+  - ninja2_rulelocked_survival_battle_a
+status: extracted
+
+skins:
+  panel:
+    fill: "#2a261e"
+    alt_fill: "#f4dfb1"
+    outline: "#171f18"
+    outline_px: 4
+    radius_px: 14
+    shadow: "0 4px 0 rgba(0,0,0,.32)"
+  resource_chip:
+    fill: "#2b241c"
+    text: "#f8ead1"
+    icon_shapes: ["wood log", "soul flame", "coin", "blue crystal"]
+    plus_button: "small cream circle"
+  topbar_cluster:
+    profile_card: "fixed generated parchment-gold card sprite; rejected for 9-slice because the portrait slot and bottom ornaments are fixed composition"
+    resource_board: "generated dark rounded board PNG containing only frame/material; use Phaser 9-slice with slice_hints { left: 24, right: 24, top: 24, bottom: 24 }"
+    resource_chip: "generated dark pill PNG; use Phaser 9-slice with slice_hints { left: 18, right: 18, top: 14, bottom: 14 }; resource icon, value, and plus remain separate atoms"
+    status_card: "fixed generated status frame sprite; rejected for 9-slice because its slot/progress ornament composition is not stretch-safe"
+    resource_icons: ["coin", "soul teal orb", "wood log", "stone diamond", "cream plus"]
+    production_contract: "Only resource_board and resource_chip are Phaser phaser_nineslice skins; profile/status cards and icons are fixed sprites."
+    runtime_usage: "DOM preview uses the same PNGs via CSS border-image/background fallback under harness/runtime/assets/ninja2/ui/topbar; Phaser UI runtime should call scene.add.nineslice for the accepted resource skins."
+  hex_tile:
+    source: "state-specific transparent PNG hex ground tiles derived from the generated forest sanctuary background"
+    built: "forest ground texture visible under buildings with subtle stone edge"
+    selected: "same ground texture with cyan rim glow"
+    empty: "lighter forest ground tile with a small stake/foundation marker, not a button-like plus"
+    locked: "dark shaded forest ground tile with low-contrast native lock mark"
+    fogged: "dark misted forest ground tile with soft mist mark"
+    expandable: "forest ground tile with lantern-gold dashed edge and cost"
+  settlement_layer:
+    purpose: "make the housing board read as the player's owned base rather than a standalone hex puzzle"
+    owned_ground: "subtle warm clearing behind built cluster; never cover the full background"
+    paths: "thin stone/dirt paths from the selected shrine to production buildings"
+    foundations: "footprint-specific yard/plaza/garden pads under building sprites"
+    footprint_occupancy: "building footprint controls actual occupied hexes and sprite center; large buildings must not read as oversized art on a single tile"
+    props: ["small lanterns", "wood crates", "red shrine flag", "dark shrubs", "stones"]
+  building:
+    style: "2.5D pre-rendered sprite impression"
+    footprint_variants: ["1x1 guard utility occupies 1 hex", "1x2 production hut occupies 2 hexes", "1x3 garden/yard occupies 3 hexes", "2x2 sanctuary centerpiece occupies 4 hexes"]
+    details: ["teal roof", "lantern windows", "stone base", "tiny flags/wood piles/planters"]
+    labels: "compact black Lv plaque only; footprint is data/placement behavior, not visible map text"
+    map_badges: "small +production pill so large buildings do not cover the forest-ground hex texture"
+  sortie_button:
+    fill: "fixed orange faceted sprite"
+    outline: "#171f18"
+    text: "large cream bold"
+    icon: "baked crossed-swords emblem in the fixed sprite; native text remains separate"
+    nine_slice: "rejected: hexagonal silhouette, baked emblem, and sparkle accents are not stretch-safe"
+  battle_enemy:
+    variants: ["leaf imp", "soot spirit", "thorn bush", "purple mushroom"]
+    outline_px: 4
+    eyes: "small yellow/cream readable eyes"
+  battle_pickup:
+    exp: "blue diamond with label when large"
+    coin: "generated topbar coin PNG reused as the Phaser coinDrop texture"
+    soul: "generated topbar soulflame PNG reused as the Phaser soulFlame texture"
+    wood: "generated topbar wood log PNG reused as the Phaser woodCrate texture"
+    stone: "generated topbar faceted stone PNG reused as the Phaser stoneDrop texture"
+  battle_profile_portrait:
+    source: "approved battle guardian sprite, cropped into a transparent circular avatar cutout"
+    shape: "native circular HUD frame owns the outline; bitmap contains only the guardian face, scarf, cloak, and warm inner glow"
+    avoid: "no baked level text, HP, numbers, or reusable frame border"
+  battle_skill_button:
+    shape: "large black-rimmed circle"
+    fill: "dark radial"
+    icon_colors: ["lantern gold", "soul teal", "sunburst gold"]
+    cooldown_text: "cream numeric label"

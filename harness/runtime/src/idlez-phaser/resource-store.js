@@ -32,9 +32,7 @@ export class ResourceStore {
     this.gameId = gameId;
     const entries = await Promise.all(BUNDLES.map(async ([key, file]) => {
       const url = `${this.basePath}/${gameId}/${file}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status}`);
-      return [key, await res.json()];
+      return [key, await fetchJsonWithRetry(url)];
     }));
     this.indexBundles(Object.fromEntries(entries));
     return this;
@@ -145,4 +143,24 @@ export class ResourceStore {
     const material = (group?.materialItems || []).find(item => Number(item.id ?? item.itemDataId) === materialItemId);
     return material ? Number(material.count || 0) : Infinity;
   }
+}
+
+async function fetchJsonWithRetry(url, attempts = 3) {
+  let lastError = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status}`);
+      return await res.json();
+    } catch (error) {
+      lastError = error;
+      if (attempt >= attempts) break;
+      await sleep(90 * attempt);
+    }
+  }
+  throw lastError || new Error(`Failed to load ${url}`);
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

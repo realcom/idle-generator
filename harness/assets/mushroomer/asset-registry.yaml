@@ -1,0 +1,43 @@
+version: 1
+game: mushroomer
+updated_at: 2026-06-02T00:00:00Z
+
+# Runtime-facing asset keys are paths under harness/runtime, for example:
+# assets/ui/icons/skills/skill_ham_seed_pop.png
+#
+# Current imported Phaser packs are covered as approved collections. Future AI
+# generated or hand-bound assets should be added to `assets:` explicitly so the
+# asset-producer workflow can track status and used_by precisely.
+collections:
+  - name: phaser-root-images
+    pattern: assets/*
+    type: runtime
+    status: approved
+    source: imported-phaser-runtime
+  - name: phaser-audio
+    prefix: assets/audio/
+    type: audio
+    status: approved
+    source: imported-phaser-runtime
+  - name: phaser-equipment-icons
+    prefix: assets/items/
+    type: sprite
+    status: approved
+    source: imported-phaser-runtime
+  - name: phaser-map-layers
+    prefix: assets/maps/
+    type: map-layer
+    status: approved
+    source: imported-phaser-runtime
+  - name: phaser-spine-monsters
+    prefix: assets/monsters/
+    type: spine
+    status: approved
+    source: imported-phaser-runtime
+  - name: phaser-ui
+    prefix: assets/ui/
+    type: ui
+    status: approved
+    source: imported-phaser-runtime
+
+assets: {}

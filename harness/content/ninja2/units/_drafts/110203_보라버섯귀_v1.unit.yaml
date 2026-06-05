@@ -1,0 +1,43 @@
+id: 110203
+name: "보라 버섯귀"
+type: Elite
+tags: [Monster]
+armorType: NormalArmor
+warmupDelay: 1.35
+targetMode: Chaser
+targetAwareDistance: 22.0
+targetResetDistance: 28.0
+deadDestroyDelaySeconds: 0.55
+
+addStats:
+  - { type: Hp, value: [130.0, 154.0, 183.0, 217.0, 257.0, 305.0, 362.0, 429.0, 509.0, 604.0, 717.0, 851.0, 1010.0, 1198.0, 1422.0, 1687.0, 2002.0, 2376.0, 2820.0, 3347.0] }
+  - { type: Attack, value: [11.0, 13.0, 15.0, 18.0, 21.0, 25.0, 30.0, 35.0, 42.0, 49.0, 58.0, 69.0, 81.0, 96.0, 113.0, 133.0, 157.0, 185.0, 218.0, 257.0] }
+  - { type: Defense, value: [4.0, 5.0, 6.0, 7.0, 8.0, 10.0, 12.0, 14.0, 16.0, 19.0, 23.0, 27.0, 32.0, 38.0, 45.0, 53.0, 63.0, 74.0, 88.0, 104.0] }
+  - { type: MoveSpeed, value: [2.85] }
+  - { type: ScalePercent, value: [-58.0] }
+
+triggers:
+  - UNIT_ONSTART_BAMBOOBANDITWANDER
+  - UNIT_ONUPDATE_BAMBOOBANDITATTACK
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 30, maxCount: 48, isCore: true }
+      - { itemDataId: 6, count: 14 }
+  - shouldAddAll: false
+    probPercent: 62
+    addItems:
+      - { itemDataId: 200102, count: 1, weight: 70, group: 1 }
+      - { itemDataId: 200103, count: 1, weight: 30, group: 1 }
+
+prefab: "Units/Monsters/PFB_NINJA2_PurpleMushroom.prefab"
+sprite: "Units/Monsters/Assets/enemy_purple_mushroom.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 1.08
+

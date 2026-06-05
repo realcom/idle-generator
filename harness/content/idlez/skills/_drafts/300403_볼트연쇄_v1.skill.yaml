@@ -1,0 +1,18 @@
+id: 300403
+name: "볼트 연쇄"
+damageType: Spell
+projectileType: Target
+targetRefreshType: Nearest
+cooldown: 3.2
+priority: 30
+maxHit: 4
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/VFX_BoltChain_Cast.prefab" } }
+  - time: 0.06
+    hit:
+      maxHit: 4
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 3.8 }
+      addDamage: { damagePercent: [118.0] }
+  - { time: 0.36, destroy: {} }

@@ -1,0 +1,259 @@
+version: "1.0"
+game: ninja2
+slug: ninja2-run-levelup-choice
+status: implemented
+implemented_at: 2026-06-04
+
+target_runtime:
+  page: harness/runtime/survivor-runtime.html
+  entrypoint: harness/runtime/src/survivor/survivor-app.js
+  implementation_mode: dom_overlay
+  parent_spec: harness/runtime/specs/ui/ninja2-survival-battle.yaml
+  fixture_urls:
+    - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelup=demo
+    - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelup=demo&vfx=demo
+
+source_design:
+  selected_concept:
+    id: ninja2_run_levelup_choice_modal_a
+    image: harness/design/ninja2/concepts/ninja2_run_levelup_choice_modal_a.png
+    notes: harness/design/ninja2/concepts/ninja2_run_levelup_choice_modal_a.md
+  supporting_concepts:
+    - harness/design/ninja2/concepts/ninja2_flat_arcade_survivors_scene_f.md
+    - harness/design/ninja2/concepts/ninja2_run_levelup_choice_overlay_b.md
+  tokens:
+    - harness/design/ninja2/art-direction.yaml
+    - harness/design/ninja2/layout-tokens.yaml
+    - harness/design/ninja2/component-skins.yaml
+    - harness/design/ninja2/asset-plan.yaml
+  content_sources:
+    - harness/content/ninja2/growth/survivor-skill-pool.notes.md
+    - harness/content/ninja2/skills/_index.yaml
+    - harness/content/ninja2/buffs/_index.yaml
+
+screen:
+  orientation: portrait_9_16
+  target_reference_size_px: { width: 440, height: 782 }
+  generated_concept_size_px: { width: 948, height: 1659 }
+  responsive_policy:
+    stage: "Phaser Scale.RESIZE remains active underneath the paused overlay."
+    modal_width: "min(760px, calc(100vw - 24px)); clamp card internals before changing the 3-choice grammar."
+    modal_height: "max 78dvh; body may scroll only inside the card text area or modal body, never the whole page."
+    card_columns: "3 columns at the 440px reference width; below 390px, keep 3 columns but hide secondary flavor copy before falling back to 1-column."
+  safe_area_policy: "Overlay padding includes env(safe-area-inset-*) on all sides; EXP bar and joystick remain visible but disabled behind dim."
+
+intent:
+  summary: "Run-level skill growth choice shown when the player levels up during a Ninja2 survivor expedition."
+  run_scope: "Every expedition starts fresh; choices are in-run skill levels only."
+  excludes:
+    - "persistent skill tree"
+    - "recipes"
+    - "achievement-gated skill unlock"
+    - "meta progression spending"
+
+existing_runtime_surface:
+  html_ids:
+    modal_root: levelModal
+    panel: ".level-panel"
+    title: levelTitle
+    subtitle: levelSubtitle
+    run_summary: runSummary
+    choices: choiceGrid
+  current_state:
+    - "A basic modal shell already exists in survivor-runtime.html."
+    - "Current placeholder styling is dark and collapses .choice-grid to 1 column on mobile; replace with selected Modal A parchment/gold 3-card treatment."
+  required_new_hooks:
+    datasets:
+      - survivorLevelChoiceOpen
+      - survivorLevelChoiceCount
+      - survivorLevelChoiceLevel
+      - survivorLevelChoiceSelected
+      - survivorLevelChoiceSource
+    globals:
+      - "__IDLEZ_SURVIVOR__ exposes openLevelChoiceDemo() for fixture QA"
+      - "__NINJA2_LEVEL_CHOICE_DEMO__ stores last generated choices for smoke checks"
+
+regions:
+  phaser_canvas:
+    battle_backdrop:
+      behavior: "Continue rendering the paused combat frame behind the modal."
+      dim: "DOM overlay background rgba(9,16,13,0.56) plus slight blur only if it does not blur text."
+      disabled_controls: "Joystick, skill buttons, and EXP bar stay visible as background context but do not receive pointer input."
+  dom_overlay:
+    modal_root:
+      placement: "absolute inset 0, z-index above HUD/actions/result screens"
+      display_state: "closed by default; .is-open when a level choice is pending"
+      pointer_policy: "modal captures all pointer input while open"
+    panel:
+      placement: "centered; top header ornament may overlap panel border by 18-28px"
+      visual: "cream parchment field, thick #171f18 outline, hard cartoon shadow, leafy/lantern crest via CSS or generated small sprite"
+      radius_px: 14
+      outline_px: 4
+    header:
+      title: "large run-level-up title, generated image text is not authoritative"
+      subtitle: "short instruction; no keyboard shortcut copy visible"
+      run_summary: "right-side compact Lv/kills/timer summary; can be hidden on narrow widths"
+    choice_grid:
+      count: 3
+      layout: "equal-width vertical cards"
+      gap_px: 10
+      min_card_height_px: 258
+      target_card_width_px: 122
+    choice_card:
+      states:
+        - new_skill
+        - upgrade
+        - focused
+        - selected
+        - disabled
+      hierarchy:
+        - "NEW or Lv+ badge"
+        - "large circular icon"
+        - "skill name"
+        - "5-step level pips"
+        - "one-line effect summary"
+        - "1-2 stat chips"
+        - "category chip"
+      selected_visual: "lantern-gold outer glow, thicker border, subtle sparkle particles"
+      card_radius_px: 8
+      text_policy: "Clamp description to 2 lines at reference width, 1 line below 390px."
+    footer:
+      reroll_button: "optional; hidden for first implementation unless run currency cost is wired"
+      close_button: "none; player must choose one card"
+
+data_contract:
+  trigger:
+    primary: "open when board player level increases from EXP gain"
+    fixture: "levelup=demo opens after survivorReady and startExpedition, independent of actual EXP"
+  choice_pool:
+    source: "compiled ResourceSkill ids 300101-300116"
+    count: 3
+    selection_rule: "Prefer unowned run skills first; include upgrades for already chosen skills when pool narrows."
+    rarity_rule: "No rarity art for first pass; all choices use same card shell with role/category chips."
+  run_skill_state:
+    max_level: 5
+    level_pips: "filled pips equal current run skill level after selection preview; empty pips to max_level"
+    new_skill_level: 1
+    upgrade_delta: "show next level number and the largest meaningful stat delta"
+    reset_timing: "reset on every startExpedition() call"
+  card_fields:
+    required:
+      - skillDataId
+      - name
+      - currentRunLevel
+      - nextRunLevel
+      - iconFamily
+      - categoryLabel
+      - effectSummary
+      - statChips
+    derived_from:
+      iconFamily: "harness/runtime/src/survivor/skill-vfx.js profile family or damageType fallback"
+      effectSummary: "ResourceSkill role table notes or generated formatter from cooldown/damage/buffs"
+      statChips: "cooldown, damagePercent delta, buff/debuff stat, maxHit, duration"
+  apply_choice:
+    effect: "Add skill to run skill set or increase its run level; then close modal and resume board stepping."
+    auto_cast: "If the chosen skill has a VFX profile, next cast uses the profile immediately."
+
+interaction:
+  primary_input:
+    - "tap/click card"
+    - "keyboard 1/2/3 allowed for QA but not shown in visible UI"
+  animation:
+    open: "dim fade 140ms, panel scale 0.96->1.0 180ms, cards stagger 45ms"
+    select: "selected card glow pulse 160ms, then modal fades 120ms"
+    resume: "board stepping resumes after close animation completes"
+  pause_policy:
+    board_step: "pause while modal is open"
+    player_input: "ignore movement and pause button while choosing"
+    existing_projectiles: "stay frozen visually because board stepping is paused"
+
+asset_keys:
+  generated:
+    - key: ninja2.ui.panel.parchment_9slice
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/panel_parchment_9slice.png
+      usage: "Phaser 9-slice parchment skin for reusable panels/cards; current DOM modal may use CSS border-image as a preview fallback"
+    - key: ninja2.ui.profile.guardian
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/profile_guardian.png
+      usage: "background HUD continuity; not required inside the modal"
+    - key: ninja2.battle.characters.guardian_walk_3x8
+      runtime_paths:
+        - harness/runtime/assets/ninja2/battle/animations/guardian_hero_walk_3x8.png
+      usage: "battle backdrop continuity"
+  native_phaser:
+    - key: ninja2.battle.skill_vfx.phaser_runtime_profiles
+      runtime_paths:
+        - harness/runtime/src/survivor/skill-vfx.js
+      usage: "derive icon family, card tint, and optional selected sparkle color"
+  planned_later:
+    - key: ninja2.ui.skill_choice.icons
+      planned_runtime_path: harness/runtime/assets/ninja2/ui/skill_choice_icons.png
+      current_runtime: "CSS/canvas/icon glyphs derived from VFX family"
+      reason: "Do not block first implementation on final bitmap icon atlas."
+
+design_mapping:
+  css_tokens:
+    outline: "#171f18"
+    modal_dim: "rgba(9, 16, 13, 0.56)"
+    parchment: "#f4dfb1"
+    parchment_light: "#fff1c8"
+    panel_dark: "rgba(27, 24, 19, 0.96)"
+    lantern_gold: "#ffc64a"
+    soul_teal: "#36e0d4"
+    moss: "#6f9d48"
+    cream_text: "#f8ead1"
+    ink_text: "#171f18"
+  component_rules:
+    panel: "4px dark outline, hard drop shadow, 14px radius"
+    card: "4px dark outline, 8px radius, selected gold glow"
+    icon_disc: "black/brown circular badge with colored skill glyph"
+    level_pips: "5 tiny diamond or chevron pips; active gold, inactive brown"
+    stat_chip: "rounded parchment-brown chip; maximum two per card"
+  phaser_graphics:
+    backdrop: "No new canvas work required; combat scene remains underneath."
+    optional_sparks: "Tiny DOM/CSS or Phaser overlay sparkles around selected card only."
+
+accessibility_and_text:
+  language: ko
+  text_source: "runtime strings from ResourceSkill and formatter; do not reuse generated image text verbatim"
+  aria:
+    modal_root: "role=dialog, aria-modal=true"
+    choice_card: "button with aria-label including skill name and next level"
+  focus:
+    open: "focus first recommended card"
+    close: "return focus to game stage or pause button"
+  visible_shortcuts: "none"
+
+validation:
+  static:
+    - "python3 - <<'PY'\nimport yaml; yaml.safe_load(open('harness/runtime/specs/ui/ninja2-run-levelup-choice.yaml'))\nPY"
+  baseline:
+    - "/usr/bin/python3 harness/tools/idlez_compile.py ninja2"
+    - "/usr/bin/python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --no-browser"
+  browser:
+    - "Open http://127.0.0.1:8765/harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelup=demo"
+    - "Optional VFX context: http://127.0.0.1:8765/harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelup=demo&vfx=demo"
+  screenshots:
+    - /tmp/ninja2-run-levelup-choice-modal-a.png
+  checks:
+    - "dataset survivorLevelChoiceOpen=true while modal is visible"
+    - "choiceGrid renders exactly 3 selectable cards"
+    - "selected concept A visual language: parchment panel, 3 cards, lantern-gold selected/focus state"
+    - "battle HUD remains dimly visible but disabled"
+    - "choosing a card closes modal, increments run skill level, and resumes survivorTick"
+    - "no visible generated-image pseudo text is copied into runtime"
+    - "card text does not overflow at 440px and 390px widths"
+
+implementation_notes:
+  runtime_files:
+    - harness/runtime/survivor-runtime.html
+    - harness/runtime/src/survivor/survivor-app.js
+  verified_fixture: "harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelup=demo"
+  verified_screenshot: /tmp/ninja2-run-levelup-choice-modal-a.png
+  notes:
+    - "Run skill levels reset on startExpedition() and are stored only in SurvivorScene.runSkillLevels."
+    - "Card icons are native glyph discs derived from skill-vfx.js profiles; final bitmap atlas remains optional."
+    - "440px and 390px CDP viewport checks keep three columns and no horizontal text overflow."
+
+blockers: []

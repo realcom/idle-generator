@@ -1,0 +1,46 @@
+version: "1.0"
+game: ninja2
+source_concepts:
+  - ninja2_rulelocked_housing_home_a
+  - ninja2_rulelocked_survival_battle_a
+status: extracted
+
+blockers:
+  - "screen is not portrait mobile"
+  - "housing and survival appear as the same screen instead of separate home/sortie loop"
+  - "combat core no longer uses trigger/IdlezBoard runtime"
+  - "battle UI covers the central playfield"
+  - "hero loses cream cloak/red scarf/lantern identity"
+  - "home hex states cannot be distinguished"
+
+weighted_criteria:
+  housing_rule_match:
+    weight: 20
+    checks:
+      - "Lantern Shrine is central and selected"
+      - "built/empty/locked/fog/expand states are readable"
+      - "Sortie CTA is strongest action"
+  survival_rule_match:
+    weight: 20
+    checks:
+      - "top-down 2D sprite-game feel"
+      - "enemy/pickup silhouettes match rulelocked set"
+      - "edge HUD leaves playfield open"
+  art_style_transfer:
+    weight: 20
+    checks:
+      - "bold ink outlines"
+      - "warm lantern/soul teal palette"
+      - "forest floor has repeatable prop language"
+  mobile_readability:
+    weight: 20
+    checks:
+      - "key values readable at 428x932"
+      - "buttons fit text"
+      - "no incoherent overlap"
+  runtime_demo_quality:
+    weight: 20
+    checks:
+      - "home to sortie to result loop completes"
+      - "trigger combat remains visible and active"
+      - "console has no errors"

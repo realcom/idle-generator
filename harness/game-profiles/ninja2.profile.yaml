@@ -1,0 +1,169 @@
+# ============================================================
+# Game Profile: ninja2
+# 닌자 서바이벌 2 — Survival + Housing 동시 MVP.
+# 엔진 확장은 최후 수단으로 두고, 첫 구현은 idlez Resource* 계약 안에서
+# 전투 보상 -> 영지 생산/건설 -> 전투 보너스 루프를 닫는다.
+# ============================================================
+
+game:
+  id: ninja2
+  name: "닌자 서바이벌 2"
+  genre: afk-idle-rpg-lite
+  engine_ref: idlez-client
+
+modes:
+  mvp: [Survival, Housing]
+  future: [Alliance4X]
+  note: "서바이벌과 하우징은 첫 MVP부터 한 루프로 묶고, 4X는 같은 영지 자산 위에 확장한다."
+
+stats:
+  use:
+    - Hp
+    - HpPercent
+    - GameplayHpPercent
+    - Attack
+    - AttackPercent
+    - GameplayAttackPercent
+    - Defense
+    - DefensePercent
+    - CriticalPercent
+    - CriticalDamagePercent
+    - AttackSpeed
+    - AttackSpeedPercent
+    - MoveSpeed
+    - CooldownPercent
+    - ExpPercent
+    - ItemDropPercent
+    - SellPricePercent
+    - Luck
+    - BuffDurationEfficiencyPercent
+    - DamageTakenEfficiencyPercent
+    - MonsterDamageEfficiencyPercent
+    - BossDamageEfficiencyPercent
+    - ScalePercent
+  guardrails:
+    Attack: { min: 1 }
+    Hp: { min: 1 }
+    CriticalPercent: { min: 0, max: 100 }
+    CriticalDamagePercent: { min: 0, max: 100000 }
+    ScalePercent: { min: -70, max: -20 }
+
+unit_visual_scale:
+  stat: ScalePercent
+  note: "전투 화면 기준 시각 스케일. ScalePercent -60 = 원본 prefab의 40%."
+  classes:
+    Player: { target: -58, min: -65, max: -48 }
+    Normal: { target: -62, min: -68, max: -52 }
+    Elite: { target: -58, min: -65, max: -48 }
+    MidBoss: { target: -52, min: -60, max: -40 }
+    Boss: { target: -46, min: -56, max: -34 }
+    Building: { target: -45, min: -60, max: -30 }
+
+currencies:
+  soft: { id: 5, name: "골드" }
+  premium: { id: 3, name: "루비" }
+  premium_free: { id: 4, name: "무료 루비" }
+  exp: { id: 6, name: "경험치" }
+  credit: { id: 2, name: "크레딧" }
+
+reserved_ids:
+  playerLevel: 1
+  rankPoint: 7
+  energy: 8
+  abilityRank: 1010
+  defaultCharacter: 110101
+  respawnProduct: 10040
+  tutorialGachaProduct: 20801001
+  tutorialSummonPetProduct: 20401001
+  achievement:
+    tutorialComplete: 610000
+    tutorialSteps: [610101, 610102, 610103, 610201, 610202, 610203, 610204, 610205]
+    ingameTutorialEnter: 610001
+    sentFeedback: -20020904
+    reviewedOnStore: -20010101
+    chapterEnterAgainCondition: 610010
+    battleUnlock: 10000
+    equipmentSlotUnlockHead: 10100
+    equipmentSlotUnlockChest: 10101
+    equipmentSlotUnlockGloves: 10102
+    equipmentSlotUnlockBoots: 10103
+    equipmentSlotUnlockNecklace: 10104
+    equipmentSlotUnlockRing: 10105
+    petSlotUnlocks: [50002, 50003, 50004]
+    abilityRoot: 10001
+    equipmentPetUnlock: 50002
+    lobbyDungeonUnlock: 50006
+    premiumDailyReward: 20700000
+    inventoryAutoSpawnUnlock: 50007
+
+id_ranges:
+  unit: { start: 110000, end: 119999, note: "플레이어/몬스터/보스/영지 건물 표현 유닛" }
+  item: { start: 200000, end: 299999, note: "재료/무기/스킬아이템/영지 생산 노드/Mine" }
+  skill: { start: 300000, end: 399999 }
+  buff: { start: 400000, end: 499999 }
+  map: { start: 500000, end: 599999 }
+  achievement: { start: 600000, end: 699999 }
+  reward: { start: 700000, end: 799999 }
+
+theme:
+  tone: "밝고 귀여운 성소 성장 + 살짝 수상한 숲 탐험"
+  setting: "작은 성소를 키우고 바깥 숲으로 출격하는 캐주얼 생존 하이브리드"
+  naming_style: "한글 2~10자, 짧고 액션성이 드러나는 이름"
+  motifs: [성소, 헥스영지, 등불, 숲정령, 허브밭, 영혼불, 안개타일, 작은작업장]
+  character_anchor: "등불을 든 작은 성소 수호자. 따뜻한 갈색 머리, 또렷한 눈, 크림색 후드 망토, 붉은 스카프, 원형 펜던트, 이마의 잎/불꽃형 흉터가 있는 호감형 주인공."
+  pivot_candidate:
+    key: casual_sanctuary
+    tone: "밝고 귀여운 숲속 성소 + 살짝 수상한 탐험 숲"
+    balance: "Cute 70 / Mystery 30"
+    setting: "작은 성소를 꾸미고 주민을 돌보며, 바깥 숲으로 출격해 자원과 영혼불을 회수하는 모바일 캐주얼 생존 하이브리드"
+    motifs: [성소, 등불, 숲정령, 허브밭, 영혼불, 안개타일, 작은작업장]
+    character_anchor: "등불을 든 작은 성소 수호자. 밝은 얼굴, 후드 망토, 잎 장식, 원형 펜던트, 이마의 잎/불꽃형 흉터, 따뜻한 불빛, 주민을 이끄는 호감형 주인공."
+    runtime_character_style: "키아트와 별도로 Spine-ready SD 캐릭터를 제작한다. 정면 neutral pose, 단순화한 머리/망토/스카프/등불 파츠, scar overlay, 모바일 전투에서 읽히는 밝은 망토 실루엣을 우선한다."
+    avoid: [양, 왕관, 검은복면, 큰검, 직접적인컬트상징, 고어]
+
+balance:
+  level_cap: 160
+  required_exp:
+    monotonic: increasing
+  prestige:
+    enabled: false
+    name: ""
+  idle:
+    offline_cap_hours: 8
+
+progression:
+  core_loop:
+    name: survival_housing_mvp
+    rule: "모든 메인 스테이지 보상은 적어도 하나의 하우징 재료나 생산 노드 강화 재료를 포함한다."
+    survival:
+      map_series: ninja2-survival-housing-10
+      first_map: 500101
+      rewards_feed_housing: true
+      screen_style: "portrait ultra-flat 2D top-down arcade survivors-like sprite arena"
+      combat_loop: "자동 공격, 적 웨이브, 생존 타이머, EXP/자원 픽업, 스킬 쿨다운, 귀환 보상"
+      visual_contract: "키아트보다 실제 인게임 가시성을 우선한다. 단색에 가까운 잔디 필드, 3~4종 반복 적 스프라이트, 굵은 외곽선, 큰 피해 숫자, 파란 EXP 조각, 가장자리형 플랫 HUD로 구성한다."
+    housing:
+      representation:
+        map: "portrait hybrid 2.5D hex-grid sanctuary expansion board"
+        production_nodes: "Item.Category=Mine"
+        passive_building_bonuses: "Item.Category=Stat 또는 Buff/achievement reward"
+        visual_buildings: "3D풍 pre-rendered building sprite atlas 또는 필요 시 Unit.Type=Building"
+        resident_characters: "2D Spine-style 주민/수호자 캐릭터를 하우징 보드 위에 y-sort로 배치"
+        sortie_flow: "하우징 홈의 출격 버튼으로 별도 Survival 전투 화면 진입"
+        visual_contract: "하우징은 전투보다 예쁜 2.5D 소유감을 허용한다. 헥스 타일은 built/selected/empty/locked/fogged/expandable 상태를 명확히 구분하고, 건물은 둥근 3D풍 디오라마 자산처럼 표현한다. 주민/수호자는 2D Spine 캐릭터로 얹고, UI는 전투와 같은 굵은 외곽선/재화 색상 규칙을 공유한다."
+      first_nodes:
+        - { id: 200601, name: "수련마당", output: "경험치/전투 성장" }
+        - { id: 200602, name: "대나무창고", output: "영지 목재" }
+        - { id: 200603, name: "그림자광맥", output: "그림자 광석" }
+    future_4x:
+      unlock_after: "Survival+Housing D7 loop 검증"
+      reuse_assets: [housing_buildings, clan_tokens, territory_materials]
+
+shop:
+  product_costs:
+    use: productMaterialItemGroups
+    disallow_fields: [priceXtr]
+
+behavior:
+  triggerType_map: {}
+  disallow_actions: []

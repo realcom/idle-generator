@@ -1,0 +1,663 @@
+version: "1.0"
+game: ninja2
+source_concepts:
+  - ninja2_rulelocked_housing_home_a
+  - ninja2_rulelocked_survival_battle_a
+status: extracted
+
+assetization_summary:
+  generate_image:
+    - "home forest sanctuary background with transparent-safe board clearing"
+    - "Lantern Shrine and production building sprite atlas"
+    - "sanctuary extension building atlas for quarry, workshop, scout post, and midgame production"
+    - "SD guardian portrait and board resident sprite set"
+    - "parchment panel plus resource board/chip 9-slice skins"
+    - "orange sortie button fixed sprite"
+    - "battle enemy and pickup atlas"
+  native_ui:
+    - "top resource chip layout and text"
+    - "hex grid coordinates and tile state overlays"
+    - "progress bars, timers, labels, nav tabs"
+  hybrid:
+    - "building cards use generated sprite plus native labels/progress"
+    - "sortie button uses generated skin plus native text"
+    - "battle skill buttons use native circles plus generated icons"
+    - "battle skill VFX use Phaser-native graphics/tweens first, then graduate selected effects to bitmap atlases later"
+  reuse:
+    - "source concept images remain visual references only"
+
+assets:
+  - key: ninja2.home.background.forest_sanctuary
+    type: background
+    mode: generate_image
+    platforms: [phaser, unity]
+    target_path: harness/design/ninja2/assets/home/background_forest_sanctuary.png
+    usage:
+      - component-skins.yaml:home_background
+      - layout-tokens.yaml:HousingHome.board
+    prompt_notes: "Portrait mobile forest sanctuary clearing, warm lantern light, darker foliage around edges, center kept readable for hex grid, no UI text, no characters."
+    background: opaque
+    target_size: { width: 864, height: 1536 }
+    slice_hints: null
+    states: [normal]
+    variants: [day_lantern, dusk_lantern]
+    phaser:
+      usage: css_background
+      target_path: harness/runtime/assets/ninja2/home/background_forest_sanctuary.png
+    unity:
+      usage: raw_image
+      target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_home_background_forest_sanctuary.png
+    priority: must
+    blocking_reason: "Defines the rulelocked housing home atmosphere."
+    status: generated
+    generated_at: 2026-06-03T07:07:00+09:00
+    generated_with: built_in_imagegen
+    actual_path: harness/design/ninja2/assets/home/background_forest_sanctuary.png
+    source_path: harness/design/ninja2/assets/home/background_forest_sanctuary.source.png
+    runtime_path: harness/runtime/assets/ninja2/home/background_forest_sanctuary.png
+    generation_notes: "Opaque source resized to 864x1536 and wired as the Phaser housing home background."
+
+  - key: ninja2.home.hex_tile_set.forest_sanctuary
+    type: hex_tile_set
+    mode: hybrid
+    platforms: [phaser, unity]
+    target_path: harness/design/ninja2/assets/home/hex/
+    usage:
+      - component-skins.yaml:hex_tile
+      - layout-tokens.yaml:HousingHome.board
+    prompt_notes: "Exact hex-shaped forest sanctuary ground tiles derived from the generated home background texture; transparent outside the hex, soft fill with no baked heavy outlines, readable under buildings, dark shaded variants for inactive states."
+    background: transparent
+    target_size: { width: 258, height: 297 }
+    slice_hints: null
+    states: [built, selected, empty, expandable, fogged, locked]
+    variants:
+      - hex_ground_built
+      - hex_ground_selected
+      - hex_ground_empty
+      - hex_ground_expand
+      - hex_ground_fog
+      - hex_ground_locked
+    phaser:
+      usage: css_background_per_hex_state
+      target_path: harness/runtime/assets/ninja2/home/hex/
+    unity:
+      usage: sprite
+      target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_home_hex_tile_set/
+    priority: must
+    blocking_reason: "Housing board must show the sanctuary ground texture per tile instead of covering the full screen with one background image."
+    status: generated
+    generated_at: 2026-06-04T11:02:00+09:00
+    generated_with: built_in_imagegen_source_reuse_plus_exact_hex_mask
+    source_path: harness/design/ninja2/assets/home/background_forest_sanctuary.png
+    actual_paths:
+      - harness/design/ninja2/assets/home/hex/hex_ground_built.png
+      - harness/design/ninja2/assets/home/hex/hex_ground_selected.png
+      - harness/design/ninja2/assets/home/hex/hex_ground_empty.png
+      - harness/design/ninja2/assets/home/hex/hex_ground_expand.png
+      - harness/design/ninja2/assets/home/hex/hex_ground_fog.png
+      - harness/design/ninja2/assets/home/hex/hex_ground_locked.png
+    runtime_paths:
+      - harness/runtime/assets/ninja2/home/hex/hex_ground_built.png
+      - harness/runtime/assets/ninja2/home/hex/hex_ground_selected.png
+      - harness/runtime/assets/ninja2/home/hex/hex_ground_empty.png
+      - harness/runtime/assets/ninja2/home/hex/hex_ground_expand.png
+      - harness/runtime/assets/ninja2/home/hex/hex_ground_fog.png
+      - harness/runtime/assets/ninja2/home/hex/hex_ground_locked.png
+    generation_notes: "Reused the generated forest sanctuary background as a shared source texture, applied exact polygon alpha masks, removed heavy baked outlines to avoid awkward doubled edges between neighboring hexes, and wired each Phaser hex state to a state-specific PNG. The full-screen background cover is no longer used for the home scene."
+
+  - key: ninja2.home.building_atlas.lantern_sanctuary
+    type: atlas
+    mode: generate_image
+    platforms: [phaser, unity]
+    target_path: harness/design/ninja2/assets/home/building_atlas_lantern_sanctuary.png
+    usage:
+      - component-skins.yaml:building
+    prompt_notes: "Transparent 2.5D pre-rendered sprite atlas: Lantern Shrine, Wood Workshop, Herb Garden, Training Yard, Storage, Soulflame Well, Guard Lantern. Thick ink outline, teal roofs, warm window glow, stone bases."
+    background: transparent
+    target_size: { width: 1024, height: 1024 }
+    slice_hints: null
+    states: [level_1, level_2, level_3]
+    variants: [shrine, wood_workshop, herb_garden, training_yard, storage, soulflame_well, guard_lantern]
+    phaser:
+      usage: atlas_region
+      target_path: harness/runtime/assets/ninja2/home/building_atlas_lantern_sanctuary.png
+    unity:
+      usage: sprite
+      target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_home_building_atlas.png
+    priority: must
+    blocking_reason: "Current CSS buildings are placeholders; final ownership feel needs sprites."
+    status: generated
+    generated_at: 2026-06-03T07:11:00+09:00
+    generated_with: built_in_imagegen_plus_chromakey_removal
+    actual_path: harness/design/ninja2/assets/home/building_atlas_lantern_sanctuary.png
+    source_path: harness/design/ninja2/assets/home/building_atlas_lantern_sanctuary.source_chromakey.png
+    runtime_path: harness/runtime/assets/ninja2/home/building_atlas_lantern_sanctuary.png
+    derived_runtime_sprites:
+      - harness/runtime/assets/ninja2/home/buildings/shrine.png
+      - harness/runtime/assets/ninja2/home/buildings/wood_workshop.png
+      - harness/runtime/assets/ninja2/home/buildings/herb_garden.png
+      - harness/runtime/assets/ninja2/home/buildings/training_yard.png
+      - harness/runtime/assets/ninja2/home/buildings/storage.png
+      - harness/runtime/assets/ninja2/home/buildings/soulflame_well.png
+      - harness/runtime/assets/ninja2/home/buildings/guard_lantern.png
+    generation_notes: "Magenta chroma-key removed to alpha; rough connected-component crops created for the Phaser demo."
+
+  - key: ninja2.home.building_atlas.sanctuary_extension_a
+    type: atlas
+    mode: generate_image
+    platforms: [phaser, unity]
+    target_path: harness/design/ninja2/assets/home/building_atlas_sanctuary_extension_a.png
+    usage:
+      - component-skins.yaml:building
+      - housing-building-tech-v0.yaml:asset_production_plan
+    prompt_notes: "Transparent 2.5D pre-rendered sprite atlas for Ninja2 housing expansion buildings: stone quarry with small pulley/cart, workshop with tool bench and small chimney, scout post with map board and lantern, granary, bamboo grove, iron mine. Thick ink outline, teal/stone/wood materials, warm lantern accents, no text."
+    background: transparent
+    target_size: { width: 1536, height: 1024 }
+    slice_hints: null
+    states: [level_1]
+    variants: [stone_quarry, workshop, scout_post, granary, bamboo_grove, iron_mine]
+    phaser:
+      usage: individual_sprites
+      target_path: harness/runtime/assets/ninja2/home/buildings
+    unity:
+      usage: sprite
+      target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_home_building_atlas_extension_a.png
+    priority: should
+    blocking_reason: "The initial housing tech tree needs quarry/workshop/scout building sprites that are not present in the existing generated atlas."
+    status: planned
+
+  - key: ninja2.home.characters.guardian_residents
+    type: atlas
+    mode: generate_image
+    platforms: [phaser, unity]
+    target_path: harness/design/ninja2/assets/home/guardian_residents_atlas.png
+    usage:
+      - archived_for_later:home_resident_layer
+    prompt_notes: "Transparent SD sprite atlas: guardian with brown hair, cream cloak, red scarf, hand lantern; residents carrying wood, tending herbs, guarding shrine, returning from sortie. Spine-like separated poses, thick outline."
+    background: transparent
+    target_size: { width: 1024, height: 1024 }
+    slice_hints: null
+    states: [idle, carry, tend, guard, return_home]
+    variants: [guardian, wood_resident, herb_resident, guard_resident, courier_resident]
+    phaser:
+      usage: atlas_region
+      target_path: harness/runtime/assets/ninja2/home/guardian_residents_atlas.png
+    unity:
+      usage: sprite
+      target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_home_guardian_residents_atlas.png
+    priority: optional
+    blocking_reason: null
+    status: generated_unwired
+    generated_at: 2026-06-03T07:13:00+09:00
+    generated_with: built_in_imagegen_plus_chromakey_removal
+    actual_path: harness/design/ninja2/assets/home/guardian_residents_atlas.png
+    source_path: harness/design/ninja2/assets/home/guardian_residents_atlas.source_chromakey.png
+    runtime_path: harness/runtime/assets/ninja2/home/guardian_residents_atlas.png
+    derived_runtime_sprites:
+      - harness/runtime/assets/ninja2/home/residents/guardian.png
+      - harness/runtime/assets/ninja2/home/residents/wood_resident.png
+      - harness/runtime/assets/ninja2/home/residents/herb_resident.png
+      - harness/runtime/assets/ninja2/home/residents/guard_resident.png
+      - harness/runtime/assets/ninja2/home/residents/courier_resident.png
+    generation_notes: "Magenta chroma-key removed to alpha; rough connected-component crops created for y-sorted home residents. The current Phaser housing screen intentionally leaves these resident character sprites unwired so buildings, hex tiles, and forest-ground texture remain the focus."
+
+  - key: ninja2.ui.profile.guardian_avatar
+    type: profile_portrait
+    mode: hybrid
+    platforms: [phaser, unity]
+    target_path: harness/design/ninja2/assets/ui/profile_guardian.png
+    usage:
+      - component-skins.yaml:battle_profile_portrait
+      - survivor-runtime.html:home_portrait
+      - survivor-runtime.html:battle_portrait
+    prompt_notes: "Face-first HUD profile portrait for the SD sanctuary guardian: brown hair, cream cloak, red scarf, warm lantern glow. Reuse the approved battle guardian sprite as the source so the in-game profile matches the player character. No text, no numbers, no baked frame."
+    background: transparent
+    target_size: { width: 256, height: 256 }
+    slice_hints: null
+    states: [normal]
+    variants: [guardian]
+    phaser:
+      usage: css_background
+      target_path: harness/runtime/assets/ninja2/ui/profile_guardian.png
+    unity:
+      usage: sprite
+      target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_profile_guardian.png
+    priority: should
+    blocking_reason: ""
+    status: generated
+    generated_at: 2026-06-04T16:22:24+09:00
+    generated_with: existing_generated_guardian_sprite_crop_plus_alpha_avatar_mask
+    actual_path: harness/design/ninja2/assets/ui/profile_guardian.png
+    source_path: harness/runtime/assets/ninja2/battle/characters/guardian_hero.png
+    runtime_path: harness/runtime/assets/ninja2/ui/profile_guardian.png
+    generation_notes: "Derived from the approved battle guardian sprite instead of re-generating a new face, then cropped to a face/scarf/cloak portrait with a transparent circular alpha mask and warm inner glow. The native HUD frame and lantern badge remain runtime UI, not baked into the bitmap."
+
+  - key: ninja2.ui.topbar.cluster_skins
+    type: ui_skin_set
+    mode: hybrid
+    platforms: [phaser, unity]
+    target_path: harness/design/ninja2/assets/ui/topbar/
+    usage:
+      - component-skins.yaml:topbar_cluster
+      - survivor-runtime.html:home_resource_board_and_chips
+      - survivor-runtime.html:battle_resource_ledger
+      - ninja2-housing-home.yaml:accepted_nineslice_skins
+    prompt_notes: "Stretchable topbar resource skins only: dark resource board frame and dark resource chip pill. Do not bake localized text, numbers, progress values, resource icons, gain badges, or plus buttons into reusable 9-slice skins."
+    background: transparent
+    target_size: { width: null, height: null }
+    slice_hints:
+      resource_board: { left: 24, right: 24, top: 24, bottom: 24 }
+      resource_chip: { left: 18, right: 18, top: 14, bottom: 14 }
+    states: [normal]
+    variants:
+      - top_resource_board
+      - top_resource_chip
+    phaser:
+      usage: phaser_nineslice_set
+      target_path: harness/runtime/assets/ninja2/ui/topbar/
+      renderer: scene.add.nineslice
+    unity:
+      usage: sliced_sprite_set
+      target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_topbar/
+      slice_hints:
+        resource_board: { left: 24, right: 24, top: 24, bottom: 24 }
+        resource_chip: { left: 18, right: 18, top: 14, bottom: 14 }
+    priority: should
+    blocking_reason: ""
+    status: generated
+    generated_at: 2026-06-04T19:10:00+09:00
+    generated_with: procedural_pillow_resource_refresh_from_extracted_design_tokens
+    actual_paths:
+      - harness/design/ninja2/assets/ui/topbar/top_resource_board.png
+      - harness/design/ninja2/assets/ui/topbar/top_resource_chip.png
+    runtime_paths:
+      - harness/runtime/assets/ninja2/ui/topbar/top_resource_board.png
+      - harness/runtime/assets/ninja2/ui/topbar/top_resource_chip.png
+    unity_paths:
+      - engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_topbar/top_resource_board.png
+      - engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_topbar/top_resource_chip.png
+    generation_notes: "Resource board and chip are the only topbar atoms accepted for 9-slice: both are rectangular, contain no baked text/icons/numbers, have clean reusable caps, and stretch across home and battle resource layouts."
+
+  - key: ninja2.ui.topbar.fixed_atoms
+    type: ui_sprite_set
+    mode: hybrid
+    platforms: [phaser, unity]
+    target_path: harness/design/ninja2/assets/ui/topbar/
+    usage:
+      - component-skins.yaml:topbar_cluster
+      - survivor-runtime.html:home_profile_status_icons
+      - survivor-app.js:run_resource_drop_textures
+      - ninja2-housing-home.yaml:rejected_nineslice_candidates
+    prompt_notes: "Fixed-size topbar atoms: profile card, status card, coin/soul/wood/stone/plus icons. Keep localized text, values, avatar, and runtime progress overlays native; do not stretch these as 9-slice skins."
+    background: transparent
+    target_size: { width: null, height: null }
+    slice_hints: null
+    states: [normal]
+    variants:
+      - top_profile_card
+      - top_status_card
+      - icon_coin
+      - icon_soul
+      - icon_wood
+      - icon_stone
+      - icon_plus_cream
+    phaser:
+      usage: image_sprite_set
+      target_path: harness/runtime/assets/ninja2/ui/topbar/
+    unity:
+      usage: sprite_set
+      target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_topbar/
+    priority: should
+    blocking_reason: ""
+    status: generated
+    generated_at: 2026-06-04T19:10:00+09:00
+    generated_with: procedural_pillow_resource_refresh_from_extracted_design_tokens
+    actual_paths:
+      - harness/design/ninja2/assets/ui/topbar/top_profile_card.png
+      - harness/design/ninja2/assets/ui/topbar/top_status_card.png
+      - harness/design/ninja2/assets/ui/topbar/icon_coin.png
+      - harness/design/ninja2/assets/ui/topbar/icon_soul.png
+      - harness/design/ninja2/assets/ui/topbar/icon_wood.png
+      - harness/design/ninja2/assets/ui/topbar/icon_stone.png
+      - harness/design/ninja2/assets/ui/topbar/icon_plus_cream.png
+    runtime_paths:
+      - harness/runtime/assets/ninja2/ui/topbar/top_profile_card.png
+      - harness/runtime/assets/ninja2/ui/topbar/top_status_card.png
+      - harness/runtime/assets/ninja2/ui/topbar/icon_coin.png
+      - harness/runtime/assets/ninja2/ui/topbar/icon_soul.png
+      - harness/runtime/assets/ninja2/ui/topbar/icon_wood.png
+      - harness/runtime/assets/ninja2/ui/topbar/icon_stone.png
+      - harness/runtime/assets/ninja2/ui/topbar/icon_plus_cream.png
+    unity_paths:
+      - engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_topbar/top_profile_card.png
+      - engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_topbar/top_status_card.png
+      - engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_topbar/icon_coin.png
+      - engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_topbar/icon_soul.png
+      - engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_topbar/icon_wood.png
+      - engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_topbar/icon_stone.png
+      - engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_topbar/icon_plus_cream.png
+    generation_notes: "Rejected for 9-slice where applicable: profile/status cards are fixed-composition HUD sprites with baked slots/ornaments, and icons are non-rectangular atoms. Home resource chips, battle resource ledger rows, and Phaser run drop textures still share the same coin, soulflame, wood, and stone PNGs; text, values, gain badges, progress bars, and avatar image remain native/runtime layers."
+
+  - key: ninja2.ui.panel.parchment_9slice
+    type: nine_slice_panel
+    mode: hybrid
+    platforms: [phaser, unity]
+    target_path: harness/design/ninja2/assets/ui/panel_parchment_9slice.png
+    usage:
+      - component-skins.yaml:panel
+    prompt_notes: "Cream parchment rounded panel with dark ink 4px outline, subtle warm bevel, no text."
+    background: transparent
+    target_size: { width: 256, height: 128 }
+    slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+    states: [normal]
+    variants: [default, selected]
+    phaser:
+      usage: phaser_nineslice
+      target_path: harness/runtime/assets/ninja2/ui/panel_parchment_9slice.png
+      renderer: scene.add.nineslice
+    unity:
+      usage: sliced_sprite
+      target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_panel_parchment_9slice.png
+      slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+    priority: should
+    blocking_reason: ""
+    status: generated
+    generated_at: 2026-06-03T07:14:00+09:00
+    generated_with: built_in_imagegen_plus_chromakey_removal
+    actual_path: harness/design/ninja2/assets/ui/panel_parchment_9slice.png
+    source_path: harness/design/ninja2/assets/ui/panel_parchment_9slice.source_chromakey.png
+    runtime_path: harness/runtime/assets/ninja2/ui/panel_parchment_9slice.png
+    generation_notes: "Magenta chroma-key removed to alpha; resized to 256x128 and wired to the Phaser home building panel."
+
+  - key: ninja2.ui.button.sortie_orange
+    type: fixed_button_sprite
+    mode: hybrid
+    platforms: [phaser, unity]
+    target_path: harness/design/ninja2/assets/ui/button_sortie_orange.png
+    usage:
+      - component-skins.yaml:sortie_button
+    prompt_notes: "Large orange faceted sortie button skin with crossed swords emblem area, thick black outline, cream highlight, no readable text."
+    background: transparent
+    target_size: { width: 256, height: 192 }
+    slice_hints: null
+    states: [normal, pressed, disabled]
+    variants: []
+    phaser:
+      usage: image_sprite
+      target_path: harness/runtime/assets/ninja2/ui/button_sortie_orange.png
+    unity:
+      usage: sprite
+      target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_button_sortie_orange.png
+    priority: should
+    blocking_reason: ""
+    status: generated
+    generated_at: 2026-06-03T07:15:00+09:00
+    generated_with: built_in_imagegen_plus_chromakey_removal
+    actual_path: harness/design/ninja2/assets/ui/button_sortie_orange.png
+    source_path: harness/design/ninja2/assets/ui/button_sortie_orange.source_chromakey.png
+    runtime_path: harness/runtime/assets/ninja2/ui/button_sortie_orange.png
+    generation_notes: "Magenta chroma-key removed to alpha and resized to 256x192. Rejected for 9-slice because the skin has a hexagonal silhouette, baked crossed-sword emblem, and sparkle accents; runtime should render it as a fixed CTA sprite with native text layered above."
+
+  - key: ninja2.battle.sprite_atlas.enemies_pickups
+    type: atlas
+    mode: generate_image
+    platforms: [phaser, unity]
+    target_path: harness/design/ninja2/assets/battle/enemies_pickups_atlas.png
+    usage:
+      - component-skins.yaml:battle_enemy
+      - component-skins.yaml:battle_pickup
+    prompt_notes: "Transparent top-down 2D sprite atlas: leaf imp, soot spirit, thorn bush, purple mushroom, blue EXP gem, gold coin, teal soulflame, wood crate. Thick outline, readable at 40px."
+    background: transparent
+    target_size: { width: 1024, height: 1024 }
+    slice_hints: null
+    states: [idle, hit, death]
+    variants: [leaf_imp, soot_spirit, thorn_bush, purple_mushroom, exp_gem, coin, soulflame, wood_crate]
+    phaser:
+      usage: atlas_region
+      target_path: harness/runtime/assets/ninja2/battle/enemies_pickups_atlas.png
+    unity:
+      usage: sprite
+      target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_battle_enemies_pickups_atlas.png
+    priority: should
+    blocking_reason: ""
+    status: planned
+
+  - key: ninja2.battle.characters.combat_sheet
+    type: atlas
+    mode: generate_image
+    platforms: [phaser, unity]
+    target_path: harness/design/ninja2/assets/battle/combat_characters_sheet.png
+    usage:
+      - component-skins.yaml:battle_enemy
+      - art-direction.yaml:identity.hero
+      - layout-tokens.yaml:SurvivalBattle.playfield
+    prompt_notes: "Transparent 2D mobile survivor combat character sheet: sanctuary guardian hero, wood/herb/guard residents, leaf imp, soot spirit, purple mushroom, thorn boss. Thick ink outline, readable at 48-96px."
+    background: transparent
+    target_size: { width: 1536, height: 1024 }
+    slice_hints: null
+    states: [idle]
+    variants: [guardian_hero, resident_wood, resident_herb, resident_guard, enemy_leaf_imp, enemy_soot_spirit, enemy_purple_mushroom, enemy_thorn_boss]
+    phaser:
+      usage: individual_sprites
+      target_path: harness/runtime/assets/ninja2/battle/characters
+    unity:
+      usage: sprite
+      target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_battle_combat_characters_sheet.png
+    priority: must
+    blocking_reason: "Survival battle should not reuse housing resident sprites or procedural placeholder enemies."
+    status: generated
+    generated_at: 2026-06-04T12:12:03+09:00
+    generated_with: built_in_imagegen_plus_chromakey_removal
+    actual_path: harness/design/ninja2/assets/battle/combat_characters_sheet.png
+    source_path: harness/design/ninja2/assets/battle/combat_characters_sheet.source_chromakey.png
+    runtime_path: harness/runtime/assets/ninja2/battle/characters
+    derived_runtime_sprites:
+      - harness/runtime/assets/ninja2/battle/characters/guardian_hero.png
+      - harness/runtime/assets/ninja2/battle/characters/resident_wood.png
+      - harness/runtime/assets/ninja2/battle/characters/resident_herb.png
+      - harness/runtime/assets/ninja2/battle/characters/resident_guard.png
+      - harness/runtime/assets/ninja2/battle/characters/enemy_leaf_imp.png
+      - harness/runtime/assets/ninja2/battle/characters/enemy_soot_spirit.png
+      - harness/runtime/assets/ninja2/battle/characters/enemy_purple_mushroom.png
+      - harness/runtime/assets/ninja2/battle/characters/enemy_thorn_boss.png
+    generation_notes: "Generated on magenta chroma-key, removed to alpha, then cropped per 4x2 cell into Phaser-ready combat sprites."
+
+  - key: ninja2.battle.characters.direction_4way_sheet
+    type: atlas
+    mode: generate_image
+    platforms: [phaser, unity]
+    target_path: harness/design/ninja2/assets/battle/combat_directions_sheet.png
+    usage:
+      - component-skins.yaml:battle_enemy
+      - art-direction.yaml:identity.hero
+      - layout-tokens.yaml:SurvivalBattle.playfield
+    prompt_notes: "Transparent 4x4 direction sheet for guardian hero, leaf imp, soot spirit, and purple mushroom. Columns are down, left, right, up; rows are character1, monster1, monster2, monster3."
+    background: transparent
+    target_size: { width: 1536, height: 1024 }
+    slice_hints: null
+    states: [idle]
+    variants: [guardian_hero, enemy_leaf_imp, enemy_soot_spirit, enemy_purple_mushroom]
+    directions: [down, left, right, up]
+    phaser:
+      usage: individual_direction_sprites
+      target_path: harness/runtime/assets/ninja2/battle/directions
+    unity:
+      usage: sprite
+      target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_battle_direction_4way_sheet.png
+    priority: must
+    blocking_reason: "Movement readability needs distinct up/down/left/right facing sprites for primary battle units."
+    status: generated
+    generated_at: 2026-06-04T12:29:26+09:00
+    generated_with: built_in_imagegen_plus_chromakey_removal
+    actual_path: harness/design/ninja2/assets/battle/combat_directions_sheet.png
+    source_path: harness/design/ninja2/assets/battle/combat_directions_sheet.source_chromakey.png
+    runtime_path: harness/runtime/assets/ninja2/battle/directions
+    derived_runtime_sprites:
+      - harness/runtime/assets/ninja2/battle/directions/guardian_hero/down.png
+      - harness/runtime/assets/ninja2/battle/directions/guardian_hero/left.png
+      - harness/runtime/assets/ninja2/battle/directions/guardian_hero/right.png
+      - harness/runtime/assets/ninja2/battle/directions/guardian_hero/up.png
+      - harness/runtime/assets/ninja2/battle/directions/enemy_leaf_imp/down.png
+      - harness/runtime/assets/ninja2/battle/directions/enemy_leaf_imp/left.png
+      - harness/runtime/assets/ninja2/battle/directions/enemy_leaf_imp/right.png
+      - harness/runtime/assets/ninja2/battle/directions/enemy_leaf_imp/up.png
+      - harness/runtime/assets/ninja2/battle/directions/enemy_soot_spirit/down.png
+      - harness/runtime/assets/ninja2/battle/directions/enemy_soot_spirit/left.png
+      - harness/runtime/assets/ninja2/battle/directions/enemy_soot_spirit/right.png
+      - harness/runtime/assets/ninja2/battle/directions/enemy_soot_spirit/up.png
+      - harness/runtime/assets/ninja2/battle/directions/enemy_purple_mushroom/down.png
+      - harness/runtime/assets/ninja2/battle/directions/enemy_purple_mushroom/left.png
+      - harness/runtime/assets/ninja2/battle/directions/enemy_purple_mushroom/right.png
+      - harness/runtime/assets/ninja2/battle/directions/enemy_purple_mushroom/up.png
+    generation_notes: "Generated on magenta chroma-key, removed to alpha, then cropped per 4x4 cell using largest connected alpha component to avoid neighboring-cell fragments. Phaser runtime treats left as the shared side-facing sprite and mirrors it for right movement."
+
+  - key: ninja2.battle.characters.guardian_walk_3x8
+    type: spritesheet
+    mode: hybrid
+    platforms: [phaser]
+    target_path: harness/design/ninja2/assets/battle/animations/guardian_hero_walk_3x8.png
+    usage:
+      - art-direction.yaml:identity.hero
+      - layout-tokens.yaml:SurvivalBattle.playfield
+    prompt_notes: "Derived down/side/up x 8-frame walk cycle for the guardian hero from the approved direction sprites. Rows are down, left side, up; columns are walk frames 0-7. Phaser mirrors the side row for right movement."
+    background: transparent
+    target_size: { width: 4096, height: 1536 }
+    frame_size: { width: 512, height: 512 }
+    frame_layout: { columns: 8, rows: 3 }
+    slice_hints: null
+    states: [walk]
+    variants: [guardian_hero]
+    directions: [down, left, up]
+    phaser:
+      usage: spritesheet
+      target_path: harness/runtime/assets/ninja2/battle/animations/guardian_hero_walk_3x8.png
+      frame_size: { width: 512, height: 512 }
+    unity:
+      usage: none
+      target_path: null
+    priority: should
+    blocking_reason: ""
+    status: generated
+    generated_at: 2026-06-04T14:22:00+09:00
+    generated_with: built_in_imagegen_plus_local_chromakey_removal_full_cell_upscale_and_anchor_repack
+    actual_path: harness/design/ninja2/assets/battle/animations/guardian_hero_walk_3x8.png
+    source_path: harness/design/ninja2/assets/battle/animations/guardian_hero_walk_3x8.source_chromakey.png
+    source_paths:
+      - harness/design/ninja2/assets/battle/animations/guardian_hero_walk_3x8.source_chromakey.png
+      - harness/runtime/assets/ninja2/battle/characters/guardian_hero.png
+    runtime_path: harness/runtime/assets/ninja2/battle/animations/guardian_hero_walk_3x8.png
+    generation_notes: "Regenerated as a full-body 8x3 walk sheet so left/right share one side-facing row. The side row has alternating/crossing foot poses; the up row was regenerated for a clearer back-view gait. Removed the magenta background locally, then repacked every frame to a fixed 256px horizontal center and 462px foot baseline after the generated source drifted left across frames. Feet, boots, cloak hem, and lantern are preserved with a 50px bottom alpha margin."
+
+  - key: ninja2.battle.skill_vfx.phaser_runtime_profiles
+    type: runtime_vfx_profile
+    mode: native_phaser
+    platforms: [phaser]
+    target_path: harness/runtime/src/survivor/skill-vfx.js
+    usage:
+      - survivor-runtime.html:combat_skill_vfx
+      - ninja2-survival-battle.yaml:skill_vfx
+      - survivor-skill-pool.notes.md:run_level_skill_pool
+    prompt_notes: "No bitmap generation for this pass. Use Phaser Graphics, generated runtime textures, and tweens to prove skill silhouettes before producing final atlas sprites."
+    background: runtime_canvas
+    target_size: null
+    slice_hints: null
+    states: [cast, hit_pulse, demo_sequence]
+    variants:
+      - kunai_slash
+      - shuriken_volley
+      - smoke_bomb
+      - shadow_breath
+      - spinning_shuriken
+      - lightning_kunai
+      - flame_scroll
+      - cold_needle
+      - shadow_clone
+      - moon_flash
+      - bamboo_spear_rain
+      - black_lotus_storm
+      - killing_focus
+      - time_fold
+      - gale_step
+      - weak_point_mark
+    phaser:
+      usage: native_graphics_profile
+      target_path: harness/runtime/src/survivor/skill-vfx.js
+      demo_url: harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&vfx=demo
+    unity:
+      usage: none
+      target_path: null
+    priority: must
+    blocking_reason: "Skill data needs immediate in-game readability validation in Phaser before final VFX asset production."
+    status: implemented
+    generated_at: 2026-06-04T00:00:00+09:00
+    generated_with: phaser_native_graphics_and_tweens
+    actual_path: harness/runtime/src/survivor/skill-vfx.js
+    runtime_path: harness/runtime/src/survivor/skill-vfx.js
+    generation_notes: "Defines 16 run-level skill VFX profiles keyed by ResourceSkill id 300101-300116, plus a ?vfx=demo sequence that fires every skill through the shared board runtime for visual smoke testing. The default demo path uses generated fallback unit textures for stable headless Phaser checks; append fullAssets=1 when the separate PNG preload pass is the thing being tested."
+
+  - key: ninja2.battle.skill_icons.survivor_level_choice_v1
+    type: skill_icon_set
+    mode: generate_image
+    platforms: [phaser]
+    target_path: harness/design/ninja2/assets/skills/
+    usage:
+      - component-skins.yaml:battle_skill_button
+      - survivor-runtime.html:level_choice_cards
+      - survivor-runtime.html:profile_skill_chips
+      - content/ninja2/skills:sprite
+    prompt_notes: "Strict 4x4 transparent sprite sheet for ResourceSkill ids 300101-300116. Flat 2D arcade mobile skill icons, thick dark ink outline, warm lantern-gold highlights, teal soulflame accents, no text or medallion frames. Icons must be visually related but silhouette-distinct for 19px profile chips and 45-52px level-up cards."
+    background: transparent
+    target_size: { width: 128, height: 128 }
+    source_sheet_size: { columns: 4, rows: 4 }
+    slice_hints: null
+    states: [normal]
+    variants:
+      - skill_kunai_slash
+      - skill_shuriken_barrage
+      - skill_smoke_bomb
+      - skill_shadow_breath
+      - skill_orbit_shuriken
+      - skill_lightning_kunai
+      - skill_fire_scroll
+      - skill_frost_needle
+      - skill_shadow_clone
+      - skill_moon_flash
+      - skill_bamboo_spear_rain
+      - skill_black_lotus_storm
+      - skill_killing_focus
+      - skill_time_fold
+      - skill_gale_steps
+      - skill_weakness_mark
+    phaser:
+      usage: img_src_for_skill_sprite
+      target_path: harness/runtime/assets/Skills/Ninja2/
+    unity:
+      usage: none
+      target_path: null
+    priority: must
+    blocking_reason: "Level-up choice cards were showing temporary glyph icons such as 刃/煙/風 instead of actual skill sprites."
+    status: generated
+    generated_at: 2026-06-04T00:00:00+09:00
+    generated_with: built_in_imagegen_plus_local_chromakey_removal
+    actual_path: harness/design/ninja2/assets/skills/
+    source_path: harness/design/ninja2/assets/skills/ninja2_skill_icons_v1_sheet.source_chromakey.png
+    preview_path: harness/design/ninja2/assets/skills/ninja2_skill_icons_v1_preview.png
+    runtime_path: harness/runtime/assets/Skills/Ninja2/
+    runtime_paths:
+      - harness/runtime/assets/Skills/Ninja2/skill_kunai_slash.png
+      - harness/runtime/assets/Skills/Ninja2/skill_shuriken_barrage.png
+      - harness/runtime/assets/Skills/Ninja2/skill_smoke_bomb.png
+      - harness/runtime/assets/Skills/Ninja2/skill_shadow_breath.png
+      - harness/runtime/assets/Skills/Ninja2/skill_orbit_shuriken.png
+      - harness/runtime/assets/Skills/Ninja2/skill_lightning_kunai.png
+      - harness/runtime/assets/Skills/Ninja2/skill_fire_scroll.png
+      - harness/runtime/assets/Skills/Ninja2/skill_frost_needle.png
+      - harness/runtime/assets/Skills/Ninja2/skill_shadow_clone.png
+      - harness/runtime/assets/Skills/Ninja2/skill_moon_flash.png
+      - harness/runtime/assets/Skills/Ninja2/skill_bamboo_spear_rain.png
+      - harness/runtime/assets/Skills/Ninja2/skill_black_lotus_storm.png
+      - harness/runtime/assets/Skills/Ninja2/skill_killing_focus.png
+      - harness/runtime/assets/Skills/Ninja2/skill_time_fold.png
+      - harness/runtime/assets/Skills/Ninja2/skill_gale_steps.png
+      - harness/runtime/assets/Skills/Ninja2/skill_weakness_mark.png
+    generation_notes: "Generated as one family sheet on a flat magenta chroma key, removed only the connected background to preserve purple/red skills, then cropped each 4x4 cell to a transparent 128x128 PNG. survivor-app now prefers ResourceSkill.sprite/skill icon paths and falls back to the previous glyph only when no sprite exists."

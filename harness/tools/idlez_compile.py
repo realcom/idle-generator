@@ -1793,6 +1793,93 @@ def validate_skill_tree(profile, bundles, errors):
 # ============================================================
 # 검증
 # ============================================================
+def _collect_reserved_ids(node, acc):
+    """reserved_ids 트리에서 모든 정수 id를 재귀 수집 (대역 검사 화이트리스트)."""
+    if isinstance(node, dict):
+        for value in node.values():
+            _collect_reserved_ids(value, acc)
+    elif isinstance(node, list):
+        for value in node:
+            _collect_reserved_ids(value, acc)
+    elif isinstance(node, int) and not isinstance(node, bool):
+        acc.add(node)
+
+
+def validate_id_ranges(profile, bundles, warns, errors):
+    """validate.md §6: 타입별 id가 profile.id_ranges 대역 안인가 + 타입 내 중복 없는가.
+
+    reserved_ids / currencies id 는 의도적 예외(예: defaultCharacter 가 unit 대역의
+    item)이므로 대역 검사에서 제외한다. 중복 검사는 예약 여부와 무관하게 적용.
+    """
+    id_ranges = profile.get("id_ranges", {}) or {}
+    reserved = set()
+    _collect_reserved_ids(profile.get("reserved_ids", {}), reserved)
+    for currency in (profile.get("currencies", {}) or {}).values():
+        if isinstance(currency, dict) and isinstance(currency.get("id"), int):
+            reserved.add(currency["id"])
+
+    for tname, entries in bundles.items():
+        rng = id_ranges.get(tname)
+        seen = {}
+        for entry in entries:
+            entry_id = entry.get("id")
+            if not isinstance(entry_id, int) or isinstance(entry_id, bool):
+                continue
+            name = entry.get("name", "?")
+            if entry_id in seen:
+                errors.append(
+                    f"{tname} id {entry_id} 중복 ({seen[entry_id]!r} ↔ {name!r})"
+                )
+            else:
+                seen[entry_id] = name
+            if entry_id in reserved or entry_id < 0:
+                continue
+            if rng:
+                start, end = rng.get("start"), rng.get("end")
+                if start is not None and end is not None and not (start <= entry_id <= end):
+                    warns.append(
+                        f"{tname} id {entry_id} ({name!r}) 가 "
+                        f"id_ranges.{tname} [{start}~{end}] 밖"
+                    )
+
+
+def validate_reward_groups(bundles, warns, errors):
+    """validate.md §7: AddItemGroup 의 probPercent 범위 + weight 무결성.
+
+    가중 추첨(weight) 합이 꼭 100일 필요는 없으므로 합>0 만 강제(=0 이면 추첨 불가).
+    weight 가 일부 항목에만 있으면 의도가 모호하므로 경고. shouldAddAll 그룹은 전부
+    지급이라 weight 무의미 → 검사 제외.
+    """
+    for tname, entries in bundles.items():
+        drop_fields = SPECS[tname].get("drop", [])
+        for entry in entries:
+            for drop_field in drop_fields:
+                groups = entry.get(drop_field)
+                if not isinstance(groups, list):
+                    continue
+                for gi, group in enumerate(groups):
+                    if not isinstance(group, dict):
+                        continue
+                    ctx = f"{tname} {entry.get('id')}.{drop_field}[{gi}]"
+                    prob = group.get("probPercent")
+                    if prob is not None and not (0.0 <= float(prob) <= 100.0):
+                        errors.append(f"{ctx}: probPercent {prob} 가 0~100 밖")
+                    if group.get("shouldAddAll"):
+                        continue
+                    add_items = group.get("addItems") or []
+                    weighted = [a for a in add_items if "weight" in a]
+                    if not weighted:
+                        continue
+                    if len(weighted) != len(add_items):
+                        warns.append(
+                            f"{ctx}: addItems weight 혼재 "
+                            f"(weight 있음 {len(weighted)}/{len(add_items)})"
+                        )
+                    total = sum(float(a["weight"]) for a in weighted)
+                    if total <= 0:
+                        errors.append(f"{ctx}: weight 합 {total} (>0 이어야 함)")
+
+
 def validate(game, bundles, triggers, globals_out, warns, errors):
     profile = load_yaml(f"{ROOT}/game-profiles/{game}.profile.yaml")
     used_stats = set(profile.get("stats", {}).get("use", []))
@@ -1829,6 +1916,8 @@ def validate(game, bundles, triggers, globals_out, warns, errors):
 
     validate_unit_visual_scale(profile, bundles, errors)
     validate_skill_tree(profile, bundles, errors)
+    validate_id_ranges(profile, bundles, warns, errors)
+    validate_reward_groups(bundles, warns, errors)
 
     item_global = globals_out["itemGlobal"]
     map_global = globals_out["mapGlobal"]

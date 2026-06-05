@@ -5,9 +5,9 @@ import { attachHud } from './hud.js?v=weekday4';
 import { attachMessageSystem } from './message-system.js?v=resource-react3';
 import { IdlezWsClient, shouldAutoConnectNetwork } from './network/idlez-ws-client.js?v=settings1';
 import { IdlezSessionStore } from './network/session-store.js?v=mushroomer2';
-import { IdlezPhaserScene } from './phaser-scene.js?v=map-sky1';
-import { IdlezSpineLayer } from './spine-layer.js?v=weekday4';
-import { attachModalSystem } from './modal-system.js?v=shopicons1';
+import { IdlezPhaserScene } from './phaser-scene.js?v=stagefit1';
+import { IdlezSpineLayer } from './spine-layer.js?v=stagefit1';
+import { attachModalSystem } from './modal-system.js?v=shopbottomfix4-skillscroll2';
 import { applyLanguagePreference, resolveSettings } from './settings-store.js?v=settings1';
 
 const GAME_ID = 'mushroomer';
@@ -84,10 +84,10 @@ async function boot() {
   });
 
   const game = new Phaser.Game({
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
     parent: 'gameStage',
     width: 920,
-    height: 840,
+    height: 960,
     backgroundColor: 'rgba(0,0,0,0)',
     transparent: true,
     banner: false,

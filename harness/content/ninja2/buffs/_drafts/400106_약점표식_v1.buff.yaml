@@ -1,0 +1,10 @@
+id: 400106
+name: "약점 표식"
+tags: [DisplayOnUnit]
+type: UnitDebuff
+duration: 4.5
+prefabAttachmentTarget: SkinRoot
+addStats:
+  - { type: DamageTakenEfficiencyPercent, value: [10.0, 13.0, 16.0, 19.0, 23.0] }
+  - { type: DefensePercent, value: [-6.0, -8.0, -10.0, -12.0, -15.0] }
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"

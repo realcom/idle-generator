@@ -1,0 +1,17 @@
+id: 300401
+name: "햄찌 씨앗"
+damageType: Pierce
+projectileType: Target
+targetRefreshType: Nearest
+cooldown: 0.75
+priority: 10
+maxHit: 1
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/VFX_HamSeed_Muzzle.prefab" } }
+  - time: 0.08
+    hit:
+      maxHit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 0.65 }
+      addDamage: { damagePercent: [92.0] }
+  - { time: 0.28, destroy: {} }

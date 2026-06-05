@@ -1,0 +1,11 @@
+id: 400105
+name: "질풍 보법"
+tags: [DisplayOnUnit]
+type: UnitBuff
+duration: 5.8
+prefabAttachmentTarget: SkinRoot
+addStats:
+  - { type: MoveSpeed, value: [0.45, 0.58, 0.72, 0.88, 1.05] }
+  - { type: AttackSpeedPercent, value: [5.0, 6.5, 8.0, 9.5, 11.0] }
+  - { type: BuffDurationEfficiencyPercent, value: [4.0, 5.0, 6.0, 7.0, 8.0] }
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"

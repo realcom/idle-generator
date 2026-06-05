@@ -1,0 +1,24 @@
+id: 300108
+name: "냉혈 침술"
+tags: [UseToTarget, TargetPosition]
+damageType: Pierce
+projectileType: Target
+cooldown: 3.6
+priority: 8
+targetRefreshType: HighestHp
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_frost_needle.png"
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Attack" } }
+  - time: 0.18
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 1.8
+      maxHit: 1
+      addDamage: { damagePercent: [360.0, 432.0, 518.0, 622.0, 746.0] }
+      addBuffs:
+        - { buffDataId: 400102, level: 1, duration: 2.5 }
+  - { time: 0.72, destroy: {} }

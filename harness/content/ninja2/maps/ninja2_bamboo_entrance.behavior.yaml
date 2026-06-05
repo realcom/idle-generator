@@ -1,0 +1,110 @@
+name: Ninja2BambooEntranceWave1
+domain: map
+
+vars:
+  bandit_unit: { type: int, default: 110201 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $bandit_unit
+          count: 18
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 18 }
+
+---
+
+name: Ninja2BambooEntranceWave2
+domain: map
+
+vars:
+  bandit_unit: { type: int, default: 110201 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $bandit_unit
+          count: 24
+          level: "enemyLevel + 1"
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 24 }
+
+---
+
+name: Ninja2BambooEntranceBossWave
+domain: map
+
+vars:
+  bandit_unit: { type: int, default: 110201 }
+  boss_unit: { type: int, default: 110501 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 1 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $boss_unit
+          count: 1
+          level: "bossLevel + 2"
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $bandit_unit
+          count: 14
+          level: "enemyLevel + 2"
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 15 }
+
+---
+
+name: Ninja2BambooEntranceUpdate
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2BAMBOOENTRANCEWAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2BAMBOOENTRANCEBOSSWAVE }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        EndGame: { result: win }

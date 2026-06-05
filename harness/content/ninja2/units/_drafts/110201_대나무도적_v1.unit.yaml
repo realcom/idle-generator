@@ -1,0 +1,41 @@
+id: 110201
+name: "대나무 도적"
+tags: [Monster]
+armorType: NormalArmor
+warmupDelay: 1.2
+targetMode: Chaser
+targetAwareDistance: 22.0
+targetResetDistance: 28.0
+deadDestroyDelaySeconds: 0.4
+
+addStats:
+  - { type: Hp, value: [70.0, 82.0, 96.0, 112.0, 131.0, 153.0, 179.0, 210.0, 246.0, 288.0, 337.0, 394.0, 461.0, 539.0, 631.0, 738.0, 863.0, 1010.0, 1182.0, 1383.0] }
+  - { type: Attack, value: [5.0, 6.0, 7.0, 8.0, 10.0, 11.0, 13.0, 15.0, 18.0, 21.0, 25.0, 29.0, 34.0, 40.0, 47.0, 55.0, 64.0, 75.0, 88.0, 103.0] }
+  - { type: Defense, value: [1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 11.0, 12.0, 14.0, 17.0, 20.0] }
+  - { type: MoveSpeed, value: [3.2] }
+  - { type: ScalePercent, value: [-62.0] }
+
+triggers:
+  - UNIT_ONSTART_BAMBOOBANDITWANDER
+  - UNIT_ONUPDATE_BAMBOOBANDITATTACK
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 16, maxCount: 26, isCore: true }
+      - { itemDataId: 6, count: 7 }
+  - shouldAddAll: false
+    probPercent: 55
+    addItems:
+      - { itemDataId: 200101, count: 1, weight: 80, group: 1 }
+      - { itemDataId: 200102, count: 1, weight: 20, group: 1 }
+
+prefab: "Units/Monsters/PFB_NINJA2_BambooBandit.prefab"
+sprite: "Units/Monsters/Assets/ninja2_bamboo_bandit.png"
+animations:
+  Idle: Idle
+  Run: Run
+  Attack: Attack1
+  Dead: Dead
+uiScale: 1.0

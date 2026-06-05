@@ -18,5 +18,21 @@ concepts:
     note: concepts/mushroomer_skill_tree_modal_concept_a.md
     parent_style: ../idlez/design-registry.yaml#hamster_portrait_combat_growth_dock_d
     summary: Portrait Phaser skill-tree modal with equip slots, skill point summary, branching skill cards, and auto/level/equip CTAs.
+  mushroomer_skill_tree_modal_b:
+    status: candidate
+    kind: skill_tree_modal
+    image: concepts/mushroomer_skill_tree_modal_concept_b.png
+    note: concepts/mushroomer_skill_tree_modal_concept_b.md
+    parent: mushroomer_skill_tree_modal_a
+    parent_style: ../idlez/design-registry.yaml#hamster_portrait_combat_growth_dock_d
+    summary: Stable 3-lane branching modal with equipped skill slots, clear learned/selected/locked states, sticky detail panel, and upgrade/equip CTAs.
+  mushroomer_skill_tree_modal_c:
+    status: candidate
+    kind: skill_tree_modal
+    image: concepts/mushroomer_skill_tree_modal_concept_c.png
+    note: concepts/mushroomer_skill_tree_modal_concept_c.md
+    parent: mushroomer_skill_tree_modal_a
+    parent_style: ../idlez/design-registry.yaml#hamster_portrait_combat_growth_dock_d
+    summary: Map-like vine/root skill tree with circular medallion nodes, visible progression spine, equipped rail, and sticky detail/upgrade panel.
 
-current_target: mushroomer_skill_tree_modal_a
+current_target: mushroomer_skill_tree_modal_c

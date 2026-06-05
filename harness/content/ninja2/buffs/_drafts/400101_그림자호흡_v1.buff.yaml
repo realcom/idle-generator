@@ -1,0 +1,11 @@
+id: 400101
+name: "그림자 호흡"
+tags: [DisplayOnUnit]
+type: UnitBuff
+duration: 7.0
+prefabAttachmentTarget: SkinRoot
+addStats:
+  - { type: AttackSpeedPercent, value: [12.0, 14.0, 16.0, 18.0, 20.0] }
+  - { type: CooldownPercent, value: [6.0, 7.0, 8.0, 9.0, 10.0] }
+  - { type: MoveSpeed, value: [0.25, 0.3, 0.35, 0.4, 0.45] }
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"

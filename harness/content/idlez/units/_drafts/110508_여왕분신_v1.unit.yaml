@@ -1,0 +1,31 @@
+id: 110508
+name: "여왕 분신"
+type: Boss
+tags: [Monster]
+armorType: NormalArmor
+
+addStats:
+  - { type: Hp, value: [1600.0, 1840.0, 2120.0, 2440.0, 2810.0, 3240.0, 3740.0, 4310.0, 4970.0, 5730.0] }
+  - { type: Attack, value: [42.0, 49.0, 57.0, 66.0, 76.0, 88.0, 102.0, 118.0, 137.0, 159.0] }
+  - { type: Defense, value: [18.0, 21.0, 24.0, 28.0, 32.0, 37.0, 43.0, 49.0, 56.0, 64.0] }
+  - { type: MoveSpeed, value: [2.55] }
+  - { type: ScalePercent, value: [-44.0] }
+
+triggers:
+  - UNIT_ONSTART_SURVIVORBOSSSTART
+  - UNIT_ONUPDATE_SURVIVORBOSSCHASE
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 6, count: 90, isCore: true }
+      - { itemDataId: 5, minCount: 120, maxCount: 180, isCore: true }
+
+prefab: "Units/Bosses/PFB_BOSS_SlimeQueenClone.prefab"
+sprite: "Units/Bosses/Assets/boss_slimequeen.png"
+uiScale: 1.18
+animations:
+  idle: "survivor_boss_idle"
+  move: "survivor_boss_move"
+  dead: "survivor_boss_dead"

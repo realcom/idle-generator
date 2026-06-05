@@ -1,0 +1,61 @@
+version: "1.0"
+game: ninja2
+source_concepts:
+  - ninja2_rulelocked_housing_home_a
+  - ninja2_rulelocked_survival_battle_a
+status: extracted
+
+viewport:
+  target: "mobile portrait"
+  aspect: "9:16"
+  max_demo_width_px: 440
+  safe_area: true
+
+HousingHome:
+  top_bar:
+    height_ratio: 0.08
+    columns: ["hero_portrait", "resources", "people_menu"]
+    edge_padding_px: 10
+  left_rail:
+    width_px: 58
+    top_px: 118
+    button_size_px: 48
+  board:
+    region_top_px: 104
+    region_bottom_px: 218
+    hex_width_px: 78
+    hex_height_px: 90
+    selected_rim: "cyan glow plus pale border"
+    fog_contrast: "lower than built tiles; should not dominate"
+  bottom_panel:
+    height_px: 106
+    layout: "building thumbnail / selected building copy / upgrade / sortie"
+  bottom_nav:
+    height_px: 64
+    tabs: 6
+
+SurvivalBattle:
+  top_hud:
+    height_px: 120
+    left: "portrait + hp + level"
+    center: "timer + stage"
+    right: "actual run resource ledger: wood, stone, soulflame, gold + gain pulse; pause"
+    progress_bar: "segmented wide bar under top clusters"
+  playfield:
+    clear_center_radius_px: 110
+    enemy_density: "high enough to see pressure by 5s"
+    pickup_size_px: 30
+  controls:
+    joystick:
+      position: "bottom-left"
+      size_px: 122
+      opacity: 0.42
+    skill_buttons:
+      position: "bottom-right"
+      count: 3
+      size_px: 76
+      cooldown_ring: true
+  exp_bar:
+    position: "bottom"
+    height_px: 28
+    side_padding_px: 28

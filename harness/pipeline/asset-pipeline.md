@@ -17,7 +17,7 @@
 ## 소스 레이아웃 (관례)
 
 ```
-assets/<game>/
+harness/assets/<game>/
 ├── sprites/        # 원본 아트 (png) + 메타
 ├── icons/
 ├── prefabs/        # (Unity 프리팹은 idlez 리포 소관 — 여기선 키/요청서)
@@ -34,9 +34,9 @@ assets/<game>/
 데이터 ↔ 에셋의 단일 매핑. 댕글링(데이터가 없는 키 참조)과 고아(아무도 안 쓰는 에셋)를 잡는 근거.
 
 ```yaml
-# assets/idlez/asset-registry.yaml
+# harness/assets/idlez/asset-registry.yaml
 assets:
-  "Units/Slime/slime_green.png":
+  "assets/units/slime_green.png":
     type: sprite
     status: ai-draft          # ai-draft | review | approved | final
     source: ai-image-gen
@@ -51,7 +51,7 @@ assets:
 
 | 에셋 | AI 방식 | 산출 |
 | --- | --- | --- |
-| 스프라이트/아이콘 | 이미지 생성(텍스트→이미지) — **[Asset Generator](asset-generator-guide.md)** CLI 또는 GUI | `assets/<game>/sprites/*.png` (status: ai-draft) |
+| 스프라이트/아이콘 | 이미지 생성(텍스트→이미지) — **[Asset Generator](asset-generator-guide.md)** CLI 또는 GUI | `harness/assets/<game>/sprites/*.png` (status: ai-draft) |
 | 컨셉/배리에이션(발산) | 동일 유닛의 색/등급 변형 일괄 생성 | 변형 세트 |
 | 오디오 | Web Audio/H5 레시피 렌더 또는 생성/라이브러리 매칭 | `assets/<game>/audio/*.wav` 후보 + 키 |
 | 현지화 | 텍스트 번역/문구 생성 | Strings 항목 |
@@ -66,7 +66,7 @@ assets:
 - 자동 렌더가 불가한 환경에서는 생성된 `*.render.html`을 브라우저에서 열어 `Preview` 후 `Export WAV`로 내려받는다.
 - 상세: [H5 SFX Renderer](../tools/SFX_H5_README.md)
 
-원칙: AI 산출 에셋은 `status: ai-draft`로 들어가고, 사람이 `approved/final`로 승격해야 빌드에 포함. 스타일 일관성은 **게임별 스타일 가이드**(`assets/<game>/STYLE.md`, 권장)로 프롬프트를 고정. → [Asset Generator Guide 참고](asset-generator-guide.md)
+원칙: AI 산출 에셋은 `status: ai-draft`로 들어가고, 사람이 `approved/final`로 승격해야 빌드에 포함. 스타일 일관성은 **게임별 스타일 가이드**(`harness/assets/<game>/STYLE.md`, 권장)로 프롬프트를 고정. → [Asset Generator Guide 참고](asset-generator-guide.md)
 
 ## 바인딩 (데이터 ↔ 에셋)
 
@@ -81,6 +81,13 @@ assets:
 - **고아 에셋**: 레지스트리에 있으나 `used_by` 비어 있음 → 경고
 - **status 게이트**: 빌드 대상인데 `ai-draft/requested` 상태 → 경고(릴리스 차단 옵션)
 - **네이밍 규칙**: 경로/이름 컨벤션 위반 → 경고
+
+실행:
+
+```bash
+python3 harness/tools/asset_registry_audit.py mushroomer
+python3 harness/tools/asset_registry_audit.py mushroomer --release
+```
 
 ## 컴파일/배포
 

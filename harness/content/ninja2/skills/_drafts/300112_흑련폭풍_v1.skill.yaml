@@ -1,0 +1,39 @@
+id: 300112
+name: "흑련 폭풍"
+tags: [UseToTarget, TargetPosition]
+damageType: Spell
+cooldown: 7.2
+priority: 12
+targetRefreshType: HighestHp
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_black_lotus_storm.png"
+selfAddBuffs:
+  - { buffDataId: 400101, level: 1, duration: 5.0 }
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - time: 0.36
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 5.6
+      maxHit: 20
+      addDamage: { damagePercent: [380.0, 456.0, 547.0, 656.0, 787.0] }
+  - time: 0.72
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 5.6
+      maxHit: 20
+      addDamage: { damagePercent: [380.0, 456.0, 547.0, 656.0, 787.0] }
+  - time: 1.08
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 5.6
+      maxHit: 20
+      addDamage: { damagePercent: [380.0, 456.0, 547.0, 656.0, 787.0] }
+  - { time: 1.58, destroy: {} }

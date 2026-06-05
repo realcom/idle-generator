@@ -69,7 +69,12 @@ class IdlezCompileTests(unittest.TestCase):
 
         bundles = copy.deepcopy(bundles)
         globals_out = copy.deepcopy(globals_out)
-        bundles["map"][0]["tags"] = []
+        for game_map in bundles["map"]:
+            game_map["tags"] = [
+                tag
+                for tag in game_map.get("tags", [])
+                if tag != "ContainPlayerInventory"
+            ]
         globals_out["mapGlobal"]["boardConstants"]["defaultPlayerInventoryShapes"] = []
 
         warns = []
@@ -900,6 +905,99 @@ class IdlezCompileTests(unittest.TestCase):
             any("액션 'increaseGold' 미지원 인자 ['target']" in error for error in errors),
             errors,
         )
+
+    # ---- validate.md §6: ID 대역 + 중복 ----
+    def test_validate_id_ranges_warns_on_out_of_band_id(self):
+        profile = {"id_ranges": {"item": {"start": 200000, "end": 299999}}}
+        bundles = {"item": [{"id": 250000, "name": "정상"}, {"id": 999999, "name": "범위밖"}]}
+
+        warns, errors = [], []
+        idlez_compile.validate_id_ranges(profile, bundles, warns, errors)
+
+        self.assertEqual([], errors)
+        self.assertTrue(any("999999" in w and "id_ranges.item" in w for w in warns), warns)
+        self.assertFalse(any("250000" in w for w in warns), warns)
+
+    def test_validate_id_ranges_excludes_reserved_ids(self):
+        profile = {
+            "id_ranges": {"item": {"start": 200000, "end": 299999}},
+            "reserved_ids": {"defaultCharacter": 110101, "nested": {"x": [20801001]}},
+        }
+        bundles = {"item": [{"id": 110101, "name": "기본캐릭"}, {"id": 20801001, "name": "튜토상품"}]}
+
+        warns, errors = [], []
+        idlez_compile.validate_id_ranges(profile, bundles, warns, errors)
+
+        self.assertEqual([], warns)
+        self.assertEqual([], errors)
+
+    def test_validate_id_ranges_rejects_duplicate_id_within_type(self):
+        profile = {"id_ranges": {"item": {"start": 200000, "end": 299999}}}
+        bundles = {"item": [{"id": 200001, "name": "첫번째"}, {"id": 200001, "name": "중복"}]}
+
+        warns, errors = [], []
+        idlez_compile.validate_id_ranges(profile, bundles, warns, errors)
+
+        self.assertTrue(any("200001 중복" in e for e in errors), errors)
+
+    # ---- validate.md §7: 보상 weight / probPercent ----
+    def test_validate_reward_groups_rejects_out_of_range_prob_percent(self):
+        bundles = {
+            "map": [
+                {"id": 500101, "rewardAddItemGroups": [{"probPercent": 140.0, "addItems": []}]}
+            ]
+        }
+
+        warns, errors = [], []
+        idlez_compile.validate_reward_groups(bundles, warns, errors)
+
+        self.assertTrue(any("probPercent 140.0" in e for e in errors), errors)
+
+    def test_validate_reward_groups_warns_on_mixed_weight_presence(self):
+        bundles = {
+            "map": [
+                {
+                    "id": 500101,
+                    "rewardAddItemGroups": [
+                        {
+                            "addItems": [
+                                {"itemDataId": 200101, "weight": 70.0},
+                                {"itemDataId": 200102},
+                            ]
+                        }
+                    ],
+                }
+            ]
+        }
+
+        warns, errors = [], []
+        idlez_compile.validate_reward_groups(bundles, warns, errors)
+
+        self.assertEqual([], errors)
+        self.assertTrue(any("weight 혼재" in w for w in warns), warns)
+
+    def test_validate_reward_groups_accepts_consistent_weights(self):
+        bundles = {
+            "map": [
+                {
+                    "id": 500101,
+                    "rewardAddItemGroups": [
+                        {
+                            "addItems": [
+                                {"itemDataId": 200101, "weight": 70.0},
+                                {"itemDataId": 200102, "weight": 30.0},
+                            ]
+                        }
+                    ],
+                }
+            ]
+        }
+
+        warns, errors = [], []
+        idlez_compile.validate_reward_groups(bundles, warns, errors)
+
+        self.assertEqual([], errors)
+        self.assertEqual([], warns)
 
 
 if __name__ == "__main__":

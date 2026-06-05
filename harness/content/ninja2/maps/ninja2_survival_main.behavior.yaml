@@ -1,0 +1,356 @@
+# Per-wave pressure: each map ramps hard, while stage 10 stays within 20 stat levels.
+name: Ninja2MainWave1
+domain: map
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: 603, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110201, count: 16, level: enemy_level, team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainWave2
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110201, count: 18, level: "enemy_level + 4", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110202, count: 8, level: "enemy_level + 4", team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainWave3
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110203, count: 5, level: "enemy_level + 6", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110202, count: 10, level: "enemy_level + 5", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110201, count: 16, level: "enemy_level + 5", team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainWave4
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110202, count: 18, level: "enemy_level + 7", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110201, count: 20, level: "enemy_level + 7", team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainWave5
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110203, count: 8, level: "enemy_level + 8", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110202, count: 14, level: "enemy_level + 7", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110201, count: 18, level: "enemy_level + 7", team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainWave6
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110201, count: 24, level: "enemy_level + 8", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110202, count: 18, level: "enemy_level + 8", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110203, count: 10, level: "enemy_level + 8", team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainWave7
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110203, count: 16, level: "enemy_level + 9", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110202, count: 24, level: "enemy_level + 8", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110201, count: 28, level: "enemy_level + 8", team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainWave8
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110203, count: 22, level: "enemy_level + 9", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110202, count: 24, level: "enemy_level + 9", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110201, count: 34, level: "enemy_level + 9", team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainWave9
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110202, count: 32, level: "enemy_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110203, count: 24, level: "enemy_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110201, count: 36, level: "enemy_level + 10", team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainBossWave3
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110501, count: 1, level: "boss_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110202, count: 18, level: "enemy_level + 8", team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainBossWave4
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110501, count: 1, level: "boss_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110203, count: 8, level: "enemy_level + 9", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110202, count: 18, level: "enemy_level + 9", team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainBossWave5
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110501, count: 1, level: "boss_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110203, count: 10, level: "enemy_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110202, count: 18, level: "enemy_level + 10", team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainBossWave7
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110501, count: 1, level: "boss_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110203, count: 14, level: "enemy_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110202, count: 24, level: "enemy_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110201, count: 24, level: "enemy_level + 10", team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainBossWave10
+domain: map
+"on":
+  - event: start
+    do:
+      - SendWaveStartedEvent: {}
+      - AddUnit: { unitDataId: 110501, count: 1, level: "boss_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110203, count: 30, level: "enemy_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110202, count: 36, level: "enemy_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110201, count: 44, level: "enemy_level + 10", team: enemy, locationId: 1 }
+
+---
+
+name: Ninja2MainWaves3Update
+domain: map
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: 603, value: 0 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE2 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINBOSSWAVE3 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        EndGame: { result: win }
+
+---
+
+name: Ninja2MainWaves4Update
+domain: map
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: 603, value: 0 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE2 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE3 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINBOSSWAVE4 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        EndGame: { result: win }
+
+---
+
+name: Ninja2MainWaves5Update
+domain: map
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: 603, value: 0 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE2 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE3 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE4 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINBOSSWAVE5 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        EndGame: { result: win }
+
+---
+
+name: Ninja2MainWaves7Update
+domain: map
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: 603, value: 0 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE2 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE3 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE4 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE5 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 6 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE6 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 6 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 7 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINBOSSWAVE7 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 7 and return == 0"
+        EndGame: { result: win }
+
+---
+
+name: Ninja2MainWaves10Update
+domain: map
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: 603, value: 0 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE2 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE3 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE4 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE5 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 6 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE6 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 6 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 7 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE7 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 7 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 8 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE8 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 8 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 9 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINWAVE9 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 9 and return == 0"
+        SetBoardVariable: { key: 603, value: 1 }
+        SetWave: { value: 10 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINBOSSWAVE10 }
+      - GetUnitCountByTeam: { team: enemy }
+      - when: "waveTransitionPending == 0 and wave == 10 and return == 0"
+        EndGame: { result: win }

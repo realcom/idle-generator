@@ -1,0 +1,193 @@
+version: "1.0"
+game: ninja2
+slug: ninja2-survival-battle
+status: implemented
+
+target_runtime:
+  page: harness/runtime/survivor-runtime.html
+  entrypoint: harness/runtime/src/survivor/survivor-app.js
+  implementation_mode: hybrid
+  fixture_urls:
+    - harness/runtime/survivor-runtime.html?game=ninja2
+    - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle
+    - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&vfx=demo
+
+source_design:
+  concepts:
+    - harness/design/ninja2/concepts/ninja2_rulelocked_survival_battle_a.md
+    - harness/design/ninja2/concepts/ninja2_casual_sanctuary_survival_screen_a.md
+  tokens:
+    - harness/design/ninja2/art-direction.yaml
+    - harness/design/ninja2/layout-tokens.yaml
+    - harness/design/ninja2/component-skins.yaml
+    - harness/design/ninja2/asset-plan.yaml
+
+screen:
+  orientation: portrait_9_16
+  responsive_policy:
+    stage: "Phaser Scale.RESIZE, fills viewport"
+    max_reference_width_px: 440
+    min_height_px: 560
+  safe_area_policy: "DOM HUD uses env(safe-area-inset-*) on all edge regions."
+
+regions:
+  phaser_canvas:
+    combat_arena:
+      world_size_px: { width: 3000, height: 2000 }
+      camera: "orthographic top-down camera follows player"
+      center_clear_radius_px: 110
+      ground: "procedural moss, dirt bands, leaves, stones, and bamboo-edge props"
+      units: "IdlezBoard-triggered player, enemy waves, boss, projectiles, drops"
+  dom_overlay:
+    top_hud:
+      left: "hero portrait, HP bar, level, kills, and two compact acquired-skill rows: active skills first, passive skills second"
+      center: "stage label and timer"
+      right: "actual run resource ledger for wood, stone, soulflame, and gold; each chip starts at 0 and pulses a +gain badge only when that resource is collected"
+      progress: "8-segment wave track, filled from current wave progress"
+    objective_strip:
+      content: "current wave objective, live enemy count, pickup count"
+      placement: "under top HUD, narrow centered pill"
+    controls:
+      joystick: "bottom-left translucent touch affordance"
+      skill_buttons: "bottom-right cooldown buttons removed; acquired active/passive skills are represented as icon-only rows under the hero profile"
+      exp_bar: "bottom EXP bar with fixed badge"
+
+asset_keys:
+  reused:
+    - key: ninja2.home.characters.guardian_residents
+      runtime_paths:
+        - harness/runtime/assets/ninja2/home/residents/guardian.png
+        - harness/runtime/assets/ninja2/home/residents/wood_resident.png
+        - harness/runtime/assets/ninja2/home/residents/herb_resident.png
+        - harness/runtime/assets/ninja2/home/residents/guard_resident.png
+        - harness/runtime/assets/ninja2/home/residents/courier_resident.png
+      usage: "identity reference and home-to-battle continuity"
+  generated:
+    - key: ninja2.ui.topbar.cluster_skins
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/topbar/top_resource_board.png
+        - harness/runtime/assets/ninja2/ui/topbar/top_resource_chip.png
+      usage: "shared Phaser 9-slice resource board/chip skins for outgame home resources and ingame battle resource ledger"
+    - key: ninja2.ui.topbar.fixed_atoms
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/topbar/icon_coin.png
+        - harness/runtime/assets/ninja2/ui/topbar/icon_soul.png
+        - harness/runtime/assets/ninja2/ui/topbar/icon_wood.png
+        - harness/runtime/assets/ninja2/ui/topbar/icon_stone.png
+      usage: "fixed resource icon sprites shared by the outgame home resources, ingame battle resource ledger, and Phaser run drop textures"
+    - key: ninja2.battle.characters.combat_sheet
+      runtime_paths:
+        - harness/runtime/assets/ninja2/battle/characters/guardian_hero.png
+        - harness/runtime/assets/ninja2/battle/characters/resident_wood.png
+        - harness/runtime/assets/ninja2/battle/characters/resident_herb.png
+        - harness/runtime/assets/ninja2/battle/characters/resident_guard.png
+        - harness/runtime/assets/ninja2/battle/characters/enemy_leaf_imp.png
+        - harness/runtime/assets/ninja2/battle/characters/enemy_soot_spirit.png
+        - harness/runtime/assets/ninja2/battle/characters/enemy_purple_mushroom.png
+        - harness/runtime/assets/ninja2/battle/characters/enemy_thorn_boss.png
+      usage: "primary Phaser combat character sprites"
+    - key: ninja2.battle.characters.direction_4way_sheet
+      runtime_paths:
+        - harness/runtime/assets/ninja2/battle/directions/guardian_hero/down.png
+        - harness/runtime/assets/ninja2/battle/directions/guardian_hero/left.png
+        - harness/runtime/assets/ninja2/battle/directions/guardian_hero/up.png
+        - harness/runtime/assets/ninja2/battle/directions/enemy_leaf_imp/down.png
+        - harness/runtime/assets/ninja2/battle/directions/enemy_leaf_imp/left.png
+        - harness/runtime/assets/ninja2/battle/directions/enemy_leaf_imp/up.png
+        - harness/runtime/assets/ninja2/battle/directions/enemy_soot_spirit/down.png
+        - harness/runtime/assets/ninja2/battle/directions/enemy_soot_spirit/left.png
+        - harness/runtime/assets/ninja2/battle/directions/enemy_soot_spirit/up.png
+        - harness/runtime/assets/ninja2/battle/directions/enemy_purple_mushroom/down.png
+        - harness/runtime/assets/ninja2/battle/directions/enemy_purple_mushroom/left.png
+        - harness/runtime/assets/ninja2/battle/directions/enemy_purple_mushroom/up.png
+      usage: "runtime-facing down/up/side sprites for player and common monsters; right-facing units mirror the left sprite in Phaser"
+    - key: ninja2.battle.characters.guardian_walk_3x8
+      runtime_paths:
+        - harness/runtime/assets/ninja2/battle/animations/guardian_hero_walk_3x8.png
+      usage: "main character down/side/up x 8-frame Phaser walk cycle; right movement mirrors the side row, with safe foot/lantern padding and subtle cloak motion"
+    - key: ninja2.battle.skill_vfx.phaser_runtime_profiles
+      runtime_paths:
+        - harness/runtime/src/survivor/skill-vfx.js
+      usage: "Phaser-native skill VFX profiles for all 16 run-level Ninja2 survivor skills; use ?vfx=demo for sequential verification"
+  planned_blocker:
+    - key: ninja2.battle.sprite_atlas.enemies_pickups
+      planned_runtime_path: harness/runtime/assets/ninja2/battle/enemies_pickups_atlas.png
+      current_runtime: "enemy characters are covered by ninja2.battle.characters.direction_4way_sheet; run resource drops reuse ninja2.ui.topbar.cluster_skins icon PNGs; EXP gem remains a Phaser-generated fallback"
+      reason: "full enemy/pickup atlas is still not present yet, but the visible gold/soulflame/wood/stone resource assets are no longer temporary shapes"
+
+design_mapping:
+  css_tokens:
+    outline: "#171f18"
+    panel: "rgba(27, 24, 19, 0.96)"
+    cream: "#f8ead1"
+    lantern_gold: "#ffc64a"
+    action_orange: "#f47b22"
+    soul_teal: "#36e0d4"
+    exp_blue: "#39a8ff"
+  phaser_graphics:
+    battle_floor: "deep forest + moss + dirt patches"
+    pickups: "blue EXP diamond remains native; gold, soulflame, wood, and stone run drops use generated ninja2.ui.topbar.cluster_skins icons"
+    skills: "kunai slash, shuriken volley, smoke bomb, buff aura, orbit blade, lightning chain, flame ground, frost needle, clone dash, moon flash, bamboo spear rain, lotus storm, weak-point reticle"
+
+skill_vfx:
+  implementation: harness/runtime/src/survivor/skill-vfx.js
+  scope: "run-level skill and growth cards; no persistent skill tree dependency"
+  profile_count: 16
+  demo_url: "harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&vfx=demo"
+  asset_mode: "The default ?vfx=demo path uses generated-vfx-demo fallback textures so headless Phaser validation focuses on skill silhouettes. Add fullAssets=1 to validate generated PNG preload as a separate visual pass."
+  families:
+    - slash
+    - projectileVolley
+    - smokeBomb
+    - shadowBreath
+    - orbitBurst
+    - lightning
+    - flameGround
+    - needlePierce
+    - shadowClone
+    - moonFlash
+    - spearRain
+    - lotusStorm
+    - killingFocus
+    - timeFold
+    - galeStep
+    - weakPointMark
+
+runtime_state_contract:
+  globals:
+    - __IDLEZ_SURVIVOR__
+    - __IDLEZ_SURVIVOR_BOARD__
+  datasets:
+    - survivorReady
+    - survivorBattleReady
+    - survivorMode
+    - survivorGameId
+    - survivorMapId
+    - survivorEnemyCount
+    - survivorPickupCount
+    - survivorStageProgress
+    - survivorTick
+    - survivorAssetMode
+    - survivorSkillVfxReady
+    - survivorSkillVfxCount
+    - survivorSkillVfxLast
+    - survivorSkillVfxDemo
+
+validation:
+  baseline:
+    - "python3 harness/tools/phaser_smoke.py ninja2 --no-browser"
+  browser:
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --no-browser"
+    - "Open http://127.0.0.1:8765/harness/runtime/survivor-runtime.html?game=ninja2&mode=battle"
+  screenshots:
+    - /tmp/ninja2-survivor-battle.png
+  checks:
+    - "home and battle modes are nonblank"
+    - "canvas is visible in battle mode"
+    - "HUD, objective strip, joystick, profile skill icon rows, and EXP bar do not overlap at mobile width"
+    - "dataset survivorBattleReady=true after battle autostart"
+    - "dataset survivorSkillVfxReady=true and survivorSkillVfxCount=16 after runtime boot"
+    - "with ?vfx=demo, survivorAssetMode=generated-vfx-demo, survivorSkillVfxDemo reaches done, and survivorSkillVfxDemoFired=16"
+    - "main character walk cycle animates while moving"
+    - "generated common monster sprites render in battle with left/right side mirroring"
+    - "battle resource ledger and run drop sprites render the generated coin, soulflame, wood, and stone PNGs instead of CSS/Graphics placeholder shapes"

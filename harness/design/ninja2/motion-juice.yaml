@@ -1,0 +1,25 @@
+version: "1.0"
+game: ninja2
+source_concepts:
+  - ninja2_rulelocked_housing_home_a
+  - ninja2_rulelocked_survival_battle_a
+status: extracted
+
+motion:
+  home:
+    selected_tile: "slow cyan rim pulse"
+    production_bubble: "small bounce on collect availability"
+    residents: "short y-sort idle/carry/tend loops"
+    sortie: "orange button glow when energy available"
+  battle:
+    hero_aura: "warm circular pulse"
+    lantern_projectile: "short gold trail toward target"
+    soul_pickup: "teal flame bob"
+    exp_pickup: "blue diamond sparkle"
+    hit: "small starburst plus white damage number with dark outline"
+    enemy_death: "quick shrink/fade plus pickup burst"
+  timing:
+    damage_float_ms: 620
+    pickup_float_ms: 640
+    skill_projectile_ms: 120
+    home_pulse_ms: 1300

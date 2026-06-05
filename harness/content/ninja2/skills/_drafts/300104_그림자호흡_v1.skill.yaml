@@ -1,0 +1,13 @@
+id: 300104
+name: "그림자 호흡"
+cooldown: 7.0
+priority: 4
+targetRefreshType: NoRefresh
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_shadow_breath.png"
+selfAddBuffs:
+  - { buffDataId: 400101, level: 1, duration: 7.0 }
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Cast" } }
+  - { time: 0.6, destroy: {} }

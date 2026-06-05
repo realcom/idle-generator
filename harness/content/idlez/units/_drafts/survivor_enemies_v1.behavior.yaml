@@ -1,0 +1,97 @@
+name: SurvivorSwarmStart
+domain: unit
+"on":
+  - event: start
+    do:
+      - moveRandom: { x: 0.0, y: 0.0, xRange: 1.8, yRange: 1.2 }
+
+---
+
+name: SurvivorSwarmChase
+domain: unit
+vars:
+  attack_range: { type: float, default: 1.7 }
+"on":
+  - event: update
+    every: 0.85s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom: { x: 0.0, y: 0.0, xRange: 1.4, yRange: 1.1 }
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget: { skillDataId: 300101 }
+
+---
+
+name: SurvivorBatStart
+domain: unit
+"on":
+  - event: start
+    do:
+      - moveRandom: { x: 0.0, y: 0.0, xRange: 2.4, yRange: 2.0 }
+
+---
+
+name: SurvivorBatDive
+domain: unit
+vars:
+  attack_range: { type: float, default: 1.9 }
+"on":
+  - event: update
+    every: 0.65s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom: { x: 0.0, y: 0.0, xRange: 2.2, yRange: 1.8 }
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget: { skillDataId: 300101 }
+
+---
+
+name: SurvivorBruiserStart
+domain: unit
+"on":
+  - event: start
+    do:
+      - moveRandom: { x: 0.0, y: 0.0, xRange: 1.2, yRange: 1.0 }
+
+---
+
+name: SurvivorBruiserChase
+domain: unit
+vars:
+  attack_range: { type: float, default: 2.05 }
+"on":
+  - event: update
+    every: 1.15s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom: { x: 0.0, y: 0.0, xRange: 1.1, yRange: 0.9 }
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget: { skillDataId: 300101 }
+
+---
+
+name: SurvivorBossStart
+domain: unit
+"on":
+  - event: start
+    do:
+      - moveRandom: { x: 0.0, y: 0.0, xRange: 0.8, yRange: 0.7 }
+
+---
+
+name: SurvivorBossChase
+domain: unit
+vars:
+  attack_range: { type: float, default: 2.7 }
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom: { x: 0.0, y: 0.0, xRange: 0.8, yRange: 0.7 }
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget: { skillDataId: 300101 }

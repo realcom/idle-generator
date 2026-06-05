@@ -1,0 +1,50 @@
+id: 500104
+group: 500104
+name: "안개숲 깊은길"
+type: Dungeon
+tags: [Survival, Housing, InfiniteWaves]
+scene: "PFB_MAP_Meadow_Day_Chapter"
+sprite: "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png"
+targetCameraPivot: { x: 0.5, y: 0.58 }
+fov: 9.25
+popupArgs:
+  ClientModeManager: ModeManagerNinja2
+  ClientHomeMapDataId: self
+  ClientRuntimePrototype: survivor
+  ClientAutoAdvance: true
+  ClientNextMapDataId: 500105
+  ClientRetryMapDataId: self
+  ClientWaveCount: 7
+  CoreLoop: "SurvivalHousing"
+initVariables:
+  - { callerKey: 605, value: 4 }
+  - { callerKey: 606, value: 4 }
+boardConstants: { levelUpChoiceCount: 3 }
+initLevel: 4
+initGold: 500
+enableUnitExp: true
+playerUnitCount: 0
+locations:
+  - { id: -1, position: { x: -7.5, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 0.75 } }] }
+  - { id: 1, position: { x: 2.25, y: 0.0 }, geometries: [{ circle: { center: { x: 0.0, y: 0.0 }, radius: 3.25 } }] }
+terrains:
+  - vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+  - type: Skill
+    vertices: [{ position: { x: -12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: -6.0 }, height: 0.0 }, { position: { x: 12.0, y: 6.0 }, height: 0.0 }, { position: { x: -12.0, y: 6.0 }, height: 0.0 }]
+    triangles: [{ v1: 0, v2: 1, v3: 2 }, { v1: 0, v2: 2, v3: 3 }]
+triggers: [MAP_ONSTART_NINJA2MAINWAVE1, MAP_ONUPDATE_NINJA2MAINWAVES7UPDATE]
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 520, maxCount: 710, isCore: true }
+      - { itemDataId: 6, count: 150 }
+      - { itemDataId: 200101, count: 10 }
+      - { itemDataId: 200102, count: 2 }
+  - shouldAddAll: false
+    probPercent: 68
+    addItems:
+      - { itemDataId: 200102, count: 1, weight: 62, group: 1 }
+      - { itemDataId: 200103, count: 1, weight: 38, group: 1 }
+

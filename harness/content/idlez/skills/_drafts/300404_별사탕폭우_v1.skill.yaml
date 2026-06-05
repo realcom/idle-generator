@@ -1,0 +1,18 @@
+id: 300404
+name: "별사탕 폭우"
+damageType: Explosive
+projectileType: Parabolic
+targetRefreshType: Random
+cooldown: 5.5
+priority: 40
+maxHit: 12
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/VFX_StarCandy_Target.prefab" } }
+  - time: 0.45
+    hit:
+      maxHit: 12
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.15 }
+      addDamage: { damagePercent: [210.0] }
+  - { time: 0.75, destroy: {} }

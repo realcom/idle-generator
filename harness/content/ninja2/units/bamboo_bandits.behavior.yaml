@@ -1,0 +1,71 @@
+name: BambooBanditWander
+domain: unit
+
+"on":
+  - event: start
+    do:
+      - moveRandom:
+          x: -0.85
+          y: 0.0
+          xRange: 0.2
+          yRange: 0.6
+
+---
+
+name: BambooBanditAttack
+domain: unit
+
+vars:
+  attack_range: { type: float, default: 1.25 }
+
+"on":
+  - event: update
+    every: 1.6s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom:
+          x: -0.85
+          y: 0.0
+          xRange: 0.2
+          yRange: 0.6
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget:
+          skillDataId: 300101
+
+---
+
+name: BanditLeaderAdvance
+domain: unit
+
+"on":
+  - event: start
+    do:
+      - moveRandom:
+          x: -0.55
+          y: 0.0
+          xRange: 0.12
+          yRange: 0.45
+
+---
+
+name: BanditLeaderAttack
+domain: unit
+
+vars:
+  attack_range: { type: float, default: 1.55 }
+
+"on":
+  - event: update
+    every: 1.8s
+    do:
+      - when: "targetDistance > $attack_range"
+        moveRandom:
+          x: -0.55
+          y: 0.0
+          xRange: 0.12
+          yRange: 0.45
+      - when: "hasTarget == 1 and targetDistance <= $attack_range"
+        stop: {}
+        useSkillToTarget:
+          skillDataId: 300101

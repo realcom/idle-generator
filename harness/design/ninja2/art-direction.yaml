@@ -1,0 +1,65 @@
+version: "1.0"
+game: ninja2
+source_concepts:
+  - ninja2_rulelocked_housing_home_a
+  - ninja2_rulelocked_survival_battle_a
+status: extracted
+orientation: portrait_9_16
+
+art_anchor:
+  theme: "lantern sanctuary home plus forest survival sortie"
+  identity:
+    hero: "SD sanctuary guardian with brown hair, cream cloak, red scarf, hand lantern"
+    home_centerpiece: "Lantern Shrine as town-center building"
+    enemies: "repeatable forest creatures, not ninja enemies"
+  must_keep:
+    - "bold dark ink outline around characters, cards, buttons, buildings"
+    - "warm lantern gold as the strongest action/readability color"
+    - "pale teal soulflame for magic/resource pickups"
+    - "orange Sortie CTA as the primary home action"
+    - "top-down 2D sprite-game battle, separate from hex housing"
+  must_avoid:
+    - "plain flat green field with no forest prop language"
+    - "debug/demo labels inside the screen"
+    - "isometric buildings in survival battle"
+    - "ninja-heavy masks, katana-first identity, or childish ninja parody"
+
+palette:
+  ink: "#171f18"
+  deep_forest: "#173224"
+  forest: "#315b33"
+  moss: "#6f9d48"
+  grass: "#87ad51"
+  warm_stone: "#d8c58e"
+  parchment: "#f4dfb1"
+  cream_cloak: "#f8ead1"
+  lantern_gold: "#ffc64a"
+  action_orange: "#f47b22"
+  muted_red: "#b94e35"
+  soul_teal: "#36e0d4"
+  exp_blue: "#39a8ff"
+  lock_gray: "#727a70"
+
+line_and_material:
+  outline_px_mobile: 4
+  outline_color: "#171f18"
+  shadow: "hard cartoon drop shadow, 3-5px vertical offset"
+  home_materials:
+    - "stone-edged hex tiles"
+    - "mossy grass interiors"
+    - "pre-rendered 2.5D-looking buildings made from 2D shapes/sprites"
+    - "warm lantern windows"
+  battle_materials:
+    - "repeatable green forest floor"
+    - "small dirt patches, leaves, stones, stumps, fence/forest edges"
+    - "small readable pickups with unique silhouettes"
+
+screen_contract:
+  HousingHome:
+    camera: "fixed portrait board view"
+    board: "center hex board, selected shrine with cyan rim"
+    ui_edges: "top resources, left rail, bottom selected building panel, bottom nav, bottom-right Sortie"
+  SurvivalBattle:
+    camera: "strict orthographic top-down 2D"
+    playfield: "center kept playable, enemies/pickups orbit around hero"
+    ui_edges: "top-left hero/HP, top-center timer/stage, top-right currencies/pause, bottom-left joystick, bottom-right circular skills, bottom EXP"

@@ -1,0 +1,21 @@
+id: 300101
+name: "쿠나이 베기"
+tags: [UseToTarget, TargetPosition, AdditionalAttackPossible]
+damageType: Pierce
+cooldown: 0.55
+priority: 1
+targetRefreshType: Nearest
+prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
+sprite: "Skills/Ninja2/skill_kunai_slash.png"
+
+timelines:
+  - { time: 0.0, unitPlayAnimation: { animation: "Attack" } }
+  - time: 0.08
+    hit:
+      geometries:
+        - circle:
+            center: { x: 0.0, y: 0.0 }
+            radius: 4.6
+      maxHit: 4
+      addDamage: { damagePercent: [85.0, 100.0, 118.0, 138.0, 160.0] }
+  - { time: 0.45, destroy: {} }
