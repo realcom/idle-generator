@@ -15,24 +15,30 @@ Purpose: convert a reviewed UI recipe into generated Unity uGUI prefabs.
 
 - The recipe file under `harness/unity/recipes/`.
 - `harness/unity/registries/ugui-atoms.yaml`.
-- `harness/design/<game>/component-skins.yaml`.
-- `harness/design/<game>/asset-plan.yaml`.
+- `harness/design/COMPONENT_BLUEPRINTS.md`
+- `harness/design/<game>/component-blueprints.yaml`
+- `harness/design/<game>/component-skins.yaml`
+- `harness/design/<game>/asset-plan.yaml`
 - `engine/client/Client/Assets/Scripts/Components/UI/UIElement.cs` naming and auto-binding rules.
 - Existing Editor builder/prefab if updating an already generated UI.
 
 ## Workflow
 
 1. Run `python3 harness/unity/validators/ui_prefab_validate.py --recipe <recipe>`.
-2. If the Editor builder does not exist, create/update it under `engine/client/Client/Assets/Scripts/Editor/Harness/` or the repo's existing Editor folder pattern.
-3. Generate prefabs only through Unity Editor APIs. Do not hand-write prefab YAML.
-4. Use uGUI elements as the real structure: `RectTransform`, `Image`, `Button`, `TextMeshProUGUI`, `CanvasGroup`, `AspectRatioFitter`, layout components when appropriate.
-5. Use asset paths from `asset-plan.yaml` for `platforms: [unity]` or shared assets; do not invent bypass paths.
-6. Follow `UIElement.FillReference` naming conventions: `Text_`, `Btn_`, `Icon`, `Panel_`, and field-prefix-compatible names.
-7. Compile/refresh Unity through the existing unity-cli flow when available.
-8. Run the builder through Unity Editor APIs, then run the recipe validator again.
-9. Run a real Play Mode smoke when the prefab is intended to appear in `GameScene`.
-10. Capture and inspect the actual Unity Game view after meaningful visual changes.
-11. Report generated prefab paths, generated sprite paths, visual QA result, and any blocked verification.
+2. Run `python3 harness/tools/design_blueprint_validate.py <game>` when the recipe references component blueprints.
+3. If the Editor builder does not exist, create/update it under `engine/client/Client/Assets/Scripts/Editor/Harness/` or the repo's existing Editor folder pattern.
+4. Generate prefabs only through Unity Editor APIs. Do not hand-write prefab YAML.
+5. Use uGUI elements as the real structure: `RectTransform`, `Image`, `Button`, `TextMeshProUGUI`, `CanvasGroup`, `AspectRatioFitter`, layout components when appropriate.
+6. Map RectTransform anchors, padding, layout groups, text clamps, and decorative sprite layers back to `component-blueprints.yaml` when the blueprint defines them.
+7. Keep blueprint sections as recognizable RectTransform groups or generated prefab children, such as `Section_TopHud`, `Section_Body`, `Section_BottomDock`, or modal header/body/footer groups.
+8. Use asset paths from `asset-plan.yaml` for `platforms: [unity]` or shared assets; do not invent bypass paths.
+9. Follow `UIElement.FillReference` naming conventions: `Text_`, `Btn_`, `Icon`, `Panel_`, and field-prefix-compatible names.
+10. Compile/refresh Unity through the existing unity-cli flow when available.
+11. Run the builder through Unity Editor APIs, then run the recipe validator again.
+12. Run `python3 harness/tools/design_blueprint_validate.py <game> --strict` before approving a blueprint-backed prefab surface.
+13. Run a real Play Mode smoke when the prefab is intended to appear in `GameScene`.
+14. Capture and inspect the actual Unity Game view after meaningful visual changes.
+15. Report generated prefab paths, generated sprite paths, visual QA result, and any blocked verification.
 
 ## 9-slice skin rules
 
@@ -46,6 +52,7 @@ Purpose: convert a reviewed UI recipe into generated Unity uGUI prefabs.
 - For uGUI skin objects, set `Image.type = Image.Type.Sliced`.
 - Keep generated skin sprites under a clearly marked folder such as `Assets/Resources/HarnessPreview/GeneratedSprites/`.
 - Keep icons as regular `Image` sprites with `preserveAspect = true`; do not 9-slice icons.
+- Keep blueprint ornament layers as fixed `Image` sprites; do not merge them into scalable panel/card skins unless explicitly stretch-safe.
 - Do not ship text fallback icons for stat/card UI unless explicitly marked temporary. Prefer generated icon sprites or verified imported sprites.
 - Do not use one full-screen PNG/RawImage overlay as the implementation. Design mock PNGs are allowed as references only.
 
@@ -68,6 +75,7 @@ Purpose: convert a reviewed UI recipe into generated Unity uGUI prefabs.
 
 - Do not modify engine runtime systems unless the recipe cannot be represented by existing uGUI atoms.
 - Do not implement Phaser DOM/canvas UI in this skill.
+- Do not collapse blueprint sections into one prefab group when the surface has top/body/bottom, modal header/body/footer, or similar semantic regions.
 - Generated prefab paths should live under a clearly marked generated folder.
 - If a prefab already exists and is hand-authored, ask before replacing it.
 - Include newly generated sprites and `.meta` files with the prefab change; otherwise Unity references will break.

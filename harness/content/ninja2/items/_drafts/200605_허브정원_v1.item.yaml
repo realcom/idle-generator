@@ -1,0 +1,68 @@
+id: 200605
+name: "허브 정원"
+category: Mine
+type: Mine
+grade: 1
+power: 16
+efficiencyPercents: [100.0, 115.0, 132.0, 152.0, 175.0]
+maxStamina: 75
+staminaRegenPerSecond: 0.0133
+sellPrice: 0
+requiredExps: [0, 120, 260, 520, 920]
+
+addStats:
+  - { type: DamageTakenEfficiencyPercent, value: [1, 2, 3, 5, 8] }
+
+levelUpMaterialItemGroups:
+  - level: 2
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 120 }
+      - { id: 200102, count: 45 }
+      - { id: 200103, count: 2 }
+      - { id: 5, count: 3500 }
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 250 }
+      - { id: 200102, count: 110 }
+      - { id: 200103, count: 6 }
+      - { id: 5, count: 7600 }
+  - level: 4
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 520 }
+      - { id: 200102, count: 260 }
+      - { id: 200103, count: 15 }
+      - { id: 5, count: 16000 }
+  - level: 5
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 1100 }
+      - { id: 200102, count: 560 }
+      - { id: 200103, count: 36 }
+      - { id: 5, count: 36000 }
+
+sellAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200108, minCount: 1, maxCount: 3, isCore: true }
+
+popupArgs:
+  HousingKey: herb_garden
+  HousingRole: support_production
+  HousingPlacementKind: repeatable
+  HousingInstanceRole: support_production_node
+  HousingMaxInstancesByLanternLevel: "4:1,5:2,6:3"
+  HousingDuplicateCostScaling: "cost_x1.25_per_extra,time_x1.15_per_extra"
+  HousingPurpose: "허브를 생산하고 회복/생존 보정을 제공해 긴 생존 전투와 정화 루프를 안정화한다."
+  HousingEffectKind: produce_herb_and_recovery_bonus
+  HousingFootprint: 1x3
+  HousingSpriteKey: herb_garden
+  HousingConstructionSeconds: 900
+  HousingLevelUpSeconds: "2:1200,3:3000,4:9000,5:21600"
+
+spriteGroups:
+  Icon: "Items/Ninja2/housing_herb_garden_icon.png"
+  Building: "Housing/Ninja2/herb_garden.png"

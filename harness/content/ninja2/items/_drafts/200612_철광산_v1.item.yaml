@@ -1,0 +1,76 @@
+id: 200612
+name: "철광산"
+category: Mine
+type: Mine
+grade: 3
+power: 30
+efficiencyPercents: [100.0, 118.0, 139.0, 164.0, 193.0]
+maxStamina: 60
+staminaRegenPerSecond: 0.0056
+sellPrice: 0
+requiredExps: [0, 260, 580, 1200, 2160]
+
+addStats:
+  - { type: BossDamageEfficiencyPercent, value: [1, 2, 3, 5, 8] }
+
+levelUpMaterialItemGroups:
+  - level: 2
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 1100 }
+      - { id: 200102, count: 900 }
+      - { id: 200103, count: 22 }
+      - { id: 200106, count: 70 }
+      - { id: 200110, count: 6 }
+      - { id: 5, count: 34000 }
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 2200 }
+      - { id: 200102, count: 1800 }
+      - { id: 200103, count: 50 }
+      - { id: 200106, count: 160 }
+      - { id: 200110, count: 14 }
+      - { id: 5, count: 74000 }
+  - level: 4
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 4700 }
+      - { id: 200102, count: 3900 }
+      - { id: 200103, count: 112 }
+      - { id: 200106, count: 380 }
+      - { id: 200110, count: 32 }
+      - { id: 5, count: 160000 }
+  - level: 5
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 10200 }
+      - { id: 200102, count: 8600 }
+      - { id: 200103, count: 250 }
+      - { id: 200106, count: 900 }
+      - { id: 200110, count: 72 }
+      - { id: 5, count: 360000 }
+
+sellAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200107, count: 1, isCore: true }
+
+popupArgs:
+  HousingKey: iron_mine
+  HousingRole: advanced_production
+  HousingPlacementKind: repeatable
+  HousingInstanceRole: advanced_production_node
+  HousingMaxInstancesByLanternLevel: "6:2"
+  HousingDuplicateCostScaling: "cost_x1.25_per_extra,time_x1.15_per_extra"
+  HousingPurpose: "철광석을 생산해 공방 고급 제작, 중반 업그레이드, 보스 대응 성장의 관문이 된다."
+  HousingEffectKind: produce_iron_and_midgame_upgrade_gate
+  HousingFootprint: 1x2
+  HousingSpriteKey: iron_mine
+  HousingConstructionSeconds: 7200
+  HousingLevelUpSeconds: "2:9000,3:18000,4:36000,5:72000"
+
+spriteGroups:
+  Icon: "Items/Ninja2/housing_iron_mine_icon.png"
+  Building: "Housing/Ninja2/iron_mine.png"

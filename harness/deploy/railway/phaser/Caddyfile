@@ -6,7 +6,7 @@
 	respond @health "ok" 200
 
 	@root path /
-	rewrite @root /idlez-phaser.html
+	rewrite @root /survivor-runtime.html?game=ninja2
 
 	header /build/* Cache-Control "no-store"
 	header /src/* Cache-Control "public, max-age=60"

@@ -1,0 +1,184 @@
+version: "1.0"
+slug: phaser-modal-system-harness
+status: draft
+scope: common_phaser_ui_harness
+
+target_runtime:
+  page: harness/runtime/phaser-modal-system-harness.html
+  entrypoint: harness/runtime/src/ui/phaser-modal-system-harness.js
+  implementation_mode: phaser_canvas
+  fixture_urls:
+    - harness/runtime/phaser-modal-system-harness.html?game=ninja2&variant=shell
+    - harness/runtime/phaser-modal-system-harness.html?game=ninja2&variant=confirm
+    - harness/runtime/phaser-modal-system-harness.html?game=ninja2&variant=reward
+    - harness/runtime/phaser-modal-system-harness.html?game=ninja2&variant=list
+    - harness/runtime/phaser-modal-system-harness.html?game=ninja2&variant=settings
+    - harness/runtime/phaser-modal-system-harness.html?game=ninja2&variant=skillChoice
+    - harness/runtime/phaser-modal-system-harness.html?game=ninja2&variant=notice
+
+source_design:
+  theme_source_game: ninja2
+  selected_concept:
+    id: ninja2_phaser_modal_system_a
+    image: harness/design/ninja2/concepts/ninja2_phaser_modal_system_a.png
+    notes: harness/design/ninja2/concepts/ninja2_phaser_modal_system_a.md
+  supporting_concepts:
+    - harness/design/ninja2/concepts/ninja2_run_levelup_choice_modal_a.md
+    - harness/design/ninja2/concepts/ninja2_flat_arcade_survivors_scene_f.md
+  tokens:
+    - harness/design/ninja2/art-direction.yaml
+    - harness/design/ninja2/layout-tokens.yaml
+    - harness/design/ninja2/component-blueprints.yaml:surfaces.PhaserModalSystem
+    - harness/design/ninja2/component-skins.yaml
+    - harness/design/ninja2/asset-plan.yaml
+    - harness/runtime/NINE_SLICE_UI.md
+
+intent:
+  summary: "Create a game-state-free Phaser harness for building and reviewing reusable modal systems before binding them to a specific runtime flow."
+  shared_contract:
+    - "ModalHost owns input capture, open/close lifecycle, optional pause state, and focus restoration."
+    - "ModalShell owns the shared parchment 9-slice skin, fixed ornament sprites, close anchor, header/body/footer slots."
+    - "Variant bodies provide only their content slots; they do not create separate full-screen blockers."
+    - "Text, values, icons, toggles, pips, and button labels remain native Phaser objects."
+  first_theme: "ninja2 lantern sanctuary parchment modal system"
+
+component_blueprint:
+  source: harness/design/ninja2/component-blueprints.yaml:surfaces.PhaserModalSystem
+  sections:
+    - modal_host
+    - modal_shell
+    - modal_header
+    - modal_body
+    - modal_footer
+  components:
+    - ModalHarnessViewport
+    - ModalHost
+    - ModalScrim
+    - ModalShell
+    - FrameOrnamentLayer
+    - ModalCloseButton
+    - ModalHeader
+    - ModalBodyRegion
+    - ModalMessageBlock
+    - ModalRewardGrid
+    - ModalRewardSlot
+    - ModalListRow
+    - ModalToggleRow
+    - SkillChoiceGrid
+    - SkillChoiceCard
+    - ModalFooter
+    - ModalActionButton
+    - ModalNoticeToast
+
+screen:
+  orientation: responsive_preview
+  preview_sizes_px:
+    compact: { width: 390, height: 760 }
+    portrait: { width: 440, height: 782 }
+    wide: { width: 760, height: 720 }
+  safe_area_policy: "Harness stage and ModalHost reserve at least 14px side padding and 16px top/bottom padding."
+  responsive_policy:
+    compact: "Reduce body copy and reward/list row density before reducing button height or close target."
+    portrait: "Reference mobile pass for all modal variants."
+    wide: "Verify 9-slice corners stay crisp and shell does not over-expand beyond max width."
+
+variants:
+  shell:
+    purpose: "Inspect common shell anatomy, header/body/footer slots, close anchor, ornament layer, and content insets."
+    footer_actions: 2
+  confirm:
+    purpose: "Two-button decision dialog with message block and clear primary/secondary actions."
+    footer_actions: 2
+    close_on_backdrop: false
+  reward:
+    purpose: "Reward popup with equal reward slots and one primary claim action."
+    footer_actions: 1
+  list:
+    purpose: "Scrollable rows for quests, gates, inventory, and generic feature lists."
+    footer_actions: 1
+    scroll_policy: internal
+  settings:
+    purpose: "Settings rows with stable binary toggles and native text."
+    footer_actions: 1
+    scroll_policy: internal
+  skillChoice:
+    purpose: "Reuse the level-up three-card grammar inside the same ModalHost/Shell family."
+    footer_actions: 0
+    close_button: hidden_when_choice_required
+  notice:
+    purpose: "Compact notice/toast using the same parchment skin language without a full modal body."
+    footer_actions: 1
+
+asset_keys:
+  generated:
+    - key: ninja2.ui.panel.parchment_9slice
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/panel_parchment_9slice.png
+      usage: "Phaser nineslice for ModalShell and compact notice skin."
+      slice_hints_px: { left: 28, right: 28, top: 28, bottom: 28 }
+      content_insets:
+        ModalShell: { left: 22, right: 22, top: 28, bottom: 18 }
+        ModalNoticeToast: { left: 18, right: 18, top: 20, bottom: 16 }
+    - key: ninja2.ui.level_choice.frame_ornaments_v1
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/level-choice/frame_crest.png
+        - harness/runtime/assets/ninja2/ui/level-choice/frame_corner_leaf.png
+      usage: "Fixed sprite ornaments over the shell border; not stretchable."
+    - key: ninja2.ui.home_icon_pack_v3
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/icons/icon_coin.png
+        - harness/runtime/assets/ninja2/ui/icons/icon_soul.png
+        - harness/runtime/assets/ninja2/ui/icons/icon_wood.png
+        - harness/runtime/assets/ninja2/ui/icons/icon_stone.png
+      usage: "Reward/icon slot examples only; values remain native text."
+  fallback_native:
+    - key: modal_harness_debug_graphics
+      usage: "Used only if a theme lacks the optional generated skin files."
+
+runtime_contract:
+  globals:
+    - "__idlezPhaserUiHarness exposes openModal(variant), setPreviewSize(size), and getSnapshot()."
+  dataset:
+    - "document.documentElement.dataset.uiHarnessReady=true after Phaser create."
+    - "document.documentElement.dataset.modalHarnessVariant=<variant> while open."
+    - "document.documentElement.dataset.modalHarnessTheme=<game>."
+  html_ids:
+    status: previewStatus
+    stage: modalStage
+    log: previewLog
+  phaser:
+    scale: Phaser.Scale.RESIZE
+    renderer: Phaser.WEBGL
+    script_source: harness/runtime/vendor/phaser.min.js
+    nineslice: "scene.add.nineslice(x, y, key, null, width, height, 28, 28, 28, 28)"
+    fallback: "draw rounded graphics frame only when the texture or nineslice API is unavailable"
+
+visual_iteration:
+  mode: variant_screenshot_matrix
+  required_captures:
+    - /private/tmp/phaser-modal-system-harness-shell.png
+    - /private/tmp/phaser-modal-system-harness-skillchoice.png
+  concept_compare:
+    concept: harness/design/ninja2/concepts/ninja2_phaser_modal_system_a.png
+    policy: "Compare proportions and ownership boundaries, not generated text fidelity."
+  pass_warn_error_policy:
+    PASS: "All variants boot, shell/ornaments render, text fits, and ModalHost remains common."
+    WARN: "Visual proportion differs from concept but ownership and lifecycle are correct."
+    ERROR: "Variant owns its own blocker, 9-slice is missing for the theme, or text/icons are baked into the skin."
+
+validation:
+  static:
+    - "python3 - <<'PY'\nimport yaml; yaml.safe_load(open('harness/runtime/specs/ui/phaser-modal-system-harness.yaml'))\nPY"
+    - "python3 harness/tools/design_blueprint_validate.py ninja2"
+  smoke:
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/phaser-modal-system-harness.html --expect ui --no-browser"
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/phaser-modal-system-harness.html --expect ui --screenshot /private/tmp/phaser-modal-system-harness-shell.png"
+  manual_browser:
+    - "http://127.0.0.1:8765/harness/runtime/phaser-modal-system-harness.html?game=ninja2&variant=shell"
+    - "http://127.0.0.1:8765/harness/runtime/phaser-modal-system-harness.html?game=ninja2&variant=skillChoice"
+  checks:
+    - "Every variant button opens without a network/game data error."
+    - "modalStage contains a Phaser canvas and keeps .is-active while a variant is shown."
+    - "Parchment shell uses nineslice when panel_parchment_9slice.png is available."
+    - "Crest and corner ornaments draw as fixed images and do not affect shell measurements."
+    - "Compact, portrait, and wide sizes keep text inside buttons/rows/cards."

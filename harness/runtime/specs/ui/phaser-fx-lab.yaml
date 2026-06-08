@@ -1,0 +1,157 @@
+id: phaser-fx-lab
+title: AI FX Review Lab
+target_runtime: harness/runtime/phaser-fx-lab.html
+implementation_mode: hybrid
+status: draft_v4_ai_review_tuning
+source_references:
+  - kind: external_reference
+    label: Kplay Web Particle Editor
+    url: https://kplay.games/play/O-Nd2BQybnMi
+    notes: "Layered emitter editor with AI authoring guide, JSON export, local save, and sprite-sheet export."
+  - kind: external_reference
+    label: Phaser ParticleEmitter API
+    url: https://docs.phaser.io/api-documentation/class/gameobjects-particles-particleemitter
+    notes: "Config-object particle emitters with JSON-friendly value formats and toJSON support."
+  - kind: external_reference
+    label: Phaser Editor AI workflow
+    url: https://phaser.io/editor
+    notes: "AI can create particle emitters inside a visual editor workflow."
+  - kind: local_reference
+    path: harness/runtime/src/idlez-phaser/phaser-scene.js
+    notes: "Current hard-coded skill cast/impact FX surface."
+  - kind: local_reference
+    path: harness/runtime/src/survivor/skill-vfx.js
+    notes: "Existing data-like skill VFX profile registry."
+  - kind: local_reference
+    path: harness/content/ninja2/skills/_drafts
+    notes: "16 ninja2 draft skills used as game-specific EffectRecipe calibration targets."
+surface:
+  orientation: landscape_primary_with_responsive_mobile_stack
+  width_policy: "Desktop uses three columns: presets/review, Phaser canvas, JSON inspector. Narrow widths stack panels above the canvas."
+  height_policy: "Canvas keeps a stable 800x520 logical scene inside a constrained preview region."
+  safe_area_policy: "No fixed mobile notch assumptions; all controls remain inside scrollable panels."
+regions:
+  preset_rail:
+    renderer: dom_overlay
+    content:
+      - AI draft sample list with 15 canonical golden references, 3 legacy references, and 16 ninja2 skill FX drafts
+      - preview intensity, scale, speed controls
+      - dark, arena, and alpha inspection backgrounds
+      - layer stack with add, duplicate, delete, and within-kind move controls
+      - human review controls with fix-prompt generation
+  phaser_preview:
+    renderer: phaser_canvas
+    content:
+      - combat scene fixture with caster and target anchors
+      - loop and one-shot playback controls
+      - persistent anchor and path guides for review screenshots
+      - live particle emitters
+      - Phaser graphics overlays for rings, beams, slashes, and shockwaves
+      - timeline and verification metrics
+  recipe_inspector:
+    renderer: dom_overlay
+    content:
+      - selected layer editor for emitter and graphics layer fields
+      - idea field for composing an AI authoring prompt
+      - sprite-sheet capture/export controls
+      - AI effect JSON textarea
+      - AI prompt and revision prompt clipboard target
+      - export/copy controls
+effect_recipe_contract:
+  storage_target: "future: harness/content/<game>/effects/*.effect.yaml"
+  mvp_storage: "runtime JS presets and copied JSON"
+  fields:
+    - schemaVersion
+    - id
+    - name
+    - durationMs
+    - loop
+    - palette
+    - emitters
+    - graphics
+    - review
+  emitter_fields:
+    - id
+    - mode
+    - anchor
+    - texture
+    - blend
+    - quantity
+    - frequency
+    - lifespan
+    - speed
+    - angle
+    - scale
+    - alpha
+    - tint
+    - gravity
+    - delayMs
+    - durationMs
+  graphics_fields:
+    - id
+    - type
+    - anchor
+    - color
+    - alpha
+    - radius
+    - stroke
+    - delayMs
+    - durationMs
+golden_samples:
+  canonical_count: 15
+  legacy_count: 3
+  families:
+    - hit_pop_small
+    - hit_pop_crit
+    - slash_arc
+    - dash_cut_trail
+    - projectile_trail
+    - impact_shockwave
+    - heal_pulse
+    - caster_aura
+    - shield_ring
+    - poison_cloud
+    - burn_tick
+    - freeze_shatter
+    - ground_aoe_warning
+    - delayed_explosion
+    - ultimate_burst
+game_skill_drafts:
+  ninja2_count: 16
+  source_path: harness/content/ninja2/skills/_drafts
+  preset_module: harness/runtime/src/fx-lab/ninja2-skill-effects.js
+  binding_status: runtime_review_only
+  families:
+    - ninja2_kunai_slash
+    - ninja2_shuriken_barrage
+    - ninja2_smoke_bomb
+    - ninja2_shadow_breath
+    - ninja2_orbit_shuriken
+    - ninja2_lightning_kunai
+    - ninja2_fire_scroll
+    - ninja2_frost_needle
+    - ninja2_shadow_clone
+    - ninja2_moon_flash
+    - ninja2_bamboo_spear_rain
+    - ninja2_black_lotus_storm
+    - ninja2_killing_focus
+    - ninja2_time_fold
+    - ninja2_gale_steps
+    - ninja2_weakness_mark
+validation:
+  baseline:
+    - "python3 harness/tools/phaser_smoke.py mushroomer --skip-compile --no-browser"
+  runtime:
+    - "node --check harness/runtime/src/fx-lab/ninja2-skill-effects.js"
+    - "node --check harness/runtime/src/fx-lab/effect-recipes.js"
+    - "node --check harness/runtime/src/fx-lab/effect-renderer.js"
+    - "node --check harness/runtime/src/fx-lab/fx-lab-app.js"
+    - "python3 harness/tools/phaser_smoke.py mushroomer --skip-compile --runtime harness/runtime/phaser-fx-lab.html --expect ui --screenshot /private/tmp/phaser-fx-lab.png"
+browser_context:
+  ready_flag: "document.documentElement.dataset.uiHarnessReady === 'true'"
+  global_context: "__idlezPhaserUiHarness"
+  screenshot_path: /private/tmp/phaser-fx-lab.png
+known_blockers:
+  - "No compiler path yet from approved recipe YAML into runtime skill bindings."
+  - "Built-in generated textures cover inspection; external texture atlas import/authoring remains future work."
+  - "Phaser smoke uses the existing ui harness readiness contract, so the FX lab exposes compatible DOM ids."

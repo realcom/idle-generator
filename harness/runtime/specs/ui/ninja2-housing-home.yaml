@@ -6,19 +6,70 @@ status: implemented
 target_runtime:
   page: harness/runtime/survivor-runtime.html
   entrypoint: harness/runtime/src/survivor/survivor-app.js
-  implementation_mode: dom_overlay_with_phaser_nineslice_contract
+  implementation_mode: dom_overlay_with_phaser_webgl_nineslice_sections
   fixture_urls:
-    - harness/runtime/survivor-runtime.html?game=ninja2
+    - harness/runtime/survivor-runtime.html?game=ninja2&homeDemo=city
+    - harness/runtime/survivor-runtime.html?game=ninja2&fixture=city
 
 source_design:
   concepts:
     - harness/design/ninja2/concepts/ninja2_rulelocked_housing_home_a.md
-    - harness/design/ninja2/concepts/ninja2_housing_top_bottom_tabs_arcade_a.md
+    - harness/design/ninja2/concepts/ninja2_housing_bottom_loop_dock_b.md
+    - harness/design/ninja2/concepts/ninja2_housing_bottom_inspector_no_collect_c.md
   tokens:
     - harness/design/ninja2/art-direction.yaml
     - harness/design/ninja2/layout-tokens.yaml
+    - harness/design/ninja2/component-blueprints.yaml:surfaces.HousingHome
     - harness/design/ninja2/component-skins.yaml
     - harness/design/ninja2/asset-plan.yaml
+
+component_blueprint:
+  source: harness/design/ninja2/component-blueprints.yaml:surfaces.HousingHome
+  sections:
+    - top_identity_band
+    - side_utility_rail
+    - sanctuary_board
+    - bottom_action_row
+    - bottom_navigation_dock
+  runtime_contract:
+    - ".home-top maps to top_identity_band and owns hero portrait/status, horizontal resource pills, population, menu, and settings only."
+    - ".home-top must not include a centered sanctuary status plaque or 2x2 resource board; those came from a rejected reference."
+    - ".home-companions owns the D1 CompanionRoster shortcut strip above the bottom action row; progress only adds companions to the gacha pool, while actual ownership happens through a random gacha roll in the building panel."
+    - "#homeTopSkinStage and #homePanelSkinStage own Phaser WebGL 9-slice skins for reusable rectangular UI frames; DOM keeps icons, labels, values, and buttons above those skin layers."
+    - ".home-board-wrap maps to sanctuary_board and must not layer expansion costs above side or bottom UI."
+    - ".home-side maps to side_utility_rail and exposes the D1 utility entries in order: 우편, 선물, 가방, 패스."
+    - ".home-bottom, .home-tab-sortie, .home-companions, and .home-tabs preserve bottom_action_row and bottom_navigation_dock boundaries."
+    - ".home-bottom must not include a standalone left quick collect card; collect/readiness status is integrated inside the selected building panel."
+    - "Building names, costs, progress, resource values, and tab labels remain native runtime text."
+    - "Bottom tab labels reflect the current D1 loop nouns: 성소, 동료, 탐험, 임무, 상점."
+
+visual_iteration:
+  mode: section_by_section_concept_compare
+  compare_tool: harness/tools/design_visual_compare.py
+  section_order:
+    - top_identity_band
+    - side_utility_rail
+    - sanctuary_board
+    - bottom_action_row
+    - bottom_navigation_dock
+  required_artifacts_per_section:
+    - concept_crop
+    - runtime_screenshot_or_crop
+    - normalized_compare_board
+    - verdict_pass_warn_error
+    - next_edit_scope
+  command_template: >
+    python3 harness/tools/design_visual_compare.py
+    --concept <concept-section-crop.png>
+    --candidate <runtime-screenshot.png>
+    --candidate-crop <x,y,width,height>
+    --out <section-compare.png>
+    --label-concept "CONCEPT <section>"
+    --label-candidate "RUNTIME <section>"
+  iteration_policy:
+    - "If section meaning differs from the selected concept, mark ERROR and rebuild the section before micro-adjusting."
+    - "If meaning matches but proportions, padding, text density, or asset anatomy drift, mark WARN and iterate within that section."
+    - "Do not move to a new major section without a compare board and explicit verdict for the current one."
 
 screen:
   orientation: portrait_9_16
@@ -55,7 +106,7 @@ accepted_nineslice_skins:
     file: harness/runtime/assets/ninja2/ui/panel_parchment_9slice.png
     surface: selected building panel and reusable parchment cards/modals
     target_sizes_px:
-      home_panel: { width: 424, height: 112 }
+      home_panel: { width: 310, height: 126 }
       level_choice_card: { width: 122, height: 258 }
     slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
     phaser_usage: phaser_nineslice
@@ -90,20 +141,37 @@ rejected_nineslice_candidates:
     reason: "Portrait is character art, not a stretchable UI frame."
 
 runtime_notes:
-  phaser_contract: "When HousingHome moves from DOM overlay to Phaser UI, accepted skins must use Phaser 4.1 scene.add.nineslice with the exact slice_hints above."
-  dom_preview: "survivor-runtime.html may use CSS border-image/background as a DOM preview fallback only; it must not add slice_hints for rejected fixed sprites."
+  phaser_contract: "Accepted reusable skins render through #homeTopSkinStage and #homePanelSkinStage using Phaser 4.1 scene.add.nineslice with the exact slice_hints above."
+  renderer_note: "Home skin stages use transparent Phaser WebGL renderers and native scene.add.nineslice objects only. No canvas-slicing fallback is part of the HousingHome production path."
+  dom_preview: "survivor-runtime.html keeps CSS border-image as a DOM fallback only; once section skin stages draw nineslice skins, html[data-home-nineslice='phaser'] disables the duplicate DOM skin pseudo-elements."
   native_layers:
     - "Korean labels, resource values, rates, progress bars, timers, and badges stay live text/DOM or Phaser text."
     - "Resource icons and sortie emblem are image sprites, not 9-slice center art."
+
+visual_qa:
+  bottom_action_row_no_collect_c:
+    concept: harness/design/ninja2/concepts/ninja2_housing_bottom_inspector_no_collect_c.png
+    runtime_screenshot: /tmp/ninja2-bottom-no-collect-runtime-v2.png
+    compare_board: /tmp/ninja2-bottom-no-collect-compare-v2.png
+    verdict: WARN
+    notes: "Structural target is met: no standalone left collect card, production/readiness is integrated into the selected building panel, and sortie CTA remains separate. V2 increases the inspector height, thumbnail well, integrated collect chip, and action stack to better match C안. Visual fidelity remains WARN because the runtime still uses the compact production panel skin/content system rather than the concept's bespoke large building illustration and READY card art."
 
 validation:
   static:
     - "python3 harness/tools/phaser_nineslice_audit.py ninja2"
   smoke:
     - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --no-browser"
-    - "Open http://127.0.0.1:8765/harness/runtime/survivor-runtime.html?game=ninja2 and capture /tmp/ninja2-housing-home.png for visual QA"
+    - "Open http://127.0.0.1:8765/harness/runtime/survivor-runtime.html?game=ninja2&homeDemo=city and capture /tmp/ninja2-housing-home-start.png for first-start visual QA"
+    - "Optional built-city QA fixture: http://127.0.0.1:8765/harness/runtime/survivor-runtime.html?game=ninja2&fixture=city"
   checks:
     - "audit accepts top_resource_board, top_resource_chip, and panel_parchment_9slice only"
     - "sortie button remains a fixed sprite and keeps native text readable"
     - "home resource board/chips and bottom panel render without warped corners"
+    - "html[data-home-nineslice='phaser'] is set after runtime draws resource-chip and panel skins with the accepted slice hints"
     - "background, hex tiles, buildings, portraits, and icons are not marked as 9-slice"
+    - "top_identity_band, side_utility_rail, sanctuary_board, bottom_action_row, and bottom_navigation_dock remain visually separable at 430x932"
+    - "homeCompanionRoster/homeCompanionUnlockedCount/homeCompanionSummonableCount/homeCompanionGachaPool datasets reflect D1 companion summoned/available/locked state and the roster strip sits above the bottom action row without overlapping the side rail, selected building panel, sortie CTA, or sanctuary board controls"
+    - "homeResourceAmounts/homeResourceRates expose exact resource totals and production rates for auto-collection QA"
+    - "homeIntegratedCollectStatus reflects auto/idle state and the selected building panel exposes production auto-collection/readiness without a standalone collect card"
+    - "Kaede starts in the Mercenary Training Yard gacha pool, while Mio/Rin enter the pool by progress; the building panel uses one random gacha button instead of direct companion selection"
+    - "visible expansion cost markers do not overlap the side rail, selected building panel, sortie CTA, or bottom navigation dock"

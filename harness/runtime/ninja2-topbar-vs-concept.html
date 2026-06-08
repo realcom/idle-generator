@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ninja2 탑바 현재 vs 정본 시안</title>
+<style>
+  * { box-sizing: border-box; }
+
+  html,
+  body {
+    margin: 0;
+    min-height: 100%;
+    background: #101914;
+    color: #f8ead1;
+    font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  }
+
+  body {
+    padding: 14px;
+    overflow-x: auto;
+  }
+
+  .comparison {
+    display: grid;
+    grid-template-columns: repeat(2, 440px);
+    gap: 16px;
+    width: max-content;
+    margin: 0 auto;
+  }
+
+  .label {
+    display: grid;
+    height: 30px;
+    margin-bottom: 8px;
+    border: 2px solid #28382d;
+    border-radius: 8px;
+    background: #18251d;
+    font-size: 14px;
+    font-weight: 900;
+    place-items: center;
+  }
+
+  .frame {
+    width: 440px;
+    height: 170px;
+    overflow: hidden;
+    border: 4px solid #17241d;
+    border-radius: 10px;
+    background: #07110c;
+    box-shadow: 0 10px 0 rgba(0, 0, 0, .24);
+  }
+
+  iframe {
+    display: block;
+    width: 440px;
+    height: 782px;
+    border: 0;
+    background: #102219;
+  }
+
+  img {
+    display: block;
+    width: 440px;
+    height: auto;
+  }
+</style>
+</head>
+<body>
+  <main class="comparison">
+    <section>
+      <div class="label">현재 탑바</div>
+      <div class="frame">
+        <iframe src="/harness/runtime/survivor-runtime.html?game=ninja2&compare=topbar4" title="현재 탑바"></iframe>
+      </div>
+    </section>
+    <section>
+      <div class="label">정본 시안 탑바</div>
+      <div class="frame">
+        <img src="/harness/design/ninja2/concepts/ninja2_rulelocked_housing_home_a.png" alt="Ninja2 rulelocked housing home topbar">
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,5 +1,5 @@
 id: 200603
-name: "그림자광맥"
+name: "영혼광맥"
 category: Mine
 type: Mine
 grade: 2
@@ -24,6 +24,20 @@ levelUpMaterialItemGroups:
       - { id: 200102, count: 12 }
       - { id: 200103, count: 2 }
       - { id: 5, count: 2100 }
+  - level: 4
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 320 }
+      - { id: 200102, count: 160 }
+      - { id: 200103, count: 12 }
+      - { id: 5, count: 9800 }
+  - level: 5
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 720 }
+      - { id: 200102, count: 360 }
+      - { id: 200103, count: 30 }
+      - { id: 5, count: 22000 }
 
 sellAddItemGroups:
   - shouldAddAll: false
@@ -32,6 +46,20 @@ sellAddItemGroups:
       - { itemDataId: 200103, count: 1, weight: 35, group: 1, isCore: true }
       - { itemDataId: 200102, count: 2, weight: 65, group: 1 }
 
+popupArgs:
+  HousingKey: soulflame_well
+  HousingRole: rare_production
+  HousingPlacementKind: singleton
+  HousingInstanceRole: rare_resource_gate
+  HousingMaxInstancesByLanternLevel: "3:1"
+  HousingDuplicateCostScaling: none
+  HousingPurpose: "보스/특수 성장의 희귀 병목인 영혼불을 생산해 신전, 동료 스킬, 특수 건물을 성장시킨다."
+  HousingEffectKind: produce_soulflame
+  HousingFootprint: 1x1
+  HousingSpriteKey: soulflame_well
+  HousingConstructionSeconds: 600
+  HousingLevelUpSeconds: "2:900,3:2400,4:7200,5:14400"
+
 spriteGroups:
-  Icon: "Items/Ninja2/housing_shadow_mine_icon.png"
-  Building: "Housing/Ninja2/shadow_mine.png"
+  Icon: "Items/Ninja2/housing_soulflame_well_icon.png"
+  Building: "Housing/Ninja2/soulflame_well.png"

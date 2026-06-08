@@ -42,17 +42,11 @@ export const SKILL_ICON_PATHS = Object.freeze({
 
 export const RUN_SKILL_BAR = Object.freeze([
   { id: 300101, name: '쿠나이', icon: '刃', sprite: SKILL_ICON_PATHS[300101], color: '#ffe17a', cooldown: 0.55, offset: 0 },
-  { id: 300103, name: '연막', icon: '煙', sprite: SKILL_ICON_PATHS[300103], color: '#8bd8d0', cooldown: 2.1, offset: 0.7 },
-  { id: 300115, name: '질풍', icon: '風', sprite: SKILL_ICON_PATHS[300115], color: '#8bd95c', cooldown: 5.4, offset: 1.8 },
 ]);
 
 export const RUN_PROFILE_SKILL_ROWS = Object.freeze({
   active: RUN_SKILL_BAR.map(({ id, name, icon, sprite, color }) => ({ id, name, icon, sprite, color })),
-  passive: Object.freeze([
-    { id: 300104, name: '그림자 호흡', icon: '息', sprite: SKILL_ICON_PATHS[300104], color: '#36e0d4' },
-    { id: 300113, name: '살의 집중', icon: '瞳', sprite: SKILL_ICON_PATHS[300113], color: '#ff6b55' },
-    { id: 300114, name: '시간 접기', icon: '刻', sprite: SKILL_ICON_PATHS[300114], color: '#43e7ff' },
-  ]),
+  passive: Object.freeze([]),
 });
 
 export const SKILL_VFX_PROFILES = Object.freeze({

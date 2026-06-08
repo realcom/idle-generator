@@ -10,7 +10,9 @@ target_runtime:
   fixture_urls:
     - harness/runtime/survivor-runtime.html?game=ninja2
     - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle
+    - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelup=demo&skilluse=demo&fullAssets=1
     - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&vfx=demo
+    - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&encounter=demo
 
 source_design:
   concepts:
@@ -40,7 +42,7 @@ regions:
       units: "IdlezBoard-triggered player, enemy waves, boss, projectiles, drops"
   dom_overlay:
     top_hud:
-      left: "hero portrait, HP bar, level, kills, and two compact acquired-skill rows: active skills first, passive skills second"
+      left: "hero portrait, HP bar, level, kills, and a compact skill row; start state shows only the basic 300101 auto attack, then acquired run skills replace the row"
       center: "stage label and timer"
       right: "actual run resource ledger for wood, stone, soulflame, and gold; each chip starts at 0 and pulses a +gain badge only when that resource is collected"
       progress: "8-segment wave track, filled from current wave progress"
@@ -49,7 +51,7 @@ regions:
       placement: "under top HUD, narrow centered pill"
     controls:
       joystick: "bottom-left translucent touch affordance"
-      skill_buttons: "bottom-right cooldown buttons removed; acquired active/passive skills are represented as icon-only rows under the hero profile"
+      skill_buttons: "bottom-right companion skill buttons for Kaede, Mio, and Rin; progress only adds companions to the mercenary gacha pool, and each button activates only after the companion is obtained by the building gacha"
       exp_bar: "bottom EXP bar with fixed badge"
 
 asset_keys:
@@ -109,6 +111,21 @@ asset_keys:
       runtime_paths:
         - harness/runtime/src/survivor/skill-vfx.js
       usage: "Phaser-native skill VFX profiles for all 16 run-level Ninja2 survivor skills; use ?vfx=demo for sequential verification"
+    - key: ninja2.ui.battle_counter_icons_v1
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/battle-counters/counter_time.png
+        - harness/runtime/assets/ninja2/ui/battle-counters/counter_kill.png
+        - harness/runtime/assets/ninja2/ui/battle-counters/counter_enemy.png
+        - harness/runtime/assets/ninja2/ui/battle-counters/counter_pickup.png
+        - harness/runtime/assets/ninja2/ui/battle-counters/counter_boss.png
+      usage: "Generated transparent icon atoms for timer, kill, enemy, pickup, and boss/stage battle HUD counters"
+    - key: ninja2.battle.encounter_icons.light_v1
+      runtime_paths:
+        - harness/runtime/assets/ninja2/battle/encounters/encounter_bomb.png
+        - harness/runtime/assets/ninja2/battle/encounters/encounter_magnet.png
+        - harness/runtime/assets/ninja2/battle/encounters/encounter_potion.png
+        - harness/runtime/assets/ninja2/battle/encounters/encounter_mine.png
+      usage: "Generated lightweight PNG world-pickup atoms for map-trigger random encounters; Phaser Graphics versions are fallback only"
   planned_blocker:
     - key: ninja2.battle.sprite_atlas.enemies_pickups
       planned_runtime_path: harness/runtime/assets/ninja2/battle/enemies_pickups_atlas.png
@@ -133,6 +150,8 @@ skill_vfx:
   implementation: harness/runtime/src/survivor/skill-vfx.js
   scope: "run-level skill and growth cards; no persistent skill tree dependency"
   profile_count: 16
+  d1_runtime_choice_pool: [300102, 300103, 300115]
+  basic_auto_attack: 300101
   demo_url: "harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&vfx=demo"
   asset_mode: "The default ?vfx=demo path uses generated-vfx-demo fallback textures so headless Phaser validation focuses on skill silhouettes. Add fullAssets=1 to validate generated PNG preload as a separate visual pass."
   families:
@@ -167,27 +186,76 @@ runtime_state_contract:
     - survivorPickupCount
     - survivorStageProgress
     - survivorTick
+    - survivorCameraReady
+    - survivorCameraScrollX
+    - survivorCameraScrollY
+    - survivorPlayerScreenX
+    - survivorPlayerScreenY
+    - survivorPlayerVisible
     - survivorAssetMode
     - survivorSkillVfxReady
     - survivorSkillVfxCount
     - survivorSkillVfxLast
     - survivorSkillVfxDemo
+    - survivorRunSkillCount
+    - survivorRunSkillLastCast
+    - survivorRunSkillLastCastSource
+    - survivorRunSkillSpawnCount
+    - survivorRunSkillLastSpawn
+    - survivorRunSkillDamageCount
+    - survivorRunSkillDamageTotal
+    - survivorRunSkillLastDamage
+    - survivorRunSkillFeedbackCount
+    - survivorRunSkillLastFeedback
+    - survivorRunSkillLastFeedbackName
+    - survivorRunSkillAutoCasts
+    - survivorRunSkillLastAuto
+    - survivorCompanionRoster
+    - survivorCompanionSkillCount
+    - survivorCompanionReadyCount
+    - survivorCompanionSkillCasts
+    - survivorCompanionLastSkill
+    - survivorCompanionMioHeal
+    - survivorEncounterActiveCount
+    - survivorEncounterCollected
+    - survivorEncounterMined
+    - survivorEncounterLast
+    - survivorEncounterTriggerSerial
+    - survivorEncounterTriggerType
+    - survivorEncounterDemoStep
+    - survivorEncounterMineProgress
+    - survivorEncounterDemo
+    - survivorMagnetActive
 
 validation:
   baseline:
     - "python3 harness/tools/phaser_smoke.py ninja2 --no-browser"
   browser:
-    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --no-browser"
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --screenshot /tmp/ninja2-survivor-battle.png"
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --query 'game=ninja2&mode=battle&levelup=demo&skilluse=demo&fullAssets=1' --timeout 140 --screenshot /tmp/ninja2-survivor-skilluse.png"
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --query 'game=ninja2&mode=battle&vfx=demo' --timeout 120 --screenshot /tmp/ninja2-survivor-vfx.png"
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --query 'game=ninja2&mode=battle&encounter=demo' --timeout 50 --screenshot /tmp/ninja2-survivor-encounters.png"
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --query 'game=ninja2&mode=battle&loop=boss' --timeout 140 --screenshot /tmp/ninja2-survivor-loop.png"
     - "Open http://127.0.0.1:8765/harness/runtime/survivor-runtime.html?game=ninja2&mode=battle"
   screenshots:
     - /tmp/ninja2-survivor-battle.png
   checks:
     - "home and battle modes are nonblank"
     - "canvas is visible in battle mode"
-    - "HUD, objective strip, joystick, profile skill icon rows, and EXP bar do not overlap at mobile width"
+    - "HUD, objective strip, joystick, companion skill dock, profile skill icon rows, and EXP bar do not overlap at mobile width"
     - "dataset survivorBattleReady=true after battle autostart"
+    - "dataset survivorPlayerVisible=true after camera framing; player screen coordinates should stay inside the viewport center band"
     - "dataset survivorSkillVfxReady=true and survivorSkillVfxCount=16 after runtime boot"
+    - "D1 runtime starts with only basic auto attack 300101 visible in the profile skill row; the first level-up choice pool is limited to 300102, 300103, and 300115"
+    - "with ?levelup=demo&skilluse=demo&fullAssets=1, the smoke runner selects from the D1 level-up pool and verifies survivorRunSkillSpawnCount>=1, survivorRunSkillDamageCount>=1, survivorRunSkillDamageTotal>0, and survivorRunSkillFeedbackCount>=1"
+    - "acquired run skill casts pulse the profile skill icon, show a short skill-cast chip in the HUD, and float the skill name near the player so usage is readable during combat"
+    - "battle timer, kill, enemy, pickup, and boss/stage counters use generated ninja2.ui.battle_counter_icons_v1 PNG backgrounds from /battle-counters/"
+    - "bomb, magnet, potion, and mine encounter pickups use generated ninja2.battle.encounter_icons.light_v1 PNG textures from /battle/encounters/ and render at lightweight in-world sizes"
     - "with ?vfx=demo, survivorAssetMode=generated-vfx-demo, survivorSkillVfxDemo reaches done, and survivorSkillVfxDemoFired=16"
+    - "with ?encounter=demo, existing map update triggers publish encounter board variables 610/611/612, survivorEncounterTriggerSerial reaches >=4, bomb/magnet/potion are collected, the mine encounter reaches 3s hold completion, survivorEncounterMined>=1, and run resources increase"
+    - "with ?loop=boss, the smoke runner auto-selects level choices, kills boss unit 110501, reaches player-win result mode, and renders non-empty reward rows"
     - "main character walk cycle animates while moving"
     - "generated common monster sprites render in battle with left/right side mirroring"
     - "battle resource ledger and run drop sprites render the generated coin, soulflame, wood, and stone PNGs instead of CSS/Graphics placeholder shapes"
+    - "companion skill dock renders three D1 companion buttons; gacha-owned buttons call board.startSkill and update survivorCompanionLastSkill"
+    - "Mio's companion skill applies an actual player HP heal/shield side effect and updates survivorCompanionMioHeal"

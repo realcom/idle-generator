@@ -1,0 +1,68 @@
+id: 200606
+name: "주민 숙소"
+category: Mine
+type: Mine
+grade: 2
+power: 18
+efficiencyPercents: [100.0, 112.0, 126.0, 141.0, 158.0]
+maxStamina: 90
+staminaRegenPerSecond: 0.0100
+sellPrice: 0
+requiredExps: [0, 140, 300, 620, 1100]
+
+addStats:
+  - { type: SellPricePercent, value: [1, 2, 3, 5, 8] }
+
+levelUpMaterialItemGroups:
+  - level: 2
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 160 }
+      - { id: 200102, count: 70 }
+      - { id: 200103, count: 3 }
+      - { id: 5, count: 4400 }
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 340 }
+      - { id: 200102, count: 160 }
+      - { id: 200103, count: 8 }
+      - { id: 5, count: 9800 }
+  - level: 4
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 760 }
+      - { id: 200102, count: 360 }
+      - { id: 200103, count: 20 }
+      - { id: 5, count: 22000 }
+  - level: 5
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 1600 }
+      - { id: 200102, count: 760 }
+      - { id: 200103, count: 46 }
+      - { id: 5, count: 50000 }
+
+sellAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200109, minCount: 1, maxCount: 2, isCore: true }
+
+popupArgs:
+  HousingKey: resident_lodge
+  HousingRole: capacity
+  HousingPlacementKind: repeatable
+  HousingInstanceRole: capacity_storage_node
+  HousingMaxInstancesByLanternLevel: "4:1,5:2,6:3"
+  HousingDuplicateCostScaling: "cost_x1.25_per_extra,time_x1.15_per_extra"
+  HousingPurpose: "주민 수용량과 오프라인 보상 한도를 늘려 여러 생산 건물을 동시에 굴리게 한다."
+  HousingEffectKind: resident_cap_and_offline
+  HousingFootprint: 1x2
+  HousingSpriteKey: storage
+  HousingConstructionSeconds: 1200
+  HousingLevelUpSeconds: "2:1800,3:5400,4:14400,5:28800"
+
+spriteGroups:
+  Icon: "Items/Ninja2/housing_resident_lodge_icon.png"
+  Building: "Housing/Ninja2/storage.png"

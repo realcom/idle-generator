@@ -59,6 +59,13 @@ assets:
 **스프라이트·아이콘 생성 워크플로우**:
 - **AI 기획 중**: `tools/asset_gen_helper.py --category <Type> --desc "설명"` (dry-run) → 검토 → `--execute`
 - **사용자 검증**: Unity `Tools > Asset Generator` 메뉴로 실시간 평가·재생성
+- **스프라이트 애니메이션**: [Sprite Animation Process](sprite-animation-process.md)의 키포즈 계약 → strip-first 생성 → shared-anchor 정규화 → QC 게이트를 통과한 뒤 바인딩한다.
+
+**UI 아이콘 생산 규칙**:
+- 플레이어에게 보이는 최종 UI 아이콘(`ui_icon_set`, 탭/사이드/재화/상태/버튼 glyph)은 built-in `imagegen`/`image_gen`으로 원본 아트워크를 생성한다.
+- Pillow, CSS, emoji, Phaser Graphics, 수작업 스크립트는 최종 아이콘 그림을 새로 그리는 용도가 아니라 chroma-key 제거, alpha 검증, crop, resize, packing, naming 같은 후처리 용도로만 사용한다.
+- `asset-plan.yaml`에는 `generated_with`, `source_path`, `alpha_source_path` 등 원본 imagegen 산출물과 후처리 과정을 추적할 수 있는 필드를 남긴다.
+- 임시 placeholder 아이콘은 `ai-draft` 또는 runtime prototype으로만 취급하고, 승인/런타임 반영 전에 imagegen 기반 아이콘으로 교체한다.
 
 **효과음 생성 워크플로우**:
 - AI가 Web Audio/H5 레시피 JS를 작성한다.

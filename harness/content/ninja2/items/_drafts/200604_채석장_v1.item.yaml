@@ -1,0 +1,64 @@
+id: 200604
+name: "채석장"
+category: Mine
+type: Mine
+grade: 1
+power: 14
+efficiencyPercents: [100.0, 116.0, 135.0, 157.0, 183.0]
+maxStamina: 70
+staminaRegenPerSecond: 0.0143
+sellPrice: 0
+requiredExps: [0, 95, 210, 420, 760]
+
+levelUpMaterialItemGroups:
+  - level: 2
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 50 }
+      - { id: 200102, count: 14 }
+      - { id: 5, count: 1200 }
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 95 }
+      - { id: 200102, count: 32 }
+      - { id: 200103, count: 1 }
+      - { id: 5, count: 2500 }
+  - level: 4
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 180 }
+      - { id: 200102, count: 72 }
+      - { id: 200103, count: 3 }
+      - { id: 5, count: 5600 }
+  - level: 5
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 360 }
+      - { id: 200102, count: 150 }
+      - { id: 200103, count: 8 }
+      - { id: 5, count: 12000 }
+
+sellAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200102, minCount: 1, maxCount: 2, isCore: true }
+
+popupArgs:
+  HousingKey: stone_quarry
+  HousingRole: production
+  HousingPlacementKind: repeatable
+  HousingInstanceRole: production_node
+  HousingMaxInstancesByLanternLevel: "2:1,4:2,6:3"
+  HousingDuplicateCostScaling: "cost_x1.25_per_extra,time_x1.15_per_extra"
+  HousingPurpose: "신전 강화, 타일 정화, 중반 건물 업그레이드에 필요한 석재 병목을 푼다."
+  HousingEffectKind: produce_stone
+  HousingFootprint: 1x2
+  HousingSpriteKey: stone_quarry
+  HousingConstructionSeconds: 180
+  HousingLevelUpSeconds: "2:300,3:900,4:2400,5:7200"
+
+spriteGroups:
+  Icon: "Items/Ninja2/housing_stone_quarry_icon.png"
+  Building: "Housing/Ninja2/stone_quarry.png"

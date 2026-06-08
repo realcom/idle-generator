@@ -149,12 +149,19 @@ progression:
         passive_building_bonuses: "Item.Category=Stat 또는 Buff/achievement reward"
         visual_buildings: "3D풍 pre-rendered building sprite atlas 또는 필요 시 Unit.Type=Building"
         resident_characters: "2D Spine-style 주민/수호자 캐릭터를 하우징 보드 위에 y-sort로 배치"
+        placement_model: "건물 정의는 blueprint, 실제 보드 배치는 instance. 저장고/수용량/일반 생산 건물은 repeatable, 신전/관리/전역 보너스 건물은 singleton."
+        starting_built: "첫 진입 시 등불 신전 1개만 설치되어 있고, 목재 작업장과 용병 훈련소는 온보딩 건설 목표로 제공한다."
         sortie_flow: "하우징 홈의 출격 버튼으로 별도 Survival 전투 화면 진입"
         visual_contract: "하우징은 전투보다 예쁜 2.5D 소유감을 허용한다. 헥스 타일은 built/selected/empty/locked/fogged/expandable 상태를 명확히 구분하고, 건물은 둥근 3D풍 디오라마 자산처럼 표현한다. 주민/수호자는 2D Spine 캐릭터로 얹고, UI는 전투와 같은 굵은 외곽선/재화 색상 규칙을 공유한다."
       first_nodes:
-        - { id: 200601, name: "수련마당", output: "경험치/전투 성장" }
-        - { id: 200602, name: "대나무창고", output: "영지 목재" }
-        - { id: 200603, name: "그림자광맥", output: "그림자 광석" }
+        - { id: 200600, name: "등불 신전", output: "성소 레벨/타일 확장" }
+        - { id: 200602, name: "목재 작업장", output: "목재" }
+        - { id: 200601, name: "용병 훈련소", output: "경험치/동료 성장" }
+        - { id: 200604, name: "채석장", output: "석재" }
+        - { id: 200603, name: "영혼광맥", output: "영혼불" }
+      expansion_nodes:
+        ring_2: [200605, 200606, 200607, 200608, 200609]
+        ring_3: [200610, 200611, 200612]
     future_4x:
       unlock_after: "Survival+Housing D7 loop 검증"
       reuse_assets: [housing_buildings, clan_tokens, territory_materials]

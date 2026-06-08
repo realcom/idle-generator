@@ -14,6 +14,8 @@ Purpose: make the 9-slice decision before UI assets, Phaser specs, or runtime co
 ## Always read
 
 - `harness/runtime/NINE_SLICE_UI.md`
+- `harness/design/COMPONENT_BLUEPRINTS.md`
+- `harness/design/<game>/component-blueprints.yaml`
 - `harness/design/<game>/asset-plan.yaml`
 - `harness/design/<game>/component-skins.yaml`
 - Relevant `harness/runtime/specs/ui/*.yaml` when a UI spec already exists.
@@ -29,13 +31,19 @@ Purpose: make the 9-slice decision before UI assets, Phaser specs, or runtime co
    - clean corner caps and edge caps
    - center area can stretch or tile without visible artifacts
    - target size is larger than `left + right` and `top + bottom`
-4. Record or revise the asset-plan contract:
+4. If the concept has border ornaments, corner clusters, crests, badges, vines, or clasps, decide whether they are stretch-safe:
+   - stretch-safe frame material can stay in the 9-slice skin
+   - non-stretch-safe decoration must become a fixed ornament sprite layer in `component-blueprints.yaml`
+5. Record or revise the blueprint and asset-plan contract:
+   - `component-blueprints.yaml` `skin_contract.slice_hints_px`
+   - `component-blueprints.yaml` `skin_contract.content_insets_px`
+   - `component-blueprints.yaml` `asset_dependency_matrix`
    - `slice_hints: { left, right, top, bottom }`
    - `phaser.usage: phaser_nineslice`
    - `unity.usage: sliced_sprite` when Unity shares the asset
    - separate state files when cap geometry differs by state
-5. Ensure Phaser UI specs call out the chosen skin and dimensions; runtime implementation should use Phaser 4.1 WebGL `scene.add.nineslice(...)`.
-6. Run `python3 harness/tools/phaser_nineslice_audit.py <game>` and the relevant Phaser smoke/screenshot when the surface is visual.
+6. Ensure Phaser UI specs call out the chosen skin, content insets, ornament layers, and dimensions; runtime implementation should use Phaser 4.1 WebGL `scene.add.nineslice(...)`.
+7. Run `python3 harness/tools/design_blueprint_validate.py <game>` and `python3 harness/tools/phaser_nineslice_audit.py <game>`; also run the relevant Phaser smoke/screenshot when the surface is visual.
 
 ## Rules
 
@@ -43,6 +51,7 @@ Purpose: make the 9-slice decision before UI assets, Phaser specs, or runtime co
 - Do not use CSS as the production 9-slice renderer. CSS is acceptable for debug or DOM-only previews.
 - Prefer Phaser graphics for plain rounded boxes and simple progress bars.
 - Prefer fixed images or sprites for small fixed-size widgets.
+- Prefer fixed transparent ornament sprites for non-stretch-safe frame decorations.
 - Keep Unity and Phaser cap insets identical unless an intentional platform divergence is documented.
 - Do not implement unrelated runtime UI while preparing the 9-slice contract.
 

@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phaser FX Lab</title>
+<script src="https://cdn.jsdelivr.net/npm/phaser@4.1.0/dist/phaser.min.js"></script>
+<style>
+:root {
+  --bg: #15171c;
+  --panel: #232733;
+  --panel-2: #2c3240;
+  --panel-3: #343b4b;
+  --stage: #080a0e;
+  --line: #3f4656;
+  --line-soft: rgba(255, 255, 255, .09);
+  --text: #edf1f8;
+  --muted: #a6afbf;
+  --cyan: #48c8e8;
+  --gold: #f5bd42;
+  --green: #77d36a;
+  --coral: #ef745f;
+  --violet: #9b7bff;
+  --font-scale: .7;
+}
+* { box-sizing: border-box; }
+html,
+body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  background: linear-gradient(180deg, #11141a, #191c23 55%, #111318);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: calc(16px * var(--font-scale));
+  letter-spacing: 0;
+  overflow-x: hidden;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button {
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+}
+.topbar {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line);
+  background: #20242e;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin-right: 4px;
+  font-weight: 900;
+}
+.brand-mark {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  color: #090b10;
+}
+.brand span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.top-spacer { flex: 1; }
+.tool-button,
+.icon-button,
+.seg-button,
+.preset-button,
+.chip-button {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #2d3340;
+  color: var(--text);
+}
+.tool-button {
+  min-height: 32px;
+  padding: 0 11px;
+  font-size: calc(12px * var(--font-scale));
+  font-weight: 800;
+}
+.tool-button.primary {
+  background: var(--gold);
+  color: #211706;
+  border-color: #ffd779;
+}
+.tool-button.good {
+  background: var(--green);
+  color: #10200d;
+  border-color: #a0e991;
+}
+.tool-button.warn {
+  background: #4a302f;
+  border-color: #79514b;
+  color: #ffd6ce;
+}
+.icon-button {
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  font-size: calc(16px * var(--font-scale));
+}
+.tool-button:hover,
+.icon-button:hover,
+.seg-button:hover,
+.preset-button:hover,
+.chip-button:hover {
+  border-color: var(--cyan);
+}
+.fx-shell {
+  height: calc(100dvh - 46px);
+  min-height: 690px;
+  display: grid;
+  grid-template-columns: 328px minmax(420px, 1fr) 364px;
+  gap: 10px;
+  padding: 10px;
+  overflow: hidden;
+}
+.rail,
+.inspector,
+.preview {
+  min-width: 0;
+  min-height: 0;
+}
+.rail,
+.inspector {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  overflow: auto;
+}
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .035), transparent 42%), var(--panel);
+  overflow: hidden;
+}
+.panel-head {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--panel-2);
+}
+.panel-title {
+  min-width: 0;
+  font-size: calc(13px * var(--font-scale));
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.panel-body {
+  padding: 10px;
+}
+.hint {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  line-height: 1.35;
+}
+.preset-list {
+  display: grid;
+  gap: 5px;
+  max-height: 252px;
+  overflow: auto;
+  padding-right: 2px;
+}
+.preset-button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 38px 1fr auto;
+  gap: 7px;
+  align-items: center;
+  min-height: 42px;
+  padding: 5px 7px;
+  text-align: left;
+}
+.preset-button.active {
+  border-color: var(--gold);
+  background: #393525;
+}
+.preset-preview {
+  width: 38px;
+  height: 30px;
+  border-radius: 6px;
+  background:
+    radial-gradient(circle at 64% 42%, rgba(255, 255, 255, .95) 0 4px, transparent 5px),
+    radial-gradient(circle at 50% 50%, var(--preview-a, #8be36d) 0 9px, transparent 10px),
+    radial-gradient(circle at 32% 54%, var(--preview-b, #f7d66a) 0 6px, transparent 7px),
+    #11151b;
+  border: 1px solid rgba(255, 255, 255, .12);
+}
+.preset-name {
+  min-width: 0;
+  font-size: calc(13px * var(--font-scale));
+  font-weight: 850;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.preset-id {
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.preset-meta {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.preset-chip {
+  width: 40px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  background: #151922;
+  color: var(--cyan);
+  font-size: calc(10px * var(--font-scale));
+  font-weight: 900;
+}
+.module-list {
+  display: grid;
+  gap: 8px;
+}
+.layer-list {
+  display: grid;
+  gap: 7px;
+}
+.layer-button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #252b36;
+  text-align: left;
+}
+.layer-button.active {
+  border-color: var(--gold);
+  background: #393525;
+}
+.layer-kind {
+  width: 34px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: #111720;
+  color: var(--cyan);
+  font-size: calc(10px * var(--font-scale));
+  font-weight: 950;
+}
+.layer-meta {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.layer-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: calc(12px * var(--font-scale));
+  font-weight: 900;
+}
+.layer-sub {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: calc(10px * var(--font-scale));
+  font-weight: 750;
+}
+.layer-chip {
+  min-width: 46px;
+  min-height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  background: #151922;
+  color: #ffe6a6;
+  font-size: calc(10px * var(--font-scale));
+  font-weight: 900;
+}
+.editor-grid,
+.sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.field {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+.field.wide {
+  grid-column: 1 / -1;
+}
+.field label {
+  color: var(--muted);
+  font-size: calc(10px * var(--font-scale));
+  font-weight: 850;
+}
+.field input,
+.field select {
+  width: 100%;
+  min-height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #10141a;
+  color: var(--text);
+  padding: 0 8px;
+  min-width: 0;
+}
+.sheet-status {
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 800;
+}
+.module {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #252b36;
+  overflow: hidden;
+}
+.module-title {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--line-soft);
+  color: #dfe7f1;
+  font-size: calc(12px * var(--font-scale));
+  font-weight: 900;
+}
+.module-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 99px;
+  background: var(--cyan);
+}
+.row {
+  display: grid;
+  grid-template-columns: 92px 1fr 42px;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 8px;
+}
+.row label {
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 750;
+}
+.row output {
+  color: #dfe6ef;
+  text-align: right;
+  font-size: calc(11px * var(--font-scale));
+  font-variant-numeric: tabular-nums;
+}
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--cyan);
+}
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip-button {
+  min-height: 28px;
+  padding: 0 9px;
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 850;
+}
+.chip-button.active {
+  border-color: var(--gold);
+  color: #ffe6a6;
+  background: #3a3425;
+}
+.review-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+.status-pill {
+  max-width: 138px;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: #1a2028;
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 900;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.status-pill[data-state="approved"] {
+  background: #1f4b25;
+  color: #bff3ae;
+}
+.status-pill[data-state="needs_work"] {
+  background: #5b2d25;
+  color: #ffd2c9;
+}
+#previewStatus.is-error {
+  background: #6a2d26;
+  color: #ffe0da;
+}
+.notes,
+.idea-input {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #10141a;
+  color: var(--text);
+  padding: 9px;
+}
+.notes {
+  min-height: 74px;
+}
+.idea-input {
+  min-height: 68px;
+}
+.preview {
+  display: grid;
+  grid-template-rows: 48px minmax(430px, 1fr) 118px;
+  gap: 8px;
+}
+.preview-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 7px 9px;
+}
+.active-name {
+  min-width: 0;
+  font-weight: 950;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.transport {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  overflow: hidden;
+}
+.seg-button {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 850;
+}
+.seg-button:last-child { border-right: 0; }
+.seg-button.active {
+  background: #3a3425;
+  color: #ffe6a6;
+}
+.stage-frame {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    repeating-conic-gradient(#242936 0% 25%, #1d222d 0% 50%) 50%/26px 26px;
+  overflow: hidden;
+  position: relative;
+}
+#modalStage {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 430px;
+  display: grid;
+  place-items: center;
+}
+#fxCanvas {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 430px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+#fxCanvas canvas {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  max-height: 100%;
+  display: block;
+  object-fit: contain;
+}
+.timeline {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 9px;
+}
+.timeline-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 800;
+}
+.timeline-track {
+  position: relative;
+  height: 22px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background:
+    linear-gradient(90deg, rgba(72, 200, 232, .34), rgba(245, 189, 66, .48)),
+    #11151b;
+  overflow: hidden;
+}
+.timeline-playhead {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  left: 0;
+  width: 3px;
+  border-radius: 3px;
+  background: #ffffff;
+  box-shadow: 0 0 12px var(--cyan);
+  animation: playhead 1.5s linear infinite;
+}
+@keyframes playhead {
+  from { left: 0; }
+  to { left: calc(100% - 3px); }
+}
+.timeline-marks {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+}
+.timeline-marks span {
+  height: 28px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #151a21;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 8px;
+}
+.metric {
+  min-height: 52px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #20252e;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 2px;
+}
+.metric span {
+  color: var(--gold);
+  font-size: calc(18px * var(--font-scale));
+  font-weight: 950;
+}
+.metric b {
+  color: var(--muted);
+  font-size: calc(10px * var(--font-scale));
+}
+.tab-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+.tab-row button {
+  min-height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #303746;
+  color: var(--muted);
+  font-size: calc(12px * var(--font-scale));
+  font-weight: 850;
+}
+.tab-row button.active {
+  background: #3b3928;
+  border-color: var(--gold);
+  color: #ffe7a2;
+}
+.codebox {
+  width: 100%;
+  height: 36dvh;
+  min-height: 244px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #0d1117;
+  color: #edf6ee;
+  padding: 10px;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: calc(12px * var(--font-scale));
+  line-height: 1.45;
+}
+.promptbox {
+  height: 176px;
+  min-height: 176px;
+}
+.split-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 8px;
+}
+@media (max-width: 1100px) {
+  .fx-shell {
+    height: auto;
+    overflow: visible;
+    grid-template-columns: 1fr;
+  }
+  .preview {
+    grid-row: 1;
+  }
+  .rail,
+  .inspector {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 680px) {
+  .topbar {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+  }
+  .brand {
+    grid-column: 1 / -1;
+  }
+  .top-spacer {
+    display: none;
+  }
+  .tool-button {
+    min-width: 0;
+    padding: 0 7px;
+    font-size: calc(11px * var(--font-scale));
+  }
+  .fx-shell {
+    min-height: 0;
+    padding: 8px;
+  }
+  .rail,
+  .inspector {
+    grid-template-columns: 1fr;
+  }
+  .preview {
+    grid-template-rows: auto minmax(320px, auto) auto;
+  }
+  .preview-top,
+  .transport {
+    flex-wrap: wrap;
+  }
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .split-actions {
+    grid-template-columns: 1fr;
+  }
+  .editor-grid,
+  .sheet-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-mark">FX</span><span>AI FX Review Lab</span></div>
+  <button id="topReplayBtn" type="button" class="tool-button">Replay</button>
+  <button id="topLoadBtn" type="button" class="tool-button">Load AI JSON</button>
+  <button id="topPromptBtn" type="button" class="tool-button">AI Prompt</button>
+  <span class="top-spacer"></span>
+  <button id="copyJsonBtn" type="button" class="tool-button">Copy JSON</button>
+  <button id="exportSheetTopBtn" type="button" class="tool-button">Sheet</button>
+  <button id="downloadJsonBtn" type="button" class="tool-button primary">Export Approved</button>
+</header>
+
+<main class="fx-shell">
+  <aside class="rail">
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">AI Draft Samples</div>
+        <span id="sampleCount" class="status-pill">0 refs</span>
+      </div>
+      <div class="panel-body">
+        <div id="presetList" class="preset-list"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Preview Tuning</div>
+      </div>
+      <div class="panel-body module-list">
+        <div class="module">
+          <div class="module-title"><span class="module-dot"></span>Emission</div>
+          <div class="row"><label for="intensityRange">Intensity</label><input id="intensityRange" type="range" min="0.35" max="2.5" step="0.05" value="1.35"><output id="intensityOut">1.35</output></div>
+          <div class="row"><label for="scaleRange">Scale</label><input id="scaleRange" type="range" min="0.6" max="2.2" step="0.05" value="1.25"><output id="scaleOut">1.25</output></div>
+          <div class="row"><label for="speedRange">Speed</label><input id="speedRange" type="range" min="0.45" max="1.8" step="0.05" value="0.9"><output id="speedOut">0.90</output></div>
+        </div>
+        <div class="module">
+          <div class="module-title"><span class="module-dot" style="background:var(--gold)"></span>Inspection</div>
+          <div class="chip-row" id="backgroundMode">
+            <button type="button" class="chip-button active" data-bg="dark">Dark</button>
+            <button type="button" class="chip-button" data-bg="arena">Arena</button>
+            <button type="button" class="chip-button" data-bg="alpha">Alpha</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Effect Layers</div>
+        <span id="layerCount" class="status-pill">0 layers</span>
+      </div>
+      <div class="panel-body">
+        <div id="layerList" class="layer-list"></div>
+        <div class="split-actions">
+          <button id="addEmitterBtn" type="button" class="tool-button">+ Emitter</button>
+          <button id="addGraphicBtn" type="button" class="tool-button">+ Graphic</button>
+          <button id="duplicateLayerBtn" type="button" class="tool-button">Duplicate</button>
+        </div>
+        <div class="split-actions">
+          <button id="moveLayerUpBtn" type="button" class="tool-button">Move Up</button>
+          <button id="moveLayerDownBtn" type="button" class="tool-button">Move Down</button>
+          <button id="deleteLayerBtn" type="button" class="tool-button warn">Delete</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Human Review</div>
+        <span id="reviewState" class="status-pill" data-state="draft">draft</span>
+      </div>
+      <div class="panel-body">
+        <div class="review-row">
+          <button id="approveBtn" type="button" class="tool-button good">Approve</button>
+          <button id="needsWorkBtn" type="button" class="tool-button warn">Needs Work</button>
+        </div>
+        <div class="split-actions">
+          <button id="copyFixPromptBtn" type="button" class="tool-button">Copy Fix Prompt</button>
+        </div>
+        <textarea id="reviewNotes" class="notes" spellcheck="false" aria-label="Review notes"></textarea>
+      </div>
+    </section>
+  </aside>
+
+  <section class="preview">
+    <div class="preview-top">
+      <div id="activeRecipeName" class="active-name">Effect</div>
+      <div class="transport">
+        <div class="segmented" id="playMode">
+          <button type="button" class="seg-button active" data-mode="loop">Loop</button>
+          <button type="button" class="seg-button" data-mode="oneshot">One Shot</button>
+        </div>
+        <button id="replayBtn" type="button" class="icon-button" title="Replay">↻</button>
+        <span id="previewStatus" class="status-pill">Booting</span>
+      </div>
+    </div>
+    <div class="stage-frame">
+      <div id="modalStage">
+        <div id="fxCanvas"></div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-head"><span>Timeline Preview</span><span id="timelineLabel">0.0s → 1.5s</span></div>
+      <div class="timeline-track"><span class="timeline-playhead"></span></div>
+      <div class="timeline-marks"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div id="metrics" class="metrics"></div>
+    </div>
+  </section>
+
+  <aside class="inspector">
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Detail Tweaks</div>
+        <span id="selectedLayerBadge" class="status-pill">none</span>
+      </div>
+      <div class="panel-body">
+        <div class="editor-grid">
+          <div class="field wide">
+            <label for="layerIdInput">Id</label>
+            <input id="layerIdInput" type="text" spellcheck="false">
+          </div>
+          <div class="field">
+            <label for="layerKindInput">Kind</label>
+            <input id="layerKindInput" type="text" disabled>
+          </div>
+          <div class="field">
+            <label for="layerVariantInput">Mode / Shape</label>
+            <select id="layerVariantInput"></select>
+          </div>
+          <div class="field">
+            <label for="layerAnchorInput">Anchor</label>
+            <select id="layerAnchorInput">
+              <option value="caster">caster</option>
+              <option value="target">target</option>
+              <option value="midpoint">midpoint</option>
+              <option value="path">path</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="layerTextureInput">Texture</label>
+            <select id="layerTextureInput">
+              <option value="spark">spark</option>
+              <option value="soft">soft</option>
+              <option value="glow">glow</option>
+              <option value="ring">ring</option>
+              <option value="shard">shard</option>
+              <option value="leaf">leaf</option>
+              <option value="slash">slash</option>
+              <option value="mote">mote</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="layerBlendInput">Blend</label>
+            <select id="layerBlendInput">
+              <option value="ADD">ADD</option>
+              <option value="NORMAL">NORMAL</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="layerQuantityInput">Quantity</label>
+            <input id="layerQuantityInput" type="number" min="0" step="1">
+          </div>
+          <div class="field">
+            <label for="layerFrequencyInput">Frequency</label>
+            <input id="layerFrequencyInput" type="number" min="0" step="1">
+          </div>
+          <div class="field">
+            <label for="layerDelayInput">Delay ms</label>
+            <input id="layerDelayInput" type="number" min="0" step="10">
+          </div>
+          <div class="field">
+            <label for="layerDurationInput">Duration ms</label>
+            <input id="layerDurationInput" type="number" min="0" step="10">
+          </div>
+          <div class="field wide">
+            <label for="layerColorInput">Tint / Color</label>
+            <input id="layerColorInput" type="text" spellcheck="false">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">AI Draft Prompt</div>
+      </div>
+      <div class="panel-body">
+        <textarea id="ideaInput" class="idea-input" spellcheck="false">위로 타오르는 푸른 마법 불꽃, 은은한 반짝임 포함</textarea>
+        <div class="chip-row" style="margin-top:8px">
+          <button id="copyPromptBtn" type="button" class="tool-button">Copy Prompt</button>
+          <button id="composePromptBtn" type="button" class="tool-button">Use Idea</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Sprite Sheet</div>
+        <span id="sheetStatus" class="status-pill">idle</span>
+      </div>
+      <div class="panel-body">
+        <div class="sheet-grid">
+          <div class="field">
+            <label for="sheetFrameCount">Frames</label>
+            <input id="sheetFrameCount" type="number" min="2" max="32" step="1" value="12">
+          </div>
+          <div class="field">
+            <label for="sheetColumns">Columns</label>
+            <input id="sheetColumns" type="number" min="1" max="8" step="1" value="4">
+          </div>
+          <div class="field">
+            <label for="sheetFps">FPS</label>
+            <input id="sheetFps" type="number" min="4" max="30" step="1" value="12">
+          </div>
+          <div class="field">
+            <label for="sheetScale">Scale</label>
+            <input id="sheetScale" type="number" min="0.25" max="1" step="0.25" value="0.5">
+          </div>
+        </div>
+        <div class="split-actions">
+          <button id="exportSheetBtn" type="button" class="tool-button primary">Export PNG</button>
+          <button id="copySheetMetaBtn" type="button" class="tool-button">Copy Meta</button>
+          <button id="sheetOneShotBtn" type="button" class="tool-button">One Shot</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">AI Effect JSON</div>
+      </div>
+      <div class="panel-body">
+        <div class="tab-row">
+          <button type="button" class="active" data-modal-id="json">JSON</button>
+          <button type="button" data-modal-id="prompt">Prompt</button>
+        </div>
+        <textarea id="recipeText" class="codebox" spellcheck="false" aria-label="Effect recipe JSON"></textarea>
+        <div class="split-actions">
+          <button id="loadJsonBtn" type="button" class="tool-button">Load AI JSON</button>
+          <button id="copyJsonBtnPanel" type="button" class="tool-button">Copy</button>
+          <button id="downloadJsonBtnPanel" type="button" class="tool-button">Export OK</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Prompt / Fix Request</div>
+      </div>
+      <div class="panel-body">
+        <textarea id="promptText" class="codebox promptbox" spellcheck="false" readonly aria-label="AI authoring prompt"></textarea>
+      </div>
+    </section>
+  </aside>
+</main>
+<script type="module" src="src/fx-lab/fx-lab-app.js"></script>
+</body>
+</html>

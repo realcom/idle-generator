@@ -17,6 +17,7 @@ This skill is the analysis step after concept generation. It decides what should
 
 - The selected concept note and image.
 - `harness/design/<game>/design-registry.yaml`.
+- `harness/design/COMPONENT_BLUEPRINTS.md`
 - `harness/runtime/NINE_SLICE_UI.md` when assetizing rectangular UI skins.
 - Existing design source files to avoid overwriting decisions accidentally.
 - Existing generated assets or asset manifests under `harness/design/<game>/` or `harness/assets/` when present.
@@ -27,6 +28,7 @@ Create or update:
 
 - `harness/design/<game>/art-direction.yaml`
 - `harness/design/<game>/layout-tokens.yaml`
+- `harness/design/<game>/component-blueprints.yaml`
 - `harness/design/<game>/component-skins.yaml`
 - `harness/design/<game>/asset-plan.yaml`
 - `harness/design/<game>/motion-juice.yaml`
@@ -36,16 +38,27 @@ Create or update:
 
 1. Identify the concept's non-negotiables: orientation, screen regions, character identity, material language, and core loop.
 2. Extract visual tokens: palette, outlines, materials, typography treatment, spacing/region ratios.
-3. Analyze assetization before writing component skins:
+3. Decompose semantic components before assetization:
+   - Split each large UI surface into semantic sections first, such as top tabs, content body, board area, bottom nav, modal header, modal body, or footer.
+   - For each section, record role, owned components, layout contract, process scope, key assets, and section-specific QA focus.
+   - Name each component by player/runtime meaning, not by bitmap shape.
+   - Define anatomy, slots, states, data bindings, repeatability, touch target rules, and text clamp rules.
+   - Define box-model contracts: min/default size, content insets, padding, gaps, and responsive reductions.
+   - Separate `slice_hints` for bitmap stretching from `content_insets` for text/icon layout.
+   - Extract border ornaments, corner clusters, crests, badges, vines, and other decorative attachments as a fixed `ornament_layer` when they are not stretch-safe.
+   - Record which slots are generated assets, fixed sprites, native text, native graphics, or hybrid assemblies.
+   - Record section crop guidance when the selected concept will be implemented in runtime, so later visual iteration compares the same semantic region rather than arbitrary screenshots.
+4. Analyze assetization before writing component skins:
    - `generate_image`: visual pieces that need genimg output, such as backgrounds, portraits, icons, textured frames, reward effects, ornate buttons, or 9-slice panel skins.
    - `native_ui`: pieces best built from layout/recipe primitives, such as text, simple panels, progress bars, grids, lists, and spacing rules.
    - `hybrid`: components that combine native layout with generated skins or icons.
    - `reuse`: existing assets that should be referenced instead of regenerated.
-4. Write `asset-plan.yaml` with source concept ids, asset keys, shared/platform-specific intended file paths, generation prompt notes, transparent/opaque background requirements, target sizes, slice/border hints, states, variants, and downstream usage.
-5. Extract component skins from the assetization decision: repeated cards, buttons, mission cards, HUD strips, tab bars, feedback elements, and their dependency on generated assets.
-6. Extract motion and reward feedback rules only when visible or implied by gameplay.
-7. Add blocker checks and weighted critique criteria, including whether required image assets are specified precisely enough for generation.
-8. Update the design registry status to `extracted` or leave `selected` if human approval is still pending.
+5. Write `asset-plan.yaml` with source concept ids, asset keys, shared/platform-specific intended file paths, generation prompt notes, transparent/opaque background requirements, target sizes, slice/border hints, states, variants, and downstream usage.
+6. Extract component skins from the assetization decision: repeated cards, buttons, mission cards, HUD strips, tab bars, feedback elements, and their dependency on generated assets.
+7. Extract motion and reward feedback rules only when visible or implied by gameplay.
+8. Add blocker checks and weighted critique criteria, including whether required image assets are specified precisely enough for generation.
+9. Update the design registry status to `extracted` or leave `selected` if human approval is still pending.
+10. Run `python3 harness/tools/design_blueprint_validate.py <game>` when `component-blueprints.yaml` was created or changed.
 
 ## Asset Plan Shape
 
@@ -91,3 +104,6 @@ assets:
 - Do not generate images in this skill; describe the genimg-ready assets so a later asset-generation step can execute them.
 - Do not invent engine or runtime bindings here; those belong in `gen-unity-ui-recipe` or `gen-phaser-ui-spec`.
 - Do not mark registry status as `extracted` if required `must` assets are ambiguous.
+- Do not skip `component-blueprints.yaml` for any selected UI concept that will produce reusable runtime components.
+- Do not jump from a full-screen concept directly to component atoms when the UI has multiple semantic sections; define the sections first and run the extraction loop per section.
+- Do not leave visual QA as a whole-screen screenshot only; large UI surfaces need section-level crop guidance for concept-vs-runtime comparison.

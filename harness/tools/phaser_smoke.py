@@ -261,9 +261,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--strict-port", action="store_true", help="Fail instead of choosing the next free port.")
     parser.add_argument("--skip-compile", action="store_true", help="Use the existing harness/build bundle.")
     parser.add_argument("--python-bin", default=os.environ.get("PHASER_SMOKE_PYTHON"), help="Python executable used for idlez_compile.py.")
+    parser.add_argument("--query", default=None, help="Optional query string appended to the runtime URL.")
     parser.add_argument("--serve-only", action="store_true", help="Compile, serve, print the URL, and block.")
     parser.add_argument("--no-browser", action="store_true", help="Only run compile and HTTP probes.")
-    parser.add_argument("--expect", choices=["app", "ui"], default="app", help="Browser readiness contract to verify.")
+    parser.add_argument("--expect", choices=["app", "ui", "survivor"], default="app", help="Browser readiness contract to verify.")
     parser.add_argument("--chrome-bin", default=os.environ.get("CHROME_BIN"), help="Chrome/Chromium executable.")
     parser.add_argument("--cdp-port", type=int, default=9333, help="Preferred Chrome DevTools port.")
     parser.add_argument("--headful", action="store_true", help="Launch a visible browser instead of headless Chrome.")
@@ -286,7 +287,7 @@ def main() -> int:
 
     port = choose_port(args.host, args.port, args.strict_port)
     server = start_server(args.host, port)
-    runtime_url = f"http://{args.host}:{port}/{args.runtime}"
+    runtime_url = append_runtime_query(f"http://{args.host}:{port}/{args.runtime}", args)
     try:
         print(f"Serving Phaser harness: {runtime_url}")
         run_http_probes(args.game, runtime_url, args.host, port)
@@ -394,6 +395,22 @@ def wait_forever() -> None:
         print("\nStopped.")
 
 
+def append_runtime_query(runtime_url: str, args: argparse.Namespace) -> str:
+    query = args.query
+    if query is None and args.expect == "survivor":
+        query = f"game={args.game}&mode=battle"
+    if not query:
+        return runtime_url
+    query = str(query).strip()
+    if not query:
+        return runtime_url
+    if query.startswith("?"):
+        return f"{runtime_url}{query}"
+    if query.startswith("&"):
+        return f"{runtime_url}?{query[1:]}"
+    return f"{runtime_url}?{query}"
+
+
 def run_browser_smoke(args: argparse.Namespace, runtime_url: str) -> dict[str, object]:
     chrome = find_chrome(args.chrome_bin)
     cdp_port = choose_port("127.0.0.1", args.cdp_port, strict=False)
@@ -436,6 +453,8 @@ def run_browser_smoke(args: argparse.Namespace, runtime_url: str) -> dict[str, o
             client.send("Page.navigate", {"url": runtime_url})
             if args.expect == "ui":
                 value = evaluate_ui_ready(client, args.timeout)
+            elif args.expect == "survivor":
+                value = evaluate_survivor_ready(client, args.timeout)
             else:
                 value = evaluate_runtime_ready(client, args.timeout)
             if screenshot:
@@ -447,6 +466,8 @@ def run_browser_smoke(args: argparse.Namespace, runtime_url: str) -> dict[str, o
             errors = unique_errors(client.errors)
             if args.expect == "ui":
                 ok = bool(value.get("ok")) and value.get("uiHarnessReady") is True and not errors
+            elif args.expect == "survivor":
+                ok = bool(value.get("ok")) and value.get("survivorReady") is True and not errors
             else:
                 ok = (
                     bool(value.get("ok"))
@@ -516,6 +537,333 @@ def evaluate_runtime_ready(client: DevToolsClient, timeout: float) -> dict[str, 
     stageHeight: stageRect?.height ?? null,
     units: ctx.board?.units?.length ?? null,
     enemies: ctx.board?.enemies?.length ?? null
+  }};
+}})()
+"""
+    result = client.send(
+        "Runtime.evaluate",
+        {"expression": expression, "awaitPromise": True, "returnByValue": True},
+        timeout=timeout + 5,
+    )
+    if "exceptionDetails" in result:
+        return {"ok": False, "reason": result["exceptionDetails"]}
+    remote = result.get("result") or {}
+    if isinstance(remote, dict) and isinstance(remote.get("value"), dict):
+        return remote["value"]
+    return {"ok": False, "reason": f"Unexpected Runtime.evaluate result: {result}"}
+
+
+def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str, object]:
+    timeout_ms = int(timeout * 1000)
+    expression = f"""
+(async () => {{
+  const deadline = Date.now() + {timeout_ms};
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const params = new URL(location.href).searchParams;
+  const requestedMode = String(params.get('mode') || '').toLowerCase();
+  const wantsBattle = ['battle', 'combat', 'expedition'].includes(requestedMode);
+  const wantsSkillUseDemo = ['1', 'true', 'demo', 'use', 'cast', 'skills'].includes(String(params.get('skilluse') || params.get('skillUseDemo') || params.get('runSkill') || '').toLowerCase());
+  const wantsLevelChoice = wantsSkillUseDemo || ['1', 'true', 'demo', 'choice'].includes(String(params.get('levelup') || params.get('levelChoiceDemo') || '').toLowerCase());
+  const wantsVfxDemo = ['1', 'true', 'demo', 'skills'].includes(String(params.get('vfx') || params.get('skillVfxDemo') || params.get('skillFxDemo') || '').toLowerCase());
+  const wantsEncounterDemo = ['1', 'true', 'demo', 'encounters'].includes(String(params.get('encounter') || params.get('encounters') || '').toLowerCase());
+  const loopMode = String(params.get('loop') || params.get('survivorLoop') || '').toLowerCase();
+  const wantsBossClearLoop = ['clear', 'win', 'boss', 'bosskill', 'boss-clear', 'bossclear'].includes(loopMode);
+  const wantsFullLoop = wantsBossClearLoop || ['1', 'true', 'full', 'result', 'end'].includes(loopMode);
+  const isReady = () => document.documentElement.dataset.survivorReady === 'true';
+  const isBootError = () => document.getElementById('bootStatus')?.classList.contains('is-error') || false;
+  while (!isReady() && !isBootError() && Date.now() < deadline) {{
+    await sleep(100);
+  }}
+  while (wantsBattle && document.documentElement.dataset.survivorBattleReady !== 'true' && Date.now() < deadline) {{
+    await sleep(100);
+  }}
+  while (wantsLevelChoice && document.documentElement.dataset.survivorLevelChoiceOpen !== 'true' && Date.now() < deadline) {{
+    await sleep(100);
+  }}
+  while (wantsSkillUseDemo && Number(document.documentElement.dataset.survivorRunSkillDamageCount || 0) < 1 && Date.now() < deadline) {{
+    const app = globalThis.__IDLEZ_SURVIVOR__ || null;
+    if (document.documentElement.dataset.survivorLevelChoiceOpen === 'true' && typeof app?.chooseLevelChoice === 'function') {{
+      app.chooseLevelChoice(0);
+      await sleep(600);
+    }} else {{
+      await sleep(120);
+    }}
+  }}
+  while (wantsVfxDemo && document.documentElement.dataset.survivorSkillVfxDemo !== 'done' && Date.now() < deadline) {{
+    await sleep(100);
+  }}
+  while (wantsEncounterDemo && document.documentElement.dataset.survivorEncounterDemo !== 'done' && Date.now() < deadline) {{
+    const app = globalThis.__IDLEZ_SURVIVOR__ || null;
+    if (document.documentElement.dataset.survivorLevelChoiceOpen === 'true' && typeof app?.chooseLevelChoice === 'function') {{
+      app.chooseLevelChoice(0);
+      await sleep(500);
+    }} else {{
+      await sleep(100);
+    }}
+  }}
+
+  const applyBossClearFixture = () => {{
+    if (!wantsBossClearLoop) return false;
+    const app = globalThis.__IDLEZ_SURVIVOR__ || null;
+    const board = globalThis.__IDLEZ_SURVIVOR_BOARD__ || null;
+    const player = board?.playerUnit || null;
+    if (player) {{
+      player.baseMaxHp = Math.max(Number(player.baseMaxHp || 0), 50000);
+      player.baseAttack = Math.max(Number(player.baseAttack || 0), 900);
+      if (typeof player.refreshStatsFromBoard === 'function') player.refreshStatsFromBoard();
+      player.maxHp = Math.max(Number(player.maxHp || 0), 50000);
+      player.hp = Math.max(Number(player.hp || 0), Math.floor(player.maxHp * 0.88));
+      player.attack = Math.max(Number(player.attack || 0), 900);
+      player.alive = true;
+      player.reviveAtTick = null;
+    }}
+    if (app?.runSkillLevels instanceof Map) {{
+      for (const [skillDataId, level] of [[300102, 3], [300103, 2], [300115, 3]]) {{
+        app.runSkillLevels.set(skillDataId, Math.max(Number(app.runSkillLevels.get(skillDataId) || 0), level));
+        if (typeof app.setRunSkillCooldown === 'function') app.setRunSkillCooldown(skillDataId, 1);
+      }}
+      document.documentElement.dataset.survivorRunSkillCount = String(app.runSkillLevels.size);
+    }}
+    document.documentElement.dataset.survivorBossLoopFixture = 'true';
+    return true;
+  }};
+
+  const chooseLoopLevelChoiceIndex = () => {{
+    if (!wantsBossClearLoop) return 0;
+    const choices = globalThis.__NINJA2_LEVEL_CHOICE_DEMO__?.choices || [];
+    const priority = [300102, 300115, 300103];
+    let bestIndex = 0;
+    let bestScore = -Infinity;
+    choices.forEach((choice, index) => {{
+      const skillDataId = Number(choice?.skillDataId || 0);
+      const priorityIndex = priority.indexOf(skillDataId);
+      const priorityScore = priorityIndex === -1 ? 0 : 100 - priorityIndex * 12;
+      const levelScore = Number(choice?.nextRunLevel || 0);
+      const score = priorityScore + levelScore;
+      if (score > bestScore) {{
+        bestScore = score;
+        bestIndex = index;
+      }}
+    }});
+    return bestIndex;
+  }};
+
+  const tickBefore = Number(document.documentElement.dataset.survivorTick || 0);
+  let survivorLoopAutoChoices = 0;
+  if (wantsBossClearLoop) applyBossClearFixture();
+  while (wantsFullLoop && document.documentElement.dataset.survivorGameEnded !== 'true' && Date.now() < deadline) {{
+    const app = globalThis.__IDLEZ_SURVIVOR__ || null;
+    if (wantsBossClearLoop) applyBossClearFixture();
+    if (document.documentElement.dataset.survivorLevelChoiceOpen === 'true' && typeof app?.chooseLevelChoice === 'function') {{
+      if (app.chooseLevelChoice(chooseLoopLevelChoiceIndex())) survivorLoopAutoChoices += 1;
+      await sleep(500);
+    }} else {{
+      await sleep(250);
+    }}
+  }}
+
+  if (wantsBattle && !wantsLevelChoice && !wantsVfxDemo && !wantsFullLoop) {{
+    while (
+      Number(document.documentElement.dataset.survivorTick || 0) <= tickBefore
+      && document.documentElement.dataset.survivorGameEnded !== 'true'
+      && Date.now() < deadline
+    ) {{
+      await sleep(100);
+    }}
+  }} else {{
+    await sleep(350);
+  }}
+
+  const ds = document.documentElement.dataset;
+  const app = globalThis.__IDLEZ_SURVIVOR__ || null;
+  const board = globalThis.__IDLEZ_SURVIVOR_BOARD__ || null;
+  const stageCanvas = document.querySelector('#gameStage canvas');
+  const stageRect = stageCanvas?.getBoundingClientRect?.();
+  const levelModal = document.getElementById('levelModal');
+  const homeScreen = document.getElementById('homeScreen');
+  const resultScreen = document.getElementById('resultScreen');
+  const resultRewardRows = [...document.querySelectorAll('#resultRewards .reward-line')];
+  const counterIconNodes = [...document.querySelectorAll('.counter-icon')];
+  const counterIconBackgrounds = [
+    ...counterIconNodes.map(node => getComputedStyle(node).backgroundImage),
+    getComputedStyle(document.querySelector('.timer'), '::before').backgroundImage,
+    getComputedStyle(document.querySelector('.stage-track b')).backgroundImage,
+  ].filter(Boolean);
+  const counterIconsReady = counterIconBackgrounds.filter(value => value.includes('/battle-counters/')).length >= 5;
+  const encounterTextureKeys = ['encounterBomb', 'encounterMagnet', 'encounterPotion', 'encounterMine'];
+  const encounterTextureUrls = encounterTextureKeys.map(key => {{
+    const source = app?.textures?.get?.(key)?.source?.[0] || null;
+    return source?.url || source?.image?.currentSrc || source?.image?.src || '';
+  }});
+  const encounterTextureReady = encounterTextureKeys.every(key => app?.textures?.exists?.(key));
+  const encounterResourceUrls = performance.getEntriesByType('resource')
+    .map(entry => entry.name || '')
+    .filter(value => value.includes('/assets/ninja2/battle/encounters/') && value.includes('.png'));
+  const encounterIconsReady = encounterTextureReady && encounterResourceUrls.length >= 4;
+  const tickAfter = Number(ds.survivorTick || 0);
+  const enemyCount = Number(ds.survivorEnemyCount || 0);
+  const killCount = Number(ds.survivorKills || 0);
+  const bossAliveCount = board
+    ? (typeof board.GetUnitCount === 'function'
+        ? Number(board.GetUnitCount({{ unitDataId: 110501 }}) || 0)
+        : [...board.units.values()].filter(unit => unit.alive && Number(unit.dataId) === 110501).length)
+    : null;
+  const skillVfxCount = Number(ds.survivorSkillVfxCount || 0);
+  const skillVfxDemoFired = Number(ds.survivorSkillVfxDemoFired || 0);
+  const levelChoiceCount = Number(ds.survivorLevelChoiceCount || 0);
+  const runSkillCount = Number(ds.survivorRunSkillCount || 0);
+  const profileSkillIcons = [...document.querySelectorAll('#profileSkillList .profile-skill-icon')];
+  const profileSkillLabels = profileSkillIcons.map(node => node.getAttribute('aria-label') || node.getAttribute('title') || '').filter(Boolean);
+  const expectedProfileSkillMax = Math.max(1, Math.min(3, runSkillCount || 1));
+  const skillCastFeedChips = [...document.querySelectorAll('#skillCastFeed .skill-cast-chip')];
+  const homeOpen = homeScreen?.classList.contains('is-open') || false;
+  const battleReady = ds.survivorBattleReady === 'true';
+  const playerVisible = ds.survivorPlayerVisible === 'true';
+  const levelChoiceOpen = ds.survivorLevelChoiceOpen === 'true';
+  const vfxReady = ds.survivorSkillVfxReady === 'true';
+  const vfxDemoDone = ds.survivorSkillVfxDemo === 'done';
+  const generatedAssetMode = ['generated-vfx-demo', 'generated-levelup-demo'].includes(ds.survivorAssetMode || '');
+  const encounterDemoDone = ds.survivorEncounterDemo === 'done';
+  const survivorTriggers = ds.survivorTriggers || '';
+  const encounterMapTriggerHostPresent = /MAP_ONUPDATE_NINJA2MAINWAVES(3|4|5|7|10)UPDATE/.test(survivorTriggers);
+  const resultOpen = resultScreen?.classList.contains('is-open') || false;
+  const resultWon = ds.survivorWinningTeam === '1';
+
+  const checks = {{
+    survivorReady: Boolean(app && board && ds.survivorReady === 'true'),
+    canvasVisible: Boolean(stageCanvas && stageRect?.width > 0 && stageRect?.height > 0),
+    homeOpen,
+    battleReady,
+    playerVisible,
+    enemiesSpawned: !wantsBattle || wantsEncounterDemo || enemyCount > 0 || killCount > 0,
+    tickAdvanced: !wantsBattle || wantsLevelChoice || wantsVfxDemo || wantsFullLoop || tickAfter > tickBefore,
+    levelChoiceOpen: !wantsLevelChoice || wantsSkillUseDemo || (levelChoiceOpen && levelChoiceCount === 3 && levelModal?.classList.contains('is-open')),
+    profileSkillLean: !wantsBattle || profileSkillIcons.length <= expectedProfileSkillMax,
+    runSkillUsed: !wantsSkillUseDemo || (
+      runSkillCount >= 1
+      && Number(ds.survivorRunSkillSpawnCount || 0) >= 1
+      && Number(ds.survivorRunSkillDamageCount || 0) >= 1
+      && Number(ds.survivorRunSkillDamageTotal || 0) > 0
+    ),
+    runSkillFeedback: !wantsSkillUseDemo || (
+      Number(ds.survivorRunSkillFeedbackCount || 0) >= 1
+      && Boolean(ds.survivorRunSkillLastFeedbackName)
+    ),
+    counterIconsReady: !wantsBattle || counterIconsReady,
+    encounterIconsReady: !wantsBattle || generatedAssetMode || encounterIconsReady,
+    vfxDemoDone: !wantsVfxDemo || (vfxReady && skillVfxCount === 16 && vfxDemoDone && skillVfxDemoFired === 16),
+    encounterDemoDone: !wantsEncounterDemo || (
+      encounterMapTriggerHostPresent
+      && encounterDemoDone
+      && Number(ds.survivorEncounterTriggerSerial || 0) >= 4
+      && Number(ds.survivorEncounterCollected || 0) >= 3
+      && Number(ds.survivorEncounterMined || 0) >= 1
+    ),
+    resultReached: !wantsFullLoop || (ds.survivorGameEnded === 'true' && resultOpen && resultRewardRows.length > 0),
+    resultWon: !wantsBossClearLoop || resultWon,
+    bossDefeated: !wantsBossClearLoop || bossAliveCount === 0,
+  }};
+  const battleRequirementMet = wantsFullLoop
+    ? checks.resultReached
+    : (!wantsBattle || (checks.battleReady && checks.playerVisible && checks.enemiesSpawned && checks.tickAdvanced));
+  const visualRequirementMet = checks.canvasVisible || (wantsFullLoop && checks.resultReached);
+  const ok = checks.survivorReady
+    && visualRequirementMet
+    && battleRequirementMet
+    && (wantsBattle || checks.homeOpen)
+    && checks.levelChoiceOpen
+    && checks.profileSkillLean
+    && checks.runSkillUsed
+    && checks.runSkillFeedback
+    && checks.counterIconsReady
+    && checks.encounterIconsReady
+    && checks.vfxDemoDone
+    && checks.encounterDemoDone
+    && checks.resultReached
+    && checks.resultWon
+    && checks.bossDefeated;
+
+  return {{
+    ok,
+    checks,
+    title: document.title,
+    href: location.href,
+    bootStatus: document.getElementById('bootStatus')?.textContent || null,
+    survivorReady: checks.survivorReady,
+    survivorBootPhase: ds.survivorBootPhase || null,
+    survivorMode: ds.survivorMode || null,
+    survivorBattleReady: battleReady,
+    survivorPlayerVisible: playerVisible,
+    survivorTickBefore: tickBefore,
+    survivorTickAfter: tickAfter,
+    survivorEnemyCount: enemyCount,
+    survivorBossAliveCount: bossAliveCount,
+    survivorPickupCount: Number(ds.survivorPickupCount || 0),
+    survivorKills: killCount,
+    survivorStageProgress: ds.survivorStageProgress || null,
+    survivorMapId: ds.survivorMapId || null,
+    survivorTriggers,
+    survivorGameEnded: ds.survivorGameEnded || null,
+    survivorWinningTeam: ds.survivorWinningTeam || null,
+    survivorResultWon: resultWon,
+    survivorLoopAutoChoices,
+    survivorLevelChoiceOpen: levelChoiceOpen,
+    survivorLevelChoiceCount: levelChoiceCount,
+    survivorLevelChoiceSource: ds.survivorLevelChoiceSource || null,
+    survivorProfileSkillIconCount: profileSkillIcons.length,
+    survivorProfileSkillLabels: profileSkillLabels,
+    survivorRunSkillCount: runSkillCount,
+    survivorRunSkillLastCast: ds.survivorRunSkillLastCast || null,
+    survivorRunSkillLastCastSource: ds.survivorRunSkillLastCastSource || null,
+    survivorRunSkillSpawnCount: Number(ds.survivorRunSkillSpawnCount || 0),
+    survivorRunSkillLastSpawn: ds.survivorRunSkillLastSpawn || null,
+    survivorRunSkillDamageCount: Number(ds.survivorRunSkillDamageCount || 0),
+    survivorRunSkillDamageTotal: Number(ds.survivorRunSkillDamageTotal || 0),
+    survivorRunSkillLastDamage: ds.survivorRunSkillLastDamage || null,
+    survivorRunSkillFeedbackCount: Number(ds.survivorRunSkillFeedbackCount || 0),
+    survivorRunSkillLastFeedback: ds.survivorRunSkillLastFeedback || null,
+    survivorRunSkillLastFeedbackName: ds.survivorRunSkillLastFeedbackName || null,
+    survivorSkillCastFeedCount: skillCastFeedChips.length,
+    survivorSkillCastFeedLabels: skillCastFeedChips.map(node => node.textContent.replace(/\\s+/g, ' ').trim()),
+    survivorRunSkillAutoCasts: Number(ds.survivorRunSkillAutoCasts || 0),
+    survivorRunSkillLastAuto: ds.survivorRunSkillLastAuto || null,
+    survivorCounterIconCount: counterIconNodes.length,
+    survivorCounterIconsReady: counterIconsReady,
+    survivorCounterIconBackgrounds: counterIconBackgrounds,
+    survivorEncounterIconsReady: encounterIconsReady,
+    survivorEncounterIconUrls: encounterTextureUrls,
+    survivorEncounterIconResourceUrls: encounterResourceUrls,
+    survivorSkillVfxReady: vfxReady,
+    survivorSkillVfxCount: skillVfxCount,
+    survivorSkillVfxDemo: ds.survivorSkillVfxDemo || null,
+    survivorSkillVfxDemoFired: skillVfxDemoFired,
+    survivorEncounterDemo: ds.survivorEncounterDemo || null,
+    survivorEncounterActiveCount: Number(ds.survivorEncounterActiveCount || 0),
+    survivorEncounterCollected: Number(ds.survivorEncounterCollected || 0),
+    survivorEncounterMined: Number(ds.survivorEncounterMined || 0),
+    survivorEncounterLast: ds.survivorEncounterLast || null,
+    survivorEncounterTriggerSerial: Number(ds.survivorEncounterTriggerSerial || 0),
+    survivorEncounterTriggerType: Number(ds.survivorEncounterTriggerType || 0),
+    survivorEncounterDemoStep: Number(ds.survivorEncounterDemoStep || 0),
+    survivorEncounterMapTriggerHostPresent: encounterMapTriggerHostPresent,
+    survivorEncounterMineProgress: ds.survivorEncounterMineProgress || null,
+    survivorEncounterBombHits: Number(ds.survivorEncounterBombHits || 0),
+    survivorEncounterHeal: Number(ds.survivorEncounterHeal || 0),
+    survivorMagnetActive: ds.survivorMagnetActive || null,
+    survivorCompanionSkillCount: Number(ds.survivorCompanionSkillCount || 0),
+    survivorCompanionReadyCount: Number(ds.survivorCompanionReadyCount || 0),
+    homeNineslice: ds.homeNineslice || null,
+    canvasCount: document.querySelectorAll('canvas').length,
+    stageWidth: stageRect?.width ?? null,
+    stageHeight: stageRect?.height ?? null,
+    boardTick: board?.tick ?? null,
+    boardUnitCount: board?.units?.size ?? null,
+    boardEnemyCount: board ? [...board.units.values()].filter(unit => unit.alive && unit.team !== 1).length : null,
+    resultOpen,
+    resultTitle: document.getElementById('resultTitle')?.textContent || null,
+    resultSummary: document.getElementById('resultSummary')?.textContent || null,
+    resultRewardCount: resultRewardRows.length,
+    resultRewards: resultRewardRows.map(row => row.textContent.replace(/\\s+/g, ' ').trim()),
   }};
 }})()
 """

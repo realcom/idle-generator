@@ -60,12 +60,27 @@
 - ⬜ `itemDataId` 무결성은 §2 참조무결성에서 처리
 - ⬜ 기대 획득률·pity 천장 시뮬 (밸런스 리포트) — `/balance-review` 스킬 영역, 미구현
 
+### 8. UI Component Blueprint — ✅ 별도 구현
+- `harness/design/<game>/component-blueprints.yaml`이 선택된 UI 시안의 의미 컴포넌트, 박스 모델, skin 계약, ornament layer, asset dependency matrix를 갖는가
+- 9-slice skin의 `slice_hints`와 텍스트/아이콘 배치용 `content_insets`가 분리되어 있는가
+- non-stretch-safe 테두리 장식(crest/corner/vine/badge 등)이 fixed ornament sprite layer로 추출되어 있는가
+- blueprint가 참조하는 asset key가 `asset-plan.yaml`에 존재하는가
+- 런타임 CSS/Phaser/Unity 값이 blueprint token mapping으로 추적 가능한가
+
+실행:
+
+```bash
+python3 harness/tools/design_blueprint_validate.py <game>
+python3 harness/tools/design_blueprint_validate.py <game> --strict
+```
+
 ## 출력
 
 ```
 PASS: 23 files
 WARN: content/idlez/units/slime_green.unit.yaml — Attack 1레벨값 12 < profile.guardrails.Attack.min 권장?
 ERROR: content/idlez/rewards/meadow_slime_drops.reward.yaml — itemDataId 200103 not found in Items
+ERROR: design/ninja2/component-blueprints.yaml — rectangular skin missing content_insets_by_slot
 ```
 
 위반 0이면 → 컴파일 단계(소스→엔진 proto-JSON) 진행 가능.

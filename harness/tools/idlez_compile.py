@@ -607,6 +607,12 @@ BOARD_VARIABLES = {
     "enemy_level": 605,
     "bosslevel": 606,
     "boss_level": 606,
+    "encounterserial": 610,
+    "encounter_serial": 610,
+    "encountertype": 611,
+    "encounter_type": 611,
+    "encounterdemostep": 612,
+    "encounter_demo_step": 612,
 }
 UNIT_VARIABLES = {
     "dataid": "DataId",
@@ -1182,6 +1188,42 @@ def compile_behavior(path, errors):
     return triggers
 
 
+def compile_behavior_action_list(actions, vars_, errors, ctx, owner_domain):
+    statements = []
+    for action in actions or []:
+        if not isinstance(action, dict):
+            errors.append(f"{ctx}: do 항목은 객체여야 함")
+            continue
+
+        cond = action.get("when")
+        inner = []
+        nested = action.get("do")
+        if nested is not None:
+            if isinstance(nested, list):
+                inner.extend(compile_behavior_action_list(nested, vars_, errors, ctx, owner_domain))
+            else:
+                errors.append(f"{ctx}: when/do 중첩 do는 리스트여야 함")
+
+        for akey, args in action.items():
+            if akey in {"when", "do"}:
+                continue
+            inner.extend(build_behavior_calls(akey, args, vars_, errors, ctx, owner_domain))
+
+        if cond:
+            statements.append(
+                {
+                    "condition": {
+                        "expression": expr_postfix(cond, vars_, errors, ctx),
+                        "statements": inner,
+                        "elseStatements": [],
+                    }
+                }
+            )
+        else:
+            statements.extend(inner)
+    return statements
+
+
 def compile_behavior_doc(doc, path, errors):
     dom, name, vars_ = doc["domain"], doc["name"], doc.get("vars", {})
     on_list = doc.get("on")
@@ -1193,26 +1235,7 @@ def compile_behavior_doc(doc, path, errors):
         if etok not in EVENT:
             errors.append(f"{path}: 이벤트 '{etok}' 미지원")
             continue
-        statements = []
-        for action in ev.get("do", []):
-            cond = action.get("when")
-            inner = []
-            for akey, args in action.items():
-                if akey == "when":
-                    continue
-                inner.extend(build_behavior_calls(akey, args, vars_, errors, path, dom))
-            if cond:
-                statements.append(
-                    {
-                        "condition": {
-                            "expression": expr_postfix(cond, vars_, errors, path),
-                            "statements": inner,
-                            "elseStatements": [],
-                        }
-                    }
-                )
-            else:
-                statements.extend(inner)
+        statements = compile_behavior_action_list(ev.get("do", []), vars_, errors, path, dom)
         trigger = {"name": f"{dom}_ON{etok}_{name}".upper(), "statements": statements}
         if EVENT[etok] != "OnStart":
             trigger["type"] = EVENT[etok]

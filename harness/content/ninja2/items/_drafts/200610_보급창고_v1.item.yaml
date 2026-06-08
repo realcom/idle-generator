@@ -1,0 +1,78 @@
+id: 200610
+name: "보급창고"
+category: Mine
+type: Mine
+grade: 2
+power: 24
+efficiencyPercents: [100.0, 118.0, 139.0, 164.0, 193.0]
+maxStamina: 100
+staminaRegenPerSecond: 0.0067
+sellPrice: 0
+requiredExps: [0, 220, 480, 980, 1760]
+
+addStats:
+  - { type: SellPricePercent, value: [1, 2, 3, 5, 8] }
+
+levelUpMaterialItemGroups:
+  - level: 2
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 780 }
+      - { id: 200102, count: 520 }
+      - { id: 200103, count: 14 }
+      - { id: 200108, count: 45 }
+      - { id: 200110, count: 3 }
+      - { id: 5, count: 24000 }
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 1450 }
+      - { id: 200102, count: 980 }
+      - { id: 200103, count: 30 }
+      - { id: 200106, count: 80 }
+      - { id: 200110, count: 8 }
+      - { id: 5, count: 52000 }
+  - level: 4
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 3000 }
+      - { id: 200102, count: 2100 }
+      - { id: 200103, count: 68 }
+      - { id: 200106, count: 180 }
+      - { id: 200107, count: 45 }
+      - { id: 200110, count: 18 }
+      - { id: 5, count: 112000 }
+  - level: 5
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 6400 }
+      - { id: 200102, count: 4600 }
+      - { id: 200103, count: 150 }
+      - { id: 200106, count: 420 }
+      - { id: 200107, count: 120 }
+      - { id: 200110, count: 42 }
+      - { id: 5, count: 250000 }
+
+sellAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200109, minCount: 2, maxCount: 5, isCore: true }
+
+popupArgs:
+  HousingKey: granary
+  HousingRole: supply_capacity
+  HousingPlacementKind: repeatable
+  HousingInstanceRole: supply_storage_node
+  HousingMaxInstancesByLanternLevel: "6:2"
+  HousingDuplicateCostScaling: "cost_x1.25_per_extra,time_x1.15_per_extra"
+  HousingPurpose: "식량과 원정 보급을 저장해 장시간 원정, 주민 배치, 오프라인 수령 한도를 확장한다."
+  HousingEffectKind: food_storage_and_expedition_supply
+  HousingFootprint: 1x2
+  HousingSpriteKey: granary
+  HousingConstructionSeconds: 5400
+  HousingLevelUpSeconds: "2:7200,3:14400,4:28800,5:64800"
+
+spriteGroups:
+  Icon: "Items/Ninja2/housing_granary_icon.png"
+  Building: "Housing/Ninja2/granary.png"

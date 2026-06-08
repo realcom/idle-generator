@@ -1,5 +1,5 @@
 version: "1.0"
-updated_at: 2026-06-04T17:18:40+09:00
+updated_at: 2026-06-07T00:00:00+09:00
 
 concepts:
   - id: ninja2_housing_hex_sortie_concept_a
@@ -226,6 +226,11 @@ concepts:
     orientation: portrait
     critique: "정보 위계와 터치 안정성이 좋아 첫 Phaser 구현 기준으로 적합. 생성 텍스트는 최종 문구로 쓰지 않고 구조만 참고."
     tags: [Ninja2, Survival, RunLevelUp, SkillChoice, Modal, ThreeCards, Phaser, MobilePortrait, SelectedDirection]
+    extracted_to:
+      - component-blueprints.yaml
+      - component-skins.yaml
+      - asset-plan.yaml
+      - ../../runtime/specs/ui/ninja2-run-levelup-choice.yaml
   - id: ninja2_run_levelup_choice_overlay_b
     title: "Run Level-Up Choice Overlay B"
     image: concepts/ninja2_run_levelup_choice_overlay_b.png
@@ -237,6 +242,17 @@ concepts:
     orientation: portrait
     critique: "전투 흐름과 속도감은 좋지만 하단 스킬 버튼/EXP 바와 겹침 위험이 있어 A안 구현 후 빠른 선택 변형으로 검토."
     tags: [Ninja2, Survival, RunLevelUp, SkillChoice, Overlay, FastChoice, Phaser, MobilePortrait]
+  - id: ninja2_phaser_modal_system_a
+    title: "Phaser Modal System A"
+    image: concepts/ninja2_phaser_modal_system_a.png
+    notes: concepts/ninja2_phaser_modal_system_a.md
+    status: candidate
+    created_at: 2026-06-07T00:00:00+09:00
+    created_by: gen-ui-concept
+    screen: PhaserModalSystem
+    orientation: portrait
+    critique: "기존 레벨업 선택 모달의 양피지/랜턴/잎 장식 문법을 확인, 보상, 목록, 설정, 스킬 선택까지 확장 가능한 Phaser 공통 모달 패밀리로 정리한 후보. 이미지 속 영어/가짜 문구는 구조 참조만 사용."
+    tags: [Ninja2, CasualSanctuary, ModalSystem, Phaser, NineSlice, ParchmentPanel, RewardPopup, ConfirmDialog, SettingsList, SkillChoice, MobilePortrait, CandidateForPhaser]
   - id: ninja2_spine_gameplay_character_sheet_a
     title: "Spine Gameplay Character Sheet A"
     image: concepts/ninja2_spine_gameplay_character_sheet_a.png
@@ -269,6 +285,11 @@ concepts:
     orientation: portrait
     critique: "합의한 룰 기준으로 하우징 소유감과 헥스 판독성을 잘 묶음. 다음 패스에서는 fogged tile 대비와 하단 패널 높이를 조정."
     tags: [Ninja2, CasualSanctuary, Housing, HexGrid, Hybrid2D3D, Rulelocked, Stylized3DBuildings, SpineCharacters, MobilePortrait, SelectedDirection]
+    extracted_to:
+      - component-blueprints.yaml:surfaces.HousingHome
+      - component-skins.yaml
+      - asset-plan.yaml
+      - ../../runtime/specs/ui/ninja2-housing-home.yaml
   - id: ninja2_rulelocked_survival_battle_a
     title: "Rulelocked Survival Battle A"
     image: concepts/ninja2_rulelocked_survival_battle_a.png
@@ -291,6 +312,28 @@ concepts:
     orientation: portrait
     critique: "현재 multi-hex 기지 화면을 유지하면서 예시 이미지식 chunky top resource band, status plaque, large bottom card, orange sortie CTA, and six-tab dock을 적용하는 구현 후보."
     tags: [Ninja2, CasualSanctuary, Housing, TopTabs, BottomTabs, ArcadeUI, MobilePortrait, CandidateForPhaser]
+  - id: ninja2_housing_bottom_loop_dock_b
+    title: "Housing Bottom Loop Dock B"
+    image: concepts/ninja2_housing_bottom_loop_dock_b.png
+    notes: concepts/ninja2_housing_bottom_loop_dock_b.md
+    status: candidate
+    created_at: 2026-06-07T00:00:00+09:00
+    created_by: gen-ui-concept
+    screen: HousingHome
+    orientation: portrait
+    critique: "system-design-v0.md의 HousingHome 하단 규칙에 맞춰 quick collect, companion strip, selected building inspector, orange sortie CTA, five-tab dock을 Phaser 구현 후보로 재정의."
+    tags: [Ninja2, CasualSanctuary, Housing, BottomUI, LoopDock, CompanionStrip, QuickCollect, FiveTabs, Phaser, MobilePortrait, CandidateForPhaser]
+  - id: ninja2_housing_bottom_inspector_no_collect_c
+    title: "Housing Bottom Inspector No Collect C"
+    image: concepts/ninja2_housing_bottom_inspector_no_collect_c.png
+    notes: concepts/ninja2_housing_bottom_inspector_no_collect_c.md
+    status: candidate
+    created_at: 2026-06-07T00:00:00+09:00
+    created_by: gen-ui-concept
+    screen: HousingHome
+    orientation: landscape_crop
+    critique: "B안의 맨왼쪽 독립 수령 버튼을 제거하고 selected building inspector를 넓힌 하단 action row 후보. 수령 상태는 패널 내부 칩으로 흡수하고, 우측 탐험 CTA는 유지한다."
+    tags: [Ninja2, CasualSanctuary, Housing, BottomUI, SelectedBuildingInspector, NoQuickCollect, SortieCTA, Phaser, CandidateForPhaser]
   - id: ninja2_survival_topbar_resource_ledger_a
     title: "Survival Topbar Resource Ledger A"
     image: concepts/ninja2_survival_topbar_resource_ledger_a.png

@@ -217,9 +217,31 @@ export class IdlezBoard extends EventBus {
     return next;
   }
 
+  RandomBetween({ min = 0, max = 1 } = {}) {
+    const low = asNumber(min, 0);
+    const high = asNumber(max, 1);
+    const from = Math.min(low, high);
+    const to = Math.max(low, high);
+    return from + Math.random() * (to - from);
+  }
+
+  RandomIntBetween({ min = 0, max = 1 } = {}) {
+    const low = Math.ceil(asNumber(min, 0));
+    const high = Math.floor(asNumber(max, 1));
+    const from = Math.min(low, high);
+    const to = Math.max(low, high);
+    return Math.floor(from + Math.random() * (to - from + 1));
+  }
+
   GetUnitCountByTeam({ team } = {}) {
     const normalized = normalizeTeam(team);
     return [...this.units.values()].filter(unit => unit.alive && unit.team === normalized).length;
+  }
+
+  GetUnitCount({ unitDataId } = {}) {
+    const dataId = Number(unitDataId);
+    if (!Number.isFinite(dataId)) return 0;
+    return [...this.units.values()].filter(unit => unit.alive && Number(unit.dataId) === dataId).length;
   }
 
   AddUnit({
@@ -1094,12 +1116,16 @@ export class IdlezBoard extends EventBus {
   }
 
   #updateMovement() {
+    const survivorBoard = isSurvivorBoard(this);
     for (const unit of this.units.values()) {
       if (!unit.alive || !['approaching', 'moving'].includes(unit.state)) continue;
+      if (survivorBoard && unit.team !== TEAM.PLAYER && unit.state === 'approaching') {
+        unit.refreshChaseDestination();
+      }
 
       const dx = unit.targetX - unit.x;
       const dy = unit.targetY - unit.y;
-      if (isSurvivorBoard(this)) {
+      if (survivorBoard) {
         const dist = Math.hypot(dx, dy);
         const move = unit.moveSpeedPx / TICKS_PER_SECOND;
         if (dist > move && dist > 0) {
@@ -1139,6 +1165,12 @@ export class IdlezBoard extends EventBus {
     this.#updateAutoSkills(player, enemies);
 
     for (const enemy of enemies) {
+      if (isSurvivorBoard(this) && enemy.targetDistance > enemy.chaseResumeRange) {
+        enemy.state = 'approaching';
+        enemy.refreshChaseDestination();
+        continue;
+      }
+
       enemy.attackTimer -= 1;
       if (enemy.attackTimer > 0) continue;
 
@@ -1440,6 +1472,12 @@ export class BoardUnit {
     this.attackIntervalTicks = ticksFromSeconds(1 / this.attackSpeed, 10);
     this.attackTimer = this.attackIntervalTicks + Math.floor(Math.random() * 20);
     this.skillTimer = ticksFromSeconds(1.0, 1);
+    this.followTargetId = null;
+    this.followOffsetX = 0;
+    this.followOffsetY = 0;
+    this.followJitterX = 0;
+    this.followJitterY = 0;
+    this.chaseResumeRange = this.type === 'Boss' ? 1.65 : 1.35;
   }
 
   refreshStatsFromBoard({ healToFull = false } = {}) {
@@ -1527,23 +1565,50 @@ export class BoardUnit {
     positionYrange,
   } = {}) {
     const target = isSurvivorBoard(this.board) && this.team !== TEAM.PLAYER ? this.targetUnit : null;
-    const fallbackX = target ? boardScreenToWorldX(this.board, target.x) : boardScreenToWorldX(this.board, this.targetX);
-    const fallbackY = target ? boardScreenToWorldY(this.board, target.y) : boardScreenToWorldY(this.board, this.targetY);
-    const baseX = asNumber(positionX, fallbackX);
-    const baseY = asNumber(positionY, fallbackY);
     const rangeX = Math.max(0, asNumber(positionXrange, 0));
     const rangeY = Math.max(0, asNumber(positionYrange, 0));
-    const nextX = baseX + (Math.random() * 2 - 1) * rangeX;
-    const nextY = baseY + (Math.random() * 2 - 1) * rangeY;
 
-    this.targetX = boardWorldToScreenX(this.board, nextX);
-    this.targetY = boardWorldToScreenY(this.board, nextY);
+    if (target) {
+      this.followTargetId = target.id;
+      this.followOffsetX = positionX == null ? 0 : asNumber(positionX, 0);
+      this.followOffsetY = positionY == null ? 0 : asNumber(positionY, 0);
+      this.followJitterX = (Math.random() * 2 - 1) * rangeX;
+      this.followJitterY = (Math.random() * 2 - 1) * rangeY;
+      this.refreshChaseDestination();
+    } else {
+      this.followTargetId = null;
+      const fallbackX = boardScreenToWorldX(this.board, this.targetX);
+      const fallbackY = boardScreenToWorldY(this.board, this.targetY);
+      const baseX = asNumber(positionX, fallbackX);
+      const baseY = asNumber(positionY, fallbackY);
+      const nextX = baseX + (Math.random() * 2 - 1) * rangeX;
+      const nextY = baseY + (Math.random() * 2 - 1) * rangeY;
+      this.targetX = boardWorldToScreenX(this.board, nextX);
+      this.targetY = boardWorldToScreenY(this.board, nextY);
+    }
+
     this.state = this.team === TEAM.ENEMY ? 'approaching' : 'moving';
     this.board.emit('unitCommand', { unit: this, command: 'SetMoveRandomDestination' });
     return 0;
   }
 
+  refreshChaseDestination() {
+    if (!isSurvivorBoard(this.board) || this.team === TEAM.PLAYER || this.followTargetId == null) return false;
+    const target = this.board.units.get(this.followTargetId);
+    if (!target?.alive) {
+      this.followTargetId = null;
+      return false;
+    }
+
+    const nextX = boardScreenToWorldX(this.board, target.x) + this.followOffsetX + this.followJitterX;
+    const nextY = boardScreenToWorldY(this.board, target.y) + this.followOffsetY + this.followJitterY;
+    this.targetX = boardWorldToScreenX(this.board, nextX);
+    this.targetY = boardWorldToScreenY(this.board, nextY);
+    return true;
+  }
+
   SetMoveDestination({ positionX, positionY } = {}) {
+    this.followTargetId = null;
     this.targetX = boardWorldToScreenX(this.board, asNumber(positionX, boardScreenToWorldX(this.board, this.x)));
     this.targetY = boardWorldToScreenY(this.board, asNumber(positionY, boardScreenToWorldY(this.board, this.y)));
     this.state = this.team === TEAM.ENEMY ? 'approaching' : 'moving';

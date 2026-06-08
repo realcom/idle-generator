@@ -74,7 +74,11 @@ export class TriggerVM {
       skill: context.skill,
       buff: context.buff,
       vars: { ...(trigger.vars || {}), ...(context.vars || {}) },
-      predef: context.predef || {},
+      predef: {
+        Tick: this.board.tick,
+        Random: Math.random(),
+        ...(context.predef || {}),
+      },
     };
 
     this.#executeStatements(trigger.statements || [], ctx);

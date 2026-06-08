@@ -1,0 +1,62 @@
+id: 200600
+name: "등불 신전"
+category: Mine
+type: Mine
+grade: 3
+power: 40
+efficiencyPercents: [100.0, 108.0, 118.0, 130.0, 144.0]
+maxStamina: 0
+staminaRegenPerSecond: 0
+sellPrice: 0
+requiredExps: [0, 180, 420, 900, 1800]
+
+addStats:
+  - { type: ExpPercent, value: [0, 1, 2, 3, 5] }
+
+levelUpMaterialItemGroups:
+  - level: 2
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 120 }
+      - { id: 200102, count: 20 }
+      - { id: 5, count: 1200 }
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 260 }
+      - { id: 200102, count: 55 }
+      - { id: 200103, count: 2 }
+      - { id: 5, count: 2800 }
+  - level: 4
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 560 }
+      - { id: 200102, count: 130 }
+      - { id: 200103, count: 8 }
+      - { id: 5, count: 6200 }
+  - level: 5
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 1200 }
+      - { id: 200102, count: 300 }
+      - { id: 200103, count: 20 }
+      - { id: 5, count: 14000 }
+
+popupArgs:
+  HousingKey: lantern_shrine
+  HousingRole: town_center
+  HousingPlacementKind: singleton
+  HousingInstanceRole: town_center_core
+  HousingMaxInstancesByLanternLevel: "1:1"
+  HousingDuplicateCostScaling: none
+  HousingPurpose: "성소 핵심 레벨을 올려 안개 정화 범위, 타일 개방 수, 주민 수용량, 최대 건물 레벨을 확장하고 기본 목재/골드 생산을 제공한다."
+  HousingEffectKind: sanctuary_core
+  HousingBaseProduction: "Lv1 wood_per_min=2,gold_per_min=12; Lv2 wood_per_min=3,gold_per_min=20; Lv3 wood_per_min=5,gold_per_min=32; Lv4 wood_per_min=8,gold_per_min=52; Lv5 wood_per_min=12,gold_per_min=84"
+  HousingFootprint: 2x2
+  HousingSpriteKey: shrine
+  HousingConstructionSeconds: 0
+  HousingLevelUpSeconds: "2:120,3:600,4:1800,5:5400"
+
+spriteGroups:
+  Icon: "Items/Ninja2/housing_lantern_shrine_icon.png"
+  Building: "Housing/Ninja2/shrine.png"

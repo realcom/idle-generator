@@ -1,8 +1,8 @@
 version: "0.1"
 game: ninja2
 status: draft
-updated_at: 2026-06-04
-purpose: "Early housing building tech tree, level effects, construction costs/times, footprints, and asset production plan."
+updated_at: 2026-06-07
+purpose: "Housing building tech tree, level effects, construction costs/times, footprints, resident jobs, and asset production plan."
 
 schema_notes:
   construction: "Cost/time to place the building for the first time."
@@ -16,6 +16,7 @@ source_runtime:
   existing_runtime_building_sprites: harness/runtime/assets/ninja2/home/buildings/
   asset_plan: harness/design/ninja2/asset-plan.yaml
   component_skins: harness/design/ninja2/component-skins.yaml
+  content_items: harness/content/ninja2/items/_index.yaml
 
 resource_ids:
   gold: 5
@@ -64,6 +65,63 @@ economy_targets:
     first_new_building_after_runs: "2~4"
     first_ring_expansion_after_minutes: "15~25"
     first_soulflame_bottleneck_after_minutes: "45~90"
+  first_week:
+    ring_2_unlock: "D1 late or D2, after lantern shrine Lv 4 and first soulflame bottleneck"
+    first_expedition_choice: "D2, scout post Lv 1 opens one focused resource expedition slot"
+    first_resident_pressure: "D2~D3, lodge cap and food start limiting parallel production jobs"
+    ring_3_unlock: "D5~D7, after lantern shrine Lv 6 and D7 map series validation"
+
+content_alignment:
+  canonical_display_names:
+    200101: "목재"
+    200102: "석재"
+    200103: "영혼불"
+    200601: "용병 훈련소"
+    200602: "목재 작업장"
+    200603: "영혼광맥"
+  legacy_draft_file_aliases:
+    200101: "영지 목재"
+    200102: "기와석"
+    200103: "그림자 광석"
+    200601: "수련마당"
+    200602: "대나무창고"
+    200603: "그림자광맥"
+  rule: "Runtime/UI should prefer canonical_display_names; legacy draft filenames can remain until approval/renaming pass."
+
+loop_layers:
+  d1_core_loop:
+    goal: "One survival run funds at least one visible housing action."
+    buildings: [lantern_shrine, wood_workshop, training_yard, stone_quarry, soulflame_well]
+    exposed_resources: [gold, exp, wood, stone, soulflame, lantern]
+  d2_to_d3_choice_loop:
+    goal: "Player chooses between faster production, companion growth, boss stability, or targeted farming."
+    buildings: [herb_garden, resident_lodge, workshop, guard_lantern, scout_post]
+    exposed_resources: [herb, food, tool, companion_shard]
+  d5_to_d7_expansion_loop:
+    goal: "Ring 3 turns the sanctuary into a small survival town with supply chains."
+    buildings: [granary, bamboo_grove, iron_mine]
+    exposed_resources: [bamboo, iron_ore]
+
+resident_jobs:
+  max_parallel_jobs_source: "lantern_shrine.effect.resident_cap + resident_lodge.effect.resident_cap_bonus"
+  assignment_rule: "A built production building can be assigned one resident; assigned buildings gain the resident bonus and show a board resident sprite."
+  food_rule: "Ring 3 assignments consume food only for long expeditions, not for D1 passive production."
+  jobs:
+    - { key: lumber, building: wood_workshop, output_bonus_percent: [0, 4, 8, 12, 18], resident_variant: wood_resident }
+    - { key: quarry, building: stone_quarry, output_bonus_percent: [0, 4, 8, 12, 18], resident_variant: wood_resident }
+    - { key: herb_tend, building: herb_garden, output_bonus_percent: [0, 5, 10, 15, 22], resident_variant: herb_resident }
+    - { key: guard, building: guard_lantern, boss_damage_bonus_percent: [0, 1, 2, 3, 5], resident_variant: guard_resident }
+    - { key: scout, building: scout_post, expedition_time_reduction_percent: [0, 3, 6, 10, 15], resident_variant: courier_resident }
+
+adjacency_bonuses:
+  implementation_status: design_only
+  rule: "Keep bonuses small and readable; no bonus is required for D1 progression."
+  pairs:
+    - { a: lantern_shrine, b: guard_lantern, bonus: { boss_damage_percent: 1, light_radius: 3 } }
+    - { a: wood_workshop, b: workshop, bonus: { construction_time_reduction_percent: 2 } }
+    - { a: herb_garden, b: resident_lodge, bonus: { recovery_percent: 1, offline_cap_hours_bonus: 0.25 } }
+    - { a: scout_post, b: granary, bonus: { expedition_food_cost_reduction_percent: 5 } }
+    - { a: iron_mine, b: workshop, bonus: { tool_per_hour: 1 } }
 
 footprint_rules:
   "1x1":
@@ -83,10 +141,25 @@ footprint_rules:
     use_for: ["town center", "central shrine"]
     visual_size_px: { w: 142, h: 134 }
 
+placement_model:
+  principle: "Building definitions are blueprints; actual board placements are instances with their own tile occupancy, construction timer, level, storage, and resident assignment."
+  instance_id_format: "<building_key>#<ordinal>"
+  blueprint_state: "Unlock rules, footprint, sprite_key, and level_curve live on the building key."
+  instance_state: "Runtime should store placed instance ids; each instance can be built, upgraded, and assigned independently."
+  singleton_rule: "Core, management, and global buff buildings are unique unless explicitly changed."
+  repeatable_rule: "Storage and normal production buildings can be placed multiple times when enough tiles are open."
+  default_duplicate_scaling:
+    cost_multiplier_per_extra: 1.25
+    time_multiplier_per_extra: 1.15
+    effect_stack: "Production, storage, and capacity effects stack additively across instances; global percent bonuses should be capped during balance review."
+  repeatable_buildings: [wood_workshop, stone_quarry, herb_garden, resident_lodge, granary, bamboo_grove, iron_mine]
+  singleton_buildings: [lantern_shrine, training_yard, soulflame_well, workshop, guard_lantern, scout_post]
+
 tech_tree:
   start:
     unlocked_buildings: [lantern_shrine, wood_workshop]
-    starting_built: [lantern_shrine, wood_workshop]
+    starting_built: [lantern_shrine]
+    tutorial_build_order: [wood_workshop, training_yard]
   ring_1:
     unlock_condition: { lantern_shrine_level: 2 }
     buildings: [stone_quarry, training_yard, soulflame_well]
@@ -101,9 +174,13 @@ tech_tree:
       - { tile_state: "fogged_to_expandable", cost: { lantern: 1 }, time_seconds: 0 }
       - { tile_state: "expandable_to_empty", cost: { wood: 150, stone: 55, soulflame: 2 }, time_seconds: 600 }
   ring_3:
-    unlock_condition: { lantern_shrine_level: 6 }
+    unlock_condition: { lantern_shrine_level: 6, resident_lodge_level: 3, scout_post_level: 2 }
     buildings: [granary, bamboo_grove, iron_mine]
-    note: "D7 이후. D1 데이터에는 비용 방향만 남긴다."
+    expansion_costs:
+      - { tile_state: "fogged_to_expandable", cost: { lantern: 2, soulflame: 6 }, time_seconds: 0 }
+      - { tile_state: "expandable_to_empty", cost: { wood: 420, stone: 240, soulflame: 10, tool: 4 }, time_seconds: 1800 }
+      - { tile_state: "expandable_to_empty", cost: { wood: 720, stone: 420, soulflame: 18, bamboo: 60, tool: 8 }, time_seconds: 3600 }
+    note: "D5~D7 target. Keep data draft-only until resource expedition and resident food sinks are validated."
 
 buildings:
   - key: lantern_shrine
@@ -111,6 +188,7 @@ buildings:
     name: "등불 신전"
     tier: core
     role: town_center
+    purpose: "성소 핵심 레벨을 올려 안개 정화 범위, 타일 개방 수, 주민 수용량, 최대 건물 레벨을 확장하고 기본 목재/골드 생산을 제공한다."
     category_mapping: "runtime_housing_node"
     footprint: "2x2"
     runtime_tiles: [11, 12, 16, 17]
@@ -118,25 +196,28 @@ buildings:
     sprite_key: shrine
     asset_status: existing
     starts_built: true
+    placement_kind: singleton
+    instance_role: town_center_core
+    max_instances_by_lantern_level: { 1: 1 }
     construction:
       seconds: 0
       cost: {}
     effect_kind: sanctuary_core
     level_curve:
       - level: 1
-        effect: { light_radius: 38, max_open_tiles: 5, resident_cap: 6, max_building_level: 2 }
+        effect: { light_radius: 38, max_open_tiles: 6, resident_cap: 6, max_building_level: 2, wood_per_min: 2, gold_per_min: 12 }
         level_up: null
       - level: 2
-        effect: { light_radius: 52, max_open_tiles: 8, resident_cap: 7, max_building_level: 3, unlocks: [stone_quarry, training_yard] }
+        effect: { light_radius: 52, max_open_tiles: 8, resident_cap: 7, max_building_level: 3, wood_per_min: 3, gold_per_min: 20, unlocks: [stone_quarry, training_yard] }
         level_up: { seconds: 120, cost: { gold: 1200, wood: 120, stone: 20 } }
       - level: 3
-        effect: { light_radius: 70, max_open_tiles: 12, resident_cap: 8, max_building_level: 4, unlocks: [soulflame_well] }
+        effect: { light_radius: 70, max_open_tiles: 12, resident_cap: 8, max_building_level: 4, wood_per_min: 5, gold_per_min: 32, unlocks: [soulflame_well] }
         level_up: { seconds: 600, cost: { gold: 2800, wood: 260, stone: 55, soulflame: 2 } }
       - level: 4
-        effect: { light_radius: 92, max_open_tiles: 17, resident_cap: 10, max_building_level: 5, unlocks: [herb_garden, resident_lodge] }
+        effect: { light_radius: 92, max_open_tiles: 17, resident_cap: 10, max_building_level: 5, wood_per_min: 8, gold_per_min: 52, unlocks: [herb_garden, resident_lodge] }
         level_up: { seconds: 1800, cost: { gold: 6200, wood: 560, stone: 130, soulflame: 8 } }
       - level: 5
-        effect: { light_radius: 120, max_open_tiles: 23, resident_cap: 12, max_building_level: 6, unlocks: [workshop, guard_lantern, scout_post] }
+        effect: { light_radius: 120, max_open_tiles: 23, resident_cap: 12, max_building_level: 6, wood_per_min: 12, gold_per_min: 84, unlocks: [workshop, guard_lantern, scout_post] }
         level_up: { seconds: 5400, cost: { gold: 14000, wood: 1200, stone: 300, soulflame: 20 } }
 
   - key: wood_workshop
@@ -144,16 +225,22 @@ buildings:
     name: "목재 작업장"
     tier: core
     role: production
+    purpose: "초반 건설, 업그레이드, 타일 정화에 가장 많이 쓰는 목재를 방치 생산한다."
     category_mapping: "Item.Category=Mine"
     footprint: "1x2"
     runtime_tiles: [6, 7]
     runtime_anchor_tile: 7
     sprite_key: wood_workshop
     asset_status: existing
-    starts_built: true
+    starts_built: false
+    placement_kind: repeatable
+    instance_role: production_node
+    max_instances_by_lantern_level: { 1: 1, 3: 2, 5: 3, 6: 4 }
+    additional_instance:
+      base_construction: { seconds: 180, cost: { gold: 700, wood: 45, stone: 8 } }
     construction:
-      seconds: 0
-      cost: {}
+      seconds: 30
+      cost: { gold: 120 }
     effect_kind: produce_wood
     level_curve:
       - { level: 1, effect: { wood_per_min: 8, storage_minutes: 60 }, level_up: null }
@@ -167,13 +254,17 @@ buildings:
     name: "채석장"
     tier: ring_1
     role: production
+    purpose: "신전 강화, 타일 정화, 중반 건물 업그레이드에 필요한 석재 병목을 푼다."
     category_mapping: "Item.Category=Mine"
     footprint: "1x2"
     runtime_tiles: [8, 9]
     runtime_anchor_tile: 8
     sprite_key: stone_quarry
-    asset_status: planned
+    asset_status: generated
     starts_built: false
+    placement_kind: repeatable
+    instance_role: production_node
+    max_instances_by_lantern_level: { 2: 1, 4: 2, 6: 3 }
     construction:
       seconds: 180
       cost: { gold: 600, wood: 35, stone: 8 }
@@ -188,9 +279,10 @@ buildings:
 
   - key: training_yard
     content_item_id: 200601
-    name: "수련마당"
+    name: "용병 훈련소"
     tier: ring_1
-    role: growth
+    role: companion_management
+    purpose: "동료 편성과 성장을 담당하고, 경험치 생산과 공격 보너스로 다음 전투력을 밀어준다."
     category_mapping: "Item.Category=Mine"
     footprint: "1x3"
     runtime_tiles: [13, 18, 19]
@@ -198,11 +290,14 @@ buildings:
     sprite_key: training_yard
     asset_status: existing
     starts_built: false
+    placement_kind: singleton
+    instance_role: companion_center
+    max_instances_by_lantern_level: { 1: 1 }
     construction:
       seconds: 120
-      cost: { gold: 450, wood: 30, stone: 4 }
+      cost: { gold: 300, wood: 30 }
     unlock: { lantern_shrine_level: 2, wood_workshop_level: 2 }
-    effect_kind: produce_exp_and_attack_bonus
+    effect_kind: companion_management_and_training
     level_curve:
       - { level: 1, effect: { exp_per_min: 18, attack_percent: 1 }, level_up: null }
       - { level: 2, effect: { exp_per_min: 30, attack_percent: 2 }, level_up: { seconds: 120, cost: { gold: 500, wood: 12 } } }
@@ -215,6 +310,7 @@ buildings:
     name: "영혼광맥"
     tier: ring_1
     role: rare_production
+    purpose: "보스/특수 성장의 희귀 병목인 영혼불을 생산해 신전, 동료 스킬, 특수 건물을 성장시킨다."
     category_mapping: "Item.Category=Mine"
     footprint: "1x1"
     runtime_tiles: [4]
@@ -222,6 +318,9 @@ buildings:
     sprite_key: soulflame_well
     asset_status: existing
     starts_built: false
+    placement_kind: singleton
+    instance_role: rare_resource_gate
+    max_instances_by_lantern_level: { 3: 1 }
     construction:
       seconds: 600
       cost: { gold: 1200, wood: 80, stone: 35, soulflame: 1 }
@@ -239,6 +338,7 @@ buildings:
     name: "허브 정원"
     tier: ring_2
     role: support_production
+    purpose: "허브를 생산하고 회복/생존 보정을 제공해 긴 생존 전투와 정화 루프를 안정화한다."
     category_mapping: "Item.Category=Mine"
     footprint: "1x3"
     runtime_tiles: [-1, -2, -3]
@@ -246,6 +346,9 @@ buildings:
     sprite_key: herb_garden
     asset_status: existing
     starts_built: false
+    placement_kind: repeatable
+    instance_role: support_production_node
+    max_instances_by_lantern_level: { 4: 1, 5: 2, 6: 3 }
     construction:
       seconds: 900
       cost: { gold: 2500, wood: 110, stone: 50, soulflame: 2 }
@@ -263,6 +366,7 @@ buildings:
     name: "주민 숙소"
     tier: ring_2
     role: capacity
+    purpose: "주민 수용량과 오프라인 보상 한도를 늘려 여러 생산 건물을 동시에 굴리게 한다."
     category_mapping: "runtime_housing_node"
     footprint: "1x2"
     runtime_tiles: [10, 14]
@@ -270,6 +374,9 @@ buildings:
     sprite_key: storage
     asset_status: existing
     starts_built: false
+    placement_kind: repeatable
+    instance_role: capacity_storage_node
+    max_instances_by_lantern_level: { 4: 1, 5: 2, 6: 3 }
     construction:
       seconds: 1200
       cost: { gold: 3200, wood: 140, stone: 60, soulflame: 2 }
@@ -287,13 +394,17 @@ buildings:
     name: "공방"
     tier: ring_2
     role: crafting
+    purpose: "도구를 생산하고 건설/레벨업 시간을 줄여 중후반 건물 성장 속도를 개선한다."
     category_mapping: "runtime_housing_node_or_Item.Category=Mine"
     footprint: "1x2"
     runtime_tiles: [2, 5]
     runtime_anchor_tile: 5
     sprite_key: workshop
-    asset_status: planned
+    asset_status: generated
     starts_built: false
+    placement_kind: singleton
+    instance_role: crafting_center
+    max_instances_by_lantern_level: { 5: 1 }
     construction:
       seconds: 1800
       cost: { gold: 5200, wood: 220, stone: 120, soulflame: 5 }
@@ -311,6 +422,7 @@ buildings:
     name: "수호등탑"
     tier: ring_2
     role: combat_bonus
+    purpose: "보스 피해와 방어 보정을 제공해 보스 추적, 방어형 스테이지, 위험 타일 정화를 안정화한다."
     category_mapping: "runtime_housing_node_or_Item.Category=Stat"
     footprint: "1x1"
     runtime_tiles: [3]
@@ -318,6 +430,9 @@ buildings:
     sprite_key: guard_lantern
     asset_status: existing
     starts_built: false
+    placement_kind: singleton
+    instance_role: combat_guard
+    max_instances_by_lantern_level: { 5: 1 }
     construction:
       seconds: 1800
       cost: { gold: 6000, wood: 180, stone: 160, soulflame: 6 }
@@ -335,13 +450,17 @@ buildings:
     name: "정찰소"
     tier: ring_2
     role: farming_control
+    purpose: "자원 원정 슬롯과 드롭률 보정으로 플레이어가 필요한 재료 파밍처를 선택하게 한다."
     category_mapping: "runtime_housing_node"
     footprint: "1x1"
     runtime_tiles: [1]
     runtime_anchor_tile: 1
     sprite_key: scout_post
-    asset_status: planned
+    asset_status: generated
     starts_built: false
+    placement_kind: singleton
+    instance_role: expedition_control
+    max_instances_by_lantern_level: { 5: 1 }
     construction:
       seconds: 2400
       cost: { gold: 7200, wood: 240, stone: 180, soulflame: 8 }
@@ -353,6 +472,90 @@ buildings:
       - { level: 3, effect: { resource_expedition_slots: 2, item_drop_percent: 4 }, level_up: { seconds: 10800, cost: { gold: 22000, wood: 620, stone: 520, soulflame: 22 } } }
       - { level: 4, effect: { resource_expedition_slots: 2, item_drop_percent: 7 }, level_up: { seconds: 28800, cost: { gold: 48000, wood: 1300, stone: 1100, soulflame: 50 } } }
       - { level: 5, effect: { resource_expedition_slots: 3, item_drop_percent: 10 }, level_up: { seconds: 57600, cost: { gold: 105000, wood: 2800, stone: 2400, soulflame: 110 } } }
+
+  - key: granary
+    content_item_id: 200610
+    name: "보급창고"
+    tier: ring_3
+    role: supply_capacity
+    purpose: "식량과 원정 보급을 저장해 장시간 원정, 주민 배치, 오프라인 수령 한도를 확장한다."
+    category_mapping: "runtime_housing_node_or_Item.Category=Mine"
+    footprint: "1x2"
+    runtime_tiles: [-4, -5]
+    runtime_anchor_tile: -4
+    sprite_key: granary
+    asset_status: generated
+    starts_built: false
+    placement_kind: repeatable
+    instance_role: supply_storage_node
+    max_instances_by_lantern_level: { 6: 2 }
+    construction:
+      seconds: 5400
+      cost: { gold: 18000, wood: 650, stone: 420, soulflame: 12, herb: 30, tool: 2 }
+    unlock: { lantern_shrine_level: 6, resident_lodge_level: 3 }
+    effect_kind: food_storage_and_expedition_supply
+    level_curve:
+      - { level: 1, effect: { food_per_hour: 12, expedition_supply_cap: 2, offline_cap_hours_bonus: 0.5 }, level_up: null }
+      - { level: 2, effect: { food_per_hour: 20, expedition_supply_cap: 3, offline_cap_hours_bonus: 0.75 }, level_up: { seconds: 7200, cost: { gold: 24000, wood: 780, stone: 520, soulflame: 14, herb: 45, tool: 3 } } }
+      - { level: 3, effect: { food_per_hour: 32, expedition_supply_cap: 4, offline_cap_hours_bonus: 1.0 }, level_up: { seconds: 14400, cost: { gold: 52000, wood: 1450, stone: 980, soulflame: 30, bamboo: 80, tool: 8 } } }
+      - { level: 4, effect: { food_per_hour: 50, expedition_supply_cap: 5, offline_cap_hours_bonus: 1.5 }, level_up: { seconds: 28800, cost: { gold: 112000, wood: 3000, stone: 2100, soulflame: 68, bamboo: 180, iron_ore: 45, tool: 18 } } }
+      - { level: 5, effect: { food_per_hour: 78, expedition_supply_cap: 7, offline_cap_hours_bonus: 2.0 }, level_up: { seconds: 64800, cost: { gold: 250000, wood: 6400, stone: 4600, soulflame: 150, bamboo: 420, iron_ore: 120, tool: 42 } } }
+
+  - key: bamboo_grove
+    content_item_id: 200611
+    name: "대나무숲"
+    tier: ring_3
+    role: advanced_production
+    purpose: "대나무를 생산해 빠른 건설재를 공급하고 목재 비용 부담을 완화한다."
+    category_mapping: "Item.Category=Mine"
+    footprint: "1x3"
+    runtime_tiles: [-6, -7, -8]
+    runtime_anchor_tile: -7
+    sprite_key: bamboo_grove
+    asset_status: generated
+    starts_built: false
+    placement_kind: repeatable
+    instance_role: advanced_production_node
+    max_instances_by_lantern_level: { 6: 2 }
+    construction:
+      seconds: 4800
+      cost: { gold: 15000, wood: 720, stone: 280, soulflame: 8, herb: 20 }
+    unlock: { lantern_shrine_level: 6, herb_garden_level: 2 }
+    effect_kind: produce_bamboo_and_build_cost_relief
+    level_curve:
+      - { level: 1, effect: { bamboo_per_min: 3, wood_cost_reduction_percent: 1 }, level_up: null }
+      - { level: 2, effect: { bamboo_per_min: 5, wood_cost_reduction_percent: 2 }, level_up: { seconds: 6600, cost: { gold: 22000, wood: 900, stone: 360, soulflame: 12, herb: 35 } } }
+      - { level: 3, effect: { bamboo_per_min: 8, wood_cost_reduction_percent: 3 }, level_up: { seconds: 13200, cost: { gold: 48000, wood: 1700, stone: 740, soulflame: 26, tool: 6 } } }
+      - { level: 4, effect: { bamboo_per_min: 13, wood_cost_reduction_percent: 5 }, level_up: { seconds: 28800, cost: { gold: 105000, wood: 3600, stone: 1600, soulflame: 60, tool: 14 } } }
+      - { level: 5, effect: { bamboo_per_min: 20, wood_cost_reduction_percent: 8 }, level_up: { seconds: 57600, cost: { gold: 230000, wood: 7800, stone: 3600, soulflame: 136, iron_ore: 90, tool: 32 } } }
+
+  - key: iron_mine
+    content_item_id: 200612
+    name: "철광산"
+    tier: ring_3
+    role: advanced_production
+    purpose: "철광석을 생산해 공방 고급 제작, 중반 업그레이드, 보스 대응 성장의 관문이 된다."
+    category_mapping: "Item.Category=Mine"
+    footprint: "1x2"
+    runtime_tiles: [-9, -10]
+    runtime_anchor_tile: -9
+    sprite_key: iron_mine
+    asset_status: generated
+    starts_built: false
+    placement_kind: repeatable
+    instance_role: advanced_production_node
+    max_instances_by_lantern_level: { 6: 2 }
+    construction:
+      seconds: 7200
+      cost: { gold: 26000, wood: 900, stone: 760, soulflame: 18, bamboo: 40, tool: 4 }
+    unlock: { lantern_shrine_level: 6, scout_post_level: 2, bamboo_grove_level: 1 }
+    effect_kind: produce_iron_and_midgame_upgrade_gate
+    level_curve:
+      - { level: 1, effect: { iron_ore_per_hour: 4, boss_damage_percent: 1 }, level_up: null }
+      - { level: 2, effect: { iron_ore_per_hour: 7, boss_damage_percent: 2 }, level_up: { seconds: 9000, cost: { gold: 34000, wood: 1100, stone: 900, soulflame: 22, bamboo: 70, tool: 6 } } }
+      - { level: 3, effect: { iron_ore_per_hour: 12, boss_damage_percent: 3 }, level_up: { seconds: 18000, cost: { gold: 74000, wood: 2200, stone: 1800, soulflame: 50, bamboo: 160, tool: 14 } } }
+      - { level: 4, effect: { iron_ore_per_hour: 20, boss_damage_percent: 5 }, level_up: { seconds: 36000, cost: { gold: 160000, wood: 4700, stone: 3900, soulflame: 112, bamboo: 380, tool: 32 } } }
+      - { level: 5, effect: { iron_ore_per_hour: 32, boss_damage_percent: 8 }, level_up: { seconds: 72000, cost: { gold: 360000, wood: 10200, stone: 8600, soulflame: 250, bamboo: 900, tool: 72 } } }
 
 asset_production_plan:
   existing_pipeline:
@@ -377,6 +580,7 @@ asset_production_plan:
   extension_atlas_needed:
     key: ninja2.home.building_atlas.sanctuary_extension_a
     priority: should
+    status: generated
     variants:
       - { sprite_key: stone_quarry, footprint: "1x2", note: "stone pit plus small pulley/cart, not a mine cave that reads as combat dungeon" }
       - { sprite_key: workshop, footprint: "1x2", note: "tool bench, small chimney, wood/iron details" }
@@ -388,9 +592,11 @@ asset_production_plan:
 implementation_notes:
   engine_item_yaml:
     safe_fields: ["category=Mine", "efficiencyPercents", "maxStamina", "staminaRegenPerSecond", "levelUpMaterialItemGroups", "sellAddItemGroups", "spriteGroups", "popupArgs"]
-    caution: "construction seconds, footprint, tile occupancy, and build cost should stay in housing runtime data or popupArgs until engine contract is extended."
+    timing_contract: "Mirror construction.seconds into popupArgs.HousingConstructionSeconds and level_curve[].level_up.seconds into popupArgs.HousingLevelUpSeconds for every building item draft."
+    placement_contract: "Mirror placement_kind, instance_role, and max_instances_by_lantern_level into popupArgs.HousingPlacementKind, HousingInstanceRole, and HousingMaxInstancesByLanternLevel."
+    caution: "construction seconds, footprint, tile occupancy, placement instance state, and build cost should stay in housing runtime data or popupArgs until engine contract is extended."
   phaser_runtime:
-    current_state: "survivor-app.js renders home BUILDINGS from housing-tech.js and tracks built/locked/buildable/constructing states."
-    next_step: "Replace the hand-maintained runtime derivative with generated JSON/JS from this YAML, then add true tile expansion and construction queue UX."
+    current_state: "survivor-app.js renders home BUILDINGS from housing-tech.js and tracks built/locked/buildable/constructing states by building key."
+    next_step: "Replace builtBuildings[key] with placedBuildingInstances[instance_id], then generate housing-tech data from this YAML."
   unity_runtime:
     next_step: "Use footprint, sprite_key, foundation kind, and construction timers to build a uGUI/grid prefab recipe."

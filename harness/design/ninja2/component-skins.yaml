@@ -3,6 +3,7 @@ game: ninja2
 source_concepts:
   - ninja2_rulelocked_housing_home_a
   - ninja2_rulelocked_survival_battle_a
+  - ninja2_run_levelup_choice_modal_a
 status: extracted
 
 skins:
@@ -19,10 +20,10 @@ skins:
     icon_shapes: ["wood log", "soul flame", "coin", "blue crystal"]
     plus_button: "small cream circle"
   topbar_cluster:
-    profile_card: "fixed generated parchment-gold card sprite; rejected for 9-slice because the portrait slot and bottom ornaments are fixed composition"
-    resource_board: "generated dark rounded board PNG containing only frame/material; use Phaser 9-slice with slice_hints { left: 24, right: 24, top: 24, bottom: 24 }"
-    resource_chip: "generated dark pill PNG; use Phaser 9-slice with slice_hints { left: 18, right: 18, top: 14, bottom: 14 }; resource icon, value, and plus remain separate atoms"
-    status_card: "fixed generated status frame sprite; rejected for 9-slice because its slot/progress ornament composition is not stretch-safe"
+    hero_portrait_status: "native circular gold portrait frame with guardian avatar sprite, level badge, lantern accent, and green progress bar; no name text in the top-left cluster"
+    resource_row: "four separate horizontal dark resource pills across the top row; not a 2x2 resource board"
+    resource_chip: "dark pill frame may use generated 9-slice or native rounded frame; resource icon and value remain separate atoms"
+    population_menu_cluster: "resident capacity pill plus menu and settings round-corner buttons in the second row on the right"
     resource_icons: ["coin", "soul teal orb", "wood log", "stone diamond", "cream plus"]
     production_contract: "Only resource_board and resource_chip are Phaser phaser_nineslice skins; profile/status cards and icons are fixed sprites."
     runtime_usage: "DOM preview uses the same PNGs via CSS border-image/background fallback under harness/runtime/assets/ninja2/ui/topbar; Phaser UI runtime should call scene.add.nineslice for the accepted resource skins."
@@ -72,3 +73,36 @@ skins:
     fill: "dark radial"
     icon_colors: ["lantern gold", "soul teal", "sunburst gold"]
     cooldown_text: "cream numeric label"
+  battle_counter_icon:
+    source: "asset-plan.yaml:ninja2.ui.battle_counter_icons_v1"
+    usage: "timer, kill, enemy, pickup, and boss/stage HUD counters"
+    style: "transparent 96px glyph atoms with dark ink outline, lantern-gold highlight, and teal soulflame glow"
+    avoid: "no baked labels, numbers, timer text, stage text, or HUD frames"
+  battle_encounter_icon:
+    source: "asset-plan.yaml:ninja2.battle.encounter_icons.light_v1"
+    usage: "bomb, magnet, potion, and mine map-trigger encounter pickups in the survival playfield"
+    style: "very light transparent glyph atoms; one simple silhouette, one main fill, one small accent, generous empty space"
+    avoid: "no dense internal texture, no HUD badge framing, no text, no amount labels, no baked collection rings, and no heavy drop shadow"
+  housing_home:
+    blueprint: component-blueprints.yaml:surfaces.HousingHome
+    purpose: "Lantern sanctuary city home assembled from semantic top, side, board, action-row, and nav sections."
+    top_identity_band: "Rulelocked concept top HUD: circular hero portrait/status cluster, single horizontal resource pill row, and population/menu/settings cluster. No centered sanctuary status plaque."
+    sanctuary_board: "Forest background, state-specific hex tile PNGs, y-sorted building sprites, native production bubbles, and low-priority expansion costs."
+    bottom_action_row: "Companion shortcut strip, widened selected building parchment panel with integrated production/collect chip, and fixed orange sortie sprite share one bottom loop row above the tab dock. No standalone left collect card."
+    bottom_navigation_dock: "Five native MVP loop tabs with stable dimensions; selected tab uses lantern-gold fill."
+    layer_policy: "Top, side rail, loop toast, action row, sortie CTA, and nav dock must layer above expansion cost markers."
+    text_policy: "Building names, resource values, progress, costs, and tab labels stay native runtime text; buildable board placeholders use compact glyphs only."
+  run_levelup_choice:
+    blueprint: component-blueprints.yaml:surfaces.RunLevelUpChoice
+    purpose: "Three-card run skill upgrade modal over a dimmed survival battle."
+    modal_panel: "cream parchment 9-slice skin with dark ink outline; header, title, run summary, and choices are native layout slots"
+    frame_ornaments: "fixed transparent sprite overlays for the lantern crest and leafy corner clusters; they sit on the panel border and do not stretch"
+    choice_card: "repeatable parchment card shell; card bitmap may provide frame/material only, while badge, skill icon, name, pips, summary, chips, and category remain native slots"
+    skill_icon_well: "native circular disc containing the generated skill icon sprite; the icon asset does not include the disc, card frame, text, or pips"
+    footer: "reroll remains hidden until run-limited cost and remaining count are wired"
+    spacing_source: "component-blueprints.yaml owns content_insets, padding, slot gaps, clamp behavior, and responsive reductions"
+    nine_slice_policy:
+      panel_and_card_skin: "accepted only when text/icons/badges/pips are not baked into the bitmap"
+      ornament_sprites: "not 9-slice; use asset-plan.yaml:ninja2.ui.level_choice.frame_ornaments_v1 as fixed overlays"
+      slice_hints_source: "asset-plan.yaml:ninja2.ui.panel.parchment_9slice"
+      content_insets_source: "component-blueprints.yaml:asset_dependency_matrix.ninja2.ui.panel.parchment_9slice"

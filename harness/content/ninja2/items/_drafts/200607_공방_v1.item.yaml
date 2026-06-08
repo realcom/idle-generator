@@ -1,0 +1,68 @@
+id: 200607
+name: "공방"
+category: Mine
+type: Mine
+grade: 2
+power: 20
+efficiencyPercents: [100.0, 118.0, 139.0, 164.0, 193.0]
+maxStamina: 55
+staminaRegenPerSecond: 0.0093
+sellPrice: 0
+requiredExps: [0, 160, 340, 720, 1280]
+
+addStats:
+  - { type: CooldownPercent, value: [0, 1, 2, 3, 5] }
+
+levelUpMaterialItemGroups:
+  - level: 2
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 260 }
+      - { id: 200102, count: 140 }
+      - { id: 200103, count: 6 }
+      - { id: 5, count: 7200 }
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 560 }
+      - { id: 200102, count: 300 }
+      - { id: 200103, count: 14 }
+      - { id: 5, count: 16000 }
+  - level: 4
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 1200 }
+      - { id: 200102, count: 640 }
+      - { id: 200103, count: 32 }
+      - { id: 5, count: 36000 }
+  - level: 5
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 2600 }
+      - { id: 200102, count: 1400 }
+      - { id: 200103, count: 72 }
+      - { id: 5, count: 78000 }
+
+sellAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200110, count: 1, isCore: true }
+
+popupArgs:
+  HousingKey: workshop
+  HousingRole: crafting
+  HousingPlacementKind: singleton
+  HousingInstanceRole: crafting_center
+  HousingMaxInstancesByLanternLevel: "5:1"
+  HousingDuplicateCostScaling: none
+  HousingPurpose: "도구를 생산하고 건설/레벨업 시간을 줄여 중후반 건물 성장 속도를 개선한다."
+  HousingEffectKind: tools_and_build_speed
+  HousingFootprint: 1x2
+  HousingSpriteKey: workshop
+  HousingConstructionSeconds: 1800
+  HousingLevelUpSeconds: "2:2400,3:7200,4:18000,5:43200"
+
+spriteGroups:
+  Icon: "Items/Ninja2/housing_workshop_icon.png"
+  Building: "Housing/Ninja2/workshop.png"

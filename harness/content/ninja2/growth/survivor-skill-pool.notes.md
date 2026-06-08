@@ -1,6 +1,11 @@
 # ninja2-survivor-skill-pool
 
-닌자 서바이벌2의 첫 인게임 스킬 풀은 뱀파이어 서바이벌식 자동 전투 확장 구조로 둔다.
+닌자 서바이벌2의 인게임 스킬은 뱀파이어 서바이벌식 자동 전투 확장 구조로 둔다.
+
+Runtime exposure:
+- Basic character auto attack: `300101 쿠나이 베기` only.
+- D1 level-up choice pool: `300102 표창 난사`, `300103 연막 폭탄`, `300115 질풍 보법`.
+- The full 16-skill list below is the authored catalogue/VFX validation set, not the starting player loadout.
 
 | id | skill | role | cooldown | damage type | level 1 damage model |
 | --- | --- | --- | ---: | --- | --- |

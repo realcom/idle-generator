@@ -15,6 +15,8 @@ Purpose: define what Unity should build before any prefab is generated.
 
 - `harness/design/<game>/art-direction.yaml`
 - `harness/design/<game>/layout-tokens.yaml`
+- `harness/design/COMPONENT_BLUEPRINTS.md`
+- `harness/design/<game>/component-blueprints.yaml`
 - `harness/design/<game>/component-skins.yaml`
 - `harness/design/<game>/asset-plan.yaml`
 - `harness/unity/registries/ugui-atoms.yaml`
@@ -31,7 +33,10 @@ Write recipes under:
 - target scene or owner, usually `GameScene`
 - backend, usually `ugui`
 - source concept and design source paths
+- component blueprint surface/component ids used by the recipe
+- component blueprint section ids used by the recipe, including ownership boundaries between HUD, body, dock, nav, modal header/body/footer, or other semantic regions
 - generated/reused asset keys from `asset-plan.yaml`, limited to `platforms: [unity]` or shared assets
+- `content_insets`, padding, gaps, text clamp rules, and ornament layers from `component-blueprints.yaml`
 - screen orientation and safe-area policy
 - top HUD, combat arena, and bottom dock regions
 - atom references from `ugui-atoms.yaml`
@@ -45,3 +50,6 @@ Write recipes under:
 - Keep bindings symbolic if engine code is not ready yet.
 - Validate atom names against `harness/unity/registries/ugui-atoms.yaml`.
 - Do not solve Phaser DOM/canvas implementation here; use `gen-phaser-ui-spec` for that path.
+- Do not invent component anatomy or spacing in the recipe when `component-blueprints.yaml` already defines it.
+- Preserve section boundaries from `component-blueprints.yaml` when creating RectTransform groups and layout owners.
+- Run `python3 harness/tools/design_blueprint_validate.py <game>` before finalizing recipes that depend on component blueprints.

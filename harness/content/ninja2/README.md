@@ -17,6 +17,19 @@
 - 건물 효과 보상: `Stat` 아이템, `Buff`, 업적 보상 중 현 엔진에 맞는 것을 우선 사용
 - 시각적 건물: 필요할 때만 `Unit.Type=Building`으로 추가
 - 화면 구조: 하우징은 별도 세로형 홈 화면이며, 헥스 타일 영지를 확장하면서 건물을 짓는 보드로 표현한다.
+- 배치 구조: 건물 정의는 13개 blueprint이고, 실제 보드에는 instance를 배치한다. 저장고/수용량/일반 생산 건물은 `repeatable`, 신전/관리/전역 보너스 건물은 `singleton`으로 둔다.
 - 전투 진입: 하우징 화면의 `출격` CTA가 별도 Survival 전투 화면으로 이동한다.
+
+## Housing Building Tech
+
+건물 테크트리의 원천 기획은 `harness/design/ninja2/housing-building-tech-v0.yaml`이다.
+
+- D1: 등불 신전만 시작 설치. 목재 작업장은 첫 튜토리얼 건설, 용병 훈련소는 신전/목재 성장 후 두 번째 목표로 둔다.
+- D2~D3: 허브 정원, 주민 숙소, 공방, 수호등탑, 정찰소.
+- D5~D7: 보급창고, 대나무숲, 철광산.
+
+콘텐츠 draft는 `items/_drafts/200600~200612`에 `Item.Category=Mine`으로 둔다. 실제 하우징 전용 필드(타일 점유, 건설 시간, 레벨업 시간, 주민 배치, 인접 보너스)는 엔진 계약 확장 전까지 `popupArgs.Housing*`와 디자인 YAML에 보관한다.
+
+반복 배치 가능 건물은 `popupArgs.HousingPlacementKind=repeatable`과 `HousingMaxInstancesByLanternLevel`을 가진다. 추가 인스턴스는 각자 건설/레벨업 시간을 갖고, 비용은 기본적으로 인스턴스가 늘어날수록 `cost x1.25`, `time x1.15`로 증가한다.
 
 4X는 별도 시작점이 아니라, 위 Housing 자산을 `Alliance4X`로 확장하는 두 번째 패스다.

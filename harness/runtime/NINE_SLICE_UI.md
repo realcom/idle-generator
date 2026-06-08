@@ -11,6 +11,7 @@ Use Phaser 9-slice only when all are true:
 - Text, numbers, icons, badges, timers, prices, and localized labels are native runtime objects, not baked into the bitmap.
 - Corners and edge caps contain the important bevel, outline, shadow, or ornament; the center can stretch or tile without visible distortion.
 - `slice_hints` are known and valid: `left + right < width`, `top + bottom < height`.
+- Text/icon layout uses separate `content_insets`; do not reuse `slice_hints` as padding.
 - Phaser runs WebGL. This harness uses Phaser 4.1, so native `scene.add.nineslice(...)` is the default.
 
 Do not use Phaser 9-slice for:
@@ -18,6 +19,7 @@ Do not use Phaser 9-slice for:
 - Characters, monsters, buildings, pets, weapons, pickups, icons, portraits, VFX, background art, hex tiles, maps, sprite sheets, or atlases.
 - Irregular silhouettes where corners are not fixed rectangular caps.
 - Images with central illustration, strong gradients, noise, symbols, or shadows that would visibly stretch.
+- Border/corner/crest/vine/badge ornaments that are not stretch-safe. Put these in a fixed ornament sprite layer from `component-blueprints.yaml` instead.
 - DOM-only layout skins. CSS may be used for debug or preview, but not as the production 9-slice path.
 - Very small fixed-size widgets where a plain sprite or native Phaser graphics is simpler and more stable.
 
@@ -26,6 +28,7 @@ Do not use Phaser 9-slice for:
 | Surface | Preferred implementation |
 | --- | --- |
 | Modal/panel/card/dock/button/tab/chip skin | `phaser_nineslice` |
+| Fixed border ornaments, crests, corner leaves, clasps, vines | Image/sprite overlay from `component-blueprints.yaml` ornament layer |
 | Simple solid rounded box, pill, separator, cooldown ring | Phaser graphics |
 | Fixed icon, portrait, badge, pickup, building | Image/sprite |
 | Background/scene art | Image, CSS background, or Phaser image cover |
@@ -43,6 +46,10 @@ mode: hybrid
 platforms: [phaser, unity]
 background: transparent
 slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+component_contract:
+  slice_hints: "Bitmap stretch borders only."
+  content_insets:
+    ExamplePanel: { left: 14, right: 14, top: 18, bottom: 14 }
 phaser:
   usage: phaser_nineslice
   target_path: harness/runtime/assets/<game>/ui/<asset>.png
@@ -55,6 +62,19 @@ unity:
 Keep state variants as separate keys or files when their cap geometry changes, such as `normal`, `pressed`, `selected`, and `disabled`.
 
 For asset entries that intentionally bundle several UI skin PNGs, use `phaser.usage: phaser_nineslice_set`, `unity.usage: sliced_sprite_set`, and name each inset group under `slice_hints`.
+
+For non-stretch-safe decorative attachments, use a separate fixed asset entry:
+
+```yaml
+type: frame_ornament_set
+mode: hybrid
+background: transparent
+slice_hints: null
+phaser:
+  usage: image_sprite_set
+```
+
+Then reference it from `harness/design/<game>/component-blueprints.yaml` as an `ornament_layer`.
 
 ## Phaser Runtime Contract
 
@@ -92,3 +112,9 @@ python3 harness/tools/phaser_smoke.py <game> --skip-compile --runtime harness/ru
 ```
 
 Check at least three sizes when possible: compact mobile, target mobile, and an oversized modal/panel. Corners must remain crisp, edge bevels must not warp, text must not be baked into the skin, and the center stretch must not smear important art.
+
+For blueprint-backed UI, also run:
+
+```bash
+python3 harness/tools/design_blueprint_validate.py <game>
+```

@@ -1,0 +1,71 @@
+id: 200609
+name: "정찰소"
+category: Mine
+type: Mine
+grade: 2
+power: 22
+efficiencyPercents: [100.0, 116.0, 135.0, 157.0, 183.0]
+maxStamina: 40
+staminaRegenPerSecond: 0.0083
+sellPrice: 0
+requiredExps: [0, 200, 420, 860, 1540]
+
+addStats:
+  - { type: ItemDropPercent, value: [1, 2, 4, 7, 10] }
+
+levelUpMaterialItemGroups:
+  - level: 2
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 280 }
+      - { id: 200102, count: 220 }
+      - { id: 200103, count: 9 }
+      - { id: 5, count: 9800 }
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 620 }
+      - { id: 200102, count: 520 }
+      - { id: 200103, count: 22 }
+      - { id: 5, count: 22000 }
+  - level: 4
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 1300 }
+      - { id: 200102, count: 1100 }
+      - { id: 200103, count: 50 }
+      - { id: 5, count: 48000 }
+  - level: 5
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 2800 }
+      - { id: 200102, count: 2400 }
+      - { id: 200103, count: 110 }
+      - { id: 5, count: 105000 }
+
+sellAddItemGroups:
+  - shouldAddAll: false
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200101, count: 8, weight: 35, group: 1, isCore: true }
+      - { itemDataId: 200102, count: 4, weight: 25, group: 1 }
+      - { itemDataId: 200108, count: 3, weight: 20, group: 1 }
+      - { itemDataId: 200111, count: 1, weight: 20, group: 1 }
+
+popupArgs:
+  HousingKey: scout_post
+  HousingRole: farming_control
+  HousingPlacementKind: singleton
+  HousingInstanceRole: expedition_control
+  HousingMaxInstancesByLanternLevel: "5:1"
+  HousingDuplicateCostScaling: none
+  HousingPurpose: "자원 원정 슬롯과 드롭률 보정으로 플레이어가 필요한 재료 파밍처를 선택하게 한다."
+  HousingEffectKind: expedition_preview_and_drop_bonus
+  HousingFootprint: 1x1
+  HousingSpriteKey: scout_post
+  HousingConstructionSeconds: 2400
+  HousingLevelUpSeconds: "2:3600,3:10800,4:28800,5:57600"
+
+spriteGroups:
+  Icon: "Items/Ninja2/housing_scout_post_icon.png"
+  Building: "Housing/Ninja2/scout_post.png"

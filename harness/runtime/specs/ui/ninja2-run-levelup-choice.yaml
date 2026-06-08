@@ -24,6 +24,7 @@ source_design:
   tokens:
     - harness/design/ninja2/art-direction.yaml
     - harness/design/ninja2/layout-tokens.yaml
+    - harness/design/ninja2/component-blueprints.yaml
     - harness/design/ninja2/component-skins.yaml
     - harness/design/ninja2/asset-plan.yaml
   content_sources:
@@ -173,6 +174,11 @@ asset_keys:
       runtime_paths:
         - harness/runtime/assets/ninja2/ui/panel_parchment_9slice.png
       usage: "Phaser 9-slice parchment skin for reusable panels/cards; current DOM modal may use CSS border-image as a preview fallback"
+    - key: ninja2.ui.level_choice.frame_ornaments_v1
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/level-choice/frame_crest.png
+        - harness/runtime/assets/ninja2/ui/level-choice/frame_corner_leaf.png
+      usage: "Fixed transparent ornament sprites anchored to the level choice panel border; not part of the 9-slice skin and not layout-affecting"
     - key: ninja2.ui.profile.guardian
       runtime_paths:
         - harness/runtime/assets/ninja2/ui/profile_guardian.png
@@ -205,11 +211,17 @@ design_mapping:
     cream_text: "#f8ead1"
     ink_text: "#171f18"
   component_rules:
+    blueprint_source: "harness/design/ninja2/component-blueprints.yaml:surfaces.RunLevelUpChoice"
     panel: "4px dark outline, hard drop shadow, 14px radius"
     card: "4px dark outline, 8px radius, selected gold glow"
     icon_disc: "black/brown circular badge with colored skill glyph"
+    frame_ornaments: "fixed crest and corner sprites over the panel border, pointer-events none"
     level_pips: "5 tiny diamond or chevron pips; active gold, inactive brown"
     stat_chip: "rounded parchment-brown chip; maximum two per card"
+    contract:
+      - "Use component-blueprints.yaml for anatomy, content_insets, padding, gaps, and clamp behavior."
+      - "Use asset-plan.yaml only for concrete bitmap sources and generated icon paths."
+      - "Do not treat slice_hints as text padding; panel/card content insets are blueprint-owned."
   phaser_graphics:
     backdrop: "No new canvas work required; combat scene remains underneath."
     optional_sparks: "Tiny DOM/CSS or Phaser overlay sparkles around selected card only."
@@ -230,7 +242,7 @@ validation:
     - "python3 - <<'PY'\nimport yaml; yaml.safe_load(open('harness/runtime/specs/ui/ninja2-run-levelup-choice.yaml'))\nPY"
   baseline:
     - "/usr/bin/python3 harness/tools/idlez_compile.py ninja2"
-    - "/usr/bin/python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --no-browser"
+    - "/usr/bin/python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --query 'game=ninja2&mode=battle&levelup=demo' --screenshot /tmp/ninja2-run-levelup-choice-modal-a.png"
   browser:
     - "Open http://127.0.0.1:8765/harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelup=demo"
     - "Optional VFX context: http://127.0.0.1:8765/harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelup=demo&vfx=demo"

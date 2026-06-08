@@ -1,0 +1,63 @@
+id: 200608
+name: "수호등탑"
+category: Mine
+type: Mine
+grade: 2
+power: 24
+efficiencyPercents: [100.0, 114.0, 130.0, 148.0, 169.0]
+maxStamina: 0
+staminaRegenPerSecond: 0
+sellPrice: 0
+requiredExps: [0, 180, 380, 780, 1400]
+
+addStats:
+  - { type: BossDamageEfficiencyPercent, value: [2, 4, 7, 11, 16] }
+  - { type: DefensePercent, value: [1, 2, 3, 5, 8] }
+
+levelUpMaterialItemGroups:
+  - level: 2
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 220 }
+      - { id: 200102, count: 180 }
+      - { id: 200103, count: 7 }
+      - { id: 5, count: 8500 }
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 480 }
+      - { id: 200102, count: 420 }
+      - { id: 200103, count: 18 }
+      - { id: 5, count: 19000 }
+  - level: 4
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 1000 }
+      - { id: 200102, count: 900 }
+      - { id: 200103, count: 40 }
+      - { id: 5, count: 42000 }
+  - level: 5
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 2200 }
+      - { id: 200102, count: 1900 }
+      - { id: 200103, count: 88 }
+      - { id: 5, count: 92000 }
+
+popupArgs:
+  HousingKey: guard_lantern
+  HousingRole: combat_bonus
+  HousingPlacementKind: singleton
+  HousingInstanceRole: combat_guard
+  HousingMaxInstancesByLanternLevel: "5:1"
+  HousingDuplicateCostScaling: none
+  HousingPurpose: "보스 피해와 방어 보정을 제공해 보스 추적, 방어형 스테이지, 위험 타일 정화를 안정화한다."
+  HousingEffectKind: boss_and_defense_bonus
+  HousingFootprint: 1x1
+  HousingSpriteKey: guard_lantern
+  HousingConstructionSeconds: 1800
+  HousingLevelUpSeconds: "2:3000,3:9000,4:21600,5:43200"
+
+spriteGroups:
+  Icon: "Items/Ninja2/housing_guard_lantern_icon.png"
+  Building: "Housing/Ninja2/guard_lantern.png"

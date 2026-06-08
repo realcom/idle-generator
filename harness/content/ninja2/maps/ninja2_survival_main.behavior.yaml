@@ -7,6 +7,9 @@ domain: map
       - SetBoardState: { value: Playing }
       - SetWave: { value: 1 }
       - SetBoardVariable: { key: 603, value: 0 }
+      - SetBoardVariable: { key: 610, value: 0 }
+      - SetBoardVariable: { key: 611, value: 0 }
+      - SetBoardVariable: { key: 612, value: 0 }
       - SendWaveStartedEvent: {}
       - AddUnit: { unitDataId: 110201, count: 16, level: enemy_level, team: enemy, locationId: 1 }
 
@@ -112,7 +115,7 @@ domain: map
   - event: start
     do:
       - SendWaveStartedEvent: {}
-      - AddUnit: { unitDataId: 110501, count: 1, level: "boss_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110501, count: 1, level: "boss_level + 5", team: enemy, locationId: 1 }
       - AddUnit: { unitDataId: 110202, count: 18, level: "enemy_level + 8", team: enemy, locationId: 1 }
 
 ---
@@ -123,7 +126,7 @@ domain: map
   - event: start
     do:
       - SendWaveStartedEvent: {}
-      - AddUnit: { unitDataId: 110501, count: 1, level: "boss_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110501, count: 1, level: "boss_level + 6", team: enemy, locationId: 1 }
       - AddUnit: { unitDataId: 110203, count: 8, level: "enemy_level + 9", team: enemy, locationId: 1 }
       - AddUnit: { unitDataId: 110202, count: 18, level: "enemy_level + 9", team: enemy, locationId: 1 }
 
@@ -135,7 +138,7 @@ domain: map
   - event: start
     do:
       - SendWaveStartedEvent: {}
-      - AddUnit: { unitDataId: 110501, count: 1, level: "boss_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110501, count: 1, level: "boss_level + 7", team: enemy, locationId: 1 }
       - AddUnit: { unitDataId: 110203, count: 10, level: "enemy_level + 10", team: enemy, locationId: 1 }
       - AddUnit: { unitDataId: 110202, count: 18, level: "enemy_level + 10", team: enemy, locationId: 1 }
 
@@ -147,7 +150,7 @@ domain: map
   - event: start
     do:
       - SendWaveStartedEvent: {}
-      - AddUnit: { unitDataId: 110501, count: 1, level: "boss_level + 10", team: enemy, locationId: 1 }
+      - AddUnit: { unitDataId: 110501, count: 1, level: "boss_level + 8", team: enemy, locationId: 1 }
       - AddUnit: { unitDataId: 110203, count: 14, level: "enemy_level + 10", team: enemy, locationId: 1 }
       - AddUnit: { unitDataId: 110202, count: 24, level: "enemy_level + 10", team: enemy, locationId: 1 }
       - AddUnit: { unitDataId: 110201, count: 24, level: "enemy_level + 10", team: enemy, locationId: 1 }
@@ -175,6 +178,30 @@ domain: map
     do:
       - when: "waveTransitionPending == 1"
         SetBoardVariable: { key: 603, value: 0 }
+      - when: "encounter_demo_step == 0 and tick % 210 == 0"
+        do:
+          - SetBoardVariable: { key: 611, value: "board.RandomIntBetween(1, 4)" }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 1"
+        do:
+          - SetBoardVariable: { key: 611, value: 1 }
+          - SetBoardVariable: { key: 612, value: 101 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 2"
+        do:
+          - SetBoardVariable: { key: 611, value: 2 }
+          - SetBoardVariable: { key: 612, value: 102 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 3"
+        do:
+          - SetBoardVariable: { key: 611, value: 3 }
+          - SetBoardVariable: { key: 612, value: 103 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 4"
+        do:
+          - SetBoardVariable: { key: 611, value: 4 }
+          - SetBoardVariable: { key: 612, value: 104 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
       - GetUnitCountByTeam: { team: enemy }
       - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
         SetBoardVariable: { key: 603, value: 1 }
@@ -186,7 +213,7 @@ domain: map
         SetWave: { value: 3 }
         SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINBOSSWAVE3 }
       - GetUnitCountByTeam: { team: enemy }
-      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+      - when: "waveTransitionPending == 0 and wave == 3 and board.GetUnitCount(110501) == 0"
         EndGame: { result: win }
 
 ---
@@ -199,6 +226,30 @@ domain: map
     do:
       - when: "waveTransitionPending == 1"
         SetBoardVariable: { key: 603, value: 0 }
+      - when: "encounter_demo_step == 0 and tick % 210 == 0"
+        do:
+          - SetBoardVariable: { key: 611, value: "board.RandomIntBetween(1, 4)" }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 1"
+        do:
+          - SetBoardVariable: { key: 611, value: 1 }
+          - SetBoardVariable: { key: 612, value: 101 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 2"
+        do:
+          - SetBoardVariable: { key: 611, value: 2 }
+          - SetBoardVariable: { key: 612, value: 102 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 3"
+        do:
+          - SetBoardVariable: { key: 611, value: 3 }
+          - SetBoardVariable: { key: 612, value: 103 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 4"
+        do:
+          - SetBoardVariable: { key: 611, value: 4 }
+          - SetBoardVariable: { key: 612, value: 104 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
       - GetUnitCountByTeam: { team: enemy }
       - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
         SetBoardVariable: { key: 603, value: 1 }
@@ -215,7 +266,7 @@ domain: map
         SetWave: { value: 4 }
         SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINBOSSWAVE4 }
       - GetUnitCountByTeam: { team: enemy }
-      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+      - when: "waveTransitionPending == 0 and wave == 4 and board.GetUnitCount(110501) == 0"
         EndGame: { result: win }
 
 ---
@@ -228,6 +279,30 @@ domain: map
     do:
       - when: "waveTransitionPending == 1"
         SetBoardVariable: { key: 603, value: 0 }
+      - when: "encounter_demo_step == 0 and tick % 210 == 0"
+        do:
+          - SetBoardVariable: { key: 611, value: "board.RandomIntBetween(1, 4)" }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 1"
+        do:
+          - SetBoardVariable: { key: 611, value: 1 }
+          - SetBoardVariable: { key: 612, value: 101 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 2"
+        do:
+          - SetBoardVariable: { key: 611, value: 2 }
+          - SetBoardVariable: { key: 612, value: 102 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 3"
+        do:
+          - SetBoardVariable: { key: 611, value: 3 }
+          - SetBoardVariable: { key: 612, value: 103 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 4"
+        do:
+          - SetBoardVariable: { key: 611, value: 4 }
+          - SetBoardVariable: { key: 612, value: 104 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
       - GetUnitCountByTeam: { team: enemy }
       - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
         SetBoardVariable: { key: 603, value: 1 }
@@ -249,7 +324,7 @@ domain: map
         SetWave: { value: 5 }
         SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINBOSSWAVE5 }
       - GetUnitCountByTeam: { team: enemy }
-      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+      - when: "waveTransitionPending == 0 and wave == 5 and board.GetUnitCount(110501) == 0"
         EndGame: { result: win }
 
 ---
@@ -262,6 +337,30 @@ domain: map
     do:
       - when: "waveTransitionPending == 1"
         SetBoardVariable: { key: 603, value: 0 }
+      - when: "encounter_demo_step == 0 and tick % 210 == 0"
+        do:
+          - SetBoardVariable: { key: 611, value: "board.RandomIntBetween(1, 4)" }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 1"
+        do:
+          - SetBoardVariable: { key: 611, value: 1 }
+          - SetBoardVariable: { key: 612, value: 101 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 2"
+        do:
+          - SetBoardVariable: { key: 611, value: 2 }
+          - SetBoardVariable: { key: 612, value: 102 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 3"
+        do:
+          - SetBoardVariable: { key: 611, value: 3 }
+          - SetBoardVariable: { key: 612, value: 103 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 4"
+        do:
+          - SetBoardVariable: { key: 611, value: 4 }
+          - SetBoardVariable: { key: 612, value: 104 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
       - GetUnitCountByTeam: { team: enemy }
       - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
         SetBoardVariable: { key: 603, value: 1 }
@@ -293,7 +392,7 @@ domain: map
         SetWave: { value: 7 }
         SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINBOSSWAVE7 }
       - GetUnitCountByTeam: { team: enemy }
-      - when: "waveTransitionPending == 0 and wave == 7 and return == 0"
+      - when: "waveTransitionPending == 0 and wave == 7 and board.GetUnitCount(110501) == 0"
         EndGame: { result: win }
 
 ---
@@ -306,6 +405,30 @@ domain: map
     do:
       - when: "waveTransitionPending == 1"
         SetBoardVariable: { key: 603, value: 0 }
+      - when: "encounter_demo_step == 0 and tick % 210 == 0"
+        do:
+          - SetBoardVariable: { key: 611, value: "board.RandomIntBetween(1, 4)" }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 1"
+        do:
+          - SetBoardVariable: { key: 611, value: 1 }
+          - SetBoardVariable: { key: 612, value: 101 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 2"
+        do:
+          - SetBoardVariable: { key: 611, value: 2 }
+          - SetBoardVariable: { key: 612, value: 102 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 3"
+        do:
+          - SetBoardVariable: { key: 611, value: 3 }
+          - SetBoardVariable: { key: 612, value: 103 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
+      - when: "encounter_demo_step == 4"
+        do:
+          - SetBoardVariable: { key: 611, value: 4 }
+          - SetBoardVariable: { key: 612, value: 104 }
+          - SetBoardVariable: { key: 610, value: "encounter_serial + 1" }
       - GetUnitCountByTeam: { team: enemy }
       - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
         SetBoardVariable: { key: 603, value: 1 }
@@ -352,5 +475,5 @@ domain: map
         SetWave: { value: 10 }
         SendWaveQueuedEvent: { name: MAP_ONSTART_NINJA2MAINBOSSWAVE10 }
       - GetUnitCountByTeam: { team: enemy }
-      - when: "waveTransitionPending == 0 and wave == 10 and return == 0"
+      - when: "waveTransitionPending == 0 and wave == 10 and board.GetUnitCount(110501) == 0"
         EndGame: { result: win }

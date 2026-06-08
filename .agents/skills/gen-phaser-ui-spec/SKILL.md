@@ -14,8 +14,10 @@ Purpose: define what the Phaser harness should build before runtime JS/HTML/CSS 
 ## Always read
 
 - `harness/runtime/PHASER_HARNESS.md`
+- `harness/design/COMPONENT_BLUEPRINTS.md`
 - `harness/design/<game>/art-direction.yaml`
 - `harness/design/<game>/layout-tokens.yaml`
+- `harness/design/<game>/component-blueprints.yaml`
 - `harness/design/<game>/component-skins.yaml`
 - `harness/design/<game>/asset-plan.yaml`
 - `harness/runtime/NINE_SLICE_UI.md` when the surface uses generated UI skins.
@@ -33,12 +35,16 @@ Write specs under:
 - target runtime page or surface, such as `idlez-phaser.html` or `phaser-ui-harness.html`
 - implementation mode: `dom_overlay`, `phaser_canvas`, or `hybrid`
 - source concept and design source paths
+- component blueprint surface/component ids used by the spec
+- component blueprint section ids used by the spec, including ownership boundaries between top bars, bodies, docks, tabs, modals, and footers
 - screen orientation, responsive width/height policy, and safe-area policy
 - HUD, combat arena, modal, dock, or tab regions as applicable
 - asset keys from `asset-plan.yaml`, limited to `platforms: [phaser]` or shared assets
+- `content_insets`, padding, gaps, clamp rules, and ornament layers from `component-blueprints.yaml`
 - 9-slice skin keys, `slice_hints`, and target min/default/max sizes when `phaser.usage: phaser_nineslice`
 - CSS/design token mapping and Phaser graphics usage
 - modal ids, route/query fixtures, or scenario ids when relevant
+- `visual_iteration` contract: section order, concept/runtime crop requirements, compare-board command template, and PASS/WARN/ERROR policy
 - validation commands, screenshot paths, and blockers
 
 ## Rules
@@ -49,3 +55,7 @@ Write specs under:
 - Prefer Phaser 4 WebGL `phaser_nineslice` for generated rectangular UI skins; do not specify CSS as the production 9-slice renderer.
 - Keep text and data bindings symbolic when content/runtime data is not ready.
 - Include smoke targets from `PHASER_HARNESS.md` so the build step knows how to verify the surface.
+- Do not invent component anatomy or spacing in the spec when `component-blueprints.yaml` already defines it; reference the blueprint contract instead.
+- Preserve section boundaries from `component-blueprints.yaml`; do not merge top HUD, main body, bottom nav, modal header/body/footer, or other semantic regions just because they share CSS.
+- Include `harness/tools/design_visual_compare.py` in visual validation whenever the spec is implementing a selected concept screenshot, not just a functional layout.
+- Run `python3 harness/tools/design_blueprint_validate.py <game>` before finalizing specs that depend on component blueprints.

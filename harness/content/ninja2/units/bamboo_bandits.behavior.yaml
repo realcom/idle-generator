@@ -30,8 +30,6 @@ vars:
           yRange: 0.6
       - when: "hasTarget == 1 and targetDistance <= $attack_range"
         stop: {}
-        useSkillToTarget:
-          skillDataId: 300101
 
 ---
 
@@ -67,5 +65,3 @@ vars:
           yRange: 0.45
       - when: "hasTarget == 1 and targetDistance <= $attack_range"
         stop: {}
-        useSkillToTarget:
-          skillDataId: 300101

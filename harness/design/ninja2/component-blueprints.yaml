@@ -1,0 +1,1755 @@
+version: "1.0"
+game: ninja2
+status: pilot
+purpose: "Semantic component decomposition layer between selected concepts, generated assets, and runtime layout."
+
+source_concepts:
+  primary:
+    id: ninja2_rulelocked_housing_home_a
+    note: concepts/ninja2_rulelocked_housing_home_a.md
+    image: concepts/ninja2_rulelocked_housing_home_a.png
+  supporting:
+    - ninja2_run_levelup_choice_modal_a
+    - ninja2_phaser_modal_system_a
+    - ninja2_flat_arcade_survivors_scene_f
+
+runtime_targets:
+  phaser_dom_overlay:
+    spec: ../../runtime/specs/ui/ninja2-run-levelup-choice.yaml
+    page: ../../runtime/survivor-runtime.html
+    owner: ../../runtime/src/survivor/survivor-app.js
+  phaser_modal_system_harness:
+    spec: ../../runtime/specs/ui/phaser-modal-system-harness.yaml
+    page: ../../runtime/phaser-modal-system-harness.html
+    owner: ../../runtime/src/ui/phaser-modal-system-harness.js
+
+extraction_rules:
+  semantic_first:
+    - "Name UI by player meaning before naming skins or image files."
+    - "Every generated rectangular skin must declare both stretch borders and content insets."
+    - "Text, numbers, pips, badges, cooldowns, and costs remain runtime-native unless explicitly marked decorative."
+    - "A component must be explainable as slots and data bindings even if all bitmap skins are temporarily removed."
+  sizing_language:
+    slice_hints: "Bitmap cap borders used by Phaser 9-slice or Unity sliced sprites."
+    content_insets: "Inner safe area where native text, icons, chips, and touch affordances may live."
+    padding: "Runtime layout spacing inside the content area."
+    gap: "Spacing between sibling slots with different semantic roles."
+
+surfaces:
+  HousingHome:
+    intent: "Let the player read, expand, upgrade, and sortie from the lantern sanctuary city without losing the owned-base board."
+    orientation: portrait_9_16
+    reference_size_px: { width: 440, height: 782 }
+    concept_size_px: { width: 941, height: 1672 }
+    source_concepts:
+      primary: ninja2_rulelocked_housing_home_a
+      supporting:
+        - ninja2_housing_bottom_loop_dock_b
+        - ninja2_housing_bottom_inspector_no_collect_c
+    sections:
+      top_identity_band:
+        role: "Own the compact top HUD from the rulelocked concept: hero portrait/status, horizontal resource pills, population, menu, and settings."
+        process_scope: section
+        components:
+          - HomeTopBand
+          - HeroPortraitStatus
+          - TopResourcePillRow
+          - TopResourcePill
+          - PopulationMenuCluster
+          - TopRoundIconButton
+        layout_contract:
+          anchor: top_safe_area
+          height_px: { target: 96, compact: 92 }
+          grid_rows: ["primary_resources", "secondary_controls"]
+          profile_anchor: top_left_overlap_two_rows
+          resource_layout: "single horizontal pill row to the right of the profile cluster"
+          secondary_controls: "population, menu, and settings align under the right resource pills"
+          forbidden_elements:
+            - "centered sanctuary status plaque"
+            - "large 2x2 resource board"
+          board_clearance_policy: "Top band may mask the forest edge but must not cover the central shrine cluster."
+        asset_keys:
+          - ninja2.ui.profile.guardian_avatar
+          - ninja2.ui.topbar.cluster_skins
+      side_utility_rail:
+        role: "Provide secondary home entries without becoming a primary reading column."
+        process_scope: section
+        components:
+          - HomeSideRail
+          - HomeSideButton
+        layout_contract:
+          anchor: left_between_top_and_bottom
+          width_px: 56
+          button_height_px: 58
+          gap_px: 8
+          collision_policy: "Board costs and building bubbles must avoid or fade behind this rail."
+      sanctuary_board:
+        role: "Show the owned city board, building footprints, production bubbles, expansion costs, and selected building focus."
+        process_scope: section
+        components:
+          - HomeBoardViewport
+          - HexTileLayer
+          - SettlementOrnamentLayer
+          - BuildingSpriteToken
+          - BuildingProductionBubble
+          - ExpansionCostMarker
+        layout_contract:
+          anchor: between_top_band_and_bottom_action_row
+          top_px: 96
+          bottom_px: 250
+          pan_px: { x: 10, y: -70 }
+          scale: 1.04
+          y_sort: true
+          cost_policy: "Expansion costs are secondary; clamp size and de-emphasize near side rail or bottom action row."
+        asset_keys:
+          - ninja2.home.background.forest_sanctuary
+          - ninja2.home.hex_tile_set.forest_sanctuary
+          - ninja2.home.building_atlas.lantern_sanctuary
+      bottom_action_row:
+        role: "Tie companion shortcuts, selected building actions, integrated production/collect status, and sortie into one clear bottom loop row."
+        process_scope: section
+        components:
+          - HomeBottomActionRow
+          - IntegratedCollectStatusChip
+          - CompanionShortcutStrip
+          - HomeLoopToast
+          - SelectedBuildingPanel
+          - BuildingThumbnailWell
+          - BuildingInfoStack
+          - UpgradeActionButton
+          - SortieCtaButton
+        layout_contract:
+          anchor: above_bottom_navigation
+          panel_columns: ["building_thumb", "copy_and_progress", "integrated_collect_status", "upgrade_button"]
+          companion_strip: "three compact slots sit above the action row and shortcut into companion management"
+          row_gap_px: 12
+          panel_height_px: { target: 126, compact: 108 }
+          forbidden_external_controls:
+            - "standalone left quick collect button"
+          sortie_size_px: { width: 118, height: 122 }
+          toast_policy: "Toast sits above the action row and should never overlap selected-building text."
+        asset_keys:
+          - ninja2.ui.panel.parchment_9slice
+          - ninja2.ui.button.sortie_orange
+      bottom_navigation_dock:
+        role: "Provide fixed home mode navigation as five stable MVP loop tabs below the action row."
+        process_scope: section
+        components:
+          - HomeTabDock
+          - HomeTabButton
+        layout_contract:
+          anchor: bottom_safe_area
+          tab_count: 5
+          labels: ["성소", "동료", "탐험", "임무", "상점"]
+          omitted_mvp_tab: "가방 is not a fixed D1 dock tab; expose inventory later through contextual or modal entry."
+          height_px: { target: 92, compact: 88 }
+          stable_dimensions: true
+          selected_state: "lantern gold fill with dark icon and text"
+    component_tree:
+      - HomeTopBand
+      - HeroPortraitStatus
+      - TopResourcePillRow
+      - TopResourcePill
+      - PopulationMenuCluster
+      - TopRoundIconButton
+      - HomeSideRail
+      - HomeSideButton
+      - HomeBoardViewport
+      - HexTileLayer
+      - SettlementOrnamentLayer
+      - BuildingSpriteToken
+      - BuildingProductionBubble
+      - ExpansionCostMarker
+      - HomeBottomActionRow
+      - IntegratedCollectStatusChip
+      - CompanionShortcutStrip
+      - HomeLoopToast
+      - SelectedBuildingPanel
+      - BuildingThumbnailWell
+      - BuildingInfoStack
+      - UpgradeActionButton
+      - SortieCtaButton
+      - HomeTabDock
+      - HomeTabButton
+    layout_contract:
+      shell_width: "min(440px, 100vw)"
+      top_band_height_px: 96
+      board_region_px: { top: 96, bottom: 250 }
+      bottom_action_bottom_px: 96
+      bottom_nav_height_px: 92
+      primary_action_color: action_orange
+      responsive_policy: "Tighten vertical gaps before shrinking tap targets or letting Korean labels overflow."
+
+  RunLevelUpChoice:
+    intent: "Pause the survival run and let the player choose exactly one run-scoped skill upgrade from three equal cards."
+    orientation: portrait_9_16
+    reference_size_px: { width: 440, height: 782 }
+    concept_size_px: { width: 948, height: 1659 }
+    sections:
+      paused_battle_context:
+        role: "Preserve the paused survival battle as readable context while blocking game input."
+        process_scope: section
+        components:
+          - LevelChoiceModalBackdrop
+        layout_contract:
+          anchor: absolute_inset
+          z_order: below_modal_panel
+          pointer_policy: captures_background_input
+        qa_focus:
+          - "Battle HUD remains visible enough to understand the run state."
+          - "Joystick, skill buttons, and EXP bar do not compete with the modal choices."
+      modal_frame:
+        role: "Own the parchment panel skin and concept border decorations."
+        process_scope: section
+        components:
+          - LevelChoicePanel
+          - FrameOrnamentLayer
+          - CrestOrnament
+          - PanelCornerOrnament
+        layout_contract:
+          anchor: centered
+          width: "min(760px, calc(100vw - 24px))"
+          max_height: "78dvh"
+          ornament_policy: "Fixed transparent sprites may overlap outer border but not content slots."
+        asset_keys:
+          - ninja2.ui.panel.parchment_9slice
+          - ninja2.ui.level_choice.frame_ornaments_v1
+      modal_header:
+        role: "Explain the level-up moment and show compact run context."
+        process_scope: section
+        components:
+          - LevelChoiceHeader
+        layout_contract:
+          anchor: panel_top
+          padding_px: { left: 14, right: 14, top: 34, bottom: 8 }
+          responsive: "Hide run summary chip below 390px before changing title hierarchy."
+      choice_body:
+        role: "Let the player compare exactly three run skill choices."
+        process_scope: section
+        components:
+          - SkillChoiceGrid
+          - SkillChoiceCard
+          - ChoiceBadge
+          - SkillIconWell
+          - LevelPipRow
+          - EffectChip
+          - CategoryChip
+        layout_contract:
+          columns: 3
+          gap_px: { target: 10, narrow: 7, compact: 5 }
+          card_min_height_px: { target: 258, narrow: 238, compact: 204 }
+          overflow_policy: "Clamp secondary text before changing the three-card grammar."
+        asset_keys:
+          - ninja2.battle.skill_icons.survivor_level_choice_v1
+      optional_footer:
+        role: "Hold reroll affordances only after run-limited cost and remaining count are wired."
+        process_scope: section
+        components:
+          - RerollFooter
+        layout_contract:
+          anchor: panel_bottom_center
+          first_pass_visibility: hidden
+        dependency:
+          requires_data:
+            - run.rerollCost
+            - run.rerollsRemaining
+    component_tree:
+      - LevelChoiceModalBackdrop
+      - LevelChoicePanel
+      - FrameOrnamentLayer
+      - LevelChoiceHeader
+      - SkillChoiceGrid
+      - SkillChoiceCard
+      - SkillIconWell
+      - LevelPipRow
+      - EffectChip
+      - CategoryChip
+      - RerollFooter
+    layout_contract:
+      panel_width: "min(760px, calc(100vw - modal_edge_padding * 2))"
+      panel_max_height: "78dvh"
+      modal_edge_padding_px:
+        top: 26
+        side: 12
+        bottom: 86
+      narrow_modal_edge_padding_px:
+        top: 24
+        side: 8
+        bottom: 78
+      grid_columns:
+        target: 3
+        min_width_before_content_clamp_px: 390
+        fallback: "Keep three columns; hide secondary copy before using one column."
+
+  PhaserModalSystem:
+    intent: "Provide a reusable Phaser-first modal family harness so confirm dialogs, rewards, lists, settings, notices, and run choices can share one lifecycle and skin contract."
+    orientation: responsive_preview
+    reference_size_px: { width: 440, height: 782 }
+    concept_size_px: { width: 941, height: 1672 }
+    source_concepts:
+      primary: ninja2_phaser_modal_system_a
+      supporting:
+        - ninja2_run_levelup_choice_modal_a
+        - ninja2_flat_arcade_survivors_scene_f
+    sections:
+      modal_host:
+        role: "Own the full-screen preview context, modal lifecycle, input capture, and game-pause contract."
+        process_scope: section
+        components:
+          - ModalHarnessViewport
+          - ModalHost
+          - ModalScrim
+        layout_contract:
+          anchor: absolute_inset
+          preview_sizes_px:
+            compact: { width: 390, height: 760 }
+            portrait: { width: 440, height: 782 }
+            wide: { width: 760, height: 720 }
+          pointer_policy: "Only the active modal receives input; background HUD/control mocks are visible but inert."
+          fixture_policy: "Every modal variant opens without requiring compiled game state."
+      modal_shell:
+        role: "Reuse the parchment 9-slice panel and fixed ornament layer across all modal variants."
+        process_scope: section
+        components:
+          - ModalShell
+          - FrameOrnamentLayer
+          - CrestOrnament
+          - PanelCornerOrnament
+          - ModalCloseButton
+        layout_contract:
+          anchor: centered_or_bottom_sheet
+          width_policy: "clamp between 312px and 720px with 18px minimum side margins"
+          height_policy: "variant-defined; never exceed viewport safe area"
+          ornament_policy: "Crest and corner leaves are fixed sprites outside the 9-slice skin and do not change content bounds."
+        asset_keys:
+          - ninja2.ui.panel.parchment_9slice
+          - ninja2.ui.level_choice.frame_ornaments_v1
+      modal_header:
+        role: "Expose title, kicker, subtitle, and optional resource/status chip as native text slots."
+        process_scope: section
+        components:
+          - ModalHeader
+        layout_contract:
+          anchor: shell_top
+          min_height_px: 74
+          padding_px: { left: 22, right: 58, top: 28, bottom: 8 }
+          clamp_policy: "Subtitle hides before title size drops below 22px."
+      modal_body:
+        role: "Switch between message, reward, list, settings, notice, and three-choice bodies without changing the shell lifecycle."
+        process_scope: section
+        components:
+          - ModalBodyRegion
+          - ModalMessageBlock
+          - ModalRewardGrid
+          - ModalRewardSlot
+          - ModalListRow
+          - ModalToggleRow
+          - SkillChoiceGrid
+          - SkillChoiceCard
+        layout_contract:
+          gap_px: 10
+          scroll_policy: "Only list/settings bodies may scroll internally; shell position and footer remain stable."
+          variant_bodies:
+            confirm: [ModalMessageBlock]
+            reward: [ModalRewardGrid, ModalRewardSlot]
+            list: [ModalListRow]
+            settings: [ModalToggleRow]
+            skillChoice: [SkillChoiceGrid, SkillChoiceCard]
+            notice: [ModalMessageBlock]
+      modal_footer:
+        role: "Own stable action rows, two-button confirmation, hidden-footer notice state, and compact toast affordances."
+        process_scope: section
+        components:
+          - ModalFooter
+          - ModalActionButton
+          - ModalNoticeToast
+        layout_contract:
+          min_height_px: 74
+          action_count_range: [0, 2]
+          button_height_px: 52
+          button_gap_px: 12
+          close_policy: "Footer action closes the active modal only through ModalHost so focus/pause state is restored consistently."
+    component_tree:
+      - ModalHarnessViewport
+      - ModalHost
+      - ModalScrim
+      - ModalShell
+      - FrameOrnamentLayer
+      - ModalCloseButton
+      - ModalHeader
+      - ModalBodyRegion
+      - ModalMessageBlock
+      - ModalRewardGrid
+      - ModalRewardSlot
+      - ModalListRow
+      - ModalToggleRow
+      - SkillChoiceGrid
+      - SkillChoiceCard
+      - ModalFooter
+      - ModalActionButton
+      - ModalNoticeToast
+    layout_contract:
+      harness_page: ../../runtime/phaser-modal-system-harness.html
+      implementation_mode: phaser_canvas
+      variants: [shell, confirm, reward, list, settings, skillChoice, notice]
+      safe_area_policy: "All shell measurements include top/bottom safe margins; mobile compact reduces body copy before touch targets."
+      renderer_policy: "Use Phaser 4 scene.add.nineslice for the parchment skin when the theme provides the texture; use Phaser graphics only as debug fallback."
+
+components:
+  HomeTopBand:
+    role: "Compact top HUD group from the rulelocked housing concept."
+    mode: hybrid
+    anatomy:
+      - HeroPortraitStatus
+      - TopResourcePillRow
+      - PopulationMenuCluster
+      - dark_top_mask
+    box_model:
+      position: absolute_top
+      height_px: { target: 96, compact: 92 }
+      padding_px: { left: 8, right: 8, top: 8, bottom: 0 }
+      grid_template: "profile overlaps left; resources run horizontally across top; population/menu/settings sit under right resource pills"
+      gap_px: 7
+    implementation_notes:
+      - "Do not add a centered sanctuary status plaque; that belongs to the rejected top/bottom-tabs concept, not this rulelocked concept."
+      - "This section frames the forest edge; it does not own the hex board or sortie CTA."
+
+  HeroPortraitStatus:
+    role: "Shows the guardian face, level badge, and green status/progress bar as one fixed top-left identity cluster."
+    mode: hybrid
+    anatomy:
+      - circular_gold_portrait_frame
+      - guardian_avatar_sprite
+      - lantern_sprite
+      - round_level_badge
+      - green_progress_bar
+    box_model:
+      size_px: { width: 86, height: 78 }
+      portrait_diameter_px: 72
+      level_badge_px: 26
+      progress_bar_px: { width: 68, height: 13 }
+      progress_anchor: bottom_right_of_portrait
+    asset_contract:
+      asset_key: ninja2.ui.profile.guardian_avatar
+      usage: avatar_sprite_inside_native_gold_frame
+      not_nine_slice: true
+    data_bindings:
+      level: sanctuary.shrineLevel_or_playerLevel
+      progress: guardian.hp_or_home_status_progress
+    implementation_notes:
+      - "There is no name text inside the top-left portrait cluster in the rulelocked concept."
+
+  TopResourcePillRow:
+    role: "Keeps the primary resources as separate dark horizontal pills across the top row."
+    mode: hybrid
+    repeatable: false
+    anatomy:
+      - TopResourcePill[4]
+      - optional_plus_button
+    box_model:
+      anchor: top_right_of_profile_cluster
+      height_px: 39
+      columns: 4
+      gap_px: 8
+      available_width_px: 330
+    data_bindings:
+      resources: [wood, soulflame, gold, stone]
+    implementation_notes:
+      - "The correct concept uses a single horizontal resource row, not a 2x2 board."
+
+  TopResourcePill:
+    role: "One top resource counter pill with an icon on the left and native value text."
+    mode: hybrid
+    repeatable: true
+    anatomy:
+      - pill_frame
+      - resource_icon_sprite
+      - value_text
+      - optional_plus_button
+    box_model:
+      min_height_px: 38
+      padding_px: { left: 9, right: 12, top: 5, bottom: 5 }
+      grid_columns_px: [28, "1fr"]
+      gap_px: 7
+    skin_contract:
+      asset_key: ninja2.ui.topbar.cluster_skins
+      usage: phaser_nineslice_or_dom_preview.resource_chip_or_native_pill
+      slice_hints_px: { left: 18, right: 18, top: 14, bottom: 14 }
+      content_insets_px: { left: 9, right: 12, top: 5, bottom: 5 }
+    text_policy:
+      value: { max_lines: 1, font_size_px: 18, overflow: tabular_ellipsis }
+
+  PopulationMenuCluster:
+    role: "Keeps population capacity, menu, and settings as a compact second-row control cluster on the upper right."
+    mode: native_ui
+    anatomy:
+      - population_pill
+      - TopRoundIconButton[2]
+    box_model:
+      anchor: second_row_right
+      columns: ["population", "menu", "settings"]
+      population_size_px: { width: 134, height: 50 }
+      button_size_px: 50
+      gap_px: 11
+    text_policy:
+      resident_count: { max_lines: 1, font_size_px: 22 }
+    asset_contract:
+      asset_key: ninja2.ui.home_icon_pack_v3
+      usage: population_icon_and_top_action_icons
+      not_nine_slice: true
+
+  TopRoundIconButton:
+    role: "One round-corner top control button for menu or settings."
+    mode: native_ui
+    repeatable: true
+    anatomy:
+      - dark_button_shell
+      - icon_glyph
+    box_model:
+      size_px: { width: 50, height: 50 }
+      outline_px: 4
+      radius_px: 14
+    asset_contract:
+      asset_key: ninja2.ui.home_icon_pack_v3
+      usage: menu_settings_image_icons
+      not_nine_slice: true
+
+  HomeSideRail:
+    role: "Secondary vertical entry rail for mail, gifts, inventory, and pass."
+    mode: native_ui
+    anatomy:
+      - rail_backplate
+      - HomeSideButton[4]
+    entries: ["우편", "선물", "가방", "패스"]
+    box_model:
+      position: absolute_left
+      top_px: 196
+      width_px: 56
+      gap_px: 8
+      padding_px: { left: 0, right: 0, top: 0, bottom: 0 }
+    constraints:
+      - "Cost markers should never become visually primary behind this rail."
+
+  HomeSideButton:
+    role: "One secondary home entry button."
+    mode: native_ui
+    repeatable: true
+    anatomy:
+      - icon_disc
+      - label_text
+      - optional_badge
+    box_model:
+      size_px: { width: 56, height: 58 }
+      grid_rows_px: [28, 19]
+      gap_px: 2
+    text_policy:
+      label: { max_lines: 1, font_size_px: 10, overflow: ellipsis }
+    asset_contract:
+      asset_key: ninja2.ui.home_icon_pack_v3
+      usage: side_rail_image_icons
+      not_nine_slice: true
+
+  HomeBoardViewport:
+    role: "Owns the camera window and pan/scale behavior for the city board."
+    mode: hybrid
+    anatomy:
+      - forest_background
+      - draggable_grid
+      - HexTileLayer
+      - SettlementOrnamentLayer
+      - BuildingSpriteToken
+      - ExpansionCostMarker
+    box_model:
+      position: absolute_between_sections
+      inset_px: { top: 184, right: 0, bottom: 250, left: 0 }
+      grid_size_px: { width: 430, height: 590 }
+      transform: { x: 10, y: -70, scale: 1.04 }
+    asset_contract:
+      asset_key: ninja2.home.background.forest_sanctuary
+      usage: css_background_cover
+      not_nine_slice: true
+
+  HexTileLayer:
+    role: "Renders stable tile states and footprints underneath buildings."
+    mode: hybrid
+    anatomy:
+      - built_tile
+      - selected_tile
+      - empty_tile
+      - expand_tile
+      - locked_tile
+      - fog_tile
+    box_model:
+      tile_size_px: { width: 86, height: 99 }
+      axial_step_px: { q_x: 73, r_x: 36.5, r_y: 65 }
+    asset_contract:
+      asset_key: ninja2.home.hex_tile_set.forest_sanctuary
+      usage: state_specific_image
+      not_nine_slice: true
+
+  SettlementOrnamentLayer:
+    role: "Adds owned-ground, paths, foundations, and props so the board reads as a city instead of isolated tokens."
+    mode: native_ui
+    anatomy:
+      - owned_ground_clearance
+      - paths
+      - foundations
+      - props
+    box_model:
+      position: inside_board_grid
+      pointer_events: none
+      y_sort_policy: below_buildings_above_hexes
+
+  BuildingSpriteToken:
+    role: "One y-sorted visible building token, including level badge and footprint ownership."
+    mode: hybrid
+    repeatable: true
+    anatomy:
+      - building_sprite_or_blueprint
+      - level_badge
+      - BuildingProductionBubble
+      - selected_glow
+    box_model:
+      anchor: footprint_center
+      pointer_target: full_sprite_bounds
+      size_source: housing_tech.visual
+    asset_contract:
+      asset_key: ninja2.home.building_atlas.lantern_sanctuary
+      usage: individual_building_sprites
+      not_nine_slice: true
+    text_policy:
+      level_badge: { max_lines: 1, font_size_px: 10 }
+
+  BuildingProductionBubble:
+    role: "Shows the most important production or construction state for a building."
+    mode: native_ui
+    repeatable: true
+    anatomy:
+      - bubble_shell
+      - compact_output_text
+    box_model:
+      anchor: above_building_sprite
+      min_width_px: 34
+      padding_px: { left: 5, right: 5, top: 1, bottom: 2 }
+    text_policy:
+      output: { max_lines: 1, font_size_px: 9, overflow: compact }
+
+  ExpansionCostMarker:
+    role: "Marks expansion costs without stealing focus from buildings or the selected panel."
+    mode: native_ui
+    repeatable: true
+    anatomy:
+      - cost_text
+      - optional_resource_icon
+    box_model:
+      anchor: center_of_expand_tile
+      min_touch_priority: low
+    text_policy:
+      cost: { max_lines: 1, font_size_px: { target: 17, compact: 14 }, overflow: fade_near_edges }
+    constraints:
+      - "Should de-emphasize near side rail and bottom action row."
+
+  HomeBottomActionRow:
+    role: "Container that aligns companion shortcuts, selected building panel, and sortie CTA above the nav dock."
+    mode: hybrid
+    anatomy:
+      - CompanionShortcutStrip
+      - SelectedBuildingPanel
+      - SortieCtaButton
+    box_model:
+      position: absolute_above_nav
+      bottom_px: 96
+      left_px: 10
+      right_reserved_for_sortie_px: 120
+      row_gap_px: 8
+      min_height_px: 118
+    constraints:
+      - "The loop toast must sit above this row, not inside the panel skin."
+      - "No standalone left quick collect card; production readiness lives inside SelectedBuildingPanel."
+
+  IntegratedCollectStatusChip:
+    role: "Shows selected-building production/readiness inside the selected building panel without creating an external collect button."
+    mode: native_ui
+    anatomy:
+      - small_resource_icon
+      - readiness_label
+      - rate_or_gain_text
+    box_model:
+      min_width_px: 48
+      min_height_px: 28
+      padding_px: { left: 6, right: 6, top: 4, bottom: 4 }
+    data_bindings:
+      selected_building_rate: selected_building_resource_rate_per_minute
+      global_rate: sum_home_resource_rates_per_minute
+      optional_click_action: existing_home_income_tick_when_ready
+    text_policy:
+      label: { max_lines: 1, font_size_px: 10, overflow: ellipsis }
+      rate: { max_lines: 1, font_size_px: 9, overflow: ellipsis }
+    asset_contract:
+      asset_key: ninja2.ui.home_icon_pack_v3
+      usage: integrated_collect_status_icon
+      not_nine_slice: true
+
+  CompanionShortcutStrip:
+    role: "Shows the D1 companion roster as three compact shortcuts into companion management above the action row."
+    mode: native_ui
+    repeatable: false
+    anatomy:
+      - companion_slot[3]
+      - colored_status_dot
+      - companion_name
+      - roster_state_copy
+    box_model:
+      position: above_bottom_action_row
+      left_px: 10
+      right_reserved_for_sortie_px: 122
+      min_height_px: 50
+      gap_px: 6
+    text_policy:
+      name: { max_lines: 1, font_size_px: 12, overflow: ellipsis }
+      state: { max_lines: 1, font_size_px: 8, overflow: ellipsis }
+
+  HomeLoopToast:
+    role: "Displays recent home progression feedback without covering selected building controls."
+    mode: native_ui
+    anatomy:
+      - toast_background
+      - log_text
+    box_model:
+      position: above_bottom_action_row
+      height_px: 28
+      side_inset_px: 12
+      bottom_offset_px: 198
+    text_policy:
+      log: { max_lines: 1, font_size_px: 12, overflow: ellipsis }
+
+  SelectedBuildingPanel:
+    role: "Summarizes the selected building and its next useful action."
+    mode: hybrid
+    anatomy:
+      - panel_9slice_skin
+      - BuildingThumbnailWell
+      - BuildingInfoStack
+      - UpgradeActionButton
+    box_model:
+      min_height_px: 118
+      grid_columns_px: [58, "1fr", 72]
+      gap_px: 7
+      padding_px: { left: 10, right: 10, top: 12, bottom: 10 }
+    skin_contract:
+      asset_key: ninja2.ui.panel.parchment_9slice
+      usage: phaser_nineslice_or_dom_preview
+      slice_hints_px: { left: 28, right: 28, top: 28, bottom: 28 }
+      content_insets_px: { left: 10, right: 10, top: 12, bottom: 10 }
+
+  BuildingThumbnailWell:
+    role: "Shows a readable sprite or icon for the selected building."
+    mode: hybrid
+    anatomy:
+      - native_slot_frame
+      - building_sprite_or_icon
+    box_model:
+      size_px: { width: 62, height: 62 }
+      padding_px: { left: 4, right: 4, top: 4, bottom: 4 }
+
+  BuildingInfoStack:
+    role: "Owns selected building title, next action copy, progress, and compact stats."
+    mode: native_ui
+    anatomy:
+      - title_text
+      - next_action_text
+      - mini_progress
+      - stat_chips
+    box_model:
+      min_width: 0
+      gap_px: 3
+    text_policy:
+      title: { max_lines: 1, font_size_px: 15, overflow: ellipsis }
+      next_action: { max_lines: 2, font_size_px: 10.5, priority: secondary }
+
+  UpgradeActionButton:
+    role: "Primary action inside the selected building panel."
+    mode: native_ui
+    anatomy:
+      - green_button_shell
+      - cost_text
+      - action_label_text
+    box_model:
+      min_height_px: 58
+      min_width_px: 78
+      padding_px: { left: 5, right: 5, top: 5, bottom: 5 }
+    text_policy:
+      cost: { max_lines: 1, font_size_px: 16, overflow: ellipsis }
+      label: { max_lines: 1, font_size_px: 10 }
+
+  SortieCtaButton:
+    role: "Most prominent transition from city building to survival combat."
+    mode: hybrid
+    anatomy:
+      - fixed_orange_button_sprite
+      - native_sortie_text
+      - native_cost_text
+    box_model:
+      size_px: { width: 118, height: 122 }
+      padding_px: { left: 10, right: 10, top: 24, bottom: 12 }
+      anchor: bottom_action_row_right
+    asset_contract:
+      asset_key: ninja2.ui.button.sortie_orange
+      usage: fixed_sprite
+      not_nine_slice: true
+    text_policy:
+      label: { max_lines: 2, font_size_px: 23, overflow: balance }
+      cost: { max_lines: 1, font_size_px: 15 }
+
+  HomeTabDock:
+    role: "Bottom fixed navigation dock."
+    mode: native_ui
+    anatomy:
+      - HomeTabButton[5]
+    box_model:
+      position: bottom_safe_area
+      height_px: { target: 92, compact: 88 }
+      grid_columns: 5
+      labels: ["성소", "동료", "탐험", "임무", "상점"]
+      gap_px: 0
+      padding_px: { left: 0, right: 0, top: 0, bottom: 0 }
+      visual_style: contiguous_segmented_dock
+
+  HomeTabButton:
+    role: "One stable bottom navigation tab."
+    mode: native_ui
+    repeatable: true
+    anatomy:
+      - icon_glyph
+      - label_text
+      - selected_background
+    box_model:
+      min_height_px: 84
+      grid_rows_px: [56, 22]
+      touch_target_min_px: 56
+      selected_border_px: 3
+    text_policy:
+      label: { max_lines: 1, font_size_px: 12, overflow: fit }
+    icon_policy:
+      usage: image_sprite
+      target_size_px: { width: 56, height: 50 }
+      selected_badges: [Home, Shop]
+    asset_contract:
+      asset_key: ninja2.ui.home_icon_pack_v3
+      usage: bottom_tab_image_icons
+      not_nine_slice: true
+
+  ModalHarnessViewport:
+    role: "A game-state-free preview phone/tablet stage for comparing common modal variants."
+    mode: native_ui
+    anatomy:
+      - preview_background
+      - inert_hud_context
+      - ModalHost
+      - inspector_controls_outside_stage
+    box_model:
+      size_presets_px:
+        compact: { width: 390, height: 760 }
+        portrait: { width: 440, height: 782 }
+        wide: { width: 760, height: 720 }
+      stage_padding_px: 0
+      overflow: hidden
+    implementation_notes:
+      - "This component is a harness surface, not production game chrome."
+      - "It must boot without ResourceStore, BoardKernel, or compiled content state."
+
+  ModalHost:
+    role: "Central modal manager/lifecycle layer shared by all common modal variants."
+    mode: native_ui
+    anatomy:
+      - ModalScrim
+      - ModalShell
+      - variant_body
+      - focus_restore_target
+    box_model:
+      position: absolute_inset
+      z_order: modal
+      safe_area_padding_px: { top: 16, right: 14, bottom: 16, left: 14 }
+    lifecycle:
+      states: [closed, opening, open, closing]
+      open_animation: "scrim alpha 0->1 and shell scale 0.96->1 over 150ms"
+      close_animation: "shell alpha 1->0 over 120ms"
+      focus_policy: "Focus returns to the triggering harness button or gameplay control."
+      pause_policy: "Production consumers may pause board stepping while host is open."
+
+  ModalScrim:
+    role: "Blocks background interaction while preserving enough battle/home context to orient the player."
+    mode: native_ui
+    anatomy:
+      - dim_fill
+      - optional_context_tint
+      - pointer_capture
+    box_model:
+      position: absolute_inset
+    visual:
+      fill: "rgba(9, 16, 13, 0.58)"
+      debug_grid: false
+    interaction:
+      close_on_backdrop_default: false
+      captures_pointer: true
+
+  ModalShell:
+    role: "Reusable parchment modal frame with fixed sanctuary ornament overlays and native content slots."
+    mode: hybrid
+    anatomy:
+      - parchment_9slice_skin
+      - FrameOrnamentLayer
+      - ModalCloseButton
+      - ModalHeader
+      - ModalBodyRegion
+      - ModalFooter
+    box_model:
+      min_width_px: 312
+      max_width_px: 720
+      min_height_px: 230
+      max_height: "calc(100% - safe_area_padding * 2)"
+      content_insets_px: { left: 22, right: 22, top: 28, bottom: 18 }
+      section_gaps_px:
+        header_to_body: 8
+        body_to_footer: 12
+    skin_contract:
+      asset_key: ninja2.ui.panel.parchment_9slice
+      usage: phaser_nineslice
+      slice_hints_px: { left: 28, right: 28, top: 28, bottom: 28 }
+      content_insets_px: { left: 22, right: 22, top: 28, bottom: 18 }
+      stretch_policy: "Only the clean parchment center stretches; ornaments, text, icons, toggles, and buttons stay native."
+    variants:
+      large_center: { width_ratio: 0.86, height_ratio: 0.64 }
+      compact_confirm: { width_ratio: 0.78, height_ratio: 0.42 }
+      bottom_sheet: { width_ratio: 0.92, anchor: bottom }
+      notice: { width_ratio: 0.72, height_ratio: 0.28 }
+
+  ModalHeader:
+    role: "Native title stack for modal identity, short instruction, and optional status chip."
+    mode: native_ui
+    anatomy:
+      - kicker_text
+      - title_text
+      - subtitle_text
+      - optional_status_chip
+    box_model:
+      min_height_px: 74
+      padding_px: { left: 0, right: 38, top: 0, bottom: 8 }
+      title_gap_px: 5
+    text_policy:
+      kicker: { max_lines: 1, font_size_px: 12, overflow: ellipsis }
+      title: { max_lines: 1, font_size_px: { target: 28, compact: 23 }, overflow: fit }
+      subtitle: { max_lines: 2, font_size_px: 13, hide_below_height_px: 320 }
+
+  ModalBodyRegion:
+    role: "Stable variant body slot inside a modal shell."
+    mode: native_ui
+    anatomy:
+      - body_background_optional
+      - variant_content
+      - internal_scroll_mask_optional
+    box_model:
+      min_height_px: 92
+      padding_px: { left: 0, right: 0, top: 0, bottom: 0 }
+      gap_px: 10
+    overflow_policy:
+      confirm: fixed
+      reward: fixed
+      list: internal_scroll
+      settings: internal_scroll
+      skillChoice: fixed_three_columns
+      notice: fixed
+
+  ModalMessageBlock:
+    role: "Readable native copy block for confirm, notice, and empty states."
+    mode: native_ui
+    anatomy:
+      - optional_icon_disc
+      - title_or_value
+      - body_text
+    box_model:
+      min_height_px: 86
+      padding_px: { left: 14, right: 14, top: 14, bottom: 14 }
+      radius_px: 12
+    text_policy:
+      body: { max_lines: 4, font_size_px: 14, overflow: clamp }
+
+  ModalRewardGrid:
+    role: "Displays reward/currency results as stable equal slots."
+    mode: native_ui
+    anatomy:
+      - ModalRewardSlot[1..4]
+    box_model:
+      columns: "auto-fit minmax(78px, 1fr)"
+      gap_px: 10
+      min_row_height_px: 102
+    data_policy:
+      values_source: reward_payload
+      empty_slots: hide
+
+  ModalRewardSlot:
+    role: "One reward item or currency slot with image icon and native amount text."
+    mode: hybrid
+    repeatable: true
+    anatomy:
+      - slot_skin_or_native_frame
+      - reward_icon_sprite
+      - amount_text
+      - label_text
+    box_model:
+      min_width_px: 78
+      min_height_px: 102
+      padding_px: { left: 8, right: 8, top: 9, bottom: 8 }
+    asset_contract:
+      asset_key: ninja2.ui.home_icon_pack_v3
+      usage: reward_icon_atoms_when_available
+      not_nine_slice: true
+    text_policy:
+      amount: { max_lines: 1, font_size_px: 18, overflow: ellipsis }
+      label: { max_lines: 1, font_size_px: 11, overflow: ellipsis }
+
+  ModalListRow:
+    role: "One scrollable modal row for quests, inventory, dungeon gates, or generic entries."
+    mode: native_ui
+    repeatable: true
+    anatomy:
+      - leading_icon_or_badge
+      - title_text
+      - body_text
+      - trailing_value_or_button
+    box_model:
+      min_height_px: 62
+      padding_px: { left: 12, right: 12, top: 8, bottom: 8 }
+      gap_px: 10
+      radius_px: 10
+    text_policy:
+      title: { max_lines: 1, font_size_px: 15, overflow: ellipsis }
+      body: { max_lines: 1, font_size_px: 12, overflow: ellipsis }
+
+  ModalToggleRow:
+    role: "Settings row with label, secondary copy, and stable binary toggle."
+    mode: native_ui
+    repeatable: true
+    anatomy:
+      - setting_icon
+      - title_text
+      - state_copy
+      - toggle_switch
+    box_model:
+      min_height_px: 54
+      padding_px: { left: 12, right: 12, top: 7, bottom: 7 }
+      toggle_size_px: { width: 54, height: 28 }
+    text_policy:
+      title: { max_lines: 1, font_size_px: 14, overflow: ellipsis }
+      state: { max_lines: 1, font_size_px: 11, overflow: ellipsis }
+
+  ModalFooter:
+    role: "Action area that keeps modal buttons stable across confirm, reward, and list variants."
+    mode: native_ui
+    anatomy:
+      - ModalActionButton[0..2]
+      - optional_cost_chip
+    box_model:
+      min_height_px: 74
+      button_height_px: 52
+      gap_px: 12
+      padding_px: { left: 0, right: 0, top: 10, bottom: 0 }
+    interaction:
+      primary_position: right_or_full_width
+      cancel_position: left
+      disabled_state_must_not_resize: true
+
+  ModalActionButton:
+    role: "Reusable footer command with color-coded action state."
+    mode: native_ui
+    repeatable: true
+    anatomy:
+      - button_shell
+      - optional_icon
+      - label_text
+    box_model:
+      min_height_px: 52
+      min_width_px: 118
+      padding_px: { left: 14, right: 14, top: 8, bottom: 8 }
+      radius_px: 12
+      outline_px: 4
+    states:
+      primary: "action orange or lantern gold"
+      secondary: "moss green"
+      disabled: "low-contrast gray/green with no layout shift"
+      destructive: "muted red accent only"
+    text_policy:
+      label: { max_lines: 1, font_size_px: 16, overflow: fit }
+
+  ModalCloseButton:
+    role: "Top-right close affordance for non-forced modal variants."
+    mode: native_ui
+    anatomy:
+      - circular_button_shell
+      - close_icon
+    box_model:
+      size_px: { width: 42, height: 42 }
+      anchor: shell_top_right
+      offset_px: { x: -10, y: 10 }
+      touch_target_px: 44
+    interaction:
+      visible_for: [shell, confirm, reward, list, settings, notice]
+      hidden_for: [skillChoice_when_choice_required]
+
+  ModalNoticeToast:
+    role: "Compact modal-family notice that uses the same parchment language without occupying the full shell."
+    mode: hybrid
+    anatomy:
+      - compact_skin
+      - status_icon
+      - body_text
+      - optional_confirm_button
+    box_model:
+      min_width_px: 260
+      max_width_px: 420
+      min_height_px: 118
+      padding_px: { left: 18, right: 18, top: 20, bottom: 16 }
+    skin_contract:
+      asset_key: ninja2.ui.panel.parchment_9slice
+      usage: phaser_nineslice
+      slice_hints_px: { left: 28, right: 28, top: 28, bottom: 28 }
+      content_insets_px: { left: 18, right: 18, top: 20, bottom: 16 }
+
+  LevelChoiceModalBackdrop:
+    role: "Blocks combat input and creates focus while preserving the paused battle context."
+    mode: native_ui
+    anatomy:
+      - dim_layer
+      - optional_blur
+      - pointer_capture
+    box_model:
+      position: absolute_inset
+      padding_source: surfaces.RunLevelUpChoice.layout_contract.modal_edge_padding_px
+    visual:
+      fill: "rgba(9, 16, 13, 0.56)"
+      blur_px: 1
+    data_bindings:
+      open_state: document.dataset.survivorLevelChoiceOpen
+    implementation_notes:
+      - "Backdrop owns pointer capture; panel and cards do not need separate screen blockers."
+      - "Combat HUD remains visible but disabled behind the dim layer."
+
+  LevelChoicePanel:
+    role: "Primary modal surface containing title, instruction, three choices, and optional reroll."
+    mode: hybrid
+    anatomy:
+      - panel_9slice_skin
+      - FrameOrnamentLayer
+      - LevelChoiceHeader
+      - SkillChoiceGrid
+      - RerollFooter
+    box_model:
+      width: "min(760px, calc(100vw - 24px))"
+      max_height: "78dvh"
+      min_touch_margin_px: 12
+      content_insets_px: { left: 14, right: 14, top: 34, bottom: 16 }
+      section_gaps_px:
+        crest_overlap: 24
+        header_to_grid: 0
+        grid_to_footer: 10
+    skin_contract:
+      asset_key: ninja2.ui.panel.parchment_9slice
+      usage: phaser_nineslice_or_dom_preview
+      slice_hints_px: { left: 28, right: 28, top: 28, bottom: 28 }
+      content_insets_px: { left: 14, right: 14, top: 34, bottom: 16 }
+      stretch_policy: "Corners and ink outline stay fixed; parchment center may stretch vertically."
+    states:
+      closed: "display none and no pointer capture"
+      opening: "scale 0.96 to 1.0 over 180ms"
+      open: "focus first recommended SkillChoiceCard"
+      closing: "fade out after a choice is selected"
+    implementation_notes:
+      - "Frame ornaments are fixed transparent sprites anchored to the panel border, not part of the 9-slice bitmap."
+      - "The panel skin must contain no Korean title, run summary, buttons, or skill icons."
+
+  FrameOrnamentLayer:
+    role: "Carries the concept's embedded-looking border decorations without baking them into the stretchable panel skin."
+    mode: hybrid
+    anatomy:
+      - CrestOrnament
+      - PanelCornerOrnament[top_left]
+      - PanelCornerOrnament[top_right]
+      - PanelCornerOrnament[bottom_left]
+      - PanelCornerOrnament[bottom_right]
+    box_model:
+      position: absolute_inset
+      z_order: "above panel skin, below readable header/card text"
+      pointer_events: none
+      reserved_content_clearance_px:
+        top: 34
+        side: 14
+        bottom: 16
+    asset_contract:
+      asset_key: ninja2.ui.level_choice.frame_ornaments_v1
+      usage: fixed_sprite_set
+      background: transparent
+      not_nine_slice: true
+      variants:
+        crest: { width: 180, height: 112, anchor: top_center, offset_px: { x: 0, y: -54 } }
+        corner_leaf: { width: 108, height: 108, anchors: [top_left, top_right, bottom_left, bottom_right] }
+    implementation_notes:
+      - "The concept reads as if ornaments are embedded in the border; runtime should render them as fixed overlay sprites attached to the panel frame."
+      - "Do not let ornament sprites participate in grid sizing, card sizing, or text padding."
+      - "Mirror/rotate the same corner cluster when the silhouette remains acceptable; create side-specific variants only if mirroring looks artificial."
+
+  CrestOrnament:
+    role: "Identifies the modal as a lantern-sanctuary reward moment."
+    mode: hybrid
+    anatomy:
+      - transparent_crest_sprite
+      - circular_badge
+      - lantern_mark
+      - leaf_wings
+    box_model:
+      size_px: { width: 180, height: 112 }
+      anchor: top_center
+      offset_px: { x: 0, y: -54 }
+    visual:
+      fill: "lantern gold to action orange"
+      outline_px: 4
+    asset_policy:
+      current: ninja2.ui.level_choice.frame_ornaments_v1.crest
+      fallback: native_css_badge_only_for_debug
+
+  PanelCornerOrnament:
+    role: "Adds leafy sanctuary personality at panel corners while preserving the panel's rectangular layout math."
+    mode: hybrid
+    repeatable: true
+    anatomy:
+      - transparent_corner_sprite
+      - mirrored_or_rotated_transform
+      - noninteractive_outer_overlap
+    box_model:
+      size_px: { width: 108, height: 108 }
+      top_left_offset_px: { x: -26, y: -24 }
+      top_right_offset_px: { x: 26, y: -24 }
+      bottom_left_offset_px: { x: -26, y: 24 }
+      bottom_right_offset_px: { x: 26, y: 24 }
+    asset_policy:
+      current: ninja2.ui.level_choice.frame_ornaments_v1.corner_leaf
+      transform_policy: "Use CSS/Phaser mirror and rotate transforms for other corners."
+    constraints:
+      - "Must not cover the level title, run summary chip, or first-row card hit targets."
+      - "May overlap the outer border and dimmed battle background."
+
+  LevelChoiceHeader:
+    role: "Explains the moment and shows compact run context without competing with the cards."
+    mode: native_ui
+    anatomy:
+      - title_text
+      - subtitle_text
+      - run_summary_chip
+    box_model:
+      grid_columns: ["title_stack", "run_summary"]
+      padding_px: { left: 14, right: 14, top: 34, bottom: 8 }
+      gap_px: 10
+      divider_height_px: 4
+    slots:
+      title_text:
+        text_source: runtime
+        max_lines: 1
+        font_size_px:
+          target: 34
+          narrow: 30
+        line_height: 0.95
+      subtitle_text:
+        text_source: runtime
+        max_lines: 1
+        font_size_px: 12
+        margin_top_px: 5
+      run_summary_chip:
+        text_source: runtime
+        hide_below_width_px: 390
+        min_width_px: 92
+        padding_px: { x: 8, y: 6 }
+    data_bindings:
+      title: fixed_runtime_string.level_up
+      subtitle: run.nextChoiceInstruction
+      run_summary: run.level_kills_elapsed
+
+  SkillChoiceGrid:
+    role: "Keeps the three choices comparable and prevents card priority from shifting with text length."
+    mode: native_ui
+    anatomy:
+      - SkillChoiceCard[3]
+    box_model:
+      display: grid
+      columns: 3
+      gap_px:
+        target: 10
+        narrow: 7
+        compact: 5
+      padding_px:
+        target: { left: 14, right: 14, top: 12, bottom: 16 }
+        narrow: { left: 9, right: 9, top: 10, bottom: 12 }
+        compact: { left: 6, right: 6, top: 10, bottom: 12 }
+    invariants:
+      - "Always render exactly three selectable cards."
+      - "Cards share equal width and equal minimum height."
+      - "Clamp text before changing the three-card grammar."
+
+  SkillChoiceCard:
+    role: "One selectable run skill option."
+    mode: hybrid
+    repeatable: true
+    anatomy:
+      - ChoiceBadge
+      - SkillIconWell
+      - skill_name_text
+      - LevelPipRow
+      - effect_summary_text
+      - EffectChip[1..2]
+      - CategoryChip
+    box_model:
+      min_height_px:
+        target: 258
+        narrow: 238
+        compact: 204
+      padding_px:
+        target: { left: 8, right: 8, top: 10, bottom: 9 }
+        narrow: { left: 6, right: 6, top: 8, bottom: 8 }
+        compact: { left: 4, right: 4, top: 7, bottom: 7 }
+      gap_px:
+        badge_to_icon: 7
+        icon_to_name: 8
+        name_to_pips: 7
+        pips_to_desc: 9
+        desc_to_chips: 9
+        chips_to_category: 6
+      radius_px: 8
+      outline_px:
+        target: 4
+        narrow: 3
+    skin_contract:
+      asset_key: ninja2.ui.panel.parchment_9slice
+      usage: phaser_nineslice_or_dom_preview
+      slice_hints_px: { left: 28, right: 28, top: 28, bottom: 28 }
+      content_insets_px: { left: 8, right: 8, top: 10, bottom: 9 }
+      note: "Current pilot reuses the parchment panel skin; a dedicated card skin is optional only if the lower brown fade must become bitmap-authored."
+    states:
+      new_skill:
+        badge_text: "NEW!"
+        emphasis: "gold badge, normal border"
+      upgrade:
+        badge_text: "Lv.+"
+        emphasis: "gold badge, normal border"
+      focused:
+        emphasis: "lantern-gold border and outer focus ring"
+      selected:
+        emphasis: "gold glow pulse, then modal closes"
+      disabled:
+        emphasis: "opacity down only after player selected another card"
+    text_policy:
+      skill_name:
+        max_lines: 2
+        font_size_px:
+          target: 15
+          narrow: 13
+          compact: 12
+        min_height_px:
+          target: 34
+          narrow: 31
+          compact: 30
+      effect_summary:
+        max_lines:
+          target: 2
+          compact: 1
+        font_size_px: 12
+        min_height_px:
+          target: 32
+          compact: 18
+      overflow_rule: "Text clips by line clamp; never resize card width from content."
+    data_bindings:
+      skillDataId: choice.skillDataId
+      name: choice.name
+      current_level: choice.currentRunLevel
+      next_level: choice.nextRunLevel
+      icon: choice.iconSrc
+      effect_summary: choice.effectSummary
+      stat_chips: choice.statChips
+      category: choice.categoryLabel
+
+  ChoiceBadge:
+    role: "Communicates whether the option is a new skill or a level upgrade."
+    mode: native_ui
+    box_model:
+      min_width_px:
+        target: 42
+        narrow: 35
+      padding_px:
+        target: { x: 7, y: 3 }
+        narrow: { x: 5, y: 3 }
+      outline_px:
+        target: 3
+        narrow: 2
+    text_policy:
+      max_lines: 1
+      font_size_px:
+        target: 10
+        narrow: 9
+
+  SkillIconWell:
+    role: "Separates the skill identity sprite from the card skin."
+    mode: hybrid
+    anatomy:
+      - circular_disc
+      - skill_icon_sprite
+    box_model:
+      disc_size_px:
+        target: 52
+        narrow: 45
+        compact: 38
+      icon_size_percent: 118
+      outline_px:
+        target: 4
+        narrow: 3
+      margin_top_px:
+        target: 7
+        compact: 6
+    asset_contract:
+      icon_asset_key: ninja2.battle.skill_icons.survivor_level_choice_v1
+      sprite_size_px: { width: 128, height: 128 }
+      background: transparent
+      not_in_skin: true
+    implementation_notes:
+      - "The circular disc may stay native; generated skill icons must not include their own card frame."
+      - "Icon sprites can overflow the disc slightly for impact, but must remain clipped by the card box."
+
+  LevelPipRow:
+    role: "Shows current or previewed run level out of five."
+    mode: native_ui
+    box_model:
+      pip_count: 5
+      pip_size_px: 9
+      pip_gap_px: 4
+      rotation_degrees: 45
+    data_bindings:
+      filled: choice.nextRunLevel
+      max: 5
+    visual:
+      filled: lantern_gold
+      empty: "rgba(59, 40, 24, .5)"
+
+  EffectChip:
+    role: "Summarizes the most important numeric or status delta."
+    mode: native_ui
+    repeatable: true
+    max_count_per_card: 2
+    anatomy:
+      - chip_background
+      - primary_delta_text
+      - optional_secondary_delta_text
+    box_model:
+      width: "100%"
+      min_height_px: 28
+      padding_px: { x: 6, y: 5 }
+      margin_top_px: 9
+      radius_px: 7
+      outline_px: 2
+    text_policy:
+      max_lines: 2
+      font_size_px: 11
+      priority_order:
+        - damage_or_heal_delta
+        - cooldown_or_duration_delta
+        - special_rule
+    visual:
+      fill: "rgba(112, 78, 39, .28)"
+      selected_fill: "rgba(255, 198, 74, .18)"
+
+  CategoryChip:
+    role: "Labels the skill family without becoming the primary reading target."
+    mode: native_ui
+    box_model:
+      align: bottom_center
+      min_width_px: 56
+      padding_px: { x: 9, y: 5 }
+      radius_px: 6
+      outline_px: 2
+    text_policy:
+      max_lines: 1
+      font_size_px: 11
+    visual:
+      fill: "deep forest"
+      text: "cream cloak"
+
+  RerollFooter:
+    role: "Optional second-choice affordance using run-limited soulflame cost."
+    mode: hybrid
+    optional: true
+    first_pass_policy: "Hide unless reroll economy is wired."
+    anatomy:
+      - reroll_button_skin
+      - reroll_icon
+      - cost_icon
+      - cost_text
+      - remaining_count_text
+    box_model:
+      anchor: bottom_center
+      min_width_px: 142
+      min_height_px: 34
+      padding_px: { x: 12, y: 7 }
+      margin_bottom_px: 16
+    skin_contract:
+      asset_key: null
+      usage: native_ui_until_wired
+      future_asset_key: ninja2.ui.button.reroll_small_9slice
+      content_insets_px: { left: 12, right: 12, top: 7, bottom: 7 }
+
+asset_dependency_matrix:
+  ninja2.home.background.forest_sanctuary:
+    component_slots:
+      - HomeBoardViewport.forest_background
+    usage: css_background_cover
+    must_not_bake:
+      - resource_values
+      - building_labels
+      - hex_costs
+      - nav_tabs
+  ninja2.home.hex_tile_set.forest_sanctuary:
+    component_slots:
+      - HexTileLayer.tile_state_sprites
+    fixed_sprite_sizes_px:
+      tile: { width: 258, height: 297 }
+    must_not_bake:
+      - building_sprites
+      - level_badges
+      - production_bubbles
+      - expansion_cost_text
+  ninja2.home.building_atlas.lantern_sanctuary:
+    component_slots:
+      - BuildingSpriteToken.building_sprite_or_blueprint
+      - BuildingThumbnailWell.building_sprite_or_icon
+    usage: individual_building_sprites
+    must_not_bake:
+      - level_badges
+      - production_bubbles
+      - selection_glow
+      - panel_text
+  ninja2.ui.profile.guardian_avatar:
+    component_slots:
+      - HeroPortraitStatus.guardian_avatar_sprite
+    fixed_sprite_sizes_px:
+      avatar: { width: 256, height: 256 }
+    must_not_bake:
+      - level_badge
+      - profile_frame
+      - progress_bar
+  ninja2.ui.topbar.cluster_skins:
+    component_slots:
+      - TopResourcePill.pill_frame
+    slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+    variant_slice_hints_px:
+      resource_board: { left: 24, right: 24, top: 24, bottom: 24 }
+      resource_chip: { left: 18, right: 18, top: 14, bottom: 14 }
+    content_insets_by_slot:
+      TopResourcePill: { left: 9, right: 12, top: 5, bottom: 5 }
+    must_not_bake:
+      - resource_icons
+      - resource_values
+      - plus_buttons
+      - gain_pulses
+  ninja2.ui.home_icon_pack_v3:
+    component_slots:
+      - PopulationMenuCluster.population_pill_icon
+      - TopRoundIconButton.icon_glyph
+      - HomeSideButton.icon_glyph
+      - IntegratedCollectStatusChip.small_resource_icon
+      - HomeTabButton.icon_glyph
+      - ModalRewardSlot.reward_icon_sprite
+    fixed_sprite_sizes_px:
+      standard_icon: { width: 96, height: 96 }
+      topbar_resource_icon: { width: 56, height: 56 }
+      topbar_plus_icon: { width: 48, height: 48 }
+    must_not_bake:
+      - character_portrait
+      - resource_values
+      - tab_labels
+      - side_button_labels
+      - unread_badge_text
+  ninja2.ui.panel.parchment_9slice:
+    component_slots:
+      - SelectedBuildingPanel.skin
+      - LevelChoicePanel.skin
+      - SkillChoiceCard.skin
+      - ModalShell.skin
+      - ModalNoticeToast.skin
+    slice_hints_px: { left: 28, right: 28, top: 28, bottom: 28 }
+    content_insets_by_slot:
+      SelectedBuildingPanel: { left: 10, right: 10, top: 12, bottom: 10 }
+      LevelChoicePanel: { left: 14, right: 14, top: 34, bottom: 16 }
+      SkillChoiceCard: { left: 8, right: 8, top: 10, bottom: 9 }
+      ModalShell: { left: 22, right: 22, top: 28, bottom: 18 }
+      ModalNoticeToast: { left: 18, right: 18, top: 20, bottom: 16 }
+    must_not_bake:
+      - title_text
+      - subtitle_text
+      - run_summary
+      - skill_name_text
+      - effect_summary_text
+      - badges
+      - pips
+      - chips
+      - icons
+      - modal_action_labels
+      - reward_counts
+      - toggle_states
+  ninja2.ui.button.sortie_orange:
+    component_slots:
+      - SortieCtaButton.fixed_orange_button_sprite
+    fixed_sprite_sizes_px:
+      sortie_button: { width: 256, height: 192 }
+    must_not_bake:
+      - native_sortie_text
+      - native_cost_text
+      - cooldown_or_energy_values
+  ninja2.battle.skill_icons.survivor_level_choice_v1:
+    component_slots:
+      - SkillIconWell.skill_icon_sprite
+    sprite_size_px: { width: 128, height: 128 }
+    must_not_bake:
+      - circular_disc
+      - card_border
+      - level_pips
+      - text
+  ninja2.ui.battle_counter_icons_v1:
+    component_slots:
+      - BattleHudCounterIcon.timer_icon
+      - BattleHudCounterIcon.kill_icon
+      - BattleHudCounterIcon.enemy_icon
+      - BattleHudCounterIcon.pickup_icon
+      - BattleHudCounterIcon.boss_stage_icon
+    fixed_sprite_sizes_px:
+      counter_icon: { width: 96, height: 96 }
+    must_not_bake:
+      - counter_labels
+      - counter_values
+      - timer_text
+      - stage_text
+      - hud_frames
+  ninja2.battle.encounter_icons.light_v1:
+    component_slots:
+      - RandomEncounterSprite.bomb_icon
+      - RandomEncounterSprite.magnet_icon
+      - RandomEncounterSprite.potion_icon
+      - RandomEncounterSprite.mine_icon
+    fixed_sprite_sizes_px:
+      encounter_icon: { width: 96, height: 96 }
+    runtime_display_size_px:
+      normal_pickup: { width: 34, height: 34 }
+      mine_pickup: { width: 42, height: 42 }
+    must_not_bake:
+      - encounter_labels
+      - reward_amounts
+      - pickup_rings
+      - mine_progress_ring
+      - glow_frames
+      - ui_badges
+  ninja2.ui.level_choice.frame_ornaments_v1:
+    component_slots:
+      - FrameOrnamentLayer.CrestOrnament
+      - FrameOrnamentLayer.PanelCornerOrnament
+      - ModalShell.FrameOrnamentLayer
+    fixed_sprite_sizes_px:
+      crest: { width: 180, height: 112 }
+      corner_leaf: { width: 108, height: 108 }
+    must_not_bake:
+      - level_title
+      - subtitle
+      - run_summary
+      - card_content
+      - panel_stretch_center
+      - modal_variant_body
+
+runtime_token_mapping:
+  css_custom_properties:
+    --home-top-height: surfaces.HousingHome.layout_contract.top_band_height_px
+    --home-board-top: surfaces.HousingHome.layout_contract.board_region_px.top
+    --home-board-bottom: surfaces.HousingHome.layout_contract.board_region_px.bottom
+    --home-bottom-action-bottom: surfaces.HousingHome.layout_contract.bottom_action_bottom_px
+    --home-bottom-nav-height: surfaces.HousingHome.layout_contract.bottom_nav_height_px
+    --level-modal-pad-top: surfaces.RunLevelUpChoice.layout_contract.modal_edge_padding_px.top
+    --level-modal-pad-x: surfaces.RunLevelUpChoice.layout_contract.modal_edge_padding_px.side
+    --level-modal-pad-bottom: surfaces.RunLevelUpChoice.layout_contract.modal_edge_padding_px.bottom
+    --level-panel-width: surfaces.RunLevelUpChoice.layout_contract.panel_width
+    --level-panel-max-height: surfaces.RunLevelUpChoice.layout_contract.panel_max_height
+    --level-head-pad-x: components.LevelChoiceHeader.box_model.padding_px.left
+    --level-grid-gap: components.SkillChoiceGrid.box_model.gap_px.target
+    --level-grid-pad-x: components.SkillChoiceGrid.box_model.padding_px.target.left
+    --level-card-min-height: components.SkillChoiceCard.box_model.min_height_px.target
+    --level-card-pad-x: components.SkillChoiceCard.box_model.padding_px.target.left
+    --level-card-outline: components.SkillChoiceCard.box_model.outline_px.target
+    --level-icon-size: components.SkillIconWell.box_model.disc_size_px.target
+    --level-name-font-size: components.SkillChoiceCard.text_policy.skill_name.font_size_px.target
+    --level-name-min-height: components.SkillChoiceCard.text_policy.skill_name.min_height_px.target
+    --level-desc-min-height: components.SkillChoiceCard.text_policy.effect_summary.min_height_px.target
+    --modal-harness-safe-top: surfaces.PhaserModalSystem.layout_contract.safe_area_policy
+    --modal-shell-min-width: components.ModalShell.box_model.min_width_px
+    --modal-shell-max-width: components.ModalShell.box_model.max_width_px
+    --modal-shell-inset-x: components.ModalShell.box_model.content_insets_px.left
+    --modal-footer-button-height: components.ModalFooter.box_model.button_height_px
+  existing_css_classes:
+    ".home-screen": HousingHome
+    ".home-top": HomeTopBand
+    ".home-portrait": HeroPortraitStatus
+    ".home-resources": TopResourcePillRow
+    ".resource-row": TopResourcePill
+    ".home-top-actions": PopulationMenuCluster
+    ".top-icon-button": TopRoundIconButton
+    ".home-side": HomeSideRail
+    ".home-side-button": HomeSideButton
+    ".home-board-wrap": HomeBoardViewport
+    ".home-hex": HexTileLayer
+    ".home-owned-ground": SettlementOrnamentLayer
+    ".home-building": BuildingSpriteToken
+    ".bubble": BuildingProductionBubble
+    ".hex-cost": ExpansionCostMarker
+    ".loop-log": HomeLoopToast
+    ".home-bottom": HomeBottomActionRow
+    ".home-panel": SelectedBuildingPanel
+    ".panel-building-icon": BuildingThumbnailWell
+    ".panel-building-copy": BuildingInfoStack
+    ".panel-upgrade": UpgradeActionButton
+    ".home-tab-sortie.sortie-button": SortieCtaButton
+    ".home-tabs": HomeTabDock
+    ".home-tab": HomeTabButton
+    ".level-modal": LevelChoiceModalBackdrop
+    ".level-panel": LevelChoicePanel
+    ".level-frame-ornament": FrameOrnamentLayer
+    ".level-head": LevelChoiceHeader
+    ".choice-grid": SkillChoiceGrid
+    ".choice": SkillChoiceCard
+    ".choice-badge": ChoiceBadge
+    ".choice-icon": SkillIconWell
+    ".choice-pips": LevelPipRow
+    ".choice-chips": EffectChip
+    ".choice-category": CategoryChip
+    ".modal-system-harness": ModalHarnessViewport
+    ".modal-harness-stage": ModalHost
+    ".modal-variant-button": ModalActionButton
+    ".modal-size-button": ModalActionButton
+
+review_gate:
+  pass_conditions:
+    - "All three cards remain equal-width and comparable at 440px and 390px viewport widths."
+    - "Skill icon sprites are independent assets inside native circular wells."
+    - "Panel and card skins contain no text, pips, badges, or stat values."
+    - "The visible border ornament layer is represented by fixed transparent sprites, not by the stretchable 9-slice center."
+    - "slice_hints and content_insets are both present for every rectangular generated skin."
+    - "Runtime CSS values can be traced back to this blueprint or layout-tokens.yaml."
+    - "The common modal harness opens every registered variant without ResourceStore or BoardKernel."
+    - "ModalShell renders through Phaser nineslice when the parchment texture is available and falls back only for debug visibility."
+    - "Confirm, reward, list, settings, skill-choice, and notice variants share the same ModalHost open/close lifecycle."
+  blockers:
+    - "Generated full modal PNG used as implementation."
+    - "Card text changes card width or breaks the three-column comparison."
+    - "9-slice border values are reused as text padding without an explicit content inset."
+    - "Concept border ornaments are dropped or replaced only by native CSS shapes without a planned/generated asset."
+    - "Reroll button appears before its cost and remaining-count data are wired."
+    - "A modal variant owns its own full-screen input blocker instead of using ModalHost."
+    - "The common harness requires a game content bundle to preview shell, confirm, reward, list, settings, or notice variants."

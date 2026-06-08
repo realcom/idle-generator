@@ -1,5 +1,5 @@
 id: 200602
-name: "대나무창고"
+name: "목재 작업장"
 category: Mine
 type: Mine
 grade: 1
@@ -22,6 +22,19 @@ levelUpMaterialItemGroups:
       - { id: 200101, count: 22 }
       - { id: 200102, count: 3 }
       - { id: 5, count: 1050 }
+  - level: 4
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 60 }
+      - { id: 200102, count: 12 }
+      - { id: 5, count: 2800 }
+  - level: 5
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 130 }
+      - { id: 200102, count: 28 }
+      - { id: 200103, count: 1 }
+      - { id: 5, count: 6500 }
 
 sellAddItemGroups:
   - shouldAddAll: true
@@ -29,6 +42,21 @@ sellAddItemGroups:
     addItems:
       - { itemDataId: 200101, minCount: 2, maxCount: 3, isCore: true }
 
+popupArgs:
+  HousingKey: wood_workshop
+  HousingRole: production
+  HousingPlacementKind: repeatable
+  HousingInstanceRole: production_node
+  HousingMaxInstancesByLanternLevel: "1:1,3:2,5:3,6:4"
+  HousingDuplicateCostScaling: "cost_x1.25_per_extra,time_x1.15_per_extra"
+  HousingAdditionalInstanceBase: "2:seconds=180,gold=700,wood=45,stone=8"
+  HousingPurpose: "초반 건설, 업그레이드, 타일 정화에 가장 많이 쓰는 목재를 방치 생산한다."
+  HousingEffectKind: produce_wood
+  HousingFootprint: 1x2
+  HousingSpriteKey: wood_workshop
+  HousingConstructionSeconds: 30
+  HousingLevelUpSeconds: "2:60,3:180,4:600,5:1800"
+
 spriteGroups:
-  Icon: "Items/Ninja2/housing_bamboo_storehouse_icon.png"
-  Building: "Housing/Ninja2/bamboo_storehouse.png"
+  Icon: "Items/Ninja2/housing_wood_workshop_icon.png"
+  Building: "Housing/Ninja2/wood_workshop.png"

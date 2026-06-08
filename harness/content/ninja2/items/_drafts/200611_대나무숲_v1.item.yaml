@@ -1,0 +1,73 @@
+id: 200611
+name: "대나무숲"
+category: Mine
+type: Mine
+grade: 2
+power: 22
+efficiencyPercents: [100.0, 120.0, 144.0, 173.0, 207.0]
+maxStamina: 90
+staminaRegenPerSecond: 0.0074
+sellPrice: 0
+requiredExps: [0, 200, 450, 920, 1660]
+
+addStats:
+  - { type: AttackSpeedPercent, value: [0, 1, 2, 3, 5] }
+
+levelUpMaterialItemGroups:
+  - level: 2
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 900 }
+      - { id: 200102, count: 360 }
+      - { id: 200103, count: 12 }
+      - { id: 200108, count: 35 }
+      - { id: 5, count: 22000 }
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 1700 }
+      - { id: 200102, count: 740 }
+      - { id: 200103, count: 26 }
+      - { id: 200110, count: 6 }
+      - { id: 5, count: 48000 }
+  - level: 4
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 3600 }
+      - { id: 200102, count: 1600 }
+      - { id: 200103, count: 60 }
+      - { id: 200110, count: 14 }
+      - { id: 5, count: 105000 }
+  - level: 5
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 7800 }
+      - { id: 200102, count: 3600 }
+      - { id: 200103, count: 136 }
+      - { id: 200107, count: 90 }
+      - { id: 200110, count: 32 }
+      - { id: 5, count: 230000 }
+
+sellAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200106, minCount: 1, maxCount: 3, isCore: true }
+
+popupArgs:
+  HousingKey: bamboo_grove
+  HousingRole: advanced_production
+  HousingPlacementKind: repeatable
+  HousingInstanceRole: advanced_production_node
+  HousingMaxInstancesByLanternLevel: "6:2"
+  HousingDuplicateCostScaling: "cost_x1.25_per_extra,time_x1.15_per_extra"
+  HousingPurpose: "대나무를 생산해 빠른 건설재를 공급하고 목재 비용 부담을 완화한다."
+  HousingEffectKind: produce_bamboo_and_build_cost_relief
+  HousingFootprint: 1x3
+  HousingSpriteKey: bamboo_grove
+  HousingConstructionSeconds: 4800
+  HousingLevelUpSeconds: "2:6600,3:13200,4:28800,5:57600"
+
+spriteGroups:
+  Icon: "Items/Ninja2/housing_bamboo_grove_icon.png"
+  Building: "Housing/Ninja2/bamboo_grove.png"

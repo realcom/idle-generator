@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phaser Modal System Harness</title>
+<script src="vendor/phaser.min.js"></script>
+<style>
+:root {
+  --ink: #171f18;
+  --forest: #173224;
+  --moss: #6f9d48;
+  --parchment: #f4dfb1;
+  --cream: #f8ead1;
+  --gold: #ffc64a;
+  --orange: #f47b22;
+  --teal: #36e0d4;
+  --panel: #2b241c;
+  --line: #0d120d;
+}
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 198, 74, .14), transparent 28%),
+    linear-gradient(135deg, #102015 0%, #26351d 44%, #1a1711 100%);
+  color: var(--cream);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  letter-spacing: 0;
+}
+
+button {
+  appearance: none;
+  border: 0;
+  border-radius: 8px;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
+.modal-system-harness {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(278px, 344px) minmax(360px, 1fr);
+  gap: 18px;
+  padding: 18px;
+}
+
+.tool-panel {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.panel-band {
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 241, 200, .12), transparent 36%),
+    linear-gradient(180deg, #3b2f21, #211a14);
+  box-shadow: inset 0 0 0 2px rgba(255, 198, 74, .12), 0 10px 0 rgba(0, 0, 0, .24);
+  padding: 12px;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 32px;
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.status-pill {
+  flex: 0 0 auto;
+  max-width: 130px;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: #2f7e20;
+  color: #f4ffe8;
+  font-size: 11px;
+  font-weight: 900;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-pill.is-error { background: #a13a24; }
+
+.variant-grid,
+.size-row {
+  display: grid;
+  gap: 8px;
+}
+
+.variant-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.size-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.modal-variant-button,
+.modal-size-button {
+  min-height: 42px;
+  border: 3px solid var(--ink);
+  background:
+    linear-gradient(180deg, rgba(255, 234, 177, .28), transparent 44%),
+    linear-gradient(180deg, #375f32, #1d3524);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .28);
+  color: #fff7dd;
+  font-size: 13px;
+  font-weight: 900;
+  text-shadow: 0 2px 0 #0d120d;
+}
+
+.modal-variant-button.active,
+.modal-size-button.active {
+  background:
+    linear-gradient(180deg, rgba(255, 251, 216, .62), transparent 44%),
+    linear-gradient(180deg, var(--gold), var(--orange));
+  color: #251207;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .7);
+}
+
+.preview-log {
+  display: grid;
+  gap: 7px;
+  max-height: 174px;
+  min-height: 116px;
+  overflow: auto;
+}
+
+.log-row {
+  border: 2px solid rgba(13, 18, 13, .78);
+  border-radius: 8px;
+  background: rgba(244, 223, 177, .95);
+  color: #21160e;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.3;
+  padding: 7px 8px;
+}
+
+.log-row strong {
+  display: block;
+  color: #171f18;
+  font-size: 13px;
+}
+
+.stage-wrap {
+  min-width: 0;
+  display: grid;
+  place-items: start center;
+}
+
+.stage-frame {
+  position: relative;
+  width: min(100%, 440px);
+  height: min(100dvh - 36px, 782px);
+  min-height: 620px;
+  overflow: hidden;
+  border: 5px solid #0d120d;
+  border-radius: 8px;
+  background: #16291d;
+  box-shadow:
+    inset 0 0 0 5px rgba(244, 223, 177, .07),
+    0 18px 0 rgba(0, 0, 0, .26);
+}
+
+.stage-frame[data-size="compact"] {
+  width: min(100%, 390px);
+  height: min(100dvh - 36px, 760px);
+}
+
+.stage-frame[data-size="wide"] {
+  width: min(100%, 760px);
+  height: min(100dvh - 36px, 720px);
+}
+
+.modal-harness-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.modal-harness-stage.is-active {
+  pointer-events: auto;
+}
+
+.modal-harness-stage canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (max-width: 840px) {
+  .modal-system-harness {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+
+  .tool-panel { order: 2; }
+  .stage-wrap { order: 1; }
+
+  .stage-frame {
+    height: min(74dvh, 782px);
+    min-height: 536px;
+  }
+}
+
+@media (max-width: 520px) {
+  .variant-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+</style>
+</head>
+<body>
+<main class="modal-system-harness">
+  <section class="tool-panel">
+    <div class="panel-band">
+      <div class="panel-title">
+        <span>Modal Harness</span>
+        <span id="previewStatus" class="status-pill">Booting</span>
+      </div>
+    </div>
+
+    <div class="panel-band">
+      <div class="variant-grid" id="modalButtons">
+        <button class="modal-variant-button tab active" type="button" data-modal-id="shell">Shell</button>
+        <button class="modal-variant-button tab" type="button" data-modal-id="confirm">Confirm</button>
+        <button class="modal-variant-button tab" type="button" data-modal-id="reward">Reward</button>
+        <button class="modal-variant-button tab" type="button" data-modal-id="list">List</button>
+        <button class="modal-variant-button tab" type="button" data-modal-id="settings">Settings</button>
+        <button class="modal-variant-button tab" type="button" data-modal-id="skillChoice">Skill Choice</button>
+        <button class="modal-variant-button tab" type="button" data-modal-id="notice">Notice</button>
+      </div>
+    </div>
+
+    <div class="panel-band">
+      <div class="size-row">
+        <button class="modal-size-button" type="button" data-preview-size="compact">390</button>
+        <button class="modal-size-button active" type="button" data-preview-size="portrait">440</button>
+        <button class="modal-size-button" type="button" data-preview-size="wide">Wide</button>
+      </div>
+    </div>
+
+    <div class="panel-band">
+      <div id="previewLog" class="preview-log" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="stage-wrap">
+    <div id="previewPhone" class="stage-frame" data-size="portrait">
+      <div id="modalStage" class="modal-harness-stage is-active" aria-hidden="false"></div>
+    </div>
+  </section>
+</main>
+<script type="module" src="src/ui/phaser-modal-system-harness.js"></script>
+</body>
+</html>

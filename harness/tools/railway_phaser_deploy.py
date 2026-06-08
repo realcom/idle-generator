@@ -7,7 +7,6 @@ import argparse
 import os
 import shutil
 import subprocess
-import sys
 import tempfile
 from pathlib import Path
 
@@ -18,10 +17,10 @@ HARNESS_CONFIG = ROOT / "harness" / "deploy" / "railway" / "phaser"
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--game", default="mushroomer", help="Content game id compiled during Docker build.")
-    parser.add_argument("--service", default="phaser-web", help="Railway service name.")
+    parser.add_argument("--game", default="ninja2", help="Content game id compiled during Docker build.")
+    parser.add_argument("--service", default="ninja2-web", help="Railway service name.")
     parser.add_argument("--environment", default="production", help="Railway environment name.")
-    parser.add_argument("--message", default="Deploy Phaser web static", help="Railway deployment message.")
+    parser.add_argument("--message", default="Deploy Ninja2 Phaser web static", help="Railway deployment message.")
     parser.add_argument("--railway-bin", default=None, help="Path to Railway CLI binary.")
     parser.add_argument("--docker-check", action="store_true", help="Build the staged Docker image before upload.")
     parser.add_argument("--dry-run", action="store_true", help="Prepare staging only; do not upload.")
@@ -56,6 +55,33 @@ def run(cmd: list[str], cwd: Path | None = None) -> None:
     subprocess.run(cmd, cwd=cwd, check=True)
 
 
+def rewrite_default_game(stage: Path, game_id: str) -> None:
+    dockerfile = stage / "Dockerfile.phaser"
+    caddyfile = stage / "harness" / "deploy" / "railway" / "phaser" / "Caddyfile"
+    railway_config = stage / "railway.json"
+    harness_railway_config = stage / "harness" / "deploy" / "railway" / "phaser" / "railway.json"
+    root_route = "/survivor-runtime.html?game=ninja2" if game_id == "ninja2" else "/idlez-phaser.html"
+
+    dockerfile.write_text(
+        dockerfile.read_text(encoding="utf-8").replace("ARG GAME_ID=ninja2", f"ARG GAME_ID={game_id}"),
+        encoding="utf-8",
+    )
+    caddyfile.write_text(
+        caddyfile.read_text(encoding="utf-8").replace(
+            "/survivor-runtime.html?game=ninja2",
+            root_route,
+        ),
+        encoding="utf-8",
+    )
+    for config in [railway_config, harness_railway_config]:
+        config.write_text(
+            config.read_text(encoding="utf-8")
+            .replace("harness/content/ninja2/**", f"harness/content/{game_id}/**")
+            .replace("harness/game-profiles/ninja2.profile.yaml", f"harness/game-profiles/{game_id}.profile.yaml"),
+            encoding="utf-8",
+        )
+
+
 def find_railway(args: argparse.Namespace) -> str:
     explicit = args.railway_bin or os.environ.get("RAILWAY_BIN")
     if explicit:
@@ -72,23 +98,23 @@ def find_railway(args: argparse.Namespace) -> str:
 
 def main() -> int:
     args = parse_args()
-    if args.game != "mushroomer":
-        print("Only mushroomer is currently wired into the Phaser Dockerfile.", file=sys.stderr)
-        return 2
 
     stage = Path(tempfile.mkdtemp(prefix="idlez-phaser-railway.", dir="/private/tmp"))
     try:
         prepare_staging(stage)
+        rewrite_default_game(stage, args.game)
         print(f"Prepared staging: {stage}")
 
         if args.docker_check:
             run([
                 "docker",
                 "build",
+                "--build-arg",
+                f"GAME_ID={args.game}",
                 "-f",
                 "Dockerfile.phaser",
                 "-t",
-                "idlez-phaser-railway-staging-smoke",
+                f"idlez-phaser-railway-{args.game}-staging-smoke",
                 str(stage),
             ])
 
