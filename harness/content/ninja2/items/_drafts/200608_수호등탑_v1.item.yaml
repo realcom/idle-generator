@@ -52,7 +52,13 @@ popupArgs:
   HousingMaxInstancesByLanternLevel: "5:1"
   HousingDuplicateCostScaling: none
   HousingPurpose: "보스 피해와 방어 보정을 제공해 보스 추적, 방어형 스테이지, 위험 타일 정화를 안정화한다."
+  HousingDescription: "성소 바깥의 위험을 감시하는 방어 건물입니다. 생산물은 없지만 레벨이 오를수록 보스에게 주는 피해와 방어 보정이 올라 어려운 전투를 안정시킵니다."
   HousingEffectKind: boss_and_defense_bonus
+  HousingTapFlow: open_modal_only
+  HousingBubblePolicy: hidden
+  HousingFeatureModal: combat_bonus
+  HousingFeatureActions: "bonus_preview,upgrade"
+  HousingLevelEffectByLevel: "Lv1 boss_damage_percent=2,defense_percent=1; Lv2 boss_damage_percent=4,defense_percent=2; Lv3 boss_damage_percent=7,defense_percent=3; Lv4 boss_damage_percent=11,defense_percent=5; Lv5 boss_damage_percent=16,defense_percent=8"
   HousingFootprint: 1x1
   HousingSpriteKey: guard_lantern
   HousingConstructionSeconds: 1800

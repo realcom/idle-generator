@@ -1,0 +1,108 @@
+version: "1.0"
+game: "<game>"
+status: draft
+purpose: "Shared button contract for UI surfaces."
+source_standard: "ui-decision-standard-kit/UI_DECISION_STANDARD.md"
+
+principles:
+  - "Buttons are shared components, not screen-local art."
+  - "Labels, prices, counters, cooldowns, and localized text remain runtime-native."
+  - "State changes must not resize stable controls."
+  - "Generated skins are declared in asset-plan.yaml before runtime use."
+
+roles:
+  primary_cta:
+    intent: "Main irreversible or progression action on a surface."
+    visual_priority: high
+    default_component: "PrimaryButton"
+  secondary:
+    intent: "Safe secondary action."
+    visual_priority: medium
+    default_component: "SecondaryButton"
+  destructive:
+    intent: "Delete, abandon, refund, or irreversible negative action."
+    visual_priority: guarded
+    default_component: "DestructiveButton"
+  icon:
+    intent: "Compact command with familiar symbol."
+    visual_priority: contextual
+    default_component: "IconButton"
+  tab:
+    intent: "Switch section or persistent mode."
+    visual_priority: navigational
+    default_component: "TabButton"
+  chip:
+    intent: "Compact filter, status, or token action."
+    visual_priority: low
+    default_component: "ChipButton"
+
+anatomy:
+  slots:
+    skin: "Generated 9-slice skin, fixed sprite, native graphics, or CSS primitive."
+    icon: "Optional runtime image/sprite or approved icon asset."
+    label: "Runtime text."
+    badge: "Optional runtime-native count/status."
+    hit_target: "Invisible or visible target meeting touch size."
+  forbidden_baked_content:
+    - labels
+    - prices
+    - counters
+    - cooldowns
+    - localized_text
+
+sizes:
+  min_touch_px: 44
+  icon_button_px: 48
+  primary_height_px: { target: 56, compact: 50 }
+  tab_height_px: { target: 64, compact: 56 }
+  chip_height_px: { target: 36, compact: 32 }
+  stable_dimensions: true
+
+states:
+  normal: {}
+  hover_focus:
+    allowed_runtime_effects: [glow, outline, brightness]
+  pressed:
+    allowed_runtime_effects: [scale_0_98, brightness_down]
+  selected:
+    allowed_runtime_effects: [fill_swap, outline, icon_tint]
+  disabled:
+    allowed_runtime_effects: [opacity_down, desaturate, block_pointer]
+  loading:
+    allowed_runtime_effects: [spinner, label_swap]
+    must_preserve_width: true
+
+text_rules:
+  max_lines: 1
+  overflow: ellipsis
+  localization_policy: "Use shorter runtime label or two-line variant only when the component declares it."
+
+skin_policy:
+  phaser_nineslice_candidates:
+    - primary_cta
+    - secondary
+    - destructive
+    - tab
+    - chip
+  native_primitive_candidates:
+    - icon
+    - simple_chip
+  ornament_policy: "Non-stretch-safe crests, leaves, clasps, and badges are separate ornament layers."
+
+asset_contract:
+  asset_plan_required: true
+  asset_keys: []
+  component_skins: []
+
+runtime_mapping:
+  css_classes: {}
+  phaser_helpers: {}
+  design_tokens: {}
+
+review_gate:
+  blockers:
+    - "Button label or price is baked into reusable skin."
+    - "Pressed/selected/disabled state changes layout size."
+    - "A screen invents a local button style without updating this system."
+    - "Generated skin is used without an asset-plan key."
+

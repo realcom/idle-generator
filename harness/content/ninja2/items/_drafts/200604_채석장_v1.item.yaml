@@ -53,7 +53,19 @@ popupArgs:
   HousingMaxInstancesByLanternLevel: "2:1,4:2,6:3"
   HousingDuplicateCostScaling: "cost_x1.25_per_extra,time_x1.15_per_extra"
   HousingPurpose: "신전 강화, 타일 정화, 중반 건물 업그레이드에 필요한 석재 병목을 푼다."
+  HousingDescription: "단단한 석재를 캐내는 생산 건물입니다. 시간이 지나면 석재가 쌓이고, 신전 강화와 중반 건물 업그레이드에 필요한 재료 흐름을 안정시킵니다."
   HousingEffectKind: produce_stone
+  HousingTapFlow: collect_then_open_modal
+  HousingCollectTiming: before_modal
+  HousingCollectAnimation: fly_to_hud
+  HousingBubblePolicy: show_when_collectable
+  HousingProductionItemDataId: 200102
+  HousingProductionRateUnit: per_minute
+  HousingProductionRateByLevel: "3,5,8,13,20"
+  HousingStorageMinutesByLevel: "60,75,90,120,150"
+  HousingFeatureModal: production
+  HousingFeatureActions: "production_status,resident_assign,upgrade"
+  HousingLevelEffectByLevel: "Lv1 stone_per_min=3,storage_minutes=60; Lv2 stone_per_min=5,storage_minutes=75; Lv3 stone_per_min=8,storage_minutes=90; Lv4 stone_per_min=13,storage_minutes=120; Lv5 stone_per_min=20,storage_minutes=150"
   HousingFootprint: 1x2
   HousingSpriteKey: stone_quarry
   HousingConstructionSeconds: 180

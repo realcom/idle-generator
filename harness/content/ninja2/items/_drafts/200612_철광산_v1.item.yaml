@@ -59,13 +59,19 @@ sellAddItemGroups:
 
 popupArgs:
   HousingKey: iron_mine
-  HousingRole: advanced_production
+  HousingRole: upgrade_gate
   HousingPlacementKind: repeatable
-  HousingInstanceRole: advanced_production_node
+  HousingInstanceRole: upgrade_gate_node
   HousingMaxInstancesByLanternLevel: "6:2"
   HousingDuplicateCostScaling: "cost_x1.25_per_extra,time_x1.15_per_extra"
-  HousingPurpose: "철광석을 생산해 공방 고급 제작, 중반 업그레이드, 보스 대응 성장의 관문이 된다."
-  HousingEffectKind: produce_iron_and_midgame_upgrade_gate
+  HousingPurpose: "공방 고급 제작, 중반 업그레이드, 보스 대응 성장의 관문이 된다."
+  HousingDescription: "중반 이후 고급 제작과 보스 대응 성장을 여는 관문 건물입니다. 생산물을 쌓는 광산이 아니라, 성장할수록 공방 제작과 강적 대응에 필요한 업그레이드 흐름을 열어 줍니다."
+  HousingEffectKind: midgame_upgrade_gate_and_boss_bonus
+  HousingTapFlow: open_modal_only
+  HousingBubblePolicy: hidden
+  HousingFeatureModal: upgrade_gate
+  HousingFeatureActions: "midgame_upgrade_gate,boss_bonus,upgrade"
+  HousingLevelEffectByLevel: "Lv1 boss_damage_percent=1; Lv2 boss_damage_percent=2; Lv3 boss_damage_percent=3; Lv4 boss_damage_percent=5; Lv5 boss_damage_percent=8"
   HousingFootprint: 1x2
   HousingSpriteKey: iron_mine
   HousingConstructionSeconds: 7200

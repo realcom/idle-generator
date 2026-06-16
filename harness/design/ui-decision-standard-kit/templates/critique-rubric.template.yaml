@@ -1,0 +1,45 @@
+version: "1.0"
+game: "<game>"
+status: draft
+source_concepts:
+  - "<concept-id>"
+
+blockers:
+  - "screen is not the required orientation"
+  - "primary gameplay area is hidden by UI"
+  - "identity anchor is lost"
+  - "mobile text overflows or controls resize unpredictably"
+  - "runtime hardcodes content that belongs in data/spec"
+
+weighted_criteria:
+  rule_match:
+    weight: 25
+    checks: []
+  art_style_transfer:
+    weight: 20
+    checks: []
+  mobile_readability:
+    weight: 20
+    checks:
+      - "key values readable at target mobile width"
+      - "buttons fit labels"
+      - "no incoherent overlap"
+  implementation_contract:
+    weight: 20
+    checks:
+      - "semantic sections exist"
+      - "component blueprints define anatomy and box model"
+      - "asset-plan owns generated assets"
+      - "Phaser spec owns data contract"
+  runtime_quality:
+    weight: 15
+    checks:
+      - "smoke test passes"
+      - "section compare board exists"
+      - "console has no errors"
+
+review_output:
+  verdict: PASS # PASS | WARN | ERROR
+  evidence: []
+  next_edit_scope: ""
+

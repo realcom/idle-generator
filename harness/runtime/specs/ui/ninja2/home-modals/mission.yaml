@@ -1,0 +1,63 @@
+version: "1.0"
+game: ninja2
+slug: home-modals/mission
+status: implemented
+
+target_runtime:
+  page: harness/runtime/survivor-runtime.html
+  entrypoint: harness/runtime/src/survivor/survivor-app.js
+  module: harness/runtime/src/survivor/home-modals/mission.js
+  fixture_urls:
+    - harness/runtime/survivor-runtime.html?game=ninja2&fixture=city&tab=missions
+
+source_design:
+  concept:
+    image: harness/design/ninja2/concepts/home-modals/mission/concept-a.png
+    notes: harness/design/ninja2/concepts/home-modals/mission/concept-a.md
+  modal_family:
+    - harness/design/ninja2/concepts/ninja2_phaser_modal_system_a.md
+    - harness/design/ninja2/concepts/ninja2_sanctuary_build_modal_a.md
+
+runtime_contract:
+  - "The bottom 임무 tab opens #homeMissionModal instead of rendering missions inside #homeFeatureScreen."
+  - "#homeMissionModal reuses the home modal shell contract: home-modal-host, home-modal-shell, home-modal-header, home-modal-body, home-modal-footer, scrim, crest, corner ornaments, and a visible X close button."
+  - "Mission definitions come from harness/build/<game>/Achievements.json Mission entries tagged HomeUI; the modal renderer must not own hard-coded mission progress rules."
+  - "The mission board covers stage clears, building construction, resource acquisition, and companion progression through content-authored achievements."
+  - "Mission text, progress values, reward quantities, and button labels remain native DOM text, not baked into generated images."
+  - "Claimable, active, and claimed states must be visible in row class names and styling."
+  - "Clicking X or the scrim closes the mission modal and returns to the sanctuary tab."
+  - "Claiming a mission updates sanctuary claimedMissionKeys, resources, data-homeMissionClaimableCount, data-homeMissionClaimedCount, and rerenders the modal."
+
+data_contract:
+  sources:
+    content:
+      - "Compiled Achievements.json provides HomeUI mission definitions, trigger conditions, reward groups, and localized mission names."
+      - "Compiled Items.json provides reward item names, categories, and resource ids for mission reward rows."
+      - "Compiled Maps.json and Items.json provide progress inputs for stage clears, building construction, and resource acquisition."
+    runtime_state:
+      - "scene.sanctuary.claimedMissionKeys stores claimed mission ids."
+      - "scene.sanctuary resources, building instances, cleared maps, and companion state provide the prototype progress snapshot."
+      - "document.documentElement.dataset.homeMission* exposes the browser-smoke contract."
+    design_assets:
+      - "harness/design/ninja2/asset-plan.yaml:ninja2.ui.run_result.return_button_9slice_v1 provides the generic orange CTA skin."
+      - "harness/design/ninja2/asset-plan.yaml resource icon atoms are reused for mission reward rows where available."
+  bindings:
+    mission_modal:
+      active_tab: "bottom tab key missions opens #homeMissionModal."
+      mission_rows: "Achievements tagged HomeUI are evaluated against scene.sanctuary progress and rendered as claimable, active, or claimed rows."
+      rewards: "Achievement rewardAddItemGroups resolve through compiled Items.json and update scene.sanctuary resources on claim."
+      counters: "data-homeMissionClaimableCount and data-homeMissionClaimedCount mirror the rendered mission state."
+  fixtures:
+    city: "harness/runtime/survivor-runtime.html?game=ninja2&fixture=city&tab=missions"
+
+validation:
+  static:
+    - "node --check harness/runtime/src/survivor/home-modals/mission.js"
+    - "node --check harness/runtime/src/survivor/survivor-app.js"
+  smoke:
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --query 'game=ninja2&fixture=city&tab=missions' --screenshot /tmp/ninja2-home-mission-modal.png --timeout 120"
+  browser_checks:
+    - "data-home-mission-modal-open is true after clicking the 임무 bottom tab."
+    - "#homeMissionModal .home-build-modal-close is visible."
+    - "At least fifteen .home-mission-row entries render for the city fixture."
+    - "Claim buttons update claimed count and remain inside the modal."

@@ -14,7 +14,7 @@ addStats:
   - { type: CriticalDamagePercent, value: [150.0] }
   - { type: AttackSpeed, value: [1.1] }
   - { type: MoveSpeed, value: [3.7] }
-  - { type: ScalePercent, value: [-58.0] }
+  - { type: ScalePercent, value: [-64.0] }
 
 triggers:
   - UNIT_ONSTART_SHADOWNINJAOPENING
@@ -30,4 +30,6 @@ animations:
   Dead: Dead
 uiScale: 1.12
 uiOffset: { x: 0.0, y: 0.12 }
+collideSize: 0.42
+hitSize: 0.52
 hitDropItemSize: 38.0

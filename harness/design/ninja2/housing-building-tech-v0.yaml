@@ -155,6 +155,119 @@ placement_model:
   repeatable_buildings: [wood_workshop, stone_quarry, herb_garden, resident_lodge, granary, bamboo_grove, iron_mine]
   singleton_buildings: [lantern_shrine, training_yard, soulflame_well, workshop, guard_lantern, scout_post]
 
+runtime_board:
+  home_paths:
+    - [12, 7, wide]
+    - [12, 18, wide]
+    - [12, 4, wide]
+    - [12, 3, narrow]
+    - [7, 6, narrow]
+    - [18, 19, narrow]
+  resource_icons:
+    gold: "●"
+    exp: "◇"
+    lantern: "◌"
+    wood: "▰"
+    stone: "◆"
+    soulflame: "◌"
+    herb: "✚"
+    food: "●"
+    tool: "▣"
+    bamboo: "▥"
+    iron_ore: "◆"
+  building_ui:
+    lantern_shrine:
+      icon: "등불"
+      output: "등불 반경"
+      kind: soul
+      home_preview: true
+      visual: { w: 142, h: 134, dx: 0, dy: -18 }
+      base: { kind: plaza, w: 198, h: 148, dx: 0, dy: 18 }
+    wood_workshop:
+      icon: "목재"
+      output: "목재"
+      kind: wood
+      home_preview: true
+      visual: { w: 112, h: 96, dx: -18, dy: -16 }
+      base: { kind: yard, w: 154, h: 72, dx: -10, dy: 22 }
+    stone_quarry:
+      icon: "석재"
+      output: "석재"
+      kind: stone
+      home_preview: true
+      visual: { w: 112, h: 96, dx: 10, dy: -16 }
+      base: { kind: yard, w: 154, h: 72, dx: 8, dy: 22 }
+    training_yard:
+      icon: "용병"
+      output: "동료/경험치"
+      kind: training
+      home_preview: true
+      visual: { w: 146, h: 84, dx: 14, dy: 4 }
+      base: { kind: yard, w: 178, h: 106, dx: 10, dy: 28 }
+    soulflame_well:
+      icon: "영혼불"
+      output: "영혼불"
+      kind: soul
+      home_preview: true
+      visual: { w: 70, h: 92, dx: 0, dy: -8 }
+      base: { kind: watch, w: 80, h: 58, dx: 0, dy: 24 }
+    herb_garden:
+      icon: "정원"
+      output: "허브"
+      kind: leaf
+      home_preview: true
+      visual: { w: 146, h: 84, dx: 14, dy: 4 }
+      base: { kind: garden, w: 178, h: 106, dx: 10, dy: 28 }
+    resident_lodge:
+      icon: "숙소"
+      output: "주민"
+      kind: resident
+      home_preview: false
+      visual: { w: 112, h: 88, dx: 12, dy: -12 }
+      base: { kind: yard, w: 150, h: 70, dx: 8, dy: 22 }
+    workshop:
+      icon: "공방"
+      output: "도구"
+      kind: workshop
+      home_preview: false
+      visual: { w: 112, h: 96, dx: -6, dy: -16 }
+      base: { kind: yard, w: 154, h: 72, dx: -2, dy: 22 }
+    guard_lantern:
+      icon: "수호"
+      output: "보스 피해"
+      kind: guard
+      home_preview: false
+      visual: { w: 70, h: 92, dx: 0, dy: -8 }
+      base: { kind: watch, w: 80, h: 58, dx: 0, dy: 24 }
+    scout_post:
+      icon: "정찰"
+      output: "드롭률"
+      kind: scout
+      home_preview: false
+      visual: { w: 70, h: 92, dx: 0, dy: -8 }
+      base: { kind: watch, w: 80, h: 58, dx: 0, dy: 24 }
+    granary:
+      icon: "보급"
+      output: "식량"
+      kind: granary
+      home_preview: false
+      visual: { w: 112, h: 96, dx: 0, dy: -16 }
+      base: { kind: yard, w: 154, h: 72, dx: 0, dy: 22 }
+    bamboo_grove:
+      icon: "대나무"
+      output: "대나무"
+      kind: bamboo
+      home_preview: false
+      visual: { w: 146, h: 84, dx: 12, dy: 4 }
+      base: { kind: garden, w: 178, h: 106, dx: 10, dy: 28 }
+    iron_mine:
+      icon: "철광"
+      output: "철광석"
+      kind: iron
+      home_preview: false
+      visual: { w: 112, h: 96, dx: 0, dy: -16 }
+      base: { kind: yard, w: 154, h: 72, dx: 0, dy: 22 }
+
 tech_tree:
   start:
     unlocked_buildings: [lantern_shrine, wood_workshop]

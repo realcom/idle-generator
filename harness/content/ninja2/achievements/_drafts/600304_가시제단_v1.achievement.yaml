@@ -1,0 +1,24 @@
+id: 600304
+name: "가시제단"
+type: Mission
+tags: [Mission, StageClear, Boss, HomeUI]
+order: 304
+initialOpen: true
+clientAchievement: false
+condition: WinGame
+conditionValue1: 500110
+conditionValue2: 0
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: false
+popupArgs:
+  MissionGroup: stage_clear
+  RuntimeMissionKey: clear_stage_10
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 6000 }
+      - { itemDataId: 200103, count: 35 }
+      - { itemDataId: 4, count: 5 }

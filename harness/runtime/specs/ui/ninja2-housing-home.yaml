@@ -9,13 +9,16 @@ target_runtime:
   implementation_mode: dom_overlay_with_phaser_webgl_nineslice_sections
   fixture_urls:
     - harness/runtime/survivor-runtime.html?game=ninja2&homeDemo=city
+    - harness/runtime/survivor-runtime.html?game=ninja2&homeDemo=city&tab=exploration
     - harness/runtime/survivor-runtime.html?game=ninja2&fixture=city
+    - harness/runtime/survivor-runtime.html?game=ninja2&fixture=city&tab=exploration
 
 source_design:
   concepts:
     - harness/design/ninja2/concepts/ninja2_rulelocked_housing_home_a.md
     - harness/design/ninja2/concepts/ninja2_housing_bottom_loop_dock_b.md
     - harness/design/ninja2/concepts/ninja2_housing_bottom_inspector_no_collect_c.md
+    - harness/design/ninja2/concepts/ninja2_exploration_contract_board_concept_b.md
   tokens:
     - harness/design/ninja2/art-direction.yaml
     - harness/design/ninja2/layout-tokens.yaml
@@ -34,14 +37,20 @@ component_blueprint:
   runtime_contract:
     - ".home-top maps to top_identity_band and owns hero portrait/status, horizontal resource pills, population, menu, and settings only."
     - ".home-top must not include a centered sanctuary status plaque or 2x2 resource board; those came from a rejected reference."
-    - ".home-companions owns the D1 CompanionRoster shortcut strip above the bottom action row; progress only adds companions to the gacha pool, while actual ownership happens through a random gacha roll in the building panel."
+    - "The home screen must not render a bottom companion shortcut strip; companion ownership and gacha state stay inside the 용병 훈련소 building panel."
     - "#homeTopSkinStage and #homePanelSkinStage own Phaser WebGL 9-slice skins for reusable rectangular UI frames; DOM keeps icons, labels, values, and buttons above those skin layers."
     - ".home-board-wrap maps to sanctuary_board and must not layer expansion costs above side or bottom UI."
     - ".home-side maps to side_utility_rail and exposes the D1 utility entries in order: 우편, 선물, 가방, 패스."
-    - ".home-bottom, .home-tab-sortie, .home-companions, and .home-tabs preserve bottom_action_row and bottom_navigation_dock boundaries."
+    - ".home-dungeon-modal owns the B안 exploration contract board for non-basic dungeons: top route map strip, expedition contract cards, selected-dungeon drawer, compact difficulty buttons, and footer start CTA."
+    - ".home-dungeon-row, .home-dungeon-map-pin, .home-dungeon-drawer-card, and .home-dungeon-detail-card render asset-plan.yaml:ninja2.ui.dungeon_icon_set.resource_collection_v1 generated PNG icons for resource-collection dungeons; text glyphs are fallback only."
+    - "Clicking a dungeon card or map pin previews that dungeon in the selected drawer without leaving the board; difficulty selection stays in .home-dungeon-modal and the footer CTA starts the selected dungeon."
+    - ".home-dungeon-detail-modal remains a deep-link/legacy fallback for dungeonDetail query fixtures and must share the same data and icon assets as the board drawer."
+    - ".home-dungeon-modal and .home-dungeon-detail-modal must reuse the existing home modal contract: home-modal-host, home-modal-shell, home-modal-header, home-modal-body, home-modal-footer, scrim, crest, and corner ornaments."
+    - ".home-bottom, .home-tab-sortie, and .home-tabs preserve bottom_action_row and bottom_navigation_dock boundaries."
     - ".home-bottom must not include a standalone left quick collect card; collect/readiness status is integrated inside the selected building panel."
     - "Building names, costs, progress, resource values, and tab labels remain native runtime text."
-    - "Bottom tab labels reflect the current D1 loop nouns: 성소, 동료, 탐험, 임무, 상점."
+    - "Constructing buildings render asset-plan.yaml:ninja2.home.building_construction_site.v1 as a generated bitmap sprite; only the percent and remaining-time badges are native runtime text."
+    - "Bottom tab labels reflect the current D1 loop nouns: 성소, 장비, 탐험, 임무, 상점."
 
 visual_iteration:
   mode: section_by_section_concept_compare
@@ -78,6 +87,30 @@ screen:
     shell_width: "max 440px; full viewport height"
     board_clearance: "top HUD and bottom panel must leave the owned hex board readable"
   safe_area_policy: "Top and bottom UI include env(safe-area-inset-*) padding."
+
+data_contract:
+  sources:
+    content:
+      - "Compiled Maps.json provides map names, tags, popupArgs.ClientWaveCount, and reward groups for main maps and side dungeons."
+      - "Compiled Items.json provides resource and reward item names/icons where available."
+    runtime_state:
+      - "scene.sanctuary stores selected/cleared main map and side dungeon progress for the local Phaser prototype."
+    design_assets:
+      - "harness/design/ninja2/asset-plan.yaml:ninja2.ui.dungeon_icon_set.resource_collection_v1 maps 500201/500202/500206 to generated dungeon icon PNG atoms."
+      - "harness/design/ninja2/asset-plan.yaml:ninja2.home.building_construction_site.v1 maps home constructing buildings to harness/runtime/assets/ninja2/home/buildings/construction_site.png."
+  bindings:
+    exploration_modal:
+      selected_tab: "query tab=exploration or HOME_TAB_KEYS state"
+      dungeon_rows: "SIDE_DUNGEON_IDS filtered through compiled map/resource data until moved to a scenario/content source."
+      contract_board: "current selectedDungeonMapId/selectedDungeonDifficultyKey renders route pins, cards, drawer, compact difficulty rows, and footer start CTA in one modal."
+      detail_modal: "query dungeonDetail=<mapId>&difficulty=<key> remains a legacy/deep-link fixture that reuses the same selectedDungeonMapId/selectedDungeonDifficultyKey."
+      icon_assets:
+        500201: harness/runtime/assets/ninja2/ui/dungeons/icon_dungeon_woodcutting_trail.png
+        500202: harness/runtime/assets/ninja2/ui/dungeons/icon_dungeon_stone_underpass.png
+        500206: harness/runtime/assets/ninja2/ui/dungeons/icon_dungeon_companion_traces.png
+  fixtures:
+    list: "harness/runtime/survivor-runtime.html?game=ninja2&fixture=city&tab=exploration"
+    detail: "harness/runtime/survivor-runtime.html?game=ninja2&fixture=city&tab=exploration&dungeonDetail=500201&difficulty=normal"
 
 accepted_nineslice_skins:
   - key: ninja2.ui.topbar.cluster_skins
@@ -151,18 +184,21 @@ runtime_notes:
 visual_qa:
   bottom_action_row_no_collect_c:
     concept: harness/design/ninja2/concepts/ninja2_housing_bottom_inspector_no_collect_c.png
-    runtime_screenshot: /tmp/ninja2-bottom-no-collect-runtime-v2.png
-    compare_board: /tmp/ninja2-bottom-no-collect-compare-v2.png
+    runtime_screenshot: /tmp/ninja2-housing-home-bottom-v5.png
+    compare_board: /tmp/ninja2-bottom-no-collect-compare-v5.png
     verdict: WARN
-    notes: "Structural target is met: no standalone left collect card, production/readiness is integrated into the selected building panel, and sortie CTA remains separate. V2 increases the inspector height, thumbnail well, integrated collect chip, and action stack to better match C안. Visual fidelity remains WARN because the runtime still uses the compact production panel skin/content system rather than the concept's bespoke large building illustration and READY card art."
+    notes: "Structural target is met: no standalone left collect card, production/readiness is integrated into the selected building panel, and sortie CTA remains separate. V5 reduces the collect status to a compact chip, removes the neon-green upgrade styling, restores the sortie CTA label to 탐험, and renders the fixed sortie sprite at its source aspect ratio so the image no longer appears vertically squashed. Visual fidelity remains WARN because the runtime still uses the compact production panel skin/content system rather than the concept's bespoke large building illustration and READY card art."
 
 validation:
   static:
     - "python3 harness/tools/phaser_nineslice_audit.py ninja2"
   smoke:
     - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --no-browser"
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --query 'game=ninja2&fixture=city&tab=exploration' --screenshot /tmp/ninja2-exploration-contract-board-b.png"
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --query 'game=ninja2&fixture=city&tab=exploration&dungeonDetail=500201&difficulty=normal' --screenshot /tmp/ninja2-dungeon-detail-home.png"
     - "Open http://127.0.0.1:8765/harness/runtime/survivor-runtime.html?game=ninja2&homeDemo=city and capture /tmp/ninja2-housing-home-start.png for first-start visual QA"
     - "Optional built-city QA fixture: http://127.0.0.1:8765/harness/runtime/survivor-runtime.html?game=ninja2&fixture=city"
+    - "Optional progressed-map QA fixture: http://127.0.0.1:8765/harness/runtime/survivor-runtime.html?game=ninja2&fixture=city&tab=exploration"
   checks:
     - "audit accepts top_resource_board, top_resource_chip, and panel_parchment_9slice only"
     - "sortie button remains a fixed sprite and keeps native text readable"
@@ -170,8 +206,12 @@ validation:
     - "html[data-home-nineslice='phaser'] is set after runtime draws resource-chip and panel skins with the accepted slice hints"
     - "background, hex tiles, buildings, portraits, and icons are not marked as 9-slice"
     - "top_identity_band, side_utility_rail, sanctuary_board, bottom_action_row, and bottom_navigation_dock remain visually separable at 430x932"
-    - "homeCompanionRoster/homeCompanionUnlockedCount/homeCompanionSummonableCount/homeCompanionGachaPool datasets reflect D1 companion summoned/available/locked state and the roster strip sits above the bottom action row without overlapping the side rail, selected building panel, sortie CTA, or sanctuary board controls"
+    - "homeCompanionRoster/homeCompanionUnlockedCount/homeCompanionSummonableCount/homeCompanionGachaPool datasets reflect D1 companion summoned/available/locked state, while no bottom companion shortcut strip is rendered on the home screen"
     - "homeResourceAmounts/homeResourceRates expose exact resource totals and production rates for auto-collection QA"
+    - "homeMainMapCurrent/homeMainMapHighest/homeMainMapCleared/homeMainMapProgress expose the basic main-map progression used by the fixed sortie CTA."
+    - "homeDungeonSelected/homeDungeonUnlocked/homeDungeonCleared expose the selected, unlocked, and cleared non-basic dungeon list state."
+    - "homeDungeonDetailOpen/homeDungeonDifficultySelected expose the board drawer/deep-link detail-modal and selected difficulty state before combat entry."
+    - "exploration route pins, dungeon cards, drawer, and detail cards render generated PNG icon atoms from harness/runtime/assets/ninja2/ui/dungeons instead of temporary text glyphs."
     - "homeIntegratedCollectStatus reflects auto/idle state and the selected building panel exposes production auto-collection/readiness without a standalone collect card"
     - "Kaede starts in the Mercenary Training Yard gacha pool, while Mio/Rin enter the pool by progress; the building panel uses one random gacha button instead of direct companion selection"
     - "visible expansion cost markers do not overlap the side rail, selected building panel, sortie CTA, or bottom navigation dock"

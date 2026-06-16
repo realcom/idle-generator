@@ -4,6 +4,9 @@ source_concepts:
   - ninja2_rulelocked_housing_home_a
   - ninja2_rulelocked_survival_battle_a
   - ninja2_run_levelup_choice_modal_a
+  - ninja2_sanctuary_build_modal_a
+  - ninja2_run_result_clear_concept_a
+  - ninja2_run_result_defeat_concept_a
 status: extracted
 
 skins:
@@ -32,8 +35,8 @@ skins:
     built: "forest ground texture visible under buildings with subtle stone edge"
     selected: "same ground texture with cyan rim glow"
     empty: "lighter forest ground tile with a small stake/foundation marker, not a button-like plus"
-    locked: "dark shaded forest ground tile with low-contrast native lock mark"
-    fogged: "dark misted forest ground tile with soft mist mark"
+    locked: "dark shaded forest ground tile with generated flat lock PNG overlay; do not draw a native CSS lock mark"
+    fogged: "dark misted forest ground tile; shrine-level locked fog may reuse the generated flat lock PNG overlay"
     expandable: "forest ground tile with lantern-gold dashed edge and cost"
   settlement_layer:
     purpose: "make the housing board read as the player's owned base rather than a standalone hex puzzle"
@@ -46,6 +49,7 @@ skins:
     style: "2.5D pre-rendered sprite impression"
     footprint_variants: ["1x1 guard utility occupies 1 hex", "1x2 production hut occupies 2 hexes", "1x3 garden/yard occupies 3 hexes", "2x2 sanctuary centerpiece occupies 4 hexes"]
     details: ["teal roof", "lantern windows", "stone base", "tiny flags/wood piles/planters"]
+    construction_state: "Use asset-plan.yaml:ninja2.home.building_construction_site.v1 as the generated bitmap sprite for constructing buildings; only the percent and remaining-time badges stay native runtime text."
     labels: "compact black Lv plaque only; footprint is data/placement behavior, not visible map text"
     map_badges: "small +production pill so large buildings do not cover the forest-ground hex texture"
   sortie_button:
@@ -73,11 +77,23 @@ skins:
     fill: "dark radial"
     icon_colors: ["lantern gold", "soul teal", "sunburst gold"]
     cooldown_text: "cream numeric label"
+  battle_dash_button:
+    source: "asset-plan.yaml:ninja2.ui.battle_dash_icon_v1"
+    usage: "single bottom-right battle HUD dash control replacing the old Kaede/Mio/Rin companion skill button dock"
+    shape: "large black-rimmed circle with native conic cooldown ring"
+    icon: "transparent 128px boot-and-wind dash glyph atom"
+    cooldown_text: "large cream numeric countdown centered over the icon only while cooling down"
+    avoid: "no companion portraits, companion names, baked cooldown numbers, baked rings, or baked button frame inside the PNG"
   battle_counter_icon:
     source: "asset-plan.yaml:ninja2.ui.battle_counter_icons_v1"
     usage: "timer, kill, enemy, pickup, and boss/stage HUD counters"
     style: "transparent 96px glyph atoms with dark ink outline, lantern-gold highlight, and teal soulflame glow"
     avoid: "no baked labels, numbers, timer text, stage text, or HUD frames"
+  equipment_empty_slot_icon:
+    source: "asset-plan.yaml:ninja2.ui.equipment_empty_slot_icons_v1"
+    usage: "empty weapon/head/chest/gloves/boots/necklace/ring equipment slots and any slot-type fallback that needs a non-text placeholder"
+    style: "transparent 96px atoms flattened to quiet dark gray silhouettes; no internal detail so they read as unoccupied slot hints, not item art"
+    avoid: "no kanji, emoji, geometric symbols, Korean labels, numbers, slot frames, bright highlights, teal flames, or full-color equipment rendering"
   battle_encounter_icon:
     source: "asset-plan.yaml:ninja2.battle.encounter_icons.light_v1"
     usage: "bomb, magnet, potion, and mine map-trigger encounter pickups in the survival playfield"
@@ -90,19 +106,40 @@ skins:
     sanctuary_board: "Forest background, state-specific hex tile PNGs, y-sorted building sprites, native production bubbles, and low-priority expansion costs."
     bottom_action_row: "Companion shortcut strip, widened selected building parchment panel with integrated production/collect chip, and fixed orange sortie sprite share one bottom loop row above the tab dock. No standalone left collect card."
     bottom_navigation_dock: "Five native MVP loop tabs with stable dimensions; selected tab uses lantern-gold fill."
+    sanctuary_build_modal: "Sanctuary build modal uses asset-plan.yaml:ninja2.ui.sanctuary_build.frame_ornaments_v1 for warmer parchment-compatible crest/corner overlays; run level-up and result modals now share this latest ornament language."
+    exploration_dungeon_icons: "B안 exploration contract board uses asset-plan.yaml:ninja2.ui.dungeon_icon_set.resource_collection_v1 for route pins, expedition cards, selected drawer, and legacy detail cards: woodcutting trail, stone quarry underpass, and companion trace icons as fixed transparent sprites instead of text glyph placeholders."
     layer_policy: "Top, side rail, loop toast, action row, sortie CTA, and nav dock must layer above expansion cost markers."
     text_policy: "Building names, resource values, progress, costs, and tab labels stay native runtime text; buildable board placeholders use compact glyphs only."
   run_levelup_choice:
     blueprint: component-blueprints.yaml:surfaces.RunLevelUpChoice
     purpose: "Three-card run skill upgrade modal over a dimmed survival battle."
     modal_panel: "cream parchment 9-slice skin with dark ink outline; header, title, run summary, and choices are native layout slots"
-    frame_ornaments: "fixed transparent sprite overlays for the lantern crest and leafy corner clusters; they sit on the panel border and do not stretch"
+    frame_ornaments: "fixed transparent sprite overlays using the latest shared sanctuary-build lantern crest and leafy corner clusters; they sit on the panel border and do not stretch"
     choice_card: "repeatable parchment card shell; card bitmap may provide frame/material only, while badge, skill icon, name, pips, summary, chips, and category remain native slots"
     skill_icon_well: "native circular disc containing the generated skill icon sprite; the icon asset does not include the disc, card frame, text, or pips"
     footer: "reroll remains hidden until run-limited cost and remaining count are wired"
     spacing_source: "component-blueprints.yaml owns content_insets, padding, slot gaps, clamp behavior, and responsive reductions"
     nine_slice_policy:
       panel_and_card_skin: "accepted only when text/icons/badges/pips are not baked into the bitmap"
-      ornament_sprites: "not 9-slice; use asset-plan.yaml:ninja2.ui.level_choice.frame_ornaments_v1 as fixed overlays"
+      ornament_sprites: "not 9-slice; use asset-plan.yaml:ninja2.ui.sanctuary_build.frame_ornaments_v1 as fixed overlays"
       slice_hints_source: "asset-plan.yaml:ninja2.ui.panel.parchment_9slice"
       content_insets_source: "component-blueprints.yaml:asset_dependency_matrix.ninja2.ui.panel.parchment_9slice"
+  run_result:
+    blueprint: component-blueprints.yaml:surfaces.RunResultModal
+    purpose: "Survival loop clear/defeat result modal where the run state reads before reward accounting."
+    modal_shell: "use asset-plan.yaml:ninja2.ui.run_result.battle_backdrop_v1 behind the modal and reuse asset-plan.yaml:ninja2.ui.panel.parchment_9slice for the outer parchment surface; do not generate or bake a whole result screenshot"
+    status_header: "use asset-plan.yaml:ninja2.ui.run_result.hero_overlays_v1 as the large overhanging state art layer, paired with the reused asset-plan.yaml:ninja2.ui.sanctuary_build.frame_ornaments_v1 crest ornament; title, stage kicker, summary, and run stat chips remain native runtime text/layout"
+    state_crest: "reuse asset-plan.yaml:ninja2.ui.sanctuary_build.frame_ornaments_v1 frame_crest as the result modal ornament so result, build, and quick modal frames share the same ornament language"
+    reward_list: "use asset-plan.yaml:ninja2.ui.run_result.reward_header_brush_v1 behind the native section label for the clear state; scroll rows render as native parchment ledger lines with a left icon medallion, native label, bold amount, and small trailing reused reward icon, while order, quantities, empty state, and persistence filter stay runtime data"
+    return_button: "use asset-plan.yaml:ninja2.ui.run_result.return_button_9slice_v1 as a generic orange CTA skin with native Korean label"
+    nine_slice_policy:
+      modal_shell: "reuse existing parchment 9-slice"
+      status_slabs: "not 9-slice after concept comparison because clear lanterns and defeat ribbon are not stretch-safe; render as fixed panel backgrounds"
+      return_button: "accepted because it is a textless generic rectangular CTA skin"
+      reward_rows: "native_ui ledger rows for now; do not create image rows until repeated row art needs stronger material detail"
+    avoid:
+      - "baked result title"
+      - "baked Stage text"
+      - "baked reward item names or amounts"
+      - "full concept PNG as runtime background"
+      - "generic home tab icons for result state identity"

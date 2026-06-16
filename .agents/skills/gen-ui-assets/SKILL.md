@@ -15,6 +15,9 @@ Purpose: execute the image-asset portion of a reviewed design system without tou
 
 - `harness/design/<game>/asset-plan.yaml`
 - `harness/design/<game>/art-direction.yaml`
+- `harness/design/<game>/button-system.yaml` when generating button, tab, chip, dock, CTA, or icon-button assets.
+- `harness/design/<game>/modal-system.yaml` when generating modal shell, frame, backdrop, close, or ornament assets.
+- `harness/design/<game>/color-tokens.yaml` when generating stateful UI assets or assets that must align with semantic action/status colors.
 - `harness/design/COMPONENT_BLUEPRINTS.md`
 - `harness/design/<game>/component-blueprints.yaml`
 - `harness/design/<game>/component-skins.yaml`
@@ -26,6 +29,7 @@ Purpose: execute the image-asset portion of a reviewed design system without tou
 
 1. Select assets with `mode: generate_image` or `mode: hybrid` and `priority: must` or `should`, unless the user asks for a narrower key.
 2. Confirm each selected UI asset appears in `component-blueprints.yaml:asset_dependency_matrix` when it is part of a reusable component.
+   - For button, modal, or state-color assets, also confirm the asset maps to the relevant shared system file.
 3. Reuse existing matching assets when `mode: reuse` or an equivalent generated file already exists.
 4. Generate raster assets with genimg/imagegen using the `prompt_notes`, `background`, `target_size`, `states`, `variants`, and platform notes from `asset-plan.yaml`.
    - For player-facing UI icons (`type: ui_icon_set`, tab/side/resource/status/button glyph atoms), use built-in imagegen/image_gen for the source artwork. Local scripts may only post-process imagegen output: chroma-key removal, alpha cleanup, crop, resize, packing, naming, and audit metadata.
@@ -46,3 +50,4 @@ Purpose: execute the image-asset portion of a reviewed design system without tou
 - Do not mark icons, portraits, backgrounds, hex tiles, buildings, characters, VFX, atlases, or spritesheets as 9-slice assets.
 - Do not approve CSS, emoji, Pillow-drawn, or Phaser Graphics placeholder icons as final UI icon assets unless the blueprint explicitly classifies that glyph as a runtime primitive instead of generated artwork.
 - Do not bake ornament layers into stretchable 9-slice skins unless the blueprint explicitly marks them stretch-safe.
+- Do not generate a one-off button, modal frame, or state-color asset that cannot be traced back to `button-system.yaml`, `modal-system.yaml`, or `color-tokens.yaml`.

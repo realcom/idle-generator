@@ -1,0 +1,166 @@
+id: 200304
+name: 혼불 후드
+category: Equipment
+type: Head
+grade: 1
+rarity: 1
+tier: 1
+power: 24
+requiredExps:
+- 0
+- 30
+- 70
+- 125
+- 200
+- 300
+- 430
+- 600
+- 820
+- 1100
+- 1450
+- 1880
+- 2400
+- 3020
+- 3760
+- 4640
+- 5680
+- 6900
+- 8320
+- 9960
+equipAddStats:
+- type: Hp
+  value:
+  - 120.0
+  - 134.4
+  - 150.528
+  - 168.5914
+  - 188.8223
+  - 211.481
+  - 236.8587
+  - 265.2818
+  - 297.1156
+  - 332.7695
+  - 372.7018
+  - 417.426
+  - 467.5171
+  - 523.6192
+  - 586.4535
+  - 656.8279
+  - 735.6472
+  - 823.9249
+  - 922.7959
+  - 1033.5314
+- type: ExpPercent
+  value:
+  - 1.0
+  - 1.018
+  - 1.0363
+  - 1.055
+  - 1.074
+  - 1.0933
+  - 1.113
+  - 1.133
+  - 1.1534
+  - 1.1742
+  - 1.1953
+  - 1.2168
+  - 1.2387
+  - 1.261
+  - 1.2837
+  - 1.3068
+  - 1.3303
+  - 1.3543
+  - 1.3787
+  - 1.4035
+levelUpMaterialItemGroups:
+- shouldAllValid: true
+  materialItems:
+  - id: 5
+    count: 90
+  - id: 200101
+    count: 6
+  - id: 200102
+    count: 1
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003041
+    grade: 1
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 1.5
+      - 2.4
+      - 3.6
+      - 5.2
+      - 7.5
+  - id: 2003042
+    grade: 1
+    group: 1
+    weight: 28
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: ExpPercent
+      value:
+      - 1.0
+      - 1.8
+      - 2.8
+      - 4.0
+      - 5.8
+  - id: 2003043
+    grade: 1
+    group: 1
+    weight: 20
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 1.0
+      - 1.8
+      - 2.8
+      - 4.2
+      - 6.0
+  - id: 2003044
+    grade: 1
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: CooldownPercent
+      value:
+      - 0.5
+      - 0.8
+      - 1.3
+      - 2.0
+      - 3.0
+rerollMaterialItemGroups:
+- level: 1
+  shouldAllValid: true
+  materialItems:
+  - id: 5
+    count: 180
+  - id: 200110
+    count: 1
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 60
+  - itemDataId: 200101
+    count: 2
+requiredAchievementDataIds:
+- 10100
+popupArgs:
+  ItemDescription: 푸른 불빛이 안쪽에서 은은히 도는 후드. 밤의 적을 먼저 알아챈다.
+spriteGroups:
+  Icon: assets/ninja2/items/flat-equipment/icon_head_soulflame_hood.png

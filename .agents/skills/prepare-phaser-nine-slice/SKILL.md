@@ -15,6 +15,8 @@ Purpose: make the 9-slice decision before UI assets, Phaser specs, or runtime co
 
 - `harness/runtime/NINE_SLICE_UI.md`
 - `harness/design/COMPONENT_BLUEPRINTS.md`
+- `harness/design/<game>/button-system.yaml` when button, tab, chip, dock, or CTA skins are candidates.
+- `harness/design/<game>/modal-system.yaml` when modal frame or sheet skins are candidates.
 - `harness/design/<game>/component-blueprints.yaml`
 - `harness/design/<game>/asset-plan.yaml`
 - `harness/design/<game>/component-skins.yaml`
@@ -24,6 +26,7 @@ Purpose: make the 9-slice decision before UI assets, Phaser specs, or runtime co
 ## Workflow
 
 1. Identify candidate UI skins: panel, modal frame, button body, dock, tab, card, chip, toast, slot frame, progress frame.
+   - For button and modal candidates, confirm the component maps to shared `button-system.yaml` or `modal-system.yaml` roles/sections before deciding the skin contract.
 2. Reject non-candidates early: characters, buildings, icons, backgrounds, hex tiles, pickups, VFX, atlases, and spritesheets.
 3. For each candidate, verify the bitmap can stretch:
    - no baked text or numbers
@@ -35,6 +38,7 @@ Purpose: make the 9-slice decision before UI assets, Phaser specs, or runtime co
    - stretch-safe frame material can stay in the 9-slice skin
    - non-stretch-safe decoration must become a fixed ornament sprite layer in `component-blueprints.yaml`
 5. Record or revise the blueprint and asset-plan contract:
+   - shared button role or modal shell/section reference when applicable
    - `component-blueprints.yaml` `skin_contract.slice_hints_px`
    - `component-blueprints.yaml` `skin_contract.content_insets_px`
    - `component-blueprints.yaml` `asset_dependency_matrix`
@@ -54,6 +58,7 @@ Purpose: make the 9-slice decision before UI assets, Phaser specs, or runtime co
 - Prefer fixed transparent ornament sprites for non-stretch-safe frame decorations.
 - Keep Unity and Phaser cap insets identical unless an intentional platform divergence is documented.
 - Do not implement unrelated runtime UI while preparing the 9-slice contract.
+- Do not approve a button or modal 9-slice skin that bypasses the shared button/modal system.
 
 ## Output
 

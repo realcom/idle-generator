@@ -1,0 +1,167 @@
+version: "1.0"
+game: ninja2
+slug: ninja2-equipment-equip
+status: draft
+
+target_runtime:
+  page: harness/runtime/survivor-runtime.html
+  entrypoint: harness/runtime/src/survivor/survivor-app.js
+  implementation_mode: dom_overlay_with_existing_phaser_home_shell
+  fixture_urls:
+    - harness/runtime/survivor-runtime.html?game=ninja2&fixture=city&tab=equipment
+    - harness/runtime/survivor-runtime.html?game=ninja2&homeDemo=city&tab=equipment
+
+source_design:
+  concepts:
+    - harness/design/ninja2/concepts/ninja2_equipment_equip_screen_a.md
+    - harness/design/ninja2/concepts/ninja2_housing_bottom_inspector_no_collect_c.md
+    - harness/design/ninja2/concepts/ninja2_sanctuary_build_modal_a.md
+  tokens:
+    - harness/design/ninja2/art-direction.yaml
+    - harness/design/ninja2/layout-tokens.yaml
+    - harness/design/ninja2/component-blueprints.yaml:surfaces.EquipmentEquip
+    - harness/design/ninja2/component-blueprints.yaml:surfaces.HousingHome.sections.bottom_navigation_dock
+    - harness/design/ninja2/component-skins.yaml
+    - harness/design/ninja2/asset-plan.yaml
+
+component_blueprint:
+  source: harness/design/ninja2/component-blueprints.yaml:surfaces.EquipmentEquip
+  sections:
+    - equipment_header
+    - equipment_body
+    - equipment_inventory
+    - bottom_navigation_dock
+  runtime_contract:
+    - "The second bottom dock tab is equipment, not residents/companion: data-home-tab='equipment', label 장비, and icon_tab_equipment.png."
+    - ".home-equipment-screen owns the 장비 tab body and is visible only when html[data-home-active-tab='equipment']."
+    - "The existing HousingHome top resource/profile band remains visible; the board, selected-building panel, sortie CTA, and build/dungeon modals do not own the equipment body."
+    - "Item icons come from Items.json spriteGroups.Icon paths and remain image sprites; item names, levels, stat values, equipped checks, and filter labels are native text."
+    - "Empty equipment slots render dark-gray silhouette PNGs from ninja2.ui.equipment_empty_slot_icons_v1; no kanji, emoji, or geometric text glyph fallback is visible."
+    - "The equipment grid renders owned equipment only, sourced from sanctuary.itemInventory plus currently equipped ids; the compiled Weapon/Equipment catalog is used for definitions, icons, slots, and fallback reward candidates."
+    - "No slot expansion button is rendered in the equipment tab."
+
+screen:
+  orientation: portrait_9_16
+  target_reference_size_px: { width: 440, height: 782 }
+  responsive_policy:
+    shell_width: "max 440px; full viewport height"
+    equipment_body: "top resource band fixed; equipment screen fills between top band and bottom dock"
+    inventory_grid: "5 columns at 430-440px; shrink gaps before text wraps"
+  safe_area_policy: "Reuse HousingHome top and bottom safe-area padding."
+
+assets:
+  ui_icons:
+    - key: ninja2.ui.home_icon_pack_v3.icon_tab_equipment
+      file: harness/runtime/assets/ninja2/ui/icons/icon_tab_equipment.png
+      usage: bottom_navigation_dock equipment tab icon
+      not_nine_slice: true
+    - key: ninja2.ui.home_icon_pack_v3
+      file: harness/runtime/assets/ninja2/ui/icons/
+      usage: equipment filter icons when a category lacks a direct item sprite
+      not_nine_slice: true
+    - key: ninja2.ui.equipment_empty_slot_icons_v1
+      file: harness/runtime/assets/ninja2/ui/equipment-slots/
+      usage: dark-gray silhouette placeholders for unoccupied equipment slots
+      variants:
+        - icon_empty_weapon.png
+        - icon_empty_head.png
+        - icon_empty_chest.png
+        - icon_empty_gloves.png
+        - icon_empty_boots.png
+        - icon_empty_necklace.png
+        - icon_empty_ring.png
+      not_nine_slice: true
+  skins:
+    - key: ninja2.ui.panel.parchment_9slice
+      file: harness/runtime/assets/ninja2/ui/panel_parchment_9slice.png
+      usage: equipment shell/card DOM preview skin; future Phaser nineslice accepted with 28px slice hints
+      slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+  item_icons:
+    source: harness/build/ninja2/Items.json:items[].spriteGroups.Icon
+    runtime_base: harness/runtime/
+    categories: [Weapon, Equipment]
+
+layout:
+  regions:
+    equipment_header:
+      owner: ".home-top"
+      reuse: HousingHome.top_identity_band
+    equipment_body:
+      owner: ".home-equipment-main"
+      top_px: 104
+      min_height_px: 280
+      components:
+        - EquipmentPaperDollPanel
+        - EquipmentSlotButton
+        - EquipmentStatSummary
+    equipment_inventory:
+      owner: ".home-equipment-inventory"
+      bottom_px: 92
+      components:
+        - EquipmentFilterBar
+        - EquipmentInventoryGrid
+        - EquipmentItemCard
+    bottom_navigation_dock:
+      owner: ".home-tabs"
+      labels: ["성소", "장비", "탐험", "임무", "상점"]
+      selected_tab: equipment
+
+data_contract:
+  query:
+    - "tab=equipment opens the equipment tab directly."
+  document_datasets:
+    - homeActiveTab: "equipment when the equipment tab is active"
+    - homeEquipmentVisible: "true/false"
+    - homeEquipmentEquippedCount: "number of occupied gear slots"
+    - homeEquipmentCatalogCount: "number of compiled Weapon/Equipment definitions"
+    - homeEquipmentOwnedCount: "number of owned Weapon/Equipment entries available to render"
+    - homeEquipmentRenderedCount: "number of owned equipment cards rendered after the active filter"
+    - homeEquipmentSelected: "selected item id"
+    - homeEquipmentFilter: "active filter key"
+    - homeEquipmentEmptySlotIconCount: "rendered empty slot silhouette image count"
+  interactions:
+    - "Clicking one of the 8 equipment filters updates the grid and homeEquipmentFilter."
+    - "Clicking a card updates the selected item summary and homeEquipmentSelected."
+    - "Clicking 장착 on a visible owned card equips it into the matching slot without adding new inventory."
+
+visual_iteration:
+  mode: section_by_section_concept_compare
+  compare_tool: harness/tools/design_visual_compare.py
+  section_order:
+    - bottom_navigation_dock
+    - equipment_body
+    - equipment_inventory
+  required_artifacts_per_section:
+    - concept_crop
+    - runtime_screenshot_or_crop
+    - normalized_compare_board
+    - verdict_pass_warn_error
+    - next_edit_scope
+  command_template: >
+    python3 harness/tools/design_visual_compare.py
+    --concept <concept-section-crop.png>
+    --candidate <runtime-screenshot.png>
+    --candidate-crop <x,y,width,height>
+    --out <section-compare.png>
+    --label-concept "CONCEPT <section>"
+    --label-candidate "RUNTIME <section>"
+  iteration_policy:
+    - "ERROR if the second bottom tab still reads 동료 or uses the companion medallion icon."
+    - "WARN if the equipment body is structurally correct but card/slot proportions need tuning."
+    - "PASS only when the 장비 tab, fixed slots, stat summary, and grid are all visible without text overlap at mobile width."
+
+validation:
+  static:
+    - "python3 harness/tools/design_blueprint_validate.py ninja2"
+    - "python3 harness/tools/phaser_asset_audit.py ninja2"
+  smoke:
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --no-browser"
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --query 'game=ninja2&fixture=city&tab=equipment' --screenshot /tmp/ninja2-equipment-tab.png"
+  checks:
+    - "Bottom dock labels are 성소, 장비, 탐험, 임무, 상점."
+    - "homeEquipmentVisible is true for tab=equipment and false for tab=sanctuary."
+    - "homeEquipmentCatalogCount is greater than zero when Items.json contains Weapon/Equipment entries."
+    - "homeEquipmentOwnedCount matches the fixture inventory/equipped data instead of the full catalog size."
+    - "No .home-companions shortcut strip or companion tab label appears as the second bottom tab."
+    - "Equipment item icons load from runtime assets without broken image placeholders."
+    - "Empty equipment slots load /ui/equipment-slots/icon_empty_*.png silhouettes and contain no visible .equipment-empty-mark glyph text."

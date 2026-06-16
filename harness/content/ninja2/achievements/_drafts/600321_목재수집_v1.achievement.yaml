@@ -1,0 +1,23 @@
+id: 600321
+name: "목재 수집"
+type: Mission
+tags: [Mission, Currency, HomeUI]
+order: 321
+initialOpen: true
+clientAchievement: false
+condition: AcquireItem
+conditionValue1: 200101
+conditionValue2: 0
+targetProgress: 200
+initialProgress: 0
+repeatable: false
+autoReward: false
+popupArgs:
+  MissionGroup: currency
+  RuntimeMissionKey: gather_wood_200
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 1000 }
+      - { itemDataId: 200102, count: 20 }

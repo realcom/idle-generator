@@ -1,0 +1,37 @@
+version: "1.0"
+game: "<game>"
+status: draft
+source_concepts:
+  - "<concept-id>"
+
+screen:
+  orientation: portrait_9_16
+  reference_size_px: { width: 440, height: 782 }
+  safe_area_policy: ""
+  responsive_policy: "Tighten spacing before shrinking touch targets or overflowing labels."
+
+spacing:
+  xs: 4
+  sm: 8
+  md: 12
+  lg: 16
+  xl: 24
+
+regions:
+  top_hud:
+    anchor: top_safe_area
+    height_px: { target: 96, compact: 88 }
+  content_body:
+    anchor: middle
+  bottom_dock:
+    anchor: bottom_safe_area
+    height_px: { target: 92, compact: 88 }
+
+touch_targets:
+  min_size_px: 44
+  icon_button_px: 48
+
+text:
+  clamp_policy: "single_line_ellipsis_or_two_line_clamp"
+  overflow_policy: "never resize stable controls on text change"
+

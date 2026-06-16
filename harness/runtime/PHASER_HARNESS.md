@@ -11,6 +11,8 @@ python3 harness/tools/phaser_smoke.py mushroomer --no-browser
 python3 harness/tools/phaser_smoke.py mushroomer --screenshot /private/tmp/idlez-phaser-smoke.png
 python3 harness/tools/phaser_smoke.py mushroomer --timeout 120
 python3 harness/tools/phaser_smoke.py ninja2 --runtime harness/runtime/survivor-runtime.html --expect survivor --screenshot /private/tmp/ninja2-survivor-battle.png
+python3 harness/tools/phaser_smoke.py ninja2 --runtime harness/runtime/survivor-runtime.html --expect survivor --query "game=ninja2&fixture=city&tab=exploration" --screenshot /private/tmp/ninja2-dungeon-modal-home.png
+python3 harness/tools/phaser_smoke.py ninja2 --runtime harness/runtime/survivor-runtime.html --expect survivor --query "game=ninja2&fixture=city&tab=exploration&dungeonDetail=500201&difficulty=normal" --screenshot /private/tmp/ninja2-dungeon-detail-home.png
 python3 harness/tools/phaser_smoke.py ninja2 --runtime harness/runtime/survivor-runtime.html --expect survivor --query "game=ninja2&mode=battle&levelup=demo" --screenshot /private/tmp/ninja2-survivor-levelup.png
 python3 harness/tools/phaser_smoke.py ninja2 --runtime harness/runtime/survivor-runtime.html --expect survivor --query "game=ninja2&mode=battle&levelup=demo&skilluse=demo&fullAssets=1" --timeout 140 --screenshot /private/tmp/ninja2-survivor-skilluse.png
 python3 harness/tools/phaser_smoke.py ninja2 --runtime harness/runtime/survivor-runtime.html --expect survivor --query "game=ninja2&mode=battle&vfx=demo" --timeout 120 --screenshot /private/tmp/ninja2-survivor-vfx.png
@@ -25,10 +27,14 @@ python3 harness/tools/phaser_smoke.py ninja2 --runtime harness/runtime/survivor-
 - `idlez-phaser.html`, `Items.json`, `Units.json`, 런타임 JS/vendor 파일 HTTP probe
 - 선택적으로 headless Chrome을 띄워 `__idlezPhaser` context, canvas, board tick 진행 확인
 - `--expect survivor`일 때는 `survivor-runtime.html`의 `__IDLEZ_SURVIVOR__` / `__IDLEZ_SURVIVOR_BOARD__`와 `data-survivor-*` 계약으로 전투, 레벨업 선택, 실제 런 스킬 선택/타격 `skilluse=demo`, 스킬 VFX 데모, 맵 update trigger 기반 랜덤 인카운트 `encounter=demo`, `loop=full` 결과 화면 fixture와 `loop=boss` 보스 처치 승리 fixture를 확인
+- Ninja2 홈 탐험 탭은 기본 메인맵이 아니라 `SideDungeon`/`ResourceCollection` 던전을 기존 홈 모달 규격 위의 B안 컨트랙트 보드로 보여준다. 보드 안에서 상단 경로 핀, 원정 카드, 선택 drawer, 난이도 버튼, 입장 CTA를 한 번에 처리하고, `dungeonDetail` query는 상세 모달 deep-link/legacy fixture로 유지한다. 기본 메인맵 진행도는 고정 sortie CTA와 `homeMainMap*` 데이터셋에 남기고, 던전 선택/해금/클리어/상세/난이도는 `homeDungeon*` 데이터셋으로 분리한다.
 - Ninja2 battle HUD의 타이머/처치/적/픽업/보스 카운터는 `ninja2.ui.battle_counter_icons_v1` 생성 PNG를 `/battle-counters/` CSS background로 사용하며, survivor smoke가 이 경로를 확인한다.
 - Ninja2 랜덤 인카운트 폭탄/자석/회복약/광산 픽업은 `ninja2.battle.encounter_icons.light_v1` 생성 PNG를 `/battle/encounters/` Phaser image texture로 사용하며, procedural Graphics 아이콘은 fallback 전용이다.
 - Ninja2 D1 실제 런 선택 풀은 300102/300103/300115로 제한한다. `vfx=demo`의 16개 스킬은 이펙트 검증용 전체 카탈로그이고, 시작 캐릭터 기본 스킬은 300101 자동타 1개만 표시한다.
+- Ninja2 프로필 스킬 아이콘은 전투 HUD에서 최소 20px 이상으로 유지하며, survivor smoke가 계산된 `.profile-skill-icon` 크기를 확인한다.
+- Ninja2 D1 실제 스킬 발동 VFX는 `ninja2.battle.skill_vfx.cast_atoms_d1_v1` 생성 PNG를 `/battle/skill-vfx/` Phaser texture로 사용하며, survivor smoke가 로드와 실제 사용 카운터를 확인한다.
 - 습득한 런 스킬은 실제 발동 시 프로필 스킬 아이콘 펄스, HUD 짧은 발동 chip, 플레이어 근처 스킬명 float text를 동시에 띄우며, `skilluse=demo` smoke가 `survivorRunSkillFeedbackCount`를 확인한다.
+- 전투 흐름은 적 추격 의도, 스킬 조준선, 몬스터 명중 반응, 플레이어 피격 위험 링으로 읽히게 유지하며, `skilluse=demo` smoke가 `survivorSkillIntentCueCount`와 `survivorEnemyHitCueCount`를 확인한다.
 
 브라우저 smoke는 현재 `idlez-phaser.html`이 Phaser/protobuf를 CDN에서 읽기 때문에 네트워크가 막힌 환경에서는 실패할 수 있다. 이때는 `--no-browser`로 로컬 파일/빌드 연결만 먼저 확인한다.
 
@@ -51,6 +57,14 @@ headless Chrome에서 Spine asset preload가 느린 머신은 `--timeout`을 늘
 
 목표: HUD, 성장, 장비, 스킬, 던전 같은 화면 상태를 전투 진입 없이 재현한다.
 
+UI foundation gate:
+
+- 새 UI 작업 전 `harness/design/<game>/ui-system-inventory.yaml`에서 기존 button/modal/color/typography/spacing/icon/9-slice/Phaser harness 문서 존재 여부를 확인한다.
+- 버튼, 탭, chip, dock, CTA, icon button은 `button-system.yaml`의 role/state/size/text/skin 규칙을 따른다.
+- dialog, modal, sheet, popup, overlay는 `modal-system.yaml`의 host/shell/header/body/footer/action/z-order 규칙을 따른다.
+- action/status/rarity/selection 색상은 `color-tokens.yaml`의 semantic token에 매핑한다.
+- 프로젝트 문서나 kit 규칙에서 명확한 결정을 찾지 못하면 런타임에서 임의로 확정하지 말고 `ui-system-inventory.yaml:unresolved_foundation_questions`에 질문을 남긴 뒤 사용자 답변을 받아 시스템 문서에 반영한다.
+
 제작 순서:
 
 ```text
@@ -60,6 +74,18 @@ extract-design-system -> prepare-phaser-nine-slice -> gen-ui-assets -> gen-phase
 `prepare-phaser-nine-slice`는 버튼/패널/dock/tab/chip/card 같은 generated UI skin을 Phaser 9-slice로 쓸지 먼저 판정한다. 세부 기준은 `harness/runtime/NINE_SLICE_UI.md`가 단일 출처다.
 
 `gen-phaser-ui-spec`는 `harness/runtime/specs/ui/`에 구현 명세를 먼저 남기고, `build-phaser-ui-runtime`이 그 명세를 기준으로 런타임 JS/HTML/CSS를 수정한다.
+
+데이터 계약 게이트:
+
+- 모든 신규 UI spec은 `data_contract`를 갖고, 화면의 텍스트/숫자/리스트/dataId/아이콘/fixture가 어느 소스에서 오는지 선언한다.
+- 런타임 JS/HTML/CSS에는 콘텐츠 테이블, 선택지 배열, 보상/상점/던전/스킬 목록, dataId literal을 직접 박지 않는다. 데모용 값도 `harness/runtime/scenarios/<game>/` 또는 spec fixture로 분리한다.
+- `harness/tools/phaser_data_contract_audit.py`는 spec과 target runtime 파일을 스캔해 `runtime_content_table`, `runtime_data_id_literal`, `runtime_text_literal`, `runtime_asset_unplanned`를 보고한다.
+- `--strict`는 warning도 실패로 처리한다. 기존 레거시 부채는 spec의 `data_contract.hardcoding_allowlist`에 정확한 file:line:code[:symbol]로 남기되, 신규 구현에서는 allowlist를 늘리지 않는다.
+
+```bash
+python3 harness/tools/phaser_data_contract_audit.py ninja2 --spec harness/runtime/specs/ui/ninja2-run-levelup-choice.yaml
+python3 harness/tools/phaser_data_contract_audit.py ninja2 --spec harness/runtime/specs/ui/ninja2-run-levelup-choice.yaml --strict
+```
 
 UI 아이콘 생산 정책:
 
@@ -125,6 +151,7 @@ http://127.0.0.1:8765/harness/runtime/phaser-modal-system-harness.html?game=ninj
 ```bash
 python3 harness/tools/phaser_asset_audit.py mushroomer
 python3 harness/tools/phaser_nineslice_audit.py mushroomer
+python3 harness/tools/phaser_data_contract_audit.py mushroomer --all
 python3 harness/tools/phaser_asset_audit.py mushroomer --json
 python3 harness/tools/asset_registry_audit.py mushroomer --release
 ```
@@ -138,6 +165,7 @@ python3 harness/tools/asset_registry_audit.py mushroomer --release
 - Spine triple(`.atlas.txt`, `.skel.bytes`, `.png`) 완결성
 - Spine atlas page image 참조
 - `harness/assets/<game>/asset-registry.yaml` coverage/status
+- Phaser UI spec의 `data_contract` 존재와 runtime data hardcoding 냄새
 
 ## 5. Deploy
 

@@ -51,7 +51,19 @@ popupArgs:
   HousingDuplicateCostScaling: "cost_x1.25_per_extra,time_x1.15_per_extra"
   HousingAdditionalInstanceBase: "2:seconds=180,gold=700,wood=45,stone=8"
   HousingPurpose: "초반 건설, 업그레이드, 타일 정화에 가장 많이 쓰는 목재를 방치 생산한다."
+  HousingDescription: "목재를 다듬어 쌓아 두는 기본 생산 건물입니다. 시간이 지나면 목재가 저장되고, 건물을 탭하면 쌓인 목재를 먼저 수집한 뒤 생산 상태와 업그레이드를 확인합니다."
   HousingEffectKind: produce_wood
+  HousingTapFlow: collect_then_open_modal
+  HousingCollectTiming: before_modal
+  HousingCollectAnimation: fly_to_hud
+  HousingBubblePolicy: show_when_collectable
+  HousingProductionItemDataId: 200101
+  HousingProductionRateUnit: per_minute
+  HousingProductionRateByLevel: "8,14,22,34,52"
+  HousingStorageMinutesByLevel: "60,75,90,120,150"
+  HousingFeatureModal: production
+  HousingFeatureActions: "production_status,resident_assign,upgrade"
+  HousingLevelEffectByLevel: "Lv1 wood_per_min=8,storage_minutes=60; Lv2 wood_per_min=14,storage_minutes=75; Lv3 wood_per_min=22,storage_minutes=90; Lv4 wood_per_min=34,storage_minutes=120; Lv5 wood_per_min=52,storage_minutes=150"
   HousingFootprint: 1x2
   HousingSpriteKey: wood_workshop
   HousingConstructionSeconds: 30

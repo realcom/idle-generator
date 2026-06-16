@@ -603,6 +603,8 @@ BOARD_VARIABLES = {
     "wave_transition_pending": 603,
     "wavespawned": 604,
     "wave_spawned": 604,
+    "wavespawnissued": 613,
+    "wave_spawn_issued": 613,
     "enemylevel": 605,
     "enemy_level": 605,
     "bosslevel": 606,

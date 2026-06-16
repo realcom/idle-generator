@@ -1,0 +1,28 @@
+version: "1.0"
+game: "<game>"
+status: draft
+source_concepts:
+  - "<concept-id>"
+
+principles:
+  - "Motion clarifies state change before decorating it."
+  - "Reward feedback should not hide combat or key controls."
+
+motions:
+  button_press:
+    trigger: pointer_down
+    response: "scale 0.98 then restore"
+    duration_ms: 120
+  reward_gain:
+    trigger: reward_collected
+    response: "icon pop, value tick, short glow"
+    duration_ms: 450
+  modal_enter:
+    trigger: open_modal
+    response: "fade/scale from section anchor"
+    duration_ms: 180
+
+limits:
+  max_overlapping_toasts: 2
+  avoid_covering_sections: []
+

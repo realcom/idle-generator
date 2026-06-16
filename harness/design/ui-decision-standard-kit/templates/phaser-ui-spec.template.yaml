@@ -1,0 +1,89 @@
+version: "1.0"
+game: "<game>"
+surface: "<surface>"
+status: draft # draft | pilot | approved
+
+target:
+  runtime_page: "runtime/<page>.html"
+  implementation_mode: hybrid # dom_overlay | phaser_canvas | hybrid
+  owner_files: []
+  route_or_query: ""
+
+sources:
+  ui_system_inventory: "design/<game>/ui-system-inventory.yaml"
+  button_system: "design/<game>/button-system.yaml"
+  modal_system: "design/<game>/modal-system.yaml"
+  color_tokens: "design/<game>/color-tokens.yaml"
+  concepts:
+    - "design/<game>/concepts/<concept-id>.md"
+  art_direction: "design/<game>/art-direction.yaml"
+  layout_tokens: "design/<game>/layout-tokens.yaml"
+  component_blueprints: "design/<game>/component-blueprints.yaml"
+  component_skins: "design/<game>/component-skins.yaml"
+  asset_plan: "design/<game>/asset-plan.yaml"
+
+blueprint_refs:
+  surface: "<SurfaceName>"
+  sections: []
+  components: []
+  shared_button_roles: []
+  shared_modal_sections: []
+  color_token_groups: []
+
+layout:
+  orientation: portrait_9_16
+  reference_size_px: { width: 440, height: 782 }
+  safe_area_policy: ""
+  responsive_policy: ""
+  regions: {}
+
+assets:
+  required_keys: []
+  nineslice:
+    - asset_key: ""
+      slice_hints: { left: 0, right: 0, top: 0, bottom: 0 }
+      min_size_px: { width: 0, height: 0 }
+      content_insets_px: { left: 0, right: 0, top: 0, bottom: 0 }
+  ornament_layers: []
+
+shared_ui_system_usage:
+  buttons:
+    roles_used: []
+    local_overrides: []
+  modals:
+    shell: ""
+    sections_used: []
+    local_overrides: []
+  colors:
+    token_groups_used: []
+    new_tokens_required: []
+
+data_contract:
+  sources:
+    content: []
+    scenarios: []
+    route_query: []
+    runtime_state: []
+  bindings: {}
+  hardcoding_allowlist: []
+
+visual_iteration:
+  section_order: []
+  concept_image: "design/<game>/concepts/<concept-id>.png"
+  runtime_screenshot: "/tmp/<surface>.png"
+  compare_boards: []
+  policy:
+    pass: "Meaning, layout, hierarchy, and key proportions match the selected concept."
+    warn: "Meaning matches but spacing, insets, or visual weight need focused edits."
+    error: "Section follows the wrong concept or loses the player/runtime meaning."
+
+validation:
+  commands:
+    - "Check ui-system-inventory.yaml confirms button/modal/color systems are linked or created."
+    - "python3 tools/design_blueprint_validate.py <game>"
+    - "python3 tools/phaser_data_contract_audit.py <game> --spec runtime/specs/ui/<surface>.yaml"
+    - "python3 tools/phaser_data_contract_audit.py <game> --spec runtime/specs/ui/<surface>.yaml --strict"
+    - "python3 tools/phaser_asset_audit.py <game>"
+    - "python3 tools/phaser_nineslice_audit.py <game>"
+    - "python3 tools/phaser_smoke.py <game> --runtime runtime/<page>.html --expect ui --screenshot /tmp/<surface>.png"
+  blockers: []

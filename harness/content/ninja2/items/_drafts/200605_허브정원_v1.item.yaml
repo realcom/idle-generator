@@ -51,13 +51,19 @@ sellAddItemGroups:
 
 popupArgs:
   HousingKey: herb_garden
-  HousingRole: support_production
+  HousingRole: support_bonus
   HousingPlacementKind: repeatable
-  HousingInstanceRole: support_production_node
+  HousingInstanceRole: support_bonus_node
   HousingMaxInstancesByLanternLevel: "4:1,5:2,6:3"
   HousingDuplicateCostScaling: "cost_x1.25_per_extra,time_x1.15_per_extra"
-  HousingPurpose: "허브를 생산하고 회복/생존 보정을 제공해 긴 생존 전투와 정화 루프를 안정화한다."
-  HousingEffectKind: produce_herb_and_recovery_bonus
+  HousingPurpose: "회복/생존 보정을 제공해 긴 생존 전투와 정화 루프를 안정화한다."
+  HousingDescription: "성소 주민들이 돌보는 조용한 정원입니다. 생산물을 만들지는 않지만, 레벨이 오를수록 전투에서 받는 피해를 줄여 긴 생존 전투를 버티기 쉽게 만듭니다."
+  HousingEffectKind: recovery_and_survival_bonus
+  HousingTapFlow: open_modal_only
+  HousingBubblePolicy: hidden
+  HousingFeatureModal: support_bonus
+  HousingFeatureActions: "bonus_preview,resident_assign,upgrade"
+  HousingLevelEffectByLevel: "Lv1 damage_taken_reduction_percent=1; Lv2 damage_taken_reduction_percent=2; Lv3 damage_taken_reduction_percent=3; Lv4 damage_taken_reduction_percent=5; Lv5 damage_taken_reduction_percent=8"
   HousingFootprint: 1x3
   HousingSpriteKey: herb_garden
   HousingConstructionSeconds: 900

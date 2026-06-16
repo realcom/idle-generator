@@ -14,7 +14,7 @@ addStats:
   - { type: Attack, value: [18.0, 22.0, 26.0, 31.0, 38.0, 45.0, 54.0, 65.0, 78.0, 94.0, 113.0, 136.0, 163.0, 196.0, 235.0, 282.0, 339.0, 407.0, 488.0, 586.0] }
   - { type: Defense, value: [4.0, 5.0, 6.0, 7.0, 8.0, 10.0, 12.0, 14.0, 17.0, 20.0, 24.0, 29.0, 35.0, 42.0, 50.0, 60.0, 72.0, 86.0, 103.0, 124.0] }
   - { type: MoveSpeed, value: [2.8] }
-  - { type: ScalePercent, value: [-47.0] }
+  - { type: ScalePercent, value: [-56.0] }
 
 triggers:
   - UNIT_ONSTART_BANDITLEADERADVANCE
@@ -24,12 +24,12 @@ dropAddItemGroups:
   - shouldAddAll: true
     probPercent: 100
     addItems:
-      - { itemDataId: 5, minCount: 180, maxCount: 260, isCore: true }
-      - { itemDataId: 6, count: 60 }
-      - { itemDataId: 200101, count: 6 }
-      - { itemDataId: 200102, count: 3 }
+      - { itemDataId: 5, minCount: 45, maxCount: 70, isCore: true }
+      - { itemDataId: 6, count: 180 }
+      - { itemDataId: 200101, count: 2 }
+      - { itemDataId: 200102, count: 1 }
   - shouldAddAll: false
-    probPercent: 35
+    probPercent: 18
     addItems:
       - { itemDataId: 200103, count: 1, weight: 100, group: 1 }
 
@@ -41,3 +41,5 @@ animations:
   Attack: Attack1
   Dead: Dead
 uiScale: 1.2
+collideSize: 0.92
+hitSize: 1.08

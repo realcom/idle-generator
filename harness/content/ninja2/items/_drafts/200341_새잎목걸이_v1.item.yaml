@@ -1,0 +1,168 @@
+id: 200341
+name: 새잎 목걸이
+category: Equipment
+type: Necklace
+grade: 1
+rarity: 1
+tier: 1
+power: 34
+requiredExps:
+- 0
+- 30
+- 70
+- 125
+- 200
+- 300
+- 430
+- 600
+- 820
+- 1100
+- 1450
+- 1880
+- 2400
+- 3020
+- 3760
+- 4640
+- 5680
+- 6900
+- 8320
+- 9960
+equipAddStats:
+- type: BossDamageEfficiencyPercent
+  value:
+  - 1.5
+  - 1.53
+  - 1.5606
+  - 1.5918
+  - 1.6236
+  - 1.6561
+  - 1.6892
+  - 1.723
+  - 1.7575
+  - 1.7926
+  - 1.8285
+  - 1.8651
+  - 1.9024
+  - 1.9404
+  - 1.9792
+  - 2.0188
+  - 2.0592
+  - 2.1004
+  - 2.1424
+  - 2.1852
+- type: Luck
+  value:
+  - 1.0
+  - 1.018
+  - 1.0363
+  - 1.055
+  - 1.074
+  - 1.0933
+  - 1.113
+  - 1.133
+  - 1.1534
+  - 1.1742
+  - 1.1953
+  - 1.2168
+  - 1.2387
+  - 1.261
+  - 1.2837
+  - 1.3068
+  - 1.3303
+  - 1.3543
+  - 1.3787
+  - 1.4035
+levelUpMaterialItemGroups:
+- shouldAllValid: true
+  materialItems:
+  - id: 5
+    count: 140
+  - id: 200102
+    count: 2
+  - id: 200103
+    count: 1
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003411
+    grade: 1
+    group: 1
+    weight: 32
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: BossDamageEfficiencyPercent
+      value:
+      - 1.0
+      - 1.8
+      - 2.8
+      - 4.2
+      - 6.0
+  - id: 2003412
+    grade: 1
+    group: 1
+    weight: 28
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: Luck
+      value:
+      - 1.0
+      - 1.8
+      - 2.8
+      - 4.0
+      - 5.8
+  - id: 2003413
+    grade: 1
+    group: 1
+    weight: 22
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: BuffDurationEfficiencyPercent
+      value:
+      - 1.0
+      - 1.7
+      - 2.6
+      - 3.8
+      - 5.4
+  - id: 2003414
+    grade: 1
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 4.0
+      - 6.5
+      - 10.0
+      - 15.0
+      - 22.0
+rerollMaterialItemGroups:
+- level: 1
+  shouldAllValid: true
+  materialItems:
+  - id: 5
+    count: 260
+  - id: 200103
+    count: 1
+  - id: 200110
+    count: 1
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 85
+  - itemDataId: 200103
+    count: 1
+requiredAchievementDataIds:
+- 10104
+popupArgs:
+  ItemDescription: 싱싱한 잎을 말려 만든 목걸이. 작지만 성소의 온기를 품고 있다.
+spriteGroups:
+  Icon: assets/ninja2/items/flat-equipment/icon_necklace_leaf_pendant.png

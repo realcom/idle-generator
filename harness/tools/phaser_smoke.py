@@ -450,6 +450,12 @@ def run_browser_smoke(args: argparse.Namespace, runtime_url: str) -> dict[str, o
             client.send("Log.enable")
             client.send("Network.enable")
             client.send("Page.enable")
+            client.send("Emulation.setDeviceMetricsOverride", {
+                "width": width,
+                "height": height,
+                "deviceScaleFactor": 1,
+                "mobile": width <= 480,
+            })
             client.send("Page.navigate", {"url": runtime_url})
             if args.expect == "ui":
                 value = evaluate_ui_ready(client, args.timeout)
@@ -458,7 +464,8 @@ def run_browser_smoke(args: argparse.Namespace, runtime_url: str) -> dict[str, o
             else:
                 value = evaluate_runtime_ready(client, args.timeout)
             if screenshot:
-                capture = client.send("Page.captureScreenshot", {"format": "png", "captureBeyondViewport": False}, timeout=10)
+                capture_timeout = min(max(args.timeout, 30), 90)
+                capture = client.send("Page.captureScreenshot", {"format": "png", "captureBeyondViewport": False}, timeout=capture_timeout)
                 screenshot.parent.mkdir(parents=True, exist_ok=True)
                 screenshot.write_bytes(base64.b64decode(str(capture["data"])))
                 value["screenshot"] = str(screenshot)
@@ -561,6 +568,11 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
   const params = new URL(location.href).searchParams;
   const requestedMode = String(params.get('mode') || '').toLowerCase();
+  const requestedHomeTab = String(params.get('tab') || params.get('homeTab') || '').toLowerCase();
+  const wantsHomeEquipment = requestedHomeTab === 'equipment';
+  const requestedEquipmentDetailId = String(params.get('equipmentDetail') || params.get('itemDetail') || '');
+  const wantsHomeEquipmentClickDemo = ['1', 'true', 'demo', 'click'].includes(String(params.get('equipmentClick') || params.get('equipmentDetailClick') || '').toLowerCase());
+  const wantsHomeEquipmentDetail = Boolean(requestedEquipmentDetailId) || wantsHomeEquipmentClickDemo;
   const wantsBattle = ['battle', 'combat', 'expedition'].includes(requestedMode);
   const wantsSkillUseDemo = ['1', 'true', 'demo', 'use', 'cast', 'skills'].includes(String(params.get('skilluse') || params.get('skillUseDemo') || params.get('runSkill') || '').toLowerCase());
   const wantsLevelChoice = wantsSkillUseDemo || ['1', 'true', 'demo', 'choice'].includes(String(params.get('levelup') || params.get('levelChoiceDemo') || '').toLowerCase());
@@ -568,38 +580,47 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
   const wantsEncounterDemo = ['1', 'true', 'demo', 'encounters'].includes(String(params.get('encounter') || params.get('encounters') || '').toLowerCase());
   const loopMode = String(params.get('loop') || params.get('survivorLoop') || '').toLowerCase();
   const wantsBossClearLoop = ['clear', 'win', 'boss', 'bosskill', 'boss-clear', 'bossclear'].includes(loopMode);
-  const wantsFullLoop = wantsBossClearLoop || ['1', 'true', 'full', 'result', 'end'].includes(loopMode);
-  const isReady = () => document.documentElement.dataset.survivorReady === 'true';
+  const wantsDefeatLoop = ['loss', 'lose', 'defeat', 'fail', 'failure', 'dead', 'death'].includes(loopMode);
+  const wantsFullLoop = wantsBossClearLoop || wantsDefeatLoop || ['1', 'true', 'full', 'result', 'end'].includes(loopMode);
+  const getDs = () => document.documentElement?.dataset || {{}};
+  const isReady = () => getDs().survivorReady === 'true';
   const isBootError = () => document.getElementById('bootStatus')?.classList.contains('is-error') || false;
   while (!isReady() && !isBootError() && Date.now() < deadline) {{
     await sleep(100);
   }}
-  while (wantsBattle && document.documentElement.dataset.survivorBattleReady !== 'true' && Date.now() < deadline) {{
+  while (wantsBattle && getDs().survivorBattleReady !== 'true' && Date.now() < deadline) {{
     await sleep(100);
   }}
-  while (wantsLevelChoice && document.documentElement.dataset.survivorLevelChoiceOpen !== 'true' && Date.now() < deadline) {{
+  while (wantsLevelChoice && getDs().survivorLevelChoiceOpen !== 'true' && Date.now() < deadline) {{
     await sleep(100);
   }}
-  while (wantsSkillUseDemo && Number(document.documentElement.dataset.survivorRunSkillDamageCount || 0) < 1 && Date.now() < deadline) {{
+  while (wantsSkillUseDemo && Number(getDs().survivorRunSkillDamageCount || 0) < 1 && Date.now() < deadline) {{
     const app = globalThis.__IDLEZ_SURVIVOR__ || null;
-    if (document.documentElement.dataset.survivorLevelChoiceOpen === 'true' && typeof app?.chooseLevelChoice === 'function') {{
+    if (getDs().survivorLevelChoiceOpen === 'true' && typeof app?.chooseLevelChoice === 'function') {{
       app.chooseLevelChoice(0);
       await sleep(600);
     }} else {{
       await sleep(120);
     }}
   }}
-  while (wantsVfxDemo && document.documentElement.dataset.survivorSkillVfxDemo !== 'done' && Date.now() < deadline) {{
+  while (wantsVfxDemo && getDs().survivorSkillVfxDemo !== 'done' && Date.now() < deadline) {{
     await sleep(100);
   }}
-  while (wantsEncounterDemo && document.documentElement.dataset.survivorEncounterDemo !== 'done' && Date.now() < deadline) {{
+  while (wantsEncounterDemo && getDs().survivorEncounterDemo !== 'done' && Date.now() < deadline) {{
     const app = globalThis.__IDLEZ_SURVIVOR__ || null;
-    if (document.documentElement.dataset.survivorLevelChoiceOpen === 'true' && typeof app?.chooseLevelChoice === 'function') {{
+    if (getDs().survivorLevelChoiceOpen === 'true' && typeof app?.chooseLevelChoice === 'function') {{
       app.chooseLevelChoice(0);
       await sleep(500);
     }} else {{
       await sleep(100);
     }}
+  }}
+  if (wantsHomeEquipmentClickDemo && getDs().homeEquipmentDetailOpen !== 'true') {{
+    while (!document.querySelector('.equipment-grid [data-equipment-item-id]') && Date.now() < deadline) {{
+      await sleep(100);
+    }}
+    document.querySelector('.equipment-grid [data-equipment-item-id]')?.click();
+    await sleep(220);
   }}
 
   const applyBossClearFixture = () => {{
@@ -628,6 +649,23 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
     return true;
   }};
 
+  const applyDefeatFixture = () => {{
+    if (!wantsDefeatLoop) return false;
+    const app = globalThis.__IDLEZ_SURVIVOR__ || null;
+    const board = globalThis.__IDLEZ_SURVIVOR_BOARD__ || null;
+    if (!app || !board || board.gameEnded) return false;
+    if (typeof app.closeLevelChoice === 'function') app.closeLevelChoice({{ restorePause: false, clearDataset: true }});
+    const player = board.playerUnit || null;
+    if (player) {{
+      player.hp = 0;
+      player.alive = false;
+      player.reviveAtTick = null;
+    }}
+    board.EndGame({{ team: 4 }});
+    document.documentElement.dataset.survivorDefeatLoopFixture = 'true';
+    return true;
+  }};
+
   const chooseLoopLevelChoiceIndex = () => {{
     if (!wantsBossClearLoop) return 0;
     const choices = globalThis.__NINJA2_LEVEL_CHOICE_DEMO__?.choices || [];
@@ -648,13 +686,15 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
     return bestIndex;
   }};
 
-  const tickBefore = Number(document.documentElement.dataset.survivorTick || 0);
+  const tickBefore = Number(getDs().survivorTick || 0);
   let survivorLoopAutoChoices = 0;
   if (wantsBossClearLoop) applyBossClearFixture();
-  while (wantsFullLoop && document.documentElement.dataset.survivorGameEnded !== 'true' && Date.now() < deadline) {{
+  if (wantsDefeatLoop) applyDefeatFixture();
+  while (wantsFullLoop && getDs().survivorGameEnded !== 'true' && Date.now() < deadline) {{
     const app = globalThis.__IDLEZ_SURVIVOR__ || null;
     if (wantsBossClearLoop) applyBossClearFixture();
-    if (document.documentElement.dataset.survivorLevelChoiceOpen === 'true' && typeof app?.chooseLevelChoice === 'function') {{
+    if (wantsDefeatLoop) applyDefeatFixture();
+    if (getDs().survivorLevelChoiceOpen === 'true' && typeof app?.chooseLevelChoice === 'function') {{
       if (app.chooseLevelChoice(chooseLoopLevelChoiceIndex())) survivorLoopAutoChoices += 1;
       await sleep(500);
     }} else {{
@@ -664,17 +704,17 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
 
   if (wantsBattle && !wantsLevelChoice && !wantsVfxDemo && !wantsFullLoop) {{
     while (
-      Number(document.documentElement.dataset.survivorTick || 0) <= tickBefore
-      && document.documentElement.dataset.survivorGameEnded !== 'true'
+      Number(getDs().survivorTick || 0) <= tickBefore
+      && getDs().survivorGameEnded !== 'true'
       && Date.now() < deadline
     ) {{
       await sleep(100);
     }}
   }} else {{
-    await sleep(350);
+    await sleep(wantsFullLoop ? 1100 : 350);
   }}
 
-  const ds = document.documentElement.dataset;
+  const ds = getDs();
   const app = globalThis.__IDLEZ_SURVIVOR__ || null;
   const board = globalThis.__IDLEZ_SURVIVOR_BOARD__ || null;
   const stageCanvas = document.querySelector('#gameStage canvas');
@@ -682,7 +722,15 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
   const levelModal = document.getElementById('levelModal');
   const homeScreen = document.getElementById('homeScreen');
   const resultScreen = document.getElementById('resultScreen');
+  const resultCard = document.getElementById('resultCard');
   const resultRewardRows = [...document.querySelectorAll('#resultRewards .reward-line')];
+  const resultRewardEmpty = document.querySelector('#resultRewards .reward-empty');
+  const resultRewardTitle = document.getElementById('resultRewardTitle');
+  const resultStatus = document.querySelector('#resultCard .result-status');
+  const resultTitleNode = document.getElementById('resultTitle');
+  const resultCrest = document.getElementById('resultCrest');
+  const resultReturn = document.getElementById('resultReturnButton');
+  const resultStats = [...document.querySelectorAll('#resultStats .result-stat')];
   const counterIconNodes = [...document.querySelectorAll('.counter-icon')];
   const counterIconBackgrounds = [
     ...counterIconNodes.map(node => getComputedStyle(node).backgroundImage),
@@ -700,6 +748,20 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
     .map(entry => entry.name || '')
     .filter(value => value.includes('/assets/ninja2/battle/encounters/') && value.includes('.png'));
   const encounterIconsReady = encounterTextureReady && encounterResourceUrls.length >= 4;
+  const skillVfxAtomKeys = [
+    'ninja2VfxKunaiSlashArc',
+    'ninja2VfxShurikenStreak',
+    'ninja2VfxSmokeBurst',
+    'ninja2VfxGaleTrail',
+    'ninja2VfxImpactFlash',
+  ];
+  const skillVfxAtomUrls = skillVfxAtomKeys.map(key => {{
+    const source = app?.textures?.get?.(key)?.source?.[0] || null;
+    return source?.url || source?.image?.currentSrc || source?.image?.src || '';
+  }});
+  const skillVfxAtomResourceUrls = performance.getEntriesByType('resource')
+    .map(entry => entry.name || '')
+    .filter(value => value.includes('/assets/ninja2/battle/skill-vfx/') && value.includes('.png'));
   const tickAfter = Number(ds.survivorTick || 0);
   const enemyCount = Number(ds.survivorEnemyCount || 0);
   const killCount = Number(ds.survivorKills || 0);
@@ -714,20 +776,152 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
   const runSkillCount = Number(ds.survivorRunSkillCount || 0);
   const profileSkillIcons = [...document.querySelectorAll('#profileSkillList .profile-skill-icon')];
   const profileSkillLabels = profileSkillIcons.map(node => node.getAttribute('aria-label') || node.getAttribute('title') || '').filter(Boolean);
+  const profileSkillIconSizes = profileSkillIcons.map(node => {{
+    const rect = node.getBoundingClientRect();
+    const style = getComputedStyle(node);
+    return {{
+      width: Math.max(Number(rect.width || 0), parseFloat(style.width) || 0),
+      height: Math.max(Number(rect.height || 0), parseFloat(style.height) || 0),
+    }};
+  }});
+  const profileSkillIconMinSize = profileSkillIconSizes.length
+    ? Math.min(...profileSkillIconSizes.map(size => Math.min(size.width, size.height)))
+    : 0;
   const expectedProfileSkillMax = Math.max(1, Math.min(3, runSkillCount || 1));
   const skillCastFeedChips = [...document.querySelectorAll('#skillCastFeed .skill-cast-chip')];
   const homeOpen = homeScreen?.classList.contains('is-open') || false;
+  const homeEquipmentRenderedCount = Number(ds.homeEquipmentRenderedCount || 0);
+  const homeEquipmentCatalogCount = Number(ds.homeEquipmentCatalogCount || 0);
+  const homeEquipmentOwnedCount = Number(ds.homeEquipmentOwnedCount || 0);
+  const homeEquipmentEmptyState = document.querySelector('.equipment-grid > .equipment-empty-state');
+  const homeEquipmentEmptyRect = homeEquipmentEmptyState?.getBoundingClientRect?.();
+  const homeEquipmentGridRect = document.querySelector('.equipment-grid')?.getBoundingClientRect?.();
+  const homeEquipmentEmptyStyle = homeEquipmentEmptyState ? getComputedStyle(homeEquipmentEmptyState) : null;
+  const homeEquipmentEmptyStateReady = homeEquipmentRenderedCount > 0 || (
+    Boolean(homeEquipmentEmptyState)
+    && Boolean(homeEquipmentEmptyRect?.width >= Math.min(240, Math.max(0, (homeEquipmentGridRect?.width || 0) * 0.62)))
+    && homeEquipmentEmptyStyle?.gridColumnStart === '1'
+    && homeEquipmentEmptyStyle?.gridColumnEnd === '-1'
+  );
+  const homeEquipmentEmptySlots = [...document.querySelectorAll('.equipment-slot.is-empty')];
+  const homeEquipmentEmptySlotIcons = homeEquipmentEmptySlots
+    .map(node => node.querySelector('img.equipment-empty-icon'))
+    .filter(Boolean);
+  const homeEquipmentEmptySlotIconRects = homeEquipmentEmptySlotIcons.map(node => node.getBoundingClientRect());
+  const homeEquipmentEmptySlotIconSrcs = homeEquipmentEmptySlotIcons.map(node => node.currentSrc || node.src || '');
+  const homeEquipmentEmptyFallbackGlyphText = [...document.querySelectorAll('.equipment-slot.is-empty .equipment-empty-mark')]
+    .map(node => node.textContent || '')
+    .join('')
+    .trim();
+  const homeEquipmentEmptySlotIconsReady = homeEquipmentEmptySlots.length === 0 || (
+    homeEquipmentEmptySlotIcons.length === homeEquipmentEmptySlots.length
+    && homeEquipmentEmptySlotIconSrcs.every(src => src.includes('/ui/equipment-slots/icon_empty_') && src.includes('.png'))
+    && homeEquipmentEmptySlotIconRects.every(rect => rect.width >= 20 && rect.height >= 20)
+    && homeEquipmentEmptyFallbackGlyphText.length === 0
+  );
+  const homeEquipmentDetailModal = document.getElementById('homeEquipmentDetailModal');
+  const homeEquipmentDetailRect = homeEquipmentDetailModal?.getBoundingClientRect?.();
+  const homeEquipmentDetailIconRect = homeEquipmentDetailModal?.querySelector('.equipment-detail-icon')?.getBoundingClientRect?.();
+  const homeEquipmentDetailEquipButton = homeEquipmentDetailModal?.querySelector('[data-equipment-detail-action="equip"]');
+  const homeEquipmentDetailCancelButton = homeEquipmentDetailModal?.querySelector('[data-close-equipment-detail]:not(.home-modal-scrim):not(.home-build-modal-close)');
+  const homeEquipmentDetailEquipRect = homeEquipmentDetailEquipButton?.getBoundingClientRect?.();
+  const homeEquipmentDetailCancelRect = homeEquipmentDetailCancelButton?.getBoundingClientRect?.();
+  const homeEquipmentDetailEquipStyle = homeEquipmentDetailEquipButton ? getComputedStyle(homeEquipmentDetailEquipButton) : null;
+  const homeEquipmentDetailCancelStyle = homeEquipmentDetailCancelButton ? getComputedStyle(homeEquipmentDetailCancelButton) : null;
+  const homeEquipmentDetailButtonSkinReady = !wantsHomeEquipmentDetail || (
+    Boolean(homeEquipmentDetailEquipRect?.height >= 48)
+    && Boolean(homeEquipmentDetailCancelRect?.height >= 48)
+    && Boolean(homeEquipmentDetailEquipRect?.width >= 118)
+    && Boolean(homeEquipmentDetailCancelRect?.width >= 118)
+    && String(homeEquipmentDetailEquipStyle?.borderImageSource || '') === 'none'
+    && String(homeEquipmentDetailEquipStyle?.backgroundImage || '') !== 'none'
+    && !String(homeEquipmentDetailCancelStyle?.borderImageSource || '').includes('/ui/run-result/result_return_button_9slice')
+  );
+  const homeEquipmentDetailStatRows = homeEquipmentDetailModal
+    ? document.querySelectorAll('#homeEquipmentDetailModal .equipment-detail-stat').length
+    : 0;
+  const homeEquipmentDetailReady = !wantsHomeEquipmentDetail || (
+    ds.homeEquipmentDetailOpen === 'true'
+    && (!requestedEquipmentDetailId || ds.homeEquipmentDetailItemId === requestedEquipmentDetailId)
+    && Boolean(homeEquipmentDetailRect?.width >= 280)
+    && Boolean(homeEquipmentDetailIconRect?.width >= 80)
+    && homeEquipmentDetailStatRows >= 1
+    && Boolean(homeEquipmentDetailEquipButton)
+    && homeEquipmentDetailButtonSkinReady
+  );
+  const homeEquipmentHiddenDisplays = [
+    '.home-board-wrap',
+    '.home-side',
+    '.home-bottom',
+    '.home-tab-sortie',
+    '.loop-log',
+  ].map(selector => {{
+    const node = document.querySelector(selector);
+    return node ? getComputedStyle(node).display : 'missing';
+  }});
   const battleReady = ds.survivorBattleReady === 'true';
   const playerVisible = ds.survivorPlayerVisible === 'true';
   const levelChoiceOpen = ds.survivorLevelChoiceOpen === 'true';
   const vfxReady = ds.survivorSkillVfxReady === 'true';
   const vfxDemoDone = ds.survivorSkillVfxDemo === 'done';
   const generatedAssetMode = ['generated-vfx-demo', 'generated-levelup-demo'].includes(ds.survivorAssetMode || '');
+  const skillVfxAtomsReady = generatedAssetMode
+    || (skillVfxAtomKeys.every(key => app?.textures?.exists?.(key)) && skillVfxAtomResourceUrls.length >= 5);
   const encounterDemoDone = ds.survivorEncounterDemo === 'done';
   const survivorTriggers = ds.survivorTriggers || '';
   const encounterMapTriggerHostPresent = /MAP_ONUPDATE_NINJA2MAINWAVES(3|4|5|7|10)UPDATE/.test(survivorTriggers);
   const resultOpen = resultScreen?.classList.contains('is-open') || false;
   const resultWon = ds.survivorWinningTeam === '1';
+  const resultStatusRect = resultStatus?.getBoundingClientRect?.();
+  const resultRewardRect = document.getElementById('resultRewards')?.getBoundingClientRect?.();
+  const resultTitleFontSize = parseFloat(getComputedStyle(resultTitleNode || document.body).fontSize) || 0;
+  const resultScreenStyle = getComputedStyle(resultScreen || document.body);
+  const resultCardStyle = getComputedStyle(resultCard || document.body);
+  const resultStatusStyle = getComputedStyle(resultStatus || document.body);
+  const resultStatusBeforeStyle = getComputedStyle(resultStatus || document.body, '::before');
+  const resultCrestStyle = getComputedStyle(resultCrest || document.body);
+  const resultReturnStyle = getComputedStyle(resultReturn || document.body);
+  const resultRewardTitleStyle = getComputedStyle(resultRewardTitle || document.body);
+  const resultAssetSources = [
+    resultScreenStyle.backgroundImage,
+    resultCardStyle.borderImageSource,
+    resultStatusBeforeStyle.backgroundImage || resultStatusStyle.backgroundImage,
+    resultCrestStyle.backgroundImage,
+    resultRewardTitleStyle.backgroundImage,
+    resultReturnStyle.borderImageSource,
+  ];
+  const resultStatusAssetReady = wantsDefeatLoop
+    ? (
+        resultAssetSources[2].includes('/ui/run-result/result_hero_defeat_overlay')
+        || resultAssetSources[2].includes('/ui/run-result/result_status_defeat_panel')
+      )
+    : (
+        resultAssetSources[2].includes('/ui/run-result/result_hero_clear_overlay')
+        || (resultAssetSources[2].includes('/ui/run-result/result_status_') && resultAssetSources[2].includes('_panel'))
+      );
+  const resultCrestAssetReady = wantsDefeatLoop
+    ? resultAssetSources[3].includes('/ui/sanctuary-build/frame_crest')
+    : resultAssetSources[3].includes('/ui/sanctuary-build/frame_crest');
+  const resultRewardTitleAssetReady = wantsDefeatLoop
+    ? resultAssetSources[4] === 'none'
+    : resultAssetSources[4].includes('/ui/run-result/result_reward_header_brush');
+  const resultRewardsReady = resultRewardRows.length > 0 || (wantsDefeatLoop && Boolean(resultRewardEmpty));
+  const resultGeneratedAssetsReady = !wantsFullLoop || (
+    resultOpen
+    && resultAssetSources[0].includes('/ui/run-result/result_battle_backdrop')
+    && resultAssetSources[1].includes('/ui/panel_parchment_9slice')
+    && resultStatusAssetReady
+    && resultCrestAssetReady
+    && resultRewardTitleAssetReady
+    && resultAssetSources[5].includes('/ui/run-result/result_return_button_9slice')
+  );
+  const resultConceptHierarchy = !wantsFullLoop || (
+    resultOpen
+    && resultStatusRect?.height >= 190
+    && resultTitleFontSize >= 44
+    && resultStats.length >= 3
+    && (!resultRewardRect || resultStatusRect.height >= Math.min(resultRewardRect.height, 260) * 0.58)
+  );
 
   const checks = {{
     survivorReady: Boolean(app && board && ds.survivorReady === 'true'),
@@ -739,6 +933,7 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
     tickAdvanced: !wantsBattle || wantsLevelChoice || wantsVfxDemo || wantsFullLoop || tickAfter > tickBefore,
     levelChoiceOpen: !wantsLevelChoice || wantsSkillUseDemo || (levelChoiceOpen && levelChoiceCount === 3 && levelModal?.classList.contains('is-open')),
     profileSkillLean: !wantsBattle || profileSkillIcons.length <= expectedProfileSkillMax,
+    profileSkillReadable: !wantsBattle || profileSkillIcons.length === 0 || profileSkillIconMinSize >= 20,
     runSkillUsed: !wantsSkillUseDemo || (
       runSkillCount >= 1
       && Number(ds.survivorRunSkillSpawnCount || 0) >= 1
@@ -749,6 +944,10 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
       Number(ds.survivorRunSkillFeedbackCount || 0) >= 1
       && Boolean(ds.survivorRunSkillLastFeedbackName)
     ),
+    combatSkillIntentCue: !wantsSkillUseDemo || Number(ds.survivorSkillIntentCueCount || 0) >= 1,
+    combatEnemyHitCue: !wantsSkillUseDemo || Number(ds.survivorEnemyHitCueCount || 0) >= 1,
+    skillVfxAtomsReady: !wantsBattle || skillVfxAtomsReady,
+    skillVfxGeneratedUsed: !wantsSkillUseDemo || generatedAssetMode || Number(ds.survivorSkillVfxGeneratedAtomUsedCount || 0) >= 1,
     counterIconsReady: !wantsBattle || counterIconsReady,
     encounterIconsReady: !wantsBattle || generatedAssetMode || encounterIconsReady,
     vfxDemoDone: !wantsVfxDemo || (vfxReady && skillVfxCount === 16 && vfxDemoDone && skillVfxDemoFired === 16),
@@ -759,9 +958,21 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
       && Number(ds.survivorEncounterCollected || 0) >= 3
       && Number(ds.survivorEncounterMined || 0) >= 1
     ),
-    resultReached: !wantsFullLoop || (ds.survivorGameEnded === 'true' && resultOpen && resultRewardRows.length > 0),
+    resultReached: !wantsFullLoop || (ds.survivorGameEnded === 'true' && resultOpen && resultRewardsReady),
+    resultConceptHierarchy,
+    resultGeneratedAssetsReady,
     resultWon: !wantsBossClearLoop || resultWon,
+    resultLost: !wantsDefeatLoop || !resultWon,
     bossDefeated: !wantsBossClearLoop || bossAliveCount === 0,
+    homeEquipmentTab: !wantsHomeEquipment || (
+      ds.homeActiveTab === 'equipment'
+      && ds.homeEquipmentVisible === 'true'
+      && homeEquipmentCatalogCount > 0
+      && homeEquipmentEmptyStateReady
+      && homeEquipmentEmptySlotIconsReady
+      && homeEquipmentHiddenDisplays.every(display => display === 'none')
+    ),
+	    homeEquipmentDetail: homeEquipmentDetailReady,
   }};
   const battleRequirementMet = wantsFullLoop
     ? checks.resultReached
@@ -773,15 +984,25 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
     && (wantsBattle || checks.homeOpen)
     && checks.levelChoiceOpen
     && checks.profileSkillLean
+    && checks.profileSkillReadable
     && checks.runSkillUsed
     && checks.runSkillFeedback
+    && checks.combatSkillIntentCue
+    && checks.combatEnemyHitCue
+    && checks.skillVfxAtomsReady
+    && checks.skillVfxGeneratedUsed
     && checks.counterIconsReady
     && checks.encounterIconsReady
     && checks.vfxDemoDone
     && checks.encounterDemoDone
     && checks.resultReached
+    && checks.resultConceptHierarchy
+    && checks.resultGeneratedAssetsReady
     && checks.resultWon
-    && checks.bossDefeated;
+    && checks.resultLost
+    && checks.bossDefeated
+    && checks.homeEquipmentTab
+    && checks.homeEquipmentDetail;
 
   return {{
     ok,
@@ -802,6 +1023,13 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
     survivorKills: killCount,
     survivorStageProgress: ds.survivorStageProgress || null,
     survivorMapId: ds.survivorMapId || null,
+    survivorSelectedMapId: ds.survivorSelectedMapId || null,
+    survivorRunMapKind: ds.survivorRunMapKind || null,
+    survivorDungeonMapId: ds.survivorDungeonMapId || null,
+    survivorDungeonDifficulty: ds.survivorDungeonDifficulty || null,
+    survivorMainStageNo: ds.survivorMainStageNo || null,
+    survivorWave: ds.survivorWave || null,
+    survivorWaveCount: ds.survivorWaveCount || null,
     survivorTriggers,
     survivorGameEnded: ds.survivorGameEnded || null,
     survivorWinningTeam: ds.survivorWinningTeam || null,
@@ -812,6 +1040,8 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
     survivorLevelChoiceSource: ds.survivorLevelChoiceSource || null,
     survivorProfileSkillIconCount: profileSkillIcons.length,
     survivorProfileSkillLabels: profileSkillLabels,
+    survivorProfileSkillIconMinSize: profileSkillIconMinSize,
+    survivorProfileSkillIconSizes: profileSkillIconSizes,
     survivorRunSkillCount: runSkillCount,
     survivorRunSkillLastCast: ds.survivorRunSkillLastCast || null,
     survivorRunSkillLastCastSource: ds.survivorRunSkillLastCastSource || null,
@@ -823,10 +1053,24 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
     survivorRunSkillFeedbackCount: Number(ds.survivorRunSkillFeedbackCount || 0),
     survivorRunSkillLastFeedback: ds.survivorRunSkillLastFeedback || null,
     survivorRunSkillLastFeedbackName: ds.survivorRunSkillLastFeedbackName || null,
+    survivorCombatCueCount: Number(ds.survivorCombatCueCount || 0),
+    survivorCombatCueLast: ds.survivorCombatCueLast || null,
+    survivorSkillIntentCueCount: Number(ds.survivorSkillIntentCueCount || 0),
+    survivorSkillIntentCueLast: ds.survivorSkillIntentCueLast || null,
+    survivorEnemyHitCueCount: Number(ds.survivorEnemyHitCueCount || 0),
+    survivorEnemyHitCueLast: ds.survivorEnemyHitCueLast || null,
+    survivorPlayerThreatCueCount: Number(ds.survivorPlayerThreatCueCount || 0),
+    survivorEnemyThreatCueCount: Number(ds.survivorEnemyThreatCueCount || 0),
     survivorSkillCastFeedCount: skillCastFeedChips.length,
     survivorSkillCastFeedLabels: skillCastFeedChips.map(node => node.textContent.replace(/\\s+/g, ' ').trim()),
     survivorRunSkillAutoCasts: Number(ds.survivorRunSkillAutoCasts || 0),
     survivorRunSkillLastAuto: ds.survivorRunSkillLastAuto || null,
+    survivorSkillVfxGeneratedAtomCount: Number(ds.survivorSkillVfxGeneratedAtomCount || 0),
+    survivorSkillVfxGeneratedAtomUsedCount: Number(ds.survivorSkillVfxGeneratedAtomUsedCount || 0),
+    survivorSkillVfxLastGeneratedAtom: ds.survivorSkillVfxLastGeneratedAtom || null,
+    survivorSkillVfxAtomsReady: skillVfxAtomsReady,
+    survivorSkillVfxAtomUrls: skillVfxAtomUrls,
+    survivorSkillVfxAtomResourceUrls: skillVfxAtomResourceUrls,
     survivorCounterIconCount: counterIconNodes.length,
     survivorCounterIconsReady: counterIconsReady,
     survivorCounterIconBackgrounds: counterIconBackgrounds,
@@ -852,7 +1096,45 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
     survivorMagnetActive: ds.survivorMagnetActive || null,
     survivorCompanionSkillCount: Number(ds.survivorCompanionSkillCount || 0),
     survivorCompanionReadyCount: Number(ds.survivorCompanionReadyCount || 0),
+    homeActiveTab: ds.homeActiveTab || null,
+    homeEquipmentVisible: ds.homeEquipmentVisible || null,
+    homeEquipmentCatalogCount,
+    homeEquipmentOwnedCount,
+    homeEquipmentRenderedCount,
+    homeEquipmentEmptyStateReady,
+    homeEquipmentEmptyStateText: homeEquipmentEmptyState?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+    homeEquipmentEmptyStateWidth: Math.round(homeEquipmentEmptyRect?.width || 0),
+    homeEquipmentGridWidth: Math.round(homeEquipmentGridRect?.width || 0),
+    homeEquipmentEmptySlotCount: Number(ds.homeEquipmentEmptySlotCount || 0),
+    homeEquipmentEmptySlotDomCount: homeEquipmentEmptySlots.length,
+    homeEquipmentEmptySlotIconCount: homeEquipmentEmptySlotIcons.length,
+    homeEquipmentEmptySlotIconDatasetCount: Number(ds.homeEquipmentEmptySlotIconCount || 0),
+    homeEquipmentEmptySlotIconSrcs,
+    homeEquipmentEmptyFallbackGlyphText,
+    homeEquipmentFilter: ds.homeEquipmentFilter || null,
+    homeEquipmentDetailOpen: ds.homeEquipmentDetailOpen || null,
+    homeEquipmentDetailItemId: ds.homeEquipmentDetailItemId || null,
+    homeEquipmentDetailStatRows,
+    homeEquipmentDetailWidth: Math.round(homeEquipmentDetailRect?.width || 0),
+    homeEquipmentDetailIconWidth: Math.round(homeEquipmentDetailIconRect?.width || 0),
+    homeEquipmentDetailEquipHeight: Math.round(homeEquipmentDetailEquipRect?.height || 0),
+    homeEquipmentDetailCancelHeight: Math.round(homeEquipmentDetailCancelRect?.height || 0),
+    homeEquipmentDetailEquipWidth: Math.round(homeEquipmentDetailEquipRect?.width || 0),
+    homeEquipmentDetailCancelWidth: Math.round(homeEquipmentDetailCancelRect?.width || 0),
+    homeEquipmentDetailEquipSkin: homeEquipmentDetailEquipStyle?.borderImageSource || null,
+    homeEquipmentDetailEquipBackground: homeEquipmentDetailEquipStyle?.backgroundImage || null,
+    homeEquipmentDetailCancelSkin: homeEquipmentDetailCancelStyle?.borderImageSource || null,
+	    homeEquipmentHiddenDisplays,
     homeNineslice: ds.homeNineslice || null,
+    homeMainMapCurrent: ds.homeMainMapCurrent || null,
+    homeMainMapHighest: ds.homeMainMapHighest || null,
+    homeMainMapCleared: ds.homeMainMapCleared || null,
+    homeMainMapProgress: ds.homeMainMapProgress || null,
+    homeDungeonSelected: ds.homeDungeonSelected || null,
+    homeDungeonDetailOpen: ds.homeDungeonDetailOpen || null,
+    homeDungeonDifficultySelected: ds.homeDungeonDifficultySelected || null,
+    homeDungeonUnlocked: ds.homeDungeonUnlocked || null,
+    homeDungeonCleared: ds.homeDungeonCleared || null,
     canvasCount: document.querySelectorAll('canvas').length,
     stageWidth: stageRect?.width ?? null,
     stageHeight: stageRect?.height ?? null,
@@ -861,7 +1143,13 @@ def evaluate_survivor_ready(client: DevToolsClient, timeout: float) -> dict[str,
     boardEnemyCount: board ? [...board.units.values()].filter(unit => unit.alive && unit.team !== 1).length : null,
     resultOpen,
     resultTitle: document.getElementById('resultTitle')?.textContent || null,
+    resultKicker: document.getElementById('resultKicker')?.textContent || null,
     resultSummary: document.getElementById('resultSummary')?.textContent || null,
+    resultTitleFontSize,
+    resultStatusHeight: resultStatusRect?.height ?? null,
+    resultRewardListHeight: resultRewardRect?.height ?? null,
+    resultAssetSources,
+    resultStats: resultStats.map(row => row.textContent.replace(/\\s+/g, ' ').trim()),
     resultRewardCount: resultRewardRows.length,
     resultRewards: resultRewardRows.map(row => row.textContent.replace(/\\s+/g, ' ').trim()),
   }};

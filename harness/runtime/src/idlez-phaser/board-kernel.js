@@ -35,6 +35,15 @@ const SURVIVOR_WORLD_SCALE_X = 120;
 const SURVIVOR_WORLD_SCALE_Y = 120;
 const SURVIVOR_WORLD_WIDTH = 3000;
 const SURVIVOR_WORLD_HEIGHT = 2000;
+const SURVIVOR_CONTACT_DAMAGE_PADDING = 0.04;
+const SURVIVOR_ENEMY_SPAWN_DISTANCE_MIN = 150;
+const SURVIVOR_ENEMY_SPAWN_DISTANCE_MAX = 230;
+const SURVIVOR_ENEMY_SPAWN_CROSS_JITTER = 105;
+const SURVIVOR_ENEMY_SPAWN_EDGE_PADDING = 56;
+const SURVIVOR_ENEMY_SEPARATION_PADDING = 0.16;
+const SURVIVOR_ENEMY_SEPARATION_STRENGTH = 0.44;
+const SURVIVOR_ENEMY_SEPARATION_MAX_STEP = 2.6;
+const SURVIVOR_ENEMY_SEPARATION_CELL_SIZE = 88;
 
 export class IdlezBoard extends EventBus {
   constructor(store) {
@@ -1120,6 +1129,7 @@ export class IdlezBoard extends EventBus {
     for (const unit of this.units.values()) {
       if (!unit.alive || !['approaching', 'moving'].includes(unit.state)) continue;
       if (survivorBoard && unit.team !== TEAM.PLAYER && unit.state === 'approaching') {
+        if (unit.followTargetId == null) unit.setSurvivorEngageOffset(unit.targetUnit);
         unit.refreshChaseDestination();
       }
 
@@ -1138,6 +1148,7 @@ export class IdlezBoard extends EventBus {
 
         if (Math.hypot(unit.x - unit.targetX, unit.y - unit.targetY) < 4) {
           unit.state = 'combat';
+          if (unit.team !== TEAM.PLAYER) unit.attackTimer = Math.min(unit.attackTimer, 1);
           this.emit('unitEnteredCombat', unit);
         }
         continue;
@@ -1153,13 +1164,85 @@ export class IdlezBoard extends EventBus {
         this.emit('unitEnteredCombat', unit);
       }
     }
+
+    if (survivorBoard) this.#applySurvivorEnemySeparation();
+  }
+
+  #applySurvivorEnemySeparation() {
+    const enemies = this.enemyUnits.filter(unit => unit.alive);
+    if (enemies.length < 2) return;
+
+    const buckets = new Map();
+    for (const unit of enemies) {
+      const cellX = Math.floor(unit.x / SURVIVOR_ENEMY_SEPARATION_CELL_SIZE);
+      const cellY = Math.floor(unit.y / SURVIVOR_ENEMY_SEPARATION_CELL_SIZE);
+      const key = `${cellX},${cellY}`;
+      const bucket = buckets.get(key);
+      if (bucket) bucket.push(unit);
+      else buckets.set(key, [unit]);
+    }
+
+    for (const unit of enemies) {
+      const cellX = Math.floor(unit.x / SURVIVOR_ENEMY_SEPARATION_CELL_SIZE);
+      const cellY = Math.floor(unit.y / SURVIVOR_ENEMY_SEPARATION_CELL_SIZE);
+      for (let offsetY = -1; offsetY <= 1; offsetY += 1) {
+        for (let offsetX = -1; offsetX <= 1; offsetX += 1) {
+          const bucket = buckets.get(`${cellX + offsetX},${cellY + offsetY}`);
+          if (!bucket) continue;
+          for (const other of bucket) {
+            if (other.id <= unit.id || !other.alive) continue;
+            this.#separateSurvivorEnemies(unit, other);
+          }
+        }
+      }
+    }
+  }
+
+  #separateSurvivorEnemies(unit, other) {
+    const minDistance = survivorEnemySeparationDistance(unit, other);
+    let dx = other.x - unit.x;
+    let dy = other.y - unit.y;
+    let distance = Math.hypot(dx, dy);
+    if (distance >= minDistance) return;
+
+    if (distance < 0.001) {
+      const angle = (((unit.id * 31 + other.id * 17) % 360) / 180) * Math.PI;
+      dx = Math.cos(angle);
+      dy = Math.sin(angle);
+      distance = 1;
+    }
+
+    const overlap = minDistance - distance;
+    const move = Math.min(SURVIVOR_ENEMY_SEPARATION_MAX_STEP, overlap * SURVIVOR_ENEMY_SEPARATION_STRENGTH);
+    if (move <= 0) return;
+
+    const nx = dx / distance;
+    const ny = dy / distance;
+    const unitMass = survivorEnemySeparationMass(unit);
+    const otherMass = survivorEnemySeparationMass(other);
+    const totalMass = unitMass + otherMass;
+    const unitShare = otherMass / totalMass;
+    const otherShare = unitMass / totalMass;
+
+    unit.x = clamp(unit.x - nx * move * unitShare, SURVIVOR_ENEMY_SPAWN_EDGE_PADDING, SURVIVOR_WORLD_WIDTH - SURVIVOR_ENEMY_SPAWN_EDGE_PADDING);
+    unit.y = clamp(unit.y - ny * move * unitShare, SURVIVOR_ENEMY_SPAWN_EDGE_PADDING, SURVIVOR_WORLD_HEIGHT - SURVIVOR_ENEMY_SPAWN_EDGE_PADDING);
+    other.x = clamp(other.x + nx * move * otherShare, SURVIVOR_ENEMY_SPAWN_EDGE_PADDING, SURVIVOR_WORLD_WIDTH - SURVIVOR_ENEMY_SPAWN_EDGE_PADDING);
+    other.y = clamp(other.y + ny * move * otherShare, SURVIVOR_ENEMY_SPAWN_EDGE_PADDING, SURVIVOR_WORLD_HEIGHT - SURVIVOR_ENEMY_SPAWN_EDGE_PADDING);
   }
 
   #updateCombat() {
     const player = this.activePlayerUnit;
     if (!player?.alive) return;
 
-    const enemies = this.enemyUnits.filter(unit => unit.state === 'combat');
+    const enemies = this.enemyUnits.filter(unit => {
+      if (unit.state === 'combat') return true;
+      if (!isSurvivorBoard(this) || !unit.alive || unit.team === TEAM.PLAYER) return false;
+      if (unit.targetDistance > unit.chaseResumeRange) return false;
+      unit.state = 'combat';
+      unit.attackTimer = Math.min(unit.attackTimer, 1);
+      this.emit('unitEnteredCombat', unit);
+      return true;
+    });
     if (enemies.length === 0) return;
 
     this.#updateAutoSkills(player, enemies);
@@ -1167,6 +1250,13 @@ export class IdlezBoard extends EventBus {
     for (const enemy of enemies) {
       if (isSurvivorBoard(this) && enemy.targetDistance > enemy.chaseResumeRange) {
         enemy.state = 'approaching';
+        enemy.setSurvivorEngageOffset(player);
+        enemy.refreshChaseDestination();
+        continue;
+      }
+      if (isSurvivorBoard(this) && !enemy.isTouchingTarget(player, SURVIVOR_CONTACT_DAMAGE_PADDING)) {
+        enemy.state = 'approaching';
+        enemy.setSurvivorEngageOffset(player);
         enemy.refreshChaseDestination();
         continue;
       }
@@ -1385,15 +1475,32 @@ export class IdlezBoard extends EventBus {
   }
 
   #grantDrops(unit) {
+    const drops = [];
     for (const group of unit.def.dropAddItemGroups || []) {
       if (Math.random() * 100 > asNumber(group.probPercent, 100)) continue;
       const addItems = group.addItems || [];
       const chosen = group.shouldAddAll ? addItems : [weightedPick(addItems)];
       for (const addItem of chosen.filter(Boolean)) {
         const count = rollCount(addItem);
-        this.addItem(addItem.itemDataId, count, `drop:${unit.dataId}`);
+        const itemDataId = Number(addItem.itemDataId);
+        if (!itemDataId || count <= 0) continue;
+        drops.push({
+          itemDataId,
+          item: this.store.getItem(itemDataId),
+          count,
+          isCore: Boolean(addItem.isCore),
+        });
       }
     }
+    if (drops.length <= 0) return drops;
+    if (isSurvivorBoard(this)) {
+      this.emit('unitDrops', { unit, drops });
+      return drops;
+    }
+    for (const drop of drops) {
+      this.addItem(drop.itemDataId, drop.count, `drop:${unit.dataId}`);
+    }
+    return drops;
   }
 
   #grantMapRewards(map) {
@@ -1449,6 +1556,9 @@ export class BoardUnit {
     this.baseCriticalPercent = board.store.statValue(def, 'CriticalPercent', this.level, 0);
     this.baseAttackSpeed = Math.max(0.2, board.store.statValue(def, 'AttackSpeed', this.level, 0.8));
     this.baseMoveSpeed = Math.max(0.1, board.store.statValue(def, 'MoveSpeed', this.level, 2));
+    this.baseScalePercent = board.store.statValue(def, 'ScalePercent', this.level, 0);
+    this.baseCollideSize = Math.max(0, asNumber(def.collideSize, 0));
+    this.baseHitSize = Math.max(0, asNumber(def.hitSize, this.baseCollideSize));
     this.moveSpeed = this.baseMoveSpeed;
     this.maxHp = 1;
     this.hp = 1;
@@ -1457,6 +1567,10 @@ export class BoardUnit {
     this.criticalPercent = 0;
     this.criticalDamagePercent = 0;
     this.attackSpeed = this.baseAttackSpeed;
+    this.scalePercent = this.baseScalePercent;
+    this.scaleRatio = scaleRatioFromPercent(this.scalePercent);
+    this.collideSize = 0;
+    this.hitSize = 0;
     this.activeBuffs = [];
     this.refreshStatsFromBoard({ healToFull: true });
     this.moveSpeedPx = this.moveSpeed * 28;
@@ -1492,6 +1606,8 @@ export class BoardUnit {
     const criticalDamagePercent = (this.team === TEAM.PLAYER ? this.board.getItemStat('CriticalDamagePercent') : 0)
       + this.getBuffStat('CriticalDamagePercent');
     const moveSpeedBonus = this.getBuffStat('MoveSpeed');
+    const scalePercentBonus = (this.team === TEAM.PLAYER ? this.board.getItemStat('ScalePercent') : 0)
+      + this.getBuffStat('ScalePercent');
 
     this.maxHp = Math.max(1, Math.round(this.baseMaxHp + hpBonus));
     this.attack = Math.max(1, Math.round((this.baseAttack + attackBonus) * Math.max(0.1, 1 + attackPercent / 100)));
@@ -1502,6 +1618,10 @@ export class BoardUnit {
     this.attackIntervalTicks = ticksFromSeconds(1 / this.attackSpeed, 10);
     this.moveSpeed = Math.max(0.1, this.baseMoveSpeed + moveSpeedBonus);
     this.moveSpeedPx = this.moveSpeed * 28;
+    this.scalePercent = this.baseScalePercent + scalePercentBonus;
+    this.scaleRatio = scaleRatioFromPercent(this.scalePercent);
+    this.collideSize = this.baseCollideSize * this.scaleRatio;
+    this.hitSize = this.baseHitSize * this.scaleRatio;
 
     if (healToFull || previousMaxHp <= 0) {
       this.hp = this.maxHp;
@@ -1607,6 +1727,18 @@ export class BoardUnit {
     return true;
   }
 
+  setSurvivorEngageOffset(target = this.targetUnit) {
+    if (!isSurvivorBoard(this.board) || this.team === TEAM.PLAYER || !target?.alive) return false;
+    const angle = ((this.id * 137.508) % 360) * Math.PI / 180;
+    const radius = survivorEnemyEngageOffsetRadius(this, target);
+    this.followTargetId = target.id;
+    this.followOffsetX = Math.cos(angle) * radius;
+    this.followOffsetY = Math.sin(angle) * radius;
+    this.followJitterX = 0;
+    this.followJitterY = 0;
+    return true;
+  }
+
   SetMoveDestination({ positionX, positionY } = {}) {
     this.followTargetId = null;
     this.targetX = boardWorldToScreenX(this.board, asNumber(positionX, boardScreenToWorldX(this.board, this.x)));
@@ -1650,7 +1782,17 @@ export class BoardUnit {
   get targetDistance() {
     const target = this.targetUnit;
     if (!target) return Infinity;
-    return Math.hypot(target.x - this.x, target.y - this.y) / boardWorldScaleX(this.board);
+    return this.surfaceDistanceTo(target);
+  }
+
+  surfaceDistanceTo(target) {
+    if (!target) return Infinity;
+    const centerDistance = Math.hypot(target.x - this.x, target.y - this.y) / boardWorldScaleX(this.board);
+    return Math.max(0, centerDistance - this.collideSize - target.collideSize);
+  }
+
+  isTouchingTarget(target, padding = 0) {
+    return this.surfaceDistanceTo(target) <= Math.max(0, asNumber(padding, 0));
   }
 
   IncreaseGold({ count } = {}) {
@@ -1766,6 +1908,31 @@ function distanceSq(a, b) {
   return (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
 }
 
+function survivorEnemySeparationDistance(a, b) {
+  const scale = boardWorldScaleX(a?.board || b?.board);
+  const radius = Math.max(0.12, a?.collideSize || 0)
+    + Math.max(0.12, b?.collideSize || 0)
+    + SURVIVOR_ENEMY_SEPARATION_PADDING;
+  return clamp(radius * scale, 38, 92);
+}
+
+function survivorEnemySeparationMass(unit) {
+  return Math.max(0.16, unit?.collideSize || 0);
+}
+
+function survivorEnemyEngageOffsetRadius(unit, target) {
+  const radius = (
+    Math.max(0.08, unit?.collideSize || 0)
+    + Math.max(0.08, target?.collideSize || 0)
+    + SURVIVOR_CONTACT_DAMAGE_PADDING
+  ) * 0.72;
+  return clamp(radius, 0.08, 0.48);
+}
+
+function scaleRatioFromPercent(scalePercent) {
+  return Math.max(0.05, 1 + asNumber(scalePercent, 0) / 100);
+}
+
 function resolveSpawnPosition(board, options, slot, team) {
   if (options.x != null || options.y != null) {
     return {
@@ -1779,6 +1946,10 @@ function resolveSpawnPosition(board, options, slot, team) {
       x: boardWorldToScreenX(board, options.positionX),
       y: boardWorldToScreenY(board, options.positionY),
     };
+  }
+
+  if (isSurvivorBoard(board) && team !== TEAM.PLAYER) {
+    return survivorEnemySpawnPosition(board, slot);
   }
 
   const location = findMapLocation(board.map, options.locationId);
@@ -1796,10 +1967,46 @@ function resolveSpawnPosition(board, options, slot, team) {
   };
 }
 
+function survivorEnemySpawnPosition(board, slot = 0) {
+  const player = board.playerUnit;
+  const baseX = player?.alive ? player.x : SURVIVOR_WORLD_ORIGIN_X;
+  const baseY = player?.alive ? player.y : SURVIVOR_WORLD_ORIGIN_Y;
+  const sideIndex = Math.floor(asNumber(board.nextUnitId + slot, slot)) % 4;
+  const distance = randomBetween(SURVIVOR_ENEMY_SPAWN_DISTANCE_MIN, SURVIVOR_ENEMY_SPAWN_DISTANCE_MAX);
+  const cross = randomBetween(-SURVIVOR_ENEMY_SPAWN_CROSS_JITTER, SURVIVOR_ENEMY_SPAWN_CROSS_JITTER);
+  let x = baseX;
+  let y = baseY;
+
+  if (sideIndex === 0) {
+    y -= distance;
+    x += cross;
+  } else if (sideIndex === 1) {
+    x += distance;
+    y += cross;
+  } else if (sideIndex === 2) {
+    y += distance;
+    x += cross;
+  } else {
+    x -= distance;
+    y += cross;
+  }
+
+  return {
+    x: clamp(x, SURVIVOR_ENEMY_SPAWN_EDGE_PADDING, SURVIVOR_WORLD_WIDTH - SURVIVOR_ENEMY_SPAWN_EDGE_PADDING),
+    y: clamp(y, SURVIVOR_ENEMY_SPAWN_EDGE_PADDING, SURVIVOR_WORLD_HEIGHT - SURVIVOR_ENEMY_SPAWN_EDGE_PADDING),
+  };
+}
+
 function findMapLocation(map, locationId) {
   const id = Number(locationId);
   if (!Number.isFinite(id) || id === 0) return null;
   return (map?.locations || []).find(location => Number(location.id) === id) || null;
+}
+
+function randomBetween(min, max) {
+  const from = Math.min(asNumber(min, 0), asNumber(max, 0));
+  const to = Math.max(asNumber(min, 0), asNumber(max, 0));
+  return from + Math.random() * (to - from);
 }
 
 function randomPointInLocation(location) {

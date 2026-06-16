@@ -54,7 +54,19 @@ popupArgs:
   HousingMaxInstancesByLanternLevel: "3:1"
   HousingDuplicateCostScaling: none
   HousingPurpose: "보스/특수 성장의 희귀 병목인 영혼불을 생산해 신전, 동료 스킬, 특수 건물을 성장시킨다."
+  HousingDescription: "깊은 땅속의 희미한 불씨를 끌어올리는 희귀 생산 건물입니다. 영혼불은 천천히 쌓이지만 신전 강화와 특수 건물 성장에 꼭 필요한 병목 자원입니다."
   HousingEffectKind: produce_soulflame
+  HousingTapFlow: collect_then_open_modal
+  HousingCollectTiming: before_modal
+  HousingCollectAnimation: fly_to_hud
+  HousingBubblePolicy: show_when_collectable
+  HousingProductionItemDataId: 200103
+  HousingProductionRateUnit: per_hour
+  HousingProductionRateByLevel: "0.6,1.1,1.9,3.2,5.0"
+  HousingStorageMinutesByLevel: "240,300,360,480,600"
+  HousingFeatureModal: rare_production
+  HousingFeatureActions: "production_status,upgrade"
+  HousingLevelEffectByLevel: "Lv1 soulflame_per_hour=0.6,storage_minutes=240; Lv2 soulflame_per_hour=1.1,storage_minutes=300; Lv3 soulflame_per_hour=1.9,storage_minutes=360; Lv4 soulflame_per_hour=3.2,storage_minutes=480; Lv5 soulflame_per_hour=5.0,storage_minutes=600"
   HousingFootprint: 1x1
   HousingSpriteKey: soulflame_well
   HousingConstructionSeconds: 600

@@ -10,12 +10,19 @@ source_concepts:
     image: concepts/ninja2_rulelocked_housing_home_a.png
   supporting:
     - ninja2_run_levelup_choice_modal_a
+    - ninja2_equipment_equip_screen_a
     - ninja2_phaser_modal_system_a
     - ninja2_flat_arcade_survivors_scene_f
+    - ninja2_run_result_clear_concept_a
+    - ninja2_run_result_defeat_concept_a
 
 runtime_targets:
   phaser_dom_overlay:
     spec: ../../runtime/specs/ui/ninja2-run-levelup-choice.yaml
+    page: ../../runtime/survivor-runtime.html
+    owner: ../../runtime/src/survivor/survivor-app.js
+  phaser_equipment_equip:
+    spec: ../../runtime/specs/ui/ninja2-equipment-equip.yaml
     page: ../../runtime/survivor-runtime.html
     owner: ../../runtime/src/survivor/survivor-app.js
   phaser_modal_system_harness:
@@ -46,6 +53,7 @@ surfaces:
       supporting:
         - ninja2_housing_bottom_loop_dock_b
         - ninja2_housing_bottom_inspector_no_collect_c
+        - ninja2_equipment_equip_screen_a
     sections:
       top_identity_band:
         role: "Own the compact top HUD from the rulelocked concept: hero portrait/status, horizontal resource pills, population, menu, and settings."
@@ -129,6 +137,7 @@ surfaces:
           sortie_size_px: { width: 118, height: 122 }
           toast_policy: "Toast sits above the action row and should never overlap selected-building text."
         asset_keys:
+          - ninja2.ui.run_result.battle_backdrop_v1
           - ninja2.ui.panel.parchment_9slice
           - ninja2.ui.button.sortie_orange
       bottom_navigation_dock:
@@ -140,8 +149,8 @@ surfaces:
         layout_contract:
           anchor: bottom_safe_area
           tab_count: 5
-          labels: ["성소", "동료", "탐험", "임무", "상점"]
-          omitted_mvp_tab: "가방 is not a fixed D1 dock tab; expose inventory later through contextual or modal entry."
+          labels: ["성소", "장비", "탐험", "임무", "상점"]
+          omitted_mvp_tab: "가방 is not a fixed D1 dock tab; the 장비 tab exposes equipped gear and equipment inventory only."
           height_px: { target: 92, compact: 88 }
           stable_dimensions: true
           selected_state: "lantern gold fill with dark icon and text"
@@ -180,6 +189,96 @@ surfaces:
       primary_action_color: action_orange
       responsive_policy: "Tighten vertical gaps before shrinking tap targets or letting Korean labels overflow."
 
+  EquipmentEquip:
+    intent: "Let the player inspect equipped gear, compare core stat changes, and browse equipment inventory from the bottom 장비 tab."
+    orientation: portrait_9_16
+    reference_size_px: { width: 440, height: 782 }
+    concept_size_px: { width: 944, height: 1672 }
+    source_concepts:
+      primary: ninja2_equipment_equip_screen_a
+      supporting:
+        - ninja2_sanctuary_build_modal_a
+        - ninja2_housing_bottom_inspector_no_collect_c
+    sections:
+      equipment_header:
+        role: "Keep the existing home top resource/profile band visible while the 장비 tab is active."
+        process_scope: section
+        components:
+          - HomeTopBand
+          - HeroPortraitStatus
+          - TopResourcePillRow
+          - PopulationMenuCluster
+        layout_contract:
+          reuse_from: surfaces.HousingHome.sections.top_identity_band
+      equipment_body:
+        role: "Own the character paper-doll, fixed equipment slots, and compact stat summary."
+        process_scope: section
+        components:
+          - EquipmentScreenShell
+          - EquipmentPaperDollPanel
+          - EquipmentSlotButton
+          - EquipmentStatSummary
+        layout_contract:
+          anchor: between_top_band_and_inventory_grid
+          top_px: 106
+          min_height_px: 280
+          columns: ["slot_rail_left", "paper_doll", "slot_rail_right", "stat_summary"]
+          slot_count: 7
+          slot_types: ["Weapon", "Head", "Chest", "Gloves", "Boots", "Necklace", "Ring"]
+          text_policy: "Slot labels and stat rows remain native runtime text; item art comes from Items.json spriteGroups.Icon; empty slots use generated icon atoms instead of text glyph fallbacks."
+        asset_keys:
+          - ninja2.ui.profile.guardian_avatar
+          - ninja2.ui.panel.parchment_9slice
+          - ninja2.ui.equipment_empty_slot_icons_v1
+      equipment_inventory:
+        role: "Show owned equipment cards with icon, rarity border, level, equipped state, and filter controls."
+        process_scope: section
+        components:
+          - EquipmentFilterBar
+          - EquipmentInventoryGrid
+          - EquipmentItemCard
+          - EquipmentPrimaryActionButton
+        layout_contract:
+          anchor: above_bottom_navigation
+          bottom_px: 96
+          grid_columns: 5
+          grid_rows_visible: 3
+          card_aspect_ratio: "1 / 1"
+          scroll_policy: "Grid may scroll internally; bottom dock and selected equipment summary remain stable."
+          filter_policy: "Use icon-first category buttons; no long text tabs."
+        asset_keys:
+          - ninja2.ui.home_icon_pack_v3
+          - ninja2.ui.panel.parchment_9slice
+      bottom_navigation_dock:
+        role: "Reuse the same five-tab dock with 장비 selected."
+        process_scope: section
+        components:
+          - HomeTabDock
+          - HomeTabButton
+        layout_contract:
+          reuse_from: surfaces.HousingHome.sections.bottom_navigation_dock
+          selected_tab: equipment
+          labels: ["성소", "장비", "탐험", "임무", "상점"]
+    component_tree:
+      - HomeTopBand
+      - EquipmentScreenShell
+      - EquipmentPaperDollPanel
+      - EquipmentSlotButton
+      - EquipmentStatSummary
+      - EquipmentFilterBar
+      - EquipmentInventoryGrid
+      - EquipmentItemCard
+      - EquipmentPrimaryActionButton
+      - HomeTabDock
+      - HomeTabButton
+    layout_contract:
+      shell_width: "min(440px, 100vw)"
+      top_band_height_px: 96
+      body_region_px: { top: 106, min_height: 280 }
+      inventory_region_bottom_px: 96
+      inventory_grid_columns: 5
+      responsive_policy: "Preserve slot hit targets and bottom dock first; inventory grid scrolls internally."
+
   RunLevelUpChoice:
     intent: "Pause the survival run and let the player choose exactly one run-scoped skill upgrade from three equal cards."
     orientation: portrait_9_16
@@ -213,7 +312,7 @@ surfaces:
           ornament_policy: "Fixed transparent sprites may overlap outer border but not content slots."
         asset_keys:
           - ninja2.ui.panel.parchment_9slice
-          - ninja2.ui.level_choice.frame_ornaments_v1
+          - ninja2.ui.sanctuary_build.frame_ornaments_v1
       modal_header:
         role: "Explain the level-up moment and show compact run context."
         process_scope: section
@@ -281,6 +380,133 @@ surfaces:
         min_width_before_content_clamp_px: 390
         fallback: "Keep three columns; hide secondary copy before using one column."
 
+  RunResultModal:
+    intent: "End a survival run with an unmistakable clear/defeat state first, then show persisted rewards as a secondary accounting list."
+    orientation: portrait_9_16
+    reference_size_px: { width: 440, height: 782 }
+    concept_size_px: { width: 1024, height: 1536 }
+    source_concepts:
+      primary: ninja2_run_result_clear_concept_a
+      supporting:
+        - ninja2_run_result_defeat_concept_a
+        - ninja2_phaser_modal_system_a
+        - ninja2_flat_arcade_survivors_scene_f
+    sections:
+      modal_shell:
+        role: "Own the centered parchment surface over the completed battle context."
+        process_scope: section
+        components:
+          - RunResultModalShell
+        layout_contract:
+          anchor: centered
+          width: "min(392px, calc(100vw - 36px))"
+          max_height: "calc(100dvh - 44px)"
+          padding_px: { outer_border: 18, inner: 2 }
+          backdrop_policy: "Battle/result background remains visible but inert behind the modal."
+        asset_keys:
+          - ninja2.ui.panel.parchment_9slice
+      state_header:
+        role: "Make clear/defeat readable before the user scans rewards."
+        process_scope: section
+        components:
+          - RunResultStatusHeader
+          - RunResultStateCrest
+          - RunResultStatChipRow
+        layout_contract:
+          min_height_px: 218
+          hierarchy: ["state_crest", "stage_kicker", "large_title", "run_stat_chips", "short_summary"]
+          title_font_px: { target: 52, minimum: 44 }
+          stat_chip_count: 3
+          state_variants:
+            clear: "gold/dark status slab plus shared sanctuary frame ornament"
+            defeat: "muted red parchment slab plus shared sanctuary frame ornament"
+        asset_keys:
+          - ninja2.ui.run_result.hero_overlays_v1
+          - ninja2.ui.run_result.status_slabs_v1
+          - ninja2.ui.sanctuary_build.frame_ornaments_v1
+        native_slots:
+          - result_title
+          - stage_kicker
+          - run_stat_labels
+          - run_stat_values
+          - short_summary
+      reward_accounting:
+        role: "Show only rewards persisted into sanctuary state, below the result state."
+        process_scope: section
+        components:
+          - RunResultRewardList
+          - RunResultRewardRow
+        layout_contract:
+          section_label: "획득 보상"
+          row_order_source: "applyExpeditionRewards.summary.rewards"
+          max_visible_rows_before_scroll: 7
+          row_min_height_px: 45
+          row_style: "ledger rows inside one parchment accounting surface; each row keeps a left icon medallion, native label, bold amount, and a small trailing reward icon echo"
+          empty_state: "native dashed row with no generated illustration"
+        asset_policy:
+          mode: hybrid
+          reason: "The section title uses a textless brush asset to match the concept, while reward rows stay native because they are data carriers."
+          reuse_icons_from:
+            - ninja2.ui.home_icon_pack_v3
+            - ninja2.ui.topbar.cluster_skins
+        asset_keys:
+          - ninja2.ui.run_result.reward_header_brush_v1
+        must_not_bake:
+          - reward_names
+          - reward_amounts
+          - item_order
+      modal_footer:
+        role: "Provide one stable return action after the reward list."
+        process_scope: section
+        components:
+          - RunResultFooter
+          - RunResultReturnButton
+        layout_contract:
+          button_height_px: 56
+          button_label: "성소로 귀환"
+          single_primary_action: true
+        asset_keys:
+          - ninja2.ui.run_result.return_button_9slice_v1
+    component_tree:
+      - RunResultModalShell
+      - RunResultStatusHeader
+      - RunResultStateCrest
+      - RunResultStatChipRow
+      - RunResultRewardList
+      - RunResultRewardRow
+      - RunResultFooter
+      - RunResultReturnButton
+    layout_contract:
+      modal_width: "min(392px, calc(100vw - 36px))"
+      modal_max_height: "calc(100dvh - 44px)"
+      status_min_height_px: 218
+      status_title_font_px: { target: 52, minimum: 44 }
+      reward_list_max_height: "clamp(128px, calc(100dvh - 424px), 380px)"
+      return_button_height_px: 56
+      responsive_policy: "Keep the result title and state slab dominant; reward rows scroll before shrinking the state header."
+    assetization_decision:
+      generate_image:
+        - ninja2.ui.run_result.hero_overlays_v1
+        - ninja2.ui.run_result.status_slabs_v1
+        - ninja2.ui.run_result.reward_header_brush_v1
+        - ninja2.ui.run_result.return_button_9slice_v1
+      reuse:
+        - ninja2.ui.panel.parchment_9slice
+        - ninja2.ui.sanctuary_build.frame_ornaments_v1
+        - existing reward/resource icons
+      hybrid:
+        - ninja2.ui.run_result.battle_backdrop_v1
+      native_ui:
+        - title_text
+        - stage_kicker
+        - run_stat_chips
+        - reward_rows
+        - reward_amounts
+        - return_button_label
+      forbidden:
+        - "full generated concept PNG as implementation"
+        - "baked Korean title or reward values inside reusable skins"
+
   PhaserModalSystem:
     intent: "Provide a reusable Phaser-first modal family harness so confirm dialogs, rewards, lists, settings, notices, and run choices can share one lifecycle and skin contract."
     orientation: responsive_preview
@@ -323,7 +549,7 @@ surfaces:
           ornament_policy: "Crest and corner leaves are fixed sprites outside the 9-slice skin and do not change content bounds."
         asset_keys:
           - ninja2.ui.panel.parchment_9slice
-          - ninja2.ui.level_choice.frame_ornaments_v1
+          - ninja2.ui.sanctuary_build.frame_ornaments_v1
       modal_header:
         role: "Expose title, kicker, subtitle, and optional resource/status chip as native text slots."
         process_scope: section
@@ -578,6 +804,7 @@ components:
       - empty_tile
       - expand_tile
       - locked_tile
+      - lock_icon_overlay
       - fog_tile
     box_model:
       tile_size_px: { width: 86, height: 99 }
@@ -585,6 +812,8 @@ components:
     asset_contract:
       asset_key: ninja2.home.hex_tile_set.forest_sanctuary
       usage: state_specific_image
+      overlay_asset_key: ninja2.ui.home_icon_pack_v3
+      overlay_usage: generated_png_atom
       not_nine_slice: true
 
   SettlementOrnamentLayer:
@@ -810,7 +1039,7 @@ components:
       position: bottom_safe_area
       height_px: { target: 92, compact: 88 }
       grid_columns: 5
-      labels: ["성소", "동료", "탐험", "임무", "상점"]
+      labels: ["성소", "장비", "탐험", "임무", "상점"]
       gap_px: 0
       padding_px: { left: 0, right: 0, top: 0, bottom: 0 }
       visual_style: contiguous_segmented_dock
@@ -838,6 +1067,141 @@ components:
       asset_key: ninja2.ui.home_icon_pack_v3
       usage: bottom_tab_image_icons
       not_nine_slice: true
+
+  EquipmentScreenShell:
+    role: "Equipment tab content frame between the persistent home header and bottom dock."
+    mode: hybrid
+    anatomy:
+      - parchment_panel_skin
+      - EquipmentPaperDollPanel
+      - EquipmentInventoryGrid
+    box_model:
+      position: between_top_band_and_bottom_dock
+      top_px: 106
+      bottom_px: 96
+      padding_px: { left: 10, right: 10, top: 10, bottom: 10 }
+      gap_px: 10
+    skin_contract:
+      asset_key: ninja2.ui.panel.parchment_9slice
+      usage: phaser_nineslice_or_dom_preview
+      slice_hints_px: { left: 28, right: 28, top: 28, bottom: 28 }
+      content_insets_px: { left: 10, right: 10, top: 10, bottom: 10 }
+
+  EquipmentPaperDollPanel:
+    role: "Shows the character identity and equipped item slots."
+    mode: hybrid
+    anatomy:
+      - guardian_avatar_sprite
+      - EquipmentSlotButton[7]
+      - EquipmentStatSummary
+    box_model:
+      min_height_px: 280
+      slot_rails: [left, right]
+      center_avatar_size_px: { width: 128, height: 128 }
+    asset_contract:
+      asset_key: ninja2.ui.profile.guardian_avatar
+      usage: fixed_avatar_sprite
+      not_nine_slice: true
+
+  EquipmentSlotButton:
+    role: "One tappable equipment slot with native state label and item icon."
+    mode: native_ui
+    repeatable: true
+    anatomy:
+      - slot_frame
+      - item_icon_sprite_or_empty_slot_icon
+      - slot_type_label
+      - equipped_state_badge
+    box_model:
+      size_px: { width: 58, height: 58 }
+      touch_target_min_px: 48
+    text_policy:
+      label: { max_lines: 1, font_size_px: 9, overflow: ellipsis }
+      empty_state: "Empty slots show no bottom state text; the dark-gray silhouette icon is the only visible empty marker."
+    icon_policy:
+      empty_slot_icon: { usage: image_sprite, target_size_px: { width: 34, height: 34 }, visual_tone: dark_gray_silhouette }
+    asset_contract:
+      asset_key: ninja2.ui.equipment_empty_slot_icons_v1
+      usage: empty_slot_icon
+      not_nine_slice: true
+      variants_by_slot:
+        weapon: icon_empty_weapon
+        head: icon_empty_head
+        chest: icon_empty_chest
+        gloves: icon_empty_gloves
+        boots: icon_empty_boots
+        necklace: icon_empty_necklace
+        ring: icon_empty_ring
+
+  EquipmentStatSummary:
+    role: "Compact native stat delta summary for the currently selected equipment context."
+    mode: native_ui
+    anatomy:
+      - stat_row[]
+      - comparison_delta
+    box_model:
+      min_width_px: 96
+      row_height_px: 20
+      gap_px: 3
+    text_policy:
+      stat_name: { max_lines: 1, font_size_px: 10, overflow: ellipsis }
+      stat_value: { max_lines: 1, font_size_px: 12, overflow: ellipsis }
+
+  EquipmentFilterBar:
+    role: "Icon-first equipment category filters."
+    mode: native_ui
+    anatomy:
+      - filter_button[8]
+      - selected_indicator
+    box_model:
+      height_px: 40
+      grid_columns: 8
+      gap_px: 4
+    icon_policy:
+      usage: generated_home_icon_or_native_slot_glyph
+      target_size_px: { width: 32, height: 32 }
+
+  EquipmentInventoryGrid:
+    role: "Scrollable equipment card grid."
+    mode: native_ui
+    anatomy:
+      - EquipmentFilterBar
+      - EquipmentItemCard[]
+      - EquipmentPrimaryActionButton
+    box_model:
+      grid_columns: 5
+      visible_rows: 3
+      card_gap_px: 6
+      overflow: auto
+
+  EquipmentItemCard:
+    role: "One inventory equipment entry."
+    mode: hybrid
+    repeatable: true
+    anatomy:
+      - item_icon_sprite
+      - rarity_border
+      - level_badge_text
+      - equipped_marker
+    box_model:
+      aspect_ratio: "1 / 1"
+      min_size_px: 58
+      padding_px: { left: 4, right: 4, top: 4, bottom: 4 }
+    text_policy:
+      level: { max_lines: 1, font_size_px: 10, overflow: ellipsis }
+
+  EquipmentPrimaryActionButton:
+    role: "Primary native action for equip/upgrade/compare from the selected inventory card."
+    mode: native_ui
+    anatomy:
+      - action_button_shell
+      - action_label_text
+      - optional_cost_text
+    box_model:
+      min_height_px: 48
+      padding_px: { left: 12, right: 12, top: 8, bottom: 8 }
+    text_policy:
+      label: { max_lines: 1, font_size_px: 14, overflow: fit }
 
   ModalHarnessViewport:
     role: "A game-state-free preview phone/tablet stage for comparing common modal variants."
@@ -1009,7 +1373,7 @@ components:
       label: { max_lines: 1, font_size_px: 11, overflow: ellipsis }
 
   ModalListRow:
-    role: "One scrollable modal row for quests, inventory, dungeon gates, or generic entries."
+    role: "One scrollable modal row/card for quests, inventory, dungeon gates, contract-board expedition cards, or generic entries."
     mode: native_ui
     repeatable: true
     anatomy:
@@ -1017,14 +1381,43 @@ components:
       - title_text
       - body_text
       - trailing_value_or_button
+      - compact_status_chips
     box_model:
       min_height_px: 62
       padding_px: { left: 12, right: 12, top: 8, bottom: 8 }
       gap_px: 10
       radius_px: 10
+    asset_contract:
+      asset_key: ninja2.ui.dungeon_icon_set.resource_collection_v1
+      usage: dungeon_gate_leading_icon_when_row_represents_resource_collection_map
+      not_nine_slice: true
     text_policy:
       title: { max_lines: 1, font_size_px: 15, overflow: ellipsis }
       body: { max_lines: 1, font_size_px: 12, overflow: ellipsis }
+
+  CashShopProductRow:
+    role: "One cash-payment product row inside the home shop modal."
+    mode: hybrid
+    repeatable: true
+    anatomy:
+      - leading_product_icon
+      - native_product_name
+      - native_cash_price
+      - native_reward_summary
+      - purchase_button
+    box_model:
+      min_height_px: 106
+      icon_size_px: { width: 52, height: 52 }
+      padding_px: { left: 8, right: 8, top: 8, bottom: 8 }
+      gap_px: 8
+    asset_contract:
+      asset_key: ninja2.ui.shop_product_icons.cash_v1
+      usage: cash_product_leading_icon
+      not_nine_slice: true
+    text_policy:
+      product_name: { max_lines: 1, font_size_px: 15, overflow: ellipsis }
+      cash_price: { max_lines: 1, font_size_px: 10, overflow: ellipsis }
+      summary: { max_lines: 1, font_size_px: 10, overflow: ellipsis }
 
   ModalToggleRow:
     role: "Settings row with label, secondary copy, and stable binary toggle."
@@ -1115,6 +1508,156 @@ components:
       slice_hints_px: { left: 28, right: 28, top: 28, bottom: 28 }
       content_insets_px: { left: 18, right: 18, top: 20, bottom: 16 }
 
+  RunResultModalShell:
+    role: "Centered parchment result surface over the completed survival run."
+    mode: hybrid
+    anatomy:
+      - battle_backdrop
+      - parchment_9slice_skin
+      - RunResultStatusHeader
+      - RunResultRewardList
+      - RunResultFooter
+    box_model:
+      width: "min(392px, calc(100vw - 36px))"
+      max_height: "calc(100dvh - 44px)"
+      border_px: 18
+      padding_px: { left: 2, right: 2, top: 2, bottom: 2 }
+    skin_contract:
+      asset_key: ninja2.ui.panel.parchment_9slice
+      usage: dom_border_image_or_phaser_nineslice
+      slice_hints_px: { left: 28, right: 28, top: 28, bottom: 28 }
+      content_insets_px: { left: 2, right: 2, top: 2, bottom: 2 }
+    implementation_notes:
+      - "Do not bake the generated full concept image into the modal shell."
+      - "Backdrop may be an opaque result-only background asset, but it must not include the modal, title, rewards, or CTA."
+
+  RunResultStatusHeader:
+    role: "Large emotional state slab for map clear or defeat."
+    mode: hybrid
+    anatomy:
+      - hero_overhang_overlay
+      - fixed_status_panel_sprite
+      - RunResultStateCrest
+      - stage_kicker
+      - large_result_title
+      - RunResultStatChipRow
+      - short_summary
+    box_model:
+      min_height_px: 218
+      border_px: 22
+      content_insets_px: { left: 10, right: 10, top: 10, bottom: 8 }
+    asset_contract:
+      asset_key: ninja2.ui.run_result.status_slabs_v1
+      usage: fixed_panel_background
+      not_nine_slice: true
+      source_size_px: { width: 576, height: 240 }
+      state_variants: [clear, defeat]
+    overlay_contract:
+      asset_key: ninja2.ui.run_result.hero_overlays_v1
+      usage: fixed_overhanging_sprite_layer
+      not_nine_slice: true
+      source_size_px:
+        clear: { width: 700, height: 270 }
+        defeat: { width: 700, height: 260 }
+      runtime_binding: ".result-status::before"
+    text_policy:
+      title: { max_lines: 1, font_size_px: { target: 52, minimum: 44 }, overflow: fit }
+      kicker: { max_lines: 1, font_size_px: 12, overflow: ellipsis }
+      summary: { max_lines: 2, font_size_px: 12, overflow: clamp }
+
+  RunResultStateCrest:
+    role: "Shared modal ornament mark reused from the sanctuary build modal in the result status header."
+    mode: hybrid
+    anatomy:
+      - fixed_sanctuary_frame_crest_sprite
+    box_model:
+      display_size_px: { width: 190, height: 104 }
+      source_size_px: { width: 240, height: 132 }
+      anchor: top_center
+    asset_contract:
+      asset_key: ninja2.ui.sanctuary_build.frame_ornaments_v1
+      usage: fixed_sprite
+      not_nine_slice: true
+
+  RunResultStatChipRow:
+    role: "Shows the three compact run facts that support the result state."
+    mode: native_ui
+    anatomy:
+      - stat_chip[3]
+    box_model:
+      columns: 3
+      gap_px: 6
+      chip_min_height_px: 45
+    text_policy:
+      label: { max_lines: 1, font_size_px: 10, overflow: ellipsis }
+      value: { max_lines: 1, font_size_px: 15, overflow: ellipsis }
+
+  RunResultRewardList:
+    role: "Scrollable accounting list of persisted rewards."
+    mode: hybrid
+    anatomy:
+      - section_title_background
+      - native_section_label
+      - RunResultRewardRow[]
+      - empty_state_row
+    box_model:
+      row_gap_px: 0
+      list_padding_px: 10
+      max_height: "clamp(128px, calc(100dvh - 424px), 380px)"
+      scroll_policy: "Reward list scrolls before the status header shrinks."
+    data_bindings:
+      rewards: applyExpeditionRewards.summary.rewards
+    asset_contract:
+      asset_key: ninja2.ui.run_result.reward_header_brush_v1
+      usage: fixed_sprite_background_for_section_title
+      not_nine_slice: true
+      source_size_px: { width: 280, height: 64 }
+
+  RunResultRewardRow:
+    role: "One persisted reward ledger line with icon, label, amount, and a small trailing icon echo."
+    mode: native_ui
+    anatomy:
+      - reward_icon_medallion
+      - reward_name_text
+      - reward_amount_text
+      - reward_trailing_icon_sprite
+    box_model:
+      min_height_px: 45
+      grid_columns_px: [40, "1fr", "minmax(54px, auto)", 26]
+      padding_px: { left: 7, right: 9, top: 4, bottom: 4 }
+    text_policy:
+      name: { max_lines: 1, font_size_px: 14, overflow: ellipsis }
+      amount: { max_lines: 1, font_size_px: 16, overflow: ellipsis }
+    asset_policy:
+      mode: native_ui_with_reused_icons
+      reason: "Rows are data carriers; reused icons can repeat at the trailing edge, but names, amounts, order, and row material remain native."
+
+  RunResultFooter:
+    role: "Holds the single return action below rewards."
+    mode: native_ui
+    anatomy:
+      - RunResultReturnButton
+    box_model:
+      margin_top_px: 14
+      min_height_px: 56
+
+  RunResultReturnButton:
+    role: "Primary action back to sanctuary after result review."
+    mode: hybrid
+    anatomy:
+      - button_9slice_skin
+      - native_button_label
+    box_model:
+      min_height_px: 56
+      border_px: 18
+      content_insets_px: { left: 18, right: 18, top: 10, bottom: 10 }
+    asset_contract:
+      asset_key: ninja2.ui.run_result.return_button_9slice_v1
+      usage: dom_border_image_or_phaser_nineslice
+      slice_hints_px: { left: 28, right: 28, top: 28, bottom: 28 }
+    text_policy:
+      label: { max_lines: 1, font_size_px: 18, overflow: fit }
+
   LevelChoiceModalBackdrop:
     role: "Blocks combat input and creates focus while preserving the paused battle context."
     mode: native_ui
@@ -1185,13 +1728,16 @@ components:
         side: 14
         bottom: 16
     asset_contract:
-      asset_key: ninja2.ui.level_choice.frame_ornaments_v1
+      asset_key: ninja2.ui.sanctuary_build.frame_ornaments_v1
+      theme_asset_keys:
+        run_levelup_choice: ninja2.ui.sanctuary_build.frame_ornaments_v1
+        sanctuary_build_modal: ninja2.ui.sanctuary_build.frame_ornaments_v1
       usage: fixed_sprite_set
       background: transparent
       not_nine_slice: true
       variants:
-        crest: { width: 180, height: 112, anchor: top_center, offset_px: { x: 0, y: -54 } }
-        corner_leaf: { width: 108, height: 108, anchors: [top_left, top_right, bottom_left, bottom_right] }
+        crest: { width: 240, height: 132, anchor: top_center, offset_px: { x: 0, y: -58 } }
+        corner_leaf: { width: 112, height: 112, anchors: [top_left, top_right, bottom_left, bottom_right] }
     implementation_notes:
       - "The concept reads as if ornaments are embedded in the border; runtime should render them as fixed overlay sprites attached to the panel frame."
       - "Do not let ornament sprites participate in grid sizing, card sizing, or text padding."
@@ -1213,7 +1759,8 @@ components:
       fill: "lantern gold to action orange"
       outline_px: 4
     asset_policy:
-      current: ninja2.ui.level_choice.frame_ornaments_v1.crest
+      current: ninja2.ui.sanctuary_build.frame_ornaments_v1.crest
+      sanctuary_build_variant: ninja2.ui.sanctuary_build.frame_ornaments_v1.crest
       fallback: native_css_badge_only_for_debug
 
   PanelCornerOrnament:
@@ -1231,7 +1778,8 @@ components:
       bottom_left_offset_px: { x: -26, y: 24 }
       bottom_right_offset_px: { x: 26, y: 24 }
     asset_policy:
-      current: ninja2.ui.level_choice.frame_ornaments_v1.corner_leaf
+      current: ninja2.ui.sanctuary_build.frame_ornaments_v1.corner_leaf
+      sanctuary_build_variant: ninja2.ui.sanctuary_build.frame_ornaments_v1.corner_leaf
       transform_policy: "Use CSS/Phaser mirror and rotate transforms for other corners."
     constraints:
       - "Must not cover the level title, run summary chip, or first-row card hit targets."
@@ -1540,6 +2088,27 @@ asset_dependency_matrix:
       - level_badge
       - profile_frame
       - progress_bar
+  ninja2.ui.equipment_empty_slot_icons_v1:
+    component_slots:
+      - EquipmentSlotButton.empty_slot_icon
+    usage: fixed_transparent_sprite_set
+    fixed_sprite_sizes_px:
+      icon: { width: 96, height: 96 }
+    runtime_display_size_px: { width: 34, height: 34 }
+    variants_by_slot:
+      weapon: icon_empty_weapon
+      head: icon_empty_head
+      chest: icon_empty_chest
+      gloves: icon_empty_gloves
+      boots: icon_empty_boots
+      necklace: icon_empty_necklace
+      ring: icon_empty_ring
+    must_not_bake:
+      - slot_labels
+      - empty_text
+      - kanji_or_symbol_fallbacks
+      - slot_frames
+      - level_badges
   ninja2.ui.topbar.cluster_skins:
     component_slots:
       - TopResourcePill.pill_frame
@@ -1562,8 +2131,10 @@ asset_dependency_matrix:
       - IntegratedCollectStatusChip.small_resource_icon
       - HomeTabButton.icon_glyph
       - ModalRewardSlot.reward_icon_sprite
+      - HexTileLayer.lock_icon_overlay
     fixed_sprite_sizes_px:
       standard_icon: { width: 96, height: 96 }
+      home_lock_overlay_display: { width: 18, height: 18 }
       topbar_resource_icon: { width: 56, height: 56 }
       topbar_plus_icon: { width: 48, height: 48 }
     must_not_bake:
@@ -1572,6 +2143,42 @@ asset_dependency_matrix:
       - tab_labels
       - side_button_labels
       - unread_badge_text
+  ninja2.ui.dungeon_icon_set.resource_collection_v1:
+    component_slots:
+      - ModalListRow.leading_icon_or_badge
+      - ModalRewardSlot.reward_icon_sprite
+    fixed_sprite_sizes_px:
+      standard_icon: { width: 96, height: 96 }
+      detail_preview: { width: 192, height: 192 }
+    map_bindings:
+      500201: icon_dungeon_woodcutting_trail
+      500202: icon_dungeon_stone_underpass
+      500206: icon_dungeon_companion_traces
+    must_not_bake:
+      - dungeon_name_text
+      - difficulty_labels
+      - reward_values
+      - locked_badges
+      - row_frames
+      - action_buttons
+  ninja2.ui.shop_product_icons.cash_v1:
+    component_slots:
+      - CashShopProductRow.leading_product_icon
+    fixed_sprite_sizes_px:
+      product_icon: { width: 256, height: 256 }
+      runtime_display: { width: 52, height: 52 }
+    product_bindings:
+      201501: shop_product_ruby_pouch
+      201502: shop_product_starter_pack
+      201503: shop_product_energy_refill
+      201504: shop_product_ad_removal_charm
+    must_not_bake:
+      - product_names
+      - cash_prices
+      - reward_quantities
+      - purchase_labels
+      - discount_badges
+      - store_logos
   ninja2.ui.panel.parchment_9slice:
     component_slots:
       - SelectedBuildingPanel.skin
@@ -1579,6 +2186,7 @@ asset_dependency_matrix:
       - SkillChoiceCard.skin
       - ModalShell.skin
       - ModalNoticeToast.skin
+      - RunResultModalShell.skin
     slice_hints_px: { left: 28, right: 28, top: 28, bottom: 28 }
     content_insets_by_slot:
       SelectedBuildingPanel: { left: 10, right: 10, top: 12, bottom: 10 }
@@ -1599,6 +2207,87 @@ asset_dependency_matrix:
       - modal_action_labels
       - reward_counts
       - toggle_states
+      - result_title
+      - result_rewards
+  ninja2.ui.run_result.battle_backdrop_v1:
+    component_slots:
+      - RunResultModalShell.battle_backdrop
+    fixed_sprite_sizes_px:
+      backdrop: { width: 864, height: 1536 }
+    usage: css_background_cover
+    must_not_bake:
+      - result_modal
+      - result_title
+      - reward_rows
+      - reward_amounts
+      - return_button
+  ninja2.ui.run_result.hero_overlays_v1:
+    component_slots:
+      - RunResultStatusHeader.hero_overhang_overlay
+    fixed_sprite_sizes_px:
+      clear_overlay: { width: 700, height: 318 }
+      defeat_overlay: { width: 700, height: 306 }
+    state_bindings:
+      clear: ".result-card.is-win .result-status::before"
+      defeat: ".result-card.is-loss .result-status::before"
+    must_not_bake:
+      - result_title
+      - stage_kicker
+      - run_stat_labels
+      - run_stat_values
+      - reward_names
+      - reward_amounts
+      - return_button_label
+  ninja2.ui.run_result.status_slabs_v1:
+    component_slots:
+      - RunResultStatusHeader.fixed_status_panel_sprite
+    fixed_sprite_sizes_px:
+      status_panel: { width: 576, height: 240 }
+    state_bindings:
+      clear: ".result-card.is-win .result-status"
+      defeat: ".result-card.is-loss .result-status"
+    must_not_bake:
+      - result_title
+      - stage_kicker
+      - run_stat_labels
+      - run_stat_values
+      - reward_names
+      - reward_amounts
+      - return_button_label
+  ninja2.ui.run_result.reward_header_brush_v1:
+    component_slots:
+      - RunResultRewardList.section_title_background
+    fixed_sprite_sizes_px:
+      brush: { width: 280, height: 64 }
+    must_not_bake:
+      - section_title_text
+      - reward_names
+      - reward_amounts
+  ninja2.ui.sanctuary_build.frame_ornaments_v1:
+    component_slots:
+      - RunResultStateCrest.shared_modal_crest
+    fixed_sprite_sizes_px:
+      crest: { width: 240, height: 132 }
+    runtime_display_size_px:
+      crest: { width: 190, height: 104 }
+    state_bindings:
+      clear: ".result-card.is-win .result-crest"
+      defeat: ".result-card.is-loss .result-crest"
+    must_not_bake:
+      - result_title
+      - stage_kicker
+      - status_slab
+      - reward_values
+  ninja2.ui.run_result.return_button_9slice_v1:
+    component_slots:
+      - RunResultReturnButton.button_skin
+    slice_hints_px: { left: 28, right: 28, top: 28, bottom: 28 }
+    content_insets_by_slot:
+      RunResultReturnButton: { left: 18, right: 18, top: 10, bottom: 10 }
+    must_not_bake:
+      - return_button_label
+      - result_title
+      - reward_values
   ninja2.ui.button.sortie_orange:
     component_slots:
       - SortieCtaButton.fixed_orange_button_sprite
@@ -1632,6 +2321,21 @@ asset_dependency_matrix:
       - timer_text
       - stage_text
       - hud_frames
+  ninja2.ui.battle_dash_icon_v1:
+    component_slots:
+      - BattleDashControl.dash_icon_sprite
+    fixed_sprite_sizes_px:
+      dash_icon: { width: 128, height: 128 }
+    runtime_display_size_px:
+      dash_button_icon: { width: 54, height: 54 }
+      dash_button_icon_mobile: { width: 48, height: 48 }
+    must_not_bake:
+      - circular_button_frame
+      - cooldown_progress_ring
+      - cooldown_numbers
+      - keyboard_shortcut_text
+      - companion_portraits
+      - companion_names
   ninja2.battle.encounter_icons.light_v1:
     component_slots:
       - RandomEncounterSprite.bomb_icon
@@ -1663,6 +2367,25 @@ asset_dependency_matrix:
       - subtitle
       - run_summary
       - card_content
+      - panel_stretch_center
+      - modal_variant_body
+  ninja2.ui.sanctuary_build.frame_ornaments_v1:
+    component_slots:
+      - FrameOrnamentLayer.CrestOrnament
+      - FrameOrnamentLayer.PanelCornerOrnament
+      - ModalShell.FrameOrnamentLayer
+    fixed_sprite_sizes_px:
+      crest: { width: 240, height: 132 }
+      corner_leaf: { width: 112, height: 112 }
+    usage_scope: "RunLevelUpChoice, SanctuaryBuildModal, RunResultModal, and housing-flavored modal variants that share the warm parchment sanctuary ornament language."
+    must_not_bake:
+      - modal_title
+      - section_labels
+      - building_names
+      - resource_costs
+      - action_labels
+      - candidate_cards
+      - owned_building_cards
       - panel_stretch_center
       - modal_variant_body
 
@@ -1702,6 +2425,7 @@ runtime_token_mapping:
     ".home-top-actions": PopulationMenuCluster
     ".top-icon-button": TopRoundIconButton
     ".home-side": HomeSideRail
+    ".equipment-empty-icon": EquipmentSlotButton
     ".home-side-button": HomeSideButton
     ".home-board-wrap": HomeBoardViewport
     ".home-hex": HexTileLayer
@@ -1709,6 +2433,7 @@ runtime_token_mapping:
     ".home-building": BuildingSpriteToken
     ".bubble": BuildingProductionBubble
     ".hex-cost": ExpansionCostMarker
+    ".hex-lock-icon": HexTileLayer
     ".loop-log": HomeLoopToast
     ".home-bottom": HomeBottomActionRow
     ".home-panel": SelectedBuildingPanel

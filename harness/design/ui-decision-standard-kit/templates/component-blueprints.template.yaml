@@ -1,0 +1,111 @@
+version: "1.0"
+game: "<game>"
+status: draft # draft | pilot | extracted | approved
+purpose: "Semantic component decomposition layer between selected concepts, generated assets, and runtime layout."
+
+source_concepts:
+  primary:
+    id: "<concept-id>"
+    note: "concepts/<concept-id>.md"
+    image: "concepts/<concept-id>.png"
+  supporting: []
+
+runtime_targets:
+  phaser:
+    spec: "../../runtime/specs/ui/<surface>.yaml"
+    page: "../../runtime/<page>.html"
+    owner: "../../runtime/src/<owner>.js"
+
+foundation_systems:
+  inventory: "ui-system-inventory.yaml"
+  buttons: "button-system.yaml"
+  modals: "modal-system.yaml"
+  colors: "color-tokens.yaml"
+  typography: ""
+  spacing: "layout-tokens.yaml"
+  icons: ""
+
+extraction_rules:
+  semantic_first:
+    - "Name UI by player meaning before naming skins or image files."
+    - "A component must remain explainable as slots and data bindings if skins are removed."
+    - "Text, numbers, prices, timers, counters, and localized labels remain runtime-native."
+    - "Buttons, modals, and colors should reference shared foundation systems instead of local one-off styles."
+  sizing_language:
+    slice_hints: "Bitmap cap borders used by Phaser 9-slice or sliced sprites."
+    content_insets: "Inner safe area for native text, icons, chips, and hit targets."
+    padding: "Runtime spacing inside the content area."
+    gap: "Spacing between sibling slots."
+
+surfaces:
+  <SurfaceName>:
+    intent: ""
+    orientation: portrait_9_16
+    reference_size_px: { width: 440, height: 782 }
+    source_concepts:
+      primary: "<concept-id>"
+    sections:
+      top_hud:
+        role: ""
+        process_scope: section
+        components: []
+        layout_contract:
+          anchor: top_safe_area
+          height_px: { target: 96, compact: 88 }
+        asset_keys: []
+        qa_focus: []
+      content_body:
+        role: ""
+        process_scope: section
+        components: []
+        layout_contract:
+          anchor: middle
+        asset_keys: []
+        qa_focus: []
+      bottom_dock:
+        role: ""
+        process_scope: section
+        components: []
+        layout_contract:
+          anchor: bottom_safe_area
+          height_px: { target: 92, compact: 88 }
+        asset_keys: []
+        qa_focus: []
+    component_tree: []
+    layout_contract:
+      shell_width: "min(440px, 100vw)"
+      responsive_policy: ""
+
+components:
+  <ComponentName>:
+    role: ""
+    mode: native_ui # native_ui | generate_image | hybrid | reuse
+    anatomy: []
+    slots: {}
+    states: [normal]
+    data_bindings: {}
+    box_model:
+      min_width_px: null
+      min_height_px: null
+      content_insets_px: { left: 0, right: 0, top: 0, bottom: 0 }
+      padding_px: 0
+      gap_px: 0
+      text_clamp: ""
+      touch_target_px: 44
+    skin_contract: null
+    ornament_layer: null
+    foundation_refs:
+      button_role: null
+      modal_section: null
+      color_tokens: []
+
+asset_dependency_matrix: {}
+
+runtime_token_mapping:
+  css_custom_properties: {}
+  phaser_constants: {}
+  existing_css_classes: {}
+
+review_gate:
+  pass_conditions: []
+  blockers: []

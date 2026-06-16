@@ -56,13 +56,19 @@ sellAddItemGroups:
 
 popupArgs:
   HousingKey: bamboo_grove
-  HousingRole: advanced_production
+  HousingRole: resource_bonus
   HousingPlacementKind: repeatable
-  HousingInstanceRole: advanced_production_node
+  HousingInstanceRole: resource_bonus_node
   HousingMaxInstancesByLanternLevel: "6:2"
   HousingDuplicateCostScaling: "cost_x1.25_per_extra,time_x1.15_per_extra"
-  HousingPurpose: "대나무를 생산해 빠른 건설재를 공급하고 목재 비용 부담을 완화한다."
-  HousingEffectKind: produce_bamboo_and_build_cost_relief
+  HousingPurpose: "목재 비용 부담을 완화하고 빠른 건설재 운용을 보조한다."
+  HousingDescription: "가볍고 질긴 대나무를 활용해 건설 부담을 낮추는 보조 건물입니다. 별도 생산물을 쌓지는 않으며, 레벨이 오를수록 목재 비용 압박을 줄여 줍니다."
+  HousingEffectKind: wood_cost_relief
+  HousingTapFlow: open_modal_only
+  HousingBubblePolicy: hidden
+  HousingFeatureModal: resource_bonus
+  HousingFeatureActions: "wood_cost_relief,upgrade"
+  HousingLevelEffectByLevel: "Lv1 wood_cost_reduction_percent=1; Lv2 wood_cost_reduction_percent=2; Lv3 wood_cost_reduction_percent=3; Lv4 wood_cost_reduction_percent=5; Lv5 wood_cost_reduction_percent=8"
   HousingFootprint: 1x3
   HousingSpriteKey: bamboo_grove
   HousingConstructionSeconds: 4800

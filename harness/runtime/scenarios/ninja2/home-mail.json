@@ -1,0 +1,57 @@
+{
+  "version": "1.0",
+  "game": "ninja2",
+  "source": "harness/runtime/specs/ui/ninja2/home-modals/mail.yaml",
+  "entries": [
+    {
+      "key": "founder_supply",
+      "sender": "성소 관리인",
+      "title": "성소 개방 보급",
+      "detail": "첫 성소 건설을 위한 목재와 출격 에너지가 도착했습니다.",
+      "iconKey": "mail",
+      "availableWhen": {},
+      "expiresInDays": 14,
+      "reward": { "wood": 120, "gold": 800, "energy": 20 }
+    },
+    {
+      "key": "first_sortie_report",
+      "sender": "정찰소",
+      "title": "첫 정화 보고",
+      "detail": "첫 원정 기록 확인 완료. 영혼불과 석재를 보급합니다.",
+      "iconKey": "exploration",
+      "availableWhen": { "minStageClears": 1 },
+      "expiresInDays": 7,
+      "reward": { "souls": 8, "stone": 30 }
+    },
+    {
+      "key": "training_yard_open",
+      "sender": "용병 훈련소",
+      "title": "훈련소 개방 축하",
+      "detail": "동료 모집을 시작할 수 있습니다. 초도 모집 조각을 지급합니다.",
+      "iconKey": "companions",
+      "availableWhen": { "buildingBuilt": "training_yard" },
+      "expiresInDays": 10,
+      "reward": { "companion_shards": 6, "companion_exp": 80 }
+    },
+    {
+      "key": "sanctuary_level_3",
+      "sender": "등불 신전",
+      "title": "성소 3단계 기록",
+      "detail": "등불이 안정화되었습니다. 다음 확장을 위한 보급을 확인하세요.",
+      "iconKey": "sanctuary",
+      "availableWhen": { "minShrineLevel": 3 },
+      "expiresInDays": 10,
+      "reward": { "light": 80, "souls": 10 }
+    },
+    {
+      "key": "city_preview_notice",
+      "sender": "마을 주민",
+      "title": "도시 프리뷰 점검",
+      "detail": "하네스 도시 fixture에서 우편함 읽음 상태를 확인하는 공지입니다.",
+      "iconKey": "population",
+      "availableWhen": { "minStageClears": 3 },
+      "expiresInDays": 30,
+      "reward": {}
+    }
+  ]
+}

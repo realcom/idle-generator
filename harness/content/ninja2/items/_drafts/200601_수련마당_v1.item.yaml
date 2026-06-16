@@ -49,8 +49,14 @@ popupArgs:
   HousingInstanceRole: companion_center
   HousingMaxInstancesByLanternLevel: "1:1"
   HousingDuplicateCostScaling: none
-  HousingPurpose: "동료 편성과 성장을 담당하고, 경험치 생산과 공격 보너스로 다음 전투력을 밀어준다."
-  HousingEffectKind: companion_management_and_training
+  HousingPurpose: "동료 모집, 편성, 훈련을 담당하고 용병 성장으로 다음 전투력을 밀어준다."
+  HousingDescription: "용병을 모집하고 훈련시키는 전투 준비 시설입니다. 이 건물에서는 생산물이 쌓이지 않으며, 탭하면 바로 용병 가챠와 편성, 훈련 화면으로 들어갑니다."
+  HousingEffectKind: companion_management
+  HousingTapFlow: open_modal_only
+  HousingBubblePolicy: hidden
+  HousingFeatureModal: companion_management
+  HousingFeatureActions: "companion_gacha,companion_roster,companion_train,upgrade"
+  HousingLevelEffectByLevel: "Lv1 companion_attack_percent=1; Lv2 companion_attack_percent=2; Lv3 companion_attack_percent=3; Lv4 companion_attack_percent=5; Lv5 companion_attack_percent=8"
   HousingFootprint: 1x3
   HousingSpriteKey: training_yard
   HousingConstructionSeconds: 120

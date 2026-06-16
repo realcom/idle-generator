@@ -1,0 +1,23 @@
+id: 201501
+name: "루비 주머니"
+category: Product
+type: MaterialRealPrice
+grade: 1
+iapIdentifier: "ninja2.cash.ruby_pouch_0600"
+priceUsd: 4.99
+priceWon: 5500
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 3, count: 600, isCore: true }
+      - { itemDataId: 4, count: 60 }
+spriteGroups:
+  Icon: "Items/Ninja2/shop/shop_product_ruby_pouch.png"
+popupArgs:
+  ShopSection: "Cash"
+  ProductKind: "RubyPouch"
+  RuntimeShopKey: "ruby_pouch"
+  RuntimeIconKey: "shop_ruby_pouch"
+  PriceTier: "1"
+  Summary: "유료 루비와 보너스 무료 루비"

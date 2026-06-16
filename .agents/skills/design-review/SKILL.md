@@ -15,6 +15,10 @@ Purpose: act as the design gate before approving concepts, extracted design syst
 
 - `harness/design/<game>/critique-rubric.yaml`
 - relevant concept note/image, Phaser spec/runtime screenshot, or Unity recipe/prefab screenshot
+- `harness/design/<game>/ui-system-inventory.yaml` if it exists.
+- `harness/design/<game>/button-system.yaml` when buttons, tabs, chips, docks, CTAs, or icon buttons are visible.
+- `harness/design/<game>/modal-system.yaml` when modals, dialogs, sheets, overlays, or popups are visible.
+- `harness/design/<game>/color-tokens.yaml` when UI state/action/status colors are part of the review.
 - `harness/design/<game>/art-direction.yaml`
 - `harness/design/<game>/layout-tokens.yaml`
 - `harness/design/COMPONENT_BLUEPRINTS.md`
@@ -34,13 +38,14 @@ Purpose: act as the design gate before approving concepts, extracted design syst
 3. Run `python3 harness/tools/design_blueprint_validate.py <game>` when component blueprints exist.
 4. Check whether each surface is split into semantic sections with clear ownership, such as top tabs, content body, board area, bottom nav, modal header/body/footer, or control dock.
 5. Check whether repeated components have anatomy, slot, state, box-model, text clamp, skin, asset, and ornament-layer contracts.
-6. For implemented visual UI, create or inspect a normalized concept-vs-runtime compare board per active section:
+6. Check whether visible buttons, modals, and UI colors trace back to shared button/modal/color systems; if not, mark `WARN` or `ERROR` and propose the system-file edit or user question needed.
+7. For implemented visual UI, create or inspect a normalized concept-vs-runtime compare board per active section:
    - Crop the selected concept and runtime screenshot to the same semantic section.
    - Normalize shell width and scale using `python3 harness/tools/design_visual_compare.py`.
    - Judge the section as `PASS`, `WARN`, or `ERROR` before broadening to another section.
-7. For Unity recipes, also run `python3 harness/unity/validators/ui_prefab_validate.py` when applicable.
-8. For Phaser runtime work, run the relevant `phaser_smoke.py` and `phaser_asset_audit.py` commands when applicable.
-9. Give concrete changes as token, blueprint, asset-plan, spec, recipe, or runtime edits, not vague taste comments.
+8. For Unity recipes, also run `python3 harness/unity/validators/ui_prefab_validate.py` when applicable.
+9. For Phaser runtime work, run the relevant `phaser_smoke.py` and `phaser_asset_audit.py` commands when applicable.
+10. Give concrete changes as token, blueprint, asset-plan, spec, shared foundation system, recipe, or runtime edits, not vague taste comments.
 
 ## Output
 
@@ -56,6 +61,7 @@ Purpose: act as the design gate before approving concepts, extracted design syst
 - Do not approve an extracted UI system that skips `component-blueprints.yaml` for reusable UI.
 - Do not approve a large UI surface that jumps directly from full concept to atoms without section decomposition.
 - Do not approve scalable panel/card/button skins that mix up `slice_hints` and `content_insets`.
+- Do not approve UI that invents screen-local button, modal, or color rules while bypassing shared foundation systems.
 - Do not approve concept border ornaments being silently dropped; they should be either generated as fixed ornament sprites or explicitly rejected with rationale.
 - Do not reject a concept only because text is imperfect; concept text is allowed to be pseudo text.
 - Do not compare Phaser and Unity screenshots as pixel-perfect targets; check that they preserve the same design system and intentional platform differences.

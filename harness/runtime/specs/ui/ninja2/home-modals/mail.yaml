@@ -1,0 +1,59 @@
+version: "1.0"
+game: ninja2
+slug: home-modals/mail
+status: implemented
+
+target_runtime:
+  page: harness/runtime/survivor-runtime.html
+  entrypoint: harness/runtime/src/survivor/survivor-app.js
+  module: harness/runtime/src/survivor/home-modals/mail.js
+  runtime_files:
+    - harness/runtime/src/survivor/home-modals/mail.js
+  fixture_urls:
+    - harness/runtime/survivor-runtime.html?game=ninja2&fixture=city
+
+source_design:
+  modal_family:
+    - harness/design/ninja2/concepts/ninja2_phaser_modal_system_a.md
+    - harness/design/ninja2/concepts/ninja2_sanctuary_build_modal_a.md
+  home_surface:
+    - harness/runtime/specs/ui/ninja2-housing-home.yaml
+
+runtime_contract:
+  - "The left 우편 side-utility button opens #homeQuickModal with the mail variant; it does not add a sixth bottom tab."
+  - "#homeQuickModal reuses the shared home modal shell: home-modal-host, home-modal-shell, home-modal-header, home-modal-body, home-modal-footer, scrim, crest, corner ornaments, and close button."
+  - "Mail definitions live in harness/runtime/scenarios/ninja2/home-mail.json; runtime JS evaluates availability and stores only read/claim state."
+  - "Mail rows expose claimable, unread/read, and claimed states through class names and data-home-mail-* attributes."
+  - "Individual claim/read actions and the footer 모두 받기 action update scene.sanctuary.mailClaims/mailReadKeys, resource totals, data-home-mail-* counters, and rerender in place."
+  - "Mail titles, sender names, expiry text, reward quantities, and button labels remain native DOM text."
+  - "Mail row actions and footer actions reuse ninja2.ui.run_result.return_button_9slice_v1 as the generic orange CTA skin; the skin contains no baked text."
+
+data_contract:
+  sources:
+    scenario:
+      - "harness/runtime/scenarios/ninja2/home-mail.json defines mail keys, senders, copy, availability rules, expiry days, and reward bundles."
+    runtime_state:
+      - "scene.sanctuary.mailClaims stores claimed mail keys and claim timestamps."
+      - "scene.sanctuary.mailReadKeys stores read notice mail keys."
+      - "scene.sanctuary resources store claimed reward deltas."
+    design_assets:
+      - "harness/design/ninja2/asset-plan.yaml:ninja2.ui.home_icon_pack_v3 provides the side mail icon and reused resource icons."
+      - "harness/design/ninja2/asset-plan.yaml:ninja2.ui.run_result.return_button_9slice_v1 provides the generic orange CTA skin for mail action buttons."
+  bindings:
+    mail_modal:
+      quick_view: "data-home-quick='mail'"
+      mail_rows: "harness/runtime/scenarios/ninja2/home-mail.json entries filtered by scene.sanctuary progress."
+      unread_badge: ".home-side-mail .home-side-badge reflects claimable + unread count."
+  fixtures:
+    city: "harness/runtime/survivor-runtime.html?game=ninja2&fixture=city"
+
+validation:
+  static:
+    - "node --check harness/runtime/src/survivor/home-modals/mail.js"
+    - "node --check harness/runtime/src/survivor/survivor-app.js"
+  smoke:
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --query 'game=ninja2&fixture=city' --screenshot /tmp/ninja2-home-mailbox.png --timeout 120"
+  browser_checks:
+    - "data-home-mail-total-count is at least one for the city fixture."
+    - "Clicking 우편 opens #homeQuickModal and sets data-home-quick-view='mail'."
+    - "Claiming a mail row updates data-home-mail-claimed, resource totals, and the mail button badge."

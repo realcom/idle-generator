@@ -1,0 +1,23 @@
+id: 600306
+name: "채석길 정화"
+type: Mission
+tags: [Mission, SideDungeon, Resource, HomeUI]
+order: 306
+initialOpen: true
+clientAchievement: false
+condition: WinGame
+conditionValue1: 500202
+conditionValue2: 0
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: false
+popupArgs:
+  MissionGroup: side_dungeon
+  RuntimeMissionKey: clear_stone_route
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 1000 }
+      - { itemDataId: 200102, count: 100 }

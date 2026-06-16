@@ -1,0 +1,82 @@
+version: "1.0"
+game: "<game>"
+status: draft
+purpose: "Shared modal/dialog contract for UI surfaces."
+source_standard: "ui-decision-standard-kit/UI_DECISION_STANDARD.md"
+
+principles:
+  - "Modal shell is shared; feature content changes inside named sections."
+  - "Header, body, and footer remain separate semantic ownership groups."
+  - "Text, values, rewards, prices, and item lists come from data/spec, not skin bitmaps."
+  - "Generated frame skins and ornaments are declared in asset-plan.yaml."
+
+host:
+  root_id: "ModalHost"
+  stacking_policy: "single_primary_modal_plus_optional_toast"
+  z_order:
+    backdrop: 1000
+    shell: 1010
+    toast: 1100
+  input_policy:
+    trap_pointer: true
+    close_on_back: true
+    close_on_escape: true
+    close_on_backdrop: configurable
+
+shell:
+  component: "ModalShell"
+  sections:
+    backdrop:
+      role: "Dim or separate underlying gameplay."
+    frame:
+      role: "Own stretchable modal skin and fixed ornaments."
+    header:
+      role: "Title, close action, optional tabs."
+    body:
+      role: "Feature-owned content and scroll area."
+    footer:
+      role: "Primary/secondary actions and legal/cost notes."
+  size_policy:
+    compact_mobile: { width: "calc(100vw - 24px)", max_height: "calc(100vh - 64px)" }
+    target_mobile: { width_px: 400, max_height_px: 700 }
+    wide: { width_px: 440, max_height_px: 760 }
+  scroll_policy:
+    owner: body
+    header_fixed: true
+    footer_fixed: true
+
+actions:
+  primary_button_role: primary_cta
+  secondary_button_role: secondary
+  destructive_button_role: destructive
+  placement: footer
+  max_primary_actions: 1
+
+skin_policy:
+  frame_usage: phaser_nineslice # phaser_nineslice | dom_preview | native_graphics
+  slice_hints: null
+  content_insets_px: { left: 20, right: 20, top: 24, bottom: 20 }
+  ornament_layer:
+    allowed: true
+    rule: "Fixed transparent sprites above frame skin and below readable content."
+
+data_contract:
+  modal_id_source: spec_or_route
+  title_source: data_or_spec
+  body_content_source: data_or_scenario
+  action_source: spec_or_runtime_state
+  hardcoding_allowlist: []
+
+runtime_mapping:
+  css_classes: {}
+  phaser_helpers: {}
+  owner_files: []
+
+review_gate:
+  blockers:
+    - "Modal content is implemented as one full-screen image."
+    - "Header/body/footer are collapsed into one unowned block."
+    - "Footer action buttons do not use the shared button system."
+    - "Backdrop or z-order hides required combat/gameplay unintentionally."
+    - "Scrollable content pushes header or footer off screen."
+

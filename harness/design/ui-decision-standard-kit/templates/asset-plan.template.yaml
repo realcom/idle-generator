@@ -1,0 +1,54 @@
+version: "1.0"
+game: "<game>"
+status: draft
+source_concepts:
+  - "<concept-id>"
+
+foundation_systems:
+  buttons: "button-system.yaml"
+  modals: "modal-system.yaml"
+  colors: "color-tokens.yaml"
+
+assetization_summary:
+  generate_image: []
+  native_ui: []
+  hybrid: []
+  reuse: []
+
+assets:
+  - key: "<game>.ui.panel.example"
+    type: nine_slice_panel # icon | background | portrait | effect | button_skin | frame | texture
+    mode: hybrid # generate_image | native_ui | hybrid | reuse
+    platforms: [phaser]
+    target_path: "design/<game>/assets/ui/panel_example.png"
+    usage:
+      - "component-blueprints.yaml:<ComponentName>.skin"
+      - "component-skins.yaml:<component_skin_id>"
+      - "button-system.yaml:<role-or-empty>"
+      - "modal-system.yaml:<section-or-empty>"
+    prompt_notes: ""
+    background: transparent # transparent | opaque
+    target_size: { width: 256, height: 256 }
+    slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+    states: [normal]
+    variants: []
+    component_contract:
+      slice_hints: "Bitmap stretch borders only."
+      content_insets:
+        <ComponentName>: { left: 16, right: 16, top: 16, bottom: 16 }
+      semantic_color_tokens: []
+    phaser:
+      usage: phaser_nineslice # phaser_nineslice | phaser_nineslice_set | image_sprite | atlas_region | css_background
+      target_path: "runtime/assets/<game>/ui/panel_example.png"
+    unity:
+      usage: sliced_sprite
+      target_path: ""
+      slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+    priority: must # must | should | nice
+    blocking_reason: ""
+    status: planned # planned | generated | reused | blocked | rejected
+    generated_with: ""
+    source_path: ""
+    actual_path: ""
+    runtime_path: ""
+    generation_notes: ""

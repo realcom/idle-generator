@@ -57,7 +57,19 @@ popupArgs:
   HousingMaxInstancesByLanternLevel: "5:1"
   HousingDuplicateCostScaling: none
   HousingPurpose: "도구를 생산하고 건설/레벨업 시간을 줄여 중후반 건물 성장 속도를 개선한다."
+  HousingDescription: "장인들이 수리와 제작에 쓸 도구를 만드는 작업 공간입니다. 시간이 지나면 도구가 쌓이고, 공방을 성장시키면 건설과 레벨업에 걸리는 시간이 줄어듭니다."
   HousingEffectKind: tools_and_build_speed
+  HousingTapFlow: collect_then_open_modal
+  HousingCollectTiming: before_modal
+  HousingCollectAnimation: fly_to_hud
+  HousingBubblePolicy: show_when_collectable
+  HousingProductionItemDataId: 200110
+  HousingProductionRateUnit: per_hour
+  HousingProductionRateByLevel: "1,2,3,5,8"
+  HousingStorageMinutesByLevel: "180,240,300,360,480"
+  HousingFeatureModal: crafting
+  HousingFeatureActions: "crafting,construction_bonus,upgrade"
+  HousingLevelEffectByLevel: "Lv1 tool_per_hour=1,storage_minutes=180,construction_time_reduction_percent=2; Lv2 tool_per_hour=2,storage_minutes=240,construction_time_reduction_percent=4; Lv3 tool_per_hour=3,storage_minutes=300,construction_time_reduction_percent=7; Lv4 tool_per_hour=5,storage_minutes=360,construction_time_reduction_percent=11; Lv5 tool_per_hour=8,storage_minutes=480,construction_time_reduction_percent=16"
   HousingFootprint: 1x2
   HousingSpriteKey: workshop
   HousingConstructionSeconds: 1800

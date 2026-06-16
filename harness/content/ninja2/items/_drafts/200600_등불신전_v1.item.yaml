@@ -49,9 +49,20 @@ popupArgs:
   HousingInstanceRole: town_center_core
   HousingMaxInstancesByLanternLevel: "1:1"
   HousingDuplicateCostScaling: none
-  HousingPurpose: "성소 핵심 레벨을 올려 안개 정화 범위, 타일 개방 수, 주민 수용량, 최대 건물 레벨을 확장하고 기본 목재/골드 생산을 제공한다."
+  HousingPurpose: "성소 핵심 레벨을 올려 안개 정화 범위, 타일 개방 수, 주민 수용량, 최대 건물 레벨을 확장하고 기본 골드 생산을 제공한다."
+  HousingDescription: "마을 한가운데 등불을 밝히는 핵심 건물입니다. 시간이 지나면 골드가 쌓이고, 신전 레벨이 오를수록 안개가 걷혀 더 많은 타일과 건물 성장이 열립니다."
   HousingEffectKind: sanctuary_core
-  HousingBaseProduction: "Lv1 wood_per_min=2,gold_per_min=12; Lv2 wood_per_min=3,gold_per_min=20; Lv3 wood_per_min=5,gold_per_min=32; Lv4 wood_per_min=8,gold_per_min=52; Lv5 wood_per_min=12,gold_per_min=84"
+  HousingTapFlow: collect_then_open_modal
+  HousingCollectTiming: before_modal
+  HousingCollectAnimation: fly_to_hud
+  HousingBubblePolicy: show_when_collectable
+  HousingProductionItemDataId: 5
+  HousingProductionRateUnit: per_minute
+  HousingProductionRateByLevel: "12,20,32,52,84"
+  HousingStorageMinutesByLevel: "60,90,120,150,180"
+  HousingFeatureModal: town_center
+  HousingFeatureActions: "upgrade,expand_tiles,building_unlocks,overview"
+  HousingLevelEffectByLevel: "Lv1 gold_per_min=12,storage_minutes=60,light_radius=38,max_open_tiles=6,resident_cap=6,max_building_level=2; Lv2 gold_per_min=20,storage_minutes=90,light_radius=52,max_open_tiles=8,resident_cap=7,max_building_level=3; Lv3 gold_per_min=32,storage_minutes=120,light_radius=70,max_open_tiles=12,resident_cap=8,max_building_level=4; Lv4 gold_per_min=52,storage_minutes=150,light_radius=92,max_open_tiles=17,resident_cap=10,max_building_level=5; Lv5 gold_per_min=84,storage_minutes=180,light_radius=120,max_open_tiles=23,resident_cap=12,max_building_level=6"
   HousingFootprint: 2x2
   HousingSpriteKey: shrine
   HousingConstructionSeconds: 0

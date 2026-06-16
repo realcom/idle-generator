@@ -1,0 +1,96 @@
+version: "1.0"
+game: "<game>"
+status: draft
+purpose: "Audit existing UI foundation documents and record how this standard is installed into the project workflow."
+
+installed_standard:
+  kit_version: "2026-06-16"
+  source_path: ""
+  installed_at: "<yyyy-mm-dd>"
+
+existing_documents:
+  design_system:
+    found: false
+    paths: []
+    notes: ""
+  button_system:
+    found: false
+    paths: []
+    action: create_from_template # link_existing | extend_existing | create_from_template
+  modal_system:
+    found: false
+    paths: []
+    action: create_from_template
+  color_tokens:
+    found: false
+    paths: []
+    action: create_from_template
+  typography:
+    found: false
+    paths: []
+    action: document_location
+  spacing_layout:
+    found: false
+    paths: []
+    action: document_location
+  icon_rules:
+    found: false
+    paths: []
+    action: document_location
+  ui_skin_nineslice:
+    found: false
+    paths: []
+    action: document_location
+  phaser_ui_harness:
+    found: false
+    paths: []
+    action: connect_to_standard
+
+created_or_updated_documents:
+  - path: "design/<game>/button-system.yaml"
+    reason: "Shared button contract required before screen-local button work."
+  - path: "design/<game>/modal-system.yaml"
+    reason: "Shared modal/dialog contract required before modal screens multiply."
+  - path: "design/<game>/color-tokens.yaml"
+    reason: "Semantic color tokens required before runtime color mapping."
+
+unresolved_foundation_questions:
+  # Add focused user questions here when project docs and kit templates do not
+  # define a needed rule clearly enough. Do not silently invent project policy.
+  - topic: ""
+    question: ""
+    user_answer: ""
+    resolved_into:
+      path: ""
+      section: ""
+    status: pending # pending | answered | resolved
+
+workflow_integration_targets:
+  skills_or_agents:
+    - name: "gen-ui-concept"
+      status: pending
+      required_change: "Mention foundation audit before concept extraction when installing the standard."
+    - name: "extract-design-system"
+      status: pending
+      required_change: "Read button/modal/color systems and reference them in component blueprints."
+    - name: "gen-phaser-ui-spec"
+      status: pending
+      required_change: "Require shared button/modal/color references in specs."
+    - name: "build-phaser-ui-runtime"
+      status: pending
+      required_change: "Use shared systems instead of screen-local styles."
+    - name: "design-review"
+      status: pending
+      required_change: "Reject local UI styles that bypass shared systems."
+  harness_docs:
+    - path: "runtime/PHASER_HARNESS.md"
+      status: pending
+      required_change: "Reference the standard, foundation audit, and shared UI systems."
+
+approval_gate:
+  required_before_first_surface:
+    - "Existing UI system docs audited."
+    - "Button system linked or created."
+    - "Modal system linked or created."
+    - "Color tokens linked or created."
+    - "Skill/harness docs updated so the standard is actually called during work."

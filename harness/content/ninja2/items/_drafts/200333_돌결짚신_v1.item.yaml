@@ -1,0 +1,166 @@
+id: 200333
+name: 돌결 짚신
+category: Equipment
+type: Boots
+grade: 1
+rarity: 1
+tier: 1
+power: 22
+requiredExps:
+- 0
+- 30
+- 70
+- 125
+- 200
+- 300
+- 430
+- 600
+- 820
+- 1100
+- 1450
+- 1880
+- 2400
+- 3020
+- 3760
+- 4640
+- 5680
+- 6900
+- 8320
+- 9960
+equipAddStats:
+- type: MoveSpeed
+  value:
+  - 0.25
+  - 0.2525
+  - 0.255
+  - 0.2576
+  - 0.2602
+  - 0.2628
+  - 0.2654
+  - 0.268
+  - 0.2707
+  - 0.2734
+  - 0.2762
+  - 0.2789
+  - 0.2817
+  - 0.2845
+  - 0.2874
+  - 0.2902
+  - 0.2931
+  - 0.2961
+  - 0.299
+  - 0.302
+- type: ItemDropPercent
+  value:
+  - 1.0
+  - 1.018
+  - 1.0363
+  - 1.055
+  - 1.074
+  - 1.0933
+  - 1.113
+  - 1.133
+  - 1.1534
+  - 1.1742
+  - 1.1953
+  - 1.2168
+  - 1.2387
+  - 1.261
+  - 1.2837
+  - 1.3068
+  - 1.3303
+  - 1.3543
+  - 1.3787
+  - 1.4035
+levelUpMaterialItemGroups:
+- shouldAllValid: true
+  materialItems:
+  - id: 5
+    count: 90
+  - id: 200101
+    count: 6
+  - id: 200102
+    count: 1
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003331
+    grade: 1
+    group: 1
+    weight: 32
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: MoveSpeed
+      value:
+      - 0.08
+      - 0.12
+      - 0.18
+      - 0.26
+      - 0.36
+  - id: 2003332
+    grade: 1
+    group: 1
+    weight: 30
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: ItemDropPercent
+      value:
+      - 1.0
+      - 1.8
+      - 2.8
+      - 4.0
+      - 5.8
+  - id: 2003333
+    grade: 1
+    group: 1
+    weight: 20
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: ExpPercent
+      value:
+      - 0.8
+      - 1.4
+      - 2.2
+      - 3.4
+      - 5.0
+  - id: 2003334
+    grade: 1
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: Luck
+      value:
+      - 0.8
+      - 1.4
+      - 2.2
+      - 3.4
+      - 5.0
+rerollMaterialItemGroups:
+- level: 1
+  shouldAllValid: true
+  materialItems:
+  - id: 5
+    count: 180
+  - id: 200110
+    count: 1
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 60
+  - itemDataId: 200101
+    count: 2
+requiredAchievementDataIds:
+- 10103
+popupArgs:
+  ItemDescription: 납작한 돌판을 덧댄 짚신. 느리지만 발 디딤이 흔들리지 않는다.
+spriteGroups:
+  Icon: assets/ninja2/items/flat-equipment/icon_boots_stone_sandals.png

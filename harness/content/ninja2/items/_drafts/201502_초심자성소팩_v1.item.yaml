@@ -1,0 +1,29 @@
+id: 201502
+name: "초심자 성소 팩"
+category: Product
+type: MaterialRealPrice
+grade: 1
+iapIdentifier: "ninja2.cash.starter_sanctuary_pack"
+priceUsd: 2.99
+priceWon: 3300
+unstackable: true
+disposable: false
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 6000, isCore: true }
+      - { itemDataId: 200101, count: 220 }
+      - { itemDataId: 200102, count: 80 }
+      - { itemDataId: 200103, count: 12 }
+      - { itemDataId: 200111, count: 8 }
+      - { itemDataId: 8, count: 40 }
+spriteGroups:
+  Icon: "Items/Ninja2/shop/shop_product_starter_pack.png"
+popupArgs:
+  ShopSection: "Cash"
+  ProductKind: "StarterPack"
+  RuntimeShopKey: "starter_sanctuary_pack"
+  RuntimeIconKey: "shop_starter_pack"
+  PurchaseLimit: "once"
+  Summary: "성소 초반 건설과 동료 성장을 당기는 1회 팩"

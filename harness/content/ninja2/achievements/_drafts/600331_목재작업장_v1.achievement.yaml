@@ -1,0 +1,24 @@
+id: 600331
+name: "목재 작업장"
+type: Mission
+tags: [Mission, Building, HomeUI]
+order: 331
+initialOpen: true
+clientAchievement: false
+condition: AcquireItem
+conditionValue1: 200602
+conditionValue2: 0
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: false
+popupArgs:
+  MissionGroup: building
+  RuntimeMissionKey: build_wood_workshop
+  RuntimeProgressSource: builtBuildings.wood_workshop
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200101, count: 60 }
+      - { itemDataId: 5, count: 120 }

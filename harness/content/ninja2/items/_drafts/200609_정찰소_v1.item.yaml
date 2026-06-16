@@ -60,7 +60,13 @@ popupArgs:
   HousingMaxInstancesByLanternLevel: "5:1"
   HousingDuplicateCostScaling: none
   HousingPurpose: "자원 원정 슬롯과 드롭률 보정으로 플레이어가 필요한 재료 파밍처를 선택하게 한다."
+  HousingDescription: "안개 너머의 길과 자원 흔적을 살피는 원정 건물입니다. 탭하면 파밍 방향을 고르고, 성장할수록 원정 선택지와 아이템 획득 기대값이 좋아집니다."
   HousingEffectKind: expedition_preview_and_drop_bonus
+  HousingTapFlow: open_modal_only
+  HousingBubblePolicy: hidden
+  HousingFeatureModal: expedition
+  HousingFeatureActions: "expedition_select,drop_bonus,upgrade"
+  HousingLevelEffectByLevel: "Lv1 resource_expedition_slots=1,item_drop_percent=1; Lv2 resource_expedition_slots=1,item_drop_percent=2; Lv3 resource_expedition_slots=2,item_drop_percent=4; Lv4 resource_expedition_slots=2,item_drop_percent=7; Lv5 resource_expedition_slots=3,item_drop_percent=10"
   HousingFootprint: 1x1
   HousingSpriteKey: scout_post
   HousingConstructionSeconds: 2400

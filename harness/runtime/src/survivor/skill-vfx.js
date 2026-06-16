@@ -1,6 +1,22 @@
-const SKILL_VFX_VERSION = 'ninja2-skill-vfx-v1';
+const SKILL_VFX_VERSION = 'ninja2-skill-vfx-v2';
 const DEMO_INTERVAL_MS = 560;
 const DEMO_START_DELAY_MS = 900;
+
+export const SKILL_VFX_ATOMS = Object.freeze({
+  kunaiSlashArc: 'ninja2VfxKunaiSlashArc',
+  shurikenStreak: 'ninja2VfxShurikenStreak',
+  smokeBurst: 'ninja2VfxSmokeBurst',
+  galeTrail: 'ninja2VfxGaleTrail',
+  impactFlash: 'ninja2VfxImpactFlash',
+});
+
+export const SKILL_VFX_ATOM_ASSETS = Object.freeze([
+  { key: SKILL_VFX_ATOMS.kunaiSlashArc, path: 'assets/ninja2/battle/skill-vfx/vfx_kunai_slash_arc.png' },
+  { key: SKILL_VFX_ATOMS.shurikenStreak, path: 'assets/ninja2/battle/skill-vfx/vfx_shuriken_streak.png' },
+  { key: SKILL_VFX_ATOMS.smokeBurst, path: 'assets/ninja2/battle/skill-vfx/vfx_smoke_burst.png' },
+  { key: SKILL_VFX_ATOMS.galeTrail, path: 'assets/ninja2/battle/skill-vfx/vfx_gale_trail.png' },
+  { key: SKILL_VFX_ATOMS.impactFlash, path: 'assets/ninja2/battle/skill-vfx/vfx_impact_flash.png' },
+]);
 
 export const SKILL_VFX_DEMO_IDS = Object.freeze([
   300101,
@@ -56,6 +72,10 @@ export const SKILL_VFX_PROFILES = Object.freeze({
     color: 0xffe17a,
     accent: 0xff6b55,
     texture: 'slashBlade',
+    castAtom: SKILL_VFX_ATOMS.kunaiSlashArc,
+    atomCount: 1,
+    atomScale: 0.34,
+    visualMaxTargets: 2,
     maxTargets: 4,
     slashCount: 3,
     hitPulse: 0xfff1c8,
@@ -66,6 +86,9 @@ export const SKILL_VFX_PROFILES = Object.freeze({
     color: 0xd8d8c2,
     accent: 0x43e7ff,
     texture: 'slashBlade',
+    projectileAtom: SKILL_VFX_ATOMS.shurikenStreak,
+    projectileAtomScale: 0.2,
+    impactAtom: SKILL_VFX_ATOMS.impactFlash,
     maxTargets: 3,
     shotsPerTarget: 3,
     hitPulse: 0xdff7ff,
@@ -75,6 +98,10 @@ export const SKILL_VFX_PROFILES = Object.freeze({
     family: 'smokeBomb',
     color: 0x9aa5a5,
     accent: 0x36e0d4,
+    areaAtom: SKILL_VFX_ATOMS.smokeBurst,
+    areaAtomAlpha: 0.74,
+    areaAtomScale: 0.42,
+    visualMaxTargets: 1,
     maxTargets: 6,
     hitPulse: 0x8bd8d0,
   },
@@ -92,6 +119,8 @@ export const SKILL_VFX_PROFILES = Object.freeze({
     color: 0xffe17a,
     accent: 0xd8d8c2,
     texture: 'slashBlade',
+    projectileAtom: SKILL_VFX_ATOMS.shurikenStreak,
+    projectileAtomScale: 0.24,
     maxTargets: 3,
     hitPulse: 0xffe17a,
   },
@@ -172,6 +201,8 @@ export const SKILL_VFX_PROFILES = Object.freeze({
     family: 'galeStep',
     color: 0x8bd95c,
     accent: 0xeaffc8,
+    auraAtom: SKILL_VFX_ATOMS.galeTrail,
+    auraAtomScale: 0.34,
     selfBuff: true,
     hitPulse: 0x8bd95c,
   },
@@ -193,6 +224,9 @@ export function installSkillVfxContract(root = document.documentElement) {
   root.dataset.survivorSkillVfxReady = 'true';
   root.dataset.survivorSkillVfxVersion = SKILL_VFX_VERSION;
   root.dataset.survivorSkillVfxCount = String(SKILL_VFX_DEMO_IDS.length);
+  root.dataset.survivorSkillVfxGeneratedAtomCount = String(SKILL_VFX_ATOM_ASSETS.length);
+  root.dataset.survivorSkillVfxGeneratedAtomUsedCount = '0';
+  root.dataset.survivorSkillVfxLastGeneratedAtom = '';
 }
 
 export function spawnSkillCastFx(scene, skill) {
@@ -259,6 +293,22 @@ export function spawnSkillTimelineFx(scene, { skill } = {}) {
   if (!profile || !scene?.add) return false;
 
   const target = profile.selfBuff ? pointFromUnit(skill.owner) : targetPoints(skill, 1)[0] || pointFromUnit(skill.owner);
+  const atom = addVfxSprite(scene, target.x, target.y, profile.impactAtom, 70, {
+    alpha: 0.92,
+    scale: profile.selfBuff ? 0.42 : 0.34,
+    rotation: Math.random() * 0.4 - 0.2,
+  });
+  if (atom) {
+    scene.tweens.add({
+      targets: atom,
+      alpha: 0,
+      scaleX: atom.scaleX * 1.35,
+      scaleY: atom.scaleY * 1.35,
+      duration: 220,
+      ease: 'Quad.easeOut',
+      onComplete: () => atom.destroy(),
+    });
+  }
   const pulse = localGraphics(scene, target.x, target.y, 66);
   pulse.lineStyle(3, profile.hitPulse || profile.color, 0.78);
   pulse.strokeCircle(0, 0, profile.selfBuff ? 64 : 42);
@@ -383,8 +433,29 @@ function ensureDemoTarget(scene, enemyDef, index) {
 }
 
 function drawSlashFan(scene, skill, profile) {
-  const points = targetPoints(skill, profile.maxTargets || 3);
+  const points = targetPoints(skill, profile.visualMaxTargets || profile.maxTargets || 3);
   points.forEach((point, pointIndex) => {
+    if (textureExists(scene, profile.castAtom)) {
+      const count = Math.max(1, Math.min(profile.atomCount || profile.slashCount || 2, 2));
+      for (let i = 0; i < count; i += 1) {
+        const sprite = addVfxSprite(scene, point.x, point.y, profile.castAtom, 66 + i, {
+          alpha: i === 1 ? 0.84 : 0.72,
+          scale: (profile.atomScale || 0.42) + i * 0.04,
+          rotation: -0.78 + i * 0.46 + pointIndex * 0.14,
+        });
+        if (!sprite) continue;
+        scene.tweens.add({
+          targets: sprite,
+          alpha: 0,
+          scaleX: sprite.scaleX * 1.18,
+          scaleY: sprite.scaleY * 1.18,
+          duration: 190 + i * 20,
+          ease: 'Quad.easeOut',
+          onComplete: () => sprite.destroy(),
+        });
+      }
+      return;
+    }
     const g = localGraphics(scene, point.x, point.y, 64);
     const count = profile.slashCount || 2;
     for (let i = 0; i < count; i += 1) {
@@ -415,9 +486,10 @@ function drawProjectileVolley(scene, skill, profile) {
       const jitter = (shot - (shots - 1) / 2) * 18;
       const start = { x: origin.x - 12 + shot * 8, y: origin.y + jitter * 0.35 };
       const end = { x: point.x + jitter, y: point.y - jitter * 0.25 };
-      const blade = scene.add.sprite(start.x, start.y, profile.texture || 'slashBlade');
+      const texture = textureExists(scene, profile.projectileAtom) ? profile.projectileAtom : profile.texture || 'slashBlade';
+      const blade = scene.add.sprite(start.x, start.y, texture);
       blade.setDepth(63 + shot);
-      blade.setScale(0.42);
+      blade.setScale(texture === profile.projectileAtom ? profile.projectileAtomScale || 0.24 : 0.42);
       blade.setRotation(angleBetween(start, end));
       trail.lineStyle(2, shot % 2 ? profile.accent : profile.color, 0.34);
       trail.lineBetween(start.x, start.y, end.x, end.y);
@@ -438,8 +510,25 @@ function drawProjectileVolley(scene, skill, profile) {
 }
 
 function drawSmokeBomb(scene, skill, profile) {
-  const points = targetPoints(skill, 3);
+  const points = targetPoints(skill, profile.visualMaxTargets || 3);
   points.forEach(point => {
+    const smoke = addVfxSprite(scene, point.x, point.y, profile.areaAtom, 61, {
+      alpha: profile.areaAtomAlpha || 0.82,
+      scale: profile.areaAtomScale || 0.5,
+      rotation: Math.random() * 0.34 - 0.17,
+    });
+    if (smoke) {
+      scene.tweens.add({
+        targets: smoke,
+        alpha: 0,
+        scaleX: smoke.scaleX * 1.28,
+        scaleY: smoke.scaleY * 1.28,
+        duration: 560,
+        ease: 'Sine.easeOut',
+        onComplete: () => smoke.destroy(),
+      });
+      return;
+    }
     const g = localGraphics(scene, point.x, point.y, 61);
     g.fillStyle(0x111b16, 0.22);
     g.fillCircle(0, 0, 84);
@@ -457,6 +546,28 @@ function drawSmokeBomb(scene, skill, profile) {
 
 function drawSelfAura(scene, skill, profile) {
   const origin = pointFromUnit(skill.owner);
+  if (textureExists(scene, profile.auraAtom)) {
+    for (let i = 0; i < 3; i += 1) {
+      const angle = -0.4 + i * 0.42;
+      const sprite = addVfxSprite(scene, origin.x + (i - 1) * 12, origin.y - 12 + i * 6, profile.auraAtom, 62 + i, {
+        alpha: 0.84,
+        scale: (profile.auraAtomScale || 0.42) + i * 0.03,
+        rotation: angle,
+      });
+      if (!sprite) continue;
+      scene.tweens.add({
+        targets: sprite,
+        x: origin.x + 56 + i * 16,
+        y: origin.y - 20 + i * 10,
+        alpha: 0,
+        scaleX: sprite.scaleX * 1.16,
+        scaleY: sprite.scaleY * 1.16,
+        duration: 430,
+        ease: 'Sine.easeOut',
+        onComplete: () => sprite.destroy(),
+      });
+    }
+  }
   const g = localGraphics(scene, origin.x, origin.y, 62);
   g.fillStyle(profile.color, 0.08);
   g.fillCircle(0, 0, 96);
@@ -696,6 +807,24 @@ function pointFromUnit(unit) {
     x: Number(unit?.x) || 0,
     y: Number(unit?.y) || 0,
   };
+}
+
+function textureExists(scene, key) {
+  return Boolean(key && scene?.textures?.exists?.(key));
+}
+
+function addVfxSprite(scene, x, y, textureKey, depth, { alpha = 1, scale = 1, rotation = 0 } = {}) {
+  if (!textureExists(scene, textureKey)) return null;
+  const sprite = scene.add.sprite(x, y, textureKey);
+  sprite.setDepth(depth);
+  sprite.setAlpha(alpha);
+  sprite.setScale(scale);
+  sprite.setRotation(rotation);
+  const root = document.documentElement;
+  const count = Number(root.dataset.survivorSkillVfxGeneratedAtomUsedCount || 0) + 1;
+  root.dataset.survivorSkillVfxGeneratedAtomUsedCount = String(count);
+  root.dataset.survivorSkillVfxLastGeneratedAtom = textureKey;
+  return sprite;
 }
 
 function localGraphics(scene, x, y, depth) {

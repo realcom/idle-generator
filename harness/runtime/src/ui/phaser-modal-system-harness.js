@@ -26,8 +26,8 @@ const COLORS = {
 
 const ASSETS = {
   panel: `assets/${theme}/ui/panel_parchment_9slice.png`,
-  crest: `assets/${theme}/ui/level-choice/frame_crest.png`,
-  corner: `assets/${theme}/ui/level-choice/frame_corner_leaf.png`,
+  crest: `assets/${theme}/ui/sanctuary-build/frame_crest.png`,
+  corner: `assets/${theme}/ui/sanctuary-build/frame_corner_leaf.png`,
   background: `assets/${theme}/home/background_forest_sanctuary.png`,
   guardian: `assets/${theme}/battle/characters/guardian_hero.png`,
   enemyA: `assets/${theme}/battle/characters/enemy_leaf_imp.png`,
@@ -378,8 +378,8 @@ function drawPanel(scene, metrics) {
 function drawOrnaments(scene, metrics, variant) {
   if (scene.textures.exists('crest')) {
     const crest = scene.add.image(metrics.x + metrics.width / 2, metrics.y - 4, 'crest');
-    const crestWidth = clamp(metrics.width * 0.34, 104, 178);
-    crest.setDisplaySize(crestWidth, crestWidth * 0.62).setDepth(2);
+    const crestWidth = clamp(metrics.width * 0.42, 148, 220);
+    crest.setDisplaySize(crestWidth, crestWidth * 0.55).setDepth(2);
   } else {
     const g = scene.add.graphics();
     g.fillStyle(COLORS.ink, 1);
@@ -389,12 +389,12 @@ function drawOrnaments(scene, metrics, variant) {
   }
 
   if (!scene.textures.exists('corner') || variant.widthRatio < 0.73) return;
-  const size = clamp(metrics.width * 0.15, 54, 88);
+  const size = clamp(metrics.width * 0.16, 58, 92);
   const corners = [
-    { x: metrics.x + 9, y: metrics.y + 10, flipX: false, flipY: false },
-    { x: metrics.x + metrics.width - 9, y: metrics.y + 10, flipX: true, flipY: false },
-    { x: metrics.x + 9, y: metrics.y + metrics.height - 10, flipX: false, flipY: true },
-    { x: metrics.x + metrics.width - 9, y: metrics.y + metrics.height - 10, flipX: true, flipY: true },
+    { x: metrics.x + 9, y: metrics.y + 10, flipX: true, flipY: true },
+    { x: metrics.x + metrics.width - 9, y: metrics.y + 10, flipX: false, flipY: true },
+    { x: metrics.x + 9, y: metrics.y + metrics.height - 10, flipX: true, flipY: false },
+    { x: metrics.x + metrics.width - 9, y: metrics.y + metrics.height - 10, flipX: false, flipY: false },
   ];
   for (const corner of corners) {
     scene.add.image(corner.x, corner.y, 'corner')

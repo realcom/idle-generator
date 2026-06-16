@@ -1,0 +1,164 @@
+id: 200203
+name: 돌결 쿠나이
+category: Weapon
+type: Dagger
+grade: 1
+rarity: 1
+tier: 1
+power: 42
+requiredExps:
+- 0
+- 30
+- 70
+- 125
+- 200
+- 300
+- 430
+- 600
+- 820
+- 1100
+- 1450
+- 1880
+- 2400
+- 3020
+- 3760
+- 4640
+- 5680
+- 6900
+- 8320
+- 9960
+equipAddStats:
+- type: Attack
+  value:
+  - 24.0
+  - 27.12
+  - 30.6456
+  - 34.6295
+  - 39.1314
+  - 44.2184
+  - 49.9668
+  - 56.4625
+  - 63.8027
+  - 72.097
+  - 81.4696
+  - 92.0607
+  - 104.0286
+  - 117.5523
+  - 132.8341
+  - 150.1025
+  - 169.6158
+  - 191.6659
+  - 216.5824
+  - 244.7381
+- type: BossDamageEfficiencyPercent
+  value:
+  - 2.0
+  - 2.05
+  - 2.1012
+  - 2.1538
+  - 2.2076
+  - 2.2628
+  - 2.3194
+  - 2.3774
+  - 2.4368
+  - 2.4977
+  - 2.5602
+  - 2.6242
+  - 2.6898
+  - 2.757
+  - 2.8259
+  - 2.8966
+  - 2.969
+  - 3.0432
+  - 3.1193
+  - 3.1973
+levelUpMaterialItemGroups:
+- shouldAllValid: true
+  materialItems:
+  - id: 5
+    count: 120
+  - id: 200101
+    count: 8
+  - id: 200102
+    count: 2
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2002031
+    grade: 1
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 1.2
+      - 2.0
+      - 3.2
+      - 5.0
+      - 7.5
+  - id: 2002032
+    grade: 1
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: AttackSpeedPercent
+      value:
+      - 0.8
+      - 1.4
+      - 2.2
+      - 3.4
+      - 5.0
+  - id: 2002033
+    grade: 1
+    group: 1
+    weight: 22
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: BossDamageEfficiencyPercent
+      value:
+      - 1.0
+      - 1.8
+      - 2.8
+      - 4.2
+      - 6.0
+  - id: 2002034
+    grade: 1
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 0.6
+      - 1.0
+      - 1.6
+      - 2.4
+      - 3.4
+rerollMaterialItemGroups:
+- level: 1
+  shouldAllValid: true
+  materialItems:
+  - id: 5
+    count: 220
+  - id: 200110
+    count: 1
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 80
+  - itemDataId: 200101
+    count: 2
+popupArgs:
+  ItemDescription: 차가운 돌결을 살린 쿠나이. 묵직하지만 흔들림 없는 첫 타를 만든다.
+spriteGroups:
+  Icon: assets/ninja2/items/flat-equipment/icon_weapon_stone_kunai.png

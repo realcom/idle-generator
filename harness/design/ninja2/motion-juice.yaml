@@ -11,6 +11,13 @@ motion:
     production_bubble: "small bounce on collect availability"
     residents: "short y-sort idle/carry/tend loops"
     sortie: "orange button glow when energy available"
+  ui_interactions:
+    press: "short 80-120ms tactile inset with tiny squash; never resize the hit target"
+    action_confirm: "lantern-gold pop/glint for primary actions such as sortie, upgrade, equip, and modal CTA"
+    select_confirm: "soul-teal rim pulse for tabs, hex/building focus, dungeon preview, equipment slot/card, and filters"
+    ready_loop: "quiet 1300ms breathing glow on available sortie, collect, and ready skill affordances only"
+    disabled_error: "brief 220ms shake plus dimmed saturation for disabled or unavailable controls"
+    reduced_motion: "preserve state color and sound, remove loops and large transforms"
   battle:
     hero_aura: "warm circular pulse"
     lantern_projectile: "short gold trail toward target"

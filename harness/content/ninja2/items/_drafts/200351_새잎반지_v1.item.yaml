@@ -1,0 +1,170 @@
+id: 200351
+name: 새잎 반지
+category: Equipment
+type: Ring
+grade: 1
+rarity: 1
+tier: 1
+power: 30
+requiredExps:
+- 0
+- 30
+- 70
+- 125
+- 200
+- 300
+- 430
+- 600
+- 820
+- 1100
+- 1450
+- 1880
+- 2400
+- 3020
+- 3760
+- 4640
+- 5680
+- 6900
+- 8320
+- 9960
+equipAddStats:
+- type: CriticalPercent
+  value:
+  - 1.2
+  - 1.2216
+  - 1.2436
+  - 1.266
+  - 1.2888
+  - 1.312
+  - 1.3356
+  - 1.3596
+  - 1.3841
+  - 1.409
+  - 1.4344
+  - 1.4602
+  - 1.4865
+  - 1.5132
+  - 1.5405
+  - 1.5682
+  - 1.5964
+  - 1.6252
+  - 1.6544
+  - 1.6842
+- type: SellPricePercent
+  value:
+  - 1.0
+  - 1.018
+  - 1.0363
+  - 1.055
+  - 1.074
+  - 1.0933
+  - 1.113
+  - 1.133
+  - 1.1534
+  - 1.1742
+  - 1.1953
+  - 1.2168
+  - 1.2387
+  - 1.261
+  - 1.2837
+  - 1.3068
+  - 1.3303
+  - 1.3543
+  - 1.3787
+  - 1.4035
+levelUpMaterialItemGroups:
+- shouldAllValid: true
+  materialItems:
+  - id: 5
+    count: 120
+  - id: 200101
+    count: 4
+  - id: 200103
+    count: 1
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003511
+    grade: 1
+    group: 1
+    weight: 32
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 0.6
+      - 1.0
+      - 1.6
+      - 2.4
+      - 3.4
+  - id: 2003512
+    grade: 1
+    group: 1
+    weight: 28
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: SellPricePercent
+      value:
+      - 1.0
+      - 1.8
+      - 2.8
+      - 4.0
+      - 5.8
+  - id: 2003513
+    grade: 1
+    group: 1
+    weight: 22
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: ItemDropPercent
+      value:
+      - 0.8
+      - 1.4
+      - 2.2
+      - 3.4
+      - 5.0
+  - id: 2003514
+    grade: 1
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 2
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 3.5
+      - 5.8
+      - 9.0
+      - 13.5
+      - 20.0
+rerollMaterialItemGroups:
+- level: 1
+  shouldAllValid: true
+  materialItems:
+  - id: 5
+    count: 240
+  - id: 200103
+    count: 1
+  - id: 200110
+    count: 1
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 75
+  - itemDataId: 200101
+    count: 1
+  - itemDataId: 200103
+    count: 1
+requiredAchievementDataIds:
+- 10105
+popupArgs:
+  ItemDescription: 작은 잎사귀를 감은 반지. 새 전투를 시작할 때 손끝을 따뜻하게 한다.
+spriteGroups:
+  Icon: assets/ninja2/items/flat-equipment/icon_ring_leaf_ring.png

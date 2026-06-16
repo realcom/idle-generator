@@ -1,0 +1,36 @@
+version: "1.0"
+game: "<game>"
+status: draft
+source_concepts:
+  - "<concept-id>"
+
+foundation_systems:
+  buttons: "button-system.yaml"
+  modals: "modal-system.yaml"
+  colors: "color-tokens.yaml"
+
+skins:
+  <component_skin_id>:
+    component: "<ComponentName>"
+    mode: hybrid # native_ui | generate_image | hybrid | reuse
+    states:
+      normal:
+        asset_key: ""
+        visual_role: ""
+        phaser_usage: "" # phaser_nineslice | image_sprite | css_background | phaser_graphics
+    content_insets_px: { left: 0, right: 0, top: 0, bottom: 0 }
+    slice_hints_px: null
+    ornament_layer: null
+    semantic_color_tokens: []
+    button_role: null
+    modal_section: null
+    must_not_bake:
+      - text
+      - numbers
+      - prices
+      - timers
+      - localized_labels
+
+native_primitives:
+  progress_bar:
+    usage: "Use runtime primitive unless art direction requires a generated frame."

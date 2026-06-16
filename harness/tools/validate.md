@@ -74,6 +74,18 @@ python3 harness/tools/design_blueprint_validate.py <game>
 python3 harness/tools/design_blueprint_validate.py <game> --strict
 ```
 
+### 9. Phaser Data Contract — ✅ 별도 구현
+- `harness/runtime/specs/ui/*.yaml`이 `data_contract`를 갖고, 화면 데이터 소스와 binding을 선언하는가
+- 런타임 JS/HTML/CSS에 콘텐츠 테이블, dataId literal, 사용자 노출 문구, asset-plan을 우회한 asset path가 박혀 있지 않은가
+- 기존 레거시 부채는 `data_contract.hardcoding_allowlist`로 정확한 file:line:code[:symbol]에만 한정하는가
+
+실행:
+
+```bash
+python3 harness/tools/phaser_data_contract_audit.py <game> --spec harness/runtime/specs/ui/<surface>.yaml
+python3 harness/tools/phaser_data_contract_audit.py <game> --spec harness/runtime/specs/ui/<surface>.yaml --strict
+```
+
 ## 출력
 
 ```
@@ -81,6 +93,7 @@ PASS: 23 files
 WARN: content/idlez/units/slime_green.unit.yaml — Attack 1레벨값 12 < profile.guardrails.Attack.min 권장?
 ERROR: content/idlez/rewards/meadow_slime_drops.reward.yaml — itemDataId 200103 not found in Items
 ERROR: design/ninja2/component-blueprints.yaml — rectangular skin missing content_insets_by_slot
+WARN: runtime/src/survivor/survivor-app.js:49 — runtime_content_table MAIN_MAP_IDS
 ```
 
 위반 0이면 → 컴파일 단계(소스→엔진 proto-JSON) 진행 가능.

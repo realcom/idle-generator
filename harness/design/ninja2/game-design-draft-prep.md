@@ -15,6 +15,7 @@
 - 디자인 레지스트리: `harness/design/ninja2/design-registry.yaml`
 - 시스템 설계: `harness/design/ninja2/system-design-v0.md`
 - 시스템 경제 루프: `harness/design/ninja2/system-economy-loop-v0.md`
+- 메인맵/던전 기획: `harness/design/ninja2/map-dungeon-plan-v0.md`
 - 하우징 건물 테크/비용/효과 데이터: `harness/design/ninja2/housing-building-tech-v0.yaml`
 - 현재 콘텐츠 초안: `harness/content/ninja2/`
 

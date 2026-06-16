@@ -1,0 +1,26 @@
+id: 201504
+name: "광고 제거 축복"
+category: Product
+type: MaterialRealPrice
+grade: 1
+iapIdentifier: "ninja2.cash.remove_ads"
+priceUsd: 5.99
+priceWon: 6600
+unstackable: true
+disposable: false
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 201504, count: 1, isCore: true }
+      - { itemDataId: 3, count: 300 }
+spriteGroups:
+  Icon: "Items/Ninja2/shop/shop_product_ad_removal_charm.png"
+popupArgs:
+  ShopSection: "Cash"
+  ProductKind: "AdRemoval"
+  RuntimeShopKey: "ad_removal_blessing"
+  RuntimeIconKey: "shop_ad_removal"
+  Entitlement: "Permanent"
+  PurchaseLimit: "once"
+  Summary: "광고 제거와 감사 루비 보너스"

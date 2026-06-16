@@ -17,8 +17,8 @@ popupArgs:
   ClientWaveCount: 10
   CoreLoop: "SurvivalHousing"
 initVariables:
-  - { callerKey: 605, value: 5 }
-  - { callerKey: 606, value: 5 }
+  - { callerKey: 605, value: 27 }
+  - { callerKey: 606, value: 27 }
 boardConstants: { levelUpChoiceCount: 3 }
 initLevel: 5
 initGold: 680
@@ -43,4 +43,4 @@ rewardAddItemGroups:
       - { itemDataId: 200101, count: 12 }
       - { itemDataId: 200102, count: 3 }
       - { itemDataId: 200103, count: 1 }
-
+      - { itemDataId: 200331, count: 1, isCore: true }

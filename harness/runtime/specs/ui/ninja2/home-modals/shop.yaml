@@ -1,0 +1,62 @@
+version: "1.0"
+game: ninja2
+slug: home-modals/shop
+status: implemented
+
+target_runtime:
+  page: harness/runtime/survivor-runtime.html
+  entrypoint: harness/runtime/src/survivor/survivor-app.js
+  module: harness/runtime/src/survivor/home-modals/shop.js
+  fixture_urls:
+    - harness/runtime/survivor-runtime.html?game=ninja2&fixture=city&tab=shop
+
+source_design:
+  primary_concept:
+    - harness/design/ninja2/concepts/home-modals/shop/concept-b.md
+  modal_family:
+    - harness/design/ninja2/concepts/ninja2_phaser_modal_system_a.md
+    - harness/design/ninja2/concepts/ninja2_sanctuary_build_modal_a.md
+  sibling_modal:
+    - harness/design/ninja2/concepts/home-modals/mission/concept-a.md
+
+runtime_contract:
+  - "The bottom 상점 tab opens #homeShopModal instead of rendering products inside #homeFeatureScreen."
+  - "#homeShopModal reuses the home modal shell contract: home-modal-host, home-modal-shell, home-modal-header, home-modal-body, home-modal-footer, scrim, crest, corner ornaments, and a visible X close button."
+  - "The shop is a cash-payment product mockup. Product rows mirror Product items 201501-201504 from harness/content/ninja2/items/_drafts and use generated product icons from ninja2.ui.shop_product_icons.cash_v1."
+  - "Product names, descriptions, KRW/USD prices, reward quantities, entitlement states, and button labels remain native DOM text."
+  - "Available, owned/claimed, and locked states must be visible in row class names and styling."
+  - "Clicking X or the scrim closes the shop modal and returns to the sanctuary tab."
+  - "Buying a product in the harness simulates test-payment success, updates sanctuary rewards/shopClaims, data-homeShopAvailableCount, and rerenders the modal."
+
+data_contract:
+  sources:
+    content:
+      - "Product items 201501-201504 in harness/content/ninja2/items/_drafts define the cash shop IDs, iapIdentifier values, real-money prices, addItemGroups, and spriteGroups.Icon."
+    design_assets:
+      - "harness/design/ninja2/asset-plan.yaml:ninja2.ui.shop_product_icons.cash_v1 defines the generated product icon atoms."
+    runtime_state:
+      - "scene.sanctuary.shopClaims stores owned one-time product keys for the local Phaser prototype."
+      - "scene.sanctuary ruby/freeRuby/energy/adRemoval fields store harness-only simulated purchase rewards."
+  bindings:
+    shop_modal:
+      selected_tab: "query tab=shop or HOME_TAB_KEYS state"
+      product_rows: "HOME_SHOP_PRODUCT_DEFS mirrors Product item ids 201501-201504 until the home modal reads compiled Items.json Product rows directly."
+      icon_assets:
+        201501: harness/runtime/assets/ninja2/ui/shop/shop_product_ruby_pouch.png
+        201502: harness/runtime/assets/ninja2/ui/shop/shop_product_starter_pack.png
+        201503: harness/runtime/assets/ninja2/ui/shop/shop_product_energy_refill.png
+        201504: harness/runtime/assets/ninja2/ui/shop/shop_product_ad_removal_charm.png
+  fixtures:
+    city: "harness/runtime/survivor-runtime.html?game=ninja2&fixture=city&tab=shop"
+
+validation:
+  static:
+    - "node --check harness/runtime/src/survivor/survivor-app.js"
+    - "node --check harness/runtime/src/survivor/home-modals/shop.js"
+  smoke:
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --query 'game=ninja2&fixture=city&tab=shop' --screenshot /tmp/ninja2-home-shop-modal.png --timeout 120"
+  browser_checks:
+    - "data-home-shop-modal-open is true after clicking the 상점 bottom tab."
+    - "#homeShopModal .home-build-modal-close is visible."
+    - "At least four .home-shop-row entries render for the city fixture with generated product icon images."
+    - "Buying a one-time cash product updates available count, marks the product owned, and remains inside the modal."

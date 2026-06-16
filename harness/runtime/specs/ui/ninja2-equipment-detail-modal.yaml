@@ -1,0 +1,94 @@
+version: "1.0"
+game: ninja2
+slug: ninja2-equipment-detail-modal
+status: draft
+
+target_runtime:
+  page: harness/runtime/survivor-runtime.html
+  entrypoint: harness/runtime/src/survivor/survivor-app.js
+  implementation_mode: dom_modal_reusing_home_modal_shell
+  fixture_urls:
+    - harness/runtime/survivor-runtime.html?game=ninja2&fixture=city&tab=equipment&equipmentDetail=200201
+    - harness/runtime/survivor-runtime.html?game=ninja2&fixture=city&tab=equipment
+
+source_design:
+  selected_concept:
+    id: ninja2_equipment_detail_modal_a
+    image: harness/design/ninja2/concepts/ninja2_equipment_detail_modal_a.png
+    notes: harness/design/ninja2/concepts/ninja2_equipment_detail_modal_a.md
+  supporting_concepts:
+    - harness/design/ninja2/concepts/ninja2_equipment_equip_screen_a.md
+    - harness/design/ninja2/concepts/ninja2_phaser_modal_system_a.md
+    - harness/design/ninja2/concepts/ninja2_sanctuary_build_modal_a.md
+  tokens:
+    - harness/design/ninja2/component-blueprints.yaml:surfaces.EquipmentEquip
+    - harness/design/ninja2/component-blueprints.yaml:surfaces.PhaserModalSystem
+    - harness/design/ninja2/component-blueprints.yaml:components.ModalFooter
+    - harness/design/ninja2/component-blueprints.yaml:components.ModalActionButton
+    - harness/design/ninja2/component-skins.yaml
+    - harness/design/ninja2/asset-plan.yaml
+
+intent:
+  summary: "Selecting an owned equipment card opens a detail modal for that item, preserving the equipment tab context behind a scrim."
+  contract:
+    - "The modal is not a baked bitmap; it reuses home-modal-host, home-modal-shell, home-modal-scrim, parchment 9-slice, and sanctuary frame ornaments."
+    - "Item icon comes from Items.json spriteGroups.Icon; name, slot, rarity, level, owned count, stats, description, and button labels are native DOM text."
+    - "The background equipment screen remains visible but inert while the detail modal is open."
+    - "The equip CTA uses the same equipSelectedHomeEquipment path so slot state and save behavior remain centralized."
+
+layout:
+  modal_shell:
+    owner: "#homeEquipmentDetailModal"
+    width: "min(392px, calc(100vw - 24px))"
+    max_height: "min(646px, calc(100dvh - 32px))"
+    grid_rows: [header, body, footer]
+  body:
+    owner: "#homeEquipmentDetailBody"
+    sections:
+      - item_hero: "large icon well, item title metadata, rarity chip, level chip"
+      - stat_compare: "up to four stat rows; each row has label, value, optional comparison delta"
+      - description: "two-line Korean description block with word-break keep-all"
+      - metadata_chips: "owned count, slot, equipped state"
+  footer:
+    owner: "#homeEquipmentDetailFooter"
+    button_model: "Reuse ModalFooter and ModalActionButton sizing: 52px button height, 12px gap, disabled state without layout shift."
+    actions:
+      - data-close-equipment-detail
+      - data-equipment-detail-action: equip
+    hierarchy:
+      cancel: "quiet parchment native secondary on the left; it must not read as the primary CTA."
+      primary: "right-side native ModalActionButton-style orange CTA; avoid the run-result return-button skin because its transparent margins collapse visually at this compact footer size."
+      disabled: "primary button keeps the same geometry and dims via color/filter only."
+
+data_contract:
+  query:
+    - "equipmentDetail=<itemId> deep-links into the equipment tab and opens the modal for an owned/catalog item when available."
+  document_datasets:
+    - homeEquipmentDetailOpen: "true/false"
+    - homeEquipmentDetailItemId: "selected modal item id or empty string"
+    - homeEquipmentSelected: "selected item id, kept in sync with the modal item"
+  interactions:
+    - "Clicking an equipment inventory card opens the detail modal and updates homeEquipmentSelected."
+    - "Clicking an equipped slot with an item opens the detail modal for that item."
+    - "Clicking close, scrim, or Escape closes only the detail modal."
+    - "Clicking 장착 in the modal equips the selected owned item, then keeps the modal details in sync with the new state."
+  sources:
+    items: harness/build/ninja2/Items.json
+    owned_state: sanctuary.itemInventory
+    equipped_state: sanctuary.equippedItemIds
+    levels: sanctuary.equipmentLevels or sanctuary.itemLevels fallback
+
+validation:
+  static:
+    - "python3 -m py_compile harness/tools/phaser_smoke.py"
+    - "python3 harness/tools/design_blueprint_validate.py ninja2"
+  smoke:
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --no-browser"
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --query 'game=ninja2&fixture=city&tab=equipment&equipmentDetail=200201' --screenshot /tmp/ninja2-equipment-detail-modal.png"
+    - "python3 harness/tools/phaser_smoke.py ninja2 --skip-compile --runtime harness/runtime/survivor-runtime.html --expect survivor --query 'game=ninja2&fixture=city&tab=equipment&equipmentClick=demo' --screenshot /tmp/ninja2-equipment-detail-click.png"
+  checks:
+    - "homeEquipmentDetailOpen is true for the equipmentDetail query."
+    - "homeEquipmentDetailItemId matches the selected item."
+    - "The modal shows one icon well, at least one stat row, and a native equip button."
+    - "The footer primary button keeps at least 48px visual height, equal-width two-button layout, and the cancel button remains visually secondary."
+    - "Korean item name and description do not overflow the modal shell at the smoke viewport."

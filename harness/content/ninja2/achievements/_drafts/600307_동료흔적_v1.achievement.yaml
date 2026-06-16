@@ -1,0 +1,23 @@
+id: 600307
+name: "동료 흔적"
+type: Mission
+tags: [Mission, SideDungeon, Companion, HomeUI]
+order: 307
+initialOpen: true
+clientAchievement: false
+condition: WinGame
+conditionValue1: 500206
+conditionValue2: 0
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: false
+popupArgs:
+  MissionGroup: side_dungeon
+  RuntimeMissionKey: clear_companion_trace
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200111, count: 8 }
+      - { itemDataId: 200103, count: 10 }

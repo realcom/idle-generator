@@ -24,6 +24,34 @@ source_design:
     - harness/design/ninja2/component-skins.yaml
     - harness/design/ninja2/asset-plan.yaml
 
+data_contract:
+  sources:
+    content:
+      - "Compiled Maps.json provides the active map, wave metadata, reward groups, and popupArgs.ClientWaveCount."
+      - "Compiled Units.json provides player, enemy, and boss combat stats consumed by IdlezBoard."
+      - "Compiled Skills.json provides the run skill pool and cooldown/effect metadata."
+      - "Compiled Items.json provides reward item names, categories, and resource ids."
+      - "Compiled Triggers.json provides the map wave trigger graph used by the board kernel."
+    runtime_state:
+      - "globalThis.__IDLEZ_SURVIVOR_BOARD__ exposes live tick, enemy, kill, HP, drop, and end-game state for smoke checks."
+      - "globalThis.__IDLEZ_SURVIVOR__ owns transient UI state for level choice, VFX demos, encounter demos, and result fixtures."
+      - "document.documentElement.dataset.survivor* exposes the browser-smoke contract."
+    design_assets:
+      - "harness/design/ninja2/asset-plan.yaml maps generated HUD, encounter, skill VFX, and run-result assets to runtime paths."
+  bindings:
+    combat:
+      map_selection: "query map=<id> or default START_MAP_ID until main-map selection fully moves to compiled/scenario data."
+      board_state: "IdlezBoard Units/Skills/Triggers drive combat entities, attacks, drops, wave progress, and boss clear/defeat."
+      run_skills: "Compiled Skills.json feeds level-up choices and profile skill chips."
+      reward_ledger: "Compiled item ids and run drop state render resource chips and result reward rows."
+      generated_assets: "Asset plan paths bind battle controls, encounter pickups, skill VFX atoms, and result overlays."
+  fixtures:
+    home: "harness/runtime/survivor-runtime.html?game=ninja2"
+    battle: "harness/runtime/survivor-runtime.html?game=ninja2&mode=battle"
+    skill_use: "harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelup=demo&skilluse=demo&fullAssets=1"
+    vfx: "harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&vfx=demo"
+    encounter: "harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&encounter=demo"
+
 screen:
   orientation: portrait_9_16
   responsive_policy:
@@ -38,7 +66,7 @@ regions:
       world_size_px: { width: 3000, height: 2000 }
       camera: "orthographic top-down camera follows player"
       center_clear_radius_px: 110
-      ground: "procedural moss, dirt bands, leaves, stones, and bamboo-edge props"
+      ground: "procedural moss and dirt bands with generated PNG forest props for lantern posts, bamboo clumps, moss stones, fallen logs, and soul shrines"
       units: "IdlezBoard-triggered player, enemy waves, boss, projectiles, drops"
   dom_overlay:
     top_hud:
@@ -51,8 +79,45 @@ regions:
       placement: "under top HUD, narrow centered pill"
     controls:
       joystick: "bottom-left translucent touch affordance"
-      skill_buttons: "bottom-right companion skill buttons for Kaede, Mio, and Rin; progress only adds companions to the mercenary gacha pool, and each button activates only after the companion is obtained by the building gacha"
+      dash_button: "bottom-right single dash control using the generated dash icon; Space/click triggers a 5s-cooldown forward invulnerable dash, with cooldown shown by native ring and large numeric countdown"
       exp_bar: "bottom EXP bar with fixed badge"
+    run_result:
+      source_concepts:
+        - harness/design/ninja2/concepts/ninja2_run_result_clear_concept_a.md
+        - harness/design/ninja2/concepts/ninja2_run_result_defeat_concept_a.md
+      hierarchy: "result state first, rewards second"
+      shell: "single parchment modal over the dimmed battle field; do not bake the generated concept PNG into runtime"
+      assetization:
+        generated:
+          - ninja2.ui.run_result.battle_backdrop_v1
+          - ninja2.ui.run_result.hero_overlays_v1
+          - ninja2.ui.run_result.status_slabs_v1
+          - ninja2.ui.run_result.reward_header_brush_v1
+          - ninja2.ui.run_result.return_button_9slice_v1
+        reuse:
+          - ninja2.ui.panel.parchment_9slice
+          - ninja2.ui.sanctuary_build.frame_ornaments_v1
+          - existing resource/reward icon sprites
+        native_ui:
+          - title text
+          - stage kicker
+          - stat chips
+          - reward row labels and amounts
+      status_header:
+        victory_title: "맵 클리어"
+        defeat_title: "패배"
+        height_ratio_of_modal: "35-40%"
+        content: "shared modal ornament, stage kicker, huge title, and 2-3 compact run stat chips"
+        victory_material: "fixed overhanging dark walnut sign hero overlay with lantern-gold trim and side lantern accents, paired with reused sanctuary-build frame_crest ornament; not 9-slice"
+        defeat_material: "fixed overhanging parchment hero overlay with muted torn red cloth/ribbon, paired with reused sanctuary-build frame_crest ornament; not 9-slice"
+      rewards:
+        placement: "below the status header as a separate 획득 보상 section"
+        section_title: "clear state uses generated dark brush title background with native text"
+        row_contract: "native parchment ledger row: left icon medallion, native label, bold native amount, and small trailing reused reward icon"
+        max_visible_rows: 7
+        persistence: "display only rewards that are persisted to sanctuary state, including non-resource itemInventory entries"
+        asset_policy: "rows stay native UI unless a later row-skin concept requires generated texture; do not bake item names or reward amounts"
+      footer: "one primary orange 성소로 귀환 button"
 
 asset_keys:
   reused:
@@ -119,6 +184,10 @@ asset_keys:
         - harness/runtime/assets/ninja2/ui/battle-counters/counter_pickup.png
         - harness/runtime/assets/ninja2/ui/battle-counters/counter_boss.png
       usage: "Generated transparent icon atoms for timer, kill, enemy, pickup, and boss/stage battle HUD counters"
+    - key: ninja2.ui.battle_dash_icon_v1
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/battle-controls/icon_dash.png
+      usage: "Generated transparent dash ability icon atom for the bottom-right battle HUD control; cooldown ring and number are native runtime layers"
     - key: ninja2.battle.encounter_icons.light_v1
       runtime_paths:
         - harness/runtime/assets/ninja2/battle/encounters/encounter_bomb.png
@@ -126,6 +195,32 @@ asset_keys:
         - harness/runtime/assets/ninja2/battle/encounters/encounter_potion.png
         - harness/runtime/assets/ninja2/battle/encounters/encounter_mine.png
       usage: "Generated lightweight PNG world-pickup atoms for map-trigger random encounters; Phaser Graphics versions are fallback only"
+    - key: ninja2.ui.run_result.battle_backdrop_v1
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/run-result/result_battle_backdrop.png
+      usage: "Opaque result-only forest battle aftermath backdrop; modal, title, rewards, and CTA remain separate runtime UI layers"
+    - key: ninja2.ui.run_result.hero_overlays_v1
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/run-result/result_hero_clear_overlay.png
+        - harness/runtime/assets/ninja2/ui/run-result/result_hero_defeat_overlay.png
+      usage: "Generated fixed transparent clear/defeat hero overlays mounted as .result-status::before so the state art overhangs the parchment modal while the shared sanctuary-build frame_crest ornament, title, stat chips, rewards, and CTA remain separate native/runtime layers"
+    - key: ninja2.ui.run_result.status_slabs_v1
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/run-result/result_status_clear_panel.png
+        - harness/runtime/assets/ninja2/ui/run-result/result_status_defeat_panel.png
+      usage: "Textless generated fixed panel sprites for the large clear/defeat result status header; lantern and ribbon ornaments are not stretch-safe"
+    - key: ninja2.ui.sanctuary_build.frame_ornaments_v1
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/sanctuary-build/frame_crest.png
+      usage: "Reused fixed transparent modal frame crest ornament for the result status header, matching the existing sanctuary build modal ornament language"
+    - key: ninja2.ui.run_result.reward_header_brush_v1
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/run-result/result_reward_header_brush.png
+      usage: "Textless generated brush sprite behind the clear-state reward section title; section title remains native"
+    - key: ninja2.ui.run_result.return_button_9slice_v1
+      runtime_paths:
+        - harness/runtime/assets/ninja2/ui/run-result/result_return_button_9slice.png
+      usage: "Textless generated 9-slice orange return CTA skin; button label remains native"
   planned_blocker:
     - key: ninja2.battle.sprite_atlas.enemies_pickups
       planned_runtime_path: harness/runtime/assets/ninja2/battle/enemies_pickups_atlas.png
@@ -145,6 +240,7 @@ design_mapping:
     battle_floor: "deep forest + moss + dirt patches"
     pickups: "blue EXP diamond remains native; gold, soulflame, wood, and stone run drops use generated ninja2.ui.topbar.cluster_skins icons"
     skills: "kunai slash, shuriken volley, smoke bomb, buff aura, orbit blade, lightning chain, flame ground, frost needle, clone dash, moon flash, bamboo spear rain, lotus storm, weak-point reticle"
+    combat_readability: "thin enemy pursuit arrows, short skill intent lines, target impact flashes, hit recoil, and player danger rings show chase -> contact -> hit -> counter-skill causality without covering the arena"
 
 skill_vfx:
   implementation: harness/runtime/src/survivor/skill-vfx.js
@@ -182,6 +278,13 @@ runtime_state_contract:
     - survivorMode
     - survivorGameId
     - survivorMapId
+    - survivorSelectedMapId
+    - survivorRunMapKind
+    - survivorDungeonMapId
+    - survivorDungeonDifficulty
+    - survivorMainStageNo
+    - survivorWave
+    - survivorWaveCount
     - survivorEnemyCount
     - survivorPickupCount
     - survivorStageProgress
@@ -208,6 +311,14 @@ runtime_state_contract:
     - survivorRunSkillFeedbackCount
     - survivorRunSkillLastFeedback
     - survivorRunSkillLastFeedbackName
+    - survivorCombatCueCount
+    - survivorCombatCueLast
+    - survivorSkillIntentCueCount
+    - survivorSkillIntentCueLast
+    - survivorEnemyHitCueCount
+    - survivorEnemyHitCueLast
+    - survivorPlayerThreatCueCount
+    - survivorEnemyThreatCueCount
     - survivorRunSkillAutoCasts
     - survivorRunSkillLastAuto
     - survivorCompanionRoster
@@ -216,6 +327,22 @@ runtime_state_contract:
     - survivorCompanionSkillCasts
     - survivorCompanionLastSkill
     - survivorCompanionMioHeal
+    - survivorDashActive
+    - survivorDashInvulnerable
+    - survivorDashReady
+    - survivorDashCooldownMs
+    - survivorDashCooldown
+    - survivorDashCooldownProgress
+    - survivorDashCount
+    - survivorDashBlockedDamageCount
+    - survivorDashLastSource
+    - survivorDashLastVector
+    - survivorDashControlReady
+    - survivorDashControlActive
+    - survivorDashControlCooldownText
+    - survivorDashControlProgress
+    - survivorDashControlIconReady
+    - survivorDashControlCompanionsHidden
     - survivorEncounterActiveCount
     - survivorEncounterCollected
     - survivorEncounterMined
@@ -242,20 +369,25 @@ validation:
   checks:
     - "home and battle modes are nonblank"
     - "canvas is visible in battle mode"
-    - "HUD, objective strip, joystick, companion skill dock, profile skill icon rows, and EXP bar do not overlap at mobile width"
+    - "HUD, objective strip, joystick, dash control, profile skill icon rows, and EXP bar do not overlap at mobile width"
+    - "profile skill icons stay readable in the top HUD: 24px at desktop/tablet width and no smaller than 20px at narrow mobile width"
     - "dataset survivorBattleReady=true after battle autostart"
     - "dataset survivorPlayerVisible=true after camera framing; player screen coordinates should stay inside the viewport center band"
     - "dataset survivorSkillVfxReady=true and survivorSkillVfxCount=16 after runtime boot"
     - "D1 runtime starts with only basic auto attack 300101 visible in the profile skill row; the first level-up choice pool is limited to 300102, 300103, and 300115"
     - "with ?levelup=demo&skilluse=demo&fullAssets=1, the smoke runner selects from the D1 level-up pool and verifies survivorRunSkillSpawnCount>=1, survivorRunSkillDamageCount>=1, survivorRunSkillDamageTotal>0, and survivorRunSkillFeedbackCount>=1"
     - "acquired run skill casts pulse the profile skill icon, show a short skill-cast chip in the HUD, and float the skill name near the player so usage is readable during combat"
+    - "skilluse smoke also verifies survivorSkillIntentCueCount>=1 and survivorEnemyHitCueCount>=1 so acquired skills visibly target and impact monsters"
+    - "nearby monsters draw lightweight pursuit cues and player damage draws a red danger ring, making monster contact readable as an interaction instead of background motion"
+    - "D1 skill casts use generated ninja2.battle.skill_vfx.cast_atoms_d1_v1 PNG atoms from /battle/skill-vfx/ instead of relying only on Phaser Graphics placeholders"
     - "battle timer, kill, enemy, pickup, and boss/stage counters use generated ninja2.ui.battle_counter_icons_v1 PNG backgrounds from /battle-counters/"
     - "bomb, magnet, potion, and mine encounter pickups use generated ninja2.battle.encounter_icons.light_v1 PNG textures from /battle/encounters/ and render at lightweight in-world sizes"
     - "with ?vfx=demo, survivorAssetMode=generated-vfx-demo, survivorSkillVfxDemo reaches done, and survivorSkillVfxDemoFired=16"
     - "with ?encounter=demo, existing map update triggers publish encounter board variables 610/611/612, survivorEncounterTriggerSerial reaches >=4, bomb/magnet/potion are collected, the mine encounter reaches 3s hold completion, survivorEncounterMined>=1, and run resources increase"
     - "with ?loop=boss, the smoke runner auto-selects level choices, kills boss unit 110501, reaches player-win result mode, and renders non-empty reward rows"
+    - "with ?loop=boss, the result screen uses a large 맵 클리어 status header with run stat chips above the reward list, and persisted reward deltas include both resources and itemInventory rewards"
     - "main character walk cycle animates while moving"
     - "generated common monster sprites render in battle with left/right side mirroring"
     - "battle resource ledger and run drop sprites render the generated coin, soulflame, wood, and stone PNGs instead of CSS/Graphics placeholder shapes"
-    - "companion skill dock renders three D1 companion buttons; gacha-owned buttons call board.startSkill and update survivorCompanionLastSkill"
-    - "Mio's companion skill applies an actual player HP heal/shield side effect and updates survivorCompanionMioHeal"
+    - "bottom-right dash control renders generated ninja2.ui.battle_dash_icon_v1, Space/click updates survivorDashLastSource, and cooldown ring/number follow survivorDashCooldownProgress"
+    - "dash invulnerability blocks incoming player damage during the short dash window and updates survivorDashBlockedDamageCount"

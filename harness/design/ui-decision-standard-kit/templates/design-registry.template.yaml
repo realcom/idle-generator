@@ -1,0 +1,23 @@
+version: "1.0"
+game: "<game>"
+status: draft
+
+concepts:
+  - id: "<concept-id>"
+    screen: "<surface-or-screen>"
+    note: "concepts/<concept-id>.md"
+    image: "concepts/<concept-id>.png"
+    status: draft # draft | candidate | selected | rejected
+    created_at: "<yyyy-mm-dd>"
+    rationale: ""
+
+selected:
+  primary_concept: ""
+  supporting_concepts: []
+
+handoff:
+  design_system_status: draft # draft | extracted | pilot | approved
+  phaser_spec: ""
+  runtime_page: ""
+  latest_review: ""
+

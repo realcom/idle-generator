@@ -1,0 +1,73 @@
+version: "1.0"
+game: "<game>"
+status: draft
+purpose: "Semantic color contract for UI surfaces and Phaser runtime mapping."
+source_standard: "ui-decision-standard-kit/UI_DECISION_STANDARD.md"
+
+principles:
+  - "Runtime code uses semantic tokens, not one-off hex values."
+  - "Generated art may contain richer color, but UI states map back to tokens."
+  - "Interaction states must remain readable on compact mobile screens."
+
+tokens:
+  surface:
+    base: "#000000"
+    raised: "#111111"
+    sunken: "#080808"
+    overlay: "rgba(0, 0, 0, 0.56)"
+  text:
+    primary: "#ffffff"
+    secondary: "#d8d8d8"
+    muted: "#9a9a9a"
+    inverse: "#141414"
+  border:
+    subtle: "#333333"
+    strong: "#666666"
+    focus: "#ffffff"
+  action:
+    primary: "#f2a23a"
+    primary_text: "#1b1208"
+    secondary: "#3f6f8f"
+    secondary_text: "#ffffff"
+    destructive: "#c8463f"
+    destructive_text: "#ffffff"
+    disabled: "#555555"
+    disabled_text: "#aaaaaa"
+  status:
+    success: "#64c27b"
+    warning: "#f2c94c"
+    danger: "#eb5757"
+    info: "#56ccf2"
+  selection:
+    selected_fill: "#f2a23a"
+    selected_outline: "#fff0ba"
+    pressed_overlay: "rgba(0, 0, 0, 0.18)"
+  rarity:
+    common: "#d7d7d7"
+    uncommon: "#72c66f"
+    rare: "#5aa7ff"
+    epic: "#b879ff"
+    legendary: "#ffb84d"
+
+runtime_mapping:
+  css_custom_properties:
+    --ui-surface-base: tokens.surface.base
+    --ui-text-primary: tokens.text.primary
+    --ui-action-primary: tokens.action.primary
+    --ui-action-primary-text: tokens.action.primary_text
+  phaser_constants: {}
+  generated_asset_notes:
+    - "Generated panel/button art may vary, but selected/disabled/error states should remain token-aligned."
+
+contrast_rules:
+  body_text: "Readable at target mobile width."
+  icon_on_action: "Icon must remain distinguishable in normal, selected, and disabled states."
+  disabled_state: "Disabled should read as unavailable without becoming illegible."
+
+review_gate:
+  blockers:
+    - "Runtime file adds new hardcoded UI hex color without token mapping."
+    - "Primary and secondary actions are visually indistinguishable."
+    - "Disabled state looks active."
+    - "Selected state relies only on color when icon/text also needs state feedback."
+

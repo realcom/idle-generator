@@ -8,7 +8,7 @@ sprite: "Maps/Map_Meadow_Day/Img_Map_Meadow_Sky.png"
 targetCameraPivot: { x: 0.5, y: 0.58 }
 fov: 9.25
 popupArgs: { ClientModeManager: ModeManagerNinja2, ClientHomeMapDataId: self, ClientRuntimePrototype: survivor, ClientAutoAdvance: true, ClientNextMapDataId: 500108, ClientRetryMapDataId: self, ClientWaveCount: 10, CoreLoop: "SurvivalHousing" }
-initVariables: [{ callerKey: 605, value: 7 }, { callerKey: 606, value: 7 }]
+initVariables: [{ callerKey: 605, value: 46 }, { callerKey: 606, value: 46 }]
 boardConstants: { levelUpChoiceCount: 3 }
 initLevel: 7
 initGold: 1160
@@ -33,4 +33,4 @@ rewardAddItemGroups:
       - { itemDataId: 200101, count: 16 }
       - { itemDataId: 200102, count: 5 }
       - { itemDataId: 200103, count: 2 }
-
+      - { itemDataId: 200351, count: 1, isCore: true }

@@ -57,7 +57,13 @@ popupArgs:
   HousingMaxInstancesByLanternLevel: "4:1,5:2,6:3"
   HousingDuplicateCostScaling: "cost_x1.25_per_extra,time_x1.15_per_extra"
   HousingPurpose: "주민 수용량과 오프라인 보상 한도를 늘려 여러 생산 건물을 동시에 굴리게 한다."
+  HousingDescription: "주민들이 머물며 일할 준비를 하는 생활 건물입니다. 주민 수용량과 작업 여유가 늘어나고, 오프라인 동안 쌓아둘 수 있는 보상 한도도 함께 커집니다."
   HousingEffectKind: resident_cap_and_offline
+  HousingTapFlow: open_modal_only
+  HousingBubblePolicy: hidden
+  HousingFeatureModal: capacity
+  HousingFeatureActions: "resident_capacity,job_slots,offline_cap,upgrade"
+  HousingLevelEffectByLevel: "Lv1 resident_cap_bonus=2,offline_cap_hours_bonus=0.5,all_production_percent=1; Lv2 resident_cap_bonus=3,offline_cap_hours_bonus=1.0,all_production_percent=2; Lv3 resident_cap_bonus=4,offline_cap_hours_bonus=1.5,all_production_percent=3; Lv4 resident_cap_bonus=5,offline_cap_hours_bonus=2.0,all_production_percent=5; Lv5 resident_cap_bonus=7,offline_cap_hours_bonus=3.0,all_production_percent=8"
   HousingFootprint: 1x2
   HousingSpriteKey: storage
   HousingConstructionSeconds: 1200
