@@ -1,0 +1,300 @@
+version: 1
+game: ninja2
+slug: ninja2-home-shop-modal
+status: implemented
+backend: godot_control
+
+target:
+  project: ../../../runtime/godot-ninja2/project.godot
+  owner_scene: ../../../runtime/godot-ninja2/scenes/main.tscn
+  owner_script: ../../../runtime/godot-ninja2/scripts/home/modals/shop_tab_modal.gd
+  output:
+    scene: ../../../runtime/godot-ninja2/scenes/generated/home_shop_modal.tscn
+    theme: ../../../runtime/godot-ninja2/themes/generated/ninja2_home_shop_modal.tres
+  generation_policy: "Generated scene documents the Control anatomy; live data binding stays in shop_tab_modal.gd."
+
+sources:
+  ui_system_inventory: ../../../design/ninja2/ui-system-inventory.yaml
+  button_system: ../../../design/ninja2/button-system.yaml
+  modal_system: ../../../design/ninja2/modal-system.yaml
+  color_tokens: ../../../design/ninja2/color-tokens.yaml
+  art_direction: ../../../design/ninja2/art-direction.yaml
+  layout_tokens: ../../../design/ninja2/layout-tokens.yaml
+  component_blueprints: ../../../design/ninja2/component-blueprints.yaml
+  component_skins: ../../../design/ninja2/component-skins.yaml
+  asset_plan: ../../../design/ninja2/asset-plan.yaml
+  concepts:
+    - ../../../design/ninja2/concepts/home-modals/shop/concept-c.md
+    - ../../../design/ninja2/concepts/ninja2_phaser_modal_system_a.md
+
+current_godot_reference:
+  owner_modal: ../../../runtime/godot-ninja2/scripts/home/modals/shop_tab_modal.gd
+  capture_script: ../../../runtime/godot-ninja2/scripts/tools/capture_tab_modals.gd
+  screenshot: ../../../runtime/godot-ninja2/screenshots/godot-ninja2-tab-shop.png
+
+blueprint_refs:
+  surface: HomeCashShopModal
+  sections:
+    - modal_shell
+    - modal_header
+    - category_tabs
+    - timed_deal_hero
+    - product_card_grid
+    - quick_purchase_list
+    - modal_footer
+  components:
+    - ModalShell
+    - ModalHeader
+    - CashShopProductRow
+    - ModalFooter
+  shared_button_roles:
+    - tab_button
+    - primary_cta
+  shared_modal_sections:
+    - shell
+    - scrim
+    - header
+    - body
+    - footer
+  color_token_groups:
+    - battle_hud_panel
+    - runtime_compare
+
+screen:
+  orientation: portrait_9_16
+  reference_size_px: { width: 540, height: 1016 }
+  concept_reference_size_px: { width: 1080, height: 1920 }
+  safe_area_policy: "Blocking home modal; top resource bar and bottom shop tab remain visible behind the scrim."
+
+layout:
+  modal:
+    anchor: centered
+    width_px: { target: 390, min: 360 }
+    height_px: { target: 690, compact: 642 }
+    content_padding_px: { left: 16, right: 16, top: 108, bottom: 14 }
+  header:
+    min_height_px: 100
+    title_font_px: 23
+    kicker_font_px: 12
+    bonus_chip_size_px: { width: 124, height: 28 }
+  category_tabs:
+    count: 5
+    labels: [추천, 패키지, 루비, 에너지, 패스]
+    height_px: 54
+    gap_px: 5
+    button_role: tab_button
+  timed_deal_hero:
+    height_px: 126
+    icon_alignment: left
+    icon_well_px: 88
+    discount_badge_px: { width: 70, height: 44 }
+    countdown_chip_px: { width: 112, height: 30 }
+    native_segments: [product_icon, deal_badge, title, summary, countdown, discount, price_cta]
+  product_grid:
+    columns: 2
+    card_min_height_px: 144
+    gap_px: 8
+    icon_size_px: { width: 52, height: 52 }
+    badge_palette_by_product: [ruby_discount, sortie_energy, permanent_teal, pass_gold]
+  quick_purchase:
+    row_min_height_px: 48
+    max_visible_without_scroll: 2
+    first_view_policy: "Starts below the initial product-card grid to avoid clipped partial rows; reachable by body scroll."
+  footer:
+    height_px: 42
+    status_text: "available_count and once_count stay native text"
+
+assets:
+  required_keys:
+    - ninja2.ui.panel.parchment_9slice
+    - ninja2.ui.sanctuary_build.frame_ornaments_v1
+    - ninja2.ui.home_icon_pack_v3
+    - ninja2.ui.shop_product_icons.cash_v1
+  nineslice:
+    - key: ninja2.ui.panel.parchment_9slice
+      atom: NinePatchPanel
+      usage: modal_shell_frame
+      godot_usage: nine_patch_rect
+      slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+      content_insets: { left: 16, right: 16, top: 108, bottom: 14 }
+      target_size_px: { width: 390, height: 690 }
+      intended_godot_target_path: harness/runtime/godot-ninja2/assets/generated/ui/panel_parchment_9slice.png
+  fixed_atoms:
+    - key: ninja2.ui.sanctuary_build.frame_ornaments_v1
+      usage: modal_crest_and_corner_ornaments
+      atom: TextureAtom
+      display_size_px: { width: 132, height: 73 }
+      intended_godot_target_path: harness/runtime/godot-ninja2/assets/generated/ui/sanctuary-build/frame_crest.png
+      not_nine_slice: true
+    - key: ninja2.ui.shop_product_icons.cash_v1
+      usage: runtime_product_icon_atoms
+      atom: TextureAtom
+      display_size_px: { width: 52, height: 52 }
+      load_policy: "Live Godot modal currently loads these from shared harness/runtime/assets/ninja2/ui/shop via Catalog."
+      not_nine_slice: true
+  native_controls:
+    - id: ShopCategoryTabs
+      usage: native_tab_buttons
+      bindings: [active_shop_category]
+    - id: TimedDealHero
+      usage: native_labels_plus_generated_product_icon
+      bindings: [featured_product, countdown_label, discount_badge]
+    - id: ShopProductCard
+      usage: native_card_grid_with_icon_atom
+      bindings: [product_name, product_price, reward_summary, purchase_state]
+    - id: QuickPurchaseRow
+      usage: native_compact_purchase_rows
+      bindings: [quick_products]
+  godot_asset_warnings:
+    - "shop_product_icons.cash_v1 and home_icon_pack_v3 are shared runtime texture sets; the live Godot modal loads them through Catalog."
+
+control_tree:
+  root:
+    atom: ScreenRoot
+    node_name: Root_HomeShopModal
+    component: HomeCashShopModal
+    anchors_preset: full_rect
+    children:
+      - atom: ModalShell
+        slot: shop_modal
+        node_name: Shell_HomeShopModal
+        component: ModalShell
+        anchor: centered
+        size_px: { width: 390, height: 690 }
+        children:
+          - atom: ModalScrim
+            slot: scrim
+            node_name: Btn_HomeShopScrim
+            color_token: deep_forest
+            alpha: 0.58
+            close_policy: close_on_backdrop
+          - atom: NinePatchPanel
+            slot: frame
+            node_name: Panel_HomeShopParchmentFrame
+            component: ModalShell
+            asset_key: ninja2.ui.panel.parchment_9slice
+            slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+            content_insets: { left: 16, right: 16, top: 108, bottom: 14 }
+            size_px: { width: 390, height: 690 }
+          - atom: SectionGroup
+            slot: header
+            node_name: Section_HomeShopHeader
+            component: ModalHeader
+            position_px: { x: 16, y: 14 }
+            size_px: { width: 358, height: 88 }
+            children:
+              - atom: TextureAtom
+                slot: crest_ornament
+                node_name: Tex_HomeShopCrest
+                component: ModalShell
+                asset_key: ninja2.ui.sanctuary_build.frame_ornaments_v1
+                variant: frame_crest
+                stretch_mode: keep_aspect_centered
+                position_px: { x: 113, y: -48 }
+                size_px: { width: 132, height: 73 }
+              - atom: NativeLabel
+                slot: kicker_text
+                node_name: Text_HomeShopKicker
+                text_binding_or_text_key: shop.kicker
+                font_size: 12
+                color_token: muted_red
+                position_px: { x: 12, y: 8 }
+                size_px: { width: 160, height: 18 }
+              - atom: NativeLabel
+                slot: title_text
+                node_name: Text_HomeShopTitle
+                text_binding_or_text_key: shop.title
+                font_size: 23
+                color_token: ink
+                position_px: { x: 12, y: 26 }
+                size_px: { width: 150, height: 44 }
+              - atom: NativePanel
+                slot: status_chip
+                node_name: Panel_HomeShopBonusRuby
+                stylebox_key: bonus_chip
+                position_px: { x: 212, y: 32 }
+                size_px: { width: 124, height: 28 }
+                children:
+                  - atom: NativeLabel
+                    slot: chip_label
+                    node_name: Text_HomeShopBonusRuby
+                    text_binding_or_text_key: shop.bonus_ruby
+                    font_size: 10
+                    color_token: ink
+          - atom: SectionGroup
+            slot: body
+            node_name: Section_HomeShopBody
+            component: CashShopProductRow
+            position_px: { x: 16, y: 108 }
+            size_px: { width: 358, height: 520 }
+            children:
+              - atom: HBox
+                slot: category_tabs
+                node_name: Row_HomeShopCategoryTabs
+                separation: 5
+                position_px: { x: 0, y: 0 }
+                size_px: { width: 358, height: 54 }
+              - atom: SectionGroup
+                slot: timed_deal_hero
+                node_name: Section_HomeShopTimedDeal
+                component: CashShopProductRow
+                position_px: { x: 0, y: 66 }
+                size_px: { width: 358, height: 126 }
+              - atom: Grid
+                slot: product_card_grid
+                node_name: Grid_HomeShopCards
+                component: CashShopProductRow
+                columns: 2
+                position_px: { x: 0, y: 226 }
+                size_px: { width: 358, height: 296 }
+          - atom: SectionGroup
+            slot: footer
+            node_name: Section_HomeShopFooter
+            component: ModalFooter
+            position_px: { x: 16, y: 632 }
+            size_px: { width: 358, height: 42 }
+            children:
+              - atom: NativePanel
+                slot: footer_status_bar
+                node_name: Panel_HomeShopFooterStatus
+                stylebox_key: footer_status
+                size_px: { width: 358, height: 42 }
+              - atom: NativeLabel
+                slot: footer_status_text
+                node_name: Text_HomeShopFooterStatus
+                text_binding_or_text_key: shop.available_status
+                font_size: 12
+                color_token: cream_cloak
+
+data_contract:
+  content:
+    - Product items 201501-201504 from compiled Items.json
+  runtime_state:
+    - SanctuaryState.shop_claims
+    - ShopTabModal.active_category
+  fixtures:
+    - scripts/tools/capture_tab_modals.gd captures the shop tab modal at 540x1016.
+  hardcoding_allowlist:
+    - "Pass teaser remains a runtime placeholder until a pass Product item exists."
+    - "Discount badges and countdown label are native fixture labels for this UI concept pass."
+
+validation:
+  commands:
+    - "python3 harness/tools/design_blueprint_validate.py ninja2"
+    - "python3 harness/godot/validators/godot_ui_recipe_validate.py --recipe harness/godot/recipes/ui/ninja2-home-shop-modal.yaml --strict"
+    - "python3 harness/godot/builders/godot_ui_recipe_build.py --recipe harness/godot/recipes/ui/ninja2-home-shop-modal.yaml"
+    - "godot --headless --path harness/runtime/godot-ninja2 --import"
+    - "godot --headless --path harness/runtime/godot-ninja2 --scene res://scenes/generated/home_shop_modal.tscn --quit-after 1"
+    - "godot --headless --path harness/runtime/godot-ninja2 --check-only --script res://scripts/home/modals/shop_tab_modal.gd"
+    - "godot --headless --path harness/runtime/godot-ninja2 --script res://scripts/tools/home_tabs_smoke.gd"
+    - "godot --path harness/runtime/godot-ninja2 --script res://scripts/tools/capture_tab_modals.gd"
+  screenshot: harness/runtime/godot-ninja2/screenshots/godot-ninja2-tab-shop.png
+  compare_board: harness/runtime/godot-ninja2/screenshots/compare/godot-home-shop-modal-vs-concept-c.png
+  segment_compare_boards:
+    header: harness/runtime/godot-ninja2/screenshots/compare/shop-segments/header.png
+    category_tabs: harness/runtime/godot-ninja2/screenshots/compare/shop-segments/category-tabs.png
+    timed_deal_hero: harness/runtime/godot-ninja2/screenshots/compare/shop-segments/timed-deal.png
+    product_card_grid: harness/runtime/godot-ninja2/screenshots/compare/shop-segments/product-cards.png
+    quick_purchase: harness/runtime/godot-ninja2/screenshots/compare/shop-segments/quick-purchase.png
+    footer: harness/runtime/godot-ninja2/screenshots/compare/shop-segments/footer.png
+  blockers: []

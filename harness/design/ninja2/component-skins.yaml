@@ -3,6 +3,7 @@ game: ninja2
 source_concepts:
   - ninja2_rulelocked_housing_home_a
   - ninja2_rulelocked_survival_battle_a
+  - ninja2_survival_visual_runtime_polish_f
   - ninja2_run_levelup_choice_modal_a
   - ninja2_sanctuary_build_modal_a
   - ninja2_run_result_clear_concept_a
@@ -49,7 +50,7 @@ skins:
     style: "2.5D pre-rendered sprite impression"
     footprint_variants: ["1x1 guard utility occupies 1 hex", "1x2 production hut occupies 2 hexes", "1x3 garden/yard occupies 3 hexes", "2x2 sanctuary centerpiece occupies 4 hexes"]
     details: ["teal roof", "lantern windows", "stone base", "tiny flags/wood piles/planters"]
-    construction_state: "Use asset-plan.yaml:ninja2.home.building_construction_site.v1 as the generated bitmap sprite for constructing buildings; only the percent and remaining-time badges stay native runtime text."
+    construction_state: "Use asset-plan.yaml:ninja2.home.building_construction_site.v1 as the generic generated bitmap sprite for constructing buildings. When a keyed stage set exists, such as asset-plan.yaml:ninja2.home.building_construction_stages.quarry.v1 or farm.v1, switch by native construction progress; only the percent and remaining-time badges stay native runtime text."
     labels: "compact black Lv plaque only; footprint is data/placement behavior, not visible map text"
     map_badges: "small +production pill so large buildings do not cover the forest-ground hex texture"
   sortie_button:
@@ -77,13 +78,48 @@ skins:
     fill: "dark radial"
     icon_colors: ["lantern gold", "soul teal", "sunburst gold"]
     cooldown_text: "cream numeric label"
+    concept_source: "ninja2_survival_visual_runtime_polish_f"
+    usage: "bottom-right three-button combat action dock; generated skill/dash icon atoms sit inside native circular frames"
+    native_parts:
+      - "outer black rim"
+      - "cooldown ring"
+      - "cooldown number"
+      - "ready glint"
+      - "touch hit area"
+    avoid:
+      - "single lonely dash button as the only combat action"
+      - "baked cooldown labels"
+      - "companion portraits in the battle action dock"
   battle_dash_button:
     source: "asset-plan.yaml:ninja2.ui.battle_dash_icon_v1"
-    usage: "single bottom-right battle HUD dash control replacing the old Kaede/Mio/Rin companion skill button dock"
+    usage: "primary or top slot inside the bottom-right three-button battle action dock"
     shape: "large black-rimmed circle with native conic cooldown ring"
     icon: "transparent 128px boot-and-wind dash glyph atom"
     cooldown_text: "large cream numeric countdown centered over the icon only while cooling down"
     avoid: "no companion portraits, companion names, baked cooldown numbers, baked rings, or baked button frame inside the PNG"
+  battle_action_dock:
+    source: "component-blueprints.yaml:BattleActionButtonDock"
+    concept_source: "ninja2_survival_visual_runtime_polish_f"
+    layout: "one large primary circular action above two secondary circular actions"
+    frame_policy: "Use native circles and rings first; generate a shared circular frame only if native strokes cannot match the concept after QA."
+    icon_policy: "Reuse generated skill icons, dash icon, and VFX atoms as transparent centered icon sprites."
+    cooldown_policy: "Native number and progress ring are layered above icon but below press/ready glint."
+    density_policy: "The dock should carry action readability without blocking lower-right enemies or pickups."
+  battle_top_hud:
+    source: "component-blueprints.yaml:BattleTopHud"
+    concept_source: "ninja2_survival_visual_runtime_polish_f"
+    material: "compact dark framed plaques with lantern-gold outline and cream native values"
+    height_policy: "Godot 540x1016 target max 126px including progress track; compact before adding VFX."
+    progress_track: "teal segmented track with dark frame, separate from hero/timer/resource plaques"
+    avoid:
+      - "large card-like HUD blocks that hide the boss lane"
+      - "2x2 resource board for survival battle"
+      - "debug labels in the playfield"
+  battle_movement_sprite:
+    source: "component-blueprints.yaml:BattleUnitSprite"
+    concept_source: "ninja2_survival_visual_runtime_polish_f"
+    walk_policy: "4-way 8-frame sheet, stable crop per direction, foot baseline locked, subtle shadow step."
+    dash_policy: "short soul-teal afterimages and rim shimmer; no big squash, no persistent action text above the hero."
   battle_counter_icon:
     source: "asset-plan.yaml:ninja2.ui.battle_counter_icons_v1"
     usage: "timer, kill, enemy, pickup, and boss/stage HUD counters"
@@ -128,8 +164,8 @@ skins:
     blueprint: component-blueprints.yaml:surfaces.RunResultModal
     purpose: "Survival loop clear/defeat result modal where the run state reads before reward accounting."
     modal_shell: "use asset-plan.yaml:ninja2.ui.run_result.battle_backdrop_v1 behind the modal and reuse asset-plan.yaml:ninja2.ui.panel.parchment_9slice for the outer parchment surface; do not generate or bake a whole result screenshot"
-    status_header: "use asset-plan.yaml:ninja2.ui.run_result.hero_overlays_v1 as the large overhanging state art layer, paired with the reused asset-plan.yaml:ninja2.ui.sanctuary_build.frame_ornaments_v1 crest ornament; title, stage kicker, summary, and run stat chips remain native runtime text/layout"
-    state_crest: "reuse asset-plan.yaml:ninja2.ui.sanctuary_build.frame_ornaments_v1 frame_crest as the result modal ornament so result, build, and quick modal frames share the same ornament language"
+    status_header: "use asset-plan.yaml:ninja2.ui.run_result.hero_overlays_v1 as the large overhanging state art layer, paired with asset-plan.yaml:ninja2.ui.run_result.crests_v1 as the dominant clear/defeat medallion; title, stage kicker, stage badge, summary, and run stat chips remain native runtime text/layout"
+    state_crest: "use asset-plan.yaml:ninja2.ui.run_result.crests_v1 as the state-specific top medallion so clear and defeat keep the strong reference composition; do not replace it with the generic shared modal crest"
     reward_list: "use asset-plan.yaml:ninja2.ui.run_result.reward_header_brush_v1 behind the native section label for the clear state; scroll rows render as native parchment ledger lines with a left icon medallion, native label, bold amount, and small trailing reused reward icon, while order, quantities, empty state, and persistence filter stay runtime data"
     return_button: "use asset-plan.yaml:ninja2.ui.run_result.return_button_9slice_v1 as a generic orange CTA skin with native Korean label"
     nine_slice_policy:

@@ -1,0 +1,69 @@
+version: "1.0"
+game: ninja2
+status: extracted
+updated_at: 2026-06-17T14:35:00+09:00
+
+source_concepts:
+  - ninja2_rulelocked_housing_home_a
+  - ninja2_rulelocked_survival_battle_a
+  - ninja2_survival_visual_runtime_polish_f
+  - ninja2_phaser_modal_system_a
+
+foundation_documents:
+  component_blueprints:
+    path: component-blueprints.yaml
+    role: "Semantic component ownership, section contracts, asset dependency matrix, and visual QA crop guidance."
+  component_skins:
+    path: component-skins.yaml
+    role: "Reusable material/skin language for panels, HUD strips, action controls, battle units, pickups, and modal shells."
+  color_tokens:
+    path: color-tokens.yaml
+    role: "Semantic colors shared by Phaser, Godot, and future Unity recipes."
+  button_system:
+    path: button-system.yaml
+    role: "Shared button roles, touch sizes, generated icon usage, cooldown/disabled states, and press motion."
+  modal_system:
+    path: modal-system.yaml
+    role: "Shared parchment modal anatomy for level choice, build, equipment, shop, and result surfaces."
+  motion_juice:
+    path: motion-juice.yaml
+    role: "Runtime motion, combat feedback, movement animation, dash, pickup, and reduced-motion rules."
+  nine_slice_policy:
+    path: ../runtime/NINE_SLICE_UI.md
+    role: "Project-wide rule for Phaser 9-slice and Unity sliced sprite eligibility."
+
+shared_runtime_targets:
+  phaser:
+    battle_page: ../../runtime/survivor-runtime.html
+    battle_owner: ../../runtime/src/survivor/survivor-app.js
+    battle_spec: ../../runtime/specs/ui/ninja2-survival-battle.yaml
+  godot:
+    project: ../../runtime/godot-ninja2/project.godot
+    battle_owner: ../../runtime/godot-ninja2/scripts/main.gd
+    battle_sim: ../../runtime/godot-ninja2/scripts/battle_sim.gd
+    visual_fixture_capture: ../../runtime/godot-ninja2/scripts/tools/capture_battle.gd
+    moving_capture: ../../runtime/godot-ninja2/scripts/tools/capture_battle_moving.gd
+
+surface_status:
+  HousingHome:
+    status: extracted
+    foundation_coverage: [colors, buttons, modals, nine_slice, component_blueprints, motion]
+  SurvivalBattle:
+    status: extracted
+    selected_visual_target: ninja2_survival_visual_runtime_polish_f
+    foundation_coverage: [colors, buttons, component_blueprints, motion, asset_plan]
+    current_runtime_verdict: WARN
+    current_runtime_gaps:
+      - "Godot top HUD is heavier and taller than the F concept target."
+      - "Godot combat field has too few pickups, hit sparks, and skill trails compared with the F concept."
+      - "Godot bottom-right action area still reads as one dash button, while the F concept uses a three-button circular action cluster."
+      - "Godot movement has direction changes and camera follow, but needs a stronger walk sheet before it reaches concept-quality motion."
+
+resolved_foundation_rules:
+  - "Text, numbers, cooldowns, Korean labels, timers, and resource amounts stay runtime-native."
+  - "Generated icons and sprites must be transparent atoms unless they are full background art."
+  - "Rectangular reusable skins require separate slice_hints and content_insets."
+  - "Fixed ornaments, circular action frames, characters, VFX atoms, pickups, and props are not 9-slice assets."
+  - "SurvivalBattle must keep center combat readable before decorative density is increased."
+
+unresolved_foundation_questions: []

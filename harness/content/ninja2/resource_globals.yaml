@@ -22,7 +22,29 @@ mapGlobal:
   dataId:
     tutorialMap: 500101
   boardConstants:
+    worldWidth: 9000
+    worldHeight: 6000
     levelUpChoiceCount: 3
+    survivalRunLeveling:
+      # D1 baseline: first choice is early, second choice is mid-run, third choice is aspirational.
+      targetRunSeconds: 75
+      targetChoicesAtClear:
+        average: 1.5
+        skilled: 2
+        cap: 3
+      expRequirement:
+        formula: base_linear_quadratic
+        base: 24
+        linear: 18
+        quadratic: 4
+      enemyExp:
+        normalBase: 1
+        normalLevelDivisor: 5
+        bossBase: 8
+        bossPerLevel: 1
+      initialSkillIds: [300101]
+      choicePoolSkillIds: [300102, 300103, 300115]
+      maxRunSkillLevel: 5
     defaultPlayerInventoryShapes:
       - rows:
           - cells: [true, true, true, true]

@@ -1,0 +1,92 @@
+version: "1.0"
+game: ninja2
+status: extracted
+updated_at: 2026-06-17T14:35:00+09:00
+
+source_concepts:
+  - ninja2_rulelocked_housing_home_a
+  - ninja2_rulelocked_survival_battle_a
+  - ninja2_survival_visual_runtime_polish_f
+
+tokens:
+  ink:
+    default: "#171f18"
+    usage: "Primary outline, HUD frame stroke, high-contrast text shadow, icon rim."
+  panel_shadow:
+    default: "#050907"
+    usage: "Deep backing under dark HUD panels and circular action controls."
+  deep_forest:
+    default: "#0e2418"
+    usage: "Battle edge shade, dark HUD panel fill, modal scrim tint."
+  forest:
+    default: "#173224"
+    usage: "Primary battle ground and housing forest base."
+  moss:
+    default: "#315b33"
+    usage: "Moss bands, grass patches, mid-value ground contrast."
+  leaf_highlight:
+    default: "#87ad51"
+    usage: "Small grass/leaf highlights only; never a full-screen dominant fill."
+  parchment:
+    default: "#f4dfb1"
+    usage: "Modal/card surfaces and readable warm labels."
+  cream_cloak:
+    default: "#f8ead1"
+    usage: "Hero identity, light text on dark panels, inactive joystick thumb."
+  lantern_gold:
+    default: "#ffc64a"
+    usage: "Primary skill arcs, hero aura, CTA emphasis, pickup glints."
+  action_orange:
+    default: "#f47b22"
+    usage: "Sortie CTA, urgent action glints, boss warning accent when mixed with red."
+  boss_warning:
+    default: "#e23a21"
+    usage: "Boss/elite warning halo, threat line, low-HP urgency; translucent in playfield."
+  muted_red:
+    default: "#b94e35"
+    usage: "Enemy HP, damage state, warning tick marks."
+  soul_teal:
+    default: "#36e0d4"
+    usage: "Soul flame pickups, secondary skill arcs, selection pulse."
+  exp_blue:
+    default: "#39a8ff"
+    usage: "EXP bar and blue crystal pickup sparkle."
+  resource_gold:
+    default: "#f6b83f"
+    usage: "Coin pickups and gold ledger icons."
+  lock_gray:
+    default: "#727a70"
+    usage: "Disabled controls, locked hex overlays, inactive progress pips."
+
+semantic_mapping:
+  battle_hud_panel:
+    fill: deep_forest
+    border: lantern_gold
+    text_primary: cream_cloak
+    text_secondary: parchment
+  battle_action_button:
+    fill: panel_shadow
+    rim: cream_cloak
+    active_rim: lantern_gold
+    cooldown_fill: deep_forest
+    disabled: lock_gray
+  battle_center_readability:
+    aura: lantern_gold
+    secondary_arc: soul_teal
+    boss_warning: boss_warning
+  pickup_feedback:
+    coin: resource_gold
+    exp: exp_blue
+    soul: soul_teal
+    wood: moss
+    stone: parchment
+  runtime_compare:
+    pass: soul_teal
+    warn: lantern_gold
+    error: boss_warning
+
+rules:
+  - "Use lantern_gold and soul_teal as sparse combat accents, not full-panel fills."
+  - "HUD panels stay dark enough for white/cream native text at 428px width."
+  - "Boss_warning must use alpha below 0.32 for large circles so it does not hide units."
+  - "Battle backgrounds may vary in moss/forest values but must preserve the hero aura contrast."

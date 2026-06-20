@@ -37,9 +37,10 @@ import {
   HOME_SHOP_PRODUCT_DEFS,
   getHomeShopProductEntries,
   getHomeShopSummary,
+  normalizeHomeShopCategoryKey,
   renderHomeShopModalBody,
   renderHomeShopModalFooter,
-} from './home-modals/shop.js?v=shop-cash1';
+} from './home-modals/shop.js?v=shop-cash2';
 
 const PhaserRef = globalThis.Phaser;
 
@@ -135,6 +136,11 @@ const DUNGEON_DIFFICULTIES = Object.freeze([
 const INITIAL_MODE = params.get('mode') || params.get('screen') || 'home';
 const VFX_DEMO_MODE = ['1', 'true', 'demo', 'skills'].includes(String(params.get('vfx') || params.get('skillVfxDemo') || params.get('skillFxDemo') || '').toLowerCase());
 const LEVEL_CHOICE_DEMO_MODE = ['1', 'true', 'demo', 'choice'].includes(String(params.get('levelup') || params.get('levelChoiceDemo') || '').toLowerCase());
+const BATTLE_VISUAL_FIXTURE_PARAM = String(params.get('battleVisual') || params.get('visualFixture') || params.get('visual') || '').toLowerCase();
+const BATTLE_VISUAL_POLISH_FIXTURE = ['1', 'true', 'yes', 'on', 'demo', 'polish', 'runtime-polish-f', 'f'].includes(BATTLE_VISUAL_FIXTURE_PARAM);
+const LEVEL_CHOICE_SUPPRESSED = BATTLE_VISUAL_POLISH_FIXTURE
+  || ['0', 'false', 'no', 'off', 'skip', 'none'].includes(String(params.get('levelChoice') || params.get('runLevelChoice') || '').toLowerCase())
+  || ['1', 'true', 'yes', 'on'].includes(String(params.get('noLevelChoice') || params.get('suppressLevelChoice') || '').toLowerCase());
 const HOME_DEMO_PARAM = String(params.get('homeDemo') || params.get('housingDemo') || '').toLowerCase();
 const HOME_FIXTURE_PARAM = String(params.get('fixture') || '').toLowerCase();
 const HOME_START_DEMO_MODE = ['1', 'true', 'demo', 'city', 'housing', 'start', 'first'].includes(HOME_DEMO_PARAM)
@@ -183,6 +189,8 @@ const NINJA2_SFX = Object.freeze({
 const STAGE = { width: 941, height: 1672 };
 const WORLD = { width: 3000, height: 2000, centerX: 1500, centerY: 1000 };
 const BATTLE_CAMERA_ZOOM = 1.08;
+const BATTLE_VISUAL_POLISH_VERSION = 'runtime-polish-f2';
+const BATTLE_CENTER_CLEAR_RADIUS = 360;
 const PLAYER_MOVE_SPEED_MULTIPLIER = 0.75;
 const PLAYER_DASH_COOLDOWN_MS = 5000;
 const PLAYER_DASH_DURATION_MS = 240;
@@ -299,6 +307,14 @@ const ENCOUNTER_DISPLAY_SIZE = Object.freeze({ normal: 42, mine: 48 });
 const RUN_LOOT_PICKUP_RADIUS = 44;
 const RUN_LOOT_TTL_MS = 28000;
 const RUN_LOOT_SCATTER_RADIUS = 34;
+const PICKUP_GLOW_SPEC = Object.freeze({
+  coinDrop: { color: COLORS.gold, accent: COLORS.cream, radius: 24 },
+  soulFlame: { color: COLORS.soul, accent: COLORS.cream, radius: 27 },
+  soulShard: { color: 0x39a8ff, accent: COLORS.cream, radius: 25 },
+  woodCrate: { color: COLORS.wood, accent: COLORS.gold, radius: 23 },
+  stoneDrop: { color: COLORS.stone, accent: COLORS.cream, radius: 23 },
+  default: { color: COLORS.gold, accent: COLORS.cream, radius: 23 },
+});
 const RANDOM_ENCOUNTERS = Object.freeze([
   { type: 'bomb', texture: 'encounterBomb', weight: 30, label: '폭탄' },
   { type: 'magnet', texture: 'encounterMagnet', weight: 22, label: '자석' },
@@ -1063,6 +1079,7 @@ function installTitleSplashController() {
 let homeSkinGames = [];
 let activeHomeTab = 'sanctuary';
 let activeEquipmentFilter = 'all';
+let activeHomeShopCategory = normalizeHomeShopCategoryKey(params.get('shopCategory'));
 let homeEquipmentDetailItemId = 0;
 let activeHomeQuickView = '';
 let homeBuildTrayOpen = false;
@@ -3197,6 +3214,7 @@ class SurvivorScene extends PhaserRef.Scene {
     document.documentElement.dataset.survivorEncounterTriggerSerial = '0';
     document.documentElement.dataset.survivorEncounterTriggerType = '0';
     document.documentElement.dataset.survivorMagnetActive = 'false';
+    document.documentElement.dataset.survivorBattleVisualFixture = BATTLE_VISUAL_POLISH_FIXTURE ? 'pending' : '';
     this.resetPlayerDash();
     this.resetCombatReadabilityCounters();
 
@@ -3213,6 +3231,9 @@ class SurvivorScene extends PhaserRef.Scene {
       this.board.setBoardVariable(BOARD_KEY_ENCOUNTER_DEMO_STEP, 1);
       document.documentElement.dataset.survivorEncounterDemoStep = '1';
     }
+    if (BATTLE_VISUAL_POLISH_FIXTURE) {
+      this.applyBattleVisualPolishFixture();
+    }
 
     this.syncUnitViews();
     this.syncBattleCamera({ snap: true });
@@ -3220,6 +3241,240 @@ class SurvivorScene extends PhaserRef.Scene {
     renderHud(this);
     this.stopSkillVfxDemo = maybeStartSkillVfxDemo(this);
     this.stopLevelChoiceDemo = this.maybeStartLevelChoiceDemo();
+  }
+
+  applyBattleVisualPolishFixture() {
+    if (!this.board || this.mode !== 'expedition') return;
+    const player = this.board.playerUnit;
+    if (!player?.alive) return;
+
+    const playerX = WORLD.centerX;
+    const playerY = WORLD.centerY + 76;
+    player.x = playerX;
+    player.y = playerY;
+    player.targetX = playerX;
+    player.targetY = playerY;
+    player.state = 'combat';
+    player.hp = Math.min(player.maxHp || player.hp || 1, Math.max(player.hp || 1, Math.round((player.maxHp || 1) * 0.92)));
+    player.attack = Math.max(3, Math.round((player.attack || 12) * 0.16));
+
+    const fixtureDefs = this.getBattleVisualFixtureUnitDefs();
+    const fixtureLevel = Math.max(6, Math.floor(Number(this.board.boardState || player.level || 1)));
+    const boss = fixtureDefs.bossDef
+      ? this.findOrSpawnFixtureEnemy(fixtureDefs.bossDef.id, {
+        level: fixtureLevel + 5,
+        x: playerX + 18,
+        y: playerY - 285,
+        targetX: playerX + 18,
+        targetY: playerY - 255,
+      })
+      : null;
+    this.lockFixtureUnitForCapture(boss, { hpMultiplier: 24, target: player, visualScaleMultiplier: 0.56 });
+
+    const ringSlots = [
+      { x: -330, y: -220 },
+      { x: 320, y: -212 },
+      { x: -305, y: 138 },
+      { x: 312, y: 152 },
+      { x: -390, y: -10 },
+      { x: 398, y: 28 },
+      { x: -168, y: 286 },
+      { x: 190, y: 280 },
+    ];
+    const enemies = ringSlots
+      .map((slot, index) => {
+        const enemyDef = fixtureDefs.enemyDefs[index % Math.max(1, fixtureDefs.enemyDefs.length)];
+        if (!enemyDef) return null;
+        const unit = this.findOrSpawnFixtureEnemy(enemyDef.id, {
+          level: fixtureLevel + (index % 3),
+          x: playerX + slot.x,
+          y: playerY + slot.y,
+          targetX: playerX + slot.x * 0.48,
+          targetY: playerY + slot.y * 0.48,
+        });
+        this.lockFixtureUnitForCapture(unit, { hpMultiplier: 10, target: player, visualScaleMultiplier: 0.92 });
+        return unit;
+      })
+      .filter(Boolean);
+
+    this.clearFixtureLootDrops();
+    [
+      { key: 'exp', count: 8, x: -250, y: -126 },
+      { key: 'gold', count: 120, x: 256, y: -100 },
+      { key: 'souls', count: 3, x: -350, y: 104 },
+      { key: 'wood', count: 5, x: 333, y: 148 },
+      { key: 'stone', count: 4, x: -88, y: 284 },
+      { key: 'exp', count: 10, x: 120, y: 266 },
+    ]
+      .map(drop => ({ ...drop, itemDataId: this.fixtureItemIdForRewardKey(drop.key) }))
+      .filter(drop => drop.itemDataId)
+      .forEach(drop => this.spawnFixtureLootDrop({
+        ...drop,
+        x: playerX + drop.x,
+        y: playerY + drop.y,
+      }));
+
+    if (enemies.length) {
+      this.board.startSkill(player, 300101, enemies.slice(0, 3), { source: 'battleVisualPolishFixture' });
+    }
+    document.documentElement.dataset.survivorBattleVisualFixture = BATTLE_VISUAL_POLISH_VERSION;
+    document.documentElement.dataset.survivorBattleVisualFixtureEnemyCount = String(enemies.length + (boss ? 1 : 0));
+    this.syncLootDropDataset();
+  }
+
+  getBattleVisualFixtureUnitDefs() {
+    const playerDef = this.store?.getPlayerUnit?.();
+    const defs = [...(this.store?.units?.values?.() || [])]
+      .filter(def => def && Number(def.id) !== Number(playerDef?.id));
+    const bossDef = defs.find(def => def.type === 'Boss') || null;
+    const enemyDefs = defs
+      .filter(def => def.id !== bossDef?.id)
+      .filter(def => def.type !== 'Boss');
+    return { bossDef, enemyDefs };
+  }
+
+  fixtureItemIdForRewardKey(key) {
+    const item = [...(this.store?.items?.values?.() || [])]
+      .find(candidate => homeRewardKeyForItemId(candidate?.id) === key);
+    return item?.id || 0;
+  }
+
+  findOrSpawnFixtureEnemy(unitDataId, options = {}) {
+    let unit = [...this.board.units.values()]
+      .find(candidate => candidate.alive && Number(candidate.dataId) === Number(unitDataId));
+    if (!unit) {
+      unit = this.board.spawnUnit(unitDataId, {
+        team: TEAM.ENEMY,
+        level: options.level,
+        x: options.x,
+        y: options.y,
+        targetX: options.targetX ?? options.x,
+        targetY: options.targetY ?? options.y,
+        state: 'combat',
+      });
+    }
+    if (!unit) return null;
+    unit.alive = true;
+    unit.level = Math.max(1, Math.floor(Number(options.level || unit.level || 1)));
+    unit.x = clamp(Number(options.x ?? unit.x), 56, WORLD.width - 56);
+    unit.y = clamp(Number(options.y ?? unit.y), 56, WORLD.height - 56);
+    unit.targetX = clamp(Number(options.targetX ?? unit.x), 56, WORLD.width - 56);
+    unit.targetY = clamp(Number(options.targetY ?? unit.y), 56, WORLD.height - 56);
+    unit.state = 'combat';
+    return unit;
+  }
+
+  lockFixtureUnitForCapture(unit, { hpMultiplier = 6, target = null, visualScaleMultiplier = 1 } = {}) {
+    if (!unit) return;
+    const targetUnit = target || this.board?.playerUnit;
+    unit.visualFixtureBaseMaxHp = unit.visualFixtureBaseMaxHp || unit.maxHp || 1;
+    unit.maxHp = Math.max(unit.maxHp || 1, Math.round(unit.visualFixtureBaseMaxHp * hpMultiplier));
+    unit.hp = Math.max(1, Math.round(unit.maxHp * (unit.type === 'Boss' ? 0.78 : 0.86)));
+    unit.visualScaleMultiplier = clamp(Number(visualScaleMultiplier || 1), 0.45, 1.25);
+    if (targetUnit) {
+      unit.targetX = targetUnit.x;
+      unit.targetY = targetUnit.y;
+    }
+  }
+
+  clearFixtureLootDrops() {
+    for (const loot of [...this.lootDrops]) {
+      if (loot?.sourceUnitDataId !== 'visual-polish-fixture') continue;
+      this.removeLootDrop(loot);
+    }
+  }
+
+  spawnFixtureLootDrop({ itemDataId, count = 1, x, y }) {
+    const id = Number(itemDataId);
+    const resourceKey = homeRewardKeyForItemId(id);
+    const texture = this.lootTextureForDrop({ itemDataId: id }, resourceKey);
+    const sprite = this.add.sprite(x, y, texture);
+    const scale = this.lootScaleForTexture(texture);
+    sprite.setDepth(29);
+    sprite.setScale(scale);
+    sprite.setAlpha(0.98);
+    const glow = this.createLootDropGlow(texture, x, y + 1);
+    const now = performance.now();
+    this.lootDrops.push({
+      id: this.lootDropSerial++,
+      itemDataId: id,
+      item: this.store?.getItem?.(id) || null,
+      count: Math.max(1, Math.floor(Number(count || 1))),
+      resourceKey,
+      texture,
+      sprite,
+      glow,
+      sourceUnitDataId: 'visual-polish-fixture',
+      spawnedAt: now,
+      collectableAt: now + 30000,
+      expiresAt: now + RUN_LOOT_TTL_MS * 3,
+      collected: false,
+    });
+  }
+
+  maintainBattleVisualPolishFixture() {
+    if (!BATTLE_VISUAL_POLISH_FIXTURE || !this.board || this.mode !== 'expedition') return;
+    const player = this.board.playerUnit;
+    if (!player?.alive) return;
+    const now = performance.now();
+    if (this.nextBattleVisualFixtureLayoutAt && now < this.nextBattleVisualFixtureLayoutAt) return;
+    this.nextBattleVisualFixtureLayoutAt = now + 280;
+
+    player.x = WORLD.centerX;
+    player.y = WORLD.centerY + 76;
+    player.targetX = player.x;
+    player.targetY = player.y;
+    player.state = 'combat';
+    player.attack = Math.max(3, Math.round((player.attack || 12) * 0.92));
+
+    const boss = [...this.board.units.values()]
+      .find(unit => unit.alive && isBossEnemy(unit));
+    if (boss) {
+      boss.x = clamp(player.x + 20, 56, WORLD.width - 56);
+      boss.y = clamp(player.y - 286, 56, WORLD.height - 56);
+      boss.targetX = boss.x;
+      boss.targetY = boss.y;
+      boss.state = 'combat';
+      this.lockFixtureUnitForCapture(boss, { hpMultiplier: 24, target: player, visualScaleMultiplier: 0.54 });
+    }
+
+    const edgeSlots = [
+      { x: -330, y: -224 },
+      { x: 326, y: -214 },
+      { x: -378, y: -24 },
+      { x: 382, y: -8 },
+      { x: -310, y: 158 },
+      { x: 318, y: 170 },
+      { x: -168, y: 292 },
+      { x: 188, y: 286 },
+      { x: -418, y: 130 },
+      { x: 420, y: 136 },
+      { x: -110, y: -304 },
+      { x: 134, y: -296 },
+      { x: -360, y: 294 },
+      { x: 374, y: 298 },
+      { x: -18, y: 336 },
+      { x: -430, y: -170 },
+      { x: 438, y: -164 },
+      { x: -252, y: 360 },
+      { x: 270, y: 354 },
+      { x: 0, y: -334 },
+    ];
+    const enemies = [...this.board.units.values()]
+      .filter(unit => unit.alive && unit.team !== TEAM.PLAYER && !isBossEnemy(unit))
+      .sort((a, b) => a.id - b.id);
+    enemies.forEach((unit, index) => {
+      const slot = edgeSlots[index % edgeSlots.length];
+      const orbitX = Math.sin(now / 680 + index * 1.13) * 10;
+      const orbitY = Math.cos(now / 720 + index) * 8;
+      unit.x = clamp(player.x + slot.x + orbitX, 56, WORLD.width - 56);
+      unit.y = clamp(player.y + slot.y + orbitY, 56, WORLD.height - 56);
+      unit.targetX = unit.x;
+      unit.targetY = unit.y;
+      unit.state = 'combat';
+      this.lockFixtureUnitForCapture(unit, { hpMultiplier: 10, target: player, visualScaleMultiplier: 0.9 });
+    });
+    document.documentElement.dataset.survivorBattleVisualFixtureEnemyCount = String(enemies.length + (boss ? 1 : 0));
   }
 
   finishExpedition(event) {
@@ -3304,8 +3559,9 @@ class SurvivorScene extends PhaserRef.Scene {
     this.updatePlayerDash(performance.now());
     this.stepBoardByWallClock(simulationDelta);
     if (!this.levelChoiceOpen) this.updateRunSkillAutos();
-    this.updateMapTriggerEncounters(simulationDelta);
+    if (!BATTLE_VISUAL_POLISH_FIXTURE) this.updateMapTriggerEncounters(simulationDelta);
     this.updateLootDrops(simulationDelta);
+    this.maintainBattleVisualPolishFixture();
     this.syncUnitViews();
     this.syncBattleCamera();
     this.drawExpeditionLight(delta);
@@ -3656,6 +3912,7 @@ class SurvivorScene extends PhaserRef.Scene {
       sprite.setDepth(29);
       sprite.setScale(scale);
       sprite.setAlpha(0.98);
+      const glow = this.createLootDropGlow(texture, unit.x, unit.y - 2);
 
       const loot = {
         id: this.lootDropSerial++,
@@ -3665,6 +3922,7 @@ class SurvivorScene extends PhaserRef.Scene {
         resourceKey,
         texture,
         sprite,
+        glow,
         sourceUnitDataId: unit.dataId,
         spawnedAt: now,
         collectableAt: now + 140,
@@ -3674,7 +3932,7 @@ class SurvivorScene extends PhaserRef.Scene {
       this.lootDrops.push(loot);
 
       this.tweens.add({
-        targets: sprite,
+        targets: [sprite, glow].filter(Boolean),
         x: targetX,
         y: targetY,
         duration: 210,
@@ -3699,6 +3957,7 @@ class SurvivorScene extends PhaserRef.Scene {
         this.removeLootDrop(loot, { fade: true });
         continue;
       }
+      this.updateLootDropGlow(loot, now);
 
       let dx = player.x - sprite.x;
       let dy = player.y - sprite.y;
@@ -3744,35 +4003,44 @@ class SurvivorScene extends PhaserRef.Scene {
     const index = this.lootDrops.indexOf(loot);
     if (index >= 0) this.lootDrops.splice(index, 1);
     const sprite = loot?.sprite;
+    const glow = loot?.glow;
     if (loot) loot.sprite = null;
-    if (!sprite?.active) {
+    if (loot) loot.glow = null;
+    if (!sprite?.active && !glow?.active) {
       this.syncLootDropDataset();
       return;
     }
 
     if (animateTo) {
       this.tweens.add({
-        targets: sprite,
+        targets: [sprite, glow].filter(Boolean),
         x: animateTo.x,
         y: animateTo.y - 30,
         alpha: 0,
-        scaleX: sprite.scaleX * 0.45,
-        scaleY: sprite.scaleY * 0.45,
+        scaleX: 0.45,
+        scaleY: 0.45,
         duration: 150,
         ease: 'Quad.easeIn',
-        onComplete: () => sprite.destroy(),
+        onComplete: () => {
+          sprite?.destroy();
+          glow?.destroy();
+        },
       });
     } else if (fade) {
       this.tweens.add({
-        targets: sprite,
+        targets: [sprite, glow].filter(Boolean),
         alpha: 0,
-        y: sprite.y - 16,
+        y: (sprite?.y || glow?.y || 0) - 16,
         duration: 220,
         ease: 'Quad.easeOut',
-        onComplete: () => sprite.destroy(),
+        onComplete: () => {
+          sprite?.destroy();
+          glow?.destroy();
+        },
       });
     } else {
-      sprite.destroy();
+      sprite?.destroy();
+      glow?.destroy();
     }
     this.syncLootDropDataset();
   }
@@ -3780,7 +4048,9 @@ class SurvivorScene extends PhaserRef.Scene {
   clearLootDrops() {
     for (const loot of this.lootDrops.splice(0)) {
       loot.sprite?.destroy?.();
+      loot.glow?.destroy?.();
       loot.sprite = null;
+      loot.glow = null;
     }
     this.syncLootDropDataset();
   }
@@ -3788,6 +4058,40 @@ class SurvivorScene extends PhaserRef.Scene {
   syncLootDropDataset() {
     document.documentElement.dataset.survivorLootDropActiveCount = String(this.lootDrops?.length || 0);
     document.documentElement.dataset.survivorLootPickupRadius = String(RUN_LOOT_PICKUP_RADIUS);
+    document.documentElement.dataset.survivorPickupGlowCount = String((this.lootDrops || []).filter(loot => loot.glow?.active).length);
+  }
+
+  createLootDropGlow(texture, x, y) {
+    const glow = this.add.graphics();
+    glow.setDepth(28);
+    glow.setPosition(x, y + 2);
+    this.redrawLootDropGlow(glow, texture, 0);
+    return glow;
+  }
+
+  updateLootDropGlow(loot, now = performance.now()) {
+    const glow = loot?.glow;
+    const sprite = loot?.sprite;
+    if (!glow?.active || !sprite?.active) return;
+    const phase = (Math.sin(now / 260 + (loot.id || 0) * 0.77) + 1) / 2;
+    glow.setPosition(sprite.x, sprite.y + 2);
+    glow.setAlpha(0.74 + phase * 0.18);
+    this.redrawLootDropGlow(glow, loot.texture, phase);
+  }
+
+  redrawLootDropGlow(glow, texture, phase = 0) {
+    if (!glow) return;
+    const spec = PICKUP_GLOW_SPEC[texture] || PICKUP_GLOW_SPEC.default;
+    const radius = spec.radius + phase * 4;
+    glow.clear();
+    glow.fillStyle(0x09120e, 0.22);
+    glow.fillEllipse(0, 12, radius * 1.6, radius * 0.56);
+    glow.fillStyle(spec.color, 0.12 + phase * 0.04);
+    glow.fillCircle(0, 0, radius * 1.08);
+    glow.lineStyle(3, spec.color, 0.34 + phase * 0.2);
+    glow.strokeCircle(0, 0, radius);
+    glow.lineStyle(1.5, spec.accent, 0.26 + phase * 0.18);
+    glow.strokeCircle(0, 0, radius * 0.58);
   }
 
   lootTextureForDrop(drop, resourceKey = homeRewardKeyForItemId(drop?.itemDataId)) {
@@ -4163,6 +4467,11 @@ class SurvivorScene extends PhaserRef.Scene {
     const player = this.board.playerUnit;
     if (!player?.alive) return;
 
+    const bossTelegraphs = [...this.board.units.values()]
+      .filter(unit => unit.alive && unit.team !== TEAM.PLAYER && (unit.type === 'Boss' || unit.type === 'Elite' || unit.type === 'MidBoss'));
+    bossTelegraphs.forEach(unit => this.drawBossTelegraph(layer, unit));
+    document.documentElement.dataset.survivorBossTelegraphCount = String(bossTelegraphs.length);
+
     const threats = [...this.board.units.values()]
       .filter(unit => unit.alive && unit.team !== TEAM.PLAYER)
       .map(unit => ({ unit, distance: Math.hypot(player.x - unit.x, player.y - unit.y) }))
@@ -4201,6 +4510,47 @@ class SurvivorScene extends PhaserRef.Scene {
       this.markCombatCue('enemyThreat', threats[0].unit.dataId);
     }
     this.drawPlayerLowHealthCue(layer, player);
+  }
+
+  drawBossTelegraph(layer, unit) {
+    const isBoss = unit.type === 'Boss';
+    const now = this.time?.now || performance.now();
+    const pulse = (Math.sin(now / (isBoss ? 310 : 260) + unit.id) + 1) / 2;
+    const radius = isBoss
+      ? clamp(unitCueRadiusPx(unit, 58) * 2.05 + pulse * 10, 96, 144)
+      : clamp(unitCueRadiusPx(unit, 36) * 1.9 + pulse * 7, 58, 92);
+    const x = unit.x;
+    const y = unit.y + (isBoss ? 4 : 0);
+    const color = isBoss ? COLORS.red : COLORS.yellow;
+    const accent = isBoss ? COLORS.yellow : COLORS.red;
+    layer.fillStyle(color, isBoss ? 0.08 : 0.055);
+    layer.fillCircle(x, y, radius);
+    layer.lineStyle(isBoss ? 5 : 3, color, 0.26 + pulse * 0.18);
+    layer.strokeCircle(x, y, radius);
+    layer.lineStyle(2, accent, 0.16 + pulse * 0.14);
+    layer.strokeCircle(x, y, radius * 0.72);
+
+    const tickCount = isBoss ? 10 : 6;
+    const rotation = now / (isBoss ? 620 : 520);
+    for (let index = 0; index < tickCount; index += 1) {
+      const angle = rotation + index * Math.PI * 2 / tickCount;
+      const inner = radius + 4;
+      const outer = radius + (isBoss ? 20 : 14);
+      layer.lineStyle(isBoss ? 3 : 2, accent, 0.2 + pulse * 0.18);
+      layer.lineBetween(
+        x + Math.cos(angle) * inner,
+        y + Math.sin(angle) * inner,
+        x + Math.cos(angle) * outer,
+        y + Math.sin(angle) * outer,
+      );
+    }
+
+    if (isBoss) {
+      layer.lineStyle(3, COLORS.red, 0.18 + pulse * 0.12);
+      layer.lineBetween(x, y - radius - 12, x, y - radius - 54);
+      layer.lineStyle(2, COLORS.cream, 0.12 + pulse * 0.08);
+      layer.lineBetween(x - 16, y - radius - 38, x + 16, y - radius - 38);
+    }
   }
 
   drawPlayerLowHealthCue(layer, player) {
@@ -4795,19 +5145,45 @@ class SurvivorScene extends PhaserRef.Scene {
     const player = this.board?.playerUnit;
     this.lightLayer.clear();
     if (!player?.alive) return;
-    const pulse = 1 + Math.sin(this.time.now / 260) * 0.035;
+    const pulseUnit = (Math.sin(this.time.now / 260) + 1) / 2;
+    const pulse = 1 + (pulseUnit - 0.5) * 0.07;
     const shrine = BUILDING_BY_KEY.get('lantern_shrine');
     const shrineEffect = getLevelData(shrine, getBuildingLevel(this.sanctuary, shrine))?.effect || {};
     const radius = (140 + (shrineEffect.light_radius || 38) * 1.2) * pulse;
-    this.lightLayer.fillStyle(0xffdf70, 0.12);
-    this.lightLayer.fillCircle(player.x, player.y, radius);
-    this.lightLayer.lineStyle(4, 0xffdf70, 0.28);
-    this.lightLayer.strokeCircle(player.x, player.y, radius * 0.72);
+    this.lightLayer.fillStyle(0xffdf70, 0.11);
+    this.lightLayer.fillCircle(player.x, player.y, radius * 1.15);
+    this.lightLayer.fillStyle(0xfff1c8, 0.07 + pulseUnit * 0.025);
+    this.lightLayer.fillCircle(player.x, player.y, radius * 0.62);
+    this.lightLayer.lineStyle(5, 0xffdf70, 0.3 + pulseUnit * 0.08);
+    this.lightLayer.strokeCircle(player.x, player.y, radius * 0.74);
+    this.lightLayer.lineStyle(2, 0xfff1c8, 0.18 + pulseUnit * 0.08);
+    this.lightLayer.strokeCircle(player.x, player.y, radius * 0.42);
+
+    const tickRadius = radius * 0.86;
+    const rotation = this.time.now / 720;
+    for (let index = 0; index < 8; index += 1) {
+      const angle = rotation + index * Math.PI * 0.25;
+      const markLength = 13 + (index % 2) * 8;
+      this.lightLayer.lineStyle(2, index % 2 ? COLORS.cream : COLORS.gold, 0.14 + pulseUnit * 0.08);
+      this.lightLayer.lineBetween(
+        player.x + Math.cos(angle) * tickRadius,
+        player.y + Math.sin(angle) * tickRadius,
+        player.x + Math.cos(angle) * (tickRadius + markLength),
+        player.y + Math.sin(angle) * (tickRadius + markLength),
+      );
+    }
+    document.documentElement.dataset.survivorHeroAuraRadius = String(Math.round(radius));
 
   }
 
   onPlayerLevelChanged(event = {}) {
     if (this.mode !== 'expedition' || this.board?.gameEnded || this.levelChoiceOpen) return;
+    if (LEVEL_CHOICE_SUPPRESSED && !LEVEL_CHOICE_DEMO_MODE) {
+      const root = document.documentElement;
+      const count = Number(root.dataset.survivorLevelChoiceSuppressedCount || 0) + 1;
+      root.dataset.survivorLevelChoiceSuppressedCount = String(count);
+      return;
+    }
     const previousLevel = Math.max(1, Number(event.previousLevel || 1));
     const level = Math.max(previousLevel + 1, Number(event.level || previousLevel + 1));
     this.openLevelChoice({ level, source: event.source || 'playerLevel' });
@@ -5213,32 +5589,53 @@ class SurvivorScene extends PhaserRef.Scene {
   }
 
   createWorld() {
-    this.cameras.main.setBackgroundColor(0x315b33);
+    this.cameras.main.setBackgroundColor(0x223d28);
     this.cameras.main.setBounds(0, 0, WORLD.width, WORLD.height);
     this.ground = this.add.graphics();
     this.ground.setDepth(-50);
-    this.ground.fillStyle(0x5f8d3d, 1);
+    this.ground.fillStyle(0x345f31, 1);
     this.ground.fillRect(0, 0, WORLD.width, WORLD.height);
 
     const rng = new PhaserRef.Math.RandomDataGenerator(['ninja2-lantern-expedition']);
-    this.ground.fillStyle(0x243f28, 0.72);
-    this.ground.fillRect(0, 0, WORLD.width, 150);
-    this.ground.fillRect(0, WORLD.height - 170, WORLD.width, 170);
-    this.ground.fillRect(0, 0, 170, WORLD.height);
-    this.ground.fillRect(WORLD.width - 190, 0, 190, WORLD.height);
-    this.ground.fillStyle(0x6d9442, 0.38);
-    this.ground.fillRoundedRect(250, 260, 980, 150, 80);
-    this.ground.fillRoundedRect(1340, 760, 1060, 138, 80);
-    this.ground.fillStyle(0xb7c861, 0.22);
-    this.ground.fillCircle(WORLD.centerX + 120, WORLD.centerY + 140, 560);
-    this.ground.lineStyle(10, 0xd1d86b, 0.24);
-    this.ground.strokeCircle(WORLD.centerX + 120, WORLD.centerY + 140, 420);
-    this.ground.lineStyle(3, 0x244d2e, 0.2);
-    for (let x = -400; x < WORLD.width + 400; x += 180) {
-      this.ground.lineBetween(x, 0, x + 880, WORLD.height);
+    const isCombatClearZone = (x, y, radius = BATTLE_CENTER_CLEAR_RADIUS) => (
+      PhaserRef.Math.Distance.Between(x, y, WORLD.centerX, WORLD.centerY) < radius
+    );
+
+    this.ground.fillStyle(0x16281b, 0.52);
+    this.ground.fillRect(0, 0, WORLD.width, 190);
+    this.ground.fillRect(0, WORLD.height - 210, WORLD.width, 210);
+    this.ground.fillRect(0, 0, 220, WORLD.height);
+    this.ground.fillRect(WORLD.width - 230, 0, 230, WORLD.height);
+    this.ground.fillStyle(0x203522, 0.34);
+    this.ground.fillRect(0, 0, WORLD.width, 70);
+    this.ground.fillRect(0, WORLD.height - 78, WORLD.width, 78);
+
+    const groundBands = [
+      { x: 170, y: 260, w: 1120, h: 168, r: 84, color: 0x6f9546, alpha: 0.31 },
+      { x: 1320, y: 720, w: 1100, h: 150, r: 80, color: 0x9a8050, alpha: 0.16 },
+      { x: 510, y: 1290, w: 1250, h: 144, r: 78, color: 0x789f45, alpha: 0.24 },
+      { x: 1840, y: 1180, w: 720, h: 120, r: 66, color: 0x3f6c34, alpha: 0.22 },
+    ];
+    groundBands.forEach(band => {
+      this.ground.fillStyle(band.color, band.alpha);
+      this.ground.fillRoundedRect(band.x, band.y, band.w, band.h, band.r);
+    });
+
+    this.ground.fillStyle(0xb7c861, 0.12);
+    this.ground.fillCircle(WORLD.centerX + 60, WORLD.centerY + 96, 560);
+    this.ground.fillStyle(0xf4d46a, 0.026);
+    this.ground.fillCircle(WORLD.centerX, WORLD.centerY, BATTLE_CENTER_CLEAR_RADIUS + 52);
+    this.ground.lineStyle(10, 0xd1d86b, 0.11);
+    this.ground.strokeCircle(WORLD.centerX, WORLD.centerY, BATTLE_CENTER_CLEAR_RADIUS + 42);
+    this.ground.lineStyle(3, 0xffdf70, 0.09);
+    this.ground.strokeCircle(WORLD.centerX, WORLD.centerY, BATTLE_CENTER_CLEAR_RADIUS - 64);
+
+    this.ground.lineStyle(3, 0x244d2e, 0.18);
+    for (let x = -460; x < WORLD.width + 420; x += 155) {
+      this.ground.lineBetween(x, -40, x + 860, WORLD.height + 40);
     }
-    const isCombatClearZone = (x, y, radius = 380) => PhaserRef.Math.Distance.Between(x, y, WORLD.centerX, WORLD.centerY) < radius;
-    for (let i = 0; i < 78; i += 1) {
+
+    for (let i = 0; i < 132; i += 1) {
       const x = rng.between(0, WORLD.width);
       const y = rng.between(0, WORLD.height);
       if (isCombatClearZone(x, y, 460)) continue;
@@ -5247,14 +5644,27 @@ class SurvivorScene extends PhaserRef.Scene {
       this.ground.fillStyle(rng.pick([0x476f31, 0x7fa850, 0x315b33, 0x91bb55]), rng.realInRange(0.12, 0.26));
       this.ground.fillRoundedRect(x, y, w, h, 24);
     }
-    for (let i = 0; i < 54; i += 1) {
-      this.ground.fillStyle(0x284229, 0.12);
+    for (let i = 0; i < 92; i += 1) {
+      const angle = rng.realInRange(0, Math.PI * 2);
+      const distance = rng.realInRange(96, 650);
+      const x = WORLD.centerX + Math.cos(angle) * distance;
+      const y = WORLD.centerY + Math.sin(angle) * distance * 0.68;
+      const size = rng.between(3, 9);
+      this.ground.fillStyle(rng.pick([0x253820, 0x6b7f39, 0xc2b06a, 0x20311f]), rng.realInRange(0.08, 0.2));
+      if (i % 4 === 0) {
+        this.ground.fillRoundedRect(x, y, size * 4, size * 1.4, size);
+      } else {
+        this.ground.fillCircle(x, y, size);
+      }
+    }
+    for (let i = 0; i < 86; i += 1) {
+      this.ground.fillStyle(rng.pick([0x1b2d20, 0x284229, 0x4d6934]), rng.realInRange(0.08, 0.15));
       const x = rng.between(0, WORLD.width);
       const y = rng.between(0, WORLD.height);
       if (isCombatClearZone(x, y, 420)) continue;
       this.ground.fillEllipse(x, y, rng.between(18, 42), rng.between(9, 22));
     }
-    for (let i = 0; i < 36; i += 1) {
+    for (let i = 0; i < 74; i += 1) {
       const x = rng.between(0, WORLD.width);
       const y = rng.between(0, WORLD.height);
       if (isCombatClearZone(x, y, 430)) continue;
@@ -5263,7 +5673,7 @@ class SurvivorScene extends PhaserRef.Scene {
       this.ground.fillStyle(0x476f31, 0.24);
       this.ground.fillTriangle(x - 10, y + 10, x, y - 12, x + 10, y + 10);
     }
-    for (let i = 0; i < 18; i += 1) {
+    for (let i = 0; i < 38; i += 1) {
       const x = rng.between(0, WORLD.width);
       const y = rng.between(0, WORLD.height);
       if (isCombatClearZone(x, y, 420)) continue;
@@ -5278,6 +5688,7 @@ class SurvivorScene extends PhaserRef.Scene {
     this.combatCueLayer.setDepth(42);
     this.skillFxLayer = this.add.graphics();
     this.skillFxLayer.setDepth(48);
+    document.documentElement.dataset.survivorBattleVisualPolish = BATTLE_VISUAL_POLISH_VERSION;
   }
 
   drawForestProps(rng) {
@@ -5299,7 +5710,19 @@ class SurvivorScene extends PhaserRef.Scene {
       return sprite;
     };
 
-    for (let i = 0; i < 16; i += 1) {
+    const addPropGlow = (texture, x, y, width) => {
+      if (!['battlePropLanternPost', 'battlePropSoulShrine'].includes(texture)) return;
+      const glow = this.add.graphics();
+      glow.setDepth(-45);
+      const color = texture === 'battlePropSoulShrine' ? COLORS.soul : COLORS.gold;
+      const radius = texture === 'battlePropSoulShrine' ? width * 0.92 : width * 1.45;
+      glow.fillStyle(color, texture === 'battlePropSoulShrine' ? 0.08 : 0.1);
+      glow.fillCircle(x, y - width * 0.58, radius);
+      glow.lineStyle(2, color, texture === 'battlePropSoulShrine' ? 0.18 : 0.16);
+      glow.strokeCircle(x, y - width * 0.58, radius * 0.72);
+    };
+
+    for (let i = 0; i < 34; i += 1) {
       const edge = rng.pick(['top', 'bottom', 'left', 'right']);
       const x = edge === 'left'
         ? rng.between(80, 260)
@@ -5319,14 +5742,14 @@ class SurvivorScene extends PhaserRef.Scene {
           : rng.between(58, 96);
       addProp(texture, x, y, {
         displayWidth: width,
-        alpha: rng.realInRange(0.32, 0.48),
+        alpha: rng.realInRange(0.36, 0.58),
         depth: -44,
         flipX: rng.between(0, 1) === 1,
         rotation: texture === 'battlePropFallenLog' ? rng.realInRange(-0.08, 0.08) : 0,
       });
     }
 
-    for (let i = 0; i < 5; i += 1) {
+    for (let i = 0; i < 14; i += 1) {
       const x = rng.between(360, WORLD.width - 360);
       const y = rng.between(260, WORLD.height - 260);
       if (PhaserRef.Math.Distance.Between(x, y, WORLD.centerX, WORLD.centerY) < 520) continue;
@@ -5344,9 +5767,10 @@ class SurvivorScene extends PhaserRef.Scene {
           : texture === 'battlePropFallenLog'
             ? rng.between(70, 104)
             : rng.between(52, 76);
+      addPropGlow(texture, x, y, width);
       addProp(texture, x, y, {
         displayWidth: width,
-        alpha: texture === 'battlePropLanternPost' ? 0.58 : rng.realInRange(0.32, 0.5),
+        alpha: texture === 'battlePropLanternPost' ? 0.68 : rng.realInRange(0.4, 0.62),
         depth: -40,
         flipX: rng.between(0, 1) === 1,
         rotation: texture === 'battlePropFallenLog' ? rng.realInRange(-0.1, 0.1) : 0,
@@ -6867,6 +7291,7 @@ function getHomeShopContext() {
 
 function getHomeShopRenderUi(scene, state) {
   return {
+    activeCategory: activeHomeShopCategory,
     escapeHtml,
     formatNumber,
     formatRewardBundle,
@@ -10013,7 +10438,8 @@ function scaleForUnit(unit) {
   const artScale = unit?.team === TEAM.PLAYER
     ? 1
     : clamp(numberOr(unit?.def?.uiScale ?? unit?.uiScale, 1), 0.72, 1.28);
-  return clamp(baseScale * scaleRatioForUnit(unit) * artScale, 0.055, maxScale);
+  const visualScaleMultiplier = clamp(numberOr(unit?.visualScaleMultiplier, 1), 0.45, 1.25);
+  return clamp(baseScale * scaleRatioForUnit(unit) * artScale * visualScaleMultiplier, 0.055, maxScale * visualScaleMultiplier);
 }
 
 function hpBarSpecForUnit(unit) {
@@ -10360,6 +10786,13 @@ function start() {
   dom.homeShopModal?.addEventListener('click', event => {
     if (event.target.closest('[data-close-home-shop]') || event.target.closest('.home-modal-scrim')) {
       closeHomeShopModal(scene());
+      return;
+    }
+    const categoryTarget = event.target.closest('[data-home-shop-category]');
+    if (categoryTarget) {
+      activeHomeShopCategory = normalizeHomeShopCategoryKey(categoryTarget.dataset.homeShopCategory);
+      renderHome(scene());
+      scene()?.playSfx?.('uiClick', { volume: 0.34 });
       return;
     }
     const shopTarget = event.target.closest('[data-buy-home-shop]');

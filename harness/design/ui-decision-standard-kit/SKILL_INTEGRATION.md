@@ -20,7 +20,7 @@ should still cause Codex to read or verify:
 - `button-system.yaml`
 - `modal-system.yaml`
 - `color-tokens.yaml`
-- component blueprints, skins, asset plan, Phaser spec, and harness docs
+- component blueprints, skins, asset plan, Phaser spec or Godot recipe, and harness docs
 
 ## Required Skill Hooks
 
@@ -70,6 +70,24 @@ Patch these skill or agent documents when they exist.
 - If a rule is missing, update the foundation docs or ask the user; do not make
   a screen-local runtime rule.
 
+### `gen-godot-ui-recipe`
+
+- Read the same foundation systems as Phaser plus `harness/godot/GODOT_UI_HARNESS.md`
+  and `harness/godot/registries/control-atoms.yaml`.
+- Write `harness/godot/recipes/ui/<surface>.yaml` before editing Godot runtime code.
+- Include generated scene/theme output paths, Control atom usage, asset keys,
+  data bindings, smoke commands, and visual compare requirements.
+
+### `build-godot-ui-runtime`
+
+- Convert a reviewed Godot recipe into Godot Control scenes, Theme resources,
+  generated `.tres` resources, or small runtime components.
+- Preserve blueprint sections in the scene tree.
+- Use `NinePatchRect` or `StyleBoxTexture` for reusable rectangular skins and
+  fixed `TextureRect`/Sprite nodes for icons, portraits, ornaments, VFX, and
+  pickups.
+- Run the Godot recipe validator plus headless check/smoke/capture commands.
+
 ### `design-review`
 
 - Check that visible buttons, modals, and UI colors trace back to shared
@@ -79,11 +97,12 @@ Patch these skill or agent documents when they exist.
 
 ## Harness Hook
 
-Patch Phaser/UI harness docs with a UI foundation gate:
+Patch Phaser/UI/Godot harness docs with a UI foundation gate:
 
 - Check `ui-system-inventory.yaml` before new UI work.
 - Route buttons to `button-system.yaml`.
 - Route modals to `modal-system.yaml`.
 - Route action/status/selection/rarity colors to `color-tokens.yaml`.
 - Record unresolved decisions as user questions before runtime implementation.
-
+- For Godot, require `harness/godot/recipes/ui/*.yaml` before scene/theme work
+  and validate it with `harness/godot/validators/godot_ui_recipe_validate.py`.

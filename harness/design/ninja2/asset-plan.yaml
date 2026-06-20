@@ -3,6 +3,7 @@ game: ninja2
 source_concepts:
   - ninja2_rulelocked_housing_home_a
   - ninja2_rulelocked_survival_battle_a
+  - ninja2_survival_visual_runtime_polish_f
   - ninja2_sanctuary_build_modal_a
   - ninja2_home_cash_shop_modal_b
   - ninja2_run_result_clear_concept_a
@@ -24,6 +25,7 @@ assetization_summary:
     - "run result generic orange return CTA 9-slice skin"
     - "battle forest prop sprite set for survival map decoration"
     - "battle enemy and pickup atlas"
+    - "4-way guardian walk sheet for Godot/Phaser runtime-polish movement QA"
     - "resource collection dungeon icon set for exploration list/detail rows"
   native_ui:
     - "top resource chip layout and text"
@@ -34,6 +36,8 @@ assetization_summary:
     - "sortie button uses generated skin plus native text"
     - "battle skill buttons use native circles plus generated icons"
     - "battle skill VFX use Phaser-native graphics/tweens first, then graduate selected effects to bitmap atlases later"
+    - "Godot battle action dock uses native circles/rings plus generated dash and skill icon atoms"
+    - "Godot/Phaser movement uses generated walk sheets plus runtime camera follow, foot shadow, and dash afterimage"
     - "run result modal uses generated status/button skins and crest sprites, while title, stats, reward rows, and reward quantities stay runtime-native"
     - "run result backdrop reuses generated forest/battle sprites as a composed background asset while the modal remains separate UI"
   reuse:
@@ -212,7 +216,7 @@ assets:
   - key: ninja2.home.building_construction_site.v1
     type: sprite
     mode: generate_image
-    platforms: [phaser]
+    platforms: [phaser, godot]
     target_path: harness/design/ninja2/assets/home/buildings/construction_site.png
     usage:
       - component-skins.yaml:building
@@ -226,6 +230,9 @@ assets:
     phaser:
       usage: image_sprite
       target_path: harness/runtime/assets/ninja2/home/buildings/construction_site.png
+    godot:
+      usage: texture_rect
+      target_path: harness/runtime/assets/ninja2/home/buildings/construction_site.png
     priority: should
     blocking_reason: "CSS-only construction placeholders looked like UI cards instead of owned village construction art."
     status: generated
@@ -235,6 +242,98 @@ assets:
     source_path: harness/design/ninja2/assets/home/buildings/construction_site.source_chromakey.png
     runtime_path: harness/runtime/assets/ninja2/home/buildings/construction_site.png
     generation_notes: "Generated on a magenta chroma-key background, removed key to alpha, cropped to visible art, and resized into the existing 1x2 building sprite frame. Build percentage and remaining time stay native runtime badges."
+
+  - key: ninja2.home.building_construction_stages.farm.v1
+    type: sprite_set
+    mode: generate_image
+    platforms: [phaser, godot]
+    target_path: harness/design/ninja2/assets/home/buildings/construction/farm/
+    usage:
+      - component-blueprints.yaml:BuildingSpriteToken.building_sprite_or_blueprint
+      - component-skins.yaml:building.construction_state
+      - godot-ninja2:construction_progress_stage_texture
+    prompt_notes: "Transparent 2.5D Ninja2 farm/herb-garden construction stage sprites for one field footprint: generic high-quality construction site, blueprint/partial farm reveal, planted herb beds, lush completed garden. Match existing home sprites with bold dark ink outline, warm lantern accents, mossy stone/wood materials, no text or progress labels."
+    background: transparent
+    target_size: { width: 326, height: 249 }
+    slice_hints: null
+    states: [site, foundation, frame, roofing, finish]
+    variants:
+      - farm_site
+      - farm_foundation
+      - farm_frame
+      - farm_roofing
+      - farm_finish
+    phaser:
+      usage: image_sprite_set
+      target_path: harness/runtime/assets/ninja2/home/buildings/construction/farm/
+    godot:
+      usage: texture_rect_set
+      target_path: harness/runtime/assets/ninja2/home/buildings/construction/farm/
+    priority: should
+    blocking_reason: "Farm/granary construction should visibly change by progress stage instead of using one generic construction sprite."
+    status: generated_prototype
+    generated_at: 2026-06-19T00:39:57+09:00
+    generated_with: existing_asset_composite_pillow_source_blend_v6
+    actual_paths:
+      - harness/design/ninja2/assets/home/buildings/construction/farm/farm_site.png
+      - harness/design/ninja2/assets/home/buildings/construction/farm/farm_foundation.png
+      - harness/design/ninja2/assets/home/buildings/construction/farm/farm_frame.png
+      - harness/design/ninja2/assets/home/buildings/construction/farm/farm_roofing.png
+      - harness/design/ninja2/assets/home/buildings/construction/farm/farm_finish.png
+    runtime_paths:
+      - harness/runtime/assets/ninja2/home/buildings/construction/farm/farm_site.png
+      - harness/runtime/assets/ninja2/home/buildings/construction/farm/farm_foundation.png
+      - harness/runtime/assets/ninja2/home/buildings/construction/farm/farm_frame.png
+      - harness/runtime/assets/ninja2/home/buildings/construction/farm/farm_roofing.png
+      - harness/runtime/assets/ninja2/home/buildings/construction/farm/farm_finish.png
+    preview_path: harness/design/ninja2/assets/home/buildings/construction/farm/farm_construction_stages_preview.png
+    generation_notes: "Quality-first prototype generated only from existing high-quality source art: construction_site for early stages and herb_garden for the farm identity/completion frames, blended by construction progress. Earlier hand-drawn field prototypes were rejected for not matching the generated sprite quality. Built-in imagegen did not expose new files in the local generated_images folder, so replace these same paths with final imagegen art when file export is available. Build percentage and remaining time stay native runtime labels."
+
+  - key: ninja2.home.building_construction_stages.quarry.v1
+    type: sprite_set
+    mode: generate_image
+    platforms: [phaser, godot]
+    target_path: harness/design/ninja2/assets/home/buildings/construction/quarry/
+    usage:
+      - component-blueprints.yaml:BuildingSpriteToken.building_sprite_or_blueprint
+      - component-skins.yaml:building.construction_state
+      - godot-ninja2:construction_progress_stage_texture
+    prompt_notes: "Transparent 2.5D Ninja2 stone quarry construction stage sprites for one 1x2 production footprint: early bamboo/stone construction site, foundation, pulley frame, rail cart and quarry rigging, finished stone quarry. Match existing home sprites with bold dark ink outline, teal canopy, warm lantern accents, mossy stone/wood materials, no text or progress labels."
+    background: transparent
+    target_size: { width: 308, height: 268 }
+    slice_hints: null
+    states: [site, foundation, frame, rigging, finish]
+    variants:
+      - quarry_site
+      - quarry_foundation
+      - quarry_frame
+      - quarry_rigging
+      - quarry_finish
+    phaser:
+      usage: image_sprite_set
+      target_path: harness/runtime/assets/ninja2/home/buildings/construction/quarry/
+    godot:
+      usage: texture_rect_set
+      target_path: harness/runtime/assets/ninja2/home/buildings/construction/quarry/
+    priority: should
+    blocking_reason: "Stone quarry construction is a better first staged-building test because the generic construction sprite and final quarry sprite share stone, pulley, cart, and scaffold language."
+    status: generated_prototype
+    generated_at: 2026-06-19T00:50:19+09:00
+    generated_with: existing_asset_composite_pillow_source_blend_v1
+    actual_paths:
+      - harness/design/ninja2/assets/home/buildings/construction/quarry/quarry_site.png
+      - harness/design/ninja2/assets/home/buildings/construction/quarry/quarry_foundation.png
+      - harness/design/ninja2/assets/home/buildings/construction/quarry/quarry_frame.png
+      - harness/design/ninja2/assets/home/buildings/construction/quarry/quarry_rigging.png
+      - harness/design/ninja2/assets/home/buildings/construction/quarry/quarry_finish.png
+    runtime_paths:
+      - harness/runtime/assets/ninja2/home/buildings/construction/quarry/quarry_site.png
+      - harness/runtime/assets/ninja2/home/buildings/construction/quarry/quarry_foundation.png
+      - harness/runtime/assets/ninja2/home/buildings/construction/quarry/quarry_frame.png
+      - harness/runtime/assets/ninja2/home/buildings/construction/quarry/quarry_rigging.png
+      - harness/runtime/assets/ninja2/home/buildings/construction/quarry/quarry_finish.png
+    preview_path: harness/design/ninja2/assets/home/buildings/construction/quarry/quarry_construction_stages_preview.png
+    generation_notes: "Quality-first prototype generated only from existing high-quality source art: construction_site for early stages and stone_quarry for the final identity, blended by construction progress. This avoids the hand-drawn look that made the farm prototype feel low quality. Build percentage and remaining time stay native runtime labels."
 
   - key: ninja2.home.characters.guardian_residents
     type: atlas
@@ -414,7 +513,7 @@ assets:
   - key: ninja2.ui.home_icon_pack_v3
     type: ui_icon_set
     mode: generate_image
-    platforms: [phaser]
+    platforms: [phaser, godot]
     target_path: harness/design/ninja2/assets/ui/icons/
     usage:
       - component-blueprints.yaml:PopulationMenuCluster.population_pill_icon
@@ -447,6 +546,9 @@ assets:
       - icon_tab_shop
     phaser:
       usage: css_background_image_set
+      target_path: harness/runtime/assets/ninja2/ui/icons/
+    godot:
+      usage: runtime_shared_texture_set
       target_path: harness/runtime/assets/ninja2/ui/icons/
     unity: null
     priority: must
@@ -505,12 +607,13 @@ assets:
   - key: ninja2.ui.equipment_empty_slot_icons_v1
     type: ui_icon_set
     mode: generate_image
-    platforms: [phaser]
+    platforms: [phaser, godot]
     target_path: harness/design/ninja2/assets/ui/equipment-slots/
     usage:
       - component-blueprints.yaml:EquipmentSlotButton.empty_slot_icon
       - runtime/specs/ui/ninja2-equipment-equip.yaml:empty_equipment_slot_icons
       - survivor-runtime.html:equipment_slot_empty_state
+      - godot-ninja2:equipment_slot_empty_state
     prompt_notes: "Transparent fixed silhouette atoms for empty Ninja2 equipment slots. Seven object-only placeholders: kunai weapon, hood/head, robe armor, gloves, tabi boots, amulet, and ring. Final PNGs are flattened to quiet dark gray so they read as slot placeholders, not obtainable equipment art. No text, letters, numbers, kanji, slot labels, internal details, highlights, frames, badges, or UI button shells."
     background: transparent
     target_size: { width: 96, height: 96 }
@@ -527,6 +630,17 @@ assets:
     phaser:
       usage: css_img_src_set
       target_path: harness/runtime/assets/ninja2/ui/equipment-slots/
+    godot:
+      usage: runtime_shared_texture_set
+      target_path: harness/runtime/assets/ninja2/ui/equipment-slots/
+      loader_keys:
+        weapon: equip_empty_weapon
+        head: equip_empty_head
+        chest: equip_empty_chest
+        gloves: equip_empty_gloves
+        boots: equip_empty_boots
+        necklace: equip_empty_necklace
+        ring: equip_empty_ring
     unity: null
     priority: must
     blocking_reason: "Empty equipment slots were rendering temporary kanji/symbol text glyphs in player-facing UI."
@@ -553,7 +667,7 @@ assets:
       - harness/runtime/assets/ninja2/ui/equipment-slots/icon_empty_boots.png
       - harness/runtime/assets/ninja2/ui/equipment-slots/icon_empty_necklace.png
       - harness/runtime/assets/ninja2/ui/equipment-slots/icon_empty_ring.png
-    generation_notes: "Generated as a seven-cell magenta chroma-key sheet with built-in imagegen, copied into the design folder, converted to alpha locally, cropped by cell/alpha bounds, flattened to one dark gray silhouette tone, cleaned of tiny sheet-edge components, normalized to fixed 96px transparent PNG atoms, and copied to the Phaser runtime asset folder. These sprites replace the previous kanji/symbol fallback marks in empty equipment slots; slot labels remain native runtime text, and empty slots do not show bottom state text."
+    generation_notes: "Generated as a seven-cell magenta chroma-key sheet with built-in imagegen, copied into the design folder, converted to alpha locally, cropped by cell/alpha bounds, flattened to one dark gray silhouette tone, cleaned of tiny sheet-edge components, normalized to fixed 96px transparent PNG atoms, and copied to the Phaser runtime asset folder. These sprites replace the previous kanji/symbol fallback marks in empty equipment slots; slot labels remain native runtime text, and empty slots do not show bottom state text. Godot reuses the same runtime PNGs through Ninja2Catalog equip_empty_* texture keys."
 
   - key: ninja2.ui.dungeon_icon_set.resource_collection_v1
     type: ui_icon_set
@@ -608,7 +722,7 @@ assets:
   - key: ninja2.ui.panel.parchment_9slice
     type: nine_slice_panel
     mode: hybrid
-    platforms: [phaser, unity]
+    platforms: [phaser, unity, godot]
     target_path: harness/design/ninja2/assets/ui/panel_parchment_9slice.png
     usage:
       - component-skins.yaml:panel
@@ -629,6 +743,11 @@ assets:
     unity:
       usage: sliced_sprite
       target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/ninja2_ui_panel_parchment_9slice.png
+      slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+    godot:
+      usage: nine_patch_rect
+      target_path: harness/runtime/godot-ninja2/assets/generated/ui/panel_parchment_9slice.png
+      source_path: harness/runtime/assets/ninja2/ui/panel_parchment_9slice.png
       slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
     priority: should
     blocking_reason: ""
@@ -704,7 +823,7 @@ assets:
   - key: ninja2.ui.sanctuary_build.frame_ornaments_v1
     type: frame_ornament_set
     mode: hybrid
-    platforms: [phaser]
+    platforms: [phaser, godot]
     target_path: harness/design/ninja2/assets/ui/sanctuary-build/
     usage:
       - component-blueprints.yaml:FrameOrnamentLayer.sanctuary_build_variant
@@ -729,6 +848,15 @@ assets:
     unity:
       usage: none
       target_path: null
+    godot:
+      usage: texture_rect_set
+      target_path: harness/runtime/godot-ninja2/assets/generated/ui/sanctuary-build/frame_crest.png
+      variant_target_paths:
+        frame_crest: harness/runtime/godot-ninja2/assets/generated/ui/sanctuary-build/frame_crest.png
+        frame_corner_leaf: harness/runtime/godot-ninja2/assets/generated/ui/sanctuary-build/frame_corner_leaf.png
+      variant_source_paths:
+        frame_crest: harness/runtime/assets/ninja2/ui/sanctuary-build/frame_crest.png
+        frame_corner_leaf: harness/runtime/assets/ninja2/ui/sanctuary-build/frame_corner_leaf.png
     priority: should
     blocking_reason: ""
     status: generated
@@ -756,7 +884,7 @@ assets:
   - key: ninja2.ui.run_result.status_slabs_v1
     type: fixed_panel_sprite_set
     mode: generate_image
-    platforms: [phaser]
+    platforms: [phaser, godot]
     target_path: harness/design/ninja2/assets/ui/run-result/
     usage:
       - component-blueprints.yaml:RunResultStatusHeader.status_slab_skin
@@ -779,6 +907,15 @@ assets:
     unity:
       usage: none
       target_path: null
+    godot:
+      usage: texture_rect_set
+      target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_status_clear_panel.png
+      variant_target_paths:
+        result_status_clear_panel: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_status_clear_panel.png
+        result_status_defeat_panel: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_status_defeat_panel.png
+      variant_source_paths:
+        result_status_clear_panel: harness/runtime/assets/ninja2/ui/run-result/result_status_clear_panel.png
+        result_status_defeat_panel: harness/runtime/assets/ninja2/ui/run-result/result_status_defeat_panel.png
     priority: must
     blocking_reason: "The run result state must read as a strong image-authored victory/defeat surface before reward rows; CSS gradients are not final UI art."
     status: generated
@@ -809,13 +946,13 @@ assets:
   - key: ninja2.ui.run_result.hero_overlays_v1
     type: fixed_overlay_sprite_set
     mode: hybrid
-    platforms: [phaser]
+    platforms: [phaser, godot]
     target_path: harness/design/ninja2/assets/ui/run-result/
     usage:
       - component-blueprints.yaml:RunResultStatusHeader.hero_overhang_overlay
       - component-skins.yaml:run_result.status_header
       - survivor-runtime.html:result_status_before_overlay
-    prompt_notes: "Textless large overhanging result header overlays for the Ninja2 survival result modal, derived from generated status slabs only. The top ornament is not baked here; runtime reuses the sanctuary build modal frame_crest as a separate overlay. No text, no stat values, no reward rows, no CTA."
+    prompt_notes: "Textless large overhanging result header overlays for the Ninja2 survival result modal, derived from generated status slabs only. The top state medallion is not baked here; runtime layers ninja2.ui.run_result.crests_v1 as a separate state-specific overlay. No text, no stat values, no reward rows, no CTA."
     background: transparent
     target_size:
       clear: { width: 700, height: 270 }
@@ -832,11 +969,20 @@ assets:
     unity:
       usage: none
       target_path: null
+    godot:
+      usage: texture_rect_set
+      target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_hero_clear_overlay.png
+      variant_target_paths:
+        result_hero_clear_overlay: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_hero_clear_overlay.png
+        result_hero_defeat_overlay: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_hero_defeat_overlay.png
+      variant_source_paths:
+        result_hero_clear_overlay: harness/runtime/assets/ninja2/ui/run-result/result_hero_clear_overlay.png
+        result_hero_defeat_overlay: harness/runtime/assets/ninja2/ui/run-result/result_hero_defeat_overlay.png
     priority: must
     blocking_reason: "The selected clear/defeat concepts read as a large hero result ornament mounted over the modal, not a flat panel trapped inside the parchment body."
     status: generated
     generated_at: 2026-06-12T00:00:00+09:00
-    generated_with: local_composite_from_generated_ui_assets_plus_reused_modal_ornament
+    generated_with: local_composite_from_generated_ui_assets_plus_state_crest_overlay
     source_path: harness/design/ninja2/assets/ui/run-result/run_result_assets_v2.source_chromakey.png
     actual_paths:
       - harness/design/ninja2/assets/ui/run-result/result_hero_clear_overlay.png
@@ -844,13 +990,13 @@ assets:
     runtime_paths:
       - harness/runtime/assets/ninja2/ui/run-result/result_hero_clear_overlay.png
       - harness/runtime/assets/ninja2/ui/run-result/result_hero_defeat_overlay.png
-    generation_notes: "Composited from the generated status slab sprites only, with alpha cleanup and light drop shadow. The result ornament is rendered separately by reusing harness/runtime/assets/ninja2/ui/sanctuary-build/frame_crest.png, matching the existing modal ornament language. This is a fixed transparent overlay, not a 9-slice skin. It intentionally contains no localized title, stage text, run stats, reward rows, reward amounts, modal crest ornament, or return-button label."
+    generation_notes: "Composited from the generated status slab sprites only, with alpha cleanup and light drop shadow. The result state medallion is rendered separately with harness/runtime/assets/ninja2/ui/run-result/result_crest_clear.png or result_crest_defeat.png so clear/defeat keep the strong top composition from the selected references. This is a fixed transparent overlay, not a 9-slice skin. It intentionally contains no localized title, stage text, run stats, reward rows, reward amounts, modal crest ornament, or return-button label."
     component_contract:
       owner: component-blueprints.yaml:RunResultStatusHeader
       fixed_sprite_sizes_px:
         clear_overlay: { width: 700, height: 270 }
         defeat_overlay: { width: 700, height: 260 }
-      runtime_display_policy: "Render as an overflowing fixed sprite layer behind native status text, with sanctuary-build/frame_crest.png over it as the shared modal ornament; do not stretch as 9-slice and do not bake runtime text."
+      runtime_display_policy: "Render as an overflowing fixed sprite layer behind native status text, with the state-specific result crest over it; do not stretch as 9-slice and do not bake runtime text."
       must_not_bake:
         - result_title
         - stage_kicker
@@ -863,7 +1009,7 @@ assets:
   - key: ninja2.ui.run_result.battle_backdrop_v1
     type: background
     mode: hybrid
-    platforms: [phaser]
+    platforms: [phaser, godot]
     target_path: harness/design/ninja2/assets/ui/run-result/result_battle_backdrop.png
     usage:
       - component-blueprints.yaml:RunResultModalShell.battle_backdrop
@@ -881,6 +1027,10 @@ assets:
     unity:
       usage: none
       target_path: null
+    godot:
+      usage: texture_rect
+      target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_battle_backdrop.png
+      source_path: harness/runtime/assets/ninja2/ui/run-result/result_battle_backdrop.png
     priority: should
     blocking_reason: ""
     status: generated
@@ -911,7 +1061,7 @@ assets:
   - key: ninja2.ui.run_result.reward_header_brush_v1
     type: texture
     mode: generate_image
-    platforms: [phaser]
+    platforms: [phaser, godot]
     target_path: harness/design/ninja2/assets/ui/run-result/result_reward_header_brush.png
     usage:
       - component-blueprints.yaml:RunResultRewardList.section_title_background
@@ -929,6 +1079,10 @@ assets:
     unity:
       usage: none
       target_path: null
+    godot:
+      usage: texture_rect
+      target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_reward_header_brush.png
+      source_path: harness/runtime/assets/ninja2/ui/run-result/result_reward_header_brush.png
     priority: should
     blocking_reason: ""
     status: generated
@@ -950,10 +1104,12 @@ assets:
   - key: ninja2.ui.run_result.crests_v1
     type: ui_icon_set
     mode: generate_image
-    platforms: [phaser]
+    platforms: [phaser, godot]
     target_path: harness/design/ninja2/assets/ui/run-result/
     usage:
-      - superseded_by:ninja2.ui.sanctuary_build.frame_ornaments_v1
+      - component-blueprints.yaml:RunResultStateCrest.state_result_crest
+      - component-skins.yaml:run_result.state_crest
+      - godot-ninja2:result_status_state_crest
     prompt_notes: "Transparent fixed result crest icons for the Ninja2 survival result modal. Victory crest uses a glowing lantern shrine/trophy badge; defeat crest uses a cracked lantern badge. Circular dark rim, thick ink outline, no text, no numbers, no panel background."
     background: transparent
     target_size: { width: 128, height: 128 }
@@ -968,10 +1124,18 @@ assets:
     unity:
       usage: none
       target_path: null
-    priority: optional
+    godot:
+      usage: texture_rect_set
+      target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_crest_clear.png
+      variant_target_paths:
+        result_crest_clear: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_crest_clear.png
+        result_crest_defeat: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_crest_defeat.png
+      variant_source_paths:
+        result_crest_clear: harness/runtime/assets/ninja2/ui/run-result/result_crest_clear.png
+        result_crest_defeat: harness/runtime/assets/ninja2/ui/run-result/result_crest_defeat.png
+    priority: must
     blocking_reason: ""
-    status: superseded
-    superseded_by: ninja2.ui.sanctuary_build.frame_ornaments_v1
+    status: generated
     generated_at: 2026-06-10T15:31:59+09:00
     generated_with: built_in_imagegen_plus_chromakey_removal
     source_path: harness/design/ninja2/assets/ui/run-result/run_result_assets_v1.source_chromakey.png
@@ -981,13 +1145,13 @@ assets:
     runtime_paths:
       - harness/runtime/assets/ninja2/ui/run-result/result_crest_clear.png
       - harness/runtime/assets/ninja2/ui/run-result/result_crest_defeat.png
-    generation_notes: "Generated in the same UI asset sheet as the result slabs, then alpha-cleaned, cropped, resized to 128x128 fixed transparent sprites, and copied to the Phaser runtime folder. These are fixed sprites, not 9-slice skins. Superseded for active result runtime by the sanctuary-build frame_crest ornament so result modal ornament language matches other modals."
+    generation_notes: "Generated in the same UI asset sheet as the result slabs, then alpha-cleaned, cropped, resized to 128x128 fixed transparent sprites, and copied to the runtime folders. These are fixed sprites, not 9-slice skins. Active result runtime uses them as the dominant top state medallion so the clear/defeat header matches the selected references."
     component_contract:
       owner: component-blueprints.yaml:RunResultStatusHeader
       fixed_sprite_sizes_px:
         crest: { width: 128, height: 128 }
       runtime_display_size_px:
-        crest: { width: 72, height: 72 }
+        crest: { width: 120, height: 120 }
       must_not_bake:
         - result_title
         - stage_kicker
@@ -997,7 +1161,7 @@ assets:
   - key: ninja2.ui.run_result.return_button_9slice_v1
     type: button_skin
     mode: generate_image
-    platforms: [phaser]
+    platforms: [phaser, godot]
     target_path: harness/design/ninja2/assets/ui/run-result/result_return_button_9slice.png
     usage:
       - component-blueprints.yaml:RunResultFooter.return_button_skin
@@ -1017,6 +1181,11 @@ assets:
     unity:
       usage: none
       target_path: null
+    godot:
+      usage: nine_patch_rect
+      target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_return_button_9slice.png
+      source_path: harness/runtime/assets/ninja2/ui/run-result/result_return_button_9slice.png
+      slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
     priority: should
     blocking_reason: ""
     status: generated
@@ -1265,6 +1434,74 @@ assets:
     runtime_path: harness/runtime/assets/ninja2/battle/animations/guardian_hero_walk_3x8.png
     generation_notes: "Regenerated as a full-body 8x3 walk sheet so left/right share one side-facing row. The side row has alternating/crossing foot poses; the up row was regenerated for a clearer back-view gait. Removed the magenta background locally, then repacked every frame to a fixed 256px horizontal center and 462px foot baseline after the generated source drifted left across frames. Feet, boots, cloak hem, and lantern are preserved with a 50px bottom alpha margin."
 
+  - key: ninja2.battle.characters.guardian_walk_4x8_runtime_v1
+    type: spritesheet
+    mode: hybrid
+    platforms: [godot, phaser]
+    target_path: harness/design/ninja2/assets/battle/animations/guardian_hero_walk_4x8.png
+    usage:
+      - component-blueprints.yaml:BattleUnitSprite.walk_cycle_state
+      - component-skins.yaml:battle_movement_sprite
+      - motion-juice.yaml:battle.movement
+      - godot-ninja2/scripts/main.gd:player_walk_frames
+    prompt_notes: "Runtime-polish F movement sheet for the sanctuary guardian: down, left, right, up rows, 8 frames per row, transparent background, stable foot baseline, cloak/scarf/lantern identity preserved, no baked shadow or motion text."
+    background: transparent
+    target_size: { width: 4096, height: 2048 }
+    frame_size: { width: 512, height: 512 }
+    frame_layout: { columns: 8, rows: 4 }
+    slice_hints: null
+    states: [walk]
+    variants: [guardian_hero]
+    directions: [down, left, right, up]
+    godot:
+      usage: runtime_spritesheet_rows_with_alpha_crop
+      target_path: harness/runtime/assets/ninja2/battle/animations/guardian_hero_walk_4x8.png
+      frame_size: { width: 512, height: 512 }
+    phaser:
+      usage: spritesheet
+      target_path: harness/runtime/assets/ninja2/battle/animations/guardian_hero_walk_4x8.png
+      frame_size: { width: 512, height: 512 }
+    unity:
+      usage: none
+      target_path: null
+    priority: must
+    blocking_reason: "Godot movement looked like texture swapping because the runtime was not tied to a documented 4-way walk sheet and stable baseline contract."
+    status: generated
+    generated_at: 2026-06-17T14:35:00+09:00
+    generated_with: existing_generated_walk_sheet_plus_runtime_alpha_crop
+    actual_path: harness/design/ninja2/assets/battle/animations/guardian_hero_walk_4x8.png
+    source_path: harness/design/ninja2/assets/battle/animations/guardian_hero_walk_4x8.source_chromakey.png
+    runtime_path: harness/runtime/assets/ninja2/battle/animations/guardian_hero_walk_4x8.png
+    generation_notes: "Existing generated 4x8 sheet is now the documented Godot runtime-polish movement source. Godot crops each row by shared alpha bounds to avoid frame-size popping, then drives the frame index from movement state rather than absolute time."
+
+  - key: ninja2.battle.controls.circular_action_dock_runtime_v1
+    type: runtime_ui_control
+    mode: native_ui
+    platforms: [godot, phaser]
+    target_path: null
+    usage:
+      - component-blueprints.yaml:BattleActionButtonDock
+      - component-skins.yaml:battle_action_dock
+      - button-system.yaml:battle_circular_action
+    prompt_notes: "No image generation for the frame in this pass. Use native circles, strokes, cooldown rings, generated dash icon, generated skill icons, and VFX atoms to build the three-button action dock from runtime-polish F."
+    background: runtime_canvas
+    target_size: null
+    slice_hints: null
+    states: [ready, pressed, cooldown, disabled, just_cast]
+    variants: [primary_dash_or_skill, secondary_skill_left, secondary_skill_right]
+    godot:
+      usage: native_control_or_texture_rect_cluster
+      target_path: harness/runtime/godot-ninja2/scripts/main.gd
+    phaser:
+      usage: native_dom_or_phaser_graphics_cluster
+      target_path: harness/runtime/src/survivor/survivor-app.js
+    unity:
+      usage: none
+      target_path: null
+    priority: must
+    blocking_reason: "The F concept and button-system require three visible circular combat actions; the current Godot battle reads as a single dash button."
+    status: planned
+
   - key: ninja2.battle.skill_vfx.phaser_runtime_profiles
     type: runtime_vfx_profile
     mode: native_phaser
@@ -1483,7 +1720,7 @@ assets:
   - key: ninja2.ui.battle_dash_icon_v1
     type: ui_icon_set
     mode: generate_image
-    platforms: [phaser]
+    platforms: [phaser, godot]
     target_path: harness/design/ninja2/assets/ui/battle-controls/
     usage:
       - component-blueprints.yaml:BattleDashControl.dash_icon_sprite
@@ -1500,6 +1737,9 @@ assets:
     phaser:
       usage: css_background_icon
       target_path: harness/runtime/assets/ninja2/ui/battle-controls/
+    godot:
+      usage: texture_rect
+      target_path: harness/runtime/godot-ninja2/assets/generated/ui/battle-controls/icon_dash.png
     unity:
       usage: none
       target_path: null
@@ -1563,7 +1803,7 @@ assets:
   - key: ninja2.ui.shop_product_icons.cash_v1
     type: ui_icon_set
     mode: generate_image
-    platforms: [phaser]
+    platforms: [phaser, godot]
     target_path: harness/design/ninja2/assets/ui/shop/
     usage:
       - component-blueprints.yaml:CashShopProductRow.leading_product_icon
@@ -1582,6 +1822,14 @@ assets:
     phaser:
       usage: css_background_image_set
       target_path: harness/runtime/assets/ninja2/ui/shop/
+    godot:
+      usage: runtime_shared_texture_set
+      target_path: harness/runtime/assets/ninja2/ui/shop/
+      loader_keys:
+        ruby_pouch: shop_ruby_pouch
+        starter_pack: shop_starter_pack
+        energy_refill: shop_energy_refill
+        ad_removal: shop_ad_removal
     unity: null
     priority: should
     blocking_reason: "The home shop now represents real-cash products; product rows need distinct generated artwork instead of reused resource or tab icons."

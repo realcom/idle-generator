@@ -1,0 +1,183 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Theme" path="res://themes/generated/ninja2_battle_actions.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/battle-controls/icon_dash.png" id="2_tex"]
+
+[node name="Section_BattleActionDock" type="Control"]
+layout_mode = 3
+theme = ExtResource("1_theme")
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 188.0
+offset_bottom = 178.0
+custom_minimum_size = Vector2(188.0, 178.0)
+metadata/atom = "BattleActionDock"
+metadata/component = "BattleActionButtonDock"
+
+[node name="Btn_PrimaryDash" type="Control" parent="."]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 0.0
+offset_right = 186.0
+offset_bottom = 86.0
+custom_minimum_size = Vector2(86.0, 86.0)
+metadata/atom = "CircularActionButton"
+metadata/component = "BattleDashControl"
+metadata/slot = "primary_action"
+metadata/button_role = "battle_circular_action"
+metadata/asset_key = "ninja2.ui.battle_dash_icon_v1"
+
+[node name="Hit_PrimaryDash" type="Button" parent="Btn_PrimaryDash"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 86.0
+offset_bottom = 86.0
+custom_minimum_size = Vector2(86.0, 86.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/slot = "button_hit_area"
+metadata/button_role = "battle_circular_action"
+
+[node name="Icon_PrimaryDash" type="TextureRect" parent="Btn_PrimaryDash"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 10.0
+offset_right = 73.0
+offset_bottom = 70.0
+custom_minimum_size = Vector2(60.0, 60.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("2_tex")
+metadata/atom = "TextureAtom"
+metadata/slot = "icon"
+metadata/asset_key = "ninja2.ui.battle_dash_icon_v1"
+
+[node name="Progress_PrimaryDashCooldown" type="ProgressBar" parent="Btn_PrimaryDash"]
+layout_mode = 0
+show_percentage = false
+max_value = 1.0
+value = 0.0
+metadata/atom = "NativeProgress"
+metadata/slot = "cooldown_ring"
+metadata/value_binding = "player.dash.cooldownRatio"
+
+[node name="Text_PrimaryDashCooldown" type="Label" parent="Btn_PrimaryDash"]
+layout_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "cooldown_label"
+metadata/text_binding_or_text_key = "player.dash.cooldownRemaining"
+
+[node name="Btn_SecondarySkillLeft" type="Control" parent="."]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 88.0
+offset_right = 96.0
+offset_bottom = 166.0
+custom_minimum_size = Vector2(78.0, 78.0)
+metadata/atom = "CircularActionButton"
+metadata/component = "BattleSkillButton"
+metadata/slot = "secondary_action_left"
+metadata/button_role = "battle_circular_action"
+
+[node name="Hit_SecondarySkillLeft" type="Button" parent="Btn_SecondarySkillLeft"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 78.0
+offset_bottom = 78.0
+custom_minimum_size = Vector2(78.0, 78.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/slot = "button_hit_area"
+metadata/button_role = "battle_circular_action"
+
+[node name="Icon_SecondarySkillLeft" type="TextureRect" parent="Btn_SecondarySkillLeft"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 11.0
+offset_right = 65.0
+offset_bottom = 63.0
+custom_minimum_size = Vector2(52.0, 52.0)
+expand_mode = 1
+stretch_mode = 5
+metadata/atom = "TextureAtom"
+metadata/slot = "icon"
+
+[node name="Progress_SecondarySkillLeftCooldown" type="ProgressBar" parent="Btn_SecondarySkillLeft"]
+layout_mode = 0
+show_percentage = false
+max_value = 1.0
+value = 0.0
+metadata/atom = "NativeProgress"
+metadata/slot = "cooldown_ring"
+metadata/value_binding = "player.activeSkills.0.cooldownRatio"
+
+[node name="Text_SecondarySkillLeftCooldown" type="Label" parent="Btn_SecondarySkillLeft"]
+layout_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "cooldown_label"
+metadata/text_binding_or_text_key = "player.activeSkills.0.cooldownRemaining"
+
+[node name="Btn_SecondarySkillRight" type="Control" parent="."]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 92.0
+offset_right = 180.0
+offset_bottom = 170.0
+custom_minimum_size = Vector2(78.0, 78.0)
+metadata/atom = "CircularActionButton"
+metadata/component = "BattleSkillButton"
+metadata/slot = "secondary_action_right"
+metadata/button_role = "battle_circular_action"
+
+[node name="Hit_SecondarySkillRight" type="Button" parent="Btn_SecondarySkillRight"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 78.0
+offset_bottom = 78.0
+custom_minimum_size = Vector2(78.0, 78.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/slot = "button_hit_area"
+metadata/button_role = "battle_circular_action"
+
+[node name="Icon_SecondarySkillRight" type="TextureRect" parent="Btn_SecondarySkillRight"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 11.0
+offset_right = 65.0
+offset_bottom = 63.0
+custom_minimum_size = Vector2(52.0, 52.0)
+expand_mode = 1
+stretch_mode = 5
+metadata/atom = "TextureAtom"
+metadata/slot = "icon"
+
+[node name="Progress_SecondarySkillRightCooldown" type="ProgressBar" parent="Btn_SecondarySkillRight"]
+layout_mode = 0
+show_percentage = false
+max_value = 1.0
+value = 0.0
+metadata/atom = "NativeProgress"
+metadata/slot = "cooldown_ring"
+metadata/value_binding = "player.activeSkills.1.cooldownRatio"
+
+[node name="Text_SecondarySkillRightCooldown" type="Label" parent="Btn_SecondarySkillRight"]
+layout_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "cooldown_label"
+metadata/text_binding_or_text_key = "player.activeSkills.1.cooldownRemaining"

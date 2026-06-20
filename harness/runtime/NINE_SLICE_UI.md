@@ -1,6 +1,6 @@
 # Phaser 9-Slice UI Policy
 
-Purpose: decide when a generated UI skin should become a Phaser 9-slice object, and keep the same cap insets reusable for Unity sliced sprites.
+Purpose: decide when a generated UI skin should become a Phaser 9-slice object, and keep the same cap insets reusable for Unity sliced sprites and Godot `NinePatchRect` or `StyleBoxTexture`.
 
 ## Decision
 
@@ -35,6 +35,7 @@ Do not use Phaser 9-slice for:
 | Hex tile or non-rectangular board tile | State-specific image/mask, not 9-slice |
 | Text-heavy form/debug UI | DOM/CSS overlay |
 | Unity shared UI skin | Same PNG plus `unity.usage: sliced_sprite` |
+| Godot shared UI skin | Same PNG plus `godot.usage: nine_patch_rect` or `stylebox_texture` |
 
 ## Asset Plan Contract
 
@@ -43,7 +44,7 @@ Do not use Phaser 9-slice for:
 ```yaml
 type: nine_slice_panel # or button_skin, dock_skin, card_skin, tab_skin, chip_skin
 mode: hybrid
-platforms: [phaser, unity]
+platforms: [phaser, unity, godot]
 background: transparent
 slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
 component_contract:
@@ -57,11 +58,15 @@ unity:
   usage: sliced_sprite
   target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/<asset>.png
   slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+godot:
+  usage: nine_patch_rect
+  target_path: harness/runtime/godot-<game>/assets/generated/ui/<asset>.png
+  slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
 ```
 
 Keep state variants as separate keys or files when their cap geometry changes, such as `normal`, `pressed`, `selected`, and `disabled`.
 
-For asset entries that intentionally bundle several UI skin PNGs, use `phaser.usage: phaser_nineslice_set`, `unity.usage: sliced_sprite_set`, and name each inset group under `slice_hints`.
+For asset entries that intentionally bundle several UI skin PNGs, use `phaser.usage: phaser_nineslice_set`, `unity.usage: sliced_sprite_set`, `godot.usage: nine_patch_rect_set`, and name each inset group under `slice_hints`.
 
 For non-stretch-safe decorative attachments, use a separate fixed asset entry:
 
@@ -96,6 +101,18 @@ const skin = scene.add.nineslice(
 ```
 
 Runtime helpers may wrap this call, but they must preserve `slice_hints` from the asset plan. Use cached canvas slicing only as a deliberate legacy fallback, and document that fallback in the spec.
+
+## Godot Runtime Contract
+
+Use `NinePatchRect` for explicit Control scene nodes or `StyleBoxTexture` for theme-owned panel/button states. Preserve the same cap insets from `asset-plan.yaml`.
+
+Godot recipes under `harness/godot/recipes/ui/` must declare:
+
+- the asset key
+- `godot.usage`
+- `slice_hints`
+- `content_insets`
+- the target generated scene/theme resource that consumes the skin
 
 ## Validation
 

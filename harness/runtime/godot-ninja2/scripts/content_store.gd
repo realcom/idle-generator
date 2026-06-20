@@ -86,6 +86,10 @@ func get_skill(data_id: int) -> Dictionary:
 	return get_record("Skills", data_id)
 
 
+func get_trigger(name: String) -> Dictionary:
+	return triggers_by_name.get(name, {})
+
+
 func get_player_unit() -> Dictionary:
 	for unit in get_records("Units"):
 		if typeof(unit) == TYPE_DICTIONARY and str(unit.get("type", "")) == "Player":
@@ -106,6 +110,17 @@ func get_main_maps() -> Array:
 	return maps
 
 
+func map_board_constants(map_def: Dictionary) -> Dictionary:
+	var constants := {}
+	var maps_bundle = bundles.get("Maps", {})
+	if typeof(maps_bundle) == TYPE_DICTIONARY:
+		var map_global = maps_bundle.get("mapGlobal", {})
+		if typeof(map_global) == TYPE_DICTIONARY:
+			_merge_dictionary(constants, map_global.get("boardConstants", {}))
+	_merge_dictionary(constants, map_def.get("boardConstants", {}))
+	return constants
+
+
 func get_equipment_sample(limit := 7) -> Array:
 	var sample := []
 	for item in get_records("Items"):
@@ -119,7 +134,7 @@ func get_equipment_sample(limit := 7) -> Array:
 	return sample
 
 
-func stat_value(definition: Dictionary, stat_type: String, fallback := 0.0) -> float:
+func stat_value(definition: Dictionary, stat_type: String, fallback := 0.0, level := 1) -> float:
 	for stat in definition.get("addStats", []):
 		if typeof(stat) != TYPE_DICTIONARY:
 			continue
@@ -129,7 +144,8 @@ func stat_value(definition: Dictionary, stat_type: String, fallback := 0.0) -> f
 
 		var values = stat.get("value", [])
 		if typeof(values) == TYPE_ARRAY and values.size() > 0:
-			return float(values[0])
+			var index: int = clamp(int(level) - 1, 0, values.size() - 1)
+			return float(values[index])
 
 	return fallback
 
@@ -160,12 +176,69 @@ func build_summary() -> String:
 	return "\n".join(lines)
 
 
+func map_init_variables(map_def: Dictionary) -> Dictionary:
+	var values := {}
+	for entry in map_def.get("initVariables", []):
+		if typeof(entry) != TYPE_DICTIONARY:
+			continue
+		values[int(entry.get("callerKey", 0))] = float(entry.get("value", 0.0))
+	return values
+
+
+func map_wave_count(map_def: Dictionary) -> int:
+	var popup_args = map_def.get("popupArgs", {})
+	if typeof(popup_args) == TYPE_DICTIONARY and popup_args.has("ClientWaveCount"):
+		return int(popup_args["ClientWaveCount"])
+	return 1
+
+
+func skill_damage_percent(skill_def: Dictionary, skill_level := 1) -> float:
+	var best := 1.0
+	for timeline in skill_def.get("timelines", []):
+		if typeof(timeline) != TYPE_DICTIONARY:
+			continue
+		var hit = timeline.get("hit", {})
+		if typeof(hit) != TYPE_DICTIONARY:
+			continue
+		var add_damage = hit.get("addDamage", {})
+		if typeof(add_damage) != TYPE_DICTIONARY:
+			continue
+		var damages = add_damage.get("attackPercentDamages", [])
+		if typeof(damages) != TYPE_ARRAY or damages.is_empty():
+			continue
+		var index: int = clamp(skill_level - 1, 0, damages.size() - 1)
+		best = max(best, float(damages[index]))
+	return best
+
+
+func skill_hit_max(skill_def: Dictionary) -> int:
+	var max_hit := 1
+	for timeline in skill_def.get("timelines", []):
+		if typeof(timeline) != TYPE_DICTIONARY:
+			continue
+		var hit = timeline.get("hit", {})
+		if typeof(hit) == TYPE_DICTIONARY:
+			max_hit = max(max_hit, int(hit.get("maxHit", 1)))
+	return max_hit
+
+
 func bundle_dir_path() -> String:
 	return ProjectSettings.globalize_path("res://%s" % BUILD_DIR)
 
 
 func runtime_asset_path(relative_path: String) -> String:
 	return ProjectSettings.globalize_path("res://../assets/ninja2/%s" % relative_path)
+
+
+func _merge_dictionary(target: Dictionary, source) -> void:
+	if typeof(source) != TYPE_DICTIONARY:
+		return
+	for key in source.keys():
+		var value = source[key]
+		if typeof(value) == TYPE_DICTIONARY and typeof(target.get(key, null)) == TYPE_DICTIONARY:
+			_merge_dictionary(target[key], value)
+		else:
+			target[key] = value
 
 
 func _read_json_bundle(bundle_name: String):

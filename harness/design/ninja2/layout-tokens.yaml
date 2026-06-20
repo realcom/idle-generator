@@ -3,6 +3,7 @@ game: ninja2
 source_concepts:
   - ninja2_rulelocked_housing_home_a
   - ninja2_rulelocked_survival_battle_a
+  - ninja2_survival_visual_runtime_polish_f
 status: extracted
 
 viewport:
@@ -36,15 +37,21 @@ HousingHome:
 
 SurvivalBattle:
   top_hud:
-    height_px: 120
+    height_px: 112
+    max_height_px: 126
     left: "portrait + hp + level"
     center: "timer + stage"
     right: "actual run resource ledger: wood, stone, soulflame, gold + gain pulse; pause"
     progress_bar: "segmented wide bar under top clusters"
+    godot_warning: "If the top HUD exceeds 126px at 540x1016 it starts hiding the boss lane and should be compacted before adding more effects."
   playfield:
-    clear_center_radius_px: 110
+    clear_center_radius_px: 118
+    boss_lane_top_px: 170
+    boss_lane_min_visible_px: 126
     enemy_density: "high enough to see pressure by 5s"
     pickup_size_px: 30
+    pickup_count_visible_target: { minimum: 18, preferred: 30 }
+    hit_spark_visible_target: { minimum: 4, preferred: 8 }
   controls:
     joystick:
       position: "bottom-left"
@@ -55,6 +62,7 @@ SurvivalBattle:
       count: 3
       size_px: 76
       cooldown_ring: true
+      cluster: "one primary button above two secondary buttons; keep all three within bottom-right 168x184px"
   exp_bar:
     position: "bottom"
     height_px: 28

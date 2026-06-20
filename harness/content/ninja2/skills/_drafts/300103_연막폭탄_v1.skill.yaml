@@ -1,9 +1,9 @@
 id: 300103
 name: "연막 폭탄"
-tags: [UseToTarget, TargetPosition]
+tags: [UseToTarget, TargetPosition, GroundArea, AreaDeny, PersistentTerrain]
 damageType: Explosive
 projectileType: Parabolic
-cooldown: 2.1
+cooldown: 2.4
 priority: 3
 targetRefreshType: Nearest
 prefab: "FXPrefabs/VFX_LiquidHitGreen.prefab"
@@ -16,9 +16,9 @@ timelines:
       geometries:
         - circle:
             center: { x: 0.0, y: 0.0 }
-            radius: 3.4
+            radius: 1.13
       maxHit: 10
-      addDamage: { damagePercent: [115.0, 138.0, 165.0, 198.0, 235.0] }
+      addDamage: { damagePercent: [28.0, 34.0, 41.0, 49.0, 59.0] }
       addBuffs:
-        - { buffDataId: 400102, level: 1, duration: 2.0 }
-  - { time: 0.72, destroy: {} }
+        - { buffDataId: 400102, level: 1, duration: 0.7 }
+  - { time: 2.22, destroy: {} }

@@ -1,0 +1,63 @@
+version: "1.0"
+game: ninja2
+status: extracted
+updated_at: 2026-06-17T14:35:00+09:00
+
+source_concepts:
+  - ninja2_rulelocked_housing_home_a
+  - ninja2_survival_visual_runtime_polish_f
+  - ninja2_phaser_modal_system_a
+
+button_roles:
+  primary_cta:
+    examples: [SortieCtaButton, ModalConfirmButton, RunResultReturnButton]
+    min_touch_px: { width: 112, height: 52 }
+    visual: "orange or lantern-gold generated/native skin with dark ink outline and native Korean label."
+    asset_policy: "Generated skin may contain material, bevel, emblem, and sparkles; label and price stay native."
+    states: [normal, pressed, disabled, ready_pulse]
+  top_icon_button:
+    examples: [pause_button, menu_button, settings_button]
+    min_touch_px: { width: 44, height: 44 }
+    visual: "dark square/circle frame, cream icon atom, lantern-gold selected or alert rim."
+    asset_policy: "Use generated icon atoms where available; frame can be native rounded rect."
+    states: [normal, pressed, selected, disabled]
+  battle_circular_action:
+    examples: [BattleDashControl, BattleSkillButton, BattleActionButtonDock]
+    min_touch_px: { width: 70, height: 70 }
+    target_touch_px: { width: 78, height: 78 }
+    visual: "large black-rimmed circle with generated skill/dash icon atom, native cooldown ring, and native cooldown number."
+    cluster: "SurvivalBattle uses a three-button bottom-right action dock: primary dash/skill at top, two secondary skill buttons below."
+    asset_policy: "Button frame, cooldown number, cooldown ring, and keyboard hints are never baked into the icon PNG."
+    states: [ready, pressed, cooldown, disabled, just_cast]
+  joystick_control:
+    examples: [BattleJoystickControl]
+    min_touch_px: { width: 112, height: 112 }
+    target_touch_px: { width: 122, height: 122 }
+    visual: "translucent ring and thumb; directional markers are low-alpha native shapes."
+    asset_policy: "No generated bitmap required unless the touch ring becomes branded art."
+    states: [idle, dragging, disabled]
+  tab_button:
+    examples: [HomeBottomTab, ModalTabButton]
+    min_touch_px: { width: 52, height: 48 }
+    visual: "stable dimensions, selected lantern rim/fill, generated icon atom plus native short label."
+    states: [normal, selected, disabled, badge]
+
+state_motion:
+  pressed:
+    duration_ms: 90
+    transform: "scale 0.97 or 1-2px inset; hit target size does not change."
+  ready_pulse:
+    duration_ms: 1300
+    transform: "low-alpha lantern-gold rim pulse only."
+  cooldown:
+    duration_ms: "data-driven"
+    transform: "native conic/radial ring; icon stays visible at 0.58-0.72 alpha."
+  disabled:
+    duration_ms: 220
+    transform: "short shake only on explicit failed press; otherwise dim saturation."
+
+rules:
+  - "Do not create screen-local button colors; use color-tokens.yaml semantic tokens."
+  - "Do not bake Korean labels, numbers, cooldowns, prices, or counts into generated button assets."
+  - "Circular battle controls are fixed sprites/native shapes, not 9-slice."
+  - "All button states must keep stable bounds so combat UI does not shift."

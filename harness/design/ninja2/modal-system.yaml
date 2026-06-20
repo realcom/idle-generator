@@ -1,0 +1,57 @@
+version: "1.0"
+game: ninja2
+status: extracted
+updated_at: 2026-06-17T14:35:00+09:00
+
+source_concepts:
+  - ninja2_phaser_modal_system_a
+  - ninja2_run_levelup_choice_modal_a
+  - ninja2_sanctuary_build_modal_a
+  - ninja2_run_result_clear_concept_a
+  - ninja2_run_result_defeat_concept_a
+
+modal_family:
+  shell:
+    skin_asset: ninja2.ui.panel.parchment_9slice
+    ornament_asset: ninja2.ui.sanctuary_build.frame_ornaments_v1
+    max_width_px: 392
+    min_width_px: 320
+    content_insets_px: { left: 18, right: 18, top: 34, bottom: 18 }
+    nine_slice_policy: "Only the rectangular parchment shell is stretchable; crest, leaves, badges, and status slabs are fixed sprites."
+  scrim:
+    color_token: deep_forest
+    alpha: 0.58
+    battle_pause_policy: "Battle continues only when modal variant explicitly allows fast-choice overlay; otherwise pause simulation."
+  header:
+    anatomy: [crest_ornament, title_text, optional_subtitle, close_button]
+    title_policy: "Native Korean text; clamp to one line at mobile width."
+  body:
+    anatomy: [content_stack, cards_or_rows, empty_state]
+    scroll_policy: "Only body scrolls; header/footer remain fixed."
+  footer:
+    anatomy: [secondary_action, primary_cta]
+    button_role_source: button-system.yaml
+
+variants:
+  skill_choice:
+    source_surface: RunLevelUpChoice
+    body: "three fixed cards; no vertical scroll in target mobile viewport."
+    battle_visibility: "dimmed battle background remains visible but unreadable enough to make the choice modal primary."
+  build_list:
+    source_surface: SanctuaryBuildModal
+    body: "scrollable building rows with generated building icon and native cost/progress."
+  equipment_detail:
+    source_surface: EquipmentDetailModal
+    body: "large generated equipment icon, native stat comparison, metadata chips, and equip CTA."
+  shop:
+    source_surface: HomeCashShopModal
+    body: "product cards with generated item art and native KRW price pills."
+  run_result:
+    source_surface: RunResultModal
+    body: "fixed status art slab plus native run stats and reward rows."
+
+rules:
+  - "No modal variant may bake generated pseudo text into runtime UI."
+  - "Frame ornaments must sit above the shell and below text/touch controls."
+  - "Parchment shell slice_hints come from asset-plan; content insets come from component-blueprints."
+  - "SurvivalBattle HUD and controls remain hidden or dimmed behind blocking modals."

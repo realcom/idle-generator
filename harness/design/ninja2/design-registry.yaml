@@ -1,5 +1,5 @@
 version: "1.0"
-updated_at: 2026-06-12T12:48:33+09:00
+updated_at: 2026-06-19T13:12:00+09:00
 
 concepts:
   - id: ninja2_housing_hex_sortie_concept_a
@@ -274,13 +274,27 @@ concepts:
     title: "Survival Visual Runtime Polish F"
     image: concepts/ninja2_survival_visual_runtime_polish_f.png
     notes: concepts/ninja2_survival_visual_runtime_polish_f.md
-    status: draft
+    status: extracted
     created_at: 2026-06-11T20:22:00+09:00
     created_by: imagegen
     screen: SurvivalBattle
     orientation: portrait
-    critique: "현재 Phaser 뷰와 가장 가까운 보수적 목표. 배경 decal, warning circle, pickup glow, skill trail만으로 접근 가능함."
-    tags: [Ninja2, Survival, VisualDirection, CurrentHeroAsset, RuntimePolish, PhaserRuntime, Draft]
+    critique: "현재 Phaser/Godot 뷰와 가장 가까운 보수적 목표. 추출 기준은 compact top HUD, central hero aura, boss warning halo, dense pickup/spark atoms, three-button action dock, 4-way movement readability."
+    tags: [Ninja2, Survival, VisualDirection, CurrentHeroAsset, RuntimePolish, PhaserRuntime, GodotRuntime, Extracted]
+    extracted_at: 2026-06-17T14:35:00+09:00
+    extracted_to:
+      - ui-system-inventory.yaml
+      - button-system.yaml
+      - modal-system.yaml
+      - color-tokens.yaml
+      - art-direction.yaml:screen_contract.SurvivalBattle.runtime_polish_f
+      - layout-tokens.yaml:SurvivalBattle
+      - component-blueprints.yaml:surfaces.SurvivalBattle
+      - component-skins.yaml:battle_action_dock
+      - asset-plan.yaml:ninja2.battle.characters.guardian_walk_4x8_runtime_v1
+      - asset-plan.yaml:ninja2.battle.controls.circular_action_dock_runtime_v1
+      - motion-juice.yaml:motion.battle
+      - critique-rubric.yaml
   - id: ninja2_run_result_clear_concept_a
     title: "Run Result Clear Concept A"
     image: concepts/ninja2_run_result_clear_concept_a.png
@@ -598,6 +612,17 @@ concepts:
     orientation: portrait
     critique: "선택 후보. 성소 보드 배경, parchment modal family, object-only 상품 아이콘, KRW price pill, orange purchase CTA가 현금 결제 상점으로 명확하다."
     tags: [Ninja2, CasualSanctuary, HomeModal, Shop, CashShop, IAP, ProductList, Phaser, MobilePortrait, CandidateForRuntime]
+  - id: ninja2_home_cash_shop_modal_c
+    title: "Home Cash Shop Modal C"
+    image: concepts/home-modals/shop/concept-c.png
+    notes: concepts/home-modals/shop/concept-c.md
+    status: candidate
+    created_at: 2026-06-19T13:12:00+09:00
+    created_by: gen-ui-concept
+    screen: HomeCashShopModal
+    orientation: portrait
+    critique: "모바일 게임 상점 문법을 강화한 후보. 카테고리 탭, 타임특가 배너, 할인/상태 badge, 2열 추천 상품, 빠른 구매 리스트가 있어 다양한 상품군 확장에 적합하다."
+    tags: [Ninja2, CasualSanctuary, HomeModal, Shop, CashShop, IAP, TimedDeal, DiscountBadge, CategoryTabs, Phaser, MobilePortrait, CandidateForRuntime]
   - id: ninja2_equipment_detail_modal_a
     title: "Equipment Detail Modal A"
     image: concepts/ninja2_equipment_detail_modal_a.png

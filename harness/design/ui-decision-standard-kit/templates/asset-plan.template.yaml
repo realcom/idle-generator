@@ -19,7 +19,7 @@ assets:
   - key: "<game>.ui.panel.example"
     type: nine_slice_panel # icon | background | portrait | effect | button_skin | frame | texture
     mode: hybrid # generate_image | native_ui | hybrid | reuse
-    platforms: [phaser]
+    platforms: [phaser, unity, godot]
     target_path: "design/<game>/assets/ui/panel_example.png"
     usage:
       - "component-blueprints.yaml:<ComponentName>.skin"
@@ -40,6 +40,11 @@ assets:
     phaser:
       usage: phaser_nineslice # phaser_nineslice | phaser_nineslice_set | image_sprite | atlas_region | css_background
       target_path: "runtime/assets/<game>/ui/panel_example.png"
+    godot:
+      usage: nine_patch_rect # nine_patch_rect | stylebox_texture | texture_rect | sprite2d | native_control | none
+      target_path: "runtime/godot-<game>/assets/generated/ui/panel_example.png"
+      import_preset: ui_texture # ui_texture | pixel_sprite | atlas | none
+      slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
     unity:
       usage: sliced_sprite
       target_path: ""

@@ -11,7 +11,7 @@ model: sonnet
 
 Purpose: turn an approved or selected concept image into reusable design harness sources and a concrete asset-generation plan.
 
-This skill is the analysis step after concept generation. It decides what should become generated image assets, what should remain runtime-native UI, and how downstream Phaser specs or Unity recipes should combine both.
+This skill is the analysis step after concept generation. It decides what should become generated image assets, what should remain runtime-native UI, and how downstream Phaser specs, Unity recipes, or Godot recipes should combine both.
 
 ## Always read
 
@@ -23,6 +23,7 @@ This skill is the analysis step after concept generation. It decides what should
 - `harness/design/<game>/color-tokens.yaml` if it exists or the concept defines new UI colors/states.
 - `harness/design/COMPONENT_BLUEPRINTS.md`
 - `harness/runtime/NINE_SLICE_UI.md` when assetizing rectangular UI skins.
+- `harness/godot/GODOT_UI_HARNESS.md` when a Godot runtime target exists or the asset plan includes Godot.
 - Existing design source files to avoid overwriting decisions accidentally.
 - Existing generated assets or asset manifests under `harness/design/<game>/` or `harness/assets/` when present.
 
@@ -89,7 +90,7 @@ assets:
   - key: ui.panel.example
     type: nine_slice_panel | icon | background | portrait | effect | button_skin | frame | texture
     mode: generate_image | native_ui | hybrid | reuse
-    platforms: [phaser, unity]
+    platforms: [phaser, unity, godot]
     target_path: harness/design/<game>/assets/example.png
     usage:
       - component-skins.yaml:example_component
@@ -106,6 +107,10 @@ assets:
       usage: sliced_sprite | sprite | raw_image
       target_path: engine/client/Client/Assets/Resources/HarnessPreview/GeneratedSprites/example.png
       slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+    godot:
+      usage: nine_patch_rect | stylebox_texture | texture_rect | sprite2d | native_control | none
+      target_path: harness/runtime/godot-<game>/assets/generated/ui/example.png
+      slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
     priority: must | should | nice
     blocking_reason: ""
 ```
@@ -115,7 +120,7 @@ assets:
 - Keep files declarative and implementation-neutral where possible.
 - Record source concept ids in every output.
 - Do not generate images in this skill; describe the genimg-ready assets so a later asset-generation step can execute them.
-- Do not invent engine or runtime bindings here; those belong in `gen-unity-ui-recipe` or `gen-phaser-ui-spec`.
+- Do not invent engine or runtime bindings here; those belong in `gen-unity-ui-recipe`, `gen-phaser-ui-spec`, or `gen-godot-ui-recipe`.
 - Do not mark registry status as `extracted` if required `must` assets are ambiguous.
 - Do not skip `component-blueprints.yaml` for any selected UI concept that will produce reusable runtime components.
 - Do not jump from a full-screen concept directly to component atoms when the UI has multiple semantic sections; define the sections first and run the extraction loop per section.

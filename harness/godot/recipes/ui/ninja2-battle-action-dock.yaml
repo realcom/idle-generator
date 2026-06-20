@@ -1,0 +1,199 @@
+version: 1
+game: ninja2
+slug: ninja2-battle-action-dock
+status: draft
+backend: godot_control
+
+target:
+  project: ../../../runtime/godot-ninja2/project.godot
+  owner_scene: ../../../runtime/godot-ninja2/scenes/main.tscn
+  owner_script: ../../../runtime/godot-ninja2/scripts/main.gd
+  output:
+    scene: ../../../runtime/godot-ninja2/scenes/generated/battle_action_dock.tscn
+    theme: ../../../runtime/godot-ninja2/themes/generated/ninja2_battle_actions.tres
+  generation_policy: "Generated from harness/godot recipe; do not hand-edit generated output."
+
+sources:
+  ui_system_inventory: ../../../design/ninja2/ui-system-inventory.yaml
+  button_system: ../../../design/ninja2/button-system.yaml
+  modal_system: ../../../design/ninja2/modal-system.yaml
+  color_tokens: ../../../design/ninja2/color-tokens.yaml
+  art_direction: ../../../design/ninja2/art-direction.yaml
+  layout_tokens: ../../../design/ninja2/layout-tokens.yaml
+  component_blueprints: ../../../design/ninja2/component-blueprints.yaml
+  component_skins: ../../../design/ninja2/component-skins.yaml
+  asset_plan: ../../../design/ninja2/asset-plan.yaml
+  concepts:
+    - ../../../design/ninja2/concepts/ninja2_survival_visual_runtime_polish_f.md
+
+blueprint_refs:
+  surface: SurvivalBattle
+  sections: [battle_controls]
+  components:
+    - BattleActionButtonDock
+    - BattleSkillButton
+    - BattleDashControl
+  shared_button_roles:
+    - battle_circular_action
+  color_token_groups:
+    - battle
+    - action
+
+screen:
+  orientation: portrait_9_16
+  reference_size_px: { width: 540, height: 1016 }
+  safe_area_policy: "Dock anchors to bottom-right safe area and stays above EXP bar."
+
+layout:
+  anchor: bottom_right_safe_area
+  size_px: { width: 188, height: 178 }
+  action_button_count: 3
+  action_button_layout: "one primary circle above two secondary circles"
+  touch_policy: "Each action keeps at least 70x70px touch target and does not resize during cooldown."
+
+assets:
+  required_keys:
+    - ninja2.ui.battle_dash_icon_v1
+    - ninja2.battle.controls.circular_action_dock_runtime_v1
+  fixed_atoms:
+    - key: ninja2.ui.battle_dash_icon_v1
+      usage: primary_action_icon
+      display_size_px: { width: 54, height: 54 }
+  native_controls:
+    - key: ninja2.battle.controls.circular_action_dock_runtime_v1
+      usage: native_control_cluster
+
+control_tree:
+  root:
+    atom: BattleActionDock
+    node_name: Section_BattleActionDock
+    component: BattleActionButtonDock
+    layout: primary_above_two_secondary
+    size_px: { width: 188, height: 178 }
+    children:
+      - atom: CircularActionButton
+        slot: primary_action
+        node_name: Btn_PrimaryDash
+        component: BattleDashControl
+        button_role: battle_circular_action
+        asset_key: ninja2.ui.battle_dash_icon_v1
+        size_px: { width: 86, height: 86 }
+        position_px: { x: 100, y: 0 }
+        bindings:
+          cooldown: player.dash.cooldownRemaining
+          action: RequestDash
+        children:
+          - atom: IconButton
+            slot: button_hit_area
+            node_name: Hit_PrimaryDash
+            button_role: battle_circular_action
+            touch_size: { width: 86, height: 86 }
+          - atom: TextureAtom
+            slot: icon
+            node_name: Icon_PrimaryDash
+            asset_key: ninja2.ui.battle_dash_icon_v1
+            stretch_mode: keep_aspect_centered
+            size_px: { width: 60, height: 60 }
+            position_px: { x: 13, y: 10 }
+          - atom: NativeProgress
+            slot: cooldown_ring
+            node_name: Progress_PrimaryDashCooldown
+            value_binding: player.dash.cooldownRatio
+            style: radial_ring
+          - atom: NativeLabel
+            slot: cooldown_label
+            node_name: Text_PrimaryDashCooldown
+            text_binding_or_text_key: player.dash.cooldownRemaining
+            font_size: 14
+            color_token: cream_cloak
+      - atom: CircularActionButton
+        slot: secondary_action_left
+        node_name: Btn_SecondarySkillLeft
+        component: BattleSkillButton
+        button_role: battle_circular_action
+        size_px: { width: 78, height: 78 }
+        position_px: { x: 18, y: 88 }
+        bindings:
+          skill_slot: player.activeSkills.0
+          cooldown: player.activeSkills.0.cooldownRemaining
+        children:
+          - atom: IconButton
+            slot: button_hit_area
+            node_name: Hit_SecondarySkillLeft
+            button_role: battle_circular_action
+            touch_size: { width: 78, height: 78 }
+          - atom: TextureAtom
+            slot: icon
+            node_name: Icon_SecondarySkillLeft
+            texture: native_placeholder_skill_icon
+            stretch_mode: keep_aspect_centered
+            size_px: { width: 52, height: 52 }
+            position_px: { x: 13, y: 11 }
+          - atom: NativeProgress
+            slot: cooldown_ring
+            node_name: Progress_SecondarySkillLeftCooldown
+            value_binding: player.activeSkills.0.cooldownRatio
+            style: radial_ring
+          - atom: NativeLabel
+            slot: cooldown_label
+            node_name: Text_SecondarySkillLeftCooldown
+            text_binding_or_text_key: player.activeSkills.0.cooldownRemaining
+            font_size: 12
+            color_token: cream_cloak
+      - atom: CircularActionButton
+        slot: secondary_action_right
+        node_name: Btn_SecondarySkillRight
+        component: BattleSkillButton
+        button_role: battle_circular_action
+        size_px: { width: 78, height: 78 }
+        position_px: { x: 102, y: 92 }
+        bindings:
+          skill_slot: player.activeSkills.1
+          cooldown: player.activeSkills.1.cooldownRemaining
+        children:
+          - atom: IconButton
+            slot: button_hit_area
+            node_name: Hit_SecondarySkillRight
+            button_role: battle_circular_action
+            touch_size: { width: 78, height: 78 }
+          - atom: TextureAtom
+            slot: icon
+            node_name: Icon_SecondarySkillRight
+            texture: native_placeholder_skill_icon
+            stretch_mode: keep_aspect_centered
+            size_px: { width: 52, height: 52 }
+            position_px: { x: 13, y: 11 }
+          - atom: NativeProgress
+            slot: cooldown_ring
+            node_name: Progress_SecondarySkillRightCooldown
+            value_binding: player.activeSkills.1.cooldownRatio
+            style: radial_ring
+          - atom: NativeLabel
+            slot: cooldown_label
+            node_name: Text_SecondarySkillRightCooldown
+            text_binding_or_text_key: player.activeSkills.1.cooldownRemaining
+            font_size: 12
+            color_token: cream_cloak
+
+data_contract:
+  runtime_state:
+    - battle_sim.dash_cooldown_remaining
+    - player.activeSkills
+  hardcoding_allowlist:
+    - "secondary skill icons may use native placeholder circles until generated skill icon atoms are selected for Godot."
+
+validation:
+  commands:
+    - "python3 harness/tools/design_blueprint_validate.py ninja2"
+    - "python3 harness/godot/validators/godot_ui_recipe_validate.py --recipe harness/godot/recipes/ui/ninja2-battle-action-dock.yaml"
+    - "python3 harness/godot/builders/godot_ui_recipe_build.py --recipe harness/godot/recipes/ui/ninja2-battle-action-dock.yaml"
+    - "godot --headless --path harness/runtime/godot-ninja2 --import"
+    - "godot --headless --path harness/runtime/godot-ninja2 --scene res://scenes/generated/battle_action_dock.tscn --quit-after 1"
+    - "godot --headless --path harness/runtime/godot-ninja2 --check-only --script res://scripts/main.gd"
+    - "godot --headless --path harness/runtime/godot-ninja2 --script res://scripts/tools/smoke.gd"
+  screenshot: harness/runtime/godot-ninja2/screenshots/godot-ninja2-battle-screen.png
+  blockers:
+    - no_unknown_atoms
+    - no_missing_asset_keys
+    - no_single_lonely_dash_button
+    - native_cooldown_text_not_baked_into_icon

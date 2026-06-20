@@ -1,0 +1,465 @@
+version: 1
+game: ninja2
+slug: ninja2-run-result-modal
+status: implemented
+backend: godot_control
+
+target:
+  project: ../../../runtime/godot-ninja2/project.godot
+  owner_scene: ../../../runtime/godot-ninja2/scenes/main.tscn
+  owner_script: ../../../runtime/godot-ninja2/scripts/main.gd
+  output:
+    scene: ../../../runtime/godot-ninja2/scenes/generated/run_result_modal.tscn
+    theme: ../../../runtime/godot-ninja2/themes/generated/ninja2_run_result_modal.tres
+  generation_policy: "Generated from harness/godot recipe; do not hand-edit generated output."
+
+sources:
+  ui_system_inventory: ../../../design/ninja2/ui-system-inventory.yaml
+  button_system: ../../../design/ninja2/button-system.yaml
+  modal_system: ../../../design/ninja2/modal-system.yaml
+  color_tokens: ../../../design/ninja2/color-tokens.yaml
+  art_direction: ../../../design/ninja2/art-direction.yaml
+  layout_tokens: ../../../design/ninja2/layout-tokens.yaml
+  component_blueprints: ../../../design/ninja2/component-blueprints.yaml
+  component_skins: ../../../design/ninja2/component-skins.yaml
+  asset_plan: ../../../design/ninja2/asset-plan.yaml
+  concepts:
+    - ../../../design/ninja2/concepts/ninja2_run_result_clear_concept_a.md
+    - ../../../design/ninja2/concepts/ninja2_run_result_defeat_concept_a.md
+    - ../../../design/ninja2/concepts/ninja2_phaser_modal_system_a.md
+
+current_godot_reference:
+  owner_method: main.gd:_build_result_panel
+  sync_method: main.gd:_sync_result_panel
+  capture_script: ../../../runtime/godot-ninja2/scripts/tools/capture_battle_result.gd
+  screenshots:
+    clear: ../../../runtime/godot-ninja2/screenshots/godot-ninja2-result-clear.png
+    defeat: ../../../runtime/godot-ninja2/screenshots/godot-ninja2-result-defeat.png
+  comparison_notes:
+    - "Current Godot already captures clear/defeat result states and uses the result-only battle backdrop."
+    - "Current Godot now uses the latest overhanging hero overlay set, state-specific result crest medallions, reward brush header, and generated return-button skin."
+    - "Generated Control scene and theme are built from this recipe; main.gd keeps the runtime data binding path for the live battle result modal."
+
+visual_comparison:
+  latest_reference_verdict: PASS_WITH_NOTES
+  clear:
+    concept: ../../../design/ninja2/concepts/ninja2_run_result_clear_concept_a.png
+    candidate: ../../../runtime/godot-ninja2/screenshots/godot-ninja2-result-clear.png
+    normalized_board: ../../../runtime/godot-ninja2/screenshots/compare/godot-run-result-clear-vs-concept.png
+    verdict: PASS_WITH_NOTES
+    next_edit_scope: "Optional polish only: concept uses larger hand-lettered hero typography and a taller top stack than the current native-text Godot implementation."
+  defeat:
+    concept: ../../../design/ninja2/concepts/ninja2_run_result_defeat_concept_a.png
+    candidate: ../../../runtime/godot-ninja2/screenshots/godot-ninja2-result-defeat.png
+    normalized_board: ../../../runtime/godot-ninja2/screenshots/compare/godot-run-result-defeat-vs-concept.png
+    verdict: PASS_WITH_NOTES
+    next_edit_scope: "Optional polish only: concept defeat card has a taller parchment body and larger brush-title treatment than the current compact Godot result modal."
+
+blueprint_refs:
+  surface: RunResultModal
+  sections:
+    - modal_shell
+    - state_header
+    - reward_accounting
+    - modal_footer
+  components:
+    - RunResultModalShell
+    - RunResultStatusHeader
+    - RunResultStateCrest
+    - RunResultStatChipRow
+    - RunResultRewardList
+    - RunResultRewardRow
+    - RunResultFooter
+    - RunResultReturnButton
+  shared_button_roles:
+    - primary_cta
+  shared_modal_sections:
+    - shell
+    - scrim
+    - header
+    - body
+    - footer
+  color_token_groups:
+    - battle_hud_panel
+    - battle_center_readability
+    - pickup_feedback
+    - runtime_compare
+
+screen:
+  orientation: portrait_9_16
+  reference_size_px: { width: 540, height: 1016 }
+  concept_reference_size_px: { width: 941, height: 1672 }
+  safe_area_policy: "Full-screen blocking result overlay; modal shell stays within 18px horizontal and 22px vertical safe margins."
+
+layout:
+  anchor: full_rect_overlay
+  modal:
+    anchor: centered
+    width_px: { target: 392, min: 320 }
+    max_height_policy: "min(584px, viewport_height - 44px)"
+    content_padding_px: { left: 18, right: 18, top: 20, bottom: 16 }
+    shell_inner_padding_px: { left: 2, right: 2, top: 2, bottom: 2 }
+  state_header:
+    min_height_px: 230
+    title_font_px: { target: 52, minimum: 44 }
+    status_overlay_display_px:
+      clear: { width: 392, height: 151 }
+      defeat: { width: 392, height: 146 }
+    crest_display_px: { width: 120, height: 120 }
+    stage_badge_display_px: { width: 132, height: 24 }
+    stat_chip_count: 3
+    stat_chip_min_height_px: 45
+    stat_chip_gap_px: 6
+    content_insets_px: { left: 10, right: 10, top: 10, bottom: 8 }
+    text_clamp:
+      title: { max_lines: 1, overflow: fit }
+      kicker: { max_lines: 1, overflow: ellipsis }
+      summary: { max_lines: 2, overflow: clamp }
+      stage_badge: { max_lines: 1, overflow: ellipsis }
+  reward_accounting:
+    max_visible_rows_before_scroll: 7
+    row_min_height_px: 45
+    row_gap_px: 0
+    list_padding_px: 10
+    scroll_policy: "Reward list scrolls before the status header shrinks."
+    text_clamp:
+      row_name: { max_lines: 1, overflow: ellipsis }
+      row_amount: { max_lines: 1, overflow: ellipsis }
+  modal_footer:
+    margin_top_px: 14
+    button_height_px: 56
+    button_content_insets_px: { left: 18, right: 18, top: 10, bottom: 10 }
+
+assets:
+  required_keys:
+    - ninja2.ui.run_result.battle_backdrop_v1
+    - ninja2.ui.panel.parchment_9slice
+    - ninja2.ui.run_result.hero_overlays_v1
+    - ninja2.ui.run_result.status_slabs_v1
+    - ninja2.ui.run_result.crests_v1
+    - ninja2.ui.run_result.reward_header_brush_v1
+    - ninja2.ui.run_result.return_button_9slice_v1
+  nineslice:
+    - key: ninja2.ui.panel.parchment_9slice
+      atom: NinePatchPanel
+      usage: modal_shell_frame
+      godot_usage: nine_patch_rect
+      slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+      content_insets: { left: 2, right: 2, top: 2, bottom: 2 }
+      target_size_px: { width: 392, height: 584 }
+      source_asset_plan_slot: "asset_dependency_matrix.ninja2.ui.panel.parchment_9slice.RunResultModalShell.skin"
+      intended_godot_target_path: harness/runtime/godot-ninja2/assets/generated/ui/panel_parchment_9slice.png
+    - key: ninja2.ui.run_result.return_button_9slice_v1
+      atom: NinePatchPanel
+      usage: return_button_skin
+      godot_usage: stylebox_texture
+      slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+      content_insets: { left: 18, right: 18, top: 10, bottom: 10 }
+      target_size_px: { width: 286, height: 56 }
+      intended_godot_target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_return_button_9slice.png
+  fixed_atoms:
+    - key: ninja2.ui.run_result.battle_backdrop_v1
+      usage: full_screen_result_background
+      atom: TextureAtom
+      stretch_mode: keep_aspect_covered
+      display_policy: "Cover viewport behind scrim; never include modal, text, rewards, or CTA."
+      intended_godot_target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_battle_backdrop.png
+    - key: ninja2.ui.run_result.hero_overlays_v1
+      usage: state_header_overhanging_art
+      atom: TextureAtom
+      variants:
+        clear:
+          source_path: harness/design/ninja2/assets/ui/run-result/result_hero_clear_overlay.png
+          intended_godot_target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_hero_clear_overlay.png
+          display_size_px: { width: 392, height: 151 }
+        defeat:
+          source_path: harness/design/ninja2/assets/ui/run-result/result_hero_defeat_overlay.png
+          intended_godot_target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_hero_defeat_overlay.png
+          display_size_px: { width: 392, height: 146 }
+      not_nine_slice: true
+    - key: ninja2.ui.run_result.status_slabs_v1
+      usage: fixed_status_panel_fallback
+      atom: TextureAtom
+      variants:
+        clear:
+          source_path: harness/design/ninja2/assets/ui/run-result/result_status_clear_panel.png
+          intended_godot_target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_status_clear_panel.png
+        defeat:
+          source_path: harness/design/ninja2/assets/ui/run-result/result_status_defeat_panel.png
+          intended_godot_target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_status_defeat_panel.png
+      not_nine_slice: true
+      use_policy: "Fallback or lower layer only; latest target should prioritize hero_overlays_v1."
+    - key: ninja2.ui.run_result.crests_v1
+      usage: state_result_crest
+      atom: TextureAtom
+      variants:
+        clear:
+          source_path: harness/design/ninja2/assets/ui/run-result/result_crest_clear.png
+          intended_godot_target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_crest_clear.png
+        defeat:
+          source_path: harness/design/ninja2/assets/ui/run-result/result_crest_defeat.png
+          intended_godot_target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_crest_defeat.png
+      display_size_px: { width: 120, height: 120 }
+      not_nine_slice: true
+    - key: ninja2.ui.run_result.reward_header_brush_v1
+      usage: reward_section_title_background
+      atom: TextureAtom
+      display_size_px: { width: 280, height: 64 }
+      intended_godot_target_path: harness/runtime/godot-ninja2/assets/generated/ui/run-result/result_reward_header_brush.png
+      not_nine_slice: true
+  native_controls:
+    - id: RunResultStatChipRow
+      usage: native_ui
+      bindings: [run.elapsed, run.kill_count, run.wave_progress]
+    - id: RunResultRewardRow
+      usage: native_ui_with_catalog_icons
+      bindings: [applyExpeditionRewards.summary.rewards]
+    - id: RunResultReturnButton
+      usage: primary_cta_button_hit_area
+      bindings: [actions.return_home]
+  godot_asset_warnings:
+    - "Resolved for this slice: asset-plan now has Godot target/source paths for the run-result assets used by generated Control nodes."
+    - "Resolved for this slice: the Godot recipe builder can resolve keyed texture variants for generated Texture2D ext_resources."
+
+control_tree:
+  root:
+    atom: ScreenRoot
+    node_name: Root_RunResultModal
+    component: RunResultModal
+    anchors_preset: full_rect
+    children:
+      - atom: TextureAtom
+        slot: battle_backdrop
+        node_name: Tex_ResultBattleBackdrop
+        component: RunResultModalShell
+        asset_key: ninja2.ui.run_result.battle_backdrop_v1
+        stretch_mode: keep_aspect_covered
+        anchors_preset: full_rect
+      - atom: ModalShell
+        slot: result_modal
+        node_name: Shell_RunResultModal
+        component: RunResultModalShell
+        anchor: centered
+        size_px: { width: 392, height: 584 }
+        children:
+          - atom: ModalScrim
+            slot: scrim
+            node_name: Btn_ResultScrim
+            color_token: deep_forest
+            alpha: 0.58
+            close_policy: blocking_no_close
+          - atom: NinePatchPanel
+            slot: frame
+            node_name: Panel_ResultParchmentFrame
+            component: RunResultModalShell
+            asset_key: ninja2.ui.panel.parchment_9slice
+            slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+            content_insets: { left: 2, right: 2, top: 2, bottom: 2 }
+            size_px: { width: 392, height: 584 }
+          - atom: SectionGroup
+            slot: header
+            node_name: Section_ResultStateHeader
+            component: RunResultStatusHeader
+            anchor: top_center
+            size_px: { width: 392, height: 230 }
+            children:
+              - atom: TextureAtom
+                slot: hero_overhang_overlay
+                node_name: Tex_ResultHeroOverlay
+                component: RunResultStatusHeader
+                asset_key: ninja2.ui.run_result.hero_overlays_v1
+                state_binding: result.state
+                variants: { clear: result_hero_clear_overlay, defeat: result_hero_defeat_overlay }
+                stretch_mode: keep_aspect_centered
+                size_px: { width: 392, height: 151 }
+                position_px: { x: 0, y: -18 }
+              - atom: TextureAtom
+                slot: state_result_crest
+                node_name: Tex_ResultStateCrest
+                component: RunResultStateCrest
+                asset_key: ninja2.ui.run_result.crests_v1
+                state_binding: result.state
+                variants: { clear: result_crest_clear, defeat: result_crest_defeat }
+                stretch_mode: keep_aspect_centered
+                size_px: { width: 120, height: 120 }
+                position_px: { x: 136, y: -66 }
+              - atom: NativeLabel
+                slot: stage_kicker
+                node_name: Text_ResultStageKicker
+                component: RunResultStatusHeader
+                text_binding_or_text_key: run.stage_kicker
+                font_size: 12
+                color_token: parchment
+                position_px: { x: 34, y: 78 }
+                size_px: { width: 324, height: 20 }
+              - atom: NativeLabel
+                slot: large_result_title
+                node_name: Text_ResultTitle
+                component: RunResultStatusHeader
+                text_binding_or_text_key: run.result_title
+                font_size: 52
+                color_token: lantern_gold
+                text_clamp: { max_lines: 1, overflow: fit }
+                position_px: { x: 28, y: 92 }
+                size_px: { width: 336, height: 64 }
+              - atom: NativeLabel
+                slot: stage_badge
+                node_name: Text_ResultStageBadge
+                component: RunResultStatusHeader
+                text_binding_or_text_key: run.stage_badge
+                font_size: 12
+                color_token: lantern_gold
+                position_px: { x: 130, y: 136 }
+                size_px: { width: 132, height: 24 }
+              - atom: HBox
+                slot: stat_chip_row
+                node_name: Row_ResultStatChips
+                component: RunResultStatChipRow
+                separation: 6
+                position_px: { x: 48, y: 180 }
+                size_px: { width: 296, height: 45 }
+                children:
+                  - atom: NativePanel
+                    slot: stat_chip
+                    node_name: Panel_ResultStatTime
+                    component: RunResultStatChipRow
+                    stylebox_key: result_stat_chip
+                    size_px: { width: 92, height: 45 }
+                    children:
+                      - atom: NativeLabel
+                        slot: stat_value
+                        node_name: Text_ResultTime
+                        text_binding_or_text_key: run.elapsed_label
+                        font_size: 15
+                        color_token: cream_cloak
+                  - atom: NativePanel
+                    slot: stat_chip
+                    node_name: Panel_ResultStatKills
+                    component: RunResultStatChipRow
+                    stylebox_key: result_stat_chip
+                    size_px: { width: 92, height: 45 }
+                    children:
+                      - atom: NativeLabel
+                        slot: stat_value
+                        node_name: Text_ResultKills
+                        text_binding_or_text_key: run.kill_count
+                        font_size: 15
+                        color_token: cream_cloak
+                  - atom: NativePanel
+                    slot: stat_chip
+                    node_name: Panel_ResultStatProgress
+                    component: RunResultStatChipRow
+                    stylebox_key: result_stat_chip
+                    size_px: { width: 92, height: 45 }
+                    children:
+                      - atom: NativeLabel
+                        slot: stat_value
+                        node_name: Text_ResultProgress
+                        text_binding_or_text_key: run.wave_progress
+                        font_size: 15
+                        color_token: cream_cloak
+          - atom: SectionGroup
+            slot: body
+            node_name: Section_ResultRewardAccounting
+            component: RunResultRewardList
+            anchor: below_header
+            size_px: { width: 356, height: 224 }
+            children:
+              - atom: TextureAtom
+                slot: section_title_background
+                node_name: Tex_ResultRewardBrush
+                component: RunResultRewardList
+                asset_key: ninja2.ui.run_result.reward_header_brush_v1
+                stretch_mode: keep_aspect_centered
+                size_px: { width: 280, height: 64 }
+                position_px: { x: 38, y: 0 }
+              - atom: NativeLabel
+                slot: native_section_label
+                node_name: Text_ResultRewardTitle
+                component: RunResultRewardList
+                text_binding_or_text_key: result_rewards.section_label
+                font_size: 18
+                color_token: cream_cloak
+                position_px: { x: 78, y: 18 }
+                size_px: { width: 200, height: 28 }
+              - atom: VBox
+                slot: reward_rows
+                node_name: List_ResultRewards
+                component: RunResultRewardRow
+                separation: 0
+                position_px: { x: 10, y: 62 }
+                size_px: { width: 336, height: 150 }
+                bindings:
+                  rewards: applyExpeditionRewards.summary.rewards
+          - atom: SectionGroup
+            slot: footer
+            node_name: Section_ResultFooter
+            component: RunResultFooter
+            anchor: bottom_center
+            size_px: { width: 356, height: 70 }
+            children:
+              - atom: NinePatchPanel
+                slot: return_button_skin
+                node_name: Panel_ResultReturnButtonSkin
+                component: RunResultReturnButton
+                asset_key: ninja2.ui.run_result.return_button_9slice_v1
+                slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+                content_insets: { left: 18, right: 18, top: 10, bottom: 10 }
+                size_px: { width: 286, height: 56 }
+                position_px: { x: 35, y: 0 }
+              - atom: IconButton
+                slot: return_button_hit_area
+                node_name: Btn_ResultReturnHome
+                component: RunResultReturnButton
+                button_role: primary_cta
+                touch_size: { width: 286, height: 56 }
+                position_px: { x: 35, y: 0 }
+                text_binding_or_text_key: actions.return_home.label
+                bindings:
+                  pressed: actions.return_home
+              - atom: NativeLabel
+                slot: native_button_label
+                node_name: Text_ResultReturnHome
+                component: RunResultReturnButton
+                text_binding_or_text_key: actions.return_home.label
+                font_size: 18
+                color_token: cream_cloak
+                position_px: { x: 35, y: 10 }
+                size_px: { width: 286, height: 36 }
+
+data_contract:
+  content:
+    - content_store.maps.active.name
+    - Catalog.RESOURCE_LABELS
+    - Catalog.RESOURCE_KEYS
+  runtime_state:
+    - battle_sim.result
+    - battle_sim.elapsed
+    - battle_sim.kill_count
+    - battle_sim.wave_index
+    - battle_sim.wave_plan
+    - run_state.applyExpeditionRewards.summary.rewards
+  fixtures:
+    - scripts/tools/capture_battle_result.gd forces clear and defeat variants at 540x1016.
+  hardcoding_allowlist:
+    - "Section labels may use native Korean text keys, but no generated bitmap may contain final localized text."
+    - "Reward row icons may continue to use Godot Catalog resource textures until dedicated Godot reward atom keys are split out."
+
+validation:
+  commands:
+    - "PYTHONPATH=/tmp/codex-pyyaml python3 harness/tools/design_blueprint_validate.py ninja2"
+    - "PYTHONPATH=/tmp/codex-pyyaml python3 harness/godot/validators/godot_ui_recipe_validate.py --recipe harness/godot/recipes/ui/ninja2-run-result-modal.yaml --strict"
+    - "PYTHONPATH=/tmp/codex-pyyaml python3 harness/godot/builders/godot_ui_recipe_build.py --recipe harness/godot/recipes/ui/ninja2-run-result-modal.yaml"
+    - "godot --headless --path harness/runtime/godot-ninja2 --import"
+    - "godot --headless --path harness/runtime/godot-ninja2 --scene res://scenes/generated/run_result_modal.tscn --quit-after 1"
+    - "godot --headless --path harness/runtime/godot-ninja2 --check-only --script res://scripts/main.gd"
+    - "godot --path harness/runtime/godot-ninja2 --script res://scripts/tools/capture_battle_result.gd"
+    - "PYTHONPATH=/tmp/codex-pillow python3 harness/tools/design_visual_compare.py --concept harness/design/ninja2/concepts/ninja2_run_result_clear_concept_a.png --candidate harness/runtime/godot-ninja2/screenshots/godot-ninja2-result-clear.png --out harness/runtime/godot-ninja2/screenshots/compare/godot-run-result-clear-vs-concept.png --mode side-by-side --width 320 --label-concept 'CONCEPT clear result' --label-candidate 'GODOT clear result'"
+    - "PYTHONPATH=/tmp/codex-pillow python3 harness/tools/design_visual_compare.py --concept harness/design/ninja2/concepts/ninja2_run_result_defeat_concept_a.png --candidate harness/runtime/godot-ninja2/screenshots/godot-ninja2-result-defeat.png --out harness/runtime/godot-ninja2/screenshots/compare/godot-run-result-defeat-vs-concept.png --mode side-by-side --width 320 --label-concept 'CONCEPT defeat result' --label-candidate 'GODOT defeat result'"
+  screenshot: harness/runtime/godot-ninja2/screenshots/godot-ninja2-result-clear.png
+  screenshots:
+    - harness/runtime/godot-ninja2/screenshots/godot-ninja2-result-clear.png
+    - harness/runtime/godot-ninja2/screenshots/godot-ninja2-result-defeat.png
+  blockers: []
+  notes:
+    - "Non-headless capture exits 0 and writes both screenshots; Godot 4.6.3 reports renderer RID leak warnings on process shutdown."

@@ -9,7 +9,7 @@ model: sonnet
 
 # Generate UI Assets
 
-Purpose: execute the image-asset portion of a reviewed design system without touching Unity or Phaser implementation code.
+Purpose: execute the image-asset portion of a reviewed design system without touching Unity, Phaser, or Godot implementation code.
 
 ## Always read
 
@@ -22,6 +22,7 @@ Purpose: execute the image-asset portion of a reviewed design system without tou
 - `harness/design/<game>/component-blueprints.yaml`
 - `harness/design/<game>/component-skins.yaml`
 - `harness/runtime/NINE_SLICE_UI.md` when the asset plan contains UI skins or `slice_hints`.
+- `harness/godot/GODOT_UI_HARNESS.md` when the asset plan contains `platforms: [godot]` or `godot:` entries.
 - Source concept notes/images referenced by the asset plan.
 - Existing assets under `harness/design/<game>/assets/`, `harness/assets/<game>/`, and runtime/platform folders when referenced.
 
@@ -43,10 +44,10 @@ Purpose: execute the image-asset portion of a reviewed design system without tou
 
 ## Rules
 
-- Do not edit Unity prefabs, Phaser runtime JS, or HTML/CSS in this skill.
+- Do not edit Unity prefabs, Phaser runtime JS, HTML/CSS, Godot scenes, Godot scripts, or Godot Theme resources in this skill.
 - Do not bake text, numbers, or localized labels into reusable UI skins unless the asset plan explicitly marks the asset as illustrative only.
 - Prefer separate state/variant files over sprite sheets unless the downstream platform already expects an atlas.
-- Keep generated assets reusable across Unity and Phaser when the visual can be shared.
+- Keep generated assets reusable across Unity, Phaser, and Godot when the visual can be shared.
 - Do not mark icons, portraits, backgrounds, hex tiles, buildings, characters, VFX, atlases, or spritesheets as 9-slice assets.
 - Do not approve CSS, emoji, Pillow-drawn, or Phaser Graphics placeholder icons as final UI icon assets unless the blueprint explicitly classifies that glyph as a runtime primitive instead of generated artwork.
 - Do not bake ornament layers into stretchable 9-slice skins unless the blueprint explicitly marks them stretch-safe.

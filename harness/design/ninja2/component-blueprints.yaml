@@ -9,6 +9,9 @@ source_concepts:
     note: concepts/ninja2_rulelocked_housing_home_a.md
     image: concepts/ninja2_rulelocked_housing_home_a.png
   supporting:
+    - ninja2_survival_visual_runtime_polish_f
+    - ninja2_rulelocked_survival_battle_a
+    - ninja2_survival_visual_flat_runtime_b
     - ninja2_run_levelup_choice_modal_a
     - ninja2_equipment_equip_screen_a
     - ninja2_phaser_modal_system_a
@@ -29,6 +32,16 @@ runtime_targets:
     spec: ../../runtime/specs/ui/phaser-modal-system-harness.yaml
     page: ../../runtime/phaser-modal-system-harness.html
     owner: ../../runtime/src/ui/phaser-modal-system-harness.js
+  phaser_survival_battle:
+    spec: ../../runtime/specs/ui/ninja2-survival-battle.yaml
+    page: ../../runtime/survivor-runtime.html
+    owner: ../../runtime/src/survivor/survivor-app.js
+  godot_survival_battle:
+    project: ../../runtime/godot-ninja2/project.godot
+    owner: ../../runtime/godot-ninja2/scripts/main.gd
+    sim: ../../runtime/godot-ninja2/scripts/battle_sim.gd
+    static_capture: ../../runtime/godot-ninja2/scripts/tools/capture_battle.gd
+    movement_capture: ../../runtime/godot-ninja2/scripts/tools/capture_battle_moving.gd
 
 extraction_rules:
   semantic_first:
@@ -621,7 +634,330 @@ surfaces:
       safe_area_policy: "All shell measurements include top/bottom safe margins; mobile compact reduces body copy before touch targets."
       renderer_policy: "Use Phaser 4 scene.add.nineslice for the parchment skin when the theme provides the texture; use Phaser graphics only as debug fallback."
 
+  SurvivalBattle:
+    intent: "Run the default Ninja2 survival combat loop with a readable top-down arena, lantern-centered hero focus, visible drops, and mobile-safe controls."
+    orientation: portrait_9_16
+    reference_size_px: { width: 440, height: 782 }
+    concept_size_px: { width: 941, height: 1672 }
+    source_concepts:
+      primary: ninja2_survival_visual_runtime_polish_f
+      invariant: ninja2_rulelocked_survival_battle_a
+      fallback: ninja2_survival_visual_flat_runtime_b
+      deferred_modes:
+        boss_trial: ninja2_survival_visual_boss_trial_c
+        event_skin: ninja2_survival_visual_red_moon_e
+        later_visual_prototype: ninja2_survival_visual_2p5d_diorama_d
+    sections:
+      top_combat_hud:
+        role: "Own immediate run state: hero portrait, HP, level, active run skills, timer, stage/wave progress, pause, and run resource ledger."
+        process_scope: section
+        components:
+          - BattleTopHud
+          - BattleHeroPanel
+          - BattleTimerPanel
+          - BattleResourceLedger
+          - BattleHudCounterIcon
+          - BattleWaveTrack
+        layout_contract:
+          anchor: top_safe_area
+          height_px: { target: 124, compact: 112, maximum_godot_540x1016: 126 }
+          shell_width_px: { max: 920, mobile_margin: 12 }
+          grid_template: "hero / timer / ledger / pause with a slim wave track under the top clusters"
+          collision_policy: "HUD can cover the forest edge only; it must not cover the centered hero readability circle or hide the boss/elite body."
+          godot_port:
+            current_verdict: WARN
+            next_edit_scope: "compact BattleHeroPanel and BattleResourceLedger before adding more VFX density"
+            qa_crop: { candidate_crop: "0,0,540,180", concept_crop: "0,0,941,250" }
+        asset_keys:
+          - ninja2.ui.profile.guardian_avatar
+          - ninja2.ui.topbar.cluster_skins
+          - ninja2.ui.topbar.fixed_atoms
+          - ninja2.ui.battle_counter_icons_v1
+      combat_playfield:
+        role: "Own the top-down forest arena, camera-follow region, center hero readability lane, and generated combat sprites."
+        process_scope: section
+        components:
+          - BattleCameraViewport
+          - BattleGroundLayer
+          - BattlePropLayer
+          - BattleUnitSprite
+          - BattleHeroAura
+        layout_contract:
+          world_size_px: { width: 3000, height: 2000 }
+          camera: "follow_player_top_down"
+          center_clear_radius_px: { target: 360, minimum: 300 }
+          density_policy: "Small pickup/spark/VFX atoms create most of the visual density; large props stay at the edge or secondary lanes."
+          pickup_density_target: { visible_minimum: 18, preferred: 30 }
+          hit_spark_target: { visible_minimum: 4, preferred: 8 }
+          boss_lane_policy: "Boss/elite should remain visibly below the compact HUD, with the warning halo and HP bar readable."
+          depth_order: ["ground", "props", "pickups", "telegraphs", "units", "skill_vfx", "combat_text"]
+          godot_port:
+            current_verdict: WARN
+            next_edit_scope: "replace oversized prop density with small pickups, leaves, hit sparks, and gold/soul skill arcs"
+            qa_crop: { candidate_crop: "0,150,540,770", concept_crop: "0,240,941,1300" }
+        asset_keys:
+          - ninja2.battle.props.forest_survival_v1
+          - ninja2.battle.characters.combat_sheet
+          - ninja2.battle.characters.direction_4way_sheet
+          - ninja2.battle.characters.guardian_walk_3x8
+      battle_feedback_layer:
+        role: "Make the F concept's combat moment readable: pickup glow, boss warning halos, enemy pressure arrows, dash trail, skill slash arcs, and hit sparks."
+        process_scope: section
+        components:
+          - BattlePickupSprite
+          - BattlePickupGlow
+          - BattleBossTelegraph
+          - BattleThreatCue
+          - BattleSkillVfxLayer
+          - BattleDashTrail
+        layout_contract:
+          pickup_display_px: { exp: 34, resource: 34, mine: 42 }
+          pickup_glow_policy: "Native rings and short pulse may surround generated resource sprites; labels and amounts stay runtime-native."
+          boss_telegraph_policy: "Warning halo uses red-orange translucent circles and tick marks under boss/elite units; HP bars and sprites stay above it."
+          skill_vfx_policy: "D1 casts prefer generated VFX atoms and keep native fallback profiles for smoke reliability."
+          damage_number_policy: "Short white/cream native numbers with dark outline may appear near hits, but dash labels should not float over the hero during normal movement."
+        asset_keys:
+          - ninja2.battle.skill_vfx.phaser_runtime_profiles
+          - ninja2.battle.skill_vfx.cast_atoms_d1_v1
+          - ninja2.battle.encounter_icons.light_v1
+          - ninja2.ui.topbar.fixed_atoms
+      battle_controls:
+        role: "Own bottom-left movement, bottom-right three-button combat action dock, and bottom EXP progression without blocking the playfield."
+        process_scope: section
+        components:
+          - BattleJoystickControl
+          - BattleActionButtonDock
+          - BattleSkillButton
+          - BattleDashControl
+          - BattleExpBar
+        layout_contract:
+          joystick_size_px: { target: 122, mobile: 112 }
+          action_cluster_size_px: { width: 168, height: 184 }
+          action_button_count: 3
+          action_button_layout: "one primary circle above two secondary circles"
+          dash_size_px: { target: 78, mobile: 70 }
+          skill_button_size_px: { target: 76, mobile: 70 }
+          exp_bar_height_px: { target: 28, compact: 24 }
+          touch_policy: "Joystick and circular action buttons are large enough for mobile input but visually translucent so enemy/pickup density remains visible."
+          godot_port:
+            current_verdict: WARN
+            next_edit_scope: "restore three circular action buttons; keep dash as primary or top slot with native cooldown"
+            qa_crop: { candidate_crop: "0,760,540,1016", concept_crop: "0,1250,941,1672" }
+        asset_keys:
+          - ninja2.ui.battle_dash_icon_v1
+          - ninja2.battle.skill_icons.survivor_level_choice_v1
+    component_tree:
+      - BattleTopHud
+      - BattleHeroPanel
+      - BattleTimerPanel
+      - BattleResourceLedger
+      - BattleHudCounterIcon
+      - BattleWaveTrack
+      - BattleCameraViewport
+      - BattleGroundLayer
+      - BattlePropLayer
+      - BattleUnitSprite
+      - BattleHeroAura
+      - BattlePickupSprite
+      - BattlePickupGlow
+      - BattleBossTelegraph
+      - BattleThreatCue
+      - BattleSkillVfxLayer
+      - BattleDashTrail
+      - BattleJoystickControl
+      - BattleActionButtonDock
+      - BattleSkillButton
+      - BattleDashControl
+      - BattleExpBar
+    layout_contract:
+      implementation_mode: hybrid_phaser_canvas_plus_dom_overlay
+      runtime_spec: ../../runtime/specs/ui/ninja2-survival-battle.yaml
+      visual_target: "Match the conservative runtime-polish F concept before experimenting with boss-trial, red-moon, or 2.5D variants."
+      visual_qa_required:
+        - "concept-vs-runtime board for full battle after no-modal Phaser capture"
+        - "Phaser visual QA uses ?battleVisual=polish to stabilize boss telegraph, pickup glow, and edge pressure without changing normal battle gameplay."
+        - "separate WARN/PASS notes for combat_playfield and battle_controls when Godot is ported"
+        - "Godot static and moving captures compare against runtime-polish F before movement, HUD, or VFX work is accepted"
+
 components:
+  BattleTopHud:
+    role: "Composes the survival battle top HUD without hiding the center combat lane."
+    mode: hybrid
+    anatomy: [BattleHeroPanel, BattleTimerPanel, BattleResourceLedger, BattleWaveTrack, pause_button]
+    box_model:
+      position: absolute_top_safe_area
+      width_px: { max: 920, mobile_margin: 12 }
+      gap_px: 8
+      stable_dimensions: true
+  BattleHeroPanel:
+    role: "Shows player identity, HP, level, kills, active run skills, and latest cast feedback."
+    mode: hybrid
+    anatomy: [portrait, hp_bar, level_text, kill_counter, skill_rows, cast_feedback]
+    box_model:
+      min_height_px: 82
+      content_insets_px: { left: 8, right: 8, top: 6, bottom: 7 }
+      text_clamp: "Skill names and cast chips ellipsize before the panel grows."
+  BattleTimerPanel:
+    role: "Shows stage/wave label and remaining run timer as the center HUD anchor."
+    mode: native_ui
+    anatomy: [timer_icon, stage_label, timer_value]
+    box_model:
+      min_width_px: 122
+      min_height_px: 78
+      content_insets_px: { left: 28, right: 12, top: 8, bottom: 10 }
+  BattleResourceLedger:
+    role: "Shows actual run resource pickups for wood, stone, soulflame, and gold with transient gain badges."
+    mode: hybrid
+    anatomy: [resource_rows, resource_icon, native_value, gain_badge]
+    box_model:
+      min_height_px: 88
+      row_min_height_px: 24
+      gap_px: 5
+      text_clamp: "Values stay tabular and trim only at extreme widths."
+  BattleHudCounterIcon:
+    role: "Generated transparent icon atom used by timer, kill, enemy, pickup, and boss counters."
+    mode: generate_image
+    anatomy: [icon_sprite]
+    box_model:
+      display_size_px: { width: 18, height: 18 }
+      native_text_policy: "Labels and values are never baked into the icon."
+  BattleWaveTrack:
+    role: "Shows stage progress as eight stable segments plus a boss marker."
+    mode: native_ui
+    anatomy: [segments, boss_marker]
+    box_model:
+      width_px: { target: 360, mobile_margin: 96 }
+      segment_height_px: 10
+      gap_px: 3
+  BattleCameraViewport:
+    role: "Maps world-space combat to the portrait viewport with player-follow camera."
+    mode: native_ui
+    anatomy: [camera, world_bounds, safe_area_offsets]
+    box_model:
+      world_size_px: { width: 3000, height: 2000 }
+      zoom: 1.08
+      follow_policy: "Player remains inside a 72px screen margin during normal movement and dash; camera has slight lag so movement is visible without letting the hero hit the HUD/controls."
+  BattleGroundLayer:
+    role: "Paints the top-down forest floor, moss bands, dirt paths, center readability circle, and edge vegetation density."
+    mode: native_ui
+    anatomy: [base_fill, edge_shade, moss_bands, dirt_patches, speckles, center_readability_ring]
+    box_model:
+      center_clear_radius_px: { target: 360, minimum: 300 }
+      decorative_density: medium_high
+  BattlePropLayer:
+    role: "Places generated forest prop sprites around the playfield edge and secondary lanes."
+    mode: reuse
+    anatomy: [lantern_posts, bamboo_clumps, moss_stones, fallen_logs, soul_shrines]
+    box_model:
+      prop_alpha_range: [0.32, 0.74]
+      center_exclusion_radius_px: 420
+  BattleUnitSprite:
+    role: "Renders player, enemies, elites, and boss with direction-aware sprites, HP bars, and hit feedback."
+    mode: hybrid
+    anatomy: [unit_sprite, hp_bar, foot_shadow, hit_offset, hit_scale, direction_state, walk_cycle_state]
+    box_model:
+      y_sort: true
+      player_depth_policy: "Player renders above common enemies and below foreground skill flashes."
+      movement_contract:
+        directions: [down, left, right, up]
+        frame_count_per_direction: 8
+        frame_rate_fps: { min: 10, target: 12, max: 13 }
+        baseline_policy: "All frames share a stable foot baseline and common crop per direction so the hero does not pop or shrink."
+        transform_policy: "Only subtle step lift and lean are allowed; whole-sprite squash/stretch must remain below 5%."
+        fallback_policy: "If a 4-way walk sheet is unavailable, use directional idle sprites plus camera drift and shadow; do not pretend that a static sprite is a finished walk cycle."
+  BattleHeroAura:
+    role: "Warm lantern readability circle around the guardian, matching runtime-polish F without becoming a UI panel."
+    mode: native_ui
+    anatomy: [outer_glow, inner_ring, rotating_ticks, low_alpha_fill]
+    box_model:
+      radius_px: { target: 190, max: 270 }
+      alpha_policy: "Low opacity fill, stronger thin rings, no opaque disc."
+  BattlePickupSprite:
+    role: "World-space EXP and resource pickup sprite that stays collectable/readable at 34-42px."
+    mode: hybrid
+    anatomy: [resource_sprite, collectable_state, scatter_motion]
+    box_model:
+      display_size_px: { exp: 34, resource: 34, mine: 42 }
+      scatter_radius_px: 34
+  BattlePickupGlow:
+    role: "Native glow ring/shadow around pickup sprites that reinforces F concept density without baking amounts."
+    mode: native_ui
+    anatomy: [shadow_ellipse, glow_ring, pulse_ring]
+    box_model:
+      radius_px: { normal: 22, resource: 26 }
+      alpha_policy: "Fades before the pickup sprite so collection feedback remains clear."
+  BattleBossTelegraph:
+    role: "Red-orange warning halo, tick marks, and threat line for boss/elite enemies."
+    mode: native_ui
+    anatomy: [warning_fill, outer_ring, rotating_ticks, threat_line]
+    box_model:
+      radius_px: { elite: 62, boss: 110 }
+      depth_policy: "Telegraph sits under HP/readability text but above the ground."
+  BattleThreatCue:
+    role: "Directional pressure arrows and danger rings that explain enemy chase and player low HP."
+    mode: native_ui
+    anatomy: [pursuit_arrow, danger_ring, low_hp_ring]
+    box_model:
+      max_visible_enemies: 6
+      alpha_policy: "Use urgency-based alpha; never cover the joystick or EXP bar."
+  BattleSkillVfxLayer:
+    role: "Generated atom and native fallback layer for run skill casts and hit pulses."
+    mode: hybrid
+    anatomy: [cast_atom, projectile_atom, area_atom, impact_flash, native_fallback_graphics]
+    box_model:
+      depth_range: [58, 70]
+      timing_policy: "Short 130-620ms bursts; no persistent opaque screen effects."
+  BattleDashTrail:
+    role: "Short gale trail and invulnerability shimmer that makes Space/button dash visible."
+    mode: hybrid
+    anatomy: [gale_atom, line_trail, afterimage]
+    box_model:
+      duration_ms: 240
+      cooldown_ms: 5000
+      afterimage_count: 2
+      label_policy: "Dash feedback may use icon/rim/trail; do not place persistent Korean action text above the hero during normal movement."
+  BattleActionButtonDock:
+    role: "Bottom-right three-button circular combat action cluster matching the runtime-polish F concept."
+    mode: hybrid
+    anatomy: [primary_action_button, secondary_skill_button_left, secondary_skill_button_right, cooldown_rings, native_numbers]
+    box_model:
+      size_px: { width: 168, height: 184 }
+      primary_button_px: { target: 82, mobile: 74 }
+      secondary_button_px: { target: 76, mobile: 70 }
+      layout: "primary button top-right or top-center, two secondary buttons below"
+      hit_target_policy: "Each action keeps at least 70x70px touch target and does not resize during cooldown."
+      concept_anchor: "runtime-polish F bottom-right has three black-rimmed circles with gold/teal icons and small native cooldown numbers."
+  BattleSkillButton:
+    role: "A circular generated-icon combat action button for active skill casts or dash-adjacent actions."
+    mode: hybrid
+    anatomy: [button_frame, generated_skill_icon, cooldown_ring, cooldown_number, ready_glint]
+    box_model:
+      size_px: { target: 76, mobile: 70 }
+      icon_display_size_px: { target: 52, mobile: 46 }
+      text_policy: "Cooldown number is native text and must not resize the button."
+  BattleJoystickControl:
+    role: "Bottom-left translucent movement affordance for touch input."
+    mode: native_ui
+    anatomy: [outer_ring, thumb]
+    box_model:
+      size_px: { target: 122, mobile: 112 }
+      pointer_policy: "Visual-only in DOM while Phaser/Godot input owns pointer state."
+  BattleDashControl:
+    role: "Bottom-right circular dash button with generated dash icon, native cooldown ring, and countdown number."
+    mode: hybrid
+    anatomy: [button_frame, generated_icon, cooldown_ring, cooldown_number]
+    box_model:
+      size_px: { target: 78, mobile: 70 }
+      icon_display_size_px: { target: 54, mobile: 48 }
+      text_policy: "Cooldown number is native text and must not resize the button."
+  BattleExpBar:
+    role: "Bottom run EXP progress bar with fixed EXP badge."
+    mode: native_ui
+    anatomy: [exp_badge, progress_track, progress_fill]
+    box_model:
+      height_px: { target: 28, compact: 24 }
+      width_policy: "Centered, max 760px, safe-area aware."
+
   HomeTopBand:
     role: "Compact top HUD group from the rulelocked housing concept."
     mode: hybrid
@@ -1540,6 +1876,7 @@ components:
       - RunResultStateCrest
       - stage_kicker
       - large_result_title
+      - stage_badge
       - RunResultStatChipRow
       - short_summary
     box_model:
@@ -1563,19 +1900,20 @@ components:
     text_policy:
       title: { max_lines: 1, font_size_px: { target: 52, minimum: 44 }, overflow: fit }
       kicker: { max_lines: 1, font_size_px: 12, overflow: ellipsis }
+      stage_badge: { max_lines: 1, font_size_px: 12, overflow: ellipsis }
       summary: { max_lines: 2, font_size_px: 12, overflow: clamp }
 
   RunResultStateCrest:
-    role: "Shared modal ornament mark reused from the sanctuary build modal in the result status header."
+    role: "State-specific clear/defeat medallion that anchors the top composition of the result status header."
     mode: hybrid
     anatomy:
-      - fixed_sanctuary_frame_crest_sprite
+      - fixed_state_result_crest_sprite
     box_model:
-      display_size_px: { width: 190, height: 104 }
-      source_size_px: { width: 240, height: 132 }
+      display_size_px: { width: 120, height: 120 }
+      source_size_px: { width: 128, height: 128 }
       anchor: top_center
     asset_contract:
-      asset_key: ninja2.ui.sanctuary_build.frame_ornaments_v1
+      asset_key: ninja2.ui.run_result.crests_v1
       usage: fixed_sprite
       not_nine_slice: true
 
@@ -2079,6 +2417,30 @@ asset_dependency_matrix:
       - production_bubbles
       - selection_glow
       - panel_text
+  ninja2.home.building_construction_stages.farm.v1:
+    component_slots:
+      - BuildingSpriteToken.building_sprite_or_blueprint
+      - BuildingThumbnailWell.building_sprite_or_icon
+    usage: progress_stage_building_sprites
+    must_not_bake:
+      - level_badges
+      - percent_text
+      - remaining_time_text
+      - production_bubbles
+      - selection_glow
+      - panel_text
+  ninja2.home.building_construction_stages.quarry.v1:
+    component_slots:
+      - BuildingSpriteToken.building_sprite_or_blueprint
+      - BuildingThumbnailWell.building_sprite_or_icon
+    usage: progress_stage_building_sprites
+    must_not_bake:
+      - level_badges
+      - percent_text
+      - remaining_time_text
+      - production_bubbles
+      - selection_glow
+      - panel_text
   ninja2.ui.profile.guardian_avatar:
     component_slots:
       - HeroPortraitStatus.guardian_avatar_sprite
@@ -2263,13 +2625,13 @@ asset_dependency_matrix:
       - section_title_text
       - reward_names
       - reward_amounts
-  ninja2.ui.sanctuary_build.frame_ornaments_v1:
+  ninja2.ui.run_result.crests_v1:
     component_slots:
-      - RunResultStateCrest.shared_modal_crest
+      - RunResultStateCrest.state_result_crest
     fixed_sprite_sizes_px:
-      crest: { width: 240, height: 132 }
+      crest: { width: 128, height: 128 }
     runtime_display_size_px:
-      crest: { width: 190, height: 104 }
+      crest: { width: 120, height: 120 }
     state_bindings:
       clear: ".result-card.is-win .result-crest"
       defeat: ".result-card.is-loss .result-crest"

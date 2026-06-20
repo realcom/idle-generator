@@ -1,0 +1,79 @@
+version: 1
+game: "<game>"
+slug: "<game>-<surface>"
+status: draft # draft | pilot | implemented | approved
+backend: godot_control
+
+target:
+  project: "../../../runtime/godot-<game>/project.godot"
+  owner_scene: "../../../runtime/godot-<game>/scenes/main.tscn"
+  owner_script: "../../../runtime/godot-<game>/scripts/main.gd"
+  output:
+    scene: "../../../runtime/godot-<game>/scenes/generated/<surface>.tscn"
+    theme: "../../../runtime/godot-<game>/themes/generated/<surface>.tres"
+  generation_policy: "Generated from harness/godot recipe; do not hand-edit generated output."
+
+sources:
+  ui_system_inventory: "../../../design/<game>/ui-system-inventory.yaml"
+  button_system: "../../../design/<game>/button-system.yaml"
+  modal_system: "../../../design/<game>/modal-system.yaml"
+  color_tokens: "../../../design/<game>/color-tokens.yaml"
+  art_direction: "../../../design/<game>/art-direction.yaml"
+  layout_tokens: "../../../design/<game>/layout-tokens.yaml"
+  component_blueprints: "../../../design/<game>/component-blueprints.yaml"
+  component_skins: "../../../design/<game>/component-skins.yaml"
+  asset_plan: "../../../design/<game>/asset-plan.yaml"
+  concepts:
+    - "../../../design/<game>/concepts/<concept-id>.md"
+
+blueprint_refs:
+  surface: "<SurfaceName>"
+  sections: []
+  components: []
+  shared_button_roles: []
+  shared_modal_sections: []
+  color_token_groups: []
+
+screen:
+  orientation: portrait_9_16
+  reference_size_px: { width: 540, height: 960 }
+  safe_area_policy: ""
+
+layout:
+  anchor: ""
+  regions: {}
+
+assets:
+  required_keys: []
+  nineslice:
+    - key: ""
+      atom: NinePatchPanel
+      slice_hints: { left: 0, right: 0, top: 0, bottom: 0 }
+      content_insets: { left: 0, right: 0, top: 0, bottom: 0 }
+      target_size_px: { width: 0, height: 0 }
+  fixed_atoms: []
+  native_controls: []
+
+control_tree:
+  root:
+    atom: ScreenRoot
+    node_name: Root_<SurfaceName>
+    component: "<ComponentName>"
+    children: []
+
+data_contract:
+  content: []
+  runtime_state: []
+  fixtures: []
+  hardcoding_allowlist: []
+
+validation:
+  commands:
+    - "python3 harness/tools/design_blueprint_validate.py <game>"
+    - "python3 harness/godot/validators/godot_ui_recipe_validate.py --recipe harness/godot/recipes/ui/<surface>.yaml"
+    - "python3 harness/godot/builders/godot_ui_recipe_build.py --recipe harness/godot/recipes/ui/<surface>.yaml"
+    - "godot --headless --path harness/runtime/godot-<game> --import"
+    - "godot --headless --path harness/runtime/godot-<game> --scene res://scenes/generated/<surface>.tscn --quit-after 1"
+    - "godot --headless --path harness/runtime/godot-<game> --check-only --script res://scripts/main.gd"
+  screenshot: "harness/runtime/godot-<game>/screenshots/<surface>.png"
+  blockers: []

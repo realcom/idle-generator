@@ -3,6 +3,7 @@ game: ninja2
 source_concepts:
   - ninja2_rulelocked_housing_home_a
   - ninja2_rulelocked_survival_battle_a
+  - ninja2_survival_visual_runtime_polish_f
 status: extracted
 
 motion:
@@ -20,11 +21,30 @@ motion:
     reduced_motion: "preserve state color and sound, remove loops and large transforms"
   battle:
     hero_aura: "warm circular pulse"
+    movement:
+      facing: "4-way direction state, driven by current movement/dash vector with small smoothing so facing does not flicker on diagonals"
+      walk_cycle: "8-frame loop per visible direction, stable foot baseline, no frame-size popping, 10-13 fps at full movement speed"
+      groundedness: "small soft oval shadow changes 10-18% width/alpha during steps; feet stay visually attached to the ground"
+      camera_follow: "player-follow camera with slight lag; player may drift within a 72px screen margin during movement and dash"
+      avoid:
+        - "large squash/stretch on the whole sprite"
+        - "fixed center pinning that makes walking look like texture swapping"
+        - "floating Korean action text over the hero during normal dash"
+    dash:
+      duration_ms: 180
+      trail_duration_ms: 240
+      afterimage_count: 2
+      trail_color: "soul_teal with low alpha plus optional lantern-gold edge glint"
     lantern_projectile: "short gold trail toward target"
     soul_pickup: "teal flame bob"
     exp_pickup: "blue diamond sparkle"
     hit: "small starburst plus white damage number with dark outline"
     enemy_death: "quick shrink/fade plus pickup burst"
+    runtime_polish_f_density:
+      visible_pickup_atoms: { minimum: 18, preferred: 30 }
+      visible_hit_sparks: { minimum: 4, preferred: 8 }
+      visible_skill_arcs: { minimum: 3, preferred: 6 }
+      large_props_policy: "large props stay outside the central hero aura and should not be the primary source of visual density"
   timing:
     damage_float_ms: 620
     pickup_float_ms: 640

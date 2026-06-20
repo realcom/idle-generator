@@ -12,6 +12,7 @@ implementation work.
 - `README.md`: quick start and package overview.
 - `UI_DECISION_STANDARD.md`: canonical decision rules.
 - `PHASER_HANDOFF.md`: Phaser-specific handoff checklist.
+- `GODOT_HANDOFF.md`: Godot-specific handoff checklist for recipes, scenes, themes, and validation.
 - `AGENT_BRIEF.md`: copy-pasteable instructions for another AI or designer.
 - `SKILL_INTEGRATION.md`: exact hooks to embed shared UI foundation rules into skills and harness docs.
 - `SLACK_SHARE.md`: concise Korean share text for Slack or messenger handoff.
@@ -29,6 +30,7 @@ implementation work.
 - `templates/motion-juice.template.yaml`: motion and feedback rules.
 - `templates/critique-rubric.template.yaml`: review gate.
 - `templates/phaser-ui-spec.template.yaml`: Phaser runtime implementation spec.
+- `templates/godot-ui-recipe.template.yaml`: Godot Control scene/theme recipe.
 
 ## External Use
 

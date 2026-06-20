@@ -1,0 +1,327 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Theme" path="res://themes/generated/ninja2_run_result_modal.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/run-result/result_battle_backdrop.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/panel_parchment_9slice.png" id="3_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/run-result/result_hero_clear_overlay.png" id="4_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/run-result/result_crest_clear.png" id="5_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/run-result/result_reward_header_brush.png" id="6_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/run-result/result_return_button_9slice.png" id="7_tex"]
+
+[node name="Root_RunResultModal" type="Control"]
+layout_mode = 3
+theme = ExtResource("1_theme")
+metadata/atom = "ScreenRoot"
+metadata/component = "RunResultModal"
+
+[node name="Tex_ResultBattleBackdrop" type="TextureRect" parent="."]
+layout_mode = 0
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("2_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "RunResultModalShell"
+metadata/slot = "battle_backdrop"
+metadata/asset_key = "ninja2.ui.run_result.battle_backdrop_v1"
+
+[node name="Shell_RunResultModal" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 392.0
+offset_bottom = 584.0
+custom_minimum_size = Vector2(392.0, 584.0)
+metadata/atom = "ModalShell"
+metadata/component = "RunResultModalShell"
+metadata/slot = "result_modal"
+
+[node name="Btn_ResultScrim" type="Button" parent="Shell_RunResultModal"]
+layout_mode = 0
+flat = true
+text = ""
+metadata/atom = "ModalScrim"
+metadata/slot = "scrim"
+
+[node name="Panel_ResultParchmentFrame" type="NinePatchRect" parent="Shell_RunResultModal"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 392.0
+offset_bottom = 584.0
+custom_minimum_size = Vector2(392.0, 584.0)
+texture = ExtResource("3_tex")
+patch_margin_left = 28.0
+patch_margin_right = 28.0
+patch_margin_top = 28.0
+patch_margin_bottom = 28.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "RunResultModalShell"
+metadata/slot = "frame"
+metadata/asset_key = "ninja2.ui.panel.parchment_9slice"
+
+[node name="Section_ResultStateHeader" type="Control" parent="Shell_RunResultModal"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 392.0
+offset_bottom = 230.0
+custom_minimum_size = Vector2(392.0, 230.0)
+metadata/atom = "SectionGroup"
+metadata/component = "RunResultStatusHeader"
+metadata/slot = "header"
+
+[node name="Tex_ResultHeroOverlay" type="TextureRect" parent="Shell_RunResultModal/Section_ResultStateHeader"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = -18.0
+offset_right = 392.0
+offset_bottom = 133.0
+custom_minimum_size = Vector2(392.0, 151.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "RunResultStatusHeader"
+metadata/slot = "hero_overhang_overlay"
+metadata/asset_key = "ninja2.ui.run_result.hero_overlays_v1"
+
+[node name="Tex_ResultStateCrest" type="TextureRect" parent="Shell_RunResultModal/Section_ResultStateHeader"]
+layout_mode = 0
+offset_left = 136.0
+offset_top = -66.0
+offset_right = 256.0
+offset_bottom = 54.0
+custom_minimum_size = Vector2(120.0, 120.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("5_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "RunResultStateCrest"
+metadata/slot = "state_result_crest"
+metadata/asset_key = "ninja2.ui.run_result.crests_v1"
+
+[node name="Text_ResultStageKicker" type="Label" parent="Shell_RunResultModal/Section_ResultStateHeader"]
+layout_mode = 0
+offset_left = 34.0
+offset_top = 78.0
+offset_right = 358.0
+offset_bottom = 98.0
+custom_minimum_size = Vector2(324.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "RunResultStatusHeader"
+metadata/slot = "stage_kicker"
+metadata/text_binding_or_text_key = "run.stage_kicker"
+
+[node name="Text_ResultTitle" type="Label" parent="Shell_RunResultModal/Section_ResultStateHeader"]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 92.0
+offset_right = 364.0
+offset_bottom = 156.0
+custom_minimum_size = Vector2(336.0, 64.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "RunResultStatusHeader"
+metadata/slot = "large_result_title"
+metadata/text_binding_or_text_key = "run.result_title"
+
+[node name="Text_ResultStageBadge" type="Label" parent="Shell_RunResultModal/Section_ResultStateHeader"]
+layout_mode = 0
+offset_left = 130.0
+offset_top = 136.0
+offset_right = 262.0
+offset_bottom = 160.0
+custom_minimum_size = Vector2(132.0, 24.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "RunResultStatusHeader"
+metadata/slot = "stage_badge"
+metadata/text_binding_or_text_key = "run.stage_badge"
+
+[node name="Row_ResultStatChips" type="HBoxContainer" parent="Shell_RunResultModal/Section_ResultStateHeader"]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 180.0
+offset_right = 344.0
+offset_bottom = 225.0
+custom_minimum_size = Vector2(296.0, 45.0)
+metadata/atom = "HBox"
+metadata/component = "RunResultStatChipRow"
+metadata/slot = "stat_chip_row"
+
+[node name="Panel_ResultStatTime" type="PanelContainer" parent="Shell_RunResultModal/Section_ResultStateHeader/Row_ResultStatChips"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 92.0
+offset_bottom = 45.0
+custom_minimum_size = Vector2(92.0, 45.0)
+metadata/atom = "NativePanel"
+metadata/component = "RunResultStatChipRow"
+metadata/slot = "stat_chip"
+
+[node name="Text_ResultTime" type="Label" parent="Shell_RunResultModal/Section_ResultStateHeader/Row_ResultStatChips/Panel_ResultStatTime"]
+layout_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "stat_value"
+metadata/text_binding_or_text_key = "run.elapsed_label"
+
+[node name="Panel_ResultStatKills" type="PanelContainer" parent="Shell_RunResultModal/Section_ResultStateHeader/Row_ResultStatChips"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 92.0
+offset_bottom = 45.0
+custom_minimum_size = Vector2(92.0, 45.0)
+metadata/atom = "NativePanel"
+metadata/component = "RunResultStatChipRow"
+metadata/slot = "stat_chip"
+
+[node name="Text_ResultKills" type="Label" parent="Shell_RunResultModal/Section_ResultStateHeader/Row_ResultStatChips/Panel_ResultStatKills"]
+layout_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "stat_value"
+metadata/text_binding_or_text_key = "run.kill_count"
+
+[node name="Panel_ResultStatProgress" type="PanelContainer" parent="Shell_RunResultModal/Section_ResultStateHeader/Row_ResultStatChips"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 92.0
+offset_bottom = 45.0
+custom_minimum_size = Vector2(92.0, 45.0)
+metadata/atom = "NativePanel"
+metadata/component = "RunResultStatChipRow"
+metadata/slot = "stat_chip"
+
+[node name="Text_ResultProgress" type="Label" parent="Shell_RunResultModal/Section_ResultStateHeader/Row_ResultStatChips/Panel_ResultStatProgress"]
+layout_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "stat_value"
+metadata/text_binding_or_text_key = "run.wave_progress"
+
+[node name="Section_ResultRewardAccounting" type="Control" parent="Shell_RunResultModal"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 356.0
+offset_bottom = 224.0
+custom_minimum_size = Vector2(356.0, 224.0)
+metadata/atom = "SectionGroup"
+metadata/component = "RunResultRewardList"
+metadata/slot = "body"
+
+[node name="Tex_ResultRewardBrush" type="TextureRect" parent="Shell_RunResultModal/Section_ResultRewardAccounting"]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 0.0
+offset_right = 318.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2(280.0, 64.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("6_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "RunResultRewardList"
+metadata/slot = "section_title_background"
+metadata/asset_key = "ninja2.ui.run_result.reward_header_brush_v1"
+
+[node name="Text_ResultRewardTitle" type="Label" parent="Shell_RunResultModal/Section_ResultRewardAccounting"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 18.0
+offset_right = 278.0
+offset_bottom = 46.0
+custom_minimum_size = Vector2(200.0, 28.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "RunResultRewardList"
+metadata/slot = "native_section_label"
+metadata/text_binding_or_text_key = "result_rewards.section_label"
+
+[node name="List_ResultRewards" type="VBoxContainer" parent="Shell_RunResultModal/Section_ResultRewardAccounting"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 62.0
+offset_right = 346.0
+offset_bottom = 212.0
+custom_minimum_size = Vector2(336.0, 150.0)
+metadata/atom = "VBox"
+metadata/component = "RunResultRewardRow"
+metadata/slot = "reward_rows"
+
+[node name="Section_ResultFooter" type="Control" parent="Shell_RunResultModal"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 356.0
+offset_bottom = 70.0
+custom_minimum_size = Vector2(356.0, 70.0)
+metadata/atom = "SectionGroup"
+metadata/component = "RunResultFooter"
+metadata/slot = "footer"
+
+[node name="Panel_ResultReturnButtonSkin" type="NinePatchRect" parent="Shell_RunResultModal/Section_ResultFooter"]
+layout_mode = 0
+offset_left = 35.0
+offset_top = 0.0
+offset_right = 321.0
+offset_bottom = 56.0
+custom_minimum_size = Vector2(286.0, 56.0)
+texture = ExtResource("7_tex")
+patch_margin_left = 28.0
+patch_margin_right = 28.0
+patch_margin_top = 28.0
+patch_margin_bottom = 28.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "RunResultReturnButton"
+metadata/slot = "return_button_skin"
+metadata/asset_key = "ninja2.ui.run_result.return_button_9slice_v1"
+
+[node name="Btn_ResultReturnHome" type="Button" parent="Shell_RunResultModal/Section_ResultFooter"]
+layout_mode = 0
+offset_left = 35.0
+offset_top = 0.0
+offset_right = 321.0
+offset_bottom = 56.0
+custom_minimum_size = Vector2(286.0, 56.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "RunResultReturnButton"
+metadata/slot = "return_button_hit_area"
+metadata/button_role = "primary_cta"
+metadata/text_binding_or_text_key = "actions.return_home.label"
+
+[node name="Text_ResultReturnHome" type="Label" parent="Shell_RunResultModal/Section_ResultFooter"]
+layout_mode = 0
+offset_left = 35.0
+offset_top = 10.0
+offset_right = 321.0
+offset_bottom = 46.0
+custom_minimum_size = Vector2(286.0, 36.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "RunResultReturnButton"
+metadata/slot = "native_button_label"
+metadata/text_binding_or_text_key = "actions.return_home.label"

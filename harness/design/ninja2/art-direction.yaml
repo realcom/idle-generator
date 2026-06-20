@@ -3,6 +3,7 @@ game: ninja2
 source_concepts:
   - ninja2_rulelocked_housing_home_a
   - ninja2_rulelocked_survival_battle_a
+  - ninja2_survival_visual_runtime_polish_f
 status: extracted
 orientation: portrait_9_16
 
@@ -18,6 +19,7 @@ art_anchor:
     - "pale teal soulflame for magic/resource pickups"
     - "orange Sortie CTA as the primary home action"
     - "top-down 2D sprite-game battle, separate from hex housing"
+    - "runtime-polish F battle composition: compact edge HUD, visible boss/elite warning halo, dense pickups, lantern-gold skill arcs, soul-teal secondary trails"
   must_avoid:
     - "plain flat green field with no forest prop language"
     - "debug/demo labels inside the screen"
@@ -63,3 +65,9 @@ screen_contract:
     camera: "strict orthographic top-down 2D"
     playfield: "center kept playable, enemies/pickups orbit around hero"
     ui_edges: "top-left hero/HP, top-center timer/stage, top-right currencies/pause, bottom-left joystick, bottom-right circular skills, bottom EXP"
+    runtime_polish_f:
+      selected_target: true
+      hud_weight: "compact dark framed HUD clusters on the top edge; they may cover foliage, never the boss body or hero readability circle"
+      combat_density: "coin/EXP/soul pickups and hit spark atoms are scattered across the field, with more small atoms than large props"
+      action_controls: "three circular bottom-right actions with native cooldown rings; dash may occupy the primary slot but should not be the only visible combat action"
+      movement: "4-way direction-aware walk with stable foot baseline, subtle shadow, and short dash afterimage; avoid squashy puppet motion"

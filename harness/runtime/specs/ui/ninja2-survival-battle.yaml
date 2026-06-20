@@ -10,14 +10,19 @@ target_runtime:
   fixture_urls:
     - harness/runtime/survivor-runtime.html?game=ninja2
     - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle
+    - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelChoice=off
+    - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelChoice=off&battleVisual=polish
     - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelup=demo&skilluse=demo&fullAssets=1
     - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&vfx=demo
     - harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&encounter=demo
 
 source_design:
   concepts:
+    - harness/design/ninja2/concepts/ninja2_survival_visual_runtime_polish_f.md
     - harness/design/ninja2/concepts/ninja2_rulelocked_survival_battle_a.md
+    - harness/design/ninja2/concepts/ninja2_survival_visual_flat_runtime_b.md
     - harness/design/ninja2/concepts/ninja2_casual_sanctuary_survival_screen_a.md
+  selected_runtime_target: "ninja2_survival_visual_runtime_polish_f is the default in-game combat target; rulelocked_survival_battle_a remains the orientation/readability invariant, and flat_runtime_b is the fallback if density harms mobile clarity."
   tokens:
     - harness/design/ninja2/art-direction.yaml
     - harness/design/ninja2/layout-tokens.yaml
@@ -48,6 +53,8 @@ data_contract:
   fixtures:
     home: "harness/runtime/survivor-runtime.html?game=ninja2"
     battle: "harness/runtime/survivor-runtime.html?game=ninja2&mode=battle"
+    battle_visual_capture: "harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelChoice=off"
+    battle_visual_polish: "harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelChoice=off&battleVisual=polish"
     skill_use: "harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&levelup=demo&skilluse=demo&fullAssets=1"
     vfx: "harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&vfx=demo"
     encounter: "harness/runtime/survivor-runtime.html?game=ninja2&mode=battle&encounter=demo"
@@ -67,6 +74,12 @@ regions:
       camera: "orthographic top-down camera follows player"
       center_clear_radius_px: 110
       ground: "procedural moss and dirt bands with generated PNG forest props for lantern posts, bamboo clumps, moss stones, fallen logs, and soul shrines"
+      runtime_polish_f_contract:
+        field_density: "Richer moss/dirt decals and edge vegetation frame the view while leaving a readable circular combat lane around the hero."
+        hero_focus: "A warm lantern aura, inner readability ring, and short golden slash arcs keep the guardian visually centered during mob pressure."
+        pickups: "EXP/resource drops use generated resource sprites where available, plus native glow/ring/shadow layers and short idle pulse."
+        elite_boss_warning: "Boss and elite units get a red-orange telegraph halo, vertical threat line, and boss-stage cue without obscuring HP bars or player input."
+        fallback: "When performance or readability fails, drop decorative ground speckles first, then pickup glows, but preserve hero aura and telegraph semantics."
       units: "IdlezBoard-triggered player, enemy waves, boss, projectiles, drops"
   dom_overlay:
     top_hud:

@@ -3,6 +3,7 @@ game: ninja2
 source_concepts:
   - ninja2_rulelocked_housing_home_a
   - ninja2_rulelocked_survival_battle_a
+  - ninja2_survival_visual_runtime_polish_f
 status: extracted
 
 blockers:
@@ -10,12 +11,14 @@ blockers:
   - "housing and survival appear as the same screen instead of separate home/sortie loop"
   - "combat core no longer uses trigger/IdlezBoard runtime"
   - "battle UI covers the central playfield"
+  - "runtime-polish F boss/elite is hidden by the top HUD"
   - "hero loses cream cloak/red scarf/lantern identity"
+  - "movement has no direction-aware sprite change, grounded foot baseline, or dash readability"
   - "home hex states cannot be distinguished"
 
 weighted_criteria:
   housing_rule_match:
-    weight: 20
+    weight: 10
     checks:
       - "Lantern Shrine is central and selected"
       - "built/empty/locked/fog/expand states are readable"
@@ -26,12 +29,14 @@ weighted_criteria:
       - "top-down 2D sprite-game feel"
       - "enemy/pickup silhouettes match rulelocked set"
       - "edge HUD leaves playfield open"
+      - "runtime-polish F structure is preserved: top boss/elite pressure, central hero aura, edge enemy pressure, bottom controls"
   art_style_transfer:
     weight: 20
     checks:
       - "bold ink outlines"
       - "warm lantern/soul teal palette"
       - "forest floor has repeatable prop language"
+      - "pickup/spark/VFX density is made from small readable atoms, not oversized background props"
   mobile_readability:
     weight: 20
     checks:
@@ -39,8 +44,16 @@ weighted_criteria:
       - "buttons fit text"
       - "no incoherent overlap"
   runtime_demo_quality:
-    weight: 20
+    weight: 15
     checks:
       - "home to sortie to result loop completes"
       - "trigger combat remains visible and active"
       - "console has no errors"
+      - "Godot and Phaser battle captures have static and movement compare boards against runtime-polish F"
+  motion_and_controls:
+    weight: 15
+    checks:
+      - "player walk uses stable 4-way frames or a documented fallback; no puppet-like squash"
+      - "dash has short afterimage/trail and cooldown feedback"
+      - "bottom-right combat action cluster exposes three circular actions at target size"
+      - "movement camera keeps player inside safe margin without pinning the sprite to exact center"

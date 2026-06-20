@@ -1,0 +1,103 @@
+version: 1
+backend: godot_control
+purpose: Map harness component concepts to reusable Godot Control scene atoms.
+
+naming_rules:
+  generated_scene_prefix: Generated
+  generated_theme_prefix: Generated
+  node_prefixes:
+    root: Root_
+    section: Section_
+    panel: Panel_
+    button: Btn_
+    label: Text_
+    icon: Icon_
+    texture: Tex_
+    progress: Progress_
+
+atoms:
+  ScreenRoot:
+    godot_type: Control
+    status: generated
+    required_properties: [anchors_preset]
+    notes: "Full-rect root for a screen or overlay surface."
+
+  SectionGroup:
+    godot_type: Control
+    status: generated
+    required_properties: [name, position_or_anchors]
+    notes: "Semantic section owner that maps to component-blueprints.yaml sections."
+
+  HBox:
+    godot_type: HBoxContainer
+    status: generated
+    required_properties: [separation]
+
+  VBox:
+    godot_type: VBoxContainer
+    status: generated
+    required_properties: [separation]
+
+  Grid:
+    godot_type: GridContainer
+    status: generated
+    required_properties: [columns]
+
+  NativePanel:
+    godot_type: PanelContainer
+    status: generated
+    required_properties: [stylebox]
+    notes: "Use Theme/StyleBoxFlat for simple native panels."
+
+  NinePatchPanel:
+    godot_type: NinePatchRect
+    status: generated
+    required_properties: [texture, patch_margins, content_insets]
+    supports_nine_slice: true
+    notes: "Use for reusable rectangular generated skins. Text and icons remain sibling/native children."
+
+  TextureAtom:
+    godot_type: TextureRect
+    status: generated
+    required_properties: [texture, stretch_mode]
+    notes: "Fixed generated icon, portrait, ornament, pickup, character, or VFX atom."
+
+  NativeLabel:
+    godot_type: Label
+    status: generated
+    required_properties: [text_binding_or_text_key, font_size, color_token]
+
+  NativeProgress:
+    godot_type: ProgressBar
+    status: generated
+    required_properties: [value_binding]
+
+  IconButton:
+    godot_type: Button
+    status: generated
+    required_properties: [button_role, touch_size]
+    notes: "Button hit area is native; optional TextureAtom child owns icon art."
+
+  CircularActionButton:
+    godot_type: Control
+    status: generated
+    required_children: [button_hit_area, icon, cooldown_ring, cooldown_label]
+    required_properties: [button_role, size_px]
+    notes: "Native circles/rings plus generated icon atoms. Do not 9-slice."
+
+  BattleActionDock:
+    godot_type: Control
+    status: generated
+    required_children: [primary_action, secondary_action_left, secondary_action_right]
+    required_properties: [layout, size_px]
+
+  ModalScrim:
+    godot_type: Button
+    status: generated
+    required_properties: [color_token, alpha, close_policy]
+
+  ModalShell:
+    godot_type: Control
+    status: generated
+    required_children: [scrim, frame, header, body, footer]
+    notes: "Frame may use NinePatchPanel; ornaments are TextureAtom overlays."
