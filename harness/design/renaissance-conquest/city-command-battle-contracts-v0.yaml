@@ -1,0 +1,655 @@
+meta:
+  game_id: renaissance-conquest
+  version: v0
+  date: "2026-06-21"
+  status: design_contract
+  purpose: "Data contract for MVP city commands, battle actions, battle phases, and aftermath hooks."
+
+priority:
+  order:
+    - city_commands
+    - battle_loop
+    - aftermath
+    - storylets
+    - personal_chains
+  reason: "VN events need concrete command and battle outcomes to react to."
+
+turn_structure:
+  default_ap: 3
+  phases:
+    - id: turn_start
+      outputs: [income, salary_paid, recovery_tick, alert_queue]
+    - id: command_phase
+      outputs: [resource_changes, city_stat_changes, battle_modifiers, event_candidates]
+    - id: battle_phase
+      outputs: [battle_result, routed_units, wall_damage, capture_candidates]
+    - id: aftermath
+      outputs: [prisoners, wounds, loot, prestige_changes, event_candidates]
+    - id: event_queue
+      outputs: [storylets_to_show, flags]
+    - id: turn_end
+      outputs: [project_progress, contract_duration_tick, fatigue_tick]
+
+city_command_schema:
+  required:
+    - id
+    - name
+    - category
+    - ap_cost
+    - actor
+    - target
+    - resolution
+    - outcomes
+    - hooks
+  fields:
+    id: "string, unique"
+    name: "display name"
+    category: "develop | military | diplomacy | intrigue | patronage | order | recovery"
+    ap_cost: "integer"
+    actor:
+      required: "boolean"
+      slot: "assigned commander slot or any available commander"
+      primary_stat: "civic stat key"
+      secondary_stat: "optional supporting stat key"
+      fatigue_gain: "integer"
+    target:
+      type: "own_city | enemy_city | faction | prisoner | commander | facility"
+      required_state: "optional conditions"
+    costs:
+      ducats: "integer or expression"
+      grain: "integer or expression"
+      prestige: "integer or expression"
+      faith: "integer or expression"
+      intel: "integer or expression"
+      tech: "integer or expression"
+    resolution:
+      base_difficulty: "integer"
+      roll: "1d6"
+      formula: "actor stat + modifiers + roll - difficulty"
+      preview_bands:
+        low: "expected margin <= -1"
+        fair: "expected margin 0..2"
+        good: "expected margin 3..5"
+        strong: "expected margin >= 6"
+    outcomes:
+      failure: "effects when margin <= -5"
+      partial: "effects when margin -4..0"
+      success: "effects when margin 1..5"
+      critical: "effects when margin >= 6"
+    hooks:
+      event_candidates: "storylet ids or event tags"
+      battle_modifiers: "temporary modifier ids"
+      flags: "flags set/cleared by result"
+
+city_commands:
+  - id: cmd_audit_ledgers
+    name: Audit Ledgers
+    category: develop
+    ap_cost: 1
+    actor: { required: true, slot: commerce, primary_stat: commerce, secondary_stat: intrigue, fatigue_gain: 4 }
+    target: { type: own_city }
+    costs: {}
+    resolution: { base_difficulty: 8, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_city_stat, stat: unrest, value: 4 }
+        - { effect: enqueue_event, tag: corruption_backlash }
+      partial:
+        - { effect: add_resource, resource: ducats, value: 350 }
+      success:
+        - { effect: add_resource, resource: ducats, value: 700 }
+        - { effect: add_city_stat, stat: guild_power, value: 1 }
+      critical:
+        - { effect: add_resource, resource: ducats, value: 1100 }
+        - { effect: add_resource, resource: intel, value: 1 }
+        - { effect: enqueue_event, tag: ledger_secret }
+    hooks: { event_candidates: [evt_florence_ledger_trial], battle_modifiers: [], flags: [] }
+
+  - id: cmd_develop_district
+    name: Develop District
+    category: develop
+    ap_cost: 1
+    actor: { required: true, slot: engineering, primary_stat: engineering, secondary_stat: commerce, fatigue_gain: 6 }
+    target: { type: own_city }
+    costs: { ducats: 800 }
+    resolution: { base_difficulty: 9, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_city_stat, stat: unrest, value: 3 }
+      partial:
+        - { effect: add_city_stat, stat: wealth, value: 1 }
+      success:
+        - { effect: add_city_stat, stat: wealth, value: 3 }
+      critical:
+        - { effect: add_city_stat, stat: wealth, value: 4 }
+        - { effect: add_city_stat, stat: culture, value: 1 }
+        - { effect: enqueue_event, tag: new_district_request }
+    hooks: { event_candidates: [city_assignment], battle_modifiers: [], flags: [] }
+
+  - id: cmd_fortify_walls
+    name: Fortify Walls
+    category: military
+    ap_cost: 1
+    actor: { required: true, slot: engineering, primary_stat: engineering, secondary_stat: command, fatigue_gain: 5 }
+    target: { type: own_city }
+    costs: { ducats: 650, grain: 80 }
+    resolution: { base_difficulty: 8, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_city_stat, stat: unrest, value: 2 }
+      partial:
+        - { effect: add_city_stat, stat: fortification, value: 2 }
+      success:
+        - { effect: add_city_stat, stat: fortification, value: 5 }
+        - { effect: add_battle_modifier, modifier: mod_defender_wall_bonus_small }
+      critical:
+        - { effect: add_city_stat, stat: fortification, value: 7 }
+        - { effect: add_battle_modifier, modifier: mod_defender_wall_bonus_large }
+    hooks: { event_candidates: [engineer_wall_event], battle_modifiers: [mod_defender_wall_bonus_small], flags: [] }
+
+  - id: cmd_muster_militia
+    name: Muster Militia
+    category: military
+    ap_cost: 1
+    actor: { required: true, slot: council, primary_stat: command, secondary_stat: diplomacy, fatigue_gain: 5 }
+    target: { type: own_city }
+    costs: { grain: 120 }
+    resolution: { base_difficulty: 7, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_city_stat, stat: unrest, value: 4 }
+      partial:
+        - { effect: add_garrison, value: 120 }
+      success:
+        - { effect: add_garrison, value: 260 }
+      critical:
+        - { effect: add_garrison, value: 340 }
+        - { effect: add_resource, resource: prestige, value: 1 }
+    hooks: { event_candidates: [militia_petition], battle_modifiers: [], flags: [] }
+
+  - id: cmd_recruit_company
+    name: Recruit Company
+    category: military
+    ap_cost: 1
+    actor: { required: true, slot: council, primary_stat: diplomacy, secondary_stat: command, fatigue_gain: 4 }
+    target: { type: own_city }
+    costs: { ducats: 900 }
+    resolution: { base_difficulty: 8, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_resource, resource: ducats, value: -250 }
+        - { effect: enqueue_event, tag: mercenary_fraud }
+      partial:
+        - { effect: add_recruit_pool, troop_class: troop_condottieri_swords, value: 160 }
+      success:
+        - { effect: add_recruit_pool, troop_class: troop_condottieri_swords, value: 320 }
+      critical:
+        - { effect: add_recruit_pool, troop_class: troop_condottieri_swords, value: 420 }
+        - { effect: enqueue_event, tag: veteran_company_offer }
+    hooks: { event_candidates: [mercenary_offer], battle_modifiers: [], flags: [] }
+
+  - id: cmd_hire_captain
+    name: Hire Captain
+    category: military
+    ap_cost: 1
+    actor: { required: true, slot: council, primary_stat: diplomacy, secondary_stat: commerce, fatigue_gain: 4 }
+    target: { type: own_city }
+    costs: { ducats: 1200, prestige: 1 }
+    resolution: { base_difficulty: 10, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: enqueue_event, tag: false_captain }
+      partial:
+        - { effect: generate_commander_candidate, grade: Generic }
+      success:
+        - { effect: generate_commander_candidate, grade: B }
+      critical:
+        - { effect: generate_commander_candidate, grade: B }
+        - { effect: add_resource, resource: prestige, value: 1 }
+    hooks: { event_candidates: [recruitment], battle_modifiers: [], flags: [] }
+
+  - id: cmd_scout_neighbor
+    name: Scout Neighbor
+    category: intrigue
+    ap_cost: 1
+    actor: { required: true, slot: intrigue, primary_stat: intrigue, secondary_stat: spd, fatigue_gain: 5 }
+    target: { type: enemy_city }
+    costs: { intel: 1 }
+    resolution: { base_difficulty: 8, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_relation, value: -2 }
+      partial:
+        - { effect: reveal_city_info, depth: basic }
+      success:
+        - { effect: reveal_city_info, depth: battle }
+        - { effect: add_battle_modifier, modifier: mod_scouted_enemy_small }
+      critical:
+        - { effect: reveal_city_info, depth: full }
+        - { effect: add_battle_modifier, modifier: mod_scouted_enemy_large }
+    hooks: { event_candidates: [spy_report], battle_modifiers: [mod_scouted_enemy_small], flags: [] }
+
+  - id: cmd_prepare_siege
+    name: Prepare Siege
+    category: military
+    ap_cost: 1
+    actor: { required: true, slot: engineering, primary_stat: engineering, secondary_stat: command, fatigue_gain: 7 }
+    target: { type: enemy_city }
+    costs: { ducats: 600, grain: 180 }
+    resolution: { base_difficulty: 9, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_resource, resource: grain, value: -80 }
+      partial:
+        - { effect: add_battle_modifier, modifier: mod_siege_prep_minor }
+      success:
+        - { effect: add_battle_modifier, modifier: mod_siege_prep_standard }
+      critical:
+        - { effect: add_battle_modifier, modifier: mod_siege_prep_major }
+        - { effect: enqueue_event, tag: engineer_inspiration }
+    hooks: { event_candidates: [evt_leonardo_02_anatomy_of_a_cannon], battle_modifiers: [mod_siege_prep_standard], flags: [] }
+
+  - id: cmd_sabotage_stores
+    name: Sabotage Stores
+    category: intrigue
+    ap_cost: 1
+    actor: { required: true, slot: intrigue, primary_stat: intrigue, secondary_stat: diplomacy, fatigue_gain: 7 }
+    target: { type: enemy_city }
+    costs: { intel: 2 }
+    resolution: { base_difficulty: 11, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_relation, value: -8 }
+        - { effect: enqueue_event, tag: exposed_agent }
+      partial:
+        - { effect: damage_enemy_garrison, value: 80 }
+      success:
+        - { effect: damage_enemy_garrison, value: 180 }
+        - { effect: add_battle_modifier, modifier: mod_enemy_low_supplies }
+      critical:
+        - { effect: damage_enemy_garrison, value: 260 }
+        - { effect: add_battle_modifier, modifier: mod_enemy_low_supplies }
+        - { effect: add_resource, resource: intel, value: 1 }
+    hooks: { event_candidates: [political_scandal], battle_modifiers: [mod_enemy_low_supplies], flags: [] }
+
+  - id: cmd_counterplot
+    name: Counterplot
+    category: intrigue
+    ap_cost: 1
+    actor: { required: true, slot: intrigue, primary_stat: intrigue, secondary_stat: faith, fatigue_gain: 4 }
+    target: { type: own_city }
+    costs: {}
+    resolution: { base_difficulty: 8, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: enqueue_event, tag: hidden_plot_advances }
+      partial:
+        - { effect: add_city_stat, stat: security, value: 2 }
+      success:
+        - { effect: add_city_stat, stat: security, value: 5 }
+        - { effect: prevent_event_tag, tag: assassination }
+      critical:
+        - { effect: add_city_stat, stat: security, value: 6 }
+        - { effect: add_resource, resource: intel, value: 2 }
+    hooks: { event_candidates: [counterplot_discovery], battle_modifiers: [], flags: [] }
+
+  - id: cmd_negotiate_ransom
+    name: Negotiate Ransom
+    category: diplomacy
+    ap_cost: 1
+    actor: { required: true, slot: council, primary_stat: diplomacy, secondary_stat: commerce, fatigue_gain: 3 }
+    target: { type: prisoner }
+    costs: {}
+    resolution: { base_difficulty: 8, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_loyalty, value: -5 }
+      partial:
+        - { effect: add_resource, resource: ducats, value: 600 }
+      success:
+        - { effect: add_resource, resource: ducats, value: 1100 }
+        - { effect: add_relation, value: 2 }
+      critical:
+        - { effect: add_resource, resource: ducats, value: 1400 }
+        - { effect: add_resource, resource: intel, value: 1 }
+        - { effect: enqueue_event, tag: prisoner_family_contact }
+    hooks: { event_candidates: [recruitment, ransom], battle_modifiers: [], flags: [] }
+
+  - id: cmd_send_envoy
+    name: Send Envoy
+    category: diplomacy
+    ap_cost: 1
+    actor: { required: true, slot: council, primary_stat: diplomacy, secondary_stat: faith, fatigue_gain: 4 }
+    target: { type: faction }
+    costs: { prestige: 1 }
+    resolution: { base_difficulty: 9, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_relation, value: -4 }
+      partial:
+        - { effect: add_relation, value: 2 }
+      success:
+        - { effect: add_relation, value: 6 }
+      critical:
+        - { effect: add_relation, value: 8 }
+        - { effect: add_treaty_progress, value: 1 }
+    hooks: { event_candidates: [political], battle_modifiers: [], flags: [] }
+
+  - id: cmd_sponsor_workshop
+    name: Sponsor Workshop
+    category: patronage
+    ap_cost: 1
+    actor: { required: true, slot: engineering, primary_stat: engineering, secondary_stat: culture, fatigue_gain: 5 }
+    target: { type: own_city }
+    costs: { ducats: 900 }
+    resolution: { base_difficulty: 9, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_resource, resource: tech, value: 0 }
+      partial:
+        - { effect: add_resource, resource: tech, value: 1 }
+      success:
+        - { effect: add_resource, resource: tech, value: 2 }
+        - { effect: enqueue_event, tag: workshop_prototype }
+      critical:
+        - { effect: add_resource, resource: tech, value: 3 }
+        - { effect: enqueue_event, event: evt_leonardo_01_broken_phone }
+    hooks: { event_candidates: [evt_leonardo_01_broken_phone], battle_modifiers: [], flags: [] }
+
+  - id: cmd_patronize_salon
+    name: Patronize Salon
+    category: patronage
+    ap_cost: 1
+    actor: { required: true, slot: culture, primary_stat: culture, secondary_stat: diplomacy, fatigue_gain: 4 }
+    target: { type: own_city }
+    costs: { ducats: 700 }
+    resolution: { base_difficulty: 8, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_city_stat, stat: unrest, value: 1 }
+      partial:
+        - { effect: add_resource, resource: prestige, value: 1 }
+      success:
+        - { effect: add_resource, resource: prestige, value: 2 }
+        - { effect: add_city_stat, stat: culture, value: 2 }
+      critical:
+        - { effect: add_resource, resource: prestige, value: 3 }
+        - { effect: enqueue_event, tag: officer_salon_scene }
+    hooks: { event_candidates: [relationship, patronage], battle_modifiers: [], flags: [] }
+
+  - id: cmd_hold_procession
+    name: Hold Procession
+    category: order
+    ap_cost: 1
+    actor: { required: true, slot: faith, primary_stat: faith, secondary_stat: culture, fatigue_gain: 4 }
+    target: { type: own_city }
+    costs: { ducats: 450, faith: 1 }
+    resolution: { base_difficulty: 8, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_city_stat, stat: church_power, value: 4 }
+      partial:
+        - { effect: add_city_stat, stat: unrest, value: -2 }
+      success:
+        - { effect: add_city_stat, stat: unrest, value: -5 }
+        - { effect: add_city_stat, stat: faith, value: 2 }
+      critical:
+        - { effect: add_city_stat, stat: unrest, value: -7 }
+        - { effect: add_resource, resource: prestige, value: 1 }
+    hooks: { event_candidates: [church_pressure], battle_modifiers: [], flags: [] }
+
+  - id: cmd_rest_officer
+    name: Rest Officer
+    category: recovery
+    ap_cost: 1
+    actor: { required: false, slot: any, primary_stat: diplomacy, secondary_stat: faith, fatigue_gain: 0 }
+    target: { type: commander }
+    costs: { ducats: 250 }
+    resolution: { base_difficulty: 6, roll: 1d6 }
+    outcomes:
+      failure:
+        - { effect: add_fatigue, value: -8 }
+      partial:
+        - { effect: add_fatigue, value: -15 }
+      success:
+        - { effect: add_fatigue, value: -25 }
+        - { effect: add_loyalty, value: 3 }
+      critical:
+        - { effect: add_fatigue, value: -35 }
+        - { effect: add_loyalty, value: 5 }
+        - { effect: enqueue_event, tag: quiet_recovery_scene }
+    hooks: { event_candidates: [relationship, recovery], battle_modifiers: [], flags: [] }
+
+battle_schema:
+  board:
+    columns_per_side: 2
+    lanes: [top, mid, bottom]
+    ally_columns: [back, front]
+    enemy_columns: [front, back]
+  unit_state:
+    required:
+      - commander_id
+      - troop_class
+      - position
+      - troops
+      - morale
+      - moves
+      - delay
+      - guard
+      - capture_pressure
+  battle_state:
+    required:
+      - attacker
+      - defender
+      - city
+      - terrain
+      - wall
+      - advantage
+      - round
+      - turn_queue
+
+battle_flow:
+  - id: pre_battle
+    inputs: [scout_modifiers, siege_modifiers, city_fortification, terrain]
+    outputs: [visible_enemy_info, starting_advantage, wall_value]
+  - id: deployment
+    inputs: [available_commanders, troop_classes]
+    outputs: [formation]
+  - id: action_loop
+    inputs: [turn_queue, battle_actions]
+    outputs: [damage_events, morale_events, advantage_events, rout_events]
+  - id: resolution
+    inputs: [advantage, routed_units, objective_state, round_limit]
+    outputs: [winner, battle_grade]
+  - id: aftermath
+    inputs: [routed_units, battle_grade, capture_pressure, city_state]
+    outputs: [prisoners, wounds, loot, city_changes, event_candidates]
+
+battle_actions:
+  - id: action_strike
+    name: Strike
+    allowed_tags: [infantry, duelist]
+    cost: { moves: 1 }
+    timing: { preparation: none, recovery: 12 }
+    targeting: { side: enemy, row: front, shape: single }
+    effects:
+      - { effect: damage, modifier: 1.0 }
+
+  - id: action_brace
+    name: Brace
+    allowed_tags: [guard, anti_cavalry]
+    cost: { moves: 1 }
+    timing: { preparation: none, recovery: 10 }
+    targeting: { side: ally, row: front, shape: self }
+    effects:
+      - { effect: guard, value: 35, duration: battle }
+      - { effect: buff_vs_tag, tag: cavalry, value: 0.4, duration: battle }
+
+  - id: action_volley
+    name: Volley
+    allowed_tags: [ranged]
+    cost: { moves: 1 }
+    timing: { preparation: none, recovery: 15 }
+    targeting: { side: enemy, row: any, shape: single }
+    effects:
+      - { effect: damage, modifier: 0.85 }
+      - { effect: morale_damage, value: 3 }
+
+  - id: action_charge
+    name: Charge
+    allowed_tags: [cavalry]
+    cost: { moves: 1 }
+    timing: { preparation: none, recovery: 16 }
+    targeting: { side: enemy, row: any, shape: single }
+    effects:
+      - { effect: damage, modifier: 1.35 }
+      - { effect: self_risk_vs_tag, tag: anti_cavalry, value: 0.35 }
+
+  - id: action_fire_by_rank
+    name: Fire by Rank
+    allowed_tags: [gunpowder, ranged]
+    cost: { moves: 1 }
+    timing: { preparation: none, recovery: 22 }
+    targeting: { side: enemy, row: front, shape: single }
+    effects:
+      - { effect: damage, modifier: 1.55 }
+      - { effect: debuff, stat: morale, value: -5 }
+
+  - id: action_cannonade
+    name: Cannonade
+    allowed_tags: [siege, gunpowder]
+    cost: { moves: 1 }
+    timing: { preparation: interruptible, recovery: 26 }
+    targeting: { side: enemy, row: front, shape: row }
+    effects:
+      - { effect: damage, modifier: 0.9 }
+      - { effect: wall_damage, value: 12 }
+      - { effect: advantage, value: 5 }
+
+  - id: action_fieldworks
+    name: Fieldworks
+    allowed_tags: [engineer, support]
+    cost: { moves: 1 }
+    timing: { preparation: none, recovery: 14 }
+    targeting: { side: ally, row: any, shape: row }
+    effects:
+      - { effect: guard, value: 20, duration: battle }
+      - { effect: advantage, value: 3 }
+
+  - id: action_cut_signal
+    name: Cut Signal
+    allowed_tags: [intrigue, interrupt]
+    cost: { moves: 1 }
+    timing: { preparation: none, recovery: 8 }
+    targeting: { side: enemy, row: any, shape: single }
+    effects:
+      - { effect: interrupt, value: 1 }
+      - { effect: advantage, value: 4 }
+
+  - id: action_rally
+    name: Rally
+    allowed_tags: [morale, support]
+    cost: { moves: 1 }
+    timing: { preparation: none, recovery: 12 }
+    targeting: { side: ally, row: any, shape: all }
+    effects:
+      - { effect: morale_heal, value: 8 }
+      - { effect: advantage, value: 4 }
+
+  - id: action_capture_push
+    name: Capture Push
+    allowed_tags: [intrigue, cavalry_flank, duelist]
+    cost: { moves: 1 }
+    timing: { preparation: none, recovery: 15 }
+    targeting: { side: enemy, row: any, shape: single }
+    effects:
+      - { effect: damage, modifier: 0.35 }
+      - { effect: capture_pressure, value: 25 }
+
+after_battle_schema:
+  routed_unit_check_order:
+    - enemy_front_top
+    - enemy_front_mid
+    - enemy_front_bottom
+    - enemy_back_top
+    - enemy_back_mid
+    - enemy_back_bottom
+  capture:
+    base_chance: 20
+    capture_pressure_to_chance: "pressure * 0.5"
+    max_prisoners_per_battle: 2
+    blocked_if:
+      - event_battle
+      - uncapturable_commander
+      - prison_full
+      - faction_has_too_few_commanders
+  wound:
+    base_chance_when_routed: 25
+    fatigue_multiplier: "1 + fatigue / 100"
+  loot:
+    victory_ducats: "city.wealth * 12"
+    victory_grain: "city.wealth * 4"
+    prestige_by_grade:
+      decisive: 3
+      normal: 2
+      narrow: 1
+      defeat: -2
+
+battle_modifiers:
+  - id: mod_scouted_enemy_small
+    source: cmd_scout_neighbor
+    duration: next_battle
+    effects:
+      - { effect: starting_advantage, value: 4 }
+      - { effect: reveal_enemy_slots, value: 3 }
+
+  - id: mod_scouted_enemy_large
+    source: cmd_scout_neighbor
+    duration: next_battle
+    effects:
+      - { effect: starting_advantage, value: 8 }
+      - { effect: reveal_enemy_slots, value: 6 }
+
+  - id: mod_siege_prep_standard
+    source: cmd_prepare_siege
+    duration: next_attack
+    effects:
+      - { effect: starting_advantage, value: 8 }
+      - { effect: wall_damage_bonus, value: 0.25 }
+
+  - id: mod_enemy_low_supplies
+    source: cmd_sabotage_stores
+    duration: next_attack
+    effects:
+      - { effect: enemy_morale, value: -8 }
+      - { effect: enemy_garrison_multiplier, value: 0.9 }
+
+  - id: mod_defender_wall_bonus_small
+    source: cmd_fortify_walls
+    duration: next_defense
+    effects:
+      - { effect: defender_starting_advantage, value: 5 }
+      - { effect: wall_value, value: 10 }
+
+mvp_slice:
+  first_city_commands:
+    - cmd_audit_ledgers
+    - cmd_develop_district
+    - cmd_fortify_walls
+    - cmd_recruit_company
+    - cmd_scout_neighbor
+    - cmd_prepare_siege
+    - cmd_sponsor_workshop
+    - cmd_rest_officer
+  first_battle_classes:
+    - troop_pike_guard
+    - troop_condottieri_swords
+    - troop_crossbowmen
+    - troop_cavalry_lancers
+  first_battle_actions:
+    - action_strike
+    - action_brace
+    - action_volley
+    - action_charge
+    - action_rally
+    - action_capture_push

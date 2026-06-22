@@ -1,0 +1,20 @@
+version: "1.0"
+game: renaissance-conquest
+status: draft
+
+roles:
+  mode_tab:
+    min_size_px: { width: 112, height: 34 }
+    text_case: title
+    states: [normal, selected, hover, pressed]
+  command:
+    min_size_px: { width: 122, height: 34 }
+    icon_policy: "icon later; native text acceptable in v0"
+    states: [normal, selected, disabled]
+  city_action:
+    min_size_px: { width: 92, height: 30 }
+    states: [normal, selected, disabled]
+  battle_skill:
+    min_size_px: { width: 116, height: 54 }
+    content: [name, ap_cost, cooldown, predicted_damage]
+    states: [ready, selected, cooldown, disabled]

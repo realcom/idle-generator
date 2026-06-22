@@ -1,0 +1,536 @@
+meta:
+  game_id: renaissance-conquest
+  version: v0
+  date: "2026-06-21"
+  purpose: >
+    Godot-first Renaissance conquest prototype data contract for commanders,
+    cities, factions, troop classes, battles, and VN-style storylets.
+
+design_goals:
+  - "Commander = battle unit + civic operator + event owner + relationship node."
+  - "City = map node + production site + political state + event source."
+  - "Battle = short 6v6 formation fight decided by advantage, capture, and aftermath."
+  - "Storylet = conditional VN event with choices, effects, and follow-up flags."
+
+creative_policy:
+  player_identity:
+    mode: fixed_protagonist
+    summary: "A modern isekai protagonist dropped into a Renaissance Italy variant."
+    player_name: customizable
+    design_reason: "VN event density needs a visible conversation partner, not only an abstract state."
+  history_policy:
+    mode: alternate_history_variants
+    real_names_allowed: true
+    rule: >
+      Historical names, houses, and cities may be used as motifs, but all characters
+      are variant-world interpretations. Personality, relationships, and outcomes
+      are not strict historical simulation.
+  content_rating:
+    default: mature_non_explicit
+    allow:
+      - political_intrigue
+      - romance
+      - betrayal
+      - imprisonment
+      - ransom
+      - assassination
+      - suggestive_fade_out
+    disallow_in_core_loop:
+      - explicit_h_scenes
+      - h_as_progression_reward
+      - non_optional_explicit_content
+    note: "Adult content can be reconsidered later as a separate flagged layer or mod path."
+  runtime_strategy:
+    mode: godot_first_harness_validated
+    content_source: "harness/design now, later harness/content/renaissance-conquest drafts"
+    runtime_target: "harness/runtime/godot-renaissance-conquest"
+    rationale: "The strategy/VN/city/battle model would be flattened by the existing idlez AFK contract."
+
+vocabulary:
+  commander_grades:
+    S: "route-level officer with 6-8 personal storylets"
+    A: "major officer with 3-5 personal storylets"
+    B: "support officer with 1-2 personal storylets"
+    Generic: "procedural officer with system reactions only"
+
+  troop_roles:
+    - front_guard
+    - front_damage
+    - rear_damage
+    - cavalry_flank
+    - siege
+    - support
+    - intrigue
+    - morale
+    - tech
+
+  contract_types:
+    loyalist:
+      loyalty_floor: 45
+      salary_multiplier: 0.8
+      betrayal_risk: low
+    mercenary:
+      loyalty_floor: 20
+      salary_multiplier: 1.5
+      betrayal_risk: medium
+    hostage:
+      loyalty_floor: 5
+      salary_multiplier: 0.5
+      betrayal_risk: high
+    patronage:
+      loyalty_floor: 30
+      salary_multiplier: 1.2
+      betrayal_risk: medium
+    church_oath:
+      loyalty_floor: 35
+      salary_multiplier: 0.9
+      betrayal_risk: low_if_faith_high
+    marriage_tie:
+      loyalty_floor: 55
+      salary_multiplier: 0.7
+      betrayal_risk: political
+
+  event_types:
+    - first_meeting
+    - recruitment
+    - after_battle
+    - city_assignment
+    - personal_chain
+    - relationship
+    - political
+    - betrayal
+    - patronage
+    - route
+
+  city_stats:
+    - wealth
+    - security
+    - unrest
+    - faith
+    - culture
+    - fortification
+    - guild_power
+    - noble_power
+    - church_power
+
+  strategic_resources:
+    - ap
+    - ducats
+    - grain
+    - prestige
+    - faith
+    - intel
+    - tech
+    - favor
+
+commander_schema:
+  required:
+    - id
+    - name
+    - grade
+    - origin_city
+    - faction
+    - troop_class
+    - level
+    - level_cap
+    - moves
+    - combat_stats
+    - civic_stats
+    - contract
+    - personality
+    - traits
+    - skills
+    - story
+
+  fields:
+    id: "string, unique, e.g. cmd_luciano_bellandi"
+    name: "display name"
+    grade: "S | A | B | Generic"
+    origin_city: "city id"
+    faction: "faction id"
+    troop_class: "troop class id"
+    level: "integer >= 1"
+    level_cap: "integer >= level"
+    troop_count: "integer, current commanded troops"
+    max_troops: "integer, current troop cap"
+    moves: "integer, battle actions per fight"
+    combat_stats:
+      atk: "0-10"
+      def: "0-10"
+      int: "0-10"
+      spd: "0-10"
+      command: "0-10"
+    civic_stats:
+      commerce: "0-10"
+      diplomacy: "0-10"
+      engineering: "0-10"
+      intrigue: "0-10"
+      culture: "0-10"
+      faith: "0-10"
+    relationship_stats:
+      loyalty: "0-100"
+      ambition: "0-100"
+      fatigue: "0-100"
+      reputation: "0-100"
+      bond: "0-100"
+    contract:
+      type: "contract type"
+      duration_turns: "integer or null"
+      salary: "ducats per turn"
+      renewal_condition: "text or flag expression"
+    personality:
+      desire: "money | honor | revenge | faith | knowledge | family | freedom | power"
+      flaw: "short flaw key"
+      taboo: "optional event avoidance key"
+    traits: "list of trait ids"
+    skills: "list of battle/civic skill ids"
+    relationships:
+      allies: "list of commander ids"
+      rivals: "list of commander ids"
+      family: "list of commander ids"
+    story:
+      flags: "list of active story flags"
+      chain_id: "personal chain id or null"
+      clear_flag: "flag set when personal chain resolves"
+
+protagonist_schema:
+  required:
+    - id
+    - default_name
+    - origin_world
+    - role
+    - narrative_hooks
+    - gameplay_hooks
+
+  fields:
+    id: "string, unique, e.g. protagonist"
+    default_name: "default display name; player-customizable"
+    origin_world: "modern world origin summary"
+    role: "patron | field_commander | scholar | merchant | hybrid"
+    can_enter_battle: "boolean or prototype toggle"
+    narrative_hooks:
+      outsider_knowledge: "what the protagonist knows that locals do not"
+      limitation: "what prevents easy domination"
+      personal_goal: "why the protagonist keeps pushing forward"
+      social_mask: "how locals explain the protagonist's presence"
+    gameplay_hooks:
+      ap_bonus: "optional AP/council bonus"
+      event_lens: "unlocks cross-cultural interpretation choices"
+      tech_bias: "optional tech/patronage bonus"
+      relationship_anchor: "bond target for commander storylets"
+
+city_schema:
+  required:
+    - id
+    - name
+    - region
+    - owner
+    - stats
+    - facilities
+    - garrison
+    - politics
+    - story
+
+  fields:
+    id: "string, unique, e.g. city_florence"
+    name: "display name"
+    region: "campaign region key"
+    owner: "faction id"
+    terrain: "plain | hill | river | coast | mountain | urban"
+    stats:
+      wealth: "0-100"
+      security: "0-100"
+      unrest: "0-100"
+      faith: "0-100"
+      culture: "0-100"
+      fortification: "0-100"
+      guild_power: "0-100"
+      noble_power: "0-100"
+      church_power: "0-100"
+    resources_per_turn:
+      ducats: "integer"
+      grain: "integer"
+      prestige: "integer"
+      faith: "integer"
+      intel: "integer"
+      tech: "integer"
+    facilities: "list of facility ids"
+    assigned_commanders:
+      council: "commander id or null"
+      commerce: "commander id or null"
+      engineering: "commander id or null"
+      intrigue: "commander id or null"
+      faith: "commander id or null"
+      culture: "commander id or null"
+    garrison:
+      troop_count: "integer"
+      commanders: "list of commander ids"
+    politics:
+      noble_house: "local house id"
+      guild: "local guild id"
+      church_order: "local church order id"
+      pressure_flags: "list of flags"
+    story:
+      flags: "list of flags"
+      event_pool: "list of event ids"
+
+faction_schema:
+  required:
+    - id
+    - name
+    - ideology
+    - capital
+    - resources
+    - relations
+
+  fields:
+    id: "string, unique"
+    name: "display name"
+    ideology: "merchant | noble | papal | mercenary | republican | foreign"
+    capital: "city id"
+    resources:
+      ducats: "integer"
+      grain: "integer"
+      prestige: "integer"
+      faith: "integer"
+      intel: "integer"
+      tech: "integer"
+      favor: "integer"
+    relations:
+      faction_id: "-100 to 100"
+    known_cities: "list of city ids"
+    active_wars: "list of faction ids"
+    treaties: "list of treaty ids"
+
+troop_class_schema:
+  required:
+    - id
+    - name
+    - role
+    - row_preference
+    - base_stats
+    - recruit
+    - default_skills
+
+  fields:
+    id: "string, unique"
+    name: "display name"
+    role: "troop role"
+    row_preference: "front | back | either"
+    base_stats:
+      atk: "integer"
+      def: "integer"
+      int: "integer"
+      delay: "integer, lower is faster"
+      morale: "integer"
+    recruit:
+      ducats_per_100: "integer"
+      grain_per_turn_per_100: "integer"
+      max_troop_ratio: "float"
+      heal_cost_per_100: "integer"
+    tags: "list of tags, e.g. anti_cavalry, gunpowder, siege"
+    counters:
+      strong_against: "list of troop class ids/tags"
+      weak_against: "list of troop class ids/tags"
+    default_skills: "list of skill ids"
+
+battle_skill_schema:
+  required:
+    - id
+    - name
+    - type
+    - allowed_classes
+    - cost
+    - targeting
+    - effects
+
+  fields:
+    id: "string, unique"
+    name: "display name"
+    type: "attack | guard | buff | debuff | heal | siege | intrigue | morale"
+    allowed_classes: "list of troop class ids or tags"
+    cost:
+      moves: "integer"
+      resources: "optional resource costs"
+    timing:
+      preparation: "none | interruptible | delayed"
+      recovery: "integer"
+    targeting:
+      side: "ally | enemy | both"
+      row: "front | back | any"
+      shape: "single | row | column | all | self"
+    effects:
+      - effect: "damage | heal | guard | buff | debuff | advantage | capture | wall_damage | interrupt"
+        value: "number or expression"
+        duration: "turns or battle"
+
+event_schema:
+  required:
+    - id
+    - title
+    - type
+    - participants
+    - trigger
+    - priority
+    - choices
+
+  fields:
+    id: "string, unique"
+    title: "display title"
+    type: "event type"
+    participants:
+      primary: "commander id, city id, or faction id"
+      secondary: "optional list"
+    trigger:
+      all: "list of conditions that must pass"
+      any: "optional list where one must pass"
+      none: "optional list that must fail"
+    priority: "integer, higher resolves first"
+    cooldown_turns: "integer"
+    repeatable: "boolean"
+    text:
+      premise: "short summary for writers"
+      scene: "VN prose/dialogue block or localization key"
+    choices:
+      - id: "choice id"
+        label: "button text"
+        requirements: "optional conditions"
+        effects: "list of effects"
+        follow_up: "optional event id or flag"
+
+condition_vocabulary:
+  commander:
+    - commander_exists
+    - commander_grade_is
+    - commander_loyalty_lt
+    - commander_loyalty_gte
+    - commander_ambition_gte
+    - commander_fatigue_gte
+    - commander_has_trait
+    - commander_missing_trait
+    - commander_has_flag
+    - commander_missing_flag
+    - commander_assigned_to_city
+    - commander_assigned_to_facility
+    - commander_was_in_last_battle
+    - commander_was_captured
+    - commander_is_prisoner
+  city:
+    - city_owner_is
+    - city_stat_lt
+    - city_stat_gte
+    - city_has_facility
+    - city_missing_facility
+    - city_has_flag
+    - city_missing_flag
+    - city_under_siege
+  battle:
+    - last_battle_result_is
+    - last_battle_advantage_gte
+    - last_battle_captured_count_gte
+    - last_battle_commander_wounded
+    - last_battle_city_is
+  faction:
+    - faction_resource_gte
+    - faction_relation_lt
+    - faction_relation_gte
+    - faction_at_war_with
+    - faction_has_treaty
+  global:
+    - turn_gte
+    - season_is
+    - route_flag_set
+    - route_flag_missing
+
+effect_vocabulary:
+  commander:
+    - add_loyalty
+    - add_ambition
+    - add_fatigue
+    - add_reputation
+    - add_bond
+    - add_trait
+    - remove_trait
+    - unlock_skill
+    - change_contract
+    - set_commander_flag
+    - clear_commander_flag
+    - wound_commander
+    - release_prisoner
+    - recruit_prisoner
+  city:
+    - add_city_stat
+    - set_city_flag
+    - clear_city_flag
+    - add_facility
+    - damage_facility
+    - assign_commander
+    - spawn_revolt
+  faction:
+    - add_resource
+    - add_relation
+    - declare_war
+    - add_treaty
+    - remove_treaty
+    - set_route_flag
+  battle:
+    - add_battle_modifier
+    - unlock_battle_skill
+    - add_advantage_bonus
+  event:
+    - enqueue_event
+    - unlock_event_pool
+    - set_cooldown
+
+formula_v0:
+  effective_troops:
+    description: "Troops scale down after thresholds to keep commanders and class identity relevant."
+    expression:
+      - "if troops <= 500: troops"
+      - "elif troops <= 2000: troops * 0.5 + 250"
+      - "else: troops * 0.25 + 750"
+
+  attack_power:
+    physical: "class.base_atk + commander.atk * 10 + commander.command * 3"
+    defense: "target_class.base_def + target.def * 8"
+    tactical: "class.base_int + commander.int * 10 + commander.command * 2"
+    tactical_defense: "target.int * 7"
+
+  damage:
+    expression: >
+      effective_troops * max(10, attack_power - defense_power) / 100
+      * skill_modifier * terrain_modifier * morale_modifier
+
+  advantage:
+    start:
+      field_defender: 0
+      town_defender: 10
+      fortified_city_defender: 20
+      citadel_defender: 30
+    events:
+      enemy_unit_routed: 8
+      ally_unit_routed: -8
+      successful_scout: "3..12"
+      siege_preparation: "5..20"
+      morale_skill_minor: "5"
+      morale_skill_major: "15"
+
+mvp_targets:
+  cities:
+    - city_florence
+    - city_pisa
+    - city_siena
+    - city_bologna
+    - city_lucca
+  factions:
+    - faction_player_house
+    - faction_medici_court
+    - faction_papal_envoys
+    - faction_condottieri_league
+  counts:
+    commanders: 30
+    troop_classes: 8
+    facilities: 8
+    events: 100
+    personal_chains_s_grade: 3
+    personal_chains_a_grade: 5

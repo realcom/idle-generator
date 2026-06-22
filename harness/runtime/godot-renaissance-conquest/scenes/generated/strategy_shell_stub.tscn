@@ -1,0 +1,254 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Theme" path="res://themes/generated/strategy_shell.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/generated/skins/ui_skin_atlas_v1.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/campaign/italy_campaign_map_v1.png" id="3_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/city/florence_city_card_v1.png" id="4_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/icons/command_icon_strip_v1.png" id="5_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/skins/command_button_frame_atlas_v1.png" id="6_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/icons/command_medallion_icon_atlas_v1.png" id="7_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/factions/faction_crest_strip_v1.png" id="8_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/minimap/campaign_minimap_v1.png" id="9_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/battle/florence_siege_battlefield_v1.png" id="10_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/officers/officer_portrait_strip_v1.png" id="11_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/skills/battle_skill_icon_strip_v1.png" id="12_tex"]
+
+[node name="Root_StrategyShellStub" type="Control"]
+layout_mode = 3
+theme = ExtResource("1_theme")
+metadata/atom = "ScreenRoot"
+metadata/component = "StrategyShellRoot"
+
+[node name="Section_TopHud" type="Control" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 1264.0
+offset_bottom = 70.0
+custom_minimum_size = Vector2(1248.0, 58.0)
+metadata/atom = "SectionGroup"
+metadata/component = "TopStrategicHud"
+
+[node name="Tex_SharedUiSkinAtlas" type="TextureRect" parent="Section_TopHud"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 576.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2(576.0, 96.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("2_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "SharedUiSkinAtlas"
+metadata/asset_key = "renaissance.ui.skin_atlas_v1"
+
+[node name="Section_CampaignMap" type="Control" parent="."]
+layout_mode = 0
+offset_left = 178.0
+offset_top = 78.0
+offset_right = 884.0
+offset_bottom = 548.0
+custom_minimum_size = Vector2(706.0, 470.0)
+metadata/atom = "SectionGroup"
+metadata/component = "CampaignMapPanel"
+
+[node name="Tex_CampaignMapArt" type="TextureRect" parent="Section_CampaignMap"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 706.0
+offset_bottom = 470.0
+custom_minimum_size = Vector2(706.0, 470.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("3_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "CampaignMapArt"
+metadata/asset_key = "renaissance.campaign.map.italy_painterly_v1"
+
+[node name="Section_CityPreview" type="Control" parent="."]
+layout_mode = 0
+offset_left = 908.0
+offset_top = 150.0
+offset_right = 1252.0
+offset_bottom = 266.0
+custom_minimum_size = Vector2(344.0, 116.0)
+metadata/atom = "SectionGroup"
+metadata/component = "CityPreviewImage"
+
+[node name="Tex_FlorencePreview" type="TextureRect" parent="Section_CityPreview"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 344.0
+offset_bottom = 116.0
+custom_minimum_size = Vector2(344.0, 116.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "CityPreviewImage"
+metadata/asset_key = "renaissance.city.florence_preview_v1"
+
+[node name="Section_CampaignIconAtlases" type="Control" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 78.0
+offset_right = 376.0
+offset_bottom = 142.0
+custom_minimum_size = Vector2(360.0, 64.0)
+metadata/atom = "SectionGroup"
+metadata/component = "CommandIconStrip"
+
+[node name="Tex_CommandIconStrip" type="TextureRect" parent="Section_CampaignIconAtlases"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 360.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2(360.0, 64.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("5_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "CommandIconStrip"
+metadata/asset_key = "renaissance.campaign.command_icons_v1"
+
+[node name="Tex_CommandButtonFrames" type="TextureRect" parent="Section_CampaignIconAtlases"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 144.0
+offset_right = 700.0
+offset_bottom = 163.0
+custom_minimum_size = Vector2(700.0, 19.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("6_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "CommandButtonFrameAtlas"
+metadata/asset_key = "renaissance.campaign.command_button_frames_v1"
+
+[node name="Tex_CommandMedallionIcons" type="TextureRect" parent="Section_CampaignIconAtlases"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 168.0
+offset_right = 360.0
+offset_bottom = 204.0
+custom_minimum_size = Vector2(360.0, 36.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("7_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "CommandMedallionIconAtlas"
+metadata/asset_key = "renaissance.campaign.command_medallion_icons_v1"
+
+[node name="Tex_FactionCrestStrip" type="TextureRect" parent="Section_CampaignIconAtlases"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 72.0
+offset_right = 360.0
+offset_bottom = 136.0
+custom_minimum_size = Vector2(360.0, 64.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("8_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "FactionCrestStrip"
+metadata/asset_key = "renaissance.factions.crests_v1"
+
+[node name="Section_CampaignMiniMap" type="Control" parent="."]
+layout_mode = 0
+offset_left = 1038.0
+offset_top = 560.0
+offset_right = 1264.0
+offset_bottom = 708.0
+custom_minimum_size = Vector2(226.0, 148.0)
+metadata/atom = "SectionGroup"
+metadata/component = "CampaignMiniMap"
+
+[node name="Tex_CampaignMiniMap" type="TextureRect" parent="Section_CampaignMiniMap"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 176.0
+offset_bottom = 106.0
+custom_minimum_size = Vector2(168.0, 98.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("9_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "CampaignMiniMap"
+metadata/asset_key = "renaissance.campaign.minimap_v1"
+
+[node name="Section_BattleFormation" type="Control" parent="."]
+layout_mode = 0
+offset_left = 188.0
+offset_top = 92.0
+offset_right = 946.0
+offset_bottom = 480.0
+custom_minimum_size = Vector2(758.0, 388.0)
+metadata/atom = "SectionGroup"
+metadata/component = "BattleFormationBoard"
+
+[node name="Tex_BattlefieldBackground" type="TextureRect" parent="Section_BattleFormation"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 758.0
+offset_bottom = 388.0
+custom_minimum_size = Vector2(758.0, 388.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("10_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "BattlefieldBackground"
+metadata/asset_key = "renaissance.battle.background.florence_siege_v1"
+
+[node name="Section_OfficerRoster" type="Control" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 560.0
+offset_right = 1026.0
+offset_bottom = 708.0
+custom_minimum_size = Vector2(1010.0, 148.0)
+metadata/atom = "SectionGroup"
+metadata/component = "OfficerRoster"
+
+[node name="Tex_OfficerPortraitStrip" type="TextureRect" parent="Section_OfficerRoster"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 610.0
+offset_bottom = 122.0
+custom_minimum_size = Vector2(600.0, 112.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("11_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "OfficerPortraitStrip"
+metadata/asset_key = "renaissance.officers.portrait_strip_v1"
+
+[node name="Section_BattleSkillIcons" type="Control" parent="."]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 540.0
+offset_right = 558.0
+offset_bottom = 604.0
+custom_minimum_size = Vector2(360.0, 64.0)
+metadata/atom = "SectionGroup"
+metadata/component = "BattleSkillIconStrip"
+
+[node name="Tex_BattleSkillIconStrip" type="TextureRect" parent="Section_BattleSkillIcons"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 360.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2(360.0, 64.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("12_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "BattleSkillIconStrip"
+metadata/asset_key = "renaissance.battle.skill_icons_v1"

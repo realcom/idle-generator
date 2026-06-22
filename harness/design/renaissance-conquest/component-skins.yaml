@@ -1,0 +1,65 @@
+version: "1.0"
+game: renaissance-conquest
+status: draft
+
+skins:
+  generated_renaissance_frame_skin:
+    mode: generate_image
+    asset_key: renaissance.ui.skin_atlas_v1
+    runtime_usage: godot_stylebox_texture
+    slice_hints_px: { left: 12, right: 12, top: 12, bottom: 12 }
+    content_insets_px: { left: 8, right: 8, top: 7, bottom: 7 }
+    style_cells:
+      panel_dark: 0
+      button_normal_dark: 1
+      selected_blue: 2
+      selected_war_crimson: 3
+      selected_develop_green: 4
+      selected_intrigue_violet: 5
+    visual_rules:
+      - "Use dark navy leather/enamel centers with antique brass double-line borders."
+      - "Keep all text, icons, numbers, and state labels native Godot controls."
+      - "Colored states tint only the center glow/enamel; brass frame remains consistent."
+  generated_command_button_frame_skin:
+    mode: generate_image
+    asset_key: renaissance.campaign.command_button_frames_v1
+    runtime_usage: godot_texture_rect_button_background
+    source_grid: { columns: 10, rows: 1 }
+    cell_size_px: { width: 140, height: 38 }
+    native_text_rect_px: { x: 56, y: 1, width: 78, height: 35 }
+    visual_rules:
+      - "Treat the frame as a fixed command-row button background with a left circular docking socket."
+      - "Do not bake command names into the skin."
+      - "Keep command names native Godot labels centered in the right blank text well."
+  generated_command_medallion_icons:
+    mode: generate_image
+    asset_key: renaissance.campaign.command_medallion_icons_v1
+    runtime_usage: godot_texture_rect_fixed_square_overlay
+    source_grid: { columns: 10, rows: 1 }
+    cell_size_px: { width: 36, height: 36 }
+    runtime_size_px: { width: 36, height: 36 }
+    visual_rules:
+      - "Keep each medallion cell square and render with STRETCH_KEEP_ASPECT_CENTERED."
+      - "Every medallion border must be a true circle; never stretch it to fit the button."
+      - "Layer it over the command button frame socket so the rail still reads as one cohesive button."
+  native_panel_dark:
+    mode: generated_skin_fallback
+    skin_ref: generated_renaissance_frame_skin.panel_dark
+    fallback_color_token: panel.base
+    fallback_border_token: panel.border
+    radius_px: 6
+  native_panel_selected:
+    mode: generated_skin_fallback
+    skin_ref: generated_renaissance_frame_skin.selected_blue
+    fallback_color_token: panel.selected
+    fallback_border_token: action.primary
+    radius_px: 6
+  battle_slot:
+    mode: native_ui
+    color_token: bg.battle_field
+    border_token: panel.border
+    radius_px: 8
+  faction_chip:
+    mode: native_ui
+    color_source: faction
+    radius_px: 999

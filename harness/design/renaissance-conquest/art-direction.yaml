@@ -1,0 +1,53 @@
+version: "1.0"
+game: renaissance-conquest
+status: draft
+
+art_anchor:
+  theme: "Renaissance Italy isekai conquest strategy"
+  camera:
+    campaign: "wide 16:9 strategy map with UI around an Italy/Mediterranean tactical map"
+    battle: "side-facing tactical board with 2 columns x 3 lanes per side"
+  identity:
+    geography: "Italy peninsula, Po valley, Adriatic and Tyrrhenian seas, Sicily hint"
+    factions: [Milan, Venice, Florence, PapalStates, Naples, Genoa]
+    characters: [Medici, Borgia, Machiavelli, Leonardo, admiral, cathedral knight, assassin, physician]
+  must_keep:
+    - "modern game HUD density"
+    - "actual Renaissance Italy geography as campaign anchor"
+    - "anime isekai officer collection tone"
+    - "clear 2x3 per-side battle formation"
+    - "AP pressure across conquest, events, bonds, domestic actions"
+  must_avoid:
+    - "Japanese Sengoku setting"
+    - "full parchment-only antique presentation"
+    - "large character cards covering the tactical grid"
+    - "fictional continent replacing Italy"
+
+palette:
+  ink: "#101724"
+  obsidian: "#17202E"
+  panel: "#202C3E"
+  panel_light: "#2B3B50"
+  brass: "#C9A452"
+  florence_red: "#B84A4A"
+  venice_teal: "#3EA6A0"
+  milan_blue: "#4A6FB4"
+  papal_gold: "#D8BF6A"
+  naples_violet: "#7B5BA8"
+  genoa_white: "#E8E6DC"
+  sea: "#284E68"
+  land: "#506C4F"
+  road: "#C8A15D"
+  danger: "#D35D4B"
+  success: "#69C37B"
+
+line_and_material:
+  panel_radius_px: 6
+  panel_border_px: 1
+  map_line_px: 2
+  battle_slot_radius_px: 8
+  material_language:
+    - "dark lacquered HUD panels"
+    - "brass separators and small crest medallions"
+    - "flat map regions with luminous faction borders"
+    - "native labels and numbers, no baked text"

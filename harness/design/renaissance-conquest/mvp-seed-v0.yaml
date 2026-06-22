@@ -1,0 +1,500 @@
+meta:
+  game_id: renaissance-conquest
+  version: v0
+  date: "2026-06-21"
+  status: design_seed
+  source_contract: system-contracts-v0.yaml
+  note: >
+    This is not approved runtime content yet. It is the first seed set for
+    protagonist, opening cities, factions, troop classes, and S-grade officers.
+
+decisions_snapshot:
+  player_identity: fixed_isekai_protagonist
+  history_policy: alternate_history_variants
+  content_rating: mature_non_explicit
+  runtime_strategy: godot_first_harness_validated
+
+protagonist:
+  id: protagonist
+  default_name: Yujin Han
+  player_name_customizable: true
+  origin_world: "Modern Korea, near-future."
+  role: hybrid_patron_commander
+  can_enter_battle: prototype_toggle
+  social_mask: "A foreign scholar and accountant taken in by a minor Florentine household."
+  premise: >
+    A modern systems-minded protagonist wakes beneath the unfinished dome of
+    an alternate Florence with a ledger, a half-broken phone, and no legal identity.
+  limitation: >
+    The protagonist understands systems, maps, and future concepts, but lacks
+    noble blood, local language mastery, military legitimacy, and reliable technology.
+  personal_goal: >
+    Survive long enough to discover why this Renaissance is diverging from history,
+    then decide whether to return home or build a new order.
+  gameplay_hooks:
+    council_lens:
+      effect: "Adds special interpretation choices in political and officer events."
+    outsider_ledger:
+      effect: "+1 AP after building Council Hall level 2; prototype balance only."
+    future_fragments:
+      effect: "Unlocks rare Tech/Patronage choices when paired with engineers or scholars."
+    relationship_anchor:
+      effect: "S-grade officer chains use protagonist bond as a core progress stat."
+
+opening_state:
+  year: "1494 alternate"
+  season: spring
+  starting_city: city_florence
+  starting_faction: faction_player_house
+  opening_pressure:
+    - "Florence is rich but politically unstable."
+    - "The Medici variant faction wants the protagonist controlled, not empowered."
+    - "Papal envoys treat the protagonist as either miracle, heresy, or asset."
+    - "Condottieri companies are preparing to sell protection to the highest bidder."
+  first_turn_goals:
+    - "Secure a legal patron before the city council expels the protagonist."
+    - "Choose one officer to assign to commerce, engineering, or intrigue."
+    - "Scout Pisa or Siena before committing to a first campaign battle."
+
+factions:
+  - id: faction_player_house
+    name: "House Stella Cadente"
+    ideology: republican_patron
+    capital: city_florence
+    fantasy: "A minor house transformed by an impossible foreign advisor."
+    starting_resources:
+      ap: 3
+      ducats: 3200
+      grain: 900
+      prestige: 8
+      faith: 4
+      intel: 2
+      tech: 1
+      favor: 0
+    initial_relations:
+      faction_medici_court: -10
+      faction_papal_envoys: 0
+      faction_condottieri_league: 5
+
+  - id: faction_medici_court
+    name: "Medici Court"
+    ideology: merchant
+    capital: city_florence
+    fantasy: "Bankers, patrons, and quiet kingmakers trying to own the city without wearing a crown."
+    initial_relations:
+      faction_player_house: -10
+      faction_papal_envoys: 15
+      faction_condottieri_league: 20
+
+  - id: faction_papal_envoys
+    name: "Papal Envoys"
+    ideology: papal
+    capital: city_siena
+    fantasy: "A roaming church-political machine that grants legitimacy and collects obedience."
+    initial_relations:
+      faction_player_house: 0
+      faction_medici_court: 15
+      faction_condottieri_league: -5
+
+  - id: faction_condottieri_league
+    name: "Condottieri League"
+    ideology: mercenary
+    capital: city_bologna
+    fantasy: "Captains who believe every treaty is a price negotiation in ceremonial clothes."
+    initial_relations:
+      faction_player_house: 5
+      faction_medici_court: 20
+      faction_papal_envoys: -5
+
+cities:
+  - id: city_florence
+    name: Florence
+    owner: faction_player_house
+    terrain: urban
+    role: "Opening city, culture and commerce hub."
+    stats:
+      wealth: 78
+      security: 42
+      unrest: 38
+      faith: 55
+      culture: 86
+      fortification: 48
+      guild_power: 76
+      noble_power: 61
+      church_power: 52
+    facilities:
+      - facility_council_hall
+      - facility_guild_exchange
+      - facility_workshop
+    story_flags:
+      - flag_foreign_scholar_rumor
+      - flag_medici_watchers
+    event_seeds:
+      - evt_florence_ledger_trial
+      - evt_guilds_demand_audit
+      - evt_cathedral_whispers
+
+  - id: city_pisa
+    name: Pisa
+    owner: faction_medici_court
+    terrain: coast
+    role: "Harbor, trade dispute, first expansion target."
+    stats:
+      wealth: 64
+      security: 50
+      unrest: 44
+      faith: 48
+      culture: 58
+      fortification: 54
+      guild_power: 82
+      noble_power: 40
+      church_power: 36
+    facilities:
+      - facility_guild_exchange
+      - facility_barracks
+    event_seeds:
+      - evt_pisa_customs_war
+      - evt_pisa_hostage_captain
+
+  - id: city_siena
+    name: Siena
+    owner: faction_papal_envoys
+    terrain: hill
+    role: "Faith, noble pressure, church legitimacy."
+    stats:
+      wealth: 52
+      security: 61
+      unrest: 29
+      faith: 84
+      culture: 60
+      fortification: 66
+      guild_power: 37
+      noble_power: 72
+      church_power: 88
+    facilities:
+      - facility_cathedral
+      - facility_prison
+    event_seeds:
+      - evt_siena_relic_inquiry
+      - evt_siena_papal_tax
+
+  - id: city_bologna
+    name: Bologna
+    owner: faction_condottieri_league
+    terrain: plain
+    role: "University, mercenary market, early tech."
+    stats:
+      wealth: 58
+      security: 55
+      unrest: 35
+      faith: 49
+      culture: 74
+      fortification: 45
+      guild_power: 58
+      noble_power: 44
+      church_power: 40
+    facilities:
+      - facility_academy
+      - facility_barracks
+      - facility_arsenal
+    event_seeds:
+      - evt_bologna_contract_riot
+      - evt_bologna_forbidden_diagram
+
+  - id: city_lucca
+    name: Lucca
+    owner: faction_player_house
+    terrain: hill
+    role: "Small defensive city and diplomacy tutorial."
+    stats:
+      wealth: 43
+      security: 64
+      unrest: 18
+      faith: 57
+      culture: 42
+      fortification: 71
+      guild_power: 39
+      noble_power: 46
+      church_power: 50
+    facilities:
+      - facility_barracks
+      - facility_cathedral
+    event_seeds:
+      - evt_lucca_wall_captain
+      - evt_lucca_marriage_petition
+
+troop_classes:
+  - id: troop_pike_guard
+    name: Pike Guard
+    role: front_guard
+    row_preference: front
+    base_stats: { atk: 48, def: 36, int: 5, delay: 13, morale: 8 }
+    recruit: { ducats_per_100: 32, grain_per_turn_per_100: 2, max_troop_ratio: 1.4, heal_cost_per_100: 2 }
+    tags: [infantry, anti_cavalry, guard]
+    default_skills: [skill_brace_pikes, skill_line_guard]
+
+  - id: troop_condottieri_swords
+    name: Condottieri Swords
+    role: front_damage
+    row_preference: front
+    base_stats: { atk: 62, def: 28, int: 5, delay: 12, morale: 7 }
+    recruit: { ducats_per_100: 52, grain_per_turn_per_100: 3, max_troop_ratio: 1.0, heal_cost_per_100: 4 }
+    tags: [infantry, duelist]
+    default_skills: [skill_sword_push, skill_break_guard]
+
+  - id: troop_crossbowmen
+    name: Crossbowmen
+    role: rear_damage
+    row_preference: back
+    base_stats: { atk: 44, def: 16, int: 5, delay: 15, morale: 6 }
+    recruit: { ducats_per_100: 42, grain_per_turn_per_100: 2, max_troop_ratio: 1.3, heal_cost_per_100: 3 }
+    tags: [ranged, armor_pierce_light]
+    default_skills: [skill_crossbow_volley, skill_pin_front]
+
+  - id: troop_cavalry_lancers
+    name: Cavalry Lancers
+    role: cavalry_flank
+    row_preference: front
+    base_stats: { atk: 82, def: 24, int: 5, delay: 9, morale: 8 }
+    recruit: { ducats_per_100: 78, grain_per_turn_per_100: 5, max_troop_ratio: 0.8, heal_cost_per_100: 5 }
+    tags: [cavalry, flank, expensive]
+    default_skills: [skill_lance_charge, skill_harry_backline]
+
+  - id: troop_arquebusiers
+    name: Arquebusiers
+    role: rear_damage
+    row_preference: back
+    base_stats: { atk: 118, def: 4, int: 5, delay: 18, morale: 5 }
+    recruit: { ducats_per_100: 120, grain_per_turn_per_100: 3, max_troop_ratio: 0.65, heal_cost_per_100: 5 }
+    tags: [ranged, gunpowder, reload]
+    default_skills: [skill_fire_by_rank, skill_smoke_reload]
+
+  - id: troop_field_artillery
+    name: Field Artillery
+    role: siege
+    row_preference: back
+    base_stats: { atk: 126, def: 0, int: 6, delay: 22, morale: 4 }
+    recruit: { ducats_per_100: 160, grain_per_turn_per_100: 4, max_troop_ratio: 0.4, heal_cost_per_100: 6 }
+    tags: [siege, gunpowder, slow, wall_breaker]
+    default_skills: [skill_cannonade, skill_wall_breach]
+
+  - id: troop_siege_engineers
+    name: Siege Engineers
+    role: tech
+    row_preference: back
+    base_stats: { atk: 32, def: 12, int: 38, delay: 16, morale: 6 }
+    recruit: { ducats_per_100: 90, grain_per_turn_per_100: 2, max_troop_ratio: 0.7, heal_cost_per_100: 4 }
+    tags: [engineer, siege_prep, support]
+    default_skills: [skill_sap_wall, skill_fieldworks]
+
+  - id: troop_covert_agents
+    name: Covert Agents
+    role: intrigue
+    row_preference: either
+    base_stats: { atk: 36, def: 10, int: 24, delay: 7, morale: 5 }
+    recruit: { ducats_per_100: 95, grain_per_turn_per_100: 1, max_troop_ratio: 0.6, heal_cost_per_100: 4 }
+    tags: [intrigue, interrupt, capture_support]
+    default_skills: [skill_cut_signal, skill_silent_abduction]
+
+s_grade_commanders:
+  - id: cmd_lorenza_medici
+    name: Lorenza de Medici
+    inspiration: "Medici patron-politician variant"
+    grade: S
+    origin_city: city_florence
+    faction: faction_medici_court
+    troop_class: troop_crossbowmen
+    level: 18
+    level_cap: 62
+    troop_count: 520
+    max_troops: 900
+    moves: 4
+    combat_stats: { atk: 4, def: 4, int: 8, spd: 6, command: 7 }
+    civic_stats: { commerce: 9, diplomacy: 8, engineering: 3, intrigue: 6, culture: 9, faith: 5 }
+    relationship_stats: { loyalty: 28, ambition: 72, fatigue: 0, reputation: 86, bond: 0 }
+    contract: { type: patronage, duration_turns: null, salary: 220, renewal_condition: "keep_florence_wealth_gte_65" }
+    personality:
+      desire: family
+      flaw: "Trusts ledgers more than vows."
+      taboo: "public_humiliation"
+    traits: [trait_banking_network, trait_patron_of_painters, trait_cold_reader]
+    skills: [skill_crossbow_volley, skill_ledger_blackmail, skill_patronage_web]
+    relationships:
+      allies: []
+      rivals: [cmd_cesare_borsia]
+      family: []
+    story:
+      chain_id: chain_lorenza_city_that_owns_her
+      clear_flag: flag_lorenza_clear
+      premise: "She can save Florence, but only by admitting the city has also imprisoned her."
+      route_reward: "Unlocks Medici credit line and reduces mercenary salary variance."
+      beats:
+        - evt_lorenza_01_balanced_ledger
+        - evt_lorenza_02_portrait_without_smile
+        - evt_lorenza_03_hostile_loan
+        - evt_lorenza_04_family_vault
+        - evt_lorenza_05_city_that_owns_her
+        - evt_lorenza_06_clear_patron_or_partner
+
+  - id: cmd_cesare_borsia
+    name: Cesare Borsia
+    inspiration: "Borgia war-prince variant"
+    grade: S
+    origin_city: city_siena
+    faction: faction_papal_envoys
+    troop_class: troop_cavalry_lancers
+    level: 24
+    level_cap: 70
+    troop_count: 430
+    max_troops: 760
+    moves: 5
+    combat_stats: { atk: 8, def: 6, int: 6, spd: 8, command: 9 }
+    civic_stats: { commerce: 3, diplomacy: 6, engineering: 4, intrigue: 8, culture: 5, faith: 7 }
+    relationship_stats: { loyalty: 12, ambition: 94, fatigue: 0, reputation: 79, bond: 0 }
+    contract: { type: church_oath, duration_turns: 8, salary: 360, renewal_condition: "grant_city_or_major_victory" }
+    personality:
+      desire: power
+      flaw: "Cannot accept a half victory."
+      taboo: "being_spared_as_charity"
+    traits: [trait_war_prince, trait_papal_shadow, trait_beautiful_threat]
+    skills: [skill_lance_charge, skill_forced_march, skill_hostage_oath]
+    relationships:
+      allies: []
+      rivals: [cmd_lorenza_medici]
+      family: []
+    story:
+      chain_id: chain_cesare_crown_without_country
+      clear_flag: flag_cesare_clear
+      premise: "He wants a crown badly enough to serve anyone, until he decides he is the only rightful master."
+      route_reward: "Unlocks elite cavalry doctrine and high-risk coercive diplomacy actions."
+      beats:
+        - evt_cesare_01_terms_of_the_sword
+        - evt_cesare_02_papal_letter
+        - evt_cesare_03_prisoner_prince
+        - evt_cesare_04_city_promised
+        - evt_cesare_05_betrayal_check
+        - evt_cesare_06_clear_crown_or_chain
+
+  - id: cmd_leonardo_vinca
+    name: Leonardo Vinca
+    inspiration: "Leonardo da Vinci engineer-artist variant"
+    grade: S
+    origin_city: city_bologna
+    faction: faction_condottieri_league
+    troop_class: troop_siege_engineers
+    level: 16
+    level_cap: 68
+    troop_count: 300
+    max_troops: 620
+    moves: 4
+    combat_stats: { atk: 3, def: 3, int: 10, spd: 5, command: 5 }
+    civic_stats: { commerce: 4, diplomacy: 4, engineering: 10, intrigue: 5, culture: 10, faith: 2 }
+    relationship_stats: { loyalty: 35, ambition: 63, fatigue: 0, reputation: 91, bond: 0 }
+    contract: { type: patronage, duration_turns: null, salary: 300, renewal_condition: "fund_academy_or_workshop" }
+    personality:
+      desire: knowledge
+      flaw: "Finishes ideas in sketches long before he finishes obligations."
+      taboo: "burning_books"
+    traits: [trait_unfinished_genius, trait_anatomist_eye, trait_machine_dreamer]
+    skills: [skill_fieldworks, skill_sap_wall, skill_impossible_diagram]
+    relationships:
+      allies: []
+      rivals: []
+      family: []
+    story:
+      chain_id: chain_leonardo_machine_that_should_not_fly
+      clear_flag: flag_leonardo_clear
+      premise: "He sees the protagonist as either proof of impossible science or the most dangerous patron alive."
+      route_reward: "Unlocks experimental siege devices and future-fragment tech choices."
+      beats:
+        - evt_leonardo_01_broken_phone
+        - evt_leonardo_02_anatomy_of_a_cannon
+        - evt_leonardo_03_patronage_due
+        - evt_leonardo_04_wing_trial
+        - evt_leonardo_05_machine_that_should_not_fly
+        - evt_leonardo_06_clear_burn_or_build
+
+storylet_seed_examples:
+  - id: evt_florence_ledger_trial
+    type: first_meeting
+    participants: { primary: protagonist, secondary: [city_florence, cmd_lorenza_medici] }
+    trigger:
+      all:
+        - { condition: turn_gte, value: 1 }
+        - { condition: city_has_flag, city: city_florence, flag: flag_foreign_scholar_rumor }
+      none:
+        - { condition: route_flag_set, flag: flag_opening_ledger_trial_done }
+    priority: 100
+    premise: "Florentine guild auditors demand proof that the protagonist is not a fraud."
+    choices:
+      - id: choice_show_modern_accounting
+        label: "Balance the books in public"
+        effects:
+          - { effect: add_resource, faction: faction_player_house, resource: prestige, value: 3 }
+          - { effect: add_city_stat, city: city_florence, stat: guild_power, value: 2 }
+          - { effect: set_route_flag, flag: flag_opening_ledger_trial_done }
+      - id: choice_ask_lorenza_to_intervene
+        label: "Let Lorenza make the room quiet"
+        effects:
+          - { effect: add_bond, commander: cmd_lorenza_medici, value: 5 }
+          - { effect: add_relation, faction: faction_medici_court, value: 3 }
+          - { effect: set_route_flag, flag: flag_opening_ledger_trial_done }
+
+  - id: evt_cesare_05_betrayal_check
+    type: betrayal
+    participants: { primary: cmd_cesare_borsia, secondary: [protagonist, city_siena] }
+    trigger:
+      all:
+        - { condition: commander_loyalty_lt, commander: cmd_cesare_borsia, value: 35 }
+        - { condition: commander_ambition_gte, commander: cmd_cesare_borsia, value: 85 }
+      none:
+        - { condition: commander_has_flag, commander: cmd_cesare_borsia, flag: flag_cesare_clear }
+    priority: 80
+    premise: "Cesare receives an offer to abandon the protagonist in exchange for a city title."
+    choices:
+      - id: choice_pay_him
+        label: "Pay him like a prince"
+        effects:
+          - { effect: add_resource, faction: faction_player_house, resource: ducats, value: -1200 }
+          - { effect: add_loyalty, commander: cmd_cesare_borsia, value: 18 }
+          - { effect: add_ambition, commander: cmd_cesare_borsia, value: 4 }
+      - id: choice_offer_city_later
+        label: "Promise him a future city"
+        effects:
+          - { effect: add_loyalty, commander: cmd_cesare_borsia, value: 10 }
+          - { effect: set_commander_flag, commander: cmd_cesare_borsia, flag: flag_cesare_promised_city }
+          - { effect: enqueue_event, event: evt_cesare_04_city_promised }
+      - id: choice_refuse
+        label: "Refuse to buy loyalty"
+        effects:
+          - { effect: add_loyalty, commander: cmd_cesare_borsia, value: -15 }
+          - { effect: add_battle_modifier, modifier: mod_cesare_unreliable_next_battle }
+
+  - id: evt_leonardo_01_broken_phone
+    type: personal_chain
+    participants: { primary: cmd_leonardo_vinca, secondary: [protagonist] }
+    trigger:
+      all:
+        - { condition: commander_assigned_to_facility, commander: cmd_leonardo_vinca, facility: facility_workshop }
+        - { condition: route_flag_missing, flag: flag_leonardo_saw_phone }
+    priority: 70
+    premise: "Leonardo sees the protagonist's dead phone and realizes it is not a relic, but a machine."
+    choices:
+      - id: choice_let_him_study_it
+        label: "Let him disassemble the impossible glass"
+        effects:
+          - { effect: add_bond, commander: cmd_leonardo_vinca, value: 8 }
+          - { effect: add_resource, faction: faction_player_house, resource: tech, value: 2 }
+          - { effect: set_route_flag, flag: flag_leonardo_saw_phone }
+      - id: choice_keep_secret
+        label: "Keep it hidden for now"
+        effects:
+          - { effect: add_bond, commander: cmd_leonardo_vinca, value: -3 }
+          - { effect: add_resource, faction: faction_player_house, resource: intel, value: 1 }
+          - { effect: set_route_flag, flag: flag_phone_kept_secret }
+
+open_design_questions:
+  - "Should the protagonist be a deployable battle commander in the default mode?"
+  - "Should battles be direct command, auto-resolve with tactical setup, or hybrid?"
+  - "How dark should execution, hostage, and assassination outcomes become?"
+  - "How close can a variant historical name stay before it feels like strict history simulation?"

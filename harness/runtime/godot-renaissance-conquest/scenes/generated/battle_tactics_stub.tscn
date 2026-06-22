@@ -1,0 +1,567 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Theme" path="res://themes/generated/battle_tactics.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/generated/battle/florence_siege_battlefield_v1.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/officers/officer_portrait_strip_v1.png" id="3_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/skills/battle_skill_icon_strip_v1.png" id="4_tex"]
+
+[node name="Root_BattleTacticsStub" type="Control"]
+layout_mode = 3
+theme = ExtResource("1_theme")
+metadata/atom = "ScreenRoot"
+metadata/component = "StrategyShellRoot"
+
+[node name="Section_TopHud" type="Control" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 1264.0
+offset_bottom = 70.0
+custom_minimum_size = Vector2(1248.0, 58.0)
+metadata/atom = "SectionGroup"
+metadata/component = "TopStrategicHud"
+
+[node name="Panel_TopHudSkin" type="PanelContainer" parent="Section_TopHud"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1248.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(1248.0, 58.0)
+metadata/atom = "NativePanel"
+metadata/component = "SharedUiSkinAtlas"
+
+[node name="Btn_ModeCampaign" type="Button" parent="Section_TopHud"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 10.0
+offset_right = 120.0
+offset_bottom = 44.0
+custom_minimum_size = Vector2(112.0, 34.0)
+flat = true
+text = "ui.mode.campaign"
+metadata/atom = "IconButton"
+metadata/component = "ModeTabBar"
+metadata/button_role = "mode_tab"
+
+[node name="Btn_ModeBattle" type="Button" parent="Section_TopHud"]
+layout_mode = 0
+offset_left = 126.0
+offset_top = 10.0
+offset_right = 238.0
+offset_bottom = 44.0
+custom_minimum_size = Vector2(112.0, 34.0)
+flat = true
+text = "ui.mode.battle"
+metadata/atom = "IconButton"
+metadata/component = "ModeTabBar"
+metadata/button_role = "mode_tab"
+
+[node name="Text_BattleContext" type="Label" parent="Section_TopHud"]
+layout_mode = 0
+offset_left = 286.0
+offset_top = 18.0
+offset_right = 1222.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2(936.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "TopStrategicHud"
+
+[node name="Section_PlayerArmyList" type="Control" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 78.0
+offset_right = 176.0
+offset_bottom = 548.0
+custom_minimum_size = Vector2(160.0, 470.0)
+metadata/atom = "SectionGroup"
+metadata/component = "BattleArmyList"
+
+[node name="Panel_PlayerArmyList" type="PanelContainer" parent="Section_PlayerArmyList"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 160.0
+offset_bottom = 470.0
+custom_minimum_size = Vector2(160.0, 470.0)
+metadata/atom = "NativePanel"
+metadata/component = "BattleArmyList"
+
+[node name="Text_PlayerArmyHeader" type="Label" parent="Section_PlayerArmyList"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 152.0
+offset_bottom = 26.0
+custom_minimum_size = Vector2(144.0, 18.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattleArmyList"
+
+[node name="Grid_PlayerArmyRows" type="GridContainer" parent="Section_PlayerArmyList"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 36.0
+offset_right = 152.0
+offset_bottom = 460.0
+custom_minimum_size = Vector2(144.0, 424.0)
+metadata/atom = "Grid"
+metadata/component = "BattleArmyList"
+
+[node name="Section_BattleFormation" type="Control" parent="."]
+layout_mode = 0
+offset_left = 188.0
+offset_top = 78.0
+offset_right = 946.0
+offset_bottom = 548.0
+custom_minimum_size = Vector2(758.0, 470.0)
+metadata/atom = "SectionGroup"
+metadata/component = "BattleFormationBoard"
+
+[node name="Tex_BattlefieldBackground" type="TextureRect" parent="Section_BattleFormation"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 758.0
+offset_bottom = 470.0
+custom_minimum_size = Vector2(758.0, 470.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("2_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "BattlefieldBackground"
+metadata/asset_key = "renaissance.battle.background.florence_siege_v1"
+
+[node name="Text_AllyColumnLabels" type="Label" parent="Section_BattleFormation"]
+layout_mode = 0
+offset_left = 68.0
+offset_top = 48.0
+offset_right = 368.0
+offset_bottom = 70.0
+custom_minimum_size = Vector2(300.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattleFormationBoard"
+
+[node name="Text_EnemyColumnLabels" type="Label" parent="Section_BattleFormation"]
+layout_mode = 0
+offset_left = 442.0
+offset_top = 48.0
+offset_right = 742.0
+offset_bottom = 70.0
+custom_minimum_size = Vector2(300.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattleFormationBoard"
+
+[node name="Grid_FormationSlots" type="GridContainer" parent="Section_BattleFormation"]
+layout_mode = 0
+offset_left = 74.0
+offset_top = 72.0
+offset_right = 682.0
+offset_bottom = 412.0
+custom_minimum_size = Vector2(608.0, 340.0)
+metadata/atom = "Grid"
+metadata/component = "BattleFormationBoard"
+
+[node name="Text_TargetPreview" type="Label" parent="Section_BattleFormation"]
+layout_mode = 0
+offset_left = 418.0
+offset_top = 320.0
+offset_right = 598.0
+offset_bottom = 340.0
+custom_minimum_size = Vector2(180.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattleFormationBoard"
+
+[node name="Section_EnemyArmyList" type="Control" parent="."]
+layout_mode = 0
+offset_left = 958.0
+offset_top = 78.0
+offset_right = 1264.0
+offset_bottom = 548.0
+custom_minimum_size = Vector2(306.0, 470.0)
+metadata/atom = "SectionGroup"
+metadata/component = "BattleArmyList"
+
+[node name="Panel_EnemyArmyList" type="PanelContainer" parent="Section_EnemyArmyList"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 306.0
+offset_bottom = 470.0
+custom_minimum_size = Vector2(306.0, 470.0)
+metadata/atom = "NativePanel"
+metadata/component = "BattleArmyList"
+
+[node name="Text_EnemyArmyHeader" type="Label" parent="Section_EnemyArmyList"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 298.0
+offset_bottom = 26.0
+custom_minimum_size = Vector2(290.0, 18.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattleArmyList"
+
+[node name="Grid_EnemyArmyRows" type="GridContainer" parent="Section_EnemyArmyList"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 36.0
+offset_right = 298.0
+offset_bottom = 460.0
+custom_minimum_size = Vector2(290.0, 424.0)
+metadata/atom = "Grid"
+metadata/component = "BattleArmyList"
+
+[node name="Section_BattlePrediction" type="Control" parent="."]
+layout_mode = 0
+offset_left = 958.0
+offset_top = 560.0
+offset_right = 1264.0
+offset_bottom = 708.0
+custom_minimum_size = Vector2(306.0, 148.0)
+metadata/atom = "SectionGroup"
+metadata/component = "BattlePredictionPanel"
+
+[node name="Panel_BattlePrediction" type="PanelContainer" parent="Section_BattlePrediction"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 306.0
+offset_bottom = 148.0
+custom_minimum_size = Vector2(306.0, 148.0)
+metadata/atom = "NativePanel"
+metadata/component = "BattlePredictionPanel"
+
+[node name="Text_PredictionTitle" type="Label" parent="Section_BattlePrediction"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 134.0
+offset_bottom = 30.0
+custom_minimum_size = Vector2(126.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattlePredictionPanel"
+
+[node name="Text_SelectedSkillName" type="Label" parent="Section_BattlePrediction"]
+layout_mode = 0
+offset_left = 138.0
+offset_top = 10.0
+offset_right = 298.0
+offset_bottom = 30.0
+custom_minimum_size = Vector2(160.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattlePredictionPanel"
+
+[node name="Text_PredictionRows" type="Label" parent="Section_BattlePrediction"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 38.0
+offset_right = 298.0
+offset_bottom = 116.0
+custom_minimum_size = Vector2(290.0, 78.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattlePredictionPanel"
+
+[node name="Text_PredictionNote" type="Label" parent="Section_BattlePrediction"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 120.0
+offset_right = 298.0
+offset_bottom = 140.0
+custom_minimum_size = Vector2(290.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattlePredictionPanel"
+
+[node name="Section_BattleOfficerDetail" type="Control" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 560.0
+offset_right = 376.0
+offset_bottom = 708.0
+custom_minimum_size = Vector2(360.0, 148.0)
+metadata/atom = "SectionGroup"
+metadata/component = "BattleOfficerDetail"
+
+[node name="Panel_BattleOfficerDetail" type="PanelContainer" parent="Section_BattleOfficerDetail"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 360.0
+offset_bottom = 148.0
+custom_minimum_size = Vector2(360.0, 148.0)
+metadata/atom = "NativePanel"
+metadata/component = "BattleOfficerDetail"
+
+[node name="Tex_SelectedOfficerPortrait" type="TextureRect" parent="Section_BattleOfficerDetail"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 14.0
+offset_right = 100.0
+offset_bottom = 132.0
+custom_minimum_size = Vector2(92.0, 118.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("3_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "OfficerPortraitStrip"
+metadata/asset_key = "renaissance.officers.portrait_strip_v1"
+
+[node name="Text_SelectedOfficerName" type="Label" parent="Section_BattleOfficerDetail"]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 28.0
+offset_right = 346.0
+offset_bottom = 54.0
+custom_minimum_size = Vector2(236.0, 26.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattleOfficerDetail"
+
+[node name="Text_SelectedOfficerStats" type="Label" parent="Section_BattleOfficerDetail"]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 60.0
+offset_right = 346.0
+offset_bottom = 130.0
+custom_minimum_size = Vector2(236.0, 70.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattleOfficerDetail"
+
+[node name="Section_BattleSkillDock" type="Control" parent="."]
+layout_mode = 0
+offset_left = 388.0
+offset_top = 560.0
+offset_right = 946.0
+offset_bottom = 708.0
+custom_minimum_size = Vector2(558.0, 148.0)
+metadata/atom = "SectionGroup"
+metadata/component = "BattleSkillDock"
+
+[node name="Panel_BattleSkillDock" type="PanelContainer" parent="Section_BattleSkillDock"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 558.0
+offset_bottom = 148.0
+custom_minimum_size = Vector2(558.0, 148.0)
+metadata/atom = "NativePanel"
+metadata/component = "BattleSkillDock"
+
+[node name="Text_SkillDockTitle" type="Label" parent="Section_BattleSkillDock"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 228.0
+offset_bottom = 30.0
+custom_minimum_size = Vector2(220.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattleSkillDock"
+
+[node name="Grid_BattleSkillButtons" type="GridContainer" parent="Section_BattleSkillDock"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 36.0
+offset_right = 550.0
+offset_bottom = 136.0
+custom_minimum_size = Vector2(542.0, 100.0)
+metadata/atom = "Grid"
+metadata/component = "BattleSkillDock"
+
+[node name="Btn_SkillStrike" type="Button" parent="Section_BattleSkillDock/Grid_BattleSkillButtons"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 172.0
+offset_bottom = 44.0
+custom_minimum_size = Vector2(172.0, 44.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "BattleSkillDock"
+metadata/button_role = "battle_skill"
+
+[node name="Icon_SkillStrike" type="TextureRect" parent="Section_BattleSkillDock/Grid_BattleSkillButtons/Btn_SkillStrike"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 8.0
+offset_right = 35.0
+offset_bottom = 36.0
+custom_minimum_size = Vector2(28.0, 28.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "BattleSkillIconStrip"
+metadata/asset_key = "renaissance.battle.skill_icons_v1"
+
+[node name="Btn_SkillGuard" type="Button" parent="Section_BattleSkillDock/Grid_BattleSkillButtons"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 172.0
+offset_bottom = 44.0
+custom_minimum_size = Vector2(172.0, 44.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "BattleSkillDock"
+metadata/button_role = "battle_skill"
+
+[node name="Icon_SkillGuard" type="TextureRect" parent="Section_BattleSkillDock/Grid_BattleSkillButtons/Btn_SkillGuard"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 8.0
+offset_right = 35.0
+offset_bottom = 36.0
+custom_minimum_size = Vector2(28.0, 28.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "BattleSkillIconStrip"
+metadata/asset_key = "renaissance.battle.skill_icons_v1"
+
+[node name="Btn_SkillVolley" type="Button" parent="Section_BattleSkillDock/Grid_BattleSkillButtons"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 172.0
+offset_bottom = 44.0
+custom_minimum_size = Vector2(172.0, 44.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "BattleSkillDock"
+metadata/button_role = "battle_skill"
+
+[node name="Icon_SkillVolley" type="TextureRect" parent="Section_BattleSkillDock/Grid_BattleSkillButtons/Btn_SkillVolley"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 8.0
+offset_right = 35.0
+offset_bottom = 36.0
+custom_minimum_size = Vector2(28.0, 28.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "BattleSkillIconStrip"
+metadata/asset_key = "renaissance.battle.skill_icons_v1"
+
+[node name="Btn_SkillRally" type="Button" parent="Section_BattleSkillDock/Grid_BattleSkillButtons"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 172.0
+offset_bottom = 44.0
+custom_minimum_size = Vector2(172.0, 44.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "BattleSkillDock"
+metadata/button_role = "battle_skill"
+
+[node name="Icon_SkillRally" type="TextureRect" parent="Section_BattleSkillDock/Grid_BattleSkillButtons/Btn_SkillRally"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 8.0
+offset_right = 35.0
+offset_bottom = 36.0
+custom_minimum_size = Vector2(28.0, 28.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "BattleSkillIconStrip"
+metadata/asset_key = "renaissance.battle.skill_icons_v1"
+
+[node name="Btn_SkillScheme" type="Button" parent="Section_BattleSkillDock/Grid_BattleSkillButtons"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 172.0
+offset_bottom = 44.0
+custom_minimum_size = Vector2(172.0, 44.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "BattleSkillDock"
+metadata/button_role = "battle_skill"
+
+[node name="Icon_SkillScheme" type="TextureRect" parent="Section_BattleSkillDock/Grid_BattleSkillButtons/Btn_SkillScheme"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 8.0
+offset_right = 35.0
+offset_bottom = 36.0
+custom_minimum_size = Vector2(28.0, 28.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "BattleSkillIconStrip"
+metadata/asset_key = "renaissance.battle.skill_icons_v1"
+
+[node name="Btn_SkillCannon" type="Button" parent="Section_BattleSkillDock/Grid_BattleSkillButtons"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 172.0
+offset_bottom = 44.0
+custom_minimum_size = Vector2(172.0, 44.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "BattleSkillDock"
+metadata/button_role = "battle_skill"
+
+[node name="Icon_SkillCannon" type="TextureRect" parent="Section_BattleSkillDock/Grid_BattleSkillButtons/Btn_SkillCannon"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 8.0
+offset_right = 35.0
+offset_bottom = 36.0
+custom_minimum_size = Vector2(28.0, 28.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "BattleSkillIconStrip"
+metadata/asset_key = "renaissance.battle.skill_icons_v1"

@@ -1,0 +1,24 @@
+version: "1.0"
+game: renaissance-conquest
+status: draft
+
+screen:
+  orientation: landscape_16_9
+  reference_size_px: { width: 1280, height: 720 }
+  safe_area_px: { left: 16, right: 16, top: 12, bottom: 12 }
+
+campaign:
+  top_hud: { x: 16, y: 12, width: 1248, height: 54 }
+  left_commands: { x: 16, y: 78, width: 150, height: 470 }
+  map_view: { x: 178, y: 78, width: 706, height: 470 }
+  city_inspector: { x: 896, y: 78, width: 368, height: 470 }
+  officer_roster: { x: 16, y: 560, width: 1248, height: 148 }
+
+battle:
+  top_hud: { x: 16, y: 12, width: 1248, height: 58 }
+  tactical_board: { x: 188, y: 78, width: 758, height: 470 }
+  player_army: { x: 16, y: 78, width: 160, height: 470 }
+  enemy_army: { x: 958, y: 78, width: 306, height: 470 }
+  officer_detail: { x: 16, y: 560, width: 360, height: 148 }
+  skill_dock: { x: 388, y: 560, width: 558, height: 148 }
+  prediction_panel: { x: 958, y: 560, width: 306, height: 148 }

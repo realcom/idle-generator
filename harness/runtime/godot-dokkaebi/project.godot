@@ -1,0 +1,22 @@
+; Godot 4.6 Standard project for Dokkaebi ingame core prototype.
+
+config_version=5
+
+[application]
+
+config/name="Dokkaebi Godot Ingame Prototype"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.6")
+
+[display]
+
+window/size/viewport_width=540
+window/size/viewport_height=960
+window/size/window_width_override=810
+window/size/window_height_override=1440
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[rendering]
+
+renderer/rendering_method="mobile"

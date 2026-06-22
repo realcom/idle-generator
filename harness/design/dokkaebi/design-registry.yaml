@@ -1,0 +1,36 @@
+version: "1.0"
+game: dokkaebi
+updated_at: 2026-06-22T23:40:00+09:00
+
+concepts:
+  - id: dokkaebi_lobby_haeil_concept_a
+    status: candidate
+    screen: LobbyHome
+    target_runtime: godot
+    image: concepts/dokkaebi_lobby_haeil_concept_a.png
+    notes: concepts/dokkaebi_lobby_haeil_concept_a.md
+    source: built_in_imagegen
+    art_anchor:
+      - Haeil user-provided reference
+      - Joseon night training courtyard
+      - parchment and ink-brush mobile RPG UI
+    tags: [Lobby, Home, Haeil, Godot, Candidate]
+
+  - id: dokkaebi_ingame_haeil_concept_a
+    status: candidate
+    screen: SurvivalBattle
+    target_runtime: godot
+    image: concepts/dokkaebi_ingame_haeil_concept_a.png
+    notes: concepts/dokkaebi_ingame_haeil_concept_a.md
+    source: built_in_imagegen
+    art_anchor:
+      - Haeil user-provided reference
+      - night forest 요귀 survival run
+      - water-blue spear slash VFX
+    tags: [Ingame, HUD, Combat, Haeil, Godot, Candidate]
+
+foundation_gaps:
+  - ui-system-inventory.yaml
+  - button-system.yaml
+  - modal-system.yaml
+  - color-tokens.yaml

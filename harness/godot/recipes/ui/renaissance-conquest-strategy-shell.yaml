@@ -1,0 +1,297 @@
+version: 1
+game: renaissance-conquest
+slug: renaissance-conquest-strategy-shell
+status: draft
+backend: godot_control
+
+target:
+  project: ../../../runtime/godot-renaissance-conquest/project.godot
+  owner_scene: ../../../runtime/godot-renaissance-conquest/scenes/main.tscn
+  owner_script: ../../../runtime/godot-renaissance-conquest/scripts/main.gd
+  output:
+    scene: ../../../runtime/godot-renaissance-conquest/scenes/generated/strategy_shell_stub.tscn
+    theme: ../../../runtime/godot-renaissance-conquest/themes/generated/strategy_shell.tres
+  generation_policy: "Generated from harness/godot recipe; runtime main scene owns the hand-authored interactive prototype."
+
+sources:
+  ui_system_inventory: ../../../design/renaissance-conquest/ui-system-inventory.yaml
+  button_system: ../../../design/renaissance-conquest/button-system.yaml
+  color_tokens: ../../../design/renaissance-conquest/color-tokens.yaml
+  art_direction: ../../../design/renaissance-conquest/art-direction.yaml
+  layout_tokens: ../../../design/renaissance-conquest/layout-tokens.yaml
+  component_blueprints: ../../../design/renaissance-conquest/component-blueprints.yaml
+  component_skins: ../../../design/renaissance-conquest/component-skins.yaml
+  asset_plan: ../../../design/renaissance-conquest/asset-plan.yaml
+  concepts:
+    - ../../../design/renaissance-conquest/concepts/strategy-shell-godot-v0.md
+
+blueprint_refs:
+  surface: StrategyShell
+  sections: [top_hud, campaign_body, battle_body, officer_roster]
+  components:
+    - StrategyShellRoot
+    - SharedUiSkinAtlas
+    - TopStrategicHud
+    - ModeTabBar
+    - HudResourceIconStrip
+    - TopActionIconStrip
+    - CampaignMapPanel
+    - CampaignMapArt
+    - CommandRail
+    - CommandButtonFrameAtlas
+    - CommandMedallionIconAtlas
+    - CommandIconStrip
+    - FactionCrestStrip
+    - CityInspector
+    - CityPreviewImage
+    - CityStatIconStrip
+    - CampaignMiniMap
+    - BattleFormationBoard
+    - BattlefieldBackground
+    - BattlePredictionPanel
+    - BattleSkillDock
+    - BattleSkillIconStrip
+    - OfficerRoster
+    - OfficerPortraitStrip
+  shared_button_roles: [mode_tab, command, city_action, battle_skill]
+  color_token_groups: [bg, panel, text, action, faction]
+
+screen:
+  orientation: landscape_16_9
+  reference_size_px: { width: 1280, height: 720 }
+  safe_area_policy: "Desktop prototype; fixed 16:9 reference layout for v0."
+
+layout:
+  anchor: full_rect
+  regions:
+    top_hud: { x: 16, y: 12, width: 1248, height: 58 }
+    campaign_map: { x: 178, y: 78, width: 706, height: 470 }
+    battle_board: { x: 188, y: 92, width: 758, height: 388 }
+    officer_roster: { x: 16, y: 560, width: 1010, height: 148 }
+    campaign_minimap: { x: 1038, y: 560, width: 226, height: 148 }
+
+assets:
+  required_keys:
+    - renaissance.ui.native_strategy_shell
+    - renaissance.ui.skin_atlas_v1
+    - renaissance.campaign.map.italy_painterly_v1
+    - renaissance.campaign.command_button_frames_v1
+    - renaissance.campaign.command_medallion_icons_v1
+    - renaissance.campaign.command_icons_v1
+    - renaissance.campaign.hud_resource_icons_v1
+    - renaissance.campaign.top_action_icons_v1
+    - renaissance.city.inspector_icons_v1
+    - renaissance.factions.crests_v1
+    - renaissance.campaign.minimap_v1
+    - renaissance.city.florence_preview_v1
+    - renaissance.officers.portrait_strip_v1
+    - renaissance.battle.background.florence_siege_v1
+    - renaissance.battle.skill_icons_v1
+    - renaissance.battle.formation_grid_v0
+  fixed_atoms:
+    - key: renaissance.ui.skin_atlas_v1
+      usage: shared_stylebox_texture_atlas
+      display_size_px: { width: 576, height: 96 }
+      slice_hints: { left: 12, right: 12, top: 12, bottom: 12 }
+    - key: renaissance.campaign.map.italy_painterly_v1
+      usage: campaign_map_background
+      display_size_px: { width: 706, height: 470 }
+    - key: renaissance.city.florence_preview_v1
+      usage: city_inspector_preview
+      display_size_px: { width: 344, height: 116 }
+    - key: renaissance.campaign.command_icons_v1
+      usage: command_icon_atlas_source
+      display_size_px: { width: 360, height: 64 }
+    - key: renaissance.campaign.command_button_frames_v1
+      usage: command_button_frame_atlas_source
+      display_size_px: { width: 700, height: 19 }
+    - key: renaissance.campaign.command_medallion_icons_v1
+      usage: command_medallion_icon_atlas_source
+      display_size_px: { width: 360, height: 36 }
+    - key: renaissance.campaign.hud_resource_icons_v1
+      usage: top_hud_resource_icon_atlas_source
+      display_size_px: { width: 396, height: 36 }
+    - key: renaissance.campaign.top_action_icons_v1
+      usage: top_action_icon_atlas_source
+      display_size_px: { width: 180, height: 36 }
+    - key: renaissance.city.inspector_icons_v1
+      usage: city_stat_icon_atlas_source
+      display_size_px: { width: 360, height: 64 }
+    - key: renaissance.factions.crests_v1
+      usage: faction_crest_atlas_source
+      display_size_px: { width: 360, height: 64 }
+    - key: renaissance.campaign.minimap_v1
+      usage: campaign_minimap
+      display_size_px: { width: 168, height: 98 }
+    - key: renaissance.officers.portrait_strip_v1
+      usage: officer_roster_atlas_source
+      display_size_px: { width: 600, height: 112 }
+    - key: renaissance.battle.background.florence_siege_v1
+      usage: battle_board_background
+      display_size_px: { width: 758, height: 388 }
+    - key: renaissance.battle.skill_icons_v1
+      usage: battle_skill_icon_atlas_source
+      display_size_px: { width: 360, height: 64 }
+  native_controls:
+    - key: renaissance.ui.native_strategy_shell
+      usage: root_native_control_shell
+    - key: renaissance.battle.formation_grid_v0
+      usage: procedural_battle_grid
+
+control_tree:
+  root:
+    atom: ScreenRoot
+    node_name: Root_StrategyShellStub
+    component: StrategyShellRoot
+    anchors_preset: full_rect
+    children:
+      - atom: SectionGroup
+        node_name: Section_TopHud
+        component: TopStrategicHud
+        position_px: { x: 16, y: 12 }
+        size_px: { width: 1248, height: 58 }
+        children:
+          - atom: TextureAtom
+            node_name: Tex_SharedUiSkinAtlas
+            component: SharedUiSkinAtlas
+            asset_key: renaissance.ui.skin_atlas_v1
+            stretch_mode: keep_aspect_covered
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 576, height: 96 }
+      - atom: SectionGroup
+        node_name: Section_CampaignMap
+        component: CampaignMapPanel
+        position_px: { x: 178, y: 78 }
+        size_px: { width: 706, height: 470 }
+        children:
+          - atom: TextureAtom
+            node_name: Tex_CampaignMapArt
+            component: CampaignMapArt
+            asset_key: renaissance.campaign.map.italy_painterly_v1
+            stretch_mode: keep_aspect_covered
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 706, height: 470 }
+      - atom: SectionGroup
+        node_name: Section_CityPreview
+        component: CityPreviewImage
+        position_px: { x: 908, y: 150 }
+        size_px: { width: 344, height: 116 }
+        children:
+          - atom: TextureAtom
+            node_name: Tex_FlorencePreview
+            component: CityPreviewImage
+            asset_key: renaissance.city.florence_preview_v1
+            stretch_mode: keep_aspect_covered
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 344, height: 116 }
+      - atom: SectionGroup
+        node_name: Section_CampaignIconAtlases
+        component: CommandIconStrip
+        position_px: { x: 16, y: 78 }
+        size_px: { width: 360, height: 64 }
+        children:
+          - atom: TextureAtom
+            node_name: Tex_CommandIconStrip
+            component: CommandIconStrip
+            asset_key: renaissance.campaign.command_icons_v1
+            stretch_mode: keep_aspect_covered
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 360, height: 64 }
+          - atom: TextureAtom
+            node_name: Tex_CommandButtonFrames
+            component: CommandButtonFrameAtlas
+            asset_key: renaissance.campaign.command_button_frames_v1
+            stretch_mode: keep_aspect_covered
+            position_px: { x: 0, y: 144 }
+            size_px: { width: 700, height: 19 }
+          - atom: TextureAtom
+            node_name: Tex_CommandMedallionIcons
+            component: CommandMedallionIconAtlas
+            asset_key: renaissance.campaign.command_medallion_icons_v1
+            stretch_mode: keep_aspect_centered
+            position_px: { x: 0, y: 168 }
+            size_px: { width: 360, height: 36 }
+          - atom: TextureAtom
+            node_name: Tex_FactionCrestStrip
+            component: FactionCrestStrip
+            asset_key: renaissance.factions.crests_v1
+            stretch_mode: keep_aspect_covered
+            position_px: { x: 0, y: 72 }
+            size_px: { width: 360, height: 64 }
+      - atom: SectionGroup
+        node_name: Section_CampaignMiniMap
+        component: CampaignMiniMap
+        position_px: { x: 1038, y: 560 }
+        size_px: { width: 226, height: 148 }
+        children:
+          - atom: TextureAtom
+            node_name: Tex_CampaignMiniMap
+            component: CampaignMiniMap
+            asset_key: renaissance.campaign.minimap_v1
+            stretch_mode: keep_aspect_covered
+            position_px: { x: 8, y: 8 }
+            size_px: { width: 168, height: 98 }
+      - atom: SectionGroup
+        node_name: Section_BattleFormation
+        component: BattleFormationBoard
+        position_px: { x: 188, y: 92 }
+        size_px: { width: 758, height: 388 }
+        children:
+          - atom: TextureAtom
+            node_name: Tex_BattlefieldBackground
+            component: BattlefieldBackground
+            asset_key: renaissance.battle.background.florence_siege_v1
+            stretch_mode: keep_aspect_covered
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 758, height: 388 }
+      - atom: SectionGroup
+        node_name: Section_OfficerRoster
+        component: OfficerRoster
+        position_px: { x: 16, y: 560 }
+        size_px: { width: 1010, height: 148 }
+        children:
+          - atom: TextureAtom
+            node_name: Tex_OfficerPortraitStrip
+            component: OfficerPortraitStrip
+            asset_key: renaissance.officers.portrait_strip_v1
+            stretch_mode: keep_aspect_covered
+            position_px: { x: 10, y: 10 }
+            size_px: { width: 600, height: 112 }
+      - atom: SectionGroup
+        node_name: Section_BattleSkillIcons
+        component: BattleSkillIconStrip
+        position_px: { x: 198, y: 540 }
+        size_px: { width: 360, height: 64 }
+        children:
+          - atom: TextureAtom
+            node_name: Tex_BattleSkillIconStrip
+            component: BattleSkillIconStrip
+            asset_key: renaissance.battle.skill_icons_v1
+            stretch_mode: keep_aspect_covered
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 360, height: 64 }
+
+data_contract:
+  runtime_state:
+    - shell.mode
+    - campaign.selected_city
+    - battle.selected_skill
+    - officers.collection
+  fixtures:
+    - Milan, Venice, Florence, PapalStates, Naples, Genoa
+    - Medici, Borgia, Machiavelli, Leonardo variants
+  hardcoding_allowlist:
+    - "v0 uses fixture data inside scripts/main.gd until a Godot data model is introduced."
+
+validation:
+  commands:
+    - "python3 harness/tools/design_blueprint_validate.py renaissance-conquest"
+    - "python3 harness/godot/validators/godot_ui_recipe_validate.py --recipe harness/godot/recipes/ui/renaissance-conquest-strategy-shell.yaml"
+    - "python3 harness/godot/builders/godot_ui_recipe_build.py --recipe harness/godot/recipes/ui/renaissance-conquest-strategy-shell.yaml"
+    - "godot --headless --path harness/runtime/godot-renaissance-conquest --import"
+    - "godot --headless --path harness/runtime/godot-renaissance-conquest --scene res://scenes/main.tscn --quit-after 1"
+    - "godot --headless --path harness/runtime/godot-renaissance-conquest --check-only --script res://scripts/main.gd"
+    - "godot --headless --path harness/runtime/godot-renaissance-conquest --script res://scripts/tools/smoke.gd"
+  screenshot: harness/runtime/godot-renaissance-conquest/screenshots/strategy-shell-campaign.png
+  blockers:
+    - "v1 generated skins are wired; future pass should split ornament-only layers if the frame detail becomes too dense on small controls"

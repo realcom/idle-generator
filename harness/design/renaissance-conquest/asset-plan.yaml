@@ -1,0 +1,540 @@
+version: "1.0"
+game: renaissance-conquest
+source_concepts:
+  - strategy-shell-godot-v0
+status: draft
+
+assetization_summary:
+  native_ui:
+    - "Godot-native panels, labels, buttons, city buttons, stat rows, and battle slots."
+  generate_image:
+    - "campaign map art used as the main visual image under native controls"
+    - "city inspector preview image"
+    - "officer portrait strip cropped in Godot with AtlasTexture"
+    - "battlefield background art used under native 2x3 formation slots"
+    - "battle skill icon strip cropped in Godot with AtlasTexture"
+    - "battle unit type icon strip cropped in Godot for formation token thumbnails"
+    - "battle unit ground squad transparent strip cropped in Godot for battlefield standees"
+    - "command rail icon strip cropped in Godot with AtlasTexture"
+    - "top HUD resource icon strip cropped in Godot with AtlasTexture"
+    - "top-right action icon strip cropped in Godot with AtlasTexture"
+    - "city inspector stat/development icon strip cropped in Godot with AtlasTexture"
+    - "faction crest strip cropped in Godot with AtlasTexture"
+    - "campaign minimap art"
+    - "panel/button/card/chip skin atlas consumed by Godot StyleBoxTexture"
+    - "command button frame atlas plus fixed circular medallion icon atlas for the left command rail"
+
+assets:
+  - key: renaissance.ui.native_strategy_shell
+    type: native_control_surface
+    mode: native_ui
+    platforms: [godot]
+    godot:
+      usage: native_control_surface
+      target_path: harness/runtime/godot-renaissance-conquest/scenes/main.tscn
+    usage:
+      - component-blueprints.yaml:StrategyShellRoot
+      - godot recipe:renaissance-conquest-strategy-shell
+    status: draft
+    priority: must
+    notes: "No bitmap asset required for v0; validates native Godot-first UI ownership."
+
+  - key: renaissance.map.italy_vector_v0
+    type: procedural_vector_map
+    mode: native_ui
+    platforms: [godot]
+    godot:
+      usage: scripted_draw
+      target_path: harness/runtime/godot-renaissance-conquest/scripts/main.gd
+    usage:
+      - component-blueprints.yaml:CampaignMapPanel
+      - scripts/main.gd:_draw_campaign_map
+    status: draft
+    priority: must
+    notes: "Stylized Godot draw polygons for Italy and surrounding seas."
+
+  - key: renaissance.battle.formation_grid_v0
+    type: procedural_battle_grid
+    mode: native_ui
+    platforms: [godot]
+    godot:
+      usage: scripted_draw
+      target_path: harness/runtime/godot-renaissance-conquest/scripts/main.gd
+    usage:
+      - component-blueprints.yaml:BattleFormationBoard
+      - scripts/main.gd:_draw_battle_board
+    status: draft
+    priority: must
+    notes: "Correct 2 columns x 3 lanes per side."
+
+  - key: renaissance.campaign.map.italy_painterly_v1
+    type: map_background
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 1672, height: 941 }
+    background: opaque
+    usage:
+      - component-blueprints.yaml:CampaignMapArt
+      - scripts/main.gd:_draw_campaign_map
+    prompt_notes: "Renaissance Italy conquest map background with no baked text, no UI panels, no portraits; designed to sit under native Godot city buttons."
+    status: generated
+    priority: must
+    generated_with: built_in_imagegen
+    generated_at: 2026-06-21T04:31:00+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee672-6869-7ac0-aeef-f3f2c7f2185a/ig_084b516b66b78db2016a36e9564344819190e05c6c2762c15c.png
+    actual_path: harness/design/renaissance-conquest/assets/campaign/italy_campaign_map_v1.png
+    godot:
+      usage: texture_atom
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/campaign/italy_campaign_map_v1.png
+      source_path: harness/design/renaissance-conquest/assets/campaign/italy_campaign_map_v1.png
+
+  - key: renaissance.city.florence_preview_v1
+    type: city_preview
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 1672, height: 941 }
+    background: opaque
+    usage:
+      - component-blueprints.yaml:CityPreviewImage
+      - scripts/main.gd:_build_city_inspector
+    prompt_notes: "Florence city panorama for the right-side city inspector, no text and no UI frame."
+    status: generated
+    priority: must
+    generated_with: built_in_imagegen
+    generated_at: 2026-06-21T04:31:00+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee672-6869-7ac0-aeef-f3f2c7f2185a/ig_084b516b66b78db2016a36e9a53a7481918a2cff9db1137d11.png
+    actual_path: harness/design/renaissance-conquest/assets/city/florence_city_card_v1.png
+    godot:
+      usage: texture_atom
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/city/florence_city_card_v1.png
+      source_path: harness/design/renaissance-conquest/assets/city/florence_city_card_v1.png
+
+  - key: renaissance.officers.portrait_strip_v1
+    type: portrait_strip
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 2172, height: 724 }
+    background: opaque
+    usage:
+      - component-blueprints.yaml:OfficerPortraitStrip
+      - scripts/main.gd:_officer_card
+    prompt_notes: "Six equal officer portrait cells: Medici, Borgia, Machiavelli, Leonardo engineer, Venice admiral, cathedral knight; no text and no UI labels."
+    status: generated
+    priority: must
+    generated_with: built_in_imagegen
+    generated_at: 2026-06-21T04:33:00+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee672-6869-7ac0-aeef-f3f2c7f2185a/ig_05a1a799d49f3e7f016a36eae10b0c8191921807f11f4b0f6b.png
+    actual_path: harness/design/renaissance-conquest/assets/officers/officer_portrait_strip_v1.png
+    godot:
+      usage: atlas_texture_source
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/officers/officer_portrait_strip_v1.png
+      source_path: harness/design/renaissance-conquest/assets/officers/officer_portrait_strip_v1.png
+
+  - key: renaissance.battle.background.florence_siege_v1
+    type: battle_background
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 1672, height: 941 }
+    background: opaque
+    usage:
+      - component-blueprints.yaml:BattlefieldBackground
+      - scripts/main.gd:_draw_battle_board
+    prompt_notes: "Renaissance Florence siege battlefield with open tactical center, no baked text, no UI frame, no large foreground units."
+    status: generated
+    priority: must
+    generated_with: built_in_imagegen
+    generated_at: 2026-06-21T04:48:00+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee672-6869-7ac0-aeef-f3f2c7f2185a/ig_0e022d10292f150a016a36edd7203881918e7ace40975f6ca7.png
+    actual_path: harness/design/renaissance-conquest/assets/battle/florence_siege_battlefield_v1.png
+    godot:
+      usage: texture_atom
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/battle/florence_siege_battlefield_v1.png
+      source_path: harness/design/renaissance-conquest/assets/battle/florence_siege_battlefield_v1.png
+
+  - key: renaissance.battle.skill_icons_v1
+    type: icon_strip
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 2172, height: 724 }
+    background: opaque
+    usage:
+      - component-blueprints.yaml:BattleSkillIconStrip
+      - scripts/main.gd:_skill_icon_texture
+    prompt_notes: "Six equal cells: Strike, Guard, Volley, Rally, Scheme, Cannon. No text and no labels."
+    status: generated
+    priority: must
+    generated_with: built_in_imagegen
+    generated_at: 2026-06-21T04:48:00+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee672-6869-7ac0-aeef-f3f2c7f2185a/ig_0e022d10292f150a016a36ee393788819197a2c8590bd686c0.png
+    actual_path: harness/design/renaissance-conquest/assets/skills/battle_skill_icon_strip_v1.png
+    godot:
+      usage: atlas_texture_source
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/skills/battle_skill_icon_strip_v1.png
+      source_path: harness/design/renaissance-conquest/assets/skills/battle_skill_icon_strip_v1.png
+
+  - key: renaissance.battle.unit_icons_v2
+    type: icon_strip
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 768, height: 128 }
+    background: opaque
+    component_contract:
+      source_grid: { columns: 6, rows: 1 }
+      cell_order:
+        - Spy
+        - Duelist
+        - Volley
+        - Knight
+        - Cannon
+        - Scheme
+      thumbnail_size_px: { width: 34, height: 34 }
+      render_rule: "Use AtlasTexture square crop per formation token thumbnail; keep names, troop values, HP, turn badges, and status pips native."
+    usage:
+      - component-blueprints.yaml:BattleUnitIconStrip
+      - scripts/main.gd:_unit_type_icon_texture
+    prompt_notes: "Six equal square cells: spy/assassin hood and dagger, duelist rapier and cloak, volley crossbow and bolts, knight helm and shield, siege cannon and tools, schemer mask and sealed letter. No text, numbers, labels, or full characters."
+    status: generated
+    priority: must
+    generated_with: deterministic_crop_from_built_in_imagegen
+    generated_at: 2026-06-21T11:27:05+09:00
+    source_path: harness/design/renaissance-conquest/assets/units/battle_unit_icon_strip_v1.png
+    original_imagegen_source_path: /Users/yangjinhwan/.codex/generated_images/019ee7b6-86e6-78a3-99d4-9a4cc9c7195d/ig_0aef61515cebb6e9016a374b5370a481918f92ce5f850283ac.png
+    actual_path: harness/design/renaissance-conquest/assets/units/battle_unit_icon_strip_v2.png
+    godot:
+      usage: atlas_texture_source
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/units/battle_unit_icon_strip_v2.png
+      source_path: harness/design/renaissance-conquest/assets/units/battle_unit_icon_strip_v2.png
+
+  - key: renaissance.battle.unit_squads_v1
+    type: formation_squad_strip
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 768, height: 128 }
+    background: opaque
+    component_contract:
+      source_grid: { columns: 6, rows: 1 }
+      cell_order:
+        - SpySkirmishers
+        - DuelistInfantry
+        - CrossbowVolley
+        - PikeKnightBlock
+        - CannonCrew
+        - AgentRetinue
+      thumbnail_size_px: { width: 38, height: 38 }
+      render_rule: "Use AtlasTexture square crop per formation token and turn-order thumbnail; keep names, troop values, HP, turn badges, and status pips native."
+    usage:
+      - prior framed variant retained for visual audit
+    prompt_notes: "Six equal square cells of compact Renaissance soldier corps: hooded skirmishers, duelist infantry, crossbow volley, armored pike/knight block, cannon crew, masked agent retinue. No text, numbers, labels, or single-character portraits."
+    status: generated
+    priority: should
+    generated_with: built_in_imagegen_plus_deterministic_crop
+    generated_at: 2026-06-21T18:41:42+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee7b6-86e6-78a3-99d4-9a4cc9c7195d/ig_07f6f0005eb1e754016a377c1826288191bd53958278152905.png
+    actual_path: harness/design/renaissance-conquest/assets/units/battle_unit_squad_strip_v1.png
+    godot:
+      usage: atlas_texture_source
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/units/battle_unit_squad_strip_v1.png
+      source_path: harness/design/renaissance-conquest/assets/units/battle_unit_squad_strip_v1.png
+
+  - key: renaissance.battle.unit_squads_v2
+    type: formation_squad_strip
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 768, height: 128 }
+    background: opaque
+    component_contract:
+      source_grid: { columns: 6, rows: 1 }
+      cell_order:
+        - SpySkirmishers
+        - DuelistInfantry
+        - CrossbowVolley
+        - PikeKnightBlock
+        - CannonCrew
+        - AgentRetinue
+      thumbnail_size_px: { width: 42, height: 42 }
+      render_rule: "Use zoomed AtlasTexture square crop per formation token and turn-order thumbnail; the decorative card frame is removed so tiny soldier groups read at 34-42 px."
+    usage:
+      - prior opaque squad variant retained for visual audit
+    prompt_notes: "Deterministic zoom crop from the generated six-cell soldier-corps atlas; compact troop clusters remain visible in small Godot formation tokens. No text, numbers, labels, or single-character portraits."
+    status: generated
+    priority: should
+    generated_with: deterministic_zoom_crop_from_built_in_imagegen
+    generated_at: 2026-06-21T18:46:16+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee7b6-86e6-78a3-99d4-9a4cc9c7195d/ig_07f6f0005eb1e754016a377c1826288191bd53958278152905.png
+    source_assets:
+      - harness/design/renaissance-conquest/assets/units/battle_unit_squad_strip_v1.png
+    actual_path: harness/design/renaissance-conquest/assets/units/battle_unit_squad_strip_v2.png
+    godot:
+      usage: atlas_texture_source
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/units/battle_unit_squad_strip_v2.png
+      source_path: harness/design/renaissance-conquest/assets/units/battle_unit_squad_strip_v2.png
+
+  - key: renaissance.battle.unit_ground_squads_v3
+    type: formation_ground_sprite_strip
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 768, height: 128 }
+    background: transparent
+    component_contract:
+      source_grid: { columns: 6, rows: 1 }
+      cell_order:
+        - SpySkirmishers
+        - DuelistInfantry
+        - CrossbowVolley
+        - PikeKnightBlock
+        - CannonCrew
+        - AgentRetinue
+      runtime_size_px: { width: 64, height: 64 }
+      ground_anchor_px: { x: 64, y: 126 }
+      render_rule: "Use transparent AtlasTexture cells as battlefield standees; bottom-align each sprite to the scripted ground shadow so the unit reads as standing on the board, while names, troop values, HP, turn badges, and status pips stay native."
+    usage:
+      - component-blueprints.yaml:BattleUnitGroundSquadStrip
+      - scripts/main.gd:_unit_squad_texture
+    prompt_notes: "Six equal transparent sprite cells of compact Renaissance soldier groups with visible full bodies, feet, and small dirt/contact shadows. Generated on #00ff00 chroma-key, then alpha-cleaned and bottom-aligned; no card frames, labels, numbers, portraits, or dark square backgrounds."
+    status: generated
+    priority: must
+    generated_with: built_in_imagegen_chroma_key_plus_deterministic_alpha_pack
+    generated_at: 2026-06-21T19:11:15+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee7b6-86e6-78a3-99d4-9a4cc9c7195d/ig_09aba799b6621f31016a37b7d2949c81919c33443c50ef818e.png
+    actual_path: harness/design/renaissance-conquest/assets/units/battle_unit_ground_squad_strip_v3.png
+    godot:
+      usage: atlas_texture_source
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/units/battle_unit_ground_squad_strip_v3.png
+      source_path: harness/design/renaissance-conquest/assets/units/battle_unit_ground_squad_strip_v3.png
+
+  - key: renaissance.campaign.command_icons_v1
+    type: icon_strip
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 2172, height: 724 }
+    background: opaque
+    usage:
+      - component-blueprints.yaml:CommandIconStrip
+      - scripts/main.gd:_build_command_rail
+      - scripts/main.gd:_build_city_inspector
+    prompt_notes: "Ten equal command cells: War, Develop, Recruit, Officers, Diplomacy, Intrigue, Explore, Dungeon, Events, Decrees. No text and no labels."
+    status: generated
+    priority: must
+    generated_with: built_in_imagegen
+    generated_at: 2026-06-21T07:49:12+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee672-6869-7ac0-aeef-f3f2c7f2185a/ig_052f7fe62ce4b158016a3716068cec8191b5536a7ee8d59d94.png
+    actual_path: harness/design/renaissance-conquest/assets/icons/command_icon_strip_v1.png
+    godot:
+      usage: atlas_texture_source
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/icons/command_icon_strip_v1.png
+      source_path: harness/design/renaissance-conquest/assets/icons/command_icon_strip_v1.png
+
+  - key: renaissance.campaign.command_button_frames_v1
+    type: fixed_button_frame_atlas
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 1400, height: 38 }
+    background: opaque
+    component_contract:
+      source_grid: { columns: 10, rows: 1 }
+      cell_size_px: { width: 140, height: 38 }
+      native_text_rect_px: { x: 56, y: 1, width: 78, height: 35 }
+      medallion_socket_px: { x: 3, y: 1, width: 36, height: 36 }
+      render_rule: "Use each atlas cell as a fixed TextureRect button frame. It contains no command icon and can visually dock a separate fixed circular medallion overlay."
+    usage:
+      - component-blueprints.yaml:CommandButtonFrameAtlas
+      - component-skins.yaml:generated_command_button_frame_skin
+      - scripts/main.gd:_command_button
+    prompt_notes: "Deterministic frame atlas derived from the generated shared UI skin; no baked command icons or text."
+    status: generated
+    priority: must
+    generated_with: deterministic_pillow_composite_from_generated_assets
+    generated_at: 2026-06-21T12:22:12+09:00
+    source_path: harness/design/renaissance-conquest/assets/skins/command_button_frame_atlas_source_v1.png
+    source_assets:
+      - harness/design/renaissance-conquest/assets/skins/ui_skin_atlas_v1.png
+    actual_path: harness/design/renaissance-conquest/assets/skins/command_button_frame_atlas_v1.png
+    source_copy_path: harness/design/renaissance-conquest/assets/skins/command_button_frame_atlas_source_v1.png
+    godot:
+      usage: fixed_texture_button_frame_atlas
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/skins/command_button_frame_atlas_v1.png
+      source_path: harness/design/renaissance-conquest/assets/skins/command_button_frame_atlas_v1.png
+
+  - key: renaissance.campaign.command_medallion_icons_v1
+    type: fixed_square_medallion_icon_atlas
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 360, height: 36 }
+    background: transparent
+    component_contract:
+      source_grid: { columns: 10, rows: 1 }
+      cell_size_px: { width: 36, height: 36 }
+      runtime_size_px: { width: 36, height: 36 }
+      cell_order:
+        - War
+        - Develop
+        - Recruit
+        - Officers
+        - Diplomacy
+        - Intrigue
+        - Explore
+        - Dungeon
+        - Events
+        - Decrees
+      render_rule: "Use each cell as a fixed square TextureRect with STRETCH_KEEP_ASPECT_CENTERED; never stretch medallions horizontally or vertically."
+    usage:
+      - component-blueprints.yaml:CommandMedallionIconAtlas
+      - component-skins.yaml:generated_command_medallion_icons
+      - scripts/main.gd:_command_button
+    prompt_notes: "Deterministic circular medallion atlas derived from the generated command icon strip; each cell keeps a true circular frame and transparent corners."
+    status: generated
+    priority: must
+    generated_with: deterministic_pillow_composite_from_generated_assets
+    generated_at: 2026-06-21T12:22:12+09:00
+    source_path: harness/design/renaissance-conquest/assets/icons/command_medallion_icon_atlas_source_v1.png
+    source_assets:
+      - harness/design/renaissance-conquest/assets/icons/command_icon_strip_v1.png
+    actual_path: harness/design/renaissance-conquest/assets/icons/command_medallion_icon_atlas_v1.png
+    source_copy_path: harness/design/renaissance-conquest/assets/icons/command_medallion_icon_atlas_source_v1.png
+    godot:
+      usage: fixed_square_texture_overlay_atlas
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/icons/command_medallion_icon_atlas_v1.png
+      source_path: harness/design/renaissance-conquest/assets/icons/command_medallion_icon_atlas_v1.png
+
+  - key: renaissance.campaign.hud_resource_icons_v1
+    type: icon_strip
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 1315, height: 1197 }
+    background: opaque
+    usage:
+      - component-blueprints.yaml:HudResourceIconStrip
+      - scripts/main.gd:_build_top_hud
+    prompt_notes: "Eleven equal HUD cells: year, turn, season, AP, gold, grain, troops, prestige, faith, tech, unrest. No text and no labels."
+    status: generated
+    priority: must
+    generated_with: built_in_imagegen
+    generated_at: 2026-06-21T07:49:12+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee672-6869-7ac0-aeef-f3f2c7f2185a/ig_052f7fe62ce4b158016a371631d7c08191b6277d60f8fd5cde.png
+    actual_path: harness/design/renaissance-conquest/assets/icons/hud_resource_icon_strip_v1.png
+    godot:
+      usage: atlas_texture_source
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/icons/hud_resource_icon_strip_v1.png
+      source_path: harness/design/renaissance-conquest/assets/icons/hud_resource_icon_strip_v1.png
+
+  - key: renaissance.campaign.top_action_icons_v1
+    type: icon_strip
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 2172, height: 724 }
+    background: opaque
+    usage:
+      - component-blueprints.yaml:TopActionIconStrip
+      - scripts/main.gd:_build_top_hud
+      - scripts/main.gd:_build_minimap
+    prompt_notes: "Five equal top action cells: court, mail, proclamation, scroll, settings. No text and no labels."
+    status: generated
+    priority: must
+    generated_with: built_in_imagegen
+    generated_at: 2026-06-21T07:49:12+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee672-6869-7ac0-aeef-f3f2c7f2185a/ig_052f7fe62ce4b158016a37167d47d08191afaf1ee69b806c9d.png
+    actual_path: harness/design/renaissance-conquest/assets/icons/top_action_icon_strip_v1.png
+    godot:
+      usage: atlas_texture_source
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/icons/top_action_icon_strip_v1.png
+      source_path: harness/design/renaissance-conquest/assets/icons/top_action_icon_strip_v1.png
+
+  - key: renaissance.city.inspector_icons_v1
+    type: icon_strip
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 2172, height: 724 }
+    background: opaque
+    usage:
+      - component-blueprints.yaml:CityStatIconStrip
+      - scripts/main.gd:_build_city_inspector
+    prompt_notes: "Ten equal city stat/development cells: income, grain, garrison, fort/order, faith/trade, guild, chapel, salon, workshop, locked slot. No text and no labels."
+    status: generated
+    priority: must
+    generated_with: built_in_imagegen
+    generated_at: 2026-06-21T07:49:12+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee672-6869-7ac0-aeef-f3f2c7f2185a/ig_052f7fe62ce4b158016a3716b4ca9481918ea973b045bb0f83.png
+    actual_path: harness/design/renaissance-conquest/assets/icons/city_stat_icon_strip_v1.png
+    godot:
+      usage: atlas_texture_source
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/icons/city_stat_icon_strip_v1.png
+      source_path: harness/design/renaissance-conquest/assets/icons/city_stat_icon_strip_v1.png
+
+  - key: renaissance.factions.crests_v1
+    type: faction_crest_strip
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 2172, height: 724 }
+    background: opaque
+    usage:
+      - component-blueprints.yaml:FactionCrestStrip
+      - scripts/main.gd:_draw_campaign_map
+      - scripts/main.gd:_build_city_inspector
+    prompt_notes: "Six equal heraldic crest cells: Milan, Venice, Florence, Papal States, Naples, Genoa. No text and no labels."
+    status: generated
+    priority: must
+    generated_with: built_in_imagegen
+    generated_at: 2026-06-21T07:49:12+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee672-6869-7ac0-aeef-f3f2c7f2185a/ig_052f7fe62ce4b158016a3716e8d8f48191b383c97569fb978d.png
+    actual_path: harness/design/renaissance-conquest/assets/factions/faction_crest_strip_v1.png
+    godot:
+      usage: atlas_texture_source
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/factions/faction_crest_strip_v1.png
+      source_path: harness/design/renaissance-conquest/assets/factions/faction_crest_strip_v1.png
+
+  - key: renaissance.campaign.minimap_v1
+    type: minimap_background
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 168, height: 98 }
+    background: opaque
+    usage:
+      - component-blueprints.yaml:CampaignMiniMap
+      - scripts/main.gd:_build_minimap
+    prompt_notes: "Small tactical Italy minimap with province colors, sea routes, and central selection rectangle; no labels. Project copy is downsampled from the source image for exact Godot display size."
+    status: generated
+    priority: must
+    generated_with: built_in_imagegen
+    generated_at: 2026-06-21T07:49:12+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee672-6869-7ac0-aeef-f3f2c7f2185a/ig_052f7fe62ce4b158016a37171d4b2c819196e699f74ebb4d54.png
+    actual_path: harness/design/renaissance-conquest/assets/minimap/campaign_minimap_v1.png
+    godot:
+      usage: texture_atom
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/minimap/campaign_minimap_v1.png
+      source_path: harness/design/renaissance-conquest/assets/minimap/campaign_minimap_v1.png
+
+  - key: renaissance.ui.skin_atlas_v1
+    type: stylebox_texture_atlas
+    mode: generate_image
+    platforms: [godot]
+    target_size: { width: 576, height: 96 }
+    background: opaque
+    slice_hints: { left: 12, right: 12, top: 12, bottom: 12 }
+    component_contract:
+      source_grid: { columns: 6, rows: 1 }
+      cell_order:
+        - panel_dark
+        - button_normal_dark
+        - selected_blue
+        - selected_war_crimson
+        - selected_develop_green
+        - selected_intrigue_violet
+      content_insets:
+        default: { left: 8, right: 8, top: 7, bottom: 7 }
+    usage:
+      - component-blueprints.yaml:SharedUiSkinAtlas
+      - component-skins.yaml:generated_renaissance_frame_skin
+      - scripts/main.gd:_style
+    prompt_notes: "Six equal stretch-safe UI skin cells: dark panel, normal button, selected blue, war red, develop green, intrigue violet. No baked text/icons."
+    status: generated
+    priority: must
+    generated_with: built_in_imagegen
+    generated_at: 2026-06-21T08:10:00+09:00
+    source_path: /Users/yangjinhwan/.codex/generated_images/019ee672-6869-7ac0-aeef-f3f2c7f2185a/ig_0de412823c0a3e45016a371e9fbc0081918a92c855705b2614.png
+    actual_path: harness/design/renaissance-conquest/assets/skins/ui_skin_atlas_v1.png
+    source_copy_path: harness/design/renaissance-conquest/assets/skins/ui_skin_atlas_source_v1.png
+    godot:
+      usage: stylebox_texture_atlas
+      target_path: harness/runtime/godot-renaissance-conquest/assets/generated/skins/ui_skin_atlas_v1.png
+      source_path: harness/design/renaissance-conquest/assets/skins/ui_skin_atlas_v1.png
+      slice_hints: { left: 12, right: 12, top: 12, bottom: 12 }

@@ -1,0 +1,562 @@
+version: 1
+game: renaissance-conquest
+slug: renaissance-conquest-battle-tactics
+status: draft
+backend: godot_control
+
+target:
+  project: ../../../runtime/godot-renaissance-conquest/project.godot
+  owner_scene: ../../../runtime/godot-renaissance-conquest/scenes/main.tscn
+  owner_script: ../../../runtime/godot-renaissance-conquest/scripts/main.gd
+  output:
+    scene: ../../../runtime/godot-renaissance-conquest/scenes/generated/battle_tactics_stub.tscn
+    theme: ../../../runtime/godot-renaissance-conquest/themes/generated/battle_tactics.tres
+  generation_policy: "Generated from harness/godot recipe; runtime main scene owns interaction and scripted battle board drawing."
+
+sources:
+  ui_system_inventory: ../../../design/renaissance-conquest/ui-system-inventory.yaml
+  button_system: ../../../design/renaissance-conquest/button-system.yaml
+  color_tokens: ../../../design/renaissance-conquest/color-tokens.yaml
+  art_direction: ../../../design/renaissance-conquest/art-direction.yaml
+  layout_tokens: ../../../design/renaissance-conquest/layout-tokens.yaml
+  component_blueprints: ../../../design/renaissance-conquest/component-blueprints.yaml
+  component_skins: ../../../design/renaissance-conquest/component-skins.yaml
+  asset_plan: ../../../design/renaissance-conquest/asset-plan.yaml
+  nine_slice_policy: ../../../runtime/NINE_SLICE_UI.md
+  concepts:
+    - ../../../design/renaissance-conquest/concepts/strategy-shell-godot-v0.md
+  reference_images:
+    - ../../../runtime/godot-renaissance-conquest/screenshots/compare/strategy-shell-battle-vs-reference.png
+    - ../../../runtime/godot-renaissance-conquest/screenshots/strategy-shell-battle.png
+
+blueprint_refs:
+  inventory_surface: BattleTactics
+  surface: StrategyShell
+  sections: [top_hud, battle_body]
+  section_focus: battle_body
+  components:
+    - StrategyShellRoot
+    - SharedUiSkinAtlas
+    - TopStrategicHud
+    - ModeTabBar
+    - BattleArmyList
+    - BattleFormationBoard
+    - BattlefieldBackground
+    - BattleUnitIconStrip
+    - BattleUnitGroundSquadStrip
+    - BattlePredictionPanel
+    - BattleSkillDock
+    - BattleSkillIconStrip
+    - BattleOfficerDetail
+    - OfficerPortraitStrip
+  shared_button_roles: [mode_tab, battle_skill]
+  shared_modal_sections: []
+  color_token_groups: [bg, panel, text, action, faction]
+  control_atoms:
+    - ScreenRoot
+    - SectionGroup
+    - NativePanel
+    - Grid
+    - TextureAtom
+    - NativeLabel
+    - IconButton
+
+screen:
+  orientation: landscape_16_9
+  reference_size_px: { width: 1280, height: 720 }
+  safe_area_policy: "Fixed desktop 16:9 prototype matching layout-tokens.yaml battle reference."
+
+layout:
+  anchor: full_rect
+  regions:
+    top_hud: { x: 16, y: 12, width: 1248, height: 58 }
+    player_army: { x: 16, y: 78, width: 160, height: 470 }
+    tactical_board: { x: 188, y: 78, width: 758, height: 470 }
+    enemy_army: { x: 958, y: 78, width: 306, height: 470 }
+    officer_detail: { x: 16, y: 560, width: 360, height: 148 }
+    skill_dock: { x: 388, y: 560, width: 558, height: 148 }
+    prediction_panel: { x: 958, y: 560, width: 306, height: 148 }
+  gaps_px:
+    panel_gap: 12
+    skill_button_gap: 8
+    stat_row_gap: 6
+  formation_grid:
+    contract: "2 columns x 3 lanes per side; ally BACK/FRONT then enemy FRONT/BACK."
+    lane_order: [TOP, MID, BOTTOM]
+    ally_columns: [BACK, FRONT]
+    enemy_columns: [FRONT, BACK]
+    slot_size_px: { width: 108, height: 82 }
+    slot_gap_px: { x: 10, y: 36 }
+  text_clamp:
+    default: ellipsis
+    skill_button: "Two native label lines; clamp long skill names before numeric AP/DMG/CD line."
+    prediction_note: "Wrap inside panel body; no baked explanatory text in textures."
+
+assets:
+  required_keys:
+    - renaissance.ui.native_strategy_shell
+    - renaissance.ui.skin_atlas_v1
+    - renaissance.battle.background.florence_siege_v1
+    - renaissance.battle.skill_icons_v1
+    - renaissance.battle.unit_icons_v2
+    - renaissance.battle.unit_ground_squads_v3
+    - renaissance.battle.formation_grid_v0
+    - renaissance.officers.portrait_strip_v1
+  nineslice:
+    - key: renaissance.ui.skin_atlas_v1
+      atom: StyleBoxTexture
+      usage: "Theme-owned panel, mode tab, skill button, prediction panel, and officer card states."
+      godot_usage: stylebox_texture_atlas
+      target_resource: ../../../runtime/godot-renaissance-conquest/themes/generated/battle_tactics.tres
+      target_path: ../../../runtime/godot-renaissance-conquest/assets/generated/skins/ui_skin_atlas_v1.png
+      source_grid: { columns: 6, rows: 1 }
+      style_cells:
+        panel_dark: 0
+        button_normal_dark: 1
+        selected_blue: 2
+        selected_war_crimson: 3
+        selected_develop_green: 4
+        selected_intrigue_violet: 5
+      slice_hints: { left: 12, right: 12, top: 12, bottom: 12 }
+      content_insets: { left: 8, right: 8, top: 7, bottom: 7 }
+      must_not_bake: [labels, numbers, cooldowns, AP costs, prediction values, localized_text]
+  fixed_atoms:
+    - key: renaissance.battle.background.florence_siege_v1
+      usage: battle_board_background
+      godot_usage: texture_atom
+      target_path: ../../../runtime/godot-renaissance-conquest/assets/generated/battle/florence_siege_battlefield_v1.png
+      display_size_px: { width: 758, height: 470 }
+    - key: renaissance.battle.skill_icons_v1
+      usage: battle_skill_icon_atlas_source
+      godot_usage: atlas_texture_source
+      target_path: ../../../runtime/godot-renaissance-conquest/assets/generated/skills/battle_skill_icon_strip_v1.png
+      source_grid: { columns: 6, rows: 1 }
+      display_size_px: { width: 360, height: 64 }
+    - key: renaissance.battle.unit_icons_v2
+      usage: battle_unit_icon_atlas_source
+      godot_usage: atlas_texture_source
+      target_path: ../../../runtime/godot-renaissance-conquest/assets/generated/units/battle_unit_icon_strip_v2.png
+      source_grid: { columns: 6, rows: 1 }
+      display_size_px: { width: 204, height: 34 }
+    - key: renaissance.battle.unit_ground_squads_v3
+      usage: battle_unit_ground_squad_atlas_source
+      godot_usage: atlas_texture_source
+      target_path: ../../../runtime/godot-renaissance-conquest/assets/generated/units/battle_unit_ground_squad_strip_v3.png
+      source_grid: { columns: 6, rows: 1 }
+      display_size_px: { width: 384, height: 64 }
+    - key: renaissance.officers.portrait_strip_v1
+      usage: battle_army_and_officer_detail_portrait_atlas_source
+      godot_usage: atlas_texture_source
+      target_path: ../../../runtime/godot-renaissance-conquest/assets/generated/officers/officer_portrait_strip_v1.png
+      source_grid: { columns: 6, rows: 1 }
+      display_size_px: { width: 92, height: 118 }
+  native_controls:
+    - key: renaissance.ui.native_strategy_shell
+      usage: root_native_control_shell
+    - key: renaissance.battle.formation_grid_v0
+      usage: scripted_draw_formation_slots_and_target_preview
+
+control_tree:
+  root:
+    atom: ScreenRoot
+    node_name: Root_BattleTacticsStub
+    component: StrategyShellRoot
+    anchors_preset: full_rect
+    children:
+      - atom: SectionGroup
+        node_name: Section_TopHud
+        component: TopStrategicHud
+        position_px: { x: 16, y: 12 }
+        size_px: { width: 1248, height: 58 }
+        children:
+          - atom: NativePanel
+            node_name: Panel_TopHudSkin
+            component: SharedUiSkinAtlas
+            stylebox_key: generated_renaissance_frame_skin.panel_dark
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 1248, height: 58 }
+          - atom: IconButton
+            node_name: Btn_ModeCampaign
+            component: ModeTabBar
+            button_role: mode_tab
+            text_key: ui.mode.campaign
+            position_px: { x: 8, y: 10 }
+            touch_size: { width: 112, height: 34 }
+          - atom: IconButton
+            node_name: Btn_ModeBattle
+            component: ModeTabBar
+            button_role: mode_tab
+            text_key: ui.mode.battle
+            state: selected
+            position_px: { x: 126, y: 10 }
+            touch_size: { width: 112, height: 34 }
+          - atom: NativeLabel
+            node_name: Text_BattleContext
+            component: TopStrategicHud
+            text_binding: battle.context_chips
+            font_size: 10
+            color_token: text.primary
+            position_px: { x: 286, y: 18 }
+            size_px: { width: 936, height: 22 }
+
+      - atom: SectionGroup
+        node_name: Section_PlayerArmyList
+        component: BattleArmyList
+        position_px: { x: 16, y: 78 }
+        size_px: { width: 160, height: 470 }
+        children:
+          - atom: NativePanel
+            node_name: Panel_PlayerArmyList
+            component: BattleArmyList
+            stylebox_key: generated_renaissance_frame_skin.panel_dark
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 160, height: 470 }
+          - atom: NativeLabel
+            node_name: Text_PlayerArmyHeader
+            component: BattleArmyList
+            text_key: battle.player_army.title
+            font_size: 11
+            color_token: action.primary
+            position_px: { x: 8, y: 8 }
+            size_px: { width: 144, height: 18 }
+          - atom: Grid
+            node_name: Grid_PlayerArmyRows
+            component: BattleArmyList
+            columns: 1
+            separation: 4
+            position_px: { x: 8, y: 36 }
+            size_px: { width: 144, height: 424 }
+            data_binding: battle.player_army.rows
+
+      - atom: SectionGroup
+        node_name: Section_BattleFormation
+        component: BattleFormationBoard
+        position_px: { x: 188, y: 78 }
+        size_px: { width: 758, height: 470 }
+        children:
+          - atom: TextureAtom
+            node_name: Tex_BattlefieldBackground
+            component: BattlefieldBackground
+            asset_key: renaissance.battle.background.florence_siege_v1
+            stretch_mode: keep_aspect_covered
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 758, height: 470 }
+          - atom: NativeLabel
+            node_name: Text_AllyColumnLabels
+            component: BattleFormationBoard
+            text_key: battle.columns.ally_back_front
+            font_size: 15
+            color_token: text.secondary
+            position_px: { x: 68, y: 48 }
+            size_px: { width: 300, height: 22 }
+          - atom: NativeLabel
+            node_name: Text_EnemyColumnLabels
+            component: BattleFormationBoard
+            text_key: battle.columns.enemy_front_back
+            font_size: 15
+            color_token: text.secondary
+            position_px: { x: 442, y: 48 }
+            size_px: { width: 300, height: 22 }
+          - atom: Grid
+            node_name: Grid_FormationSlots
+            component: BattleFormationBoard
+            columns: 4
+            separation: 14
+            position_px: { x: 74, y: 72 }
+            size_px: { width: 608, height: 340 }
+            data_binding: battle.formation_slots
+          - atom: NativeLabel
+            node_name: Text_TargetPreview
+            component: BattleFormationBoard
+            text_binding: battle.target_preview.label
+            font_size: 12
+            color_token: text.secondary
+            position_px: { x: 418, y: 320 }
+            size_px: { width: 180, height: 20 }
+
+      - atom: SectionGroup
+        node_name: Section_EnemyArmyList
+        component: BattleArmyList
+        position_px: { x: 958, y: 78 }
+        size_px: { width: 306, height: 470 }
+        children:
+          - atom: NativePanel
+            node_name: Panel_EnemyArmyList
+            component: BattleArmyList
+            stylebox_key: generated_renaissance_frame_skin.panel_dark
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 306, height: 470 }
+          - atom: NativeLabel
+            node_name: Text_EnemyArmyHeader
+            component: BattleArmyList
+            text_key: battle.enemy_army.title
+            font_size: 12
+            color_token: action.primary
+            position_px: { x: 8, y: 8 }
+            size_px: { width: 290, height: 18 }
+          - atom: Grid
+            node_name: Grid_EnemyArmyRows
+            component: BattleArmyList
+            columns: 1
+            separation: 4
+            position_px: { x: 8, y: 36 }
+            size_px: { width: 290, height: 424 }
+            data_binding: battle.enemy_army.rows
+
+      - atom: SectionGroup
+        node_name: Section_BattlePrediction
+        component: BattlePredictionPanel
+        position_px: { x: 958, y: 560 }
+        size_px: { width: 306, height: 148 }
+        children:
+          - atom: NativePanel
+            node_name: Panel_BattlePrediction
+            component: BattlePredictionPanel
+            stylebox_key: generated_renaissance_frame_skin.panel_dark
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 306, height: 148 }
+          - atom: NativeLabel
+            node_name: Text_PredictionTitle
+            component: BattlePredictionPanel
+            text_key: battle.prediction.title
+            font_size: 16
+            color_token: text.primary
+            position_px: { x: 8, y: 8 }
+            size_px: { width: 126, height: 22 }
+          - atom: NativeLabel
+            node_name: Text_SelectedSkillName
+            component: BattlePredictionPanel
+            text_binding: battle.selected_skill.name
+            font_size: 13
+            color_token: action.primary
+            position_px: { x: 138, y: 10 }
+            size_px: { width: 160, height: 20 }
+          - atom: NativeLabel
+            node_name: Text_PredictionRows
+            component: BattlePredictionPanel
+            text_binding: battle.selected_skill.prediction_rows
+            font_size: 10
+            color_token: text.secondary
+            position_px: { x: 8, y: 38 }
+            size_px: { width: 290, height: 78 }
+          - atom: NativeLabel
+            node_name: Text_PredictionNote
+            component: BattlePredictionPanel
+            text_binding: battle.selected_skill.target_note
+            font_size: 11
+            color_token: text.muted
+            position_px: { x: 8, y: 120 }
+            size_px: { width: 290, height: 20 }
+
+      - atom: SectionGroup
+        node_name: Section_BattleOfficerDetail
+        component: BattleOfficerDetail
+        position_px: { x: 16, y: 560 }
+        size_px: { width: 360, height: 148 }
+        children:
+          - atom: NativePanel
+            node_name: Panel_BattleOfficerDetail
+            component: BattleOfficerDetail
+            stylebox_key: generated_renaissance_frame_skin.panel_dark
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 360, height: 148 }
+          - atom: TextureAtom
+            node_name: Tex_SelectedOfficerPortrait
+            component: OfficerPortraitStrip
+            asset_key: renaissance.officers.portrait_strip_v1
+            atlas_cell: 3
+            stretch_mode: keep_aspect_covered
+            position_px: { x: 8, y: 14 }
+            size_px: { width: 92, height: 118 }
+          - atom: NativeLabel
+            node_name: Text_SelectedOfficerName
+            component: BattleOfficerDetail
+            text_binding: battle.active_officer.name
+            font_size: 20
+            color_token: text.primary
+            position_px: { x: 110, y: 28 }
+            size_px: { width: 236, height: 26 }
+          - atom: NativeLabel
+            node_name: Text_SelectedOfficerStats
+            component: BattleOfficerDetail
+            text_binding: battle.active_officer.detail_rows
+            font_size: 11
+            color_token: text.secondary
+            position_px: { x: 110, y: 60 }
+            size_px: { width: 236, height: 70 }
+
+      - atom: SectionGroup
+        node_name: Section_BattleSkillDock
+        component: BattleSkillDock
+        position_px: { x: 388, y: 560 }
+        size_px: { width: 558, height: 148 }
+        children:
+          - atom: NativePanel
+            node_name: Panel_BattleSkillDock
+            component: BattleSkillDock
+            stylebox_key: generated_renaissance_frame_skin.panel_dark
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 558, height: 148 }
+          - atom: NativeLabel
+            node_name: Text_SkillDockTitle
+            component: BattleSkillDock
+            text_key: battle.skill_dock.title
+            font_size: 16
+            color_token: text.primary
+            position_px: { x: 8, y: 8 }
+            size_px: { width: 220, height: 22 }
+          - atom: Grid
+            node_name: Grid_BattleSkillButtons
+            component: BattleSkillDock
+            columns: 3
+            separation: 8
+            position_px: { x: 8, y: 36 }
+            size_px: { width: 542, height: 100 }
+            children:
+              - atom: IconButton
+                node_name: Btn_SkillStrike
+                component: BattleSkillDock
+                button_role: battle_skill
+                text_binding: battle.skills[0].summary
+                state: selected
+                touch_size: { width: 172, height: 44 }
+                children:
+                  - atom: TextureAtom
+                    node_name: Icon_SkillStrike
+                    component: BattleSkillIconStrip
+                    asset_key: renaissance.battle.skill_icons_v1
+                    atlas_cell: 0
+                    stretch_mode: keep_aspect_covered
+                    position_px: { x: 7, y: 8 }
+                    size_px: { width: 28, height: 28 }
+              - atom: IconButton
+                node_name: Btn_SkillGuard
+                component: BattleSkillDock
+                button_role: battle_skill
+                text_binding: battle.skills[1].summary
+                touch_size: { width: 172, height: 44 }
+                children:
+                  - atom: TextureAtom
+                    node_name: Icon_SkillGuard
+                    component: BattleSkillIconStrip
+                    asset_key: renaissance.battle.skill_icons_v1
+                    atlas_cell: 1
+                    stretch_mode: keep_aspect_covered
+                    position_px: { x: 7, y: 8 }
+                    size_px: { width: 28, height: 28 }
+              - atom: IconButton
+                node_name: Btn_SkillVolley
+                component: BattleSkillDock
+                button_role: battle_skill
+                text_binding: battle.skills[2].summary
+                touch_size: { width: 172, height: 44 }
+                children:
+                  - atom: TextureAtom
+                    node_name: Icon_SkillVolley
+                    component: BattleSkillIconStrip
+                    asset_key: renaissance.battle.skill_icons_v1
+                    atlas_cell: 2
+                    stretch_mode: keep_aspect_covered
+                    position_px: { x: 7, y: 8 }
+                    size_px: { width: 28, height: 28 }
+              - atom: IconButton
+                node_name: Btn_SkillRally
+                component: BattleSkillDock
+                button_role: battle_skill
+                text_binding: battle.skills[3].summary
+                touch_size: { width: 172, height: 44 }
+                children:
+                  - atom: TextureAtom
+                    node_name: Icon_SkillRally
+                    component: BattleSkillIconStrip
+                    asset_key: renaissance.battle.skill_icons_v1
+                    atlas_cell: 3
+                    stretch_mode: keep_aspect_covered
+                    position_px: { x: 7, y: 8 }
+                    size_px: { width: 28, height: 28 }
+              - atom: IconButton
+                node_name: Btn_SkillScheme
+                component: BattleSkillDock
+                button_role: battle_skill
+                text_binding: battle.skills[4].summary
+                touch_size: { width: 172, height: 44 }
+                children:
+                  - atom: TextureAtom
+                    node_name: Icon_SkillScheme
+                    component: BattleSkillIconStrip
+                    asset_key: renaissance.battle.skill_icons_v1
+                    atlas_cell: 4
+                    stretch_mode: keep_aspect_covered
+                    position_px: { x: 7, y: 8 }
+                    size_px: { width: 28, height: 28 }
+              - atom: IconButton
+                node_name: Btn_SkillCannon
+                component: BattleSkillDock
+                button_role: battle_skill
+                text_binding: battle.skills[5].summary
+                touch_size: { width: 172, height: 44 }
+                children:
+                  - atom: TextureAtom
+                    node_name: Icon_SkillCannon
+                    component: BattleSkillIconStrip
+                    asset_key: renaissance.battle.skill_icons_v1
+                    atlas_cell: 5
+                    stretch_mode: keep_aspect_covered
+                    position_px: { x: 7, y: 8 }
+                    size_px: { width: 28, height: 28 }
+
+data_contract:
+  runtime_state:
+    - shell.mode
+    - battle.round
+    - battle.context_chips
+    - battle.active_officer
+    - battle.player_army
+    - battle.enemy_army
+    - battle.formation_slots
+    - battle.selected_skill
+    - battle.skills
+    - battle.target_preview
+  symbolic_bindings:
+    battle.context_chips: "BATTLE, FIRENZE, ROUND, WEATHER, WALLS, MORALE, SUPPLY, AP, ADV"
+    battle.active_officer: "portrait_cell, name, class, troops, hp, stamina, bond, status, event_note"
+    battle.player_army.rows: "six selected-side rows keyed by portrait_cell, name, role, troops, hp_ratio, status"
+    battle.enemy_army.rows: "six opposing-side rows keyed by unit_name, role, troops, hp_ratio, threat_status"
+    battle.formation_slots: "12 native Control tokens keyed by side, column, lane, unit_name, unit_ground_squad_cell, turn_badge, status_badge, troop_count_chip, hp_ratio, morale_pips, frontline_state"
+    battle.turn_order: "Native Control strip of 12 upcoming turns using BattleUnitGroundSquadStrip thumbnails, faction frames, and rank badges over the battlefield."
+    battle.selected_skill.prediction_rows: "compact damage, morale, advantage, counter risk, wall bonus"
+    battle.skills: "six skill buttons with icon_cell, name, ap_cost, damage, cooldown, state"
+  fixtures:
+    - Leonardo active officer fixture from scripts/main.gd
+    - Player army fixture from scripts/main.gd officers list
+    - Enemy army fixture from scripts/main.gd enemy_units list
+    - Strike, Guard, Volley, Rally, Scheme, Cannon skill fixture data
+    - Florence ally formation and Papal enemy formation fixture data
+  hardcoding_allowlist:
+    - "v0 keeps battle fixture data inside scripts/main.gd until a Godot data model is introduced."
+
+implementation_notes:
+  nine_slice_usage:
+    panels: "Use StyleBoxTexture from renaissance.ui.skin_atlas_v1; do not place the full atlas as a visible panel texture."
+    buttons: "Use StyleBoxTexture states for mode_tab and battle_skill roles."
+    content_insets_source: component-skins.yaml:skins.generated_renaissance_frame_skin.content_insets_px
+  texture_atoms:
+    - "BattlefieldBackground is a TextureRect cover under native formation slots."
+    - "BattleSkillIconStrip, BattleUnitIconStrip, BattleUnitGroundSquadStrip, and OfficerPortraitStrip require runtime AtlasTexture cropping by atlas_cell metadata."
+  ornament_layers:
+    - "The v1 UI skin atlas keeps brass frame detail inside stretch-safe StyleBoxTexture cells; no separate fixed ornament layer is declared for this surface."
+
+validation:
+  commands:
+    - "python3 harness/tools/design_blueprint_validate.py renaissance-conquest"
+    - "python3 harness/godot/validators/godot_ui_recipe_validate.py --recipe harness/godot/recipes/ui/renaissance-conquest-battle-tactics.yaml"
+    - "python3 harness/godot/builders/godot_ui_recipe_build.py --recipe harness/godot/recipes/ui/renaissance-conquest-battle-tactics.yaml"
+    - "godot --headless --path harness/runtime/godot-renaissance-conquest --import"
+    - "godot --headless --path harness/runtime/godot-renaissance-conquest --scene res://scenes/generated/battle_tactics_stub.tscn --quit-after 1"
+    - "godot --headless --path harness/runtime/godot-renaissance-conquest --check-only --script res://scripts/main.gd"
+    - "godot --headless --path harness/runtime/godot-renaissance-conquest --script res://scripts/tools/smoke.gd"
+  screenshot: harness/runtime/godot-renaissance-conquest/screenshots/strategy-shell-battle.png
+  comparison_board: harness/runtime/godot-renaissance-conquest/screenshots/compare/strategy-shell-battle-vs-reference.png
+  blockers:
+    - "Enemy army rows use native colored pips until an enemy portrait/icon atlas exists."
+    - "The generic Godot recipe builder does not yet crop atlas_cell metadata, so runtime AtlasTexture cropping remains script-owned for skill icons and officer portraits."

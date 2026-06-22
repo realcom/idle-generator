@@ -1,0 +1,446 @@
+version: "1.0"
+game: renaissance-conquest
+status: draft
+purpose: "Semantic component contract for the Godot-first Renaissance Italy conquest prototype."
+
+source_concepts:
+  primary:
+    id: strategy-shell-godot-v0
+    note: concepts/strategy-shell-godot-v0.md
+
+runtime_targets:
+  godot_control:
+    project: ../../runtime/godot-renaissance-conquest/project.godot
+    owner: ../../runtime/godot-renaissance-conquest/scripts/main.gd
+
+extraction_rules:
+  semantic_first:
+    - "Campaign and battle are separate modes in one StrategyShell."
+    - "Map, inspector, roster, formation board, and prediction panel remain independent components."
+    - "Text and numbers are native Godot labels."
+  sizing_language:
+    density: "desktop strategy HUD; compact but readable"
+    card_radius_px: 6
+
+surfaces:
+  StrategyShell:
+    intent: "Wide Godot strategy prototype with campaign and battle modes."
+    orientation: landscape_16_9
+    reference_size_px: { width: 1280, height: 720 }
+    sections:
+      shell_root:
+        role: "Owns the full-rect Godot root and mode swap state."
+        components: [StrategyShellRoot, SharedUiSkinAtlas]
+        layout_contract:
+          anchor: full_rect
+          state_owner: shell.mode
+      top_hud:
+        role: "Shows mode tabs and strategic or battle state."
+        components: [TopStrategicHud, ModeTabBar, HudResourceIconStrip, TopActionIconStrip]
+        layout_contract:
+          anchor: top_safe_area
+          height_px: 58
+      campaign_body:
+        role: "Owns the campaign map, command rail, and selected city inspector."
+        components: [CampaignMapPanel, CampaignMapArt, CommandRail, CommandButtonFrameAtlas, CommandMedallionIconAtlas, CommandIconStrip, FactionCrestStrip, CityInspector, CityPreviewImage, CityStatIconStrip, CampaignMiniMap]
+        layout_contract:
+          visible_when: campaign
+          map_center_px: { x: 531, y: 313 }
+      battle_body:
+        role: "Owns the corrected 6v6 formation board and prediction panel."
+        components: [BattleArmyList, BattleFormationBoard, BattlefieldBackground, BattleUnitIconStrip, BattleUnitGroundSquadStrip, BattlePredictionPanel, BattleSkillDock, BattleSkillIconStrip, BattleOfficerDetail, OfficerPortraitStrip]
+        layout_contract:
+          visible_when: battle
+          formation: "ally BACK/FRONT vs enemy FRONT/BACK, lanes TOP/MID/BOTTOM"
+      officer_roster:
+        role: "Shows collected officers as conquest, domestic, and battle assets."
+        components: [OfficerRoster, OfficerPortraitStrip, OfficerCard]
+        layout_contract:
+          anchor: bottom_safe_area
+          height_px: 148
+    component_tree:
+      - StrategyShellRoot
+      - SharedUiSkinAtlas
+      - TopStrategicHud
+      - ModeTabBar
+      - HudResourceIconStrip
+      - TopActionIconStrip
+      - CampaignMapPanel
+      - CampaignMapArt
+      - CommandRail
+      - CommandButtonFrameAtlas
+      - CommandMedallionIconAtlas
+      - CommandIconStrip
+      - FactionCrestStrip
+      - CityInspector
+      - CityPreviewImage
+      - CityStatIconStrip
+      - CampaignMiniMap
+      - BattleFormationBoard
+      - BattlefieldBackground
+      - BattleUnitIconStrip
+      - BattleUnitGroundSquadStrip
+      - BattleArmyList
+      - BattlePredictionPanel
+      - BattleSkillDock
+      - BattleSkillIconStrip
+      - BattleOfficerDetail
+      - OfficerRoster
+      - OfficerPortraitStrip
+      - OfficerCard
+    layout_contract:
+      safe_area_px: { left: 16, right: 16, top: 12, bottom: 12 }
+      responsive_policy: "Keep 16:9 reference layout first; later add scaling containers."
+
+components:
+  StrategyShellRoot:
+    role: "Root Control that swaps campaign and battle modes."
+    mode: native_ui
+    box_model:
+      fills_parent: true
+      min_size_px: { width: 1280, height: 720 }
+  SharedUiSkinAtlas:
+    role: "Generated StyleBoxTexture atlas for panels, buttons, chips, cards, and selected command states."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.ui.skin_atlas_v1
+      usage: StyleBoxTexture_regions
+    skin_contract:
+      source_grid: { columns: 6, rows: 1 }
+      slice_hints_px: { left: 12, right: 12, top: 12, bottom: 12 }
+      content_insets_px: { left: 8, right: 8, top: 7, bottom: 7 }
+  TopStrategicHud:
+    role: "Compact top ledger for time, AP, resources, and battle state."
+    mode: hybrid
+    anatomy: [mode_tabs, generated_resource_icons, resource_chips, top_action_buttons, alert_chip]
+    box_model:
+      height_px: 54
+      gap_px: 8
+  ModeTabBar:
+    role: "Campaign/Battle mode switch."
+    mode: native_ui
+    anatomy: [campaign_tab, battle_tab]
+    box_model:
+      min_button_size_px: { width: 112, height: 34 }
+  HudResourceIconStrip:
+    role: "Generated eleven-cell icon strip for YEAR, TURN, SEASON, AP, GOLD, GRAIN, TROOPS, PRESTIGE, FAITH, TECH, and UNREST chips."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.campaign.hud_resource_icons_v1
+      usage: AtlasTexture_regions
+    box_model:
+      source_grid: { columns: 11, rows: 1 }
+  TopActionIconStrip:
+    role: "Generated five-cell icon strip for top-right court, mail, proclamation, log, and settings buttons."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.campaign.top_action_icons_v1
+      usage: AtlasTexture_regions
+    box_model:
+      source_grid: { columns: 5, rows: 1 }
+  CampaignMapPanel:
+    role: "Campaign map viewport with generated map art and native city nodes."
+    mode: hybrid
+    asset_contract:
+      asset_key: renaissance.campaign.map.italy_painterly_v1
+      usage: texture_background
+    box_model:
+      rect_px: { x: 178, y: 78, width: 706, height: 470 }
+  CampaignMapArt:
+    role: "Generated painterly Italy/Mediterranean map image under all native controls."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.campaign.map.italy_painterly_v1
+      usage: TextureRect_cover
+    box_model:
+      rect_px: { x: 178, y: 78, width: 706, height: 470 }
+  CommandRail:
+    role: "Action categories consuming AP pressure."
+    mode: hybrid
+    anatomy: [button_frame_skins, fixed_circular_medallions, native_command_labels, transparent_button_hits]
+    box_model:
+      rect_px: { x: 16, y: 78, width: 150, height: 470 }
+      button_size_px: { width: 140, height: 38 }
+      medallion_size_px: { width: 36, height: 36 }
+      medallion_offset_px: { x: 3, y: 1 }
+      gap_px: 4
+  CommandButtonFrameAtlas:
+    role: "Ten fixed command button frames with a circular docking socket and native text well."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.campaign.command_button_frames_v1
+      usage: AtlasTexture_regions_as_fixed_TextureRect_backgrounds
+    skin_contract:
+      source_grid: { columns: 10, rows: 1 }
+      cell_size_px: { width: 140, height: 38 }
+      native_text_rect_px: { x: 56, y: 1, width: 78, height: 35 }
+      medallion_socket_px: { x: 3, y: 1, width: 36, height: 36 }
+  CommandMedallionIconAtlas:
+    role: "Ten fixed square command medallions; each contains a true circular icon frame that is never stretched."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.campaign.command_medallion_icons_v1
+      usage: AtlasTexture_regions_as_fixed_square_TextureRect_overlays
+    skin_contract:
+      source_grid: { columns: 10, rows: 1 }
+      cell_size_px: { width: 36, height: 36 }
+      runtime_size_px: { width: 36, height: 36 }
+      stretch_policy: keep_aspect_centered
+  CommandIconStrip:
+    role: "Generated ten-cell command icon strip for compact city action buttons and secondary command affordances."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.campaign.command_icons_v1
+      usage: AtlasTexture_regions
+    box_model:
+      source_grid: { columns: 10, rows: 1 }
+  FactionCrestStrip:
+    role: "Generated six-cell heraldry strip used for map city nodes and selected city header."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.factions.crests_v1
+      usage: AtlasTexture_regions
+    box_model:
+      source_grid: { columns: 6, rows: 1 }
+  CityInspector:
+    role: "Selected city stats, development slots, assigned officer, and action buttons."
+    mode: hybrid
+    anatomy: [city_header, generated_faction_crest, city_preview_image, generated_stat_icons, development_slots, officer_assignment, action_grid]
+    box_model:
+      rect_px: { x: 896, y: 78, width: 368, height: 470 }
+  CityPreviewImage:
+    role: "Generated city panorama image inside the selected city inspector."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.city.florence_preview_v1
+      usage: TextureRect_cover
+    box_model:
+      size_px: { width: 344, height: 116 }
+  CityStatIconStrip:
+    role: "Generated ten-cell city stat and development slot icon strip."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.city.inspector_icons_v1
+      usage: AtlasTexture_regions
+    box_model:
+      source_grid: { columns: 10, rows: 1 }
+  CampaignMiniMap:
+    role: "Generated tactical Italy minimap with native zoom/settings controls."
+    mode: hybrid
+    asset_contract:
+      asset_key: renaissance.campaign.minimap_v1
+      usage: TextureRect_cover
+    box_model:
+      rect_px: { x: 1038, y: 560, width: 226, height: 148 }
+  BattleFormationBoard:
+    role: "Readable 6v6 tactical grid over a generated siege battlefield."
+    mode: hybrid
+    anatomy: [battlefield_background, turn_order_ground_squad_strip, turn_order_rank_badges, lane_labels, formation_slot_tokens, turn_badges, unit_ground_standees, ground_shadows, status_badges, troop_count_chips, troop_hp_bars, morale_pips, target_vector]
+    asset_contract:
+      asset_key: renaissance.battle.background.florence_siege_v1
+      usage: texture_background
+    box_model:
+      rect_px: { x: 188, y: 78, width: 758, height: 470 }
+  BattlefieldBackground:
+    role: "Generated Florence siege field image under formation slots."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.battle.background.florence_siege_v1
+      usage: TextureRect_cover
+    box_model:
+      rect_px: { x: 188, y: 78, width: 758, height: 470 }
+  BattleUnitIconStrip:
+    role: "Generated six-cell unit class icon strip retained for fallback class glyphs."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.battle.unit_icons_v2
+      usage: AtlasTexture_regions
+    box_model:
+      source_grid: { columns: 6, rows: 1 }
+      thumbnail_size_px: { width: 34, height: 34 }
+  BattleUnitSquadStrip:
+    role: "Generated six-cell opaque soldier-corps strip retained as a fallback thumbnail variant."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.battle.unit_squads_v2
+      usage: AtlasTexture_regions
+    box_model:
+      source_grid: { columns: 6, rows: 1 }
+      thumbnail_size_px: { width: 42, height: 42 }
+  BattleUnitGroundSquadStrip:
+    role: "Generated transparent six-cell soldier-corps strip used as battlefield standees anchored to ground shadows."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.battle.unit_ground_squads_v3
+      usage: AtlasTexture_regions
+    box_model:
+      source_grid: { columns: 6, rows: 1 }
+      standee_size_px: { width: 64, height: 64 }
+      ground_anchor_px: { x: 32, y: 61 }
+  BattlePredictionPanel:
+    role: "Shows selected skill outcome before committing AP."
+    mode: native_ui
+    anatomy: [damage, morale, advantage, counter, wall_bonus, capture]
+    box_model:
+      rect_px: { x: 958, y: 560, width: 306, height: 148 }
+  BattleArmyList:
+    role: "Side army lists showing player and enemy units, troop state, and current selection."
+    mode: native_ui
+    repeatable: true
+    anatomy: [side_header, unit_rows, name, role, troops_hp, morale_bar, status_badge]
+    box_model:
+      player_rect_px: { x: 16, y: 78, width: 160, height: 470 }
+      enemy_rect_px: { x: 958, y: 78, width: 306, height: 470 }
+      row_height_px: 56
+      gap_px: 4
+  BattleSkillDock:
+    role: "Action buttons for selected officer."
+    mode: hybrid
+    anatomy: [selected_officer_summary, skill_buttons, generated_skill_icons]
+    box_model:
+      rect_px: { x: 388, y: 560, width: 558, height: 148 }
+  BattleSkillIconStrip:
+    role: "Generated six-skill icon strip cropped per battle skill button."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.battle.skill_icons_v1
+      usage: AtlasTexture_regions
+    box_model:
+      source_grid: { columns: 6, rows: 1 }
+  BattleOfficerDetail:
+    role: "Bottom selected commander detail with portrait, class, troop state, stamina, bond, and tactical note."
+    mode: hybrid
+    anatomy: [portrait_medallion, name, class, troop_hp, stamina, bond, status, tactical_note]
+    asset_contract:
+      asset_key: renaissance.officers.portrait_strip_v1
+      usage: AtlasTexture_regions
+    box_model:
+      rect_px: { x: 16, y: 560, width: 360, height: 148 }
+  OfficerRoster:
+    role: "Bottom collection roster shared by campaign and battle."
+    mode: hybrid
+    anatomy: [officer_cards, generated_portraits]
+    box_model:
+      rect_px: { x: 16, y: 560, width: 1010, height: 148 }
+  OfficerPortraitStrip:
+    role: "Generated six-cell commander portrait strip, cropped per officer card in Godot."
+    mode: generate_image
+    asset_contract:
+      asset_key: renaissance.officers.portrait_strip_v1
+      usage: AtlasTexture_regions
+    box_model:
+      source_grid: { columns: 6, rows: 1 }
+  OfficerCard:
+    role: "One officer with portrait medallion, class, troops, stamina, loyalty/bond, status."
+    mode: native_ui
+    repeatable: true
+    anatomy: [portrait_medallion, name, class, troop_hp, stamina, loyalty_bond, status]
+    box_model:
+      width_px: 178
+      height_px: 110
+      gap_px: 8
+
+asset_dependency_matrix:
+  renaissance.ui.native_strategy_shell:
+    component_slots:
+      - StrategyShellRoot.native_controls
+      - TopStrategicHud.native_controls
+      - BattleArmyList.native_rows
+      - BattleOfficerDetail.native_stats
+  renaissance.ui.skin_atlas_v1:
+    component_slots:
+      - SharedUiSkinAtlas.texture
+      - TopStrategicHud.panel_and_chip_skins
+      - CityInspector.panel_and_action_skins
+      - OfficerRoster.card_skins
+      - BattleSkillDock.button_skins
+      - BattlePredictionPanel.panel_skin
+  renaissance.campaign.command_button_frames_v1:
+    component_slots:
+      - CommandRail.button_frame_skins
+      - CommandButtonFrameAtlas.texture
+  renaissance.campaign.command_medallion_icons_v1:
+    component_slots:
+      - CommandRail.fixed_circular_medallions
+      - CommandMedallionIconAtlas.texture
+  renaissance.campaign.hud_resource_icons_v1:
+    component_slots:
+      - TopStrategicHud.generated_resource_icons
+      - HudResourceIconStrip.texture
+  renaissance.campaign.top_action_icons_v1:
+    component_slots:
+      - TopStrategicHud.generated_top_action_icons
+      - TopActionIconStrip.texture
+  renaissance.map.italy_vector_v0:
+    component_slots:
+      - CampaignMapPanel.godot_draw
+  renaissance.campaign.map.italy_painterly_v1:
+    component_slots:
+      - CampaignMapPanel.background
+      - CampaignMapArt.texture
+  renaissance.campaign.command_icons_v1:
+    component_slots:
+      - CityInspector.generated_action_icons
+      - CommandIconStrip.texture
+  renaissance.factions.crests_v1:
+    component_slots:
+      - CampaignMapPanel.city_node_crests
+      - CityInspector.generated_faction_crest
+      - FactionCrestStrip.texture
+  renaissance.city.florence_preview_v1:
+    component_slots:
+      - CityInspector.city_preview_image
+      - CityPreviewImage.texture
+  renaissance.city.inspector_icons_v1:
+    component_slots:
+      - CityInspector.generated_stat_icons
+      - CityInspector.generated_development_slot_icons
+      - CityStatIconStrip.texture
+  renaissance.campaign.minimap_v1:
+    component_slots:
+      - CampaignMiniMap.texture
+  renaissance.officers.portrait_strip_v1:
+    component_slots:
+      - OfficerRoster.generated_portraits
+      - OfficerPortraitStrip.texture
+      - BattleOfficerDetail.portrait
+  renaissance.battle.formation_grid_v0:
+    component_slots:
+      - BattleFormationBoard.godot_draw
+  renaissance.battle.unit_icons_v2:
+    component_slots:
+      - BattleFormationBoard.generated_unit_class_icons
+      - BattleUnitIconStrip.texture
+  renaissance.battle.unit_squads_v2:
+    component_slots:
+      - BattleFormationBoard.generated_unit_squad_thumbnails_fallback
+      - BattleUnitSquadStrip.texture
+  renaissance.battle.unit_ground_squads_v3:
+    component_slots:
+      - BattleFormationBoard.generated_unit_ground_standees
+      - BattleFormationBoard.turn_order_ground_squad_strip
+      - BattleUnitGroundSquadStrip.texture
+  renaissance.battle.background.florence_siege_v1:
+    component_slots:
+      - BattleFormationBoard.background
+      - BattlefieldBackground.texture
+  renaissance.battle.skill_icons_v1:
+    component_slots:
+      - BattleSkillDock.generated_skill_icons
+      - BattleSkillIconStrip.texture
+
+runtime_token_mapping:
+  existing_css_classes:
+    not_applicable: "Godot-native prototype; kept only to satisfy the current shared validator shape."
+  godot_theme_values:
+    panel_base: color-tokens.yaml:tokens.panel.base
+    action_primary: color-tokens.yaml:tokens.action.primary
+    battle_field: color-tokens.yaml:tokens.bg.battle_field
+
+review_gate:
+  pass_conditions:
+    - "Campaign screen exposes all requested HUD, rail, inspector, and roster regions."
+    - "Battle screen shows 2 columns x 3 lanes per side with correct front/back order."
+    - "Officer cards make collection/battle/domestic roles visible."
+  blockers:
+    - "Historical portrait names remain fixture data in v0; future passes should bind them to authored character records."
