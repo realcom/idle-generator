@@ -1,6 +1,6 @@
 version: "1.0"
 game: dokkaebi
-updated_at: 2026-06-22T23:40:00+09:00
+updated_at: 2026-06-23T00:44:14+09:00
 
 concepts:
   - id: dokkaebi_lobby_haeil_concept_a
@@ -28,6 +28,20 @@ concepts:
       - night forest 요귀 survival run
       - water-blue spear slash VFX
     tags: [Ingame, HUD, Combat, Haeil, Godot, Candidate]
+
+  - id: dokkaebi_tangtang_ingame_screen_b
+    status: candidate
+    screen: SurvivalBattle
+    target_runtime: godot
+    image: concepts/dokkaebi_tangtang_ingame_screen_b.png
+    notes: concepts/dokkaebi_tangtang_ingame_screen_b.md
+    source: built_in_imagegen
+    art_anchor:
+      - Haeil user-provided reference
+      - current godot-dokkaebi TangTang runtime layout
+      - ninja2 survivor HUD composition
+      - dark lacquer and gold battle UI
+    tags: [Ingame, HUD, Combat, Haeil, TangTang, Godot, Candidate]
 
 foundation_gaps:
   - ui-system-inventory.yaml
