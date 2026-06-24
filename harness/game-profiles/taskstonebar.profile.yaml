@@ -1,0 +1,112 @@
+# ============================================================
+# Game Profile: taskstonebar
+# 작업표시줄 위 픽셀 자동전투 + 돌/광석 머지 성장 실험.
+# 외부 Task Stone 프로토타입의 에셋 감성을 하네스 콘텐츠로 이식하기 위한 MVP.
+# ============================================================
+
+game:
+  id: taskstonebar
+  name: "Taskstonebar"
+  genre: afk-idle-rpg-lite
+  engine_ref: idlez-client
+
+stats:
+  use:
+    - Hp
+    - HpPercent
+    - Attack
+    - AttackPercent
+    - Defense
+    - DefensePercent
+    - CriticalPercent
+    - CriticalDamagePercent
+    - AttackSpeed
+    - AttackSpeedPercent
+    - MoveSpeed
+    - CooldownPercent
+    - ExpPercent
+    - ItemDropPercent
+    - SellPricePercent
+    - Luck
+    - MonsterDamageEfficiencyPercent
+    - BossDamageEfficiencyPercent
+    - BossDamageTakenEfficiencyPercent
+    - ScalePercent
+  guardrails:
+    Attack: { min: 1 }
+    Hp: { min: 1 }
+    CriticalPercent: { min: 0, max: 100 }
+    CriticalDamagePercent: { min: 0, max: 100000 }
+    ScalePercent: { min: -75, max: -20 }
+
+unit_visual_scale:
+  stat: ScalePercent
+  note: "작업표시줄 스트립에서는 작은 픽셀 스프라이트가 핵심. ScalePercent -60 전후를 기본으로 둔다."
+  classes:
+    Player: { target: -58, min: -68, max: -45 }
+    Normal: { target: -62, min: -72, max: -48 }
+    Elite: { target: -58, min: -68, max: -44 }
+    Boss: { target: -48, min: -60, max: -30 }
+
+currencies:
+  soft: { id: 5, name: "골드" }
+  premium: { id: 3, name: "루비" }
+  premium_free: { id: 4, name: "무료 루비" }
+  exp: { id: 6, name: "경험치" }
+  credit: { id: 2, name: "크레딧" }
+
+reserved_ids:
+  playerLevel: 1
+  rankPoint: 7
+  energy: 8
+  defaultCharacter: 110101
+  achievement:
+    tutorialComplete: null
+    tutorialSteps: []
+    ingameTutorialEnter: null
+
+id_ranges:
+  unit: { start: 110000, end: 119999, note: "플레이어/작업표시줄 몬스터/보스" }
+  item: { start: 200000, end: 299999, note: "광석/촉매/장비/큐브 재료" }
+  skill: { start: 300000, end: 399999 }
+  buff: { start: 400000, end: 499999 }
+  map: { start: 500000, end: 599999 }
+  achievement: { start: 600000, end: 699999 }
+  reward: { start: 700000, end: 799999 }
+
+theme:
+  tone: "픽셀 RPG / 갈색 9-slice 패널 / 금색 텍스트 / 작고 귀여운 데스크톱 장난감"
+  setting: "작업표시줄 밑 광맥에서 살아난 돌지기가 몬스터를 처치하고 광석을 큐브에 먹여 진화하는 방치형 RPG"
+  naming_style: "한글 2~10자, 짧고 읽기 쉬운 이름. 시스템명은 Taskstonebar 영문 유지."
+  motifs: [작업표시줄, 픽셀 영웅, 돌 진화, 광석, 큐브 제련, 상자, 데스크톱 패널]
+
+balance:
+  level_cap: 100
+  required_exp:
+    monotonic: increasing
+  prestige:
+    enabled: false
+    name: ""
+  idle:
+    offline_cap_hours: 8
+    note: "오프라인은 골드/경험치만, 핵심 상자와 광석 머지는 온라인 체류 보상으로 둔다."
+
+progression:
+  core_loop:
+    name: taskbar_stone_loop
+    summary: "하단 스트립 자동전투 -> 광석/상자 획득 -> 큐브 제련/머지 -> 돌 등급 상승 -> 다음 작업구역 진입"
+    online_only_rewards: [상자, 큐브촉매, 고등급광석]
+    offline_rewards: [골드, 경험치]
+  cube:
+    name: "작업석 큐브"
+    unlock_level: 4
+    early_functions: [연금, 합성, 제련]
+
+shop:
+  product_costs:
+    use: productMaterialItemGroups
+    disallow_fields: [priceXtr]
+
+behavior:
+  triggerType_map: {}
+  disallow_actions: []

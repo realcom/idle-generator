@@ -1,6 +1,6 @@
 version: "1.0"
 game: dokkaebi
-updated_at: 2026-06-23T00:44:14+09:00
+updated_at: 2026-06-23T09:35:00+09:00
 
 concepts:
   - id: dokkaebi_lobby_haeil_concept_a
@@ -30,7 +30,7 @@ concepts:
     tags: [Ingame, HUD, Combat, Haeil, Godot, Candidate]
 
   - id: dokkaebi_tangtang_ingame_screen_b
-    status: candidate
+    status: revision_needed
     screen: SurvivalBattle
     target_runtime: godot
     image: concepts/dokkaebi_tangtang_ingame_screen_b.png
@@ -43,8 +43,128 @@ concepts:
       - dark lacquer and gold battle UI
     tags: [Ingame, HUD, Combat, Haeil, TangTang, Godot, Candidate]
 
-foundation_gaps:
-  - ui-system-inventory.yaml
-  - button-system.yaml
-  - modal-system.yaml
-  - color-tokens.yaml
+  - id: dokkaebi_tangtang_ingame_screen_c_flat
+    status: supporting
+    screen: SurvivalBattle
+    target_runtime: godot
+    image: concepts/dokkaebi_tangtang_ingame_screen_c_flat.png
+    notes: concepts/dokkaebi_tangtang_ingame_screen_c_flat.md
+    source: built_in_imagegen
+    revision_of: dokkaebi_tangtang_ingame_screen_b
+    art_anchor:
+      - Haeil user-provided reference
+      - current godot-dokkaebi TangTang runtime layout
+      - flat small 2D survivor unit scale
+      - dark lacquer and gold battle HUD
+    tags: [Ingame, HUD, Combat, Haeil, TangTang, Godot, Candidate, Flat2D]
+
+  - id: dokkaebi_tangtang_ingame_screen_d_autumn_flat
+    status: selected
+    screen: SurvivalBattle
+    target_runtime: godot
+    image: concepts/dokkaebi_tangtang_ingame_screen_d_autumn_flat.png
+    notes: concepts/dokkaebi_tangtang_ingame_screen_d_autumn_flat.md
+    source: built_in_imagegen
+    selected_from_batch: 3
+    revision_of: dokkaebi_tangtang_ingame_screen_c_flat
+    art_anchor:
+      - Haeil user-provided reference
+      - flat small 2D survivor unit scale
+      - autumn abandoned village yard
+      - dark lacquer and gold battle HUD
+    tags: [Ingame, HUD, Combat, Haeil, TangTang, Godot, Selected, Flat2D, AutumnVillage]
+
+  - id: dokkaebi_outgame_home_tangtang_concept_a
+    status: selected
+    screen: OutgameHome
+    target_runtime: godot
+    image: concepts/dokkaebi_outgame_home_tangtang_concept_a.png
+    notes: concepts/dokkaebi_outgame_home_tangtang_concept_a.md
+    source: built_in_imagegen
+    generator_source: /Users/yangjinhwan/.codex/generated_images/019ef0b9-4c8c-7af0-9000-9c2b2536099b/ig_0200bd666f4d9487016a3988438e488191b4b02377c3956c27.png
+    art_anchor:
+      - Haeil folklore spear hero
+      - TangTang-style fast mobile outgame lobby ergonomics
+      - Joseon autumn village courtyard
+      - parchment, lacquer, talisman gold, water-blue accents
+    tags: [Outgame, Home, Lobby, Haeil, TangTang, Godot, Selected, AutumnVillage]
+
+  - id: dokkaebi_outgame_home_stage_top_concept_a
+    status: candidate
+    screen: OutgameHome
+    target_runtime: godot
+    image: concepts/dokkaebi_outgame_home_stage_top_concept_a.png
+    notes: concepts/dokkaebi_outgame_home_stage_top_concept_a.md
+    source: built_in_imagegen
+    generator_source: /Users/yangjinhwan/.codex/generated_images/019ef0b9-4c8c-7af0-9000-9c2b2536099b/ig_066523b8838bec2e016a39d3cb82cc8191bde3f709297bdfef.png
+    revision_of: dokkaebi_outgame_home_tangtang_concept_a
+    art_anchor:
+      - Haeil folklore spear hero
+      - top current-stage plaque
+      - Joseon autumn village courtyard
+      - parchment, lacquer, talisman gold, water-blue accents
+    tags: [Outgame, Home, Lobby, StagePlaque, Haeil, TangTang, Godot, Candidate, AutumnVillage]
+
+foundation_status:
+  ui-system-inventory.yaml: created
+  button-system.yaml: created
+  modal-system.yaml: created
+  color-tokens.yaml: created
+
+sprite_sets:
+  - id: dokkaebi.hero.haeil.battle_4dir_walk_v1
+    status: runtime_integrated
+    role: player
+    style_anchor:
+      - flat 2D readable survivor unit
+      - Haeil blue headband and spear silhouette
+      - small TangTang-scale Godot runtime sprite
+    source:
+      imagegen_sheet: assets/units/source/haeil_4dir_sprite_sheet_imagegen_v1_alpha.png
+      derived_walk_frames: deterministic_pose_offset_v1
+    frames:
+      down: assets/units/haeil_down.png
+      down_walk_b: assets/units/haeil_down_walk_b.png
+      left: assets/units/haeil_left.png
+      left_walk_b: assets/units/haeil_left_walk_b.png
+      right: assets/units/haeil_right.png
+      right_walk_b: assets/units/haeil_right_walk_b.png
+      up: assets/units/haeil_up.png
+      up_walk_b: assets/units/haeil_up_walk_b.png
+    runtime:
+      godot_script: harness/runtime/godot-dokkaebi/scripts/main.gd
+      target_dir: harness/runtime/godot-dokkaebi/assets/generated/units
+      animation: two_step_directional_walk
+
+  - id: dokkaebi.monsters.tangtang_walk_v1
+    status: runtime_integrated
+    role: enemies
+    style_anchor:
+      - readable small yokai silhouettes
+      - flat 2D survivor horde scale
+      - staggered two-step walk phases by enemy id
+    source:
+      imagegen_sheet: assets/units/source/dokkaebi_units_sprite_sheet_imagegen_v1_alpha.png
+      derived_walk_frames: deterministic_pose_offset_v1
+    frames:
+      japgwi: assets/units/monster_japgwi.png
+      japgwi_walk_b: assets/units/monster_japgwi_walk_b.png
+      grunt: assets/units/monster_grunt.png
+      grunt_walk_b: assets/units/monster_grunt_walk_b.png
+      ghost: assets/units/monster_ghost.png
+      ghost_walk_b: assets/units/monster_ghost_walk_b.png
+      talisman_caster: assets/units/monster_talisman_caster.png
+      talisman_caster_walk_b: assets/units/monster_talisman_caster_walk_b.png
+      night_ogre: assets/units/monster_night_ogre.png
+      night_ogre_walk_b: assets/units/monster_night_ogre_walk_b.png
+    runtime:
+      godot_script: harness/runtime/godot-dokkaebi/scripts/main.gd
+      target_dir: harness/runtime/godot-dokkaebi/assets/generated/units
+      animation: two_step_walk_with_bob
+
+visual_checks:
+  - id: dokkaebi.units.walk_pairs_preview
+    image: compare/haeil_monster_walk_pairs_preview.png
+    covers:
+      - dokkaebi.hero.haeil.battle_4dir_walk_v1
+      - dokkaebi.monsters.tangtang_walk_v1

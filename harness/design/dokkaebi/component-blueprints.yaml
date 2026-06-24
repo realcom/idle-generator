@@ -1,0 +1,1024 @@
+version: "1.0"
+game: dokkaebi
+status: extracted
+purpose: "Semantic component decomposition for the Haeil TangTang-style survival battle HUD."
+
+source_concepts:
+  primary:
+    id: dokkaebi_tangtang_ingame_screen_d_autumn_flat
+    note: concepts/dokkaebi_tangtang_ingame_screen_d_autumn_flat.md
+    image: concepts/dokkaebi_tangtang_ingame_screen_d_autumn_flat.png
+  supporting:
+    - id: dokkaebi_tangtang_ingame_screen_c_flat
+      note: concepts/dokkaebi_tangtang_ingame_screen_c_flat.md
+      image: concepts/dokkaebi_tangtang_ingame_screen_c_flat.png
+    - id: dokkaebi_tangtang_ingame_screen_b
+      note: concepts/dokkaebi_tangtang_ingame_screen_b.md
+      image: concepts/dokkaebi_tangtang_ingame_screen_b.png
+    - id: dokkaebi_ingame_haeil_concept_a
+      note: concepts/dokkaebi_ingame_haeil_concept_a.md
+      image: concepts/dokkaebi_ingame_haeil_concept_a.png
+
+runtime_targets:
+  godot:
+    recipe: "../godot/recipes/ui/dokkaebi-tangtang-battle-hud.yaml"
+    project: "../../runtime/godot-dokkaebi/project.godot"
+    owner_scene: "../../runtime/godot-dokkaebi/scenes/main.tscn"
+    owner_script: "../../runtime/godot-dokkaebi/scripts/main.gd"
+
+foundation_systems:
+  inventory: "ui-system-inventory.yaml"
+  buttons: "button-system.yaml"
+  modals: "modal-system.yaml"
+  colors: "color-tokens.yaml"
+  typography: ""
+  spacing: "layout-tokens.yaml"
+  icons: "asset-plan.yaml"
+
+extraction_rules:
+  semantic_first:
+    - "Name UI by player/runtime meaning before naming skins or image files."
+    - "Text, timers, counters, cooldowns, HP, EXP, and Korean labels remain runtime-native."
+    - "The selected concept is a visual target, not a full-screen implementation image."
+    - "Playfield units use flat small 2D sprite scale; B concept's large illustrated unit scale is rejected."
+  sizing_language:
+    slice_hints: "Bitmap cap borders for NinePatchRect or StyleBoxTexture."
+    content_insets: "Inner safe area for native text, icons, bars, and hit targets."
+    padding: "Runtime spacing inside the content area."
+    gap: "Spacing between sibling slots."
+
+surfaces:
+  DokkaebiOutgameHome:
+    intent: "Mobile outgame home for Dokkaebi World where the player reads resources, checks events, claims progression, and starts the next Haeil sortie."
+    orientation: portrait_9_16
+    reference_size_px: { width: 540, height: 960 }
+    source_concepts:
+      primary: dokkaebi_outgame_home_tangtang_concept_a
+    sections:
+      top_resource_bar:
+        role: "Shows profile identity, stamina, currencies, and mailbox/notifications in the top safe area."
+        process_scope: section
+        components:
+          - HomeProfileButton
+          - HomeResourceChip
+          - HomeMailButton
+        layout_contract:
+          anchor: top_safe_area
+          height_px: { target: 88, compact: 78 }
+          margin_px: { left: 10, right: 10, top: 8 }
+          gap_px: 8
+        asset_keys:
+          - dokkaebi.ui.outgame.topbar_imagegen_v2
+          - dokkaebi.outgame.runtime.native_home_shapes
+        qa_focus:
+          - "Top chips remain readable and do not hide the courtyard horizon."
+          - "Resource values can grow without shifting touch targets."
+      hero_stage:
+        role: "Owns the courtyard, Haeil hero figure, spirit-fire well, and visual identity behind the UI."
+        process_scope: section
+        components:
+          - HomeCourtyardBackdrop
+          - HomeHeroFigure
+        layout_contract:
+          anchor: middle_left
+          bounds_px: { x: 0, y: 92, width: 356, height: 610 }
+          hero_bounds_px: { x: 92, y: 242, width: 230, height: 350 }
+          touch_policy: "decorative background ignores pointer unless future drag/inspect is added"
+        asset_keys:
+          - dokkaebi.outgame.background.courtyard_v2
+          - dokkaebi.outgame.hero.haeil_lobby_sprite_v1
+          - dokkaebi.outgame.hero.haeil_lobby_sprite_v2
+          - dokkaebi.outgame.runtime.native_home_shapes
+        qa_focus:
+          - "Haeil remains visible behind UI and reads as blue headband, spear, water accent."
+      event_rail:
+        role: "Presents repeatable outgame actions such as daily missions, relic/equipment, boss, locked feature, and reward chest."
+        process_scope: section
+        components:
+          - HomeEventRail
+          - HomeEventCard
+        layout_contract:
+          anchor: right_safe_area
+          bounds_px: { x: 368, y: 118, width: 158, height: 548 }
+          card_size_px: { width: 150, height: 90 }
+          gap_px: 10
+          scroll_policy: "static first pass; future overflow scrolls inside rail"
+        asset_keys:
+          - dokkaebi.ui.outgame.event_cards_imagegen_v2
+          - dokkaebi.outgame.runtime.native_home_shapes
+        qa_focus:
+          - "Right rail stays tappable without crowding the sortie CTA."
+      progression_cards:
+        role: "Shows claimable idle reward and current training/loadout progression near the lower middle."
+        process_scope: section
+        components:
+          - HomeProgressionCard
+          - HomeTrainingCard
+        layout_contract:
+          anchor: lower_content
+          bounds_px: { x: 12, y: 656, width: 344, height: 172 }
+          card_size_px: { width: 164, height: 164 }
+          gap_px: 10
+        asset_keys:
+          - dokkaebi.ui.outgame.command_bar_imagegen_v2
+          - dokkaebi.outgame.runtime.native_home_shapes
+        qa_focus:
+          - "Reward cards are useful but lower priority than sortie."
+      sortie_cta:
+        role: "Primary start action for entering Haeil's next survival run."
+        process_scope: section
+        components:
+          - HomeSortieButton
+        layout_contract:
+          anchor: lower_right
+          bounds_px: { x: 360, y: 696, width: 168, height: 124 }
+          touch_target_px: { width: 150, height: 88 }
+        asset_keys:
+          - dokkaebi.ui.outgame.command_bar_imagegen_v2
+          - dokkaebi.outgame.runtime.native_home_shapes
+        qa_focus:
+          - "Sortie CTA is the strongest action and does not collide with bottom nav."
+      bottom_nav:
+        role: "Persistent outgame navigation across home, yokai collection, weapon/loadout, talisman/mission, and shop."
+        process_scope: section
+        components:
+          - HomeBottomNav
+          - HomeBottomTab
+        layout_contract:
+          anchor: bottom_safe_area
+          height_px: { target: 112, compact: 96 }
+          tab_count: 5
+          tab_min_width_px: 80
+        asset_keys:
+          - dokkaebi.ui.outgame.bottom_tab_cell_9slice
+          - dokkaebi.ui.outgame.tab_selected_9slice
+          - dokkaebi.ui.outgame.bottom_nav_imagegen_v2
+          - dokkaebi.outgame.runtime.native_home_shapes
+        qa_focus:
+          - "Five tabs fit at 540px width with stable icon and label slots."
+    component_tree:
+      - HomeProfileButton
+      - HomeResourceChip
+      - HomeMailButton
+      - HomeCourtyardBackdrop
+      - HomeHeroFigure
+      - HomeEventRail
+      - HomeEventCard
+      - HomeProgressionCard
+      - HomeTrainingCard
+      - HomeSortieButton
+      - HomeBottomNav
+      - HomeBottomTab
+    layout_contract:
+      implementation_mode: godot_control_overlay_plus_runtime_draw_home
+      visual_target: "Match dokkaebi_outgame_home_tangtang_concept_a for fast survivor lobby ergonomics, Haeil hero anchoring, event rail, reward cards, large sortie CTA, and five-tab bottom nav."
+      visual_qa_required:
+        - "section compare board for top_resource_bar"
+        - "section compare board for event_rail"
+        - "section compare board for bottom_nav"
+
+  DokkaebiTangTangBattleHud:
+    intent: "Active-combat survivor HUD for Haeil's first TangTang-style playable run."
+    orientation: portrait_9_16
+    reference_size_px: { width: 540, height: 960 }
+    source_concepts:
+      primary: dokkaebi_tangtang_ingame_screen_d_autumn_flat
+    sections:
+      top_hud:
+        role: "Shows Haeil identity, HP, timer/stage, run counters, and pause without hiding the combat lane."
+        process_scope: section
+        components:
+          - BattleTopHud
+          - BattleTopStatusTab
+          - BattleHeroPanel
+          - BattleTimerPanel
+          - BattleRunLedger
+          - BattlePauseButton
+        layout_contract:
+          anchor: top_safe_area
+          height_px: { target: 98, compact: 90 }
+          margin_px: { left: 8, right: 8, top: 8 }
+          gap_px: 8
+        asset_keys:
+          - dokkaebi.ui.battle.panel_lacquer_9slice
+          - dokkaebi.ui.battle.top_status_tab_9slice_v1
+          - dokkaebi.ui.battle.hero_portrait_haeil_v1
+          - dokkaebi.ui.battle.hero_portrait_frame_v1
+          - dokkaebi.ui.battle.resource_icons_v1
+        qa_focus:
+          - "Top panels remain compact and do not cover enemy pressure."
+          - "Haeil portrait and HP text remain readable at 540px width."
+      wave_track:
+        role: "Communicates stage/wave progress as a thin rail under the top HUD."
+        process_scope: section
+        components:
+          - BattleWaveTrack
+        layout_contract:
+          anchor: below_top_hud
+          height_px: { target: 18, compact: 16 }
+          margin_px: { left: 8, right: 8 }
+        asset_keys:
+          - dokkaebi.ui.battle.wave_track_9slice
+        qa_focus:
+          - "Rail remains thin and never becomes a banner."
+      combat_playfield:
+        role: "Owns readable world-space combat, enemy pressure, pickups, Haeil sprite, and water VFX."
+        process_scope: section
+        components:
+          - BattleCameraViewport
+          - BattleGroundLayer
+          - BattleUnitSprite
+          - BattlePickupSprite
+          - BattleSkillVfxLayer
+        layout_contract:
+          anchor: middle
+          hud_exclusion_px: { top: 132, bottom: 178, left: 0, right: 0 }
+          center_clear_radius_px: { target: 150, minimum: 120 }
+          y_sort: true
+        asset_keys:
+          - dokkaebi.battle.runtime.native_hud_shapes
+        qa_focus:
+          - "Haeil, pickups, and enemy silhouettes remain readable under dense spawns."
+      battle_controls:
+        role: "Owns bottom-left movement, bottom-right three-button action cluster, and touch-safe spacing above EXP."
+        process_scope: section
+        components:
+          - BattleJoystickControl
+          - BattleActionButtonDock
+          - BattleCircularActionButton
+        layout_contract:
+          anchor: bottom_safe_area
+          joystick_size_px: { target: 128, compact: 112 }
+          action_cluster_size_px: { width: 174, height: 170 }
+          action_button_layout: "one primary circle above two secondary circles"
+          gap_from_exp_bar_px: 20
+        asset_keys:
+          - dokkaebi.ui.battle.circular_action_frame_v1
+          - dokkaebi.ui.battle.skill_icons_haeil_v1
+        qa_focus:
+          - "Controls stay translucent enough to see enemies but readable enough for touch."
+          - "Cooldown labels and skill levels never overlap the EXP bar."
+      exp_bar:
+        role: "Shows run EXP progress and current run level across the bottom edge."
+        process_scope: section
+        components:
+          - BattleExpBar
+        layout_contract:
+          anchor: bottom_safe_area
+          height_px: { target: 30, compact: 26 }
+          margin_px: { left: 28, right: 28, bottom: 10 }
+        asset_keys:
+          - dokkaebi.ui.battle.exp_frame_9slice
+        qa_focus:
+          - "EXP fill, level badge, and numeric value remain native and readable."
+    component_tree:
+      - BattleTopHud
+      - BattleTopStatusTab
+      - BattleHeroPanel
+      - BattleTimerPanel
+      - BattleRunLedger
+      - BattlePauseButton
+      - BattleWaveTrack
+      - BattleCameraViewport
+      - BattleGroundLayer
+      - BattleUnitSprite
+      - BattlePickupSprite
+      - BattleSkillVfxLayer
+      - BattleJoystickControl
+      - BattleActionButtonDock
+      - BattleCircularActionButton
+      - BattleExpBar
+    layout_contract:
+      implementation_mode: godot_control_overlay_plus_runtime_draw_world
+      visual_target: "Match dokkaebi_tangtang_ingame_screen_d_autumn_flat for selected autumn village map tone, flat unit scale, and active combat HUD, while preserving current runnable Godot combat logic."
+      visual_qa_required:
+        - "section compare board for top_hud"
+        - "section compare board for battle_controls"
+        - "section compare board for exp_bar"
+
+components:
+  HomeProfileButton:
+    role: "Top-left profile and Haeil status entry."
+    mode: native_ui
+    anatomy: [portrait_badge, name_label, rank_badge, hp_or_stamina_bar]
+    data_bindings:
+      player_name: meta.player_name
+      rank: meta.rank
+      stamina_ratio: meta.stamina_ratio
+    box_model:
+      min_width_px: 150
+      min_height_px: 72
+      content_insets_px: { left: 10, right: 10, top: 8, bottom: 8 }
+      text_clamp: "Name and rank ellipsize without resizing the top bar."
+    foundation_refs:
+      button_role: outgame_resource_chip
+      color_tokens: [outgame_home]
+    skin_contract:
+      asset_key: dokkaebi.ui.outgame.resource_chip_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
+      content_insets_px: { left: 10, right: 10, top: 8, bottom: 8 }
+
+  HomeResourceChip:
+    role: "Repeatable top resource chip with icon, native value, and plus affordance."
+    mode: native_ui
+    repeatable: true
+    anatomy: [chip_frame, icon, value_label, plus_button]
+    data_bindings:
+      resource_key: meta.resources[].key
+      value: meta.resources[].value
+    box_model:
+      min_width_px: 94
+      min_height_px: 44
+      content_insets_px: { left: 8, right: 8, top: 6, bottom: 6 }
+      icon_size_px: { width: 24, height: 24 }
+      text_clamp: "Value uses compact notation before chip width grows."
+    foundation_refs:
+      button_role: outgame_resource_chip
+      color_tokens: [outgame_home]
+    skin_contract:
+      asset_key: dokkaebi.ui.outgame.resource_chip_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
+      content_insets_px: { left: 8, right: 8, top: 6, bottom: 6 }
+    asset_contract:
+      asset_key: dokkaebi.ui.outgame.icon_set_v1
+      usage: fixed_texture_atom_set
+      not_nine_slice: true
+
+  HomeMailButton:
+    role: "Top-right inbox/notification command."
+    mode: native_ui
+    anatomy: [button_frame, mail_icon, notification_dot]
+    data_bindings:
+      unread_count: meta.mail.unread_count
+    box_model:
+      min_width_px: 56
+      min_height_px: 56
+      touch_target_px: 48
+    foundation_refs:
+      button_role: top_icon_button
+      color_tokens: [outgame_home]
+    asset_contract:
+      asset_key: dokkaebi.ui.outgame.icon_set_v1
+      usage: fixed_texture_atom
+      not_nine_slice: true
+
+  HomeCourtyardBackdrop:
+    role: "Runtime-drawn autumn village courtyard backdrop for the outgame home."
+    mode: native_ui
+    anatomy: [sky_band, roof_silhouettes, lanterns, spirit_well, fallen_leaves, edge_props]
+    box_model:
+      bounds_px: { x: 0, y: 0, width: 540, height: 848 }
+      center_readability: "Low contrast detail behind Haeil and card surfaces."
+    asset_contract:
+      asset_key: dokkaebi.outgame.runtime.native_home_shapes
+      usage: godot_draw_primitives
+      not_nine_slice: true
+
+  HomeHeroFigure:
+    role: "Haeil lobby hero identity figure layered above the courtyard and behind UI cards."
+    mode: hybrid
+    anatomy: [hero_sprite, spear_glow, water_energy, foot_shadow]
+    box_model:
+      display_bounds_px: { x: 94, y: 290, width: 188, height: 252 }
+      hit_test_policy: decorative
+    asset_contract:
+      asset_key: dokkaebi.outgame.hero.haeil_lobby_sprite_v1
+      usage: fixed_texture_atom
+      not_nine_slice: true
+
+  HomeEventRail:
+    role: "Vertical owner for event cards and locked future surfaces."
+    mode: native_ui
+    anatomy: [rail_backing, event_card_list]
+    box_model:
+      bounds_px: { x: 368, y: 118, width: 158, height: 548 }
+      gap_px: 10
+      scroll_policy: static_first_pass
+    foundation_refs:
+      color_tokens: [outgame_home]
+
+  HomeEventCard:
+    role: "Repeatable event/feature entry card."
+    mode: native_ui
+    repeatable: true
+    anatomy: [card_frame, icon_or_thumbnail, title_label, progress_pips, notification_dot, lock_badge]
+    data_bindings:
+      event_id: meta.home_events[].id
+      title: meta.home_events[].title
+      progress_ratio: meta.home_events[].progress_ratio
+      locked: meta.home_events[].locked
+      alert: meta.home_events[].alert
+    box_model:
+      size_px: { width: 150, height: 90 }
+      content_insets_px: { left: 10, right: 10, top: 8, bottom: 8 }
+      text_clamp: "Title stays one line; progress pips never resize the card."
+    foundation_refs:
+      button_role: outgame_event_card
+      color_tokens: [outgame_home]
+    skin_contract:
+      asset_key: dokkaebi.ui.outgame.parchment_card_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+      content_insets_px: { left: 10, right: 10, top: 8, bottom: 8 }
+    asset_contract:
+      asset_key: dokkaebi.ui.outgame.icon_set_v1
+      usage: fixed_texture_atom_set
+      not_nine_slice: true
+
+  HomeProgressionCard:
+    role: "Idle reward chest and claim progress card."
+    mode: native_ui
+    anatomy: [card_frame, chest_icon, reward_label, progress_bar, claim_badge]
+    data_bindings:
+      idle_reward_ready: meta.idle_reward.ready
+      idle_reward_ratio: meta.idle_reward.progress_ratio
+      idle_reward_amount: meta.idle_reward.amount
+    box_model:
+      size_px: { width: 164, height: 164 }
+      content_insets_px: { left: 12, right: 12, top: 12, bottom: 12 }
+      text_clamp: "Reward amount uses compact notation."
+    foundation_refs:
+      button_role: outgame_event_card
+      color_tokens: [outgame_home]
+    skin_contract:
+      asset_key: dokkaebi.ui.outgame.parchment_card_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+      content_insets_px: { left: 12, right: 12, top: 12, bottom: 12 }
+    asset_contract:
+      asset_key: dokkaebi.ui.outgame.icon_set_v1
+      usage: fixed_texture_atom
+      not_nine_slice: true
+
+  HomeTrainingCard:
+    role: "Current training/loadout summary card for the next run."
+    mode: native_ui
+    anatomy: [card_frame, skill_icon_row, training_level_label, progress_bar, quick_upgrade_hint]
+    data_bindings:
+      training_level: meta.training.level
+      training_ratio: meta.training.progress_ratio
+      selected_loadout: meta.loadout.active_summary
+    box_model:
+      size_px: { width: 164, height: 164 }
+      content_insets_px: { left: 12, right: 12, top: 12, bottom: 12 }
+      text_clamp: "Loadout summary clamps to two short lines."
+    foundation_refs:
+      button_role: outgame_event_card
+      color_tokens: [outgame_home]
+    skin_contract:
+      asset_key: dokkaebi.ui.outgame.parchment_card_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+      content_insets_px: { left: 12, right: 12, top: 12, bottom: 12 }
+    asset_contract:
+      asset_key: dokkaebi.ui.outgame.icon_set_v1
+      usage: fixed_texture_atom_set
+      not_nine_slice: true
+
+  HomeSortieButton:
+    role: "Primary command to start the next survival run."
+    mode: native_ui
+    anatomy: [cta_frame, title_label, stage_label, energy_cost_chip, glow_ornaments]
+    data_bindings:
+      next_stage: meta.next_stage.label
+      stamina_cost: meta.next_stage.stamina_cost
+      action: StartSortie
+    box_model:
+      min_width_px: 150
+      min_height_px: 88
+      content_insets_px: { left: 14, right: 14, top: 12, bottom: 12 }
+      text_clamp: "Stage label fits under the main CTA title without resizing."
+    foundation_refs:
+      button_role: primary_cta
+      color_tokens: [outgame_home]
+    skin_contract:
+      asset_key: dokkaebi.ui.outgame.sortie_cta_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+      content_insets_px: { left: 14, right: 14, top: 12, bottom: 12 }
+
+  HomeBottomNav:
+    role: "Persistent five-tab outgame navigation dock."
+    mode: native_ui
+    anatomy: [native_shell_rails, tab_cells, selected_indicator]
+    box_model:
+      height_px: { target: 112, compact: 96 }
+      content_insets_px: { left: 0, right: 0, top: 10, bottom: 10 }
+      tab_count: 5
+      tab_width_px: 108
+      gap_px: 0
+    foundation_refs:
+      color_tokens: [outgame_home]
+    shell_contract:
+      usage: native_color_rect_rails_only
+      rule: "Do not place a single full-width bitmap under all five tabs; every tab owns its own cell background."
+
+  HomeBottomTab:
+    role: "One icon-first tab in the outgame bottom dock."
+    mode: native_ui
+    repeatable: true
+    anatomy: [tab_frame, icon, label, alert_dot, selected_marker]
+    data_bindings:
+      tab_id: meta.nav_tabs[].id
+      label: meta.nav_tabs[].label
+      selected: meta.nav_tabs[].selected
+      alert: meta.nav_tabs[].alert
+    box_model:
+      min_width_px: 80
+      min_height_px: 78
+      icon_size_px: { width: 40, height: 40 }
+      text_clamp: "Label is one short native line and never changes tab size."
+    foundation_refs:
+      button_role: outgame_bottom_tab
+      color_tokens: [outgame_home]
+    skin_contract:
+      asset_key: dokkaebi.ui.outgame.bottom_tab_cell_9slice
+      selected_asset_key: dokkaebi.ui.outgame.tab_selected_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
+      content_insets_px: { left: 8, right: 8, top: 8, bottom: 8 }
+    asset_contract:
+      asset_key: dokkaebi.ui.outgame.icon_set_v1
+      usage: fixed_texture_atom_set
+      not_nine_slice: true
+
+  BattleTopHud:
+    role: "Composes top identity, timer, ledger, pause controls, and compact survivor status tabs."
+    mode: hybrid
+    anatomy: [hero_panel, timer_panel, run_ledger, pause_button, status_tabs]
+    box_model:
+      min_height_px: 90
+      content_insets_px: { left: 8, right: 8, top: 8, bottom: 6 }
+      gap_px: 8
+    foundation_refs:
+      color_tokens: [battle_hud_panel]
+
+  BattleTopStatusTab:
+    role: "Small non-navigation survivor HUD tab label that separates player, survival timer, and run-data clusters."
+    mode: hybrid
+    repeatable: true
+    anatomy: [tab_backing, tab_label, selected_accent]
+    data_bindings:
+      label: run.top_status_tabs[].label
+      accent: run.top_status_tabs[].accent
+    box_model:
+      min_width_px: 72
+      min_height_px: 16
+      content_insets_px: { left: 6, right: 6, top: 2, bottom: 2 }
+      text_clamp: "Uppercase status label stays one short native line."
+    foundation_refs:
+      color_tokens: [battle_hud_panel, battle_progress]
+    asset_contract:
+      asset_key: dokkaebi.ui.battle.top_status_tab_9slice_v1
+      usage: godot_nine_patch_rect_variant_set
+      slice_hints_px: { left: 32, right: 32, top: 10, bottom: 10 }
+      not_nine_slice: false
+
+  BattleHeroPanel:
+    role: "Shows Haeil portrait, level, HP, and purification progress."
+    mode: hybrid
+    anatomy: [panel_skin, portrait, portrait_frame, name_label, level_label, hp_bar, hp_value]
+    data_bindings:
+      name: player.name
+      level: run.level
+      hp: player.hp
+      max_hp: player.max_hp
+      purified: run.purified
+    box_model:
+      min_width_px: 188
+      min_height_px: 90
+      content_insets_px: { left: 10, right: 10, top: 8, bottom: 8 }
+      text_clamp: "Name and level line ellipsize before the panel grows."
+    skin_contract:
+      asset_key: dokkaebi.ui.battle.panel_lacquer_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+      content_insets_px: { left: 10, right: 10, top: 8, bottom: 8 }
+    asset_contract:
+      asset_key: dokkaebi.ui.battle.hero_portrait_frame_v1
+      usage: fixed_texture_atom
+      not_nine_slice: true
+    portrait_asset_contract:
+      asset_key: dokkaebi.ui.battle.hero_portrait_haeil_v1
+      usage: fixed_texture_atom
+      not_nine_slice: true
+      must_not_bake: [name_label, level_label, hp_value]
+
+  BattleTimerPanel:
+    role: "Shows remaining time and stage label as the central battle anchor."
+    mode: hybrid
+    anatomy: [panel_skin, timer_label, divider, stage_label, stage_pips]
+    data_bindings:
+      remaining_time: run.remaining_seconds
+      stage: run.stage_index
+      stage_total: run.stage_total
+    box_model:
+      min_width_px: 132
+      min_height_px: 90
+      content_insets_px: { left: 12, right: 12, top: 10, bottom: 10 }
+      text_clamp: "Timer stays centered and stage label stays one line."
+    skin_contract:
+      asset_key: dokkaebi.ui.battle.panel_lacquer_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+      content_insets_px: { left: 12, right: 12, top: 10, bottom: 10 }
+
+  BattleRunLedger:
+    role: "Shows compact live run counters for kills, enemy count, and purification."
+    mode: hybrid
+    anatomy: [panel_skin, icon_rows, native_values]
+    data_bindings:
+      kills: run.kills
+      enemies: run.enemy_count
+      purified: run.purified
+    box_model:
+      min_width_px: 142
+      min_height_px: 90
+      content_insets_px: { left: 12, right: 12, top: 8, bottom: 8 }
+      row_gap_px: 5
+      text_clamp: "Values use tabular alignment and do not resize the ledger."
+    skin_contract:
+      asset_key: dokkaebi.ui.battle.panel_lacquer_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+      content_insets_px: { left: 12, right: 12, top: 8, bottom: 8 }
+    asset_contract:
+      asset_key: dokkaebi.ui.battle.resource_icons_v1
+      usage: fixed_texture_atom_set
+      not_nine_slice: true
+
+  BattlePauseButton:
+    role: "Compact top-right pause command."
+    mode: hybrid
+    anatomy: [button_frame, pause_icon, hit_target]
+    box_model:
+      min_width_px: 44
+      min_height_px: 54
+      touch_target_px: 48
+    foundation_refs:
+      button_role: top_icon_button
+      color_tokens: [battle_hud_panel]
+
+  BattleWaveTrack:
+    role: "Thin wave/stage progress rail."
+    mode: hybrid
+    anatomy: [track_skin, progress_fill, stage_pips, wave_label]
+    data_bindings:
+      progress_ratio: run.wave_progress_ratio
+      stage_label: run.stage_label
+    box_model:
+      min_height_px: 18
+      content_insets_px: { left: 14, right: 14, top: 5, bottom: 5 }
+    skin_contract:
+      asset_key: dokkaebi.ui.battle.wave_track_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 28, right: 28, top: 8, bottom: 8 }
+      content_insets_px: { left: 14, right: 14, top: 5, bottom: 5 }
+
+  BattleCameraViewport:
+    role: "Maps world combat to the portrait viewport while keeping Haeil readable."
+    mode: native_ui
+    anatomy: [camera, world_bounds, safe_area_offsets]
+    box_model:
+      world_size_px: { width: 3400, height: 3400 }
+      follow_policy: "Player stays centered in the readable middle unless future dodge/camera lag is added."
+
+  BattleGroundLayer:
+    role: "Paints dark forest/courtyard ground with edge props and subtle grid/readability variation."
+    mode: native_ui
+    anatomy: [ground_fill, subtle_grid, edge_props, vignette]
+    box_model:
+      center_clear_radius_px: { target: 150, minimum: 120 }
+      decorative_density: medium_low
+
+  BattleUnitSprite:
+    role: "Renders Haeil, common enemies, elites, and HP feedback."
+    mode: hybrid
+    anatomy: [unit_sprite, hp_bar, foot_shadow, hit_flash, direction_state]
+    box_model:
+      y_sort: true
+      display_size_policy:
+        player_height_ratio_of_screen: "0.07-0.09"
+        common_enemy_height_ratio_of_screen: "0.04-0.06"
+        elite_height_ratio_of_screen: "0.07-0.10"
+      player_depth_policy: "Haeil renders above common enemies and below foreground skill flashes."
+
+  BattlePickupSprite:
+    role: "World-space EXP and spirit pickups that remain readable while dense enemies spawn."
+    mode: hybrid
+    anatomy: [pickup_sprite, glow_ring, collectable_state]
+    box_model:
+      display_size_px: { exp: 14, spirit: 18, coin: 18 }
+      magnet_feedback: "Move toward Haeil after entering magnet radius."
+
+  BattleSkillVfxLayer:
+    role: "Water slash, vortex, wave, spiritfire, and ward effects."
+    mode: native_ui
+    anatomy: [arc, projectile, impact_flash, label_feedback]
+    box_model:
+      timing_policy: "Short 130-620ms bursts; no persistent opaque full-screen effects."
+
+  BattleJoystickControl:
+    role: "Bottom-left translucent movement control."
+    mode: native_ui
+    anatomy: [outer_ring, direction_markers, thumb]
+    box_model:
+      size_px: { target: 128, compact: 112 }
+      touch_target_px: 112
+      pointer_policy: "Godot input owns pointer state; visual control does not resize."
+    foundation_refs:
+      button_role: joystick_control
+
+  BattleActionButtonDock:
+    role: "Bottom-right three-button circular combat action cluster."
+    mode: hybrid
+    anatomy: [primary_action_button, secondary_skill_button_left, secondary_skill_button_right]
+    box_model:
+      size_px: { width: 174, height: 170 }
+      primary_button_px: { target: 86, compact: 78 }
+      secondary_button_px: { target: 78, compact: 70 }
+      layout: "primary button top-right; two secondary buttons below"
+      hit_target_policy: "Each action keeps at least 70x70px touch target and does not resize during cooldown."
+    foundation_refs:
+      button_role: battle_circular_action
+
+  BattleCircularActionButton:
+    role: "One circular generated-icon combat button with native cooldown and level text."
+    mode: hybrid
+    repeatable: true
+    anatomy: [button_frame, icon, cooldown_ring, cooldown_number, level_label, hit_target]
+    data_bindings:
+      skill_id: player.activeSkills[].id
+      level: player.activeSkills[].level
+      cooldown_remaining: player.activeSkills[].cooldownRemaining
+      cooldown_ratio: player.activeSkills[].cooldownRatio
+    box_model:
+      size_px: { target: 78, compact: 70 }
+      icon_display_size_px: { target: 52, compact: 46 }
+      touch_target_px: 70
+      text_clamp: "Cooldown and level labels are native and must not resize the button."
+    asset_contract:
+      asset_key: dokkaebi.ui.battle.circular_action_frame_v1
+      usage: fixed_texture_atom
+      not_nine_slice: true
+    foundation_refs:
+      button_role: battle_circular_action
+      color_tokens: [battle_action_button]
+
+  BattleExpBar:
+    role: "Bottom run EXP progress bar with fixed level badge and native progress fill."
+    mode: hybrid
+    anatomy: [frame_skin, level_badge, progress_track, progress_fill, exp_value]
+    data_bindings:
+      level: run.level
+      exp: run.exp
+      exp_to_next: run.exp_to_next
+    box_model:
+      height_px: { target: 30, compact: 26 }
+      content_insets_px: { left: 96, right: 92, top: 8, bottom: 8 }
+      width_policy: "Full width minus 28px side margins at 540px reference."
+    skin_contract:
+      asset_key: dokkaebi.ui.battle.exp_frame_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 28, right: 28, top: 10, bottom: 10 }
+      content_insets_px: { left: 96, right: 92, top: 8, bottom: 8 }
+
+asset_dependency_matrix:
+  dokkaebi.ui.outgame.parchment_card_9slice:
+    component_slots:
+      - HomeEventCard.skin
+      - HomeProgressionCard.skin
+      - HomeTrainingCard.skin
+    slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+    content_insets_by_slot:
+      HomeEventCard: { left: 10, right: 10, top: 8, bottom: 8 }
+      HomeProgressionCard: { left: 12, right: 12, top: 12, bottom: 12 }
+      HomeTrainingCard: { left: 12, right: 12, top: 12, bottom: 12 }
+  dokkaebi.ui.outgame.resource_chip_9slice:
+    component_slots:
+      - HomeProfileButton.skin
+      - HomeResourceChip.skin
+    slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
+    content_insets_by_slot:
+      HomeProfileButton: { left: 10, right: 10, top: 8, bottom: 8 }
+      HomeResourceChip: { left: 8, right: 8, top: 6, bottom: 6 }
+  dokkaebi.ui.outgame.sortie_cta_9slice:
+    component_slots:
+      - HomeSortieButton.skin
+    slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+    content_insets_by_slot:
+      HomeSortieButton: { left: 14, right: 14, top: 12, bottom: 12 }
+  dokkaebi.ui.outgame.bottom_tab_cell_9slice:
+    component_slots:
+      - HomeBottomTab.normal_skin
+    slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
+    content_insets_by_slot:
+      HomeBottomTab: { left: 8, right: 8, top: 8, bottom: 8 }
+  dokkaebi.ui.outgame.tab_selected_9slice:
+    component_slots:
+      - HomeBottomTab.selected_skin
+    slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
+    content_insets_by_slot:
+      HomeBottomTab: { left: 8, right: 8, top: 8, bottom: 8 }
+  dokkaebi.ui.outgame.icon_set_v1:
+    component_slots:
+      - HomeResourceChip.icon
+      - HomeMailButton.mail_icon
+      - HomeEventCard.icon_or_thumbnail
+      - HomeProgressionCard.chest_icon
+      - HomeTrainingCard.skill_icon_row
+      - HomeBottomTab.icon
+    fixed_sprite_sizes_px:
+      HomeResourceChip.icon: { width: 26, height: 26 }
+      HomeMailButton.mail_icon: { width: 30, height: 30 }
+      HomeEventCard.icon: { width: 42, height: 42 }
+      HomeProgressionCard.icon: { width: 52, height: 52 }
+      HomeTrainingCard.icon: { width: 40, height: 40 }
+      HomeBottomTab.icon: { width: 34, height: 34 }
+
+  dokkaebi.ui.outgame.topbar_imagegen_v2:
+    component_slots:
+      - HomeProfileButton.skin
+      - HomeResourceChip.skin
+      - HomeMailButton.mail_button
+      - HomeResourceChip.icon
+    fixed_sprite_sizes_px:
+      HomeProfileButton.skin: { width: 150, height: 50 }
+      HomeResourceChip.skin: { width: 96, height: 42 }
+      HomeMailButton.mail_button: { width: 48, height: 48 }
+      HomeResourceChip.icon: { width: 28, height: 28 }
+    must_not_bake:
+      - profile_name
+      - rank
+      - resource_value
+      - plus_label
+      - notification_count
+
+  dokkaebi.ui.outgame.event_cards_imagegen_v2:
+    component_slots:
+      - HomeEventCard.icon_or_thumbnail
+    fixed_sprite_sizes_px:
+      HomeEventCard.thumbnail: { width: 150, height: 90 }
+    must_not_bake:
+      - title
+      - progress
+      - notification_dot
+      - locked_label
+
+  dokkaebi.ui.outgame.command_bar_imagegen_v2:
+    component_slots:
+      - HomeProgressionCard.thumbnail
+      - HomeTrainingCard.thumbnail
+      - HomeSortieButton.skin
+    fixed_sprite_sizes_px:
+      HomeProgressionCard.thumbnail: { width: 164, height: 164 }
+      HomeTrainingCard.thumbnail: { width: 164, height: 164 }
+      HomeSortieButton.skin: { width: 168, height: 116 }
+    must_not_bake:
+      - reward_title
+      - training_title
+      - claim_label
+      - progress
+      - sortie_label
+      - stage_label
+      - stamina_cost
+
+  dokkaebi.ui.outgame.bottom_nav_imagegen_v2:
+    component_slots:
+      - HomeBottomTab.icon
+    fixed_sprite_sizes_px:
+      HomeBottomTab.selected_skin: { width: 104, height: 92 }
+      HomeBottomTab.icon: { width: 42, height: 42 }
+    must_not_bake:
+      - tab_label
+      - alert_count
+
+  dokkaebi.outgame.hero.haeil_lobby_sprite_v1:
+    component_slots:
+      - HomeHeroFigure.hero_sprite
+    fixed_sprite_sizes_px:
+      HomeHeroFigure.hero_sprite: { width: 188, height: 252 }
+  dokkaebi.outgame.background.courtyard_v2:
+    component_slots:
+      - HomeCourtyardBackdrop.background
+    fixed_sprite_sizes_px:
+      HomeCourtyardBackdrop.background: { width: 540, height: 960 }
+    must_not_bake:
+      - ui_panels
+      - labels
+      - character
+  dokkaebi.outgame.hero.haeil_lobby_sprite_v2:
+    component_slots:
+      - HomeHeroFigure.hero_sprite
+    fixed_sprite_sizes_px:
+      HomeHeroFigure.hero_sprite: { width: 320, height: 498 }
+  dokkaebi.outgame.runtime.native_home_shapes:
+    component_slots:
+      - HomeCourtyardBackdrop.native_shapes
+      - HomeProfileButton.native_shapes
+      - HomeResourceChip.native_shapes
+      - HomeMailButton.native_shapes
+      - HomeEventRail.native_shapes
+      - HomeEventCard.native_shapes
+      - HomeProgressionCard.native_shapes
+      - HomeTrainingCard.native_shapes
+      - HomeSortieButton.native_shapes
+      - HomeBottomNav.native_shapes
+      - HomeBottomTab.native_shapes
+
+  dokkaebi.ui.battle.panel_lacquer_9slice:
+    component_slots:
+      - BattleHeroPanel.skin
+      - BattleTimerPanel.skin
+      - BattleRunLedger.skin
+    slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+    content_insets_by_slot:
+      BattleHeroPanel: { left: 10, right: 10, top: 8, bottom: 8 }
+      BattleTimerPanel: { left: 12, right: 12, top: 10, bottom: 10 }
+      BattleRunLedger: { left: 12, right: 12, top: 8, bottom: 8 }
+  dokkaebi.ui.battle.wave_track_9slice:
+    component_slots:
+      - BattleWaveTrack.skin
+    slice_hints_px: { left: 28, right: 28, top: 8, bottom: 8 }
+    content_insets_by_slot:
+      BattleWaveTrack: { left: 14, right: 14, top: 5, bottom: 5 }
+  dokkaebi.ui.battle.exp_frame_9slice:
+    component_slots:
+      - BattleExpBar.skin
+    slice_hints_px: { left: 28, right: 28, top: 10, bottom: 10 }
+    content_insets_by_slot:
+      BattleExpBar: { left: 96, right: 92, top: 8, bottom: 8 }
+  dokkaebi.ui.battle.circular_action_frame_v1:
+    component_slots:
+      - BattleCircularActionButton.frame
+    fixed_sprite_sizes_px:
+      BattleCircularActionButton: { width: 96, height: 96 }
+  dokkaebi.ui.battle.skill_icons_haeil_v1:
+    component_slots:
+      - BattleCircularActionButton.icon
+    fixed_sprite_sizes_px:
+      BattleCircularActionButton.icon: { width: 52, height: 52 }
+  dokkaebi.ui.battle.resource_icons_v1:
+    component_slots:
+      - BattleRunLedger.icons
+    fixed_sprite_sizes_px:
+      BattleRunLedger.icon: { width: 18, height: 18 }
+  dokkaebi.ui.battle.hero_portrait_haeil_v1:
+    component_slots:
+      - BattleHeroPanel.portrait
+    fixed_sprite_sizes_px:
+      BattleHeroPanel.portrait: { width: 64, height: 64 }
+    must_not_bake:
+      - name_label
+      - level_label
+      - hp_value
+  dokkaebi.ui.battle.hero_portrait_frame_v1:
+    component_slots:
+      - BattleHeroPanel.portrait_frame
+    fixed_sprite_sizes_px:
+      BattleHeroPanel.portrait_frame: { width: 64, height: 64 }
+  dokkaebi.ui.battle.top_status_tab_9slice_v1:
+    component_slots:
+      - BattleTopStatusTab.tab_backing
+    slice_hints_px: { left: 32, right: 32, top: 10, bottom: 10 }
+    content_insets_by_slot:
+      BattleTopStatusTab: { left: 6, right: 6, top: 2, bottom: 2 }
+    variants: [gold, water, amber]
+    must_not_bake:
+      - tab_label
+      - timer
+      - stage
+      - counters
+  dokkaebi.battle.runtime.native_hud_shapes:
+    component_slots:
+      - BattleGroundLayer.native_shapes
+      - BattleSkillVfxLayer.native_shapes
+      - BattleJoystickControl.native_shapes
+
+runtime_token_mapping:
+  phaser_constants: {}
+  godot_outgame_recipe_values:
+    home.top_resource_bar.height_px: surfaces.DokkaebiOutgameHome.sections.top_resource_bar.layout_contract.height_px.target
+    home.event_rail.bounds_px: surfaces.DokkaebiOutgameHome.sections.event_rail.layout_contract.bounds_px
+    home.sortie_cta.bounds_px: surfaces.DokkaebiOutgameHome.sections.sortie_cta.layout_contract.bounds_px
+    home.bottom_nav.height_px: surfaces.DokkaebiOutgameHome.sections.bottom_nav.layout_contract.height_px.target
+  godot_recipe_values:
+    top_hud.height_px: surfaces.DokkaebiTangTangBattleHud.sections.top_hud.layout_contract.height_px.target
+    controls.action_cluster_size_px: components.BattleActionButtonDock.box_model.size_px
+    exp_bar.insets: components.BattleExpBar.box_model.content_insets_px
+  existing_godot_draw_functions:
+    "_draw_top_hud": BattleTopHud
+    "_draw_controls": BattleActionButtonDock
+    "_draw_exp_bar": BattleExpBar
+
+review_gate:
+  pass_conditions:
+    - "All active combat HUD sections are represented as semantic sections."
+    - "Text, timers, counters, cooldowns, HP, and EXP remain runtime-native."
+    - "Godot recipe references only declared component and asset keys."
+  blockers:
+    - "Full-screen concept PNG is used as implementation."
+    - "Combat buttons bake cooldown numbers or Korean labels into generated images."
+    - "Top HUD or controls cover the central Haeil readability zone."

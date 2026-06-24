@@ -1,0 +1,72 @@
+version: "1.0"
+game: taskstonebar
+status: extracted
+updated_at: 2026-06-23T00:00:00+09:00
+
+tokens:
+  panel_outer:
+    default: "#6b4a2a"
+    usage: "Frame border, button border, panel rim."
+  panel_mid:
+    default: "#4a2f1a"
+    usage: "Main frame body and beveled button gradient lower stop."
+  panel_inner:
+    default: "#1a0f06"
+    usage: "Inner content wells and progress bar tracks."
+  title_gold:
+    default: "#ffcf7a"
+    usage: "Panel titles, stage badges, primary accent labels."
+  text_cream:
+    default: "#f3e6c8"
+    usage: "Primary text on dark panels."
+  text_muted:
+    default: "#b79a72"
+    usage: "Secondary labels and disabled text."
+  coin_gold:
+    default: "#ffd877"
+    usage: "Gold amount, reward spark, coin icon glow."
+  hp_red:
+    default: "#c0392b"
+    usage: "HP bars and damage state."
+  exp_blue:
+    default: "#2e8fd0"
+    usage: "EXP bars and level progress."
+  ruby_red:
+    default: "#d94b74"
+    usage: "Premium currency and cube catalyst accent."
+  moss_green:
+    default: "#6a8f42"
+    usage: "Cave moss, low-tier ore, early enemy accent."
+  taskbar_ground:
+    default: "#3a2a18"
+    usage: "Bottom combat strip floor."
+  shadow:
+    default: "#050302"
+    usage: "Hard drop shadow and text shadow."
+
+semantic_mapping:
+  panel:
+    fill: panel_mid
+    border: panel_outer
+    inner: panel_inner
+    title: title_gold
+    text: text_cream
+  progress:
+    hp: hp_red
+    exp: exp_blue
+    track: panel_inner
+    border: panel_outer
+  reward:
+    gold: coin_gold
+    ore: moss_green
+    catalyst: ruby_red
+  taskbar_strip:
+    ground: taskbar_ground
+    ticker: text_cream
+    badge: title_gold
+
+rules:
+  - "Keep panel_inner dark enough for cream text; do not lower text contrast for pixel authenticity."
+  - "Use title_gold as a sparse accent, not as full-panel fill."
+  - "Ruby/catalyst red is rare reward feedback, not the default CTA color."
+  - "All imported pixel assets must render with image-rendering: pixelated/crisp-edges."

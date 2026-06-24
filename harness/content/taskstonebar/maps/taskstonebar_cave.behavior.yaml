@@ -1,0 +1,117 @@
+name: TaskstonebarCaveWave1
+domain: map
+
+vars:
+  tick_unit: { type: int, default: 110201 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $tick_unit
+          count: 5
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 5 }
+
+---
+
+name: TaskstonebarCaveWave2
+domain: map
+
+vars:
+  tick_unit: { type: int, default: 110201 }
+  bat_unit: { type: int, default: 110202 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $tick_unit
+          count: 4
+          level: "enemyLevel + 1"
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $bat_unit
+          count: 2
+          level: "enemyLevel + 2"
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 6 }
+
+---
+
+name: TaskstonebarCaveBossWave
+domain: map
+
+vars:
+  boss_unit: { type: int, default: 110501 }
+  bat_unit: { type: int, default: 110202 }
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $boss_unit
+          count: 1
+          level: "bossLevel + 3"
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $bat_unit
+          count: 2
+          level: "enemyLevel + 3"
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 3 }
+
+---
+
+name: TaskstonebarCaveUpdate
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARCAVEWAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARCAVEBOSSWAVE }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        EndGame: { result: win }

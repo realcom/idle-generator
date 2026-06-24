@@ -1,0 +1,183 @@
+version: "1.0"
+game: dokkaebi
+status: draft
+source_concepts:
+  - dokkaebi_outgame_home_tangtang_concept_a
+  - dokkaebi_tangtang_ingame_screen_d_autumn_flat
+  - dokkaebi_tangtang_ingame_screen_c_flat
+  - dokkaebi_tangtang_ingame_screen_b
+
+foundation_systems:
+  buttons: "button-system.yaml"
+  modals: "modal-system.yaml"
+  colors: "color-tokens.yaml"
+
+skins:
+  outgame_native_cards:
+    component: HomeEventCard
+    also_used_by: [HomeProgressionCard, HomeTrainingCard, HomeResourceChip]
+    mode: hybrid
+    states:
+      normal:
+        asset_key: dokkaebi.ui.outgame.parchment_card_9slice
+        visual_role: "Warm parchment reusable event/progression card skin."
+        godot_usage: nine_patch_rect
+      alert:
+        asset_key: dokkaebi.ui.outgame.parchment_card_9slice
+        visual_role: "Same card with native lantern-orange notification dot."
+        godot_usage: nine_patch_rect
+    content_insets_px: { left: 12, right: 12, top: 10, bottom: 10 }
+    slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+    button_role: outgame_event_card
+    semantic_color_tokens: [outgame_home]
+    must_not_bake: [text, numbers, timers, localized_labels, prices, reward_values]
+
+  outgame_resource_chip:
+    component: HomeResourceChip
+    also_used_by: [HomeProfileButton]
+    mode: hybrid
+    states:
+      normal:
+        asset_key: dokkaebi.ui.outgame.resource_chip_9slice
+        visual_role: "Compact dark resource chip with gold rim and icon well."
+        godot_usage: nine_patch_rect
+    content_insets_px: { left: 8, right: 8, top: 6, bottom: 6 }
+    slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
+    button_role: outgame_resource_chip
+    semantic_color_tokens: [outgame_home]
+    must_not_bake: [resource_value, plus_label]
+
+  outgame_sortie_cta:
+    component: HomeSortieButton
+    mode: hybrid
+    states:
+      normal:
+        asset_key: dokkaebi.ui.outgame.sortie_cta_9slice
+        visual_role: "Lantern-orange primary sortie button skin with native label and stage/cost sublabels."
+        godot_usage: nine_patch_rect
+      ready_pulse:
+        asset_key: dokkaebi.ui.outgame.sortie_cta_9slice
+        visual_role: "Native gold/blue rim pulse; bounds remain stable."
+        godot_usage: nine_patch_rect
+    content_insets_px: { left: 14, right: 14, top: 12, bottom: 12 }
+    slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+    button_role: primary_cta
+    semantic_color_tokens: [outgame_home]
+    must_not_bake: [text, stage_label, stamina_cost]
+
+  outgame_bottom_nav:
+    component: HomeBottomTab
+    also_used_by: [HomeBottomNav]
+    mode: hybrid
+    states:
+      normal:
+        asset_key: dokkaebi.ui.outgame.bottom_tab_cell_9slice
+        visual_role: "Per-tab dark wood cell backing with native icon atoms and labels."
+        godot_usage: nine_patch_rect
+      selected:
+        asset_key: dokkaebi.ui.outgame.tab_selected_9slice
+        visual_role: "Selected per-tab cell adds water-blue glow and talisman-gold marker without resizing."
+        godot_usage: nine_patch_rect
+    content_insets_px: { left: 8, right: 8, top: 8, bottom: 8 }
+    slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
+    button_role: outgame_bottom_tab
+    semantic_color_tokens: [outgame_home]
+    must_not_bake: [tab_label, alert_count]
+
+  battle_lacquer_panel:
+    component: BattleHeroPanel
+    also_used_by: [BattleTimerPanel, BattleRunLedger]
+    mode: hybrid
+    states:
+      normal:
+        asset_key: dokkaebi.ui.battle.panel_lacquer_9slice
+        visual_role: "Dark battle HUD panel frame."
+        godot_usage: nine_patch_rect
+    content_insets_px: { left: 10, right: 10, top: 8, bottom: 8 }
+    slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+    semantic_color_tokens: [lacquer_panel, talisman_gold, cream_text]
+    must_not_bake: [text, numbers, timers, localized_labels, hp_values]
+
+  battle_top_status_tabs:
+    component: BattleTopStatusTab
+    mode: hybrid
+    states:
+      normal:
+        asset_key: dokkaebi.ui.battle.top_status_tab_9slice_v1
+        visual_role: "Generated dark lacquer survivor HUD tab backing inside the top panels."
+        godot_usage: nine_patch_rect
+      selected:
+        asset_key: dokkaebi.ui.battle.top_status_tab_9slice_v1
+        visual_role: "Variant-specific gold, water-blue, or amber bottom accent; no layout change."
+        godot_usage: nine_patch_rect
+    content_insets_px: { left: 6, right: 6, top: 2, bottom: 2 }
+    slice_hints_px: { left: 32, right: 32, top: 10, bottom: 10 }
+    semantic_color_tokens: [battle_hud_panel, battle_progress]
+    must_not_bake: [tab_label, timer, stage, counters]
+
+  battle_haeil_portrait:
+    component: BattleHeroPanel
+    mode: hybrid
+    states:
+      normal:
+        asset_key: dokkaebi.ui.battle.hero_portrait_haeil_v1
+        visual_role: "Generated Haeil face portrait inside the top-left hero medallion."
+        godot_usage: texture_rect
+    content_insets_px: { left: 0, right: 0, top: 0, bottom: 0 }
+    slice_hints_px: null
+    semantic_color_tokens: [battle_hud_panel, water_blue, talisman_gold]
+    must_not_bake: [name_label, level_label, hp_value]
+
+  battle_wave_track:
+    component: BattleWaveTrack
+    mode: hybrid
+    states:
+      normal:
+        asset_key: dokkaebi.ui.battle.wave_track_9slice
+        visual_role: "Thin stage progress rail."
+        godot_usage: nine_patch_rect
+    content_insets_px: { left: 14, right: 14, top: 5, bottom: 5 }
+    slice_hints_px: { left: 28, right: 28, top: 8, bottom: 8 }
+    semantic_color_tokens: [lacquer_panel, talisman_gold, spirit_teal]
+    must_not_bake: [wave_label, progress_fill, pips]
+
+  battle_exp_bar:
+    component: BattleExpBar
+    mode: hybrid
+    states:
+      normal:
+        asset_key: dokkaebi.ui.battle.exp_frame_9slice
+        visual_role: "Bottom EXP frame."
+        godot_usage: nine_patch_rect
+    content_insets_px: { left: 96, right: 92, top: 8, bottom: 8 }
+    slice_hints_px: { left: 28, right: 28, top: 10, bottom: 10 }
+    semantic_color_tokens: [lacquer_panel, talisman_gold, water_blue]
+    must_not_bake: [level_label, exp_value, progress_fill]
+
+  battle_circular_action_button:
+    component: BattleCircularActionButton
+    mode: hybrid
+    states:
+      ready:
+        asset_key: dokkaebi.ui.battle.circular_action_frame_v1
+        visual_role: "Circular lacquer/gold action frame."
+        godot_usage: texture_rect
+      cooldown:
+        asset_key: dokkaebi.ui.battle.circular_action_frame_v1
+        visual_role: "Same frame with native cooldown overlay."
+        godot_usage: texture_rect
+    content_insets_px: { left: 10, right: 10, top: 10, bottom: 10 }
+    slice_hints_px: null
+    button_role: battle_circular_action
+    semantic_color_tokens: [battle_action_button]
+    must_not_bake: [cooldown, level_label, localized_labels]
+
+native_primitives:
+  outgame_home:
+    usage: "Use Godot draw primitives and Theme styleboxes for first-pass home cards, CTA, dock, resource chips, and notification dots."
+  progress_bar:
+    usage: "Use Godot ProgressBar or native draw fill unless a generated frame is present."
+  joystick:
+    usage: "Use native circles and direction markers until branded joystick art is approved."
+  cooldown_ring:
+    usage: "Use native radial/ring draw or shader; cooldown number is a Label."

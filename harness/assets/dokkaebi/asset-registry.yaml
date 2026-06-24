@@ -1,0 +1,126 @@
+version: "1.0"
+game: dokkaebi
+updated_at: 2026-06-23T00:00:00+09:00
+
+policy:
+  protected_ip_source:
+    repo_storage: "Do not store official IP source images here unless explicit permission is documented."
+    usage: "Use protected source only as reference and human approval input."
+  generated_asset_status:
+    ai_draft: "Playable prototype/review only."
+    approved: "Human-reviewed build candidate."
+    final: "Production-ready art."
+
+sources:
+  dokkaebi.units.sprite_sheet.imagegen_v1:
+    status: ai-draft
+    generator: built_in_imagegen
+    source_chromakey_path: "harness/assets/dokkaebi/sprites/source/dokkaebi_units_sprite_sheet_imagegen_v1_chromakey.png"
+    alpha_sheet_path: "harness/assets/dokkaebi/sprites/source/dokkaebi_units_sprite_sheet_imagegen_v1_alpha.png"
+    prompt_summary: "Haeil plus Korean folklore enemy sprite sheet on flat #ff00ff chroma-key background; no text or watermark."
+    notes:
+      - "Generated from licensed/IP-approved art direction, but still requires human art review before promotion."
+      - "Chroma key removed locally; individual sprites are cropped from the alpha sheet."
+
+  dokkaebi.hero.haeil.4dir.imagegen_v1:
+    status: ai-draft
+    generator: built_in_imagegen
+    source_chromakey_path: "harness/assets/dokkaebi/sprites/source/haeil_4dir_sprite_sheet_imagegen_v1_chromakey.png"
+    alpha_sheet_path: "harness/assets/dokkaebi/sprites/source/haeil_4dir_sprite_sheet_imagegen_v1_alpha.png"
+    prompt_summary: "Four-direction Haeil sprite sheet on flat #ff00ff chroma-key background: down, left, right, up."
+    notes:
+      - "Generated to prototype directional movement readability."
+      - "Requires human art review before promotion from ai-draft."
+
+assets:
+  dokkaebi.hero.haeil.battle_sd.v1:
+    status: ai-draft
+    type: character_sprite
+    source: dokkaebi.units.sprite_sheet.imagegen_v1
+    design_path: "harness/design/dokkaebi/assets/units/haeil_player.png"
+    canonical_path: "harness/assets/dokkaebi/sprites/units/haeil_player.png"
+    runtime_path: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_player.png"
+    used_by:
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:_draw_player"
+    review_notes:
+      - "Readable at prototype scale, but pose/style should be reviewed against official Haeil."
+
+  dokkaebi.hero.haeil.battle_4dir.v1:
+    status: ai-draft
+    type: character_directional_sprite_set
+    source: dokkaebi.hero.haeil.4dir.imagegen_v1
+    directions:
+      down:
+        canonical_path: "harness/assets/dokkaebi/sprites/units/haeil_down.png"
+        design_path: "harness/design/dokkaebi/assets/units/haeil_down.png"
+        runtime_path: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_down.png"
+      left:
+        canonical_path: "harness/assets/dokkaebi/sprites/units/haeil_left.png"
+        design_path: "harness/design/dokkaebi/assets/units/haeil_left.png"
+        runtime_path: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_left.png"
+      right:
+        canonical_path: "harness/assets/dokkaebi/sprites/units/haeil_right.png"
+        design_path: "harness/design/dokkaebi/assets/units/haeil_right.png"
+        runtime_path: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_right.png"
+      up:
+        canonical_path: "harness/assets/dokkaebi/sprites/units/haeil_up.png"
+        design_path: "harness/design/dokkaebi/assets/units/haeil_up.png"
+        runtime_path: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_up.png"
+    used_by:
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:_draw_player"
+    review_notes:
+      - "Direction set is stable enough for movement prototyping; animation frames are still simulated in runtime."
+
+  dokkaebi.enemy.japgwi.swarm.v1:
+    status: ai-draft
+    type: enemy_sprite
+    source: dokkaebi.units.sprite_sheet.imagegen_v1
+    design_path: "harness/design/dokkaebi/assets/units/monster_japgwi.png"
+    canonical_path: "harness/assets/dokkaebi/sprites/units/monster_japgwi.png"
+    runtime_path: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_japgwi.png"
+    used_by:
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:_draw_enemy kind=japgwi"
+
+  dokkaebi.enemy.dokkaebi_grunt.v1:
+    status: ai-draft
+    type: enemy_sprite
+    source: dokkaebi.units.sprite_sheet.imagegen_v1
+    design_path: "harness/design/dokkaebi/assets/units/monster_grunt.png"
+    canonical_path: "harness/assets/dokkaebi/sprites/units/monster_grunt.png"
+    runtime_path: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_grunt.png"
+    used_by:
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:_draw_enemy kind=grunt"
+    review_notes:
+      - "Tint/scale variant of japgwi source for prototype differentiation."
+
+  dokkaebi.enemy.ghost.v1:
+    status: ai-draft
+    type: enemy_sprite
+    source: dokkaebi.units.sprite_sheet.imagegen_v1
+    design_path: "harness/design/dokkaebi/assets/units/monster_ghost.png"
+    canonical_path: "harness/assets/dokkaebi/sprites/units/monster_ghost.png"
+    runtime_path: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_ghost.png"
+    used_by:
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:_draw_enemy kind=ghost"
+
+  dokkaebi.enemy.talisman_caster.v1:
+    status: ai-draft
+    type: enemy_sprite
+    source: dokkaebi.units.sprite_sheet.imagegen_v1
+    design_path: "harness/design/dokkaebi/assets/units/monster_talisman_caster.png"
+    canonical_path: "harness/assets/dokkaebi/sprites/units/monster_talisman_caster.png"
+    runtime_path: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_talisman_caster.png"
+    used_by:
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:_draw_enemy kind=talisman_caster"
+
+  dokkaebi.boss.night_ogre.v1:
+    status: ai-draft
+    type: boss_sprite
+    source: dokkaebi.units.sprite_sheet.imagegen_v1
+    design_path: "harness/design/dokkaebi/assets/units/monster_night_ogre.png"
+    canonical_path: "harness/assets/dokkaebi/sprites/units/monster_night_ogre.png"
+    runtime_path: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_night_ogre.png"
+    used_by:
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:_draw_enemy kind=night_ogre"
+    review_notes:
+      - "Prototype boss sprite; silhouette works, but boss identity needs art direction approval."

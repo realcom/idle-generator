@@ -1,0 +1,130 @@
+version: 1
+game: taskstonebar
+updated_at: 2026-06-23T00:00:00+09:00
+
+source:
+  name: taskstone-local-prototype
+  path: "/Users/yangjinhwan/Downloads/taskstone (1)/assets/img"
+  license_hint: "Task Stone package.json declares MIT; verify before redistribution."
+  note: "Imported as style/reference and MVP runtime seed assets for Taskstonebar."
+
+collections:
+  - name: taskstone-imported-pixel-ui
+    prefix: source/taskstone/
+    type: ui-sprite
+    status: draft
+    source: taskstone-local-prototype
+  - name: taskstone-imported-stone-icons
+    prefix: source/taskstone/stone
+    type: item-icon
+    status: draft
+    source: taskstone-local-prototype
+
+assets:
+  stone_keeper_remodel_sheet_a:
+    file: generated/characters/stone_keeper_character_remodel_sheet_a.png
+    source_file: ../../design/taskstonebar/concepts/stone_keeper_character_remodel_sheet_a_source.png
+    type: sprite-sheet-concept
+    dimensions: "2172x724"
+    status: candidate
+    used_by:
+      units: [110111]
+      runtime: [taskstonebar_bottom_combat_hero]
+    note: "Transparent chroma-key extraction from imagegen concept. Needs recut to exact 48x48 or 64x64 frames before runtime replacement."
+  hero_sheet:
+    file: source/taskstone/hero.png
+    type: sprite-sheet
+    dimensions: "528x48"
+    frames: 11
+    frame_size: "48x48"
+    used_by:
+      units: [110111]
+    status: draft
+  panel_frame:
+    file: source/taskstone/frame.png
+    type: nine-slice-source
+    dimensions: "128x128"
+    slice_hint: 30
+    used_by:
+      ui: [status_panel, portal_panel, stone_panel]
+    status: draft
+  inner_panel:
+    file: source/taskstone/inner.png
+    type: nine-slice-source
+    dimensions: "128x256"
+    used_by:
+      ui: [panel_body]
+    status: draft
+  slot_frame:
+    file: source/taskstone/slot.png
+    type: cell-frame
+    dimensions: "128x128"
+    used_by:
+      ui: [stone_merge_slot]
+    status: draft
+  stone_0:
+    file: source/taskstone/stone0.png
+    type: item-icon
+    dimensions: "32x32"
+    used_by:
+      items: [200101]
+      units: [110201]
+    status: draft
+  stone_1:
+    file: source/taskstone/stone1.png
+    type: item-icon
+    dimensions: "32x32"
+    used_by:
+      items: [200102]
+      units: [110202]
+    status: draft
+  stone_2:
+    file: source/taskstone/stone2.png
+    type: item-icon
+    dimensions: "37x30"
+    used_by:
+      units: [110501]
+    status: draft
+  rock_projectile:
+    file: source/taskstone/rock.png
+    type: projectile-icon
+    dimensions: "32x32"
+    used_by:
+      skills: [300101]
+      items: [200201]
+    status: draft
+  coin:
+    file: source/taskstone/coin.png
+    type: currency-icon
+    dimensions: "32x32"
+    used_by:
+      items: [5]
+    status: draft
+  ruby:
+    file: source/taskstone/ruby.png
+    type: currency-icon
+    dimensions: "32x32"
+    used_by:
+      items: [3, 4, 200103]
+    status: draft
+  bar_frame:
+    file: source/taskstone/bar_frame.png
+    type: progress-frame
+    dimensions: "192x34"
+    used_by:
+      ui: [hp_bar, exp_bar]
+    status: draft
+  bar_fill:
+    file: source/taskstone/bar_fill.png
+    type: progress-fill
+    dimensions: "192x34"
+    used_by:
+      ui: [hp_bar, exp_bar]
+    status: draft
+  close_button:
+    file: source/taskstone/close.png
+    type: button-icon
+    dimensions: "112x84"
+    used_by:
+      ui: [close_button]
+    status: draft

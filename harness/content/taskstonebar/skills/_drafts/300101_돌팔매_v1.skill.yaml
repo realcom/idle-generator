@@ -1,0 +1,15 @@
+id: 300101
+name: "돌팔매"
+damageType: NormalDamage
+cooldown: 1.2
+priority: 1
+projectileType: Projectile
+projectilePrefab: "FXPrefabs/Taskstonebar/RockProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_RockThrow_Start.prefab" } }
+  - time: 0.12
+    hit:
+      maxHit: 1
+      addDamage: { damagePercent: [135.0] }
+  - { time: 0.32, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_StoneImpact.prefab" } }
+  - { time: 0.45, destroy: {} }

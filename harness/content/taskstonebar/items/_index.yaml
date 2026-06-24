@@ -1,0 +1,132 @@
+version: "1.0"
+updated_at: 2026-06-23T00:00:00+09:00
+
+items:
+  - id: 1
+    name: "플레이어 레벨"
+    file: bootstrap/player_level.item.yaml
+    status: bootstrap
+    created_at: 2026-06-23T00:00:00+09:00
+    created_by: new-content
+    reviewer: null
+    reviewed_at: null
+    tags: [System, Bootstrap, Taskstonebar]
+  - id: 2
+    name: "크레딧"
+    file: bootstrap/credit.item.yaml
+    status: bootstrap
+    created_at: 2026-06-23T00:00:00+09:00
+    created_by: new-content
+    reviewer: null
+    reviewed_at: null
+    tags: [System, Bootstrap, Currency, Taskstonebar]
+  - id: 3
+    name: "루비"
+    file: bootstrap/ruby.item.yaml
+    status: bootstrap
+    created_at: 2026-06-23T00:00:00+09:00
+    created_by: new-content
+    reviewer: null
+    reviewed_at: null
+    tags: [System, Bootstrap, Currency, Taskstonebar]
+  - id: 4
+    name: "무료 루비"
+    file: bootstrap/free_ruby.item.yaml
+    status: bootstrap
+    created_at: 2026-06-23T00:00:00+09:00
+    created_by: new-content
+    reviewer: null
+    reviewed_at: null
+    tags: [System, Bootstrap, Currency, Taskstonebar]
+  - id: 5
+    name: "골드"
+    file: bootstrap/gold.item.yaml
+    status: bootstrap
+    created_at: 2026-06-23T00:00:00+09:00
+    created_by: new-content
+    reviewer: null
+    reviewed_at: null
+    tags: [System, Bootstrap, Currency, Taskstonebar]
+  - id: 6
+    name: "경험치"
+    file: bootstrap/exp.item.yaml
+    status: bootstrap
+    created_at: 2026-06-23T00:00:00+09:00
+    created_by: new-content
+    reviewer: null
+    reviewed_at: null
+    tags: [System, Bootstrap, Currency, Taskstonebar]
+  - id: 7
+    name: "랭크 포인트"
+    file: bootstrap/rank_point.item.yaml
+    status: bootstrap
+    created_at: 2026-06-23T00:00:00+09:00
+    created_by: new-content
+    reviewer: null
+    reviewed_at: null
+    tags: [System, Bootstrap, Currency, Taskstonebar]
+  - id: 8
+    name: "에너지"
+    file: bootstrap/energy.item.yaml
+    status: bootstrap
+    created_at: 2026-06-23T00:00:00+09:00
+    created_by: new-content
+    reviewer: null
+    reviewed_at: null
+    tags: [System, Bootstrap, Currency, Taskstonebar]
+  - id: 110101
+    name: "작업돌지기"
+    file: _drafts/110101_작업돌지기_v1.item.yaml
+    status: draft
+    created_at: 2026-06-23T00:00:00+09:00
+    created_by: new-content
+    reviewer: null
+    reviewed_at: null
+    category: Character
+    refs: { units: [110111], items: [] }
+    tags: [Character, ReservedDefaultCharacter, Taskstonebar]
+  - id: 200101
+    name: "조약돌 파편"
+    file: _drafts/200101_조약돌파편_v1.item.yaml
+    status: draft
+    created_at: 2026-06-23T00:00:00+09:00
+    created_by: new-content
+    reviewer: null
+    reviewed_at: null
+    category: Material
+    refs: { units: [110201, 110202], items: [] }
+    tags: [Material, Stone, Drop, Taskstonebar]
+  - id: 200102
+    name: "이끼 광석"
+    file: _drafts/200102_이끼광석_v1.item.yaml
+    status: draft
+    created_at: 2026-06-23T00:00:00+09:00
+    created_by: new-content
+    reviewer: null
+    reviewed_at: null
+    category: Material
+    refs: { units: [110202, 110501], items: [] }
+    tags: [Material, Ore, Drop, Taskstonebar]
+  - id: 200103
+    name: "큐브 촉매"
+    file: _drafts/200103_큐브촉매_v1.item.yaml
+    status: draft
+    created_at: 2026-06-23T00:00:00+09:00
+    created_by: new-content
+    reviewer: null
+    reviewed_at: null
+    category: Material
+    refs: { units: [110501], items: [] }
+    tags: [Material, Cube, OnlineReward, Taskstonebar]
+  - id: 200201
+    name: "데굴 투석구"
+    file: _drafts/200201_데굴투석구_v1.item.yaml
+    status: draft
+    created_at: 2026-06-23T00:00:00+09:00
+    created_by: new-content
+    reviewer: null
+    reviewed_at: null
+    category: Weapon
+    type: Hammer
+    refs: { units: [], items: [5, 200101, 200103], skills: [300101] }
+    tags: [Weapon, Starter, StoneThrow, Taskstonebar]

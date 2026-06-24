@@ -1,0 +1,33 @@
+id: 110501
+name: "고대 작업석"
+type: Boss
+tags: [Monster]
+armorType: NormalArmor
+
+addStats:
+  - { type: Hp, value: [760.0] }
+  - { type: Attack, value: [34.0] }
+  - { type: Defense, value: [12.0] }
+  - { type: MoveSpeed, value: [2.0] }
+  - { type: BossDamageTakenEfficiencyPercent, value: [0.0] }
+  - { type: ScalePercent, value: [-48.0] }
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 80, maxCount: 130, isCore: true }
+      - { itemDataId: 6, count: 45 }
+      - { itemDataId: 200102, count: 2 }
+  - shouldAddAll: false
+    probPercent: 40
+    addItems:
+      - { itemDataId: 200103, count: 1, weight: 100, group: 2, pityGroup: 5 }
+
+prefab: "Units/Taskstonebar/PFB_AncientTaskstone.prefab"
+sprite: "Assets/Taskstonebar/taskstone/stone2.png"
+uiScale: 1.25
+animations:
+  idle: "ancient_taskstone_idle"
+  move: "ancient_taskstone_move"
+  dead: "ancient_taskstone_dead"

@@ -1,0 +1,27 @@
+id: 200201
+name: "데굴 투석구"
+category: Weapon
+type: Hammer
+tags: [StoneThrow, Starter]
+grade: 1
+rarity: 1
+tier: 1
+power: 34
+equipAddStats:
+  - { type: Attack, value: [24.0] }
+  - { type: AttackSpeedPercent, value: [4.0] }
+equipSkillDataIds: [300101]
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 5, count: 120 }
+      - { id: 200101, count: 3 }
+unstackable: true
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, count: 80 }
+      - { itemDataId: 200101, count: 1 }
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"

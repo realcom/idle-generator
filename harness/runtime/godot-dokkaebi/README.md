@@ -1,9 +1,10 @@
-# Dokkaebi Godot Ingame Prototype
+# Dokkaebi Godot Prototype
 
-Godot 4.6 prototype for the first `도깨비의 세계` survivor combat slice.
+Godot 4.6 prototype for the first `도깨비의 세계` mobile home and survivor combat slice.
 
 This is intentionally a thin core-feel prototype before data/content integration:
 
+- The app starts on a TangTang-style mobile outgame home.
 - Haeil is the first playable hero.
 - Movement is direct, attacks and skills are automatic.
 - The current focus is the `탕탕특공대` style: flat top-down arena, dense swarms, EXP gems, and fast skill picks.
@@ -21,6 +22,7 @@ godot --path harness/runtime/godot-dokkaebi
 
 Keyboard controls:
 
+- `Space` / `Enter`: start sortie from the home screen
 - `WASD` / arrows: move
 - `1`, `2`, `3`: choose a level-up card
 - `Space`: accept the first card when a choice is open
@@ -30,12 +32,15 @@ Keyboard controls:
 
 ```bash
 godot --headless --path harness/runtime/godot-dokkaebi --check-only --script res://scripts/main.gd
+godot --headless --path harness/runtime/godot-dokkaebi --script res://scripts/tools/home_smoke.gd
 godot --headless --path harness/runtime/godot-dokkaebi --script res://scripts/tools/smoke.gd
+godot --path harness/runtime/godot-dokkaebi --script res://scripts/tools/capture_home.gd
 godot --path harness/runtime/godot-dokkaebi --script res://scripts/tools/capture_ingame.gd
 ```
 
 ## Next Hooks
 
+- Replace native home card/CTA/dock primitives with generated parchment and carved-wood 9-slice skins after outgame UX review.
 - Replace primitive Haeil/enemy drawing with approved SD sprites.
 - Move skill numbers into `harness/content/dokkaebi/skills`.
 - Move wave timing into `harness/content/dokkaebi/maps`.

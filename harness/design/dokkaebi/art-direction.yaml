@@ -1,0 +1,79 @@
+version: "1.0"
+game: dokkaebi
+status: draft
+source_concepts:
+  - dokkaebi_outgame_home_tangtang_concept_a
+  - dokkaebi_tangtang_ingame_screen_d_autumn_flat
+  - dokkaebi_tangtang_ingame_screen_c_flat
+  - dokkaebi_tangtang_ingame_screen_b
+
+identity:
+  one_line: "A Korean folklore survivor action game where Haeil prepares in a lantern-lit autumn village home screen, then cuts through small spirits with water-blue spear skills in a dry Joseon yard."
+  non_negotiables:
+    - "Haeil reads as blue headband, gold talisman plate, long black hair, spear, and red glove accent."
+    - "Combat screen remains portrait 9:16 and mobile-touch readable."
+    - "Battle characters are flat, small 2D runtime sprites; at most lightly flattened 3D-to-2D tokens."
+    - "Common enemies are small folklore spirits/goblins/talisman ghosts, not western zombies."
+    - "Water-blue slash VFX is the player's dominant combat signature."
+  forbidden_drift:
+    - "Do not turn the screen into a landing poster or key art composition."
+    - "Do not use bulky UI banners that hide the playfield."
+    - "Do not use large illustrated playfield characters or cinematic monster art."
+    - "Do not let parchment/gold dominate the active battle screen."
+
+palette:
+  primary:
+    - night_forest
+    - lacquer_panel
+    - ink_black
+  secondary:
+    - talisman_gold
+    - parchment_warm
+    - cream_text
+  accent:
+    - water_blue
+    - spirit_teal
+    - water_foam
+  warning:
+    - enemy_red
+    - elite_orange
+  neutral:
+    - disabled_gray
+    - muted_text
+
+materials:
+  battle_panels: "Dark lacquer/ink surfaces with thin talisman-gold bevels and small ornament corners."
+  lobby_panels: "Warm parchment cards on dark wood/lacquer rails with thin talisman-gold trim, lighter than battle HUD but still compact and functional."
+  lobby_cta: "Large lantern-gold sortie button with a dark ink lower edge, fixed ornaments, and native label."
+  lobby_dock: "Dark carved wood bottom dock with icon-first tabs, selected tab using water-blue glow and gold corner marks."
+  buttons: "Circular combat buttons use black lacquer rims, gold edging, and generated water/skill icon wells."
+  icons: "Skill icons should be saturated water-blue/teal atoms with clean silhouettes."
+  backgrounds: "Top-down autumn village ground: dry dirt, muted stone path, fallen red leaves, talisman scraps, carts/barrels/fences at edges only."
+  characters: "Flat SD 2D top-down sprites with compact footprints; Haeil about 7-9% screen height, common enemies about 4-6%."
+
+shape_language:
+  corners: "Small bevels or cut-corner motifs; avoid soft pill-heavy SaaS shapes."
+  outlines: "Thin gold outer stroke plus dark inner stroke for HUD panels."
+  shadows: "Dark vignette and subtle panel shadow; no decorative orbs."
+  ornament_rules: "Talismans, knots, and corner caps are fixed ornaments, not stretch-center details."
+
+typography_treatment:
+  tone: "Readable Korean runtime labels, compact, high-contrast, not decorative display text inside controls."
+  runtime_font_policy: "Concept text may be pseudo; implementation text stays Godot Label/native."
+
+art_asset_rules:
+  transparent_assets:
+    - "lobby tab icons"
+    - "outgame resource icons"
+    - "sortie CTA ornament atoms"
+    - "skill icon atoms"
+    - "resource icon atoms"
+    - "portrait frame ornaments"
+    - "panel corner ornaments"
+  opaque_assets:
+    - "battle ground background chunks only if runtime props cannot carry the look"
+  reuse_first:
+    - "current Godot runtime layout"
+    - "ninja2 survivor HUD composition"
+  generate_when:
+    - "A reusable skin or icon needs painterly material that native shapes cannot communicate."

@@ -1,0 +1,1071 @@
+version: "1.0"
+game: dokkaebi
+status: draft
+source_concepts:
+  - dokkaebi_outgame_home_tangtang_concept_a
+  - dokkaebi_tangtang_ingame_screen_d_autumn_flat
+  - dokkaebi_tangtang_ingame_screen_c_flat
+  - dokkaebi_tangtang_ingame_screen_b
+
+foundation_systems:
+  buttons: "button-system.yaml"
+  modals: "modal-system.yaml"
+  colors: "color-tokens.yaml"
+
+assetization_summary:
+  generate_image:
+    - dokkaebi.outgame.background.courtyard_v2
+    - dokkaebi.outgame.hero.haeil_lobby_sprite_v2
+    - dokkaebi.ui.outgame.topbar_imagegen_v2
+    - dokkaebi.ui.outgame.event_cards_imagegen_v2
+    - dokkaebi.ui.outgame.command_bar_imagegen_v2
+    - dokkaebi.ui.outgame.bottom_nav_imagegen_v2
+    - dokkaebi.ui.outgame.icon_set_v1
+    - dokkaebi.ui.battle.panel_lacquer_9slice
+    - dokkaebi.ui.battle.circular_action_frame_v1
+    - dokkaebi.ui.battle.skill_icons_haeil_v1
+    - dokkaebi.ui.battle.resource_icons_v1
+    - dokkaebi.ui.battle.hero_portrait_haeil_v1
+    - dokkaebi.ui.battle.hero_portrait_frame_v1
+    - dokkaebi.ui.battle.top_status_tab_9slice_v1
+    - dokkaebi.hero.haeil.battle_4dir_walk_v1
+    - dokkaebi.monsters.tangtang_walk_v1
+  native_ui:
+    - dokkaebi.outgame.runtime.native_home_shapes
+    - dokkaebi.battle.runtime.native_hud_shapes
+    - dokkaebi.battle.runtime.progress_bars
+  hybrid:
+    - dokkaebi.ui.outgame.parchment_card_9slice
+    - dokkaebi.ui.outgame.resource_chip_9slice
+    - dokkaebi.ui.outgame.sortie_cta_9slice
+    - dokkaebi.ui.outgame.bottom_tab_cell_9slice
+    - dokkaebi.ui.outgame.tab_selected_9slice
+    - dokkaebi.outgame.hero.haeil_lobby_sprite_v1
+    - dokkaebi.ui.battle.wave_track_9slice
+    - dokkaebi.ui.battle.exp_frame_9slice
+  reuse:
+    - dokkaebi.reference.haeil_user_clipboard
+
+assets:
+  - key: dokkaebi.ui.outgame.parchment_card_9slice
+    type: card_skin
+    mode: hybrid
+    platforms: [godot, phaser, unity]
+    target_path: "harness/design/dokkaebi/assets/ui/outgame_parchment_card_9slice.png"
+    source_path: "harness/design/dokkaebi/assets/ui/outgame_parchment_card_9slice.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_parchment_card_9slice.png"
+    generated_with: "imagegen_source_sheet_plus_deterministic_9slice_rebuild_v1"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_outgame_ui_asset_sheet_imagegen_v1.png"
+    postprocess_notes: "Rebuilt as stretch-safe parchment card skin; native labels, progress, badges, and icon atoms remain separate."
+    usage:
+      - "component-blueprints.yaml:HomeEventCard.skin"
+      - "component-blueprints.yaml:HomeProgressionCard.skin"
+      - "component-blueprints.yaml:HomeTrainingCard.skin"
+      - "component-skins.yaml:outgame_native_cards"
+    prompt_notes: "Warm parchment card with thin dark ink and talisman-gold corner trim, no text, no icons."
+    background: transparent
+    target_size: { width: 192, height: 112 }
+    slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+    states: [normal, alert, locked]
+    variants: []
+    component_contract:
+      slice_hints: "Bitmap card cap borders only."
+      content_insets:
+        HomeEventCard: { left: 10, right: 10, top: 8, bottom: 8 }
+        HomeProgressionCard: { left: 12, right: 12, top: 12, bottom: 12 }
+        HomeTrainingCard: { left: 12, right: 12, top: 12, bottom: 12 }
+      semantic_color_tokens: [outgame_home]
+    godot:
+      usage: nine_patch_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_parchment_card_9slice.png"
+      import_preset: ui_texture
+      slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+    phaser:
+      usage: phaser_nineslice
+      target_path: "harness/runtime/assets/dokkaebi/ui/outgame_parchment_card_9slice.png"
+      renderer: scene.add.nineslice
+      port_status: metadata_only
+    unity:
+      usage: sliced_sprite
+      target_path: "Assets/Resources/HarnessPreview/Dokkaebi/OutgameUI/outgame_parchment_card_9slice.png"
+      import_preset: sprite_2d_ui
+      slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+      port_status: recipe_only
+    priority: must
+    blocking_reason: ""
+    status: generated_v1_9slice_safe
+
+  - key: dokkaebi.ui.outgame.resource_chip_9slice
+    type: chip_skin
+    mode: hybrid
+    platforms: [godot, phaser, unity]
+    target_path: "harness/design/dokkaebi/assets/ui/outgame_resource_chip_9slice.png"
+    source_path: "harness/design/dokkaebi/assets/ui/outgame_resource_chip_9slice.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_resource_chip_9slice.png"
+    generated_with: "deterministic_per_cell_rebuild_v3"
+    imagegen_source_path: ""
+    postprocess_notes: "Rebuilt as compact dark chip with safe stretch center and fixed plus affordance zone."
+    usage:
+      - "component-blueprints.yaml:HomeResourceChip.skin"
+      - "component-skins.yaml:outgame_native_cards"
+    prompt_notes: "Compact dark lacquer resource chip with gold trim, icon well, plus affordance, no value text."
+    background: transparent
+    target_size: { width: 128, height: 56 }
+    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+    states: [normal, alert]
+    variants: []
+    component_contract:
+      slice_hints: "Compact chip cap borders only."
+      content_insets:
+        HomeResourceChip: { left: 8, right: 8, top: 6, bottom: 6 }
+        HomeProfileButton: { left: 10, right: 10, top: 8, bottom: 8 }
+      semantic_color_tokens: [outgame_home]
+    godot:
+      usage: nine_patch_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_resource_chip_9slice.png"
+      import_preset: ui_texture
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+    phaser:
+      usage: phaser_nineslice
+      target_path: "harness/runtime/assets/dokkaebi/ui/outgame_resource_chip_9slice.png"
+      renderer: scene.add.nineslice
+      port_status: metadata_only
+    unity:
+      usage: sliced_sprite
+      target_path: "Assets/Resources/HarnessPreview/Dokkaebi/OutgameUI/outgame_resource_chip_9slice.png"
+      import_preset: sprite_2d_ui
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+      port_status: recipe_only
+    priority: must
+    blocking_reason: ""
+    status: generated_v1_9slice_safe
+
+  - key: dokkaebi.ui.outgame.sortie_cta_9slice
+    type: button_skin
+    mode: hybrid
+    platforms: [godot, phaser, unity]
+    target_path: "harness/design/dokkaebi/assets/ui/outgame_sortie_cta_9slice.png"
+    source_path: "harness/design/dokkaebi/assets/ui/outgame_sortie_cta_9slice.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_sortie_cta_9slice.png"
+    generated_with: "imagegen_source_sheet_plus_deterministic_9slice_rebuild_v1"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_outgame_ui_asset_sheet_imagegen_v1.png"
+    postprocess_notes: "Rebuilt as stable lantern-orange CTA skin; title, stage label, and stamina cost stay native."
+    usage:
+      - "component-blueprints.yaml:HomeSortieButton.skin"
+      - "component-skins.yaml:outgame_sortie_cta"
+    prompt_notes: "Large lantern-orange sortie/start button frame, gold inner rim, no text."
+    background: transparent
+    target_size: { width: 192, height: 112 }
+    slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+    states: [normal, pressed, ready_pulse]
+    variants: []
+    component_contract:
+      slice_hints: "CTA cap borders only."
+      content_insets:
+        HomeSortieButton: { left: 14, right: 14, top: 12, bottom: 12 }
+      semantic_color_tokens: [outgame_home]
+    godot:
+      usage: nine_patch_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_sortie_cta_9slice.png"
+      import_preset: ui_texture
+      slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+    phaser:
+      usage: phaser_nineslice
+      target_path: "harness/runtime/assets/dokkaebi/ui/outgame_sortie_cta_9slice.png"
+      renderer: scene.add.nineslice
+      port_status: metadata_only
+    unity:
+      usage: sliced_sprite
+      target_path: "Assets/Resources/HarnessPreview/Dokkaebi/OutgameUI/outgame_sortie_cta_9slice.png"
+      import_preset: sprite_2d_ui
+      slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+      port_status: recipe_only
+    priority: must
+    blocking_reason: ""
+    status: generated_v1_9slice_safe
+
+  - key: dokkaebi.ui.outgame.bottom_dock_9slice
+    type: dock_skin
+    mode: hybrid
+    platforms: [godot, phaser, unity]
+    target_path: "harness/design/dokkaebi/assets/ui/outgame_bottom_dock_9slice.png"
+    source_path: "harness/design/dokkaebi/assets/ui/outgame_bottom_dock_9slice.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_bottom_dock_9slice.png"
+    generated_with: "imagegen_source_sheet_plus_deterministic_9slice_rebuild_v1"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_outgame_ui_asset_sheet_imagegen_v1.png"
+    postprocess_notes: "Legacy full-width dock skin. Kept for history, but runtime outgame bottom nav now uses per-tab cell skins instead of this full-width bitmap."
+    usage:
+      - "component-blueprints.yaml:HomeBottomNav.skin"
+      - "component-skins.yaml:outgame_bottom_nav"
+    prompt_notes: "Dark carved wood bottom dock frame with gold dividers, no labels or icons."
+    background: transparent
+    target_size: { width: 540, height: 112 }
+    slice_hints: { left: 16, right: 16, top: 16, bottom: 16 }
+    states: [normal]
+    variants: []
+    component_contract:
+      slice_hints: "Dock cap borders only."
+      content_insets:
+        HomeBottomNav: { left: 8, right: 8, top: 10, bottom: 8 }
+      semantic_color_tokens: [outgame_home]
+    godot:
+      usage: nine_patch_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_bottom_dock_9slice.png"
+      import_preset: ui_texture
+      slice_hints: { left: 16, right: 16, top: 16, bottom: 16 }
+    phaser:
+      usage: phaser_nineslice
+      target_path: "harness/runtime/assets/dokkaebi/ui/outgame_bottom_dock_9slice.png"
+      renderer: scene.add.nineslice
+      port_status: metadata_only
+    unity:
+      usage: sliced_sprite
+      target_path: "Assets/Resources/HarnessPreview/Dokkaebi/OutgameUI/outgame_bottom_dock_9slice.png"
+      import_preset: sprite_2d_ui
+      slice_hints: { left: 16, right: 16, top: 16, bottom: 16 }
+      port_status: recipe_only
+    priority: nice
+    blocking_reason: ""
+    status: deprecated_for_runtime_replaced_by_per_tab_cells
+
+  - key: dokkaebi.ui.outgame.bottom_tab_cell_9slice
+    type: tab_skin
+    mode: hybrid
+    platforms: [godot, phaser, unity]
+    target_path: "harness/design/dokkaebi/assets/ui/outgame_bottom_tab_cell_9slice.png"
+    source_path: "harness/design/dokkaebi/assets/ui/outgame_bottom_tab_cell_9slice.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_bottom_tab_cell_9slice.png"
+    generated_with: "deterministic_per_cell_rebuild_v4"
+    imagegen_source_path: ""
+    postprocess_notes: "Built as one reusable per-tab cell skin with edge-to-edge dark wood rails, replacing the previous full-width bottom dock runtime backing. Native labels, alert dots, selection marker, and icons remain separate."
+    usage:
+      - "component-blueprints.yaml:HomeBottomTab.normal_skin"
+      - "component-skins.yaml:outgame_bottom_nav"
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:Skin_TabCellNormal"
+    prompt_notes: "Dark carved wood single bottom tab cell with talisman-gold trim, attached dock-like edge rails, no label, no icon, no full-width dock image."
+    background: transparent
+    target_size: { width: 108, height: 92 }
+    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+    states: [normal]
+    variants: []
+    component_contract:
+      slice_hints: "Single tab cell cap borders only."
+      content_insets:
+        HomeBottomTab: { left: 8, right: 8, top: 8, bottom: 8 }
+      semantic_color_tokens: [outgame_home]
+    godot:
+      usage: nine_patch_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_bottom_tab_cell_9slice.png"
+      import_preset: ui_texture
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+    phaser:
+      usage: phaser_nineslice
+      target_path: "harness/runtime/assets/dokkaebi/ui/outgame_bottom_tab_cell_9slice.png"
+      renderer: scene.add.nineslice
+      port_status: metadata_only
+    unity:
+      usage: sliced_sprite
+      target_path: "Assets/Resources/HarnessPreview/Dokkaebi/OutgameUI/outgame_bottom_tab_cell_9slice.png"
+      import_preset: sprite_2d_ui
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+      port_status: recipe_only
+    priority: must
+    blocking_reason: ""
+    status: generated_v4_9slice_safe
+
+  - key: dokkaebi.ui.outgame.tab_selected_9slice
+    type: tab_skin
+    mode: hybrid
+    platforms: [godot, phaser, unity]
+    target_path: "harness/design/dokkaebi/assets/ui/outgame_tab_selected_9slice.png"
+    source_path: "harness/design/dokkaebi/assets/ui/outgame_tab_selected_9slice.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_tab_selected_9slice.png"
+    generated_with: "deterministic_per_cell_rebuild_v4"
+    imagegen_source_path: ""
+    postprocess_notes: "Rebuilt as selected per-tab skin with water-blue inner diamond, gold trim, and bottom glow marker; used inside one 108px tab cell, never as a full-width dock."
+    usage:
+      - "component-blueprints.yaml:HomeBottomTab.selected_skin"
+      - "component-skins.yaml:outgame_bottom_nav"
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:Skin_TabSelected"
+    prompt_notes: "Selected bottom tab frame with water-blue diamond glow, gold trim, no label."
+    background: transparent
+    target_size: { width: 108, height: 92 }
+    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+    states: [selected]
+    variants: []
+    component_contract:
+      slice_hints: "Selected tab cap borders only."
+      content_insets:
+        HomeBottomTab: { left: 8, right: 8, top: 8, bottom: 8 }
+      semantic_color_tokens: [outgame_home]
+    godot:
+      usage: nine_patch_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_tab_selected_9slice.png"
+      import_preset: ui_texture
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+    phaser:
+      usage: phaser_nineslice
+      target_path: "harness/runtime/assets/dokkaebi/ui/outgame_tab_selected_9slice.png"
+      renderer: scene.add.nineslice
+      port_status: metadata_only
+    unity:
+      usage: sliced_sprite
+      target_path: "Assets/Resources/HarnessPreview/Dokkaebi/OutgameUI/outgame_tab_selected_9slice.png"
+      import_preset: sprite_2d_ui
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+      port_status: recipe_only
+    priority: should
+    blocking_reason: ""
+    status: generated_v1_9slice_safe
+
+  - key: dokkaebi.ui.outgame.icon_set_v1
+    type: ui_icon_set
+    mode: generate_image
+    platforms: [godot, phaser, unity]
+    target_path: "harness/design/dokkaebi/assets/ui/outgame_icon_set_v1.png"
+    source_path: "harness/design/dokkaebi/assets/ui/outgame_icon_set_v1.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_set_v1.png"
+    generated_with: "imagegen_source_sheet_plus_deterministic_icon_postprocess_v1"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_outgame_ui_asset_sheet_imagegen_v1.png"
+    postprocess_notes: "Icon atoms rebuilt from the imagegen source-sheet art direction for small mobile readability; no text is baked."
+    usage:
+      - "component-blueprints.yaml:HomeResourceChip.icon"
+      - "component-blueprints.yaml:HomeMailButton.mail_icon"
+      - "component-blueprints.yaml:HomeEventCard.icon_or_thumbnail"
+      - "component-blueprints.yaml:HomeProgressionCard.chest_icon"
+      - "component-blueprints.yaml:HomeTrainingCard.skill_icon_row"
+      - "component-blueprints.yaml:HomeBottomTab.icon"
+    prompt_notes: "Dokkaebi outgame icon atoms: stamina flame, coin, jade gem, mail, home shrine, yokai mask, weapon, talisman, shop, chest, training, relic, boss. No text."
+    background: transparent
+    target_size: { width: 256, height: 256 }
+    slice_hints: null
+    states: [normal]
+    variants: [stamina, coin, gem, mail, home, yokai, weapon, talisman, shop, chest, training, relic, boss]
+    godot:
+      usage: texture_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_set_v1.png"
+      variant_target_paths:
+        stamina: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_stamina.png"
+        coin: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_coin.png"
+        gem: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_gem.png"
+        mail: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_mail.png"
+        home: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_home.png"
+        yokai: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_yokai.png"
+        weapon: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_weapon.png"
+        talisman: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_talisman.png"
+        shop: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_shop.png"
+        chest: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_chest.png"
+        training: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_training.png"
+        relic: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_relic.png"
+        boss: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_icon_boss.png"
+      import_preset: ui_texture
+      slice_hints: null
+    phaser:
+      usage: image_sprite_set
+      target_path: "harness/runtime/assets/dokkaebi/ui/outgame_icon_set_v1.png"
+      port_status: metadata_only
+    unity:
+      usage: sprite_atlas_source
+      target_path: "Assets/Resources/HarnessPreview/Dokkaebi/OutgameUI/outgame_icon_set_v1.png"
+      import_preset: sprite_2d_ui_multiple
+      slice_hints: null
+      port_status: recipe_only
+    priority: must
+    blocking_reason: ""
+    status: generated_v1
+
+  - key: dokkaebi.ui.outgame.topbar_imagegen_v2
+    type: ui_texture_set
+    mode: generate_image
+    platforms: [godot, phaser]
+    target_path: "harness/design/dokkaebi/assets/ui/outgame_top_profile_chip_v2.png"
+    source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_outgame_imagegen_v2/"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_top_profile_chip_v2.png"
+    generated_with: "built_in_imagegen_individual_prompts_plus_chromakey_postprocess_v2"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_outgame_imagegen_v2/"
+    postprocess_notes: "One imagegen call per topbar asset; chroma-key source and alpha source preserved, then trimmed/resized by harness/tools/postprocess_dokkaebi_outgame_imagegen_v2.py. Native labels and values remain separate."
+    usage:
+      - "component-blueprints.yaml:HomeProfileButton.skin"
+      - "component-blueprints.yaml:HomeResourceChip.skin"
+      - "component-blueprints.yaml:HomeMailButton.mail_button"
+    prompt_notes: "Top profile chip, compact resource chip, mail button, and resource icons matching the selected outgame concept. No text or values."
+    background: transparent
+    target_size: { width: 300, height: 100 }
+    variant_target_sizes:
+      profile_chip: { width: 300, height: 100 }
+      resource_chip: { width: 192, height: 84 }
+      mail_button: { width: 96, height: 96 }
+      stamina: { width: 96, height: 96 }
+      coin: { width: 96, height: 96 }
+      gem: { width: 96, height: 96 }
+    slice_hints: null
+    states: [normal]
+    variants: [profile_chip, resource_chip, mail_button, stamina, coin, gem]
+    godot:
+      usage: texture_rect_set
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_top_profile_chip_v2.png"
+      variant_target_paths:
+        profile_chip: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_top_profile_chip_v2.png"
+        resource_chip: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_top_resource_chip_v2.png"
+        mail_button: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_top_mail_button_v2.png"
+        stamina: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_resource_stamina_v2.png"
+        coin: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_resource_coin_v2.png"
+        gem: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_resource_gem_v2.png"
+      import_preset: ui_texture
+      slice_hints: null
+    phaser:
+      usage: image_sprite_set
+      target_path: "harness/runtime/assets/dokkaebi/ui/outgame_top_profile_chip_v2.png"
+      port_status: metadata_only
+    priority: must
+    blocking_reason: ""
+    status: generated_v2_imagegen_individual_assets
+
+  - key: dokkaebi.ui.outgame.event_cards_imagegen_v2
+    type: ui_card_art_set
+    mode: generate_image
+    platforms: [godot, phaser]
+    target_path: "harness/design/dokkaebi/assets/ui/outgame_event_daily_v2.png"
+    source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_outgame_imagegen_v2/"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_event_daily_v2.png"
+    generated_with: "built_in_imagegen_individual_prompts_plus_chromakey_postprocess_v2"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_outgame_imagegen_v2/"
+    postprocess_notes: "Five right-rail cards generated one by one; each keeps labels/progress/badges native and reserves lower card space for runtime text."
+    usage:
+      - "component-blueprints.yaml:HomeEventCard.icon_or_thumbnail"
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:Section_EventRail"
+    prompt_notes: "Daily training, relic, boss, locked feature, and treasure card artwork in the selected Dokkaebi outgame material language. No baked text."
+    background: transparent
+    target_size: { width: 300, height: 180 }
+    slice_hints: null
+    states: [normal, locked, alert]
+    variants: [daily, relic, boss, locked, chest]
+    godot:
+      usage: texture_rect_set
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_event_daily_v2.png"
+      variant_target_paths:
+        daily: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_event_daily_v2.png"
+        relic: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_event_relic_v2.png"
+        boss: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_event_boss_v2.png"
+        locked: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_event_locked_v2.png"
+        chest: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_event_chest_v2.png"
+      import_preset: ui_texture
+      slice_hints: null
+    phaser:
+      usage: image_sprite_set
+      target_path: "harness/runtime/assets/dokkaebi/ui/outgame_event_daily_v2.png"
+      port_status: metadata_only
+    priority: must
+    blocking_reason: ""
+    status: generated_v2_imagegen_individual_assets
+
+  - key: dokkaebi.ui.outgame.command_bar_imagegen_v2
+    type: ui_texture_set
+    mode: generate_image
+    platforms: [godot, phaser]
+    target_path: "harness/design/dokkaebi/assets/ui/outgame_command_reward_v2.png"
+    source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_outgame_imagegen_v2/"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_command_reward_v2.png"
+    generated_with: "built_in_imagegen_individual_prompts_plus_chromakey_postprocess_v2"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_outgame_imagegen_v2/"
+    postprocess_notes: "Reward card, training card, and sortie CTA generated separately; native labels, progress, stage, and cost remain overlaid by Godot."
+    usage:
+      - "component-blueprints.yaml:HomeProgressionCard.icon_or_thumbnail"
+      - "component-blueprints.yaml:HomeTrainingCard.skill_icon_row"
+      - "component-blueprints.yaml:HomeSortieButton.skin"
+    prompt_notes: "Lower reward/training cards and lantern sortie CTA matching selected concept, no baked text."
+    background: transparent
+    target_size: { width: 328, height: 328 }
+    variant_target_sizes:
+      reward: { width: 328, height: 328 }
+      training: { width: 328, height: 328 }
+      sortie_cta: { width: 336, height: 248 }
+    slice_hints: null
+    states: [normal, ready_pulse]
+    variants: [reward, training, sortie_cta]
+    godot:
+      usage: texture_rect_set
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_command_reward_v2.png"
+      variant_target_paths:
+        reward: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_command_reward_v2.png"
+        training: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_command_training_v2.png"
+        sortie_cta: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_sortie_cta_v2.png"
+      import_preset: ui_texture
+      slice_hints: null
+    phaser:
+      usage: image_sprite_set
+      target_path: "harness/runtime/assets/dokkaebi/ui/outgame_command_reward_v2.png"
+      port_status: metadata_only
+    priority: must
+    blocking_reason: ""
+    status: generated_v2_imagegen_individual_assets
+
+  - key: dokkaebi.ui.outgame.bottom_nav_imagegen_v2
+    type: ui_texture_set
+    mode: generate_image
+    platforms: [godot, phaser]
+    target_path: "harness/design/dokkaebi/assets/ui/outgame_bottom_dock_v2.png"
+    source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_outgame_imagegen_v2/"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_bottom_dock_v2.png"
+    generated_with: "built_in_imagegen_individual_prompts_plus_chromakey_postprocess_v2"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_outgame_imagegen_v2/"
+    postprocess_notes: "Five tab icons generated one asset at a time. The old dock bitmap is retained only as a legacy source artifact; runtime bottom shell now uses per-tab cell skins."
+    usage:
+      - "component-blueprints.yaml:HomeBottomTab.icon"
+    prompt_notes: "Home/yokai/weapon/talisman/shop tab icons matching selected concept. No labels; no runtime full-width dock backing."
+    background: transparent
+    target_size: { width: 1080, height: 224 }
+    variant_target_sizes:
+      dock: { width: 1080, height: 224 }
+      selected: { width: 208, height: 184 }
+      home: { width: 128, height: 128 }
+      yokai: { width: 128, height: 128 }
+      weapon: { width: 128, height: 128 }
+      talisman: { width: 128, height: 128 }
+      shop: { width: 128, height: 128 }
+    slice_hints: null
+    states: [normal, selected]
+    variants: [dock, selected, home, yokai, weapon, talisman, shop]
+    godot:
+      usage: texture_rect_set
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_bottom_dock_v2.png"
+      variant_target_paths:
+        dock: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_bottom_dock_v2.png"
+        selected: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_tab_selected_v2.png"
+        home: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_tab_home_v2.png"
+        yokai: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_tab_yokai_v2.png"
+        weapon: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_tab_weapon_v2.png"
+        talisman: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_tab_talisman_v2.png"
+        shop: "harness/runtime/godot-dokkaebi/assets/generated/ui/outgame_tab_shop_v2.png"
+      import_preset: ui_texture
+      slice_hints: null
+    phaser:
+      usage: image_sprite_set
+      target_path: "harness/runtime/assets/dokkaebi/ui/outgame_bottom_dock_v2.png"
+      port_status: metadata_only
+    priority: must
+    blocking_reason: ""
+    status: generated_v2_imagegen_individual_assets
+
+  - key: dokkaebi.outgame.hero.haeil_lobby_sprite_v1
+    type: character_sprite
+    mode: hybrid
+    platforms: [godot, unity]
+    target_path: "harness/design/dokkaebi/assets/units/haeil_player.png"
+    source_path: "harness/design/dokkaebi/assets/units/haeil_player.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_player.png"
+    generated_with: "reused_from_dokkaebi_battle_haeil_sprite_v1"
+    postprocess_notes: "Temporary lobby hero uses the approved playable Haeil sprite until a taller lobby-specific illustration is generated."
+    usage:
+      - "component-blueprints.yaml:HomeHeroFigure.hero_sprite"
+      - "harness/godot/recipes/ui/dokkaebi-outgame-home.yaml:Tex_HaeilLobby"
+    prompt_notes: "Future replacement should be a transparent full-body Haeil lobby hero with spear and water-blue energy, no text."
+    background: transparent
+    target_size: { width: 188, height: 252 }
+    slice_hints: null
+    states: [normal]
+    variants: []
+    component_contract:
+      semantic_color_tokens: [water_blue, talisman_gold]
+    godot:
+      usage: texture_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_player.png"
+      import_preset: ui_texture
+      slice_hints: null
+    unity:
+      usage: image_sprite
+      target_path: "Assets/Resources/HarnessPreview/Dokkaebi/Units/haeil_player.png"
+      import_preset: sprite_2d_ui
+      slice_hints: null
+      port_status: recipe_only
+    priority: must
+    blocking_reason: ""
+    status: reused_runtime_sprite
+
+  - key: dokkaebi.outgame.background.courtyard_v2
+    type: background
+    mode: generate_image
+    platforms: [godot, phaser]
+    target_path: "harness/design/dokkaebi/assets/backgrounds/outgame_courtyard_bg_v2.png"
+    source_path: "harness/design/dokkaebi/assets/source/dokkaebi_outgame_scene_imagegen_v2/outgame_courtyard_bg_v2_source.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/backgrounds/outgame_courtyard_bg_v2.png"
+    generated_with: "built_in_imagegen_original_background_plus_cover_resize_v2"
+    imagegen_source_path: "harness/design/dokkaebi/assets/source/dokkaebi_outgame_scene_imagegen_v2/outgame_courtyard_bg_v2_source.png"
+    postprocess_notes: "Original generated lobby background; not a concept crop. Cropped/resized to 540x960 by harness/tools/postprocess_dokkaebi_outgame_scene_imagegen_v2.py. Contains no UI, text, or character."
+    usage:
+      - "component-blueprints.yaml:HomeCourtyardBackdrop.background"
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:_draw_home_background"
+    prompt_notes: "Joseon autumn village courtyard at dusk, no UI, no character, clear overlay zones for top bar, right rail, command cards, and bottom nav."
+    background: opaque
+    target_size: { width: 540, height: 960 }
+    slice_hints: null
+    states: [normal]
+    variants: []
+    godot:
+      usage: canvas_draw_texture
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/backgrounds/outgame_courtyard_bg_v2.png"
+      import_preset: texture
+      slice_hints: null
+    phaser:
+      usage: image_cover
+      target_path: "harness/runtime/assets/dokkaebi/backgrounds/outgame_courtyard_bg_v2.png"
+      port_status: metadata_only
+    priority: must
+    blocking_reason: ""
+    status: generated_v2_imagegen_original_asset
+
+  - key: dokkaebi.outgame.hero.haeil_lobby_sprite_v2
+    type: character_sprite
+    mode: generate_image
+    platforms: [godot, phaser]
+    target_path: "harness/design/dokkaebi/assets/units/haeil_lobby_v2.png"
+    source_path: "harness/design/dokkaebi/assets/source/dokkaebi_outgame_scene_imagegen_v2/haeil_lobby_v2_alpha.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_lobby_v2.png"
+    generated_with: "built_in_imagegen_chromakey_alpha_postprocess_v2"
+    imagegen_source_path: "harness/design/dokkaebi/assets/source/dokkaebi_outgame_scene_imagegen_v2/haeil_lobby_v2_chromakey.png"
+    postprocess_notes: "Original generated Haeil lobby figure; chroma-key removed locally, then fitted to 360x560 with transparent padding. No concept crop."
+    usage:
+      - "component-blueprints.yaml:HomeHeroFigure.hero_sprite"
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:Tex_HaeilLobbyV2"
+    prompt_notes: "Full-body Haeil lobby hero: long black hair, blue headband, gold talisman plate, spear, red glove, water-blue energy. No UI or text."
+    background: transparent
+    target_size: { width: 360, height: 560 }
+    slice_hints: null
+    states: [normal]
+    variants: []
+    component_contract:
+      semantic_color_tokens: [water_blue, talisman_gold]
+    godot:
+      usage: texture_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_lobby_v2.png"
+      import_preset: ui_texture
+      slice_hints: null
+    phaser:
+      usage: image_sprite
+      target_path: "harness/runtime/assets/dokkaebi/units/haeil_lobby_v2.png"
+      port_status: metadata_only
+    priority: must
+    blocking_reason: ""
+    status: generated_v2_imagegen_original_asset
+
+  - key: dokkaebi.outgame.runtime.native_home_shapes
+    type: native_ui_shapes
+    mode: native_ui
+    platforms: [godot]
+    target_path: ""
+    usage:
+      - "component-blueprints.yaml:HomeCourtyardBackdrop.native_shapes"
+      - "component-blueprints.yaml:HomeSortieButton.native_shapes"
+      - "component-blueprints.yaml:HomeBottomNav.native_shapes"
+      - "component-skins.yaml:outgame_native_cards"
+    prompt_notes: "Native Godot ColorRect, PanelContainer, Label, Button, ProgressBar, and draw primitives. No bitmap output."
+    background: transparent
+    target_size: { width: 0, height: 0 }
+    slice_hints: null
+    states: [normal, selected, alert, disabled]
+    variants: []
+    godot:
+      usage: none
+      target_path: ""
+      import_preset: none
+      slice_hints: null
+    priority: must
+    blocking_reason: ""
+    status: implemented_native_first_pass
+
+  - key: dokkaebi.ui.battle.panel_lacquer_9slice
+    type: nine_slice_panel
+    mode: hybrid
+    platforms: [godot]
+    target_path: "harness/design/dokkaebi/assets/ui/battle_panel_lacquer_9slice.png"
+    source_path: "harness/design/dokkaebi/assets/ui/battle_panel_lacquer_9slice.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/battle_panel_lacquer_9slice.png"
+    generated_with: "imagegen_palette_plus_deterministic_9slice_rebuild_v2"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_battle_ui_asset_sheet_imagegen_v1.png"
+    postprocess_notes: "Rebuilt as stretch-safe 9-slice: flat lacquer center, structural gold trim, cap-only corner marks, and no center brush/ornament distortion."
+    usage:
+      - "component-blueprints.yaml:BattleTopHudPanel.skin"
+      - "component-skins.yaml:battle_lacquer_panel"
+    prompt_notes: "Dark lacquer/ink rectangular HUD panel with thin talisman-gold bevel, no text, no icons, transparent outside bounds."
+    background: transparent
+    target_size: { width: 192, height: 96 }
+    slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+    states: [normal]
+    variants: []
+    component_contract:
+      slice_hints: "Bitmap cap borders only."
+      content_insets:
+        BattleHeroPanel: { left: 10, right: 10, top: 8, bottom: 8 }
+        BattleTimerPanel: { left: 12, right: 12, top: 10, bottom: 10 }
+        BattleRunLedger: { left: 12, right: 12, top: 8, bottom: 8 }
+      semantic_color_tokens: [lacquer_panel, talisman_gold, cream_text]
+    godot:
+      usage: nine_patch_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/battle_panel_lacquer_9slice.png"
+      import_preset: ui_texture
+      slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+    phaser:
+      usage: phaser_nineslice
+      target_path: "harness/runtime/assets/dokkaebi/ui/battle_panel_lacquer_9slice.png"
+      renderer: scene.add.nineslice
+      port_status: metadata_only
+    priority: must
+    blocking_reason: "Needed before replacing hand-drawn HUD panels with generated Godot Control skins."
+    status: generated_v2_9slice_safe
+
+  - key: dokkaebi.ui.battle.wave_track_9slice
+    type: progress_frame
+    mode: hybrid
+    platforms: [godot]
+    target_path: "harness/design/dokkaebi/assets/ui/battle_wave_track_9slice.png"
+    source_path: "harness/design/dokkaebi/assets/ui/battle_wave_track_9slice.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/battle_wave_track_9slice.png"
+    generated_with: "imagegen_palette_plus_deterministic_9slice_rebuild_v2"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_battle_ui_asset_sheet_imagegen_v1.png"
+    postprocess_notes: "Rebuilt as stretch-safe horizontal rail: cap dots stay in fixed ends, center is a clean repeat-free line."
+    usage:
+      - "component-blueprints.yaml:BattleWaveTrack.skin"
+      - "component-skins.yaml:battle_wave_track"
+    prompt_notes: "Thin dark lacquer progress rail with gold edge caps, transparent outside, no labels or pips."
+    background: transparent
+    target_size: { width: 512, height: 24 }
+    slice_hints: { left: 28, right: 28, top: 8, bottom: 8 }
+    states: [normal]
+    variants: []
+    component_contract:
+      slice_hints: "Horizontal rail cap borders only."
+      content_insets:
+        BattleWaveTrack: { left: 14, right: 14, top: 5, bottom: 5 }
+      semantic_color_tokens: [lacquer_panel, talisman_gold, spirit_teal]
+    godot:
+      usage: nine_patch_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/battle_wave_track_9slice.png"
+      import_preset: ui_texture
+      slice_hints: { left: 28, right: 28, top: 8, bottom: 8 }
+    phaser:
+      usage: phaser_nineslice
+      target_path: "harness/runtime/assets/dokkaebi/ui/battle_wave_track_9slice.png"
+      renderer: scene.add.nineslice
+      port_status: metadata_only
+    priority: should
+    blocking_reason: ""
+    status: generated_v2_9slice_safe
+
+  - key: dokkaebi.ui.battle.exp_frame_9slice
+    type: progress_frame
+    mode: hybrid
+    platforms: [godot]
+    target_path: "harness/design/dokkaebi/assets/ui/battle_exp_frame_9slice.png"
+    source_path: "harness/design/dokkaebi/assets/ui/battle_exp_frame_9slice.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/battle_exp_frame_9slice.png"
+    generated_with: "imagegen_palette_plus_deterministic_9slice_rebuild_v2"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_battle_ui_asset_sheet_imagegen_v1.png"
+    postprocess_notes: "Rebuilt as stretch-safe EXP frame: flat center, fixed cap braces, runtime-native fill/text only."
+    usage:
+      - "component-blueprints.yaml:BattleExpBar.skin"
+      - "component-skins.yaml:battle_exp_bar"
+    prompt_notes: "Long low-profile bottom EXP frame, dark lacquer with gold trim, no text or fill baked in."
+    background: transparent
+    target_size: { width: 512, height: 32 }
+    slice_hints: { left: 28, right: 28, top: 10, bottom: 10 }
+    states: [normal]
+    variants: []
+    component_contract:
+      slice_hints: "Horizontal progress cap borders only."
+      content_insets:
+        BattleExpBar: { left: 96, right: 92, top: 8, bottom: 8 }
+      semantic_color_tokens: [lacquer_panel, talisman_gold, water_blue]
+    godot:
+      usage: nine_patch_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/battle_exp_frame_9slice.png"
+      import_preset: ui_texture
+      slice_hints: { left: 28, right: 28, top: 10, bottom: 10 }
+    phaser:
+      usage: phaser_nineslice
+      target_path: "harness/runtime/assets/dokkaebi/ui/battle_exp_frame_9slice.png"
+      renderer: scene.add.nineslice
+      port_status: metadata_only
+    priority: should
+    blocking_reason: ""
+    status: generated_v2_9slice_safe
+
+  - key: dokkaebi.ui.battle.circular_action_frame_v1
+    type: frame
+    mode: hybrid
+    platforms: [godot]
+    target_path: "harness/design/dokkaebi/assets/ui/circular_action_frame_v1.png"
+    source_path: "harness/design/dokkaebi/assets/ui/circular_action_frame_v1.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/circular_action_frame_v1.png"
+    generated_with: "imagegen_source_sheet_plus_deterministic_postprocess_v1"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_battle_ui_asset_sheet_imagegen_v1.png"
+    postprocess_notes: "Cropped and alpha-keyed from generated sheet action-ring candidate; icon/number overlays remain runtime-native."
+    usage:
+      - "component-blueprints.yaml:BattleCircularActionButton.frame"
+      - "button-system.yaml:battle_circular_action"
+      - "component-skins.yaml:battle_circular_action_button"
+    prompt_notes: "Circular black lacquer button rim with thin gold ring and empty center, transparent outside circle, no icon, no number."
+    background: transparent
+    target_size: { width: 96, height: 96 }
+    slice_hints: null
+    states: [ready, cooldown, disabled]
+    variants: []
+    component_contract:
+      semantic_color_tokens: [lacquer_panel, talisman_gold, disabled_gray]
+    godot:
+      usage: texture_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/circular_action_frame_v1.png"
+      import_preset: ui_texture
+      slice_hints: null
+    priority: must
+    blocking_reason: "Needed for final circular action button art; native placeholder can continue until generated."
+    status: generated_v1
+
+  - key: dokkaebi.ui.battle.skill_icons_haeil_v1
+    type: icon
+    mode: generate_image
+    platforms: [godot]
+    target_path: "harness/design/dokkaebi/assets/ui/skill_icons_haeil_v1.png"
+    source_path: "harness/design/dokkaebi/assets/ui/skill_icons_haeil_v1.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/skill_icons_haeil_v1.png"
+    generated_with: "imagegen_source_sheet_plus_deterministic_postprocess_v1"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_battle_ui_asset_sheet_imagegen_v1.png"
+    postprocess_notes: "Cropped and alpha-keyed from generated Haeil water/spirit icons; split into per-skill Godot textures plus atlas."
+    usage:
+      - "component-blueprints.yaml:BattleCircularActionButton.icon"
+      - "component-skins.yaml:battle_skill_icons"
+    prompt_notes: "Three transparent Haeil water skill icons: water slash, vortex, spirit fire. No text, no numbers, high readability at 52px."
+    background: transparent
+    target_size: { width: 256, height: 256 }
+    slice_hints: null
+    states: [normal]
+    variants: [wave_slash, vortex, spirit_fire]
+    godot:
+      usage: texture_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/skill_icons_haeil_v1.png"
+      variant_target_paths:
+        wave_slash: "harness/runtime/godot-dokkaebi/assets/generated/ui/skill_icon_wave_slash.png"
+        vortex: "harness/runtime/godot-dokkaebi/assets/generated/ui/skill_icon_vortex.png"
+        spirit_fire: "harness/runtime/godot-dokkaebi/assets/generated/ui/skill_icon_spirit_fire.png"
+      import_preset: ui_texture
+      slice_hints: null
+    priority: must
+    blocking_reason: "Needed before replacing Korean placeholder button labels."
+    status: generated_v1
+
+  - key: dokkaebi.ui.battle.resource_icons_v1
+    type: icon
+    mode: generate_image
+    platforms: [godot]
+    target_path: "harness/design/dokkaebi/assets/ui/resource_icons_v1.png"
+    source_path: "harness/design/dokkaebi/assets/ui/resource_icons_v1.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/resource_icons_v1.png"
+    generated_with: "imagegen_source_sheet_plus_deterministic_postprocess_v1"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_battle_ui_asset_sheet_imagegen_v1.png"
+    postprocess_notes: "Resource atlas v1 uses the generated ledger glyph language; current Godot HUD consumes a single kill icon texture."
+    usage:
+      - "component-blueprints.yaml:BattleRunLedger.icons"
+      - "component-skins.yaml:battle_resource_icons"
+    prompt_notes: "Small transparent icons for kill, enemy count, spirit purification, coin, and EXP crystal."
+    background: transparent
+    target_size: { width: 256, height: 256 }
+    slice_hints: null
+    states: [normal]
+    variants: [kill, enemy_count, spirit, coin, exp]
+    godot:
+      usage: texture_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/resource_icons_v1.png"
+      import_preset: ui_texture
+      slice_hints: null
+    priority: should
+    blocking_reason: ""
+    status: generated_v1
+
+  - key: dokkaebi.ui.battle.hero_portrait_haeil_v1
+    type: portrait
+    mode: generate_image
+    platforms: [godot]
+    target_path: "harness/design/dokkaebi/assets/ui/haeil_hud_portrait_v1.png"
+    source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_haeil_hud_portrait_imagegen_v1_alpha.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/haeil_hud_portrait_v1.png"
+    generated_with: "built_in_imagegen_chromakey_plus_alpha_crop_circular_mask_v1"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_haeil_hud_portrait_imagegen_v1_chromakey.png"
+    alpha_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_haeil_hud_portrait_imagegen_v1_alpha.png"
+    postprocess_notes: "Generated Haeil bust portrait on chroma-key green, removed alpha locally, cropped to a 96x96 circular HUD portrait so the 64px runtime frame keeps the face readable."
+    usage:
+      - "component-blueprints.yaml:BattleHeroPanel.portrait"
+      - "component-skins.yaml:battle_haeil_portrait"
+      - "harness/godot/recipes/ui/dokkaebi-tangtang-battle-hud.yaml:Tex_HaeilPortrait"
+    prompt_notes: "Flat 2D Haeil close-up portrait with black hair, blue headband, gold talisman forehead plate, playful smile, no text, no frame."
+    background: transparent
+    target_size: { width: 96, height: 96 }
+    slice_hints: null
+    states: [normal]
+    variants: []
+    godot:
+      usage: texture_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/haeil_hud_portrait_v1.png"
+      import_preset: ui_texture
+      slice_hints: null
+    priority: must
+    blocking_reason: ""
+    status: generated_v1
+
+  - key: dokkaebi.ui.battle.hero_portrait_frame_v1
+    type: frame
+    mode: hybrid
+    platforms: [godot]
+    target_path: "harness/design/dokkaebi/assets/ui/hero_portrait_frame_v1.png"
+    source_path: "harness/design/dokkaebi/assets/ui/hero_portrait_frame_v1.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/hero_portrait_frame_v1.png"
+    generated_with: "imagegen_source_sheet_plus_deterministic_postprocess_v1"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_battle_ui_asset_sheet_imagegen_v1.png"
+    postprocess_notes: "Cropped and alpha-keyed from generated portrait medallion candidate; Haeil face remains runtime-native."
+    usage:
+      - "component-blueprints.yaml:BattleHeroPanel.portrait_frame"
+      - "component-skins.yaml:battle_hero_portrait_frame"
+    prompt_notes: "Circular/medallion Haeil portrait frame with gold talisman corner, transparent center, no face baked in."
+    background: transparent
+    target_size: { width: 96, height: 96 }
+    slice_hints: null
+    states: [normal]
+    variants: []
+    godot:
+      usage: texture_rect
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/hero_portrait_frame_v1.png"
+      import_preset: ui_texture
+      slice_hints: null
+    priority: nice
+    blocking_reason: ""
+    status: generated_v1
+
+  - key: dokkaebi.ui.battle.top_status_tab_9slice_v1
+    type: tab_skin_set
+    mode: generate_image
+    platforms: [godot]
+    target_path: "harness/design/dokkaebi/assets/ui/battle_top_status_tab_gold_v1.png"
+    source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_battle_top_status_tabs_imagegen_v1_alpha.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/battle_top_status_tab_gold_v1.png"
+    generated_with: "built_in_imagegen_chromakey_plus_alpha_crop_9slice_v1"
+    imagegen_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_battle_top_status_tabs_imagegen_v1_chromakey.png"
+    alpha_source_path: "harness/design/dokkaebi/assets/ui/source/dokkaebi_battle_top_status_tabs_imagegen_v1_alpha.png"
+    postprocess_notes: "Generated as three empty top-status tab skins on chroma-key green, removed alpha locally, cropped into 192x48 variant PNGs. Runtime labels, timer, counters, and stage text remain native."
+    usage:
+      - "component-blueprints.yaml:BattleTopStatusTab.tab_backing"
+      - "component-skins.yaml:battle_top_status_tabs"
+      - "harness/godot/recipes/ui/dokkaebi-tangtang-battle-hud.yaml:Text_*StatusTab backing skins"
+    prompt_notes: "Three small dark lacquer survivor HUD status tab skins with talisman-gold, water-blue, and amber accents; no text, no numbers, no symbols."
+    background: transparent
+    target_size: { width: 192, height: 48 }
+    slice_hints: { left: 32, right: 32, top: 10, bottom: 10 }
+    states: [normal, selected]
+    variants: [gold, water, amber]
+    variant_source_paths:
+      gold: "harness/design/dokkaebi/assets/ui/battle_top_status_tab_gold_v1.png"
+      water: "harness/design/dokkaebi/assets/ui/battle_top_status_tab_water_v1.png"
+      amber: "harness/design/dokkaebi/assets/ui/battle_top_status_tab_amber_v1.png"
+    godot:
+      usage: nine_patch_rect_set
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/ui/battle_top_status_tab_gold_v1.png"
+      variant_target_paths:
+        gold: "harness/runtime/godot-dokkaebi/assets/generated/ui/battle_top_status_tab_gold_v1.png"
+        water: "harness/runtime/godot-dokkaebi/assets/generated/ui/battle_top_status_tab_water_v1.png"
+        amber: "harness/runtime/godot-dokkaebi/assets/generated/ui/battle_top_status_tab_amber_v1.png"
+      import_preset: ui_texture
+      slice_hints: { left: 32, right: 32, top: 10, bottom: 10 }
+    priority: must
+    blocking_reason: ""
+    status: generated_v1
+
+  - key: dokkaebi.battle.runtime.native_hud_shapes
+    type: texture
+    mode: native_ui
+    platforms: [godot]
+    target_path: ""
+    usage:
+      - "component-blueprints.yaml:runtime native rectangles, rings, labels, and fills"
+    prompt_notes: "Native Godot ColorRect, Panel, Label, ProgressBar, and draw primitives."
+    background: transparent
+    target_size: { width: 0, height: 0 }
+    slice_hints: null
+    states: [normal]
+    variants: []
+    godot:
+      usage: none
+      target_path: ""
+      import_preset: none
+      slice_hints: null
+    priority: must
+    blocking_reason: ""
+    status: planned
+
+  - key: dokkaebi.hero.haeil.battle_4dir_walk_v1
+    type: character_sprite
+    mode: generate_image
+    platforms: [godot]
+    target_path: "harness/design/dokkaebi/assets/units/haeil_down.png"
+    source_path: "harness/design/dokkaebi/assets/units/source/haeil_4dir_sprite_sheet_imagegen_v1_alpha.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_down.png"
+    generated_with: "imagegen_4dir_sheet_plus_deterministic_walk_b_v1"
+    postprocess_notes: "Four directional Haeil frames with derived B-step variants for runtime two-frame walk animation."
+    usage:
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:player directional sprite"
+    prompt_notes: "Flat 2D TangTang-scale Haeil sprite, blue headband, spear, transparent background, strong silhouette at 96px runtime height."
+    background: transparent
+    target_size: { width: 118, height: 180 }
+    slice_hints: null
+    states: [idle_a, walk_b]
+    variants: [down, down_walk_b, left, left_walk_b, right, right_walk_b, up, up_walk_b]
+    godot:
+      usage: canvas_draw_texture
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_down.png"
+      variant_target_paths:
+        down: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_down.png"
+        down_walk_b: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_down_walk_b.png"
+        left: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_left.png"
+        left_walk_b: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_left_walk_b.png"
+        right: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_right.png"
+        right_walk_b: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_right_walk_b.png"
+        up: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_up.png"
+        up_walk_b: "harness/runtime/godot-dokkaebi/assets/generated/units/haeil_up_walk_b.png"
+      import_preset: texture
+      slice_hints: null
+    priority: must
+    blocking_reason: ""
+    status: runtime_integrated
+
+  - key: dokkaebi.monsters.tangtang_walk_v1
+    type: enemy_sprite_set
+    mode: generate_image
+    platforms: [godot]
+    target_path: "harness/design/dokkaebi/assets/units/monster_japgwi.png"
+    source_path: "harness/design/dokkaebi/assets/units/source/dokkaebi_units_sprite_sheet_imagegen_v1_alpha.png"
+    actual_path: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_japgwi.png"
+    generated_with: "imagegen_unit_sheet_plus_deterministic_walk_b_v1"
+    postprocess_notes: "Five enemy sprites with derived B-step variants; Godot staggers phases by enemy id and adds bob/shadow squash."
+    usage:
+      - "harness/runtime/godot-dokkaebi/scripts/main.gd:enemy sprite rendering"
+    prompt_notes: "Small readable yokai horde sprites, transparent background, flat 2D survivor scale."
+    background: transparent
+    target_size: { width: 98, height: 118 }
+    slice_hints: null
+    states: [idle_a, walk_b]
+    variants: [japgwi, japgwi_walk_b, grunt, grunt_walk_b, ghost, ghost_walk_b, talisman_caster, talisman_caster_walk_b, night_ogre, night_ogre_walk_b]
+    godot:
+      usage: canvas_draw_texture
+      target_path: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_japgwi.png"
+      variant_target_paths:
+        japgwi: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_japgwi.png"
+        japgwi_walk_b: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_japgwi_walk_b.png"
+        grunt: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_grunt.png"
+        grunt_walk_b: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_grunt_walk_b.png"
+        ghost: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_ghost.png"
+        ghost_walk_b: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_ghost_walk_b.png"
+        talisman_caster: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_talisman_caster.png"
+        talisman_caster_walk_b: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_talisman_caster_walk_b.png"
+        night_ogre: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_night_ogre.png"
+        night_ogre_walk_b: "harness/runtime/godot-dokkaebi/assets/generated/units/monster_night_ogre_walk_b.png"
+      import_preset: texture
+      slice_hints: null
+    priority: must
+    blocking_reason: ""
+    status: runtime_integrated

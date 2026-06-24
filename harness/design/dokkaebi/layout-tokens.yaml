@@ -1,0 +1,83 @@
+version: "1.0"
+game: dokkaebi
+status: draft
+source_concepts:
+  - dokkaebi_outgame_home_tangtang_concept_a
+  - dokkaebi_tangtang_ingame_screen_d_autumn_flat
+  - dokkaebi_tangtang_ingame_screen_c_flat
+  - dokkaebi_tangtang_ingame_screen_b
+
+screen:
+  orientation: portrait_9_16
+  reference_size_px: { width: 540, height: 960 }
+  safe_area_policy: "Top HUD anchors to 8px visual safe area; bottom controls stay above a 38px EXP bar."
+  responsive_policy: "Tighten gaps and panel widths before shrinking touch targets below role minimums."
+
+spacing:
+  xs: 4
+  sm: 8
+  md: 12
+  lg: 16
+  xl: 24
+
+regions:
+  top_hud:
+    anchor: top_safe_area
+    height_px: { target: 98, compact: 90 }
+    gap_px: 8
+  wave_track:
+    anchor: below_top_hud
+    height_px: { target: 18, compact: 16 }
+    margin_px: { left: 8, right: 8 }
+  combat_playfield:
+    anchor: middle
+    clear_center_radius_px: { target: 150, minimum: 120 }
+    hud_exclusion_px: { top: 132, bottom: 178, left: 0, right: 0 }
+  battle_controls:
+    anchor: bottom_safe_area
+    joystick_size_px: { target: 128, compact: 112 }
+    action_cluster_size_px: { width: 174, height: 170 }
+    gap_from_exp_bar_px: 20
+  exp_bar:
+    anchor: bottom_safe_area
+    height_px: { target: 30, compact: 26 }
+    margin_px: { left: 28, right: 28, bottom: 10 }
+  outgame_top_resource_bar:
+    anchor: top_safe_area
+    height_px: { target: 88, compact: 78 }
+    margin_px: { left: 10, right: 10, top: 8 }
+    gap_px: 8
+  outgame_hero_stage:
+    anchor: middle_left
+    bounds_px: { x: 0, y: 92, width: 356, height: 610 }
+    hero_bounds_px: { x: 92, y: 242, width: 230, height: 350 }
+  outgame_event_rail:
+    anchor: right_safe_area
+    bounds_px: { x: 368, y: 118, width: 158, height: 548 }
+    card_size_px: { width: 150, height: 90 }
+    gap_px: 10
+  outgame_progression_cards:
+    anchor: lower_content
+    bounds_px: { x: 12, y: 656, width: 344, height: 172 }
+    card_size_px: { width: 164, height: 164 }
+    gap_px: 10
+  outgame_sortie_cta:
+    anchor: lower_right
+    bounds_px: { x: 360, y: 696, width: 168, height: 124 }
+  outgame_bottom_nav:
+    anchor: bottom_safe_area
+    height_px: { target: 112, compact: 96 }
+    margin_px: { left: 0, right: 0, bottom: 0 }
+    tab_count: 5
+
+touch_targets:
+  min_size_px: 44
+  battle_action_min_px: 70
+  joystick_min_px: 112
+  top_icon_button_px: 48
+  outgame_primary_cta_px: { width: 150, height: 88 }
+  outgame_tab_px: { width: 88, height: 78 }
+
+text:
+  clamp_policy: "single_line_ellipsis_or_two_line_clamp"
+  overflow_policy: "Stable controls never resize because of text changes."

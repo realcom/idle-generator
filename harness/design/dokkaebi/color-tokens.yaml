@@ -1,0 +1,137 @@
+version: "1.0"
+game: dokkaebi
+status: draft
+updated_at: 2026-06-23T00:52:00+09:00
+
+source_concepts:
+  - dokkaebi_outgame_home_tangtang_concept_a
+  - dokkaebi_tangtang_ingame_screen_d_autumn_flat
+  - dokkaebi_tangtang_ingame_screen_c_flat
+  - dokkaebi_tangtang_ingame_screen_b
+
+tokens:
+  ink_black:
+    default: "#080b09"
+    usage: "Primary outline, deep HUD backing, text shadow, icon rim."
+  night_forest:
+    default: "#0c2017"
+    usage: "Battle field base, top/bottom vignette, dark panel tint."
+  moss_green:
+    default: "#1d3f2a"
+    usage: "Ground variation, bamboo and foliage accents."
+  lacquer_panel:
+    default: "#15110d"
+    usage: "Raised battle HUD panel fill and circular action button backing."
+  lacquer_panel_high:
+    default: "#23180f"
+    usage: "Active panel bevel and selected inset fill."
+  talisman_gold:
+    default: "#d8a74b"
+    usage: "Thin battle HUD trim, progress pips, panel highlights."
+  lantern_gold:
+    default: "#ffca54"
+    usage: "Rewards, active warning highlights, small celebratory glints."
+  parchment_warm:
+    default: "#e7c46f"
+    usage: "Modal/card surface candidate and readable warm labels."
+  cream_text:
+    default: "#f7e8c5"
+    usage: "Primary text on dark HUD panels."
+  muted_text:
+    default: "#b9a77e"
+    usage: "Secondary labels, disabled short text, small metadata."
+  water_blue:
+    default: "#23a8ff"
+    usage: "Haeil skill buttons, slash effects, EXP fill, active ability icon wells."
+  water_foam:
+    default: "#a9f3ff"
+    usage: "Highlights on water slash, pickup glints, focused icon highlights."
+  spirit_teal:
+    default: "#38e0c9"
+    usage: "Spirit pickups, magic counters, secondary VFX."
+  coin_gold:
+    default: "#f5b542"
+    usage: "Coin/resource pickup icons and ledger dots."
+  enemy_red:
+    default: "#e54832"
+    usage: "Enemy eyes, HP bars, threat ticks."
+  elite_orange:
+    default: "#c66a2f"
+    usage: "Elite enemy body accents and warnings below boss severity."
+  disabled_gray:
+    default: "#55564a"
+    usage: "Locked skill buttons, inactive pips, unavailable controls."
+  dark_wood:
+    default: "#2a160c"
+    usage: "Outgame bottom dock, rails, and compact backing surfaces."
+  parchment_light:
+    default: "#f1d993"
+    usage: "Outgame card centers and reward panels that need dark text."
+  lantern_orange:
+    default: "#f47a24"
+    usage: "Primary sortie CTA fill, notification badges, and urgent claim state."
+
+semantic_mapping:
+  battle_hud_panel:
+    fill: lacquer_panel
+    fill_alt: night_forest
+    border: talisman_gold
+    text_primary: cream_text
+    text_secondary: muted_text
+  battle_action_button:
+    fill: lacquer_panel
+    rim: talisman_gold
+    active_fill: water_blue
+    secondary_fill: spirit_teal
+    disabled_fill: disabled_gray
+    cooldown_overlay: ink_black
+  battle_progress:
+    exp_fill: water_blue
+    wave_fill: spirit_teal
+    frame: talisman_gold
+    inactive: disabled_gray
+  combat_world:
+    ground_base: night_forest
+    ground_variation: moss_green
+    pickup_exp: water_foam
+    pickup_spirit: spirit_teal
+    enemy_warning: enemy_red
+  modal_surface:
+    scrim: "rgba(0, 0, 0, 0.58)"
+    frame: talisman_gold
+    fill: parchment_warm
+    text: ink_black
+  outgame_home:
+    background_base: night_forest
+    panel_fill: parchment_light
+    panel_frame: talisman_gold
+    dock_fill: dark_wood
+    text_dark: ink_black
+    text_light: cream_text
+    selected: water_blue
+    cta_fill: lantern_orange
+    cta_text: cream_text
+    notification: lantern_orange
+    locked: disabled_gray
+
+runtime_mapping:
+  godot_theme_tokens:
+    battle.panel.fill: tokens.lacquer_panel.default
+    battle.panel.border: tokens.talisman_gold.default
+    battle.text.primary: tokens.cream_text.default
+    battle.action.active: tokens.water_blue.default
+    battle.action.secondary: tokens.spirit_teal.default
+    battle.progress.exp: tokens.water_blue.default
+    modal.scrim: tokens.modal_surface.scrim
+    outgame.panel.fill: tokens.parchment_light.default
+    outgame.dock.fill: tokens.dark_wood.default
+    outgame.cta.fill: tokens.lantern_orange.default
+    outgame.selected: tokens.water_blue.default
+  generated_asset_notes:
+    - "Generated skins may include richer bevels and scratches, but runtime states map back to these semantic tokens."
+
+rules:
+  - "Water_blue and spirit_teal are sparse combat accents, not full-panel fills."
+  - "Battle HUD panels stay dark enough for cream native text at 540px width."
+  - "Enemy_red should use alpha on large warnings so it does not hide Haeil or pickups."
+  - "Gold trim is thin and structural; large gold fills are reserved for modal/card surfaces."

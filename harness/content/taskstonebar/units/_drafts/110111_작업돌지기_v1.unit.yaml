@@ -1,0 +1,22 @@
+id: 110111
+name: "작업돌지기"
+type: Player
+
+addStats:
+  - { type: Hp, value: [520.0] }
+  - { type: Attack, value: [42.0] }
+  - { type: Defense, value: [8.0] }
+  - { type: CriticalPercent, value: [6.0] }
+  - { type: CriticalDamagePercent, value: [150.0] }
+  - { type: AttackSpeed, value: [1.05] }
+  - { type: MoveSpeed, value: [3.2] }
+  - { type: ScalePercent, value: [-58.0] }
+
+prefab: "Units/Taskstonebar/PFB_Taskstonebar_Hero.prefab"
+sprite: "Assets/Taskstonebar/taskstone/hero.png"
+uiScale: 1.15
+uiOffset: { x: 0.0, y: 0.12 }
+hitDropItemSize: 34.0
+animations:
+  idle: "taskstonebar_hero_idle"
+  attack: "taskstonebar_hero_throw"

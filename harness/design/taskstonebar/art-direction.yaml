@@ -1,0 +1,59 @@
+version: "1.0"
+game: taskstonebar
+status: extracted
+updated_at: 2026-06-23T00:00:00+09:00
+
+source_concepts:
+  - taskstone_local_prototype
+
+art_anchor:
+  theme: "desktop taskbar pixel idle RPG"
+  identity:
+    hero: "tiny pixel adventurer throwing rocks from the left edge of a transparent taskbar strip"
+    growth_object: "stone evolution line: pebble -> angled stone -> ancient taskstone"
+    ui: "brown 9-slice RPG panels with warm gold titles and dark inner wells"
+  must_keep:
+    - "transparent lower combat strip that can sit above a desktop/taskbar"
+    - "32px pixel stones and currency icons scaled with crisp nearest-neighbor rendering"
+    - "rounded but low-radius brown frames, gold text, black drop shadows"
+    - "merge-board slot language for stone growth"
+    - "online-only premium drops: chests, cube catalyst, higher ore"
+  must_avoid:
+    - "directly copying TBH class/equipment naming; this is a stone/cube variant"
+    - "large mobile hero-page composition"
+    - "smooth vector-only UI that loses the pixel toy feel"
+    - "overly dark unreadable panels"
+
+palette:
+  panel_outer: "#6b4a2a"
+  panel_mid: "#4a2f1a"
+  panel_inner: "#1a0f06"
+  title_gold: "#ffcf7a"
+  text_cream: "#f3e6c8"
+  text_muted: "#b79a72"
+  coin_gold: "#ffd877"
+  hp_red: "#c0392b"
+  exp_blue: "#2e8fd0"
+  ruby_red: "#d94b74"
+  moss_green: "#6a8f42"
+  taskbar_ground: "#3a2a18"
+  shadow: "#050302"
+
+pixel_contract:
+  base_icon_px: 32
+  hero_frame_px: 48
+  scaling: "integer or nearest-neighbor only"
+  outline: "dark 1-2px sprite outline, no antialias blur"
+
+screen_contract:
+  TaskbarCombatStrip:
+    layout: "wide transparent strip, ground band at bottom, hero left, enemies right, floor HUD over ground"
+    height_target_px: 132
+    hud: "gold left, ticker center, stage badge right"
+  StonePanel:
+    layout: "single framed panel with evolution sprite, EXP/HP bars, merge board slots"
+    interaction: "drag/merge same-tier stones"
+  PortalPanel:
+    layout: "compact act/stage list with current stage highlight"
+  StatusPanel:
+    layout: "dense stat and upgrade list; no marketing copy"

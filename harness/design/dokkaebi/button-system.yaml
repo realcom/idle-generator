@@ -1,0 +1,87 @@
+version: "1.0"
+game: dokkaebi
+status: draft
+updated_at: 2026-06-23T00:52:00+09:00
+
+source_concepts:
+  - dokkaebi_outgame_home_tangtang_concept_a
+  - dokkaebi_tangtang_ingame_screen_b
+
+principles:
+  - "Buttons are shared runtime components, not screen-local screenshots."
+  - "Labels, cooldown numbers, resource values, and localized Korean text stay native."
+  - "State changes must not resize touch targets or shift combat controls."
+  - "Circular battle controls are runtime/native controls with generated icon atoms."
+
+button_roles:
+  top_icon_button:
+    examples: [BattlePauseButton]
+    min_touch_px: { width: 44, height: 44 }
+    target_touch_px: { width: 48, height: 48 }
+    visual: "Dark lacquer square or rounded-square frame with thin talisman-gold outline and cream icon."
+    asset_policy: "Icon may be generated later; label is never baked."
+    states: [normal, pressed, disabled, alert]
+  battle_circular_action:
+    examples: [BattlePrimarySkillButton, BattleSecondarySkillButton]
+    min_touch_px: { width: 70, height: 70 }
+    target_touch_px: { width: 78, height: 78 }
+    visual: "Black-rimmed circle with gold rim, water-blue or spirit-teal icon well, native cooldown ring, and native cooldown number."
+    cluster: "SurvivalBattle uses a three-button bottom-right action dock: one primary button above two secondary buttons."
+    asset_policy: "Frame, cooldown text, cooldown ring, and skill level are not baked into the icon PNG."
+    states: [ready, pressed, cooldown, disabled, just_cast]
+  joystick_control:
+    examples: [BattleJoystickControl]
+    min_touch_px: { width: 112, height: 112 }
+    target_touch_px: { width: 128, height: 128 }
+    visual: "Translucent ring, low-alpha directional markers, and stable thumb disc."
+    asset_policy: "Native primitive by default; generated ring only if a branded control skin is approved."
+    states: [idle, dragging, disabled]
+  primary_cta:
+    examples: [RunResultReturnButton, ModalConfirmButton, HomeSortieButton]
+    min_touch_px: { width: 128, height: 48 }
+    visual: "Warm lantern-gold or orange parchment/lacquer button with native label."
+    asset_policy: "Generated 9-slice skin may contain bevel and material only."
+    states: [normal, pressed, disabled, ready_pulse]
+  outgame_resource_chip:
+    examples: [HomeStaminaChip, HomeSpiritCoinChip, HomePremiumChip]
+    min_touch_px: { width: 84, height: 44 }
+    visual: "Compact dark lacquer chip with icon atom, native value, and small plus button."
+    asset_policy: "Icon and frame may be generated; values and plus label stay native."
+    states: [normal, pressed, disabled, alert]
+  outgame_event_card:
+    examples: [HomeDailyMissionCard, HomeRelicCard, HomeBossCard]
+    min_touch_px: { width: 118, height: 76 }
+    visual: "Parchment card with dark ink top mark, small notification dot, and icon-first body."
+    asset_policy: "Card frame and icon art may be generated; title/progress remain native."
+    states: [normal, pressed, selected, locked, claimable]
+  outgame_bottom_tab:
+    examples: [HomeTab, YokaiTab, WeaponTab, TalismanTab, ShopTab]
+    min_touch_px: { width: 80, height: 72 }
+    visual: "Dark wood tab cell with fixed icon atom, selected blue glow, and native one-line label."
+    asset_policy: "Icon may be generated; selection indicator and label stay native."
+    states: [normal, pressed, selected, disabled, alert]
+  skill_choice_card_button:
+    examples: [LevelChoiceCard]
+    min_touch_px: { width: 132, height: 240 }
+    visual: "Whole card is tappable; selected/pressed state uses gold rim and short water-blue pulse."
+    asset_policy: "Card frame can be generated 9-slice; icon and text remain runtime."
+    states: [normal, pressed, selected, disabled]
+
+state_motion:
+  pressed:
+    duration_ms: 90
+    transform: "scale 0.98 or 1px inset; hit target remains stable."
+  ready_pulse:
+    duration_ms: 1200
+    transform: "thin talisman-gold rim pulse."
+  cooldown:
+    duration_ms: "data-driven"
+    transform: "native radial ring; icon remains visible at reduced alpha."
+  disabled:
+    duration_ms: 160
+    transform: "desaturate and dim; no layout change."
+
+rules:
+  - "Do not create screen-local button colors; use color-tokens.yaml."
+  - "Do not bake Korean labels, numbers, cooldowns, resource costs, or skill levels into generated button assets."
+  - "All combat buttons keep stable bounds so the playfield never shifts."

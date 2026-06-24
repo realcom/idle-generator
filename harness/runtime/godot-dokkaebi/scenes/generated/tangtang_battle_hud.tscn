@@ -1,0 +1,742 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Theme" path="res://themes/generated/dokkaebi_tangtang_battle_hud.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/battle_panel_lacquer_9slice.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/battle_top_status_tab_gold_v1.png" id="3_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/haeil_hud_portrait_v1.png" id="4_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/hero_portrait_frame_v1.png" id="5_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/battle_top_status_tab_water_v1.png" id="6_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/battle_top_status_tab_amber_v1.png" id="7_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/resource_icons_v1.png" id="8_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/battle_wave_track_9slice.png" id="9_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/circular_action_frame_v1.png" id="10_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/skill_icon_wave_slash.png" id="11_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/skill_icon_vortex.png" id="12_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/skill_icon_spirit_fire.png" id="13_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/battle_exp_frame_9slice.png" id="14_tex"]
+
+[node name="Root_DokkaebiTangTangBattleHud" type="Control"]
+layout_mode = 3
+theme = ExtResource("1_theme")
+metadata/atom = "ScreenRoot"
+metadata/component = "BattleTopHud"
+
+[node name="Section_TopHud" type="Control" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 532.0
+offset_bottom = 98.0
+custom_minimum_size = Vector2(524.0, 90.0)
+metadata/atom = "SectionGroup"
+metadata/component = "BattleTopHud"
+
+[node name="Panel_Hero" type="NinePatchRect" parent="Section_TopHud"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 188.0
+offset_bottom = 90.0
+custom_minimum_size = Vector2(188.0, 90.0)
+texture = ExtResource("2_tex")
+patch_margin_left = 24.0
+patch_margin_right = 24.0
+patch_margin_top = 24.0
+patch_margin_bottom = 24.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "BattleHeroPanel"
+metadata/asset_key = "dokkaebi.ui.battle.panel_lacquer_9slice"
+
+[node name="Panel_HeroStatusTabSkin" type="NinePatchRect" parent="Section_TopHud/Panel_Hero"]
+layout_mode = 0
+offset_left = 74.0
+offset_top = 4.0
+offset_right = 174.0
+offset_bottom = 26.0
+custom_minimum_size = Vector2(100.0, 22.0)
+texture = ExtResource("3_tex")
+patch_margin_left = 32.0
+patch_margin_right = 32.0
+patch_margin_top = 10.0
+patch_margin_bottom = 10.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "BattleTopStatusTab"
+metadata/slot = "tab_backing"
+metadata/asset_key = "dokkaebi.ui.battle.top_status_tab_9slice_v1"
+
+[node name="Text_HeroStatusTab" type="Label" parent="Section_TopHud/Panel_Hero"]
+layout_mode = 0
+offset_left = 82.0
+offset_top = 8.0
+offset_right = 164.0
+offset_bottom = 22.0
+custom_minimum_size = Vector2(82.0, 14.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattleTopStatusTab"
+metadata/slot = "status_tab"
+metadata/text_binding_or_text_key = "run.top_status_tabs.player"
+
+[node name="Tex_HaeilPortrait" type="TextureRect" parent="Section_TopHud/Panel_Hero"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 12.0
+offset_right = 70.0
+offset_bottom = 76.0
+custom_minimum_size = Vector2(64.0, 64.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "BattleHeroPanel"
+metadata/slot = "portrait"
+metadata/asset_key = "dokkaebi.ui.battle.hero_portrait_haeil_v1"
+
+[node name="Tex_HaeilPortraitFrame" type="TextureRect" parent="Section_TopHud/Panel_Hero"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 12.0
+offset_right = 70.0
+offset_bottom = 76.0
+custom_minimum_size = Vector2(64.0, 64.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("5_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "BattleHeroPanel"
+metadata/slot = "portrait_frame"
+metadata/asset_key = "dokkaebi.ui.battle.hero_portrait_frame_v1"
+
+[node name="Text_HaeilName" type="Label" parent="Section_TopHud/Panel_Hero"]
+layout_mode = 0
+offset_left = 82.0
+offset_top = 25.0
+offset_right = 174.0
+offset_bottom = 45.0
+custom_minimum_size = Vector2(92.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "name_label"
+metadata/text_binding_or_text_key = "player.name"
+
+[node name="Text_HaeilLevel" type="Label" parent="Section_TopHud/Panel_Hero"]
+layout_mode = 0
+offset_left = 82.0
+offset_top = 46.0
+offset_right = 178.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2(96.0, 18.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "level_label"
+metadata/text_binding_or_text_key = "run.level_and_purified"
+
+[node name="Progress_HaeilHp" type="ProgressBar" parent="Section_TopHud/Panel_Hero"]
+layout_mode = 0
+offset_left = 82.0
+offset_top = 66.0
+offset_right = 170.0
+offset_bottom = 75.0
+custom_minimum_size = Vector2(88.0, 9.0)
+show_percentage = false
+max_value = 1.0
+value = 0.0
+metadata/atom = "NativeProgress"
+metadata/slot = "hp_bar"
+metadata/value_binding = "player.hp_ratio"
+
+[node name="Panel_Timer" type="NinePatchRect" parent="Section_TopHud"]
+layout_mode = 0
+offset_left = 196.0
+offset_top = 0.0
+offset_right = 328.0
+offset_bottom = 90.0
+custom_minimum_size = Vector2(132.0, 90.0)
+texture = ExtResource("2_tex")
+patch_margin_left = 24.0
+patch_margin_right = 24.0
+patch_margin_top = 24.0
+patch_margin_bottom = 24.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "BattleTimerPanel"
+metadata/asset_key = "dokkaebi.ui.battle.panel_lacquer_9slice"
+
+[node name="Panel_TimerStatusTabSkin" type="NinePatchRect" parent="Section_TopHud/Panel_Timer"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 4.0
+offset_right = 120.0
+offset_bottom = 26.0
+custom_minimum_size = Vector2(108.0, 22.0)
+texture = ExtResource("6_tex")
+patch_margin_left = 32.0
+patch_margin_right = 32.0
+patch_margin_top = 10.0
+patch_margin_bottom = 10.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "BattleTopStatusTab"
+metadata/slot = "tab_backing"
+metadata/asset_key = "dokkaebi.ui.battle.top_status_tab_9slice_v1"
+
+[node name="Text_TimerStatusTab" type="Label" parent="Section_TopHud/Panel_Timer"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 8.0
+offset_right = 132.0
+offset_bottom = 22.0
+custom_minimum_size = Vector2(132.0, 14.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattleTopStatusTab"
+metadata/slot = "status_tab"
+metadata/text_binding_or_text_key = "run.top_status_tabs.timer"
+
+[node name="Text_RunTimer" type="Label" parent="Section_TopHud/Panel_Timer"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 30.0
+offset_right = 132.0
+offset_bottom = 62.0
+custom_minimum_size = Vector2(132.0, 32.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "timer_label"
+metadata/text_binding_or_text_key = "run.remaining_time"
+
+[node name="Text_RunStage" type="Label" parent="Section_TopHud/Panel_Timer"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 64.0
+offset_right = 132.0
+offset_bottom = 82.0
+custom_minimum_size = Vector2(132.0, 18.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "stage_label"
+metadata/text_binding_or_text_key = "run.stage_label"
+
+[node name="Panel_RunLedger" type="NinePatchRect" parent="Section_TopHud"]
+layout_mode = 0
+offset_left = 336.0
+offset_top = 0.0
+offset_right = 478.0
+offset_bottom = 90.0
+custom_minimum_size = Vector2(142.0, 90.0)
+texture = ExtResource("2_tex")
+patch_margin_left = 24.0
+patch_margin_right = 24.0
+patch_margin_top = 24.0
+patch_margin_bottom = 24.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "BattleRunLedger"
+metadata/asset_key = "dokkaebi.ui.battle.panel_lacquer_9slice"
+
+[node name="Panel_LedgerStatusTabSkin" type="NinePatchRect" parent="Section_TopHud/Panel_RunLedger"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 4.0
+offset_right = 128.0
+offset_bottom = 26.0
+custom_minimum_size = Vector2(120.0, 22.0)
+texture = ExtResource("7_tex")
+patch_margin_left = 32.0
+patch_margin_right = 32.0
+patch_margin_top = 10.0
+patch_margin_bottom = 10.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "BattleTopStatusTab"
+metadata/slot = "tab_backing"
+metadata/asset_key = "dokkaebi.ui.battle.top_status_tab_9slice_v1"
+
+[node name="Text_LedgerStatusTab" type="Label" parent="Section_TopHud/Panel_RunLedger"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 124.0
+offset_bottom = 22.0
+custom_minimum_size = Vector2(112.0, 14.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "BattleTopStatusTab"
+metadata/slot = "status_tab"
+metadata/text_binding_or_text_key = "run.top_status_tabs.ledger"
+
+[node name="Icon_LedgerKill" type="TextureRect" parent="Section_TopHud/Panel_RunLedger"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 25.0
+offset_right = 30.0
+offset_bottom = 43.0
+custom_minimum_size = Vector2(18.0, 18.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("8_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "BattleRunLedger"
+metadata/slot = "icon"
+metadata/asset_key = "dokkaebi.ui.battle.resource_icons_v1"
+
+[node name="Text_LedgerKills" type="Label" parent="Section_TopHud/Panel_RunLedger"]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 25.0
+offset_right = 130.0
+offset_bottom = 41.0
+custom_minimum_size = Vector2(94.0, 16.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "value"
+metadata/text_binding_or_text_key = "run.kills"
+
+[node name="Text_LedgerEnemies" type="Label" parent="Section_TopHud/Panel_RunLedger"]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 45.0
+offset_right = 130.0
+offset_bottom = 61.0
+custom_minimum_size = Vector2(94.0, 16.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "value"
+metadata/text_binding_or_text_key = "run.enemy_count"
+
+[node name="Text_LedgerPurified" type="Label" parent="Section_TopHud/Panel_RunLedger"]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 64.0
+offset_right = 130.0
+offset_bottom = 80.0
+custom_minimum_size = Vector2(94.0, 16.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "value"
+metadata/text_binding_or_text_key = "run.purified"
+
+[node name="Btn_Pause" type="Button" parent="Section_TopHud"]
+layout_mode = 0
+offset_left = 486.0
+offset_top = 0.0
+offset_right = 534.0
+offset_bottom = 54.0
+custom_minimum_size = Vector2(48.0, 54.0)
+flat = true
+text = "Ⅱ"
+metadata/atom = "IconButton"
+metadata/component = "BattlePauseButton"
+metadata/button_role = "top_icon_button"
+
+[node name="Section_WaveTrack" type="Control" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 106.0
+offset_right = 532.0
+offset_bottom = 124.0
+custom_minimum_size = Vector2(524.0, 18.0)
+metadata/atom = "SectionGroup"
+metadata/component = "BattleWaveTrack"
+
+[node name="Panel_WaveTrack" type="NinePatchRect" parent="Section_WaveTrack"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 524.0
+offset_bottom = 18.0
+custom_minimum_size = Vector2(524.0, 18.0)
+texture = ExtResource("9_tex")
+patch_margin_left = 28.0
+patch_margin_right = 28.0
+patch_margin_top = 8.0
+patch_margin_bottom = 8.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "BattleWaveTrack"
+metadata/asset_key = "dokkaebi.ui.battle.wave_track_9slice"
+
+[node name="Progress_Wave" type="ProgressBar" parent="Section_WaveTrack/Panel_WaveTrack"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 5.0
+offset_right = 510.0
+offset_bottom = 13.0
+custom_minimum_size = Vector2(496.0, 8.0)
+show_percentage = false
+max_value = 1.0
+value = 0.0
+metadata/atom = "NativeProgress"
+metadata/slot = "progress_fill"
+metadata/value_binding = "run.wave_progress_ratio"
+
+[node name="Text_WaveLabel" type="Label" parent="Section_WaveTrack"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 22.0
+offset_right = 158.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2(154.0, 18.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "wave_label"
+metadata/text_binding_or_text_key = "run.wave_label"
+
+[node name="Section_BattleControls" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 742.0
+offset_right = 540.0
+offset_bottom = 922.0
+custom_minimum_size = Vector2(540.0, 180.0)
+metadata/atom = "SectionGroup"
+metadata/component = "BattleActionButtonDock"
+
+[node name="Section_Joystick" type="Control" parent="Section_BattleControls"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 18.0
+offset_right = 152.0
+offset_bottom = 146.0
+custom_minimum_size = Vector2(128.0, 128.0)
+metadata/atom = "SectionGroup"
+metadata/component = "BattleJoystickControl"
+
+[node name="Section_ActionDock" type="Control" parent="Section_BattleControls"]
+layout_mode = 0
+offset_left = 356.0
+offset_top = 0.0
+offset_right = 530.0
+offset_bottom = 170.0
+custom_minimum_size = Vector2(174.0, 170.0)
+metadata/atom = "BattleActionDock"
+metadata/component = "BattleActionButtonDock"
+metadata/slot = "action_dock"
+
+[node name="Btn_PrimaryWave" type="Control" parent="Section_BattleControls/Section_ActionDock"]
+layout_mode = 0
+offset_left = 86.0
+offset_top = 0.0
+offset_right = 172.0
+offset_bottom = 86.0
+custom_minimum_size = Vector2(86.0, 86.0)
+metadata/atom = "CircularActionButton"
+metadata/component = "BattleCircularActionButton"
+metadata/slot = "primary_action"
+metadata/button_role = "battle_circular_action"
+
+[node name="Frame_PrimaryWave" type="TextureRect" parent="Section_BattleControls/Section_ActionDock/Btn_PrimaryWave"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 86.0
+offset_bottom = 86.0
+custom_minimum_size = Vector2(86.0, 86.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("10_tex")
+metadata/atom = "TextureAtom"
+metadata/slot = "frame"
+metadata/asset_key = "dokkaebi.ui.battle.circular_action_frame_v1"
+
+[node name="Hit_PrimaryWave" type="Button" parent="Section_BattleControls/Section_ActionDock/Btn_PrimaryWave"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 86.0
+offset_bottom = 86.0
+custom_minimum_size = Vector2(86.0, 86.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/slot = "button_hit_area"
+metadata/button_role = "battle_circular_action"
+
+[node name="Icon_PrimaryWave" type="TextureRect" parent="Section_BattleControls/Section_ActionDock/Btn_PrimaryWave"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 14.0
+offset_right = 69.0
+offset_bottom = 66.0
+custom_minimum_size = Vector2(52.0, 52.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("11_tex")
+metadata/atom = "TextureAtom"
+metadata/slot = "icon"
+metadata/asset_key = "dokkaebi.ui.battle.skill_icons_haeil_v1"
+
+[node name="Progress_PrimaryWaveCooldown" type="ProgressBar" parent="Section_BattleControls/Section_ActionDock/Btn_PrimaryWave"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 86.0
+offset_bottom = 86.0
+custom_minimum_size = Vector2(86.0, 86.0)
+show_percentage = false
+max_value = 1.0
+value = 0.0
+metadata/atom = "NativeProgress"
+metadata/slot = "cooldown_ring"
+metadata/value_binding = "player.activeSkills.wave.cooldownRatio"
+
+[node name="Text_PrimaryWaveCooldown" type="Label" parent="Section_BattleControls/Section_ActionDock/Btn_PrimaryWave"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 30.0
+offset_right = 86.0
+offset_bottom = 54.0
+custom_minimum_size = Vector2(86.0, 24.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "cooldown_label"
+metadata/text_binding_or_text_key = "player.activeSkills.wave.cooldownRemaining"
+
+[node name="Btn_SecondaryVortex" type="Control" parent="Section_BattleControls/Section_ActionDock"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 78.0
+offset_right = 78.0
+offset_bottom = 156.0
+custom_minimum_size = Vector2(78.0, 78.0)
+metadata/atom = "CircularActionButton"
+metadata/component = "BattleCircularActionButton"
+metadata/slot = "secondary_action_left"
+metadata/button_role = "battle_circular_action"
+
+[node name="Frame_SecondaryVortex" type="TextureRect" parent="Section_BattleControls/Section_ActionDock/Btn_SecondaryVortex"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 78.0
+offset_bottom = 78.0
+custom_minimum_size = Vector2(78.0, 78.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("10_tex")
+metadata/atom = "TextureAtom"
+metadata/slot = "frame"
+metadata/asset_key = "dokkaebi.ui.battle.circular_action_frame_v1"
+
+[node name="Hit_SecondaryVortex" type="Button" parent="Section_BattleControls/Section_ActionDock/Btn_SecondaryVortex"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 78.0
+offset_bottom = 78.0
+custom_minimum_size = Vector2(78.0, 78.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/slot = "button_hit_area"
+metadata/button_role = "battle_circular_action"
+
+[node name="Icon_SecondaryVortex" type="TextureRect" parent="Section_BattleControls/Section_ActionDock/Btn_SecondaryVortex"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 13.0
+offset_right = 63.0
+offset_bottom = 61.0
+custom_minimum_size = Vector2(48.0, 48.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("12_tex")
+metadata/atom = "TextureAtom"
+metadata/slot = "icon"
+metadata/asset_key = "dokkaebi.ui.battle.skill_icons_haeil_v1"
+
+[node name="Progress_SecondaryVortexCooldown" type="ProgressBar" parent="Section_BattleControls/Section_ActionDock/Btn_SecondaryVortex"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 78.0
+offset_bottom = 78.0
+custom_minimum_size = Vector2(78.0, 78.0)
+show_percentage = false
+max_value = 1.0
+value = 0.0
+metadata/atom = "NativeProgress"
+metadata/slot = "cooldown_ring"
+metadata/value_binding = "player.activeSkills.vortex.cooldownRatio"
+
+[node name="Text_SecondaryVortexCooldown" type="Label" parent="Section_BattleControls/Section_ActionDock/Btn_SecondaryVortex"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 27.0
+offset_right = 78.0
+offset_bottom = 49.0
+custom_minimum_size = Vector2(78.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "cooldown_label"
+metadata/text_binding_or_text_key = "player.activeSkills.vortex.cooldownRemaining"
+
+[node name="Btn_SecondarySpiritfire" type="Control" parent="Section_BattleControls/Section_ActionDock"]
+layout_mode = 0
+offset_left = 82.0
+offset_top = 86.0
+offset_right = 160.0
+offset_bottom = 164.0
+custom_minimum_size = Vector2(78.0, 78.0)
+metadata/atom = "CircularActionButton"
+metadata/component = "BattleCircularActionButton"
+metadata/slot = "secondary_action_right"
+metadata/button_role = "battle_circular_action"
+
+[node name="Frame_SecondarySpiritfire" type="TextureRect" parent="Section_BattleControls/Section_ActionDock/Btn_SecondarySpiritfire"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 78.0
+offset_bottom = 78.0
+custom_minimum_size = Vector2(78.0, 78.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("10_tex")
+metadata/atom = "TextureAtom"
+metadata/slot = "frame"
+metadata/asset_key = "dokkaebi.ui.battle.circular_action_frame_v1"
+
+[node name="Hit_SecondarySpiritfire" type="Button" parent="Section_BattleControls/Section_ActionDock/Btn_SecondarySpiritfire"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 78.0
+offset_bottom = 78.0
+custom_minimum_size = Vector2(78.0, 78.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/slot = "button_hit_area"
+metadata/button_role = "battle_circular_action"
+
+[node name="Icon_SecondarySpiritfire" type="TextureRect" parent="Section_BattleControls/Section_ActionDock/Btn_SecondarySpiritfire"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 13.0
+offset_right = 63.0
+offset_bottom = 61.0
+custom_minimum_size = Vector2(48.0, 48.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("13_tex")
+metadata/atom = "TextureAtom"
+metadata/slot = "icon"
+metadata/asset_key = "dokkaebi.ui.battle.skill_icons_haeil_v1"
+
+[node name="Progress_SecondarySpiritfireCooldown" type="ProgressBar" parent="Section_BattleControls/Section_ActionDock/Btn_SecondarySpiritfire"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 78.0
+offset_bottom = 78.0
+custom_minimum_size = Vector2(78.0, 78.0)
+show_percentage = false
+max_value = 1.0
+value = 0.0
+metadata/atom = "NativeProgress"
+metadata/slot = "cooldown_ring"
+metadata/value_binding = "player.activeSkills.spiritfire.cooldownRatio"
+
+[node name="Text_SecondarySpiritfireCooldown" type="Label" parent="Section_BattleControls/Section_ActionDock/Btn_SecondarySpiritfire"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 27.0
+offset_right = 78.0
+offset_bottom = 49.0
+custom_minimum_size = Vector2(78.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "cooldown_label"
+metadata/text_binding_or_text_key = "player.activeSkills.spiritfire.cooldownRemaining"
+
+[node name="Section_ExpBar" type="Control" parent="."]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 922.0
+offset_right = 512.0
+offset_bottom = 952.0
+custom_minimum_size = Vector2(484.0, 30.0)
+metadata/atom = "SectionGroup"
+metadata/component = "BattleExpBar"
+
+[node name="Panel_ExpFrame" type="NinePatchRect" parent="Section_ExpBar"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 484.0
+offset_bottom = 30.0
+custom_minimum_size = Vector2(484.0, 30.0)
+texture = ExtResource("14_tex")
+patch_margin_left = 28.0
+patch_margin_right = 28.0
+patch_margin_top = 10.0
+patch_margin_bottom = 10.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "BattleExpBar"
+metadata/asset_key = "dokkaebi.ui.battle.exp_frame_9slice"
+
+[node name="Progress_RunExp" type="ProgressBar" parent="Section_ExpBar/Panel_ExpFrame"]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 8.0
+offset_right = 392.0
+offset_bottom = 20.0
+custom_minimum_size = Vector2(296.0, 12.0)
+show_percentage = false
+max_value = 1.0
+value = 0.0
+metadata/atom = "NativeProgress"
+metadata/slot = "progress_fill"
+metadata/value_binding = "run.exp_ratio"
+
+[node name="Text_RunLevel" type="Label" parent="Section_ExpBar/Panel_ExpFrame"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 5.0
+offset_right = 92.0
+offset_bottom = 25.0
+custom_minimum_size = Vector2(84.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "level_badge"
+metadata/text_binding_or_text_key = "run.level"
+
+[node name="Text_RunExpValue" type="Label" parent="Section_ExpBar/Panel_ExpFrame"]
+layout_mode = 0
+offset_left = 400.0
+offset_top = 5.0
+offset_right = 476.0
+offset_bottom = 25.0
+custom_minimum_size = Vector2(76.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/slot = "exp_value"
+metadata/text_binding_or_text_key = "run.exp_value"

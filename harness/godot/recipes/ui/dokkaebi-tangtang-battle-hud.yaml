@@ -1,0 +1,590 @@
+version: 1
+game: dokkaebi
+slug: dokkaebi-tangtang-battle-hud
+status: pilot
+backend: godot_control
+
+target:
+  project: "../../../runtime/godot-dokkaebi/project.godot"
+  owner_scene: "../../../runtime/godot-dokkaebi/scenes/main.tscn"
+  owner_script: "../../../runtime/godot-dokkaebi/scripts/main.gd"
+  output:
+    scene: "../../../runtime/godot-dokkaebi/scenes/generated/tangtang_battle_hud.tscn"
+    theme: "../../../runtime/godot-dokkaebi/themes/generated/dokkaebi_tangtang_battle_hud.tres"
+  generation_policy: "Generated from harness/godot recipe; do not hand-edit generated output."
+
+sources:
+  ui_system_inventory: "../../../design/dokkaebi/ui-system-inventory.yaml"
+  button_system: "../../../design/dokkaebi/button-system.yaml"
+  modal_system: "../../../design/dokkaebi/modal-system.yaml"
+  color_tokens: "../../../design/dokkaebi/color-tokens.yaml"
+  art_direction: "../../../design/dokkaebi/art-direction.yaml"
+  layout_tokens: "../../../design/dokkaebi/layout-tokens.yaml"
+  component_blueprints: "../../../design/dokkaebi/component-blueprints.yaml"
+  component_skins: "../../../design/dokkaebi/component-skins.yaml"
+  asset_plan: "../../../design/dokkaebi/asset-plan.yaml"
+  concepts:
+    - "../../../design/dokkaebi/concepts/dokkaebi_tangtang_ingame_screen_d_autumn_flat.md"
+    - "../../../design/dokkaebi/concepts/dokkaebi_tangtang_ingame_screen_c_flat.md"
+    - "../../../design/dokkaebi/concepts/dokkaebi_tangtang_ingame_screen_b.md"
+
+blueprint_refs:
+  surface: DokkaebiTangTangBattleHud
+  sections: [top_hud, wave_track, battle_controls, exp_bar]
+  components:
+    - BattleTopHud
+    - BattleTopStatusTab
+    - BattleHeroPanel
+    - BattleTimerPanel
+    - BattleRunLedger
+    - BattlePauseButton
+    - BattleWaveTrack
+    - BattleJoystickControl
+    - BattleActionButtonDock
+    - BattleCircularActionButton
+    - BattleExpBar
+  shared_button_roles:
+    - top_icon_button
+    - battle_circular_action
+    - joystick_control
+  shared_modal_sections: []
+  color_token_groups:
+    - battle_hud_panel
+    - battle_action_button
+    - battle_progress
+
+screen:
+  orientation: portrait_9_16
+  reference_size_px: { width: 540, height: 960 }
+  safe_area_policy: "Top HUD anchors to 8px visual safe area; bottom controls sit above the 30px EXP bar."
+
+layout:
+  anchor: full_rect_overlay
+  regions:
+    top_hud:
+      position_px: { x: 8, y: 8 }
+      size_px: { width: 524, height: 90 }
+      gap_px: 8
+      status_tab_count: 3
+      status_tab_height_px: 16
+    wave_track:
+      position_px: { x: 8, y: 106 }
+      size_px: { width: 524, height: 18 }
+    battle_controls:
+      joystick_position_px: { x: 24, y: 760 }
+      action_dock_position_px: { x: 356, y: 742 }
+      action_cluster_size_px: { width: 174, height: 170 }
+    exp_bar:
+      position_px: { x: 28, y: 922 }
+      size_px: { width: 484, height: 30 }
+
+assets:
+  required_keys:
+    - dokkaebi.ui.battle.panel_lacquer_9slice
+    - dokkaebi.ui.battle.wave_track_9slice
+    - dokkaebi.ui.battle.exp_frame_9slice
+    - dokkaebi.ui.battle.circular_action_frame_v1
+    - dokkaebi.ui.battle.skill_icons_haeil_v1
+    - dokkaebi.ui.battle.resource_icons_v1
+    - dokkaebi.ui.battle.hero_portrait_haeil_v1
+    - dokkaebi.ui.battle.hero_portrait_frame_v1
+    - dokkaebi.ui.battle.top_status_tab_9slice_v1
+    - dokkaebi.battle.runtime.native_hud_shapes
+  nineslice:
+    - key: dokkaebi.ui.battle.panel_lacquer_9slice
+      atom: NinePatchPanel
+      slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+      content_insets: { left: 10, right: 10, top: 8, bottom: 8 }
+      target_size_px: { width: 188, height: 90 }
+    - key: dokkaebi.ui.battle.wave_track_9slice
+      atom: NinePatchPanel
+      slice_hints: { left: 28, right: 28, top: 8, bottom: 8 }
+      content_insets: { left: 14, right: 14, top: 5, bottom: 5 }
+      target_size_px: { width: 524, height: 18 }
+    - key: dokkaebi.ui.battle.exp_frame_9slice
+      atom: NinePatchPanel
+      slice_hints: { left: 28, right: 28, top: 10, bottom: 10 }
+      content_insets: { left: 96, right: 92, top: 8, bottom: 8 }
+      target_size_px: { width: 484, height: 30 }
+    - key: dokkaebi.ui.battle.top_status_tab_9slice_v1
+      atom: NinePatchPanel
+      slice_hints: { left: 32, right: 32, top: 10, bottom: 10 }
+      content_insets: { left: 6, right: 6, top: 2, bottom: 2 }
+      target_size_px: { width: 112, height: 22 }
+  fixed_atoms:
+    - key: dokkaebi.ui.battle.circular_action_frame_v1
+      usage: circular_action_frame
+      display_size_px: { width: 96, height: 96 }
+    - key: dokkaebi.ui.battle.skill_icons_haeil_v1
+      usage: skill_icon_set
+      display_size_px: { width: 52, height: 52 }
+    - key: dokkaebi.ui.battle.resource_icons_v1
+      usage: ledger_icon_set
+      display_size_px: { width: 18, height: 18 }
+    - key: dokkaebi.ui.battle.hero_portrait_haeil_v1
+      usage: hero_portrait
+      display_size_px: { width: 64, height: 64 }
+    - key: dokkaebi.ui.battle.hero_portrait_frame_v1
+      usage: hero_portrait_frame
+      display_size_px: { width: 64, height: 64 }
+  native_controls:
+    - key: dokkaebi.battle.runtime.native_hud_shapes
+      usage: labels_progress_fills_joystick_rings_and_cooldown_rings
+
+control_tree:
+  root:
+    atom: ScreenRoot
+    node_name: Root_DokkaebiTangTangBattleHud
+    component: BattleTopHud
+    anchors_preset: full_rect
+    children:
+      - atom: SectionGroup
+        node_name: Section_TopHud
+        component: BattleTopHud
+        layout: absolute_top_safe_area
+        position_px: { x: 8, y: 8 }
+        size_px: { width: 524, height: 90 }
+        children:
+          - atom: NinePatchPanel
+            node_name: Panel_Hero
+            component: BattleHeroPanel
+            asset_key: dokkaebi.ui.battle.panel_lacquer_9slice
+            slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+            content_insets: { left: 10, right: 10, top: 8, bottom: 8 }
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 188, height: 90 }
+            children:
+              - atom: NinePatchPanel
+                slot: tab_backing
+                node_name: Panel_HeroStatusTabSkin
+                component: BattleTopStatusTab
+                asset_key: dokkaebi.ui.battle.top_status_tab_9slice_v1
+                variant: gold
+                slice_hints: { left: 32, right: 32, top: 10, bottom: 10 }
+                content_insets: { left: 6, right: 6, top: 2, bottom: 2 }
+                position_px: { x: 74, y: 4 }
+                size_px: { width: 100, height: 22 }
+              - atom: NativeLabel
+                slot: status_tab
+                node_name: Text_HeroStatusTab
+                component: BattleTopStatusTab
+                text_binding_or_text_key: run.top_status_tabs.player
+                font_size: 10
+                color_token: talisman_gold
+                position_px: { x: 82, y: 8 }
+                size_px: { width: 82, height: 14 }
+              - atom: TextureAtom
+                slot: portrait
+                node_name: Tex_HaeilPortrait
+                component: BattleHeroPanel
+                asset_key: dokkaebi.ui.battle.hero_portrait_haeil_v1
+                stretch_mode: keep_aspect_centered
+                size_px: { width: 64, height: 64 }
+                position_px: { x: 6, y: 12 }
+              - atom: TextureAtom
+                slot: portrait_frame
+                node_name: Tex_HaeilPortraitFrame
+                component: BattleHeroPanel
+                asset_key: dokkaebi.ui.battle.hero_portrait_frame_v1
+                stretch_mode: keep_aspect_centered
+                size_px: { width: 64, height: 64 }
+                position_px: { x: 6, y: 12 }
+              - atom: NativeLabel
+                slot: name_label
+                node_name: Text_HaeilName
+                text_binding_or_text_key: player.name
+                font_size: 18
+                color_token: cream_text
+                position_px: { x: 82, y: 25 }
+                size_px: { width: 92, height: 20 }
+              - atom: NativeLabel
+                slot: level_label
+                node_name: Text_HaeilLevel
+                text_binding_or_text_key: run.level_and_purified
+                font_size: 13
+                color_token: water_foam
+                position_px: { x: 82, y: 46 }
+                size_px: { width: 96, height: 18 }
+              - atom: NativeProgress
+                slot: hp_bar
+                node_name: Progress_HaeilHp
+                value_binding: player.hp_ratio
+                position_px: { x: 82, y: 66 }
+                size_px: { width: 88, height: 9 }
+          - atom: NinePatchPanel
+            node_name: Panel_Timer
+            component: BattleTimerPanel
+            asset_key: dokkaebi.ui.battle.panel_lacquer_9slice
+            slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+            content_insets: { left: 12, right: 12, top: 10, bottom: 10 }
+            position_px: { x: 196, y: 0 }
+            size_px: { width: 132, height: 90 }
+            children:
+              - atom: NinePatchPanel
+                slot: tab_backing
+                node_name: Panel_TimerStatusTabSkin
+                component: BattleTopStatusTab
+                asset_key: dokkaebi.ui.battle.top_status_tab_9slice_v1
+                variant: water
+                slice_hints: { left: 32, right: 32, top: 10, bottom: 10 }
+                content_insets: { left: 6, right: 6, top: 2, bottom: 2 }
+                position_px: { x: 12, y: 4 }
+                size_px: { width: 108, height: 22 }
+              - atom: NativeLabel
+                slot: status_tab
+                node_name: Text_TimerStatusTab
+                component: BattleTopStatusTab
+                text_binding_or_text_key: run.top_status_tabs.timer
+                font_size: 10
+                color_token: water_foam
+                position_px: { x: 0, y: 8 }
+                size_px: { width: 132, height: 14 }
+              - atom: NativeLabel
+                slot: timer_label
+                node_name: Text_RunTimer
+                text_binding_or_text_key: run.remaining_time
+                font_size: 27
+                color_token: cream_text
+                position_px: { x: 0, y: 30 }
+                size_px: { width: 132, height: 32 }
+              - atom: NativeLabel
+                slot: stage_label
+                node_name: Text_RunStage
+                text_binding_or_text_key: run.stage_label
+                font_size: 13
+                color_token: talisman_gold
+                position_px: { x: 0, y: 64 }
+                size_px: { width: 132, height: 18 }
+          - atom: NinePatchPanel
+            node_name: Panel_RunLedger
+            component: BattleRunLedger
+            asset_key: dokkaebi.ui.battle.panel_lacquer_9slice
+            slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+            content_insets: { left: 12, right: 12, top: 8, bottom: 8 }
+            position_px: { x: 336, y: 0 }
+            size_px: { width: 142, height: 90 }
+            children:
+              - atom: NinePatchPanel
+                slot: tab_backing
+                node_name: Panel_LedgerStatusTabSkin
+                component: BattleTopStatusTab
+                asset_key: dokkaebi.ui.battle.top_status_tab_9slice_v1
+                variant: amber
+                slice_hints: { left: 32, right: 32, top: 10, bottom: 10 }
+                content_insets: { left: 6, right: 6, top: 2, bottom: 2 }
+                position_px: { x: 8, y: 4 }
+                size_px: { width: 120, height: 22 }
+              - atom: NativeLabel
+                slot: status_tab
+                node_name: Text_LedgerStatusTab
+                component: BattleTopStatusTab
+                text_binding_or_text_key: run.top_status_tabs.ledger
+                font_size: 10
+                color_token: talisman_gold
+                position_px: { x: 12, y: 8 }
+                size_px: { width: 112, height: 14 }
+              - atom: TextureAtom
+                slot: icon
+                node_name: Icon_LedgerKill
+                component: BattleRunLedger
+                asset_key: dokkaebi.ui.battle.resource_icons_v1
+                stretch_mode: keep_aspect_centered
+                size_px: { width: 18, height: 18 }
+                position_px: { x: 12, y: 25 }
+              - atom: NativeLabel
+                slot: value
+                node_name: Text_LedgerKills
+                text_binding_or_text_key: run.kills
+                font_size: 12
+                color_token: cream_text
+                position_px: { x: 36, y: 25 }
+                size_px: { width: 94, height: 16 }
+              - atom: NativeLabel
+                slot: value
+                node_name: Text_LedgerEnemies
+                text_binding_or_text_key: run.enemy_count
+                font_size: 12
+                color_token: cream_text
+                position_px: { x: 36, y: 45 }
+                size_px: { width: 94, height: 16 }
+              - atom: NativeLabel
+                slot: value
+                node_name: Text_LedgerPurified
+                text_binding_or_text_key: run.purified
+                font_size: 12
+                color_token: cream_text
+                position_px: { x: 36, y: 64 }
+                size_px: { width: 94, height: 16 }
+          - atom: IconButton
+            node_name: Btn_Pause
+            component: BattlePauseButton
+            button_role: top_icon_button
+            touch_size: { width: 48, height: 54 }
+            position_px: { x: 486, y: 0 }
+            text: "Ⅱ"
+      - atom: SectionGroup
+        node_name: Section_WaveTrack
+        component: BattleWaveTrack
+        layout: absolute_below_top_hud
+        position_px: { x: 8, y: 106 }
+        size_px: { width: 524, height: 18 }
+        children:
+          - atom: NinePatchPanel
+            node_name: Panel_WaveTrack
+            component: BattleWaveTrack
+            asset_key: dokkaebi.ui.battle.wave_track_9slice
+            slice_hints: { left: 28, right: 28, top: 8, bottom: 8 }
+            content_insets: { left: 14, right: 14, top: 5, bottom: 5 }
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 524, height: 18 }
+            children:
+              - atom: NativeProgress
+                slot: progress_fill
+                node_name: Progress_Wave
+                value_binding: run.wave_progress_ratio
+                position_px: { x: 14, y: 5 }
+                size_px: { width: 496, height: 8 }
+          - atom: NativeLabel
+            slot: wave_label
+            node_name: Text_WaveLabel
+            text_binding_or_text_key: run.wave_label
+            font_size: 11
+            color_token: talisman_gold
+            position_px: { x: 4, y: 22 }
+            size_px: { width: 154, height: 18 }
+      - atom: SectionGroup
+        node_name: Section_BattleControls
+        component: BattleActionButtonDock
+        layout: bottom_safe_area_overlay
+        position_px: { x: 0, y: 742 }
+        size_px: { width: 540, height: 180 }
+        children:
+          - atom: SectionGroup
+            node_name: Section_Joystick
+            component: BattleJoystickControl
+            layout: bottom_left_safe_area
+            position_px: { x: 24, y: 18 }
+            size_px: { width: 128, height: 128 }
+          - atom: BattleActionDock
+            slot: action_dock
+            node_name: Section_ActionDock
+            component: BattleActionButtonDock
+            layout: primary_above_two_secondary
+            size_px: { width: 174, height: 170 }
+            position_px: { x: 356, y: 0 }
+            children:
+              - atom: CircularActionButton
+                slot: primary_action
+                node_name: Btn_PrimaryWave
+                component: BattleCircularActionButton
+                button_role: battle_circular_action
+                size_px: { width: 86, height: 86 }
+                position_px: { x: 86, y: 0 }
+                bindings:
+                  skill_slot: player.activeSkills.wave
+                  cooldown: player.activeSkills.wave.cooldownRemaining
+                children:
+                  - atom: TextureAtom
+                    slot: frame
+                    node_name: Frame_PrimaryWave
+                    asset_key: dokkaebi.ui.battle.circular_action_frame_v1
+                    stretch_mode: keep_aspect_centered
+                    size_px: { width: 86, height: 86 }
+                    position_px: { x: 0, y: 0 }
+                  - atom: IconButton
+                    slot: button_hit_area
+                    node_name: Hit_PrimaryWave
+                    button_role: battle_circular_action
+                    touch_size: { width: 86, height: 86 }
+                  - atom: TextureAtom
+                    slot: icon
+                    node_name: Icon_PrimaryWave
+                    asset_key: dokkaebi.ui.battle.skill_icons_haeil_v1
+                    variant: wave_slash
+                    stretch_mode: keep_aspect_centered
+                    size_px: { width: 52, height: 52 }
+                    position_px: { x: 17, y: 14 }
+                  - atom: NativeProgress
+                    slot: cooldown_ring
+                    node_name: Progress_PrimaryWaveCooldown
+                    value_binding: player.activeSkills.wave.cooldownRatio
+                    style: radial_ring
+                    position_px: { x: 0, y: 0 }
+                    size_px: { width: 86, height: 86 }
+                  - atom: NativeLabel
+                    slot: cooldown_label
+                    node_name: Text_PrimaryWaveCooldown
+                    text_binding_or_text_key: player.activeSkills.wave.cooldownRemaining
+                    font_size: 12
+                    color_token: cream_text
+                    position_px: { x: 0, y: 30 }
+                    size_px: { width: 86, height: 24 }
+              - atom: CircularActionButton
+                slot: secondary_action_left
+                node_name: Btn_SecondaryVortex
+                component: BattleCircularActionButton
+                button_role: battle_circular_action
+                size_px: { width: 78, height: 78 }
+                position_px: { x: 0, y: 78 }
+                bindings:
+                  skill_slot: player.activeSkills.vortex
+                  cooldown: player.activeSkills.vortex.cooldownRemaining
+                children:
+                  - atom: TextureAtom
+                    slot: frame
+                    node_name: Frame_SecondaryVortex
+                    asset_key: dokkaebi.ui.battle.circular_action_frame_v1
+                    stretch_mode: keep_aspect_centered
+                    size_px: { width: 78, height: 78 }
+                    position_px: { x: 0, y: 0 }
+                  - atom: IconButton
+                    slot: button_hit_area
+                    node_name: Hit_SecondaryVortex
+                    button_role: battle_circular_action
+                    touch_size: { width: 78, height: 78 }
+                  - atom: TextureAtom
+                    slot: icon
+                    node_name: Icon_SecondaryVortex
+                    asset_key: dokkaebi.ui.battle.skill_icons_haeil_v1
+                    variant: vortex
+                    stretch_mode: keep_aspect_centered
+                    size_px: { width: 48, height: 48 }
+                    position_px: { x: 15, y: 13 }
+                  - atom: NativeProgress
+                    slot: cooldown_ring
+                    node_name: Progress_SecondaryVortexCooldown
+                    value_binding: player.activeSkills.vortex.cooldownRatio
+                    style: radial_ring
+                    position_px: { x: 0, y: 0 }
+                    size_px: { width: 78, height: 78 }
+                  - atom: NativeLabel
+                    slot: cooldown_label
+                    node_name: Text_SecondaryVortexCooldown
+                    text_binding_or_text_key: player.activeSkills.vortex.cooldownRemaining
+                    font_size: 11
+                    color_token: cream_text
+                    position_px: { x: 0, y: 27 }
+                    size_px: { width: 78, height: 22 }
+              - atom: CircularActionButton
+                slot: secondary_action_right
+                node_name: Btn_SecondarySpiritfire
+                component: BattleCircularActionButton
+                button_role: battle_circular_action
+                size_px: { width: 78, height: 78 }
+                position_px: { x: 82, y: 86 }
+                bindings:
+                  skill_slot: player.activeSkills.spiritfire
+                  cooldown: player.activeSkills.spiritfire.cooldownRemaining
+                children:
+                  - atom: TextureAtom
+                    slot: frame
+                    node_name: Frame_SecondarySpiritfire
+                    asset_key: dokkaebi.ui.battle.circular_action_frame_v1
+                    stretch_mode: keep_aspect_centered
+                    size_px: { width: 78, height: 78 }
+                    position_px: { x: 0, y: 0 }
+                  - atom: IconButton
+                    slot: button_hit_area
+                    node_name: Hit_SecondarySpiritfire
+                    button_role: battle_circular_action
+                    touch_size: { width: 78, height: 78 }
+                  - atom: TextureAtom
+                    slot: icon
+                    node_name: Icon_SecondarySpiritfire
+                    asset_key: dokkaebi.ui.battle.skill_icons_haeil_v1
+                    variant: spirit_fire
+                    stretch_mode: keep_aspect_centered
+                    size_px: { width: 48, height: 48 }
+                    position_px: { x: 15, y: 13 }
+                  - atom: NativeProgress
+                    slot: cooldown_ring
+                    node_name: Progress_SecondarySpiritfireCooldown
+                    value_binding: player.activeSkills.spiritfire.cooldownRatio
+                    style: radial_ring
+                    position_px: { x: 0, y: 0 }
+                    size_px: { width: 78, height: 78 }
+                  - atom: NativeLabel
+                    slot: cooldown_label
+                    node_name: Text_SecondarySpiritfireCooldown
+                    text_binding_or_text_key: player.activeSkills.spiritfire.cooldownRemaining
+                    font_size: 11
+                    color_token: cream_text
+                    position_px: { x: 0, y: 27 }
+                    size_px: { width: 78, height: 22 }
+      - atom: SectionGroup
+        node_name: Section_ExpBar
+        component: BattleExpBar
+        layout: bottom_safe_area
+        position_px: { x: 28, y: 922 }
+        size_px: { width: 484, height: 30 }
+        children:
+          - atom: NinePatchPanel
+            node_name: Panel_ExpFrame
+            component: BattleExpBar
+            asset_key: dokkaebi.ui.battle.exp_frame_9slice
+            slice_hints: { left: 28, right: 28, top: 10, bottom: 10 }
+            content_insets: { left: 96, right: 92, top: 8, bottom: 8 }
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 484, height: 30 }
+            children:
+              - atom: NativeProgress
+                slot: progress_fill
+                node_name: Progress_RunExp
+                value_binding: run.exp_ratio
+                position_px: { x: 96, y: 8 }
+                size_px: { width: 296, height: 12 }
+              - atom: NativeLabel
+                slot: level_badge
+                node_name: Text_RunLevel
+                text_binding_or_text_key: run.level
+                font_size: 12
+                color_token: water_foam
+                position_px: { x: 8, y: 5 }
+                size_px: { width: 84, height: 20 }
+              - atom: NativeLabel
+                slot: exp_value
+                node_name: Text_RunExpValue
+                text_binding_or_text_key: run.exp_value
+                font_size: 12
+                color_token: water_foam
+                position_px: { x: 400, y: 5 }
+                size_px: { width: 76, height: 20 }
+
+data_contract:
+  content: []
+  runtime_state:
+    - player.name
+    - player.hp
+    - player.max_hp
+    - run.level
+    - run.kills
+    - run.enemy_count
+    - run.purified
+    - run.remaining_time
+    - run.stage_label
+    - run.top_status_tabs
+    - run.wave_progress_ratio
+    - run.exp_ratio
+    - player.activeSkills
+  fixtures:
+    - "Use current scripts/main.gd debug_snapshot for smoke until generated Control scene has a fixture binding."
+  hardcoding_allowlist:
+    - "Skill icon atoms may use a temporary sprite sheet placeholder until gen-ui-assets produces dokkaebi.ui.battle.skill_icons_haeil_v1."
+    - "Joystick remains native primitive unless branded joystick art is selected."
+
+validation:
+  commands:
+    - "python3 harness/tools/design_blueprint_validate.py dokkaebi"
+    - "python3 harness/godot/validators/godot_ui_recipe_validate.py --recipe harness/godot/recipes/ui/dokkaebi-tangtang-battle-hud.yaml"
+    - "python3 harness/godot/builders/godot_ui_recipe_build.py --recipe harness/godot/recipes/ui/dokkaebi-tangtang-battle-hud.yaml"
+    - "godot --headless --path harness/runtime/godot-dokkaebi --import"
+    - "godot --headless --path harness/runtime/godot-dokkaebi --scene res://scenes/generated/tangtang_battle_hud.tscn --quit-after 1"
+    - "godot --headless --path harness/runtime/godot-dokkaebi --check-only --script res://scripts/main.gd"
+    - "godot --headless --path harness/runtime/godot-dokkaebi --script res://scripts/tools/smoke.gd"
+  screenshot: "harness/runtime/godot-dokkaebi/screenshots/dokkaebi-ingame-tangtang-haeil-core.png"
+  blockers:
+    - no_unknown_atoms
+    - no_missing_asset_keys
+    - no_fullscreen_concept_png_implementation
+    - native_cooldown_text_not_baked_into_icon
+    - generated_texture_assets_must_be_inside_godot_project

@@ -1,0 +1,92 @@
+version: "1.0"
+game: dokkaebi
+status: draft
+purpose: "Foundation audit for Dokkaebi UI system sources before Godot UI recipe generation."
+
+installed_standard:
+  kit_version: "2026-06-16"
+  source_path: "harness/design/ui-decision-standard-kit/templates"
+  installed_at: "2026-06-23"
+
+existing_documents:
+  design_system:
+    found: false
+    paths: []
+    notes: "No project-wide UI system existed before extracting the Haeil TangTang battle HUD."
+  button_system:
+    found: false
+    paths: []
+    action: create_from_template
+  modal_system:
+    found: false
+    paths: []
+    action: create_from_template
+  color_tokens:
+    found: false
+    paths: []
+    action: create_from_template
+  typography:
+    found: false
+    paths: []
+    action: document_location
+  spacing_layout:
+    found: false
+    paths: []
+    action: create_from_concept
+  icon_rules:
+    found: false
+    paths: []
+    action: document_location
+  ui_skin_nineslice:
+    found: true
+    paths:
+      - "harness/runtime/NINE_SLICE_UI.md"
+    action: link_existing
+  godot_ui_harness:
+    found: true
+    paths:
+      - "harness/godot/GODOT_UI_HARNESS.md"
+      - "harness/godot/registries/control-atoms.yaml"
+    action: connect_to_standard
+
+created_or_updated_documents:
+  - path: "harness/design/dokkaebi/button-system.yaml"
+    reason: "Battle joystick, pause, and circular skill buttons need shared role rules."
+  - path: "harness/design/dokkaebi/modal-system.yaml"
+    reason: "Level-up and result overlays need shared modal/shell rules after active combat HUD."
+  - path: "harness/design/dokkaebi/color-tokens.yaml"
+    reason: "Godot HUD recipe should map colors to semantic tokens instead of hardcoded values."
+  - path: "harness/design/dokkaebi/layout-tokens.yaml"
+    reason: "The battle HUD needs stable 540x960 safe-area regions."
+
+unresolved_foundation_questions:
+  - topic: "battle_vs_lobby_material_language"
+    question: "Should combat UI use dark lacquer/gold frames while lobby and modal surfaces use warmer parchment?"
+    user_answer: ""
+    resolved_into:
+      path: "harness/design/dokkaebi/art-direction.yaml"
+      section: "materials"
+    status: pending
+
+workflow_integration_targets:
+  skills_or_agents:
+    - name: "gen-ui-concept"
+      status: active
+      required_change: "Concept notes must record missing foundation systems before recipe work."
+    - name: "extract-design-system"
+      status: active
+      required_change: "Battle HUD extraction writes shared button, modal, color, blueprint, and asset-plan files."
+    - name: "gen-godot-ui-recipe"
+      status: active
+      required_change: "Recipes must use component-blueprints, color tokens, and asset-plan keys."
+    - name: "build-godot-ui-runtime"
+      status: pending
+      required_change: "Generated Godot Control output should replace hand-drawn HUD sections incrementally."
+
+approval_gate:
+  required_before_first_surface:
+    - "Existing UI system docs audited."
+    - "Button system linked or created."
+    - "Modal system linked or created."
+    - "Color tokens linked or created."
+    - "Battle HUD component-blueprints validate without errors."

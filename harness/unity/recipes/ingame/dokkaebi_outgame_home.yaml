@@ -1,0 +1,190 @@
+version: 1
+game: dokkaebi
+status: candidate
+target: GameScene
+backend: ugui
+source_concept: ../../../design/dokkaebi/concepts/dokkaebi_outgame_home_tangtang_concept_a.md
+design_sources:
+  art_direction: ../../../design/dokkaebi/art-direction.yaml
+  layout_tokens: ../../../design/dokkaebi/layout-tokens.yaml
+  component_blueprints: ../../../design/dokkaebi/component-blueprints.yaml
+  component_skins: ../../../design/dokkaebi/component-skins.yaml
+  asset_plan: ../../../design/dokkaebi/asset-plan.yaml
+  ugui_atoms: ../../registries/ugui-atoms.yaml
+
+prefab_output:
+  root: Assets/Resources/HarnessPreview/DokkaebiOutgameHome.prefab
+  owner_script: DokkaebiOutgameHome
+  generation_policy: "Unity parity recipe only; Godot is the active runtime target for this request."
+
+screen:
+  orientation: portrait
+  aspect: "9:16"
+  safe_area: true
+  reference_size_px: [540, 960]
+
+blueprint_refs:
+  surface: DokkaebiOutgameHome
+  sections:
+    - top_resource_bar
+    - hero_stage
+    - event_rail
+    - progression_cards
+    - sortie_cta
+    - bottom_nav
+  components:
+    - HomeProfileButton
+    - HomeResourceChip
+    - HomeMailButton
+    - HomeCourtyardBackdrop
+    - HomeHeroFigure
+    - HomeEventRail
+    - HomeEventCard
+    - HomeProgressionCard
+    - HomeTrainingCard
+    - HomeSortieButton
+    - HomeBottomNav
+    - HomeBottomTab
+
+regions:
+  top_hud:
+    atom: TopHudStrip
+    maps_section: top_resource_bar
+    anchor: top_stretch_safe_area
+    height_px: 88
+    content_insets_px: { left: 10, right: 10, top: 8, bottom: 8 }
+    gap_px: 8
+    text_clamp:
+      profile_name: { max_lines: 1, overflow: ellipsis }
+      rank: { max_lines: 1, overflow: shrink_to_fit }
+    bindings:
+      profile_name: meta.player_name
+      rank: meta.rank
+      resources: meta.resources
+      unread_mail: meta.mail.unread_count
+  combat_arena:
+    atom: CombatArenaFrame
+    maps_section: hero_stage
+    anchor: middle_left
+    bounds_px: [0, 92, 356, 610]
+    content_insets_px: { left: 0, right: 0, top: 0, bottom: 0 }
+    ornament_layers:
+      - courtyard_backdrop
+      - lobby_hero_sprite
+      - ambient_water_orb
+    bindings:
+      hero_unit: meta.hero.haeil
+      courtyard_state: meta.home_courtyard
+  right_event_rail:
+    atom: MissionCard
+    maps_section: event_rail
+    repeatable: true
+    layout: vertical_cards
+    bounds_px: [368, 118, 158, 548]
+    card_size_px: [150, 90]
+    gap_px: 10
+    content_insets_px: { left: 12, right: 12, top: 10, bottom: 10 }
+    text_clamp:
+      title: { max_lines: 1, overflow: ellipsis }
+    bindings:
+      events: meta.home_events
+  growth_dock:
+    atom: GrowthDockRoot
+    maps_section: progression_cards
+    anchor: lower_content
+    bounds_px: [12, 656, 344, 172]
+    card_size_px: [164, 164]
+    gap_px: 10
+    content_insets_px: { left: 12, right: 12, top: 12, bottom: 12 }
+    text_clamp:
+      title: { max_lines: 1, overflow: ellipsis }
+    bindings:
+      idle_reward: meta.idle_reward
+      training: meta.training
+  sortie_cta:
+    atom: MissionCard
+    maps_section: sortie_cta
+    anchor: lower_right
+    bounds_px: [360, 696, 168, 124]
+    content_insets_px: { left: 14, right: 14, top: 12, bottom: 12 }
+    text_clamp:
+      title: { max_lines: 1, overflow: shrink_to_fit }
+      stage: { max_lines: 1, overflow: ellipsis }
+    action: StartSortie
+    bindings:
+      next_stage: meta.next_stage
+      stamina_cost: meta.next_stage.stamina_cost
+  bottom_nav:
+    atom: BottomTabBar
+    maps_section: bottom_nav
+    anchor: bottom_safe_area_stretch
+    height_px: 112
+    tab_count: 5
+    tab_size_px: [108, 92]
+    content_insets_px: { left: 8, right: 8, top: 8, bottom: 8 }
+    text_clamp:
+      tab_label: { max_lines: 1, overflow: shrink_to_fit }
+    bindings:
+      tabs: meta.nav_tabs
+
+assets:
+  generated_or_reused_keys:
+    - dokkaebi.ui.outgame.parchment_card_9slice
+    - dokkaebi.ui.outgame.resource_chip_9slice
+    - dokkaebi.ui.outgame.sortie_cta_9slice
+    - dokkaebi.ui.outgame.bottom_dock_9slice
+    - dokkaebi.ui.outgame.tab_selected_9slice
+    - dokkaebi.ui.outgame.icon_set_v1
+    - dokkaebi.outgame.hero.haeil_lobby_sprite_v1
+    - dokkaebi.outgame.runtime.native_home_shapes
+  sliced_sprites:
+    - key: dokkaebi.ui.outgame.parchment_card_9slice
+      usage: event_and_progression_card_background
+      target_path: Assets/Resources/HarnessPreview/Dokkaebi/OutgameUI/outgame_parchment_card_9slice.png
+      slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+      content_insets_px: { left: 12, right: 12, top: 10, bottom: 10 }
+    - key: dokkaebi.ui.outgame.resource_chip_9slice
+      usage: profile_and_resource_chip_background
+      target_path: Assets/Resources/HarnessPreview/Dokkaebi/OutgameUI/outgame_resource_chip_9slice.png
+      slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
+      content_insets_px: { left: 8, right: 8, top: 6, bottom: 6 }
+    - key: dokkaebi.ui.outgame.sortie_cta_9slice
+      usage: primary_sortie_button_background
+      target_path: Assets/Resources/HarnessPreview/Dokkaebi/OutgameUI/outgame_sortie_cta_9slice.png
+      slice_hints_px: { left: 24, right: 24, top: 24, bottom: 24 }
+      content_insets_px: { left: 14, right: 14, top: 12, bottom: 12 }
+    - key: dokkaebi.ui.outgame.bottom_dock_9slice
+      usage: bottom_nav_dock_background
+      target_path: Assets/Resources/HarnessPreview/Dokkaebi/OutgameUI/outgame_bottom_dock_9slice.png
+      slice_hints_px: { left: 16, right: 16, top: 16, bottom: 16 }
+      content_insets_px: { left: 8, right: 8, top: 10, bottom: 8 }
+    - key: dokkaebi.ui.outgame.tab_selected_9slice
+      usage: selected_bottom_tab_background
+      target_path: Assets/Resources/HarnessPreview/Dokkaebi/OutgameUI/outgame_tab_selected_9slice.png
+      slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
+      content_insets_px: { left: 8, right: 8, top: 8, bottom: 8 }
+  sprite_sets:
+    - key: dokkaebi.ui.outgame.icon_set_v1
+      usage: resource_event_bottom_tab_icons
+      target_path: Assets/Resources/HarnessPreview/Dokkaebi/OutgameUI/outgame_icon_set_v1.png
+      variants: [stamina, coin, gem, mail, home, yokai, weapon, talisman, shop, chest, training, relic, boss]
+  notes:
+    - "Home text, resource values, prices, timers, and notification counts remain native uGUI Text/TextMeshPro fields."
+    - "Generated outgame skins are recipe-only Unity contracts in this pass; Godot remains the implemented runtime target."
+
+validation:
+  required_viewports:
+    - name: phone_9x16
+      size: [1080, 1920]
+    - name: tall_phone_9x19_5
+      size: [1080, 2340]
+    - name: small_phone_9x16
+      size: [720, 1280]
+  blockers:
+    - no_missing_references
+    - no_text_overflow
+    - top_resource_bar_safe_area
+    - event_rail_repeatable
+    - sortie_cta_primary_action
+    - bottom_tabs_fit_five_slots
+    - godot_remains_primary_runtime_target

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Taskstonebar</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app" aria-label="Taskstonebar MVP">
+      <section class="panel-grid" aria-label="Taskstonebar panels">
+        <article class="panel status-panel">
+          <header class="titlebar">
+            <span>STATUS</span>
+            <button class="icon-button" type="button" data-action="reset" aria-label="Reset save" title="Reset save">
+              <span aria-hidden="true">×</span>
+            </button>
+          </header>
+          <div class="panel-body">
+            <div class="ledger">
+              <div class="resource-line">
+                <span class="coin-icon"></span>
+                <strong id="goldText">0</strong>
+              </div>
+              <div class="resource-line">
+                <span class="ruby-icon"></span>
+                <strong id="catalystText">0</strong>
+              </div>
+            </div>
+
+            <div class="section-title">전투</div>
+            <dl class="stat-list">
+              <div><dt>레벨</dt><dd id="levelText">1</dd></div>
+              <div><dt>공격</dt><dd id="atkText">0</dd></div>
+              <div><dt>공속</dt><dd id="speedText">0</dd></div>
+              <div><dt>DPS</dt><dd id="dpsText">0</dd></div>
+              <div><dt>처치</dt><dd id="killsText">0</dd></div>
+            </dl>
+
+            <div class="section-title">강화</div>
+            <div class="upgrade-list" id="upgradeList"></div>
+          </div>
+        </article>
+
+        <article class="panel stone-panel">
+          <header class="titlebar">
+            <span>TASKSTONE</span>
+          </header>
+          <div class="panel-body stone-body">
+            <div class="stone-stage">
+              <img id="stoneSprite" alt="" src="../../assets/taskstonebar/source/taskstone/stone0.png" />
+              <div>
+                <h1 id="stoneName">몽돌</h1>
+                <p id="nextEvoText">다음 진화 준비 중</p>
+              </div>
+            </div>
+
+            <div class="meter-block">
+              <div class="bar exp"><i id="expBar"></i><span id="expLabel">0 / 0</span></div>
+              <div class="bar hp"><i id="hpBar"></i><span id="hpLabel">0 / 0</span></div>
+            </div>
+
+            <div class="section-title">머지 보드</div>
+            <div class="merge-board" id="mergeBoard" aria-label="Stone merge board"></div>
+          </div>
+        </article>
+
+        <article class="panel portal-panel">
+          <header class="titlebar">
+            <span>PORTAL</span>
+          </header>
+          <div class="panel-body">
+            <div class="section-title">스테이지</div>
+            <div class="stage-list" id="stageList"></div>
+            <div class="section-title">로그</div>
+            <ol class="event-log" id="eventLog"></ol>
+          </div>
+        </article>
+      </section>
+
+      <section class="taskbar-strip" aria-label="Taskbar combat strip">
+        <button class="icon-button mini-close" type="button" data-action="reset" aria-label="Reset save" title="Reset save">
+          <span aria-hidden="true">×</span>
+        </button>
+        <div class="scene">
+          <div class="fighter hero" id="hero"></div>
+          <div class="enemy" id="enemy">
+            <div class="enemy-hp">
+              <i id="enemyHpBar"></i>
+              <span id="enemyHpText">0 / 0</span>
+            </div>
+            <div class="enemy-name" id="enemyName">이끼 진드기</div>
+            <img id="enemySprite" alt="" src="../../assets/taskstonebar/source/taskstone/stone0.png" />
+          </div>
+          <div class="fx-layer" id="fxLayer"></div>
+          <div class="ground"></div>
+          <div class="floorhud">
+            <div class="resource-line gold-floor">
+              <span class="coin-icon"></span>
+              <strong id="floorGoldText">0</strong>
+            </div>
+            <div class="ticker" id="tickerText">작업표시줄 동굴 진입</div>
+            <div class="stage-badge" id="stageBadge">1-1</div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="main.js"></script>
+  </body>
+</html>

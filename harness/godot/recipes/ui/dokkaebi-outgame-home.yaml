@@ -1,0 +1,545 @@
+version: 1
+game: dokkaebi
+slug: dokkaebi-outgame-home
+status: pilot
+backend: godot_control
+
+target:
+  project: "../../../runtime/godot-dokkaebi/project.godot"
+  owner_scene: "../../../runtime/godot-dokkaebi/scenes/main.tscn"
+  owner_script: "../../../runtime/godot-dokkaebi/scripts/main.gd"
+  output:
+    scene: "../../../runtime/godot-dokkaebi/scenes/generated/outgame_home.tscn"
+    theme: "../../../runtime/godot-dokkaebi/themes/generated/dokkaebi_outgame_home.tres"
+  generation_policy: "Generated from harness/godot recipe; do not hand-edit generated output."
+
+sources:
+  ui_system_inventory: "../../../design/dokkaebi/ui-system-inventory.yaml"
+  button_system: "../../../design/dokkaebi/button-system.yaml"
+  modal_system: "../../../design/dokkaebi/modal-system.yaml"
+  color_tokens: "../../../design/dokkaebi/color-tokens.yaml"
+  art_direction: "../../../design/dokkaebi/art-direction.yaml"
+  layout_tokens: "../../../design/dokkaebi/layout-tokens.yaml"
+  component_blueprints: "../../../design/dokkaebi/component-blueprints.yaml"
+  component_skins: "../../../design/dokkaebi/component-skins.yaml"
+  asset_plan: "../../../design/dokkaebi/asset-plan.yaml"
+  concepts:
+    - "../../../design/dokkaebi/concepts/dokkaebi_outgame_home_tangtang_concept_a.md"
+
+blueprint_refs:
+  surface: DokkaebiOutgameHome
+  sections: [top_resource_bar, hero_stage, event_rail, progression_cards, sortie_cta, bottom_nav]
+  components:
+    - HomeProfileButton
+    - HomeResourceChip
+    - HomeMailButton
+    - HomeCourtyardBackdrop
+    - HomeHeroFigure
+    - HomeEventRail
+    - HomeEventCard
+    - HomeProgressionCard
+    - HomeTrainingCard
+    - HomeSortieButton
+    - HomeBottomNav
+    - HomeBottomTab
+  shared_button_roles:
+    - outgame_resource_chip
+    - outgame_event_card
+    - outgame_bottom_tab
+    - primary_cta
+    - top_icon_button
+  shared_modal_sections: []
+  color_token_groups:
+    - outgame_home
+
+screen:
+  orientation: portrait_9_16
+  reference_size_px: { width: 540, height: 960 }
+  safe_area_policy: "Top resources anchor to 8px visual safe area; bottom nav owns the last 112px; sortie CTA sits above the nav."
+
+layout:
+  anchor: full_rect_overlay
+  regions:
+    top_resource_bar:
+      position_px: { x: 10, y: 8 }
+      size_px: { width: 520, height: 88 }
+      gap_px: 8
+    hero_stage:
+      position_px: { x: 0, y: 92 }
+      size_px: { width: 356, height: 610 }
+      hero_bounds_px: { x: 94, y: 230, width: 188, height: 252 }
+    event_rail:
+      position_px: { x: 368, y: 118 }
+      size_px: { width: 158, height: 548 }
+      card_size_px: { width: 150, height: 90 }
+      gap_px: 10
+    progression_cards:
+      position_px: { x: 12, y: 656 }
+      size_px: { width: 344, height: 172 }
+      card_size_px: { width: 164, height: 164 }
+      gap_px: 10
+    sortie_cta:
+      position_px: { x: 360, y: 696 }
+      size_px: { width: 168, height: 124 }
+    bottom_nav:
+      position_px: { x: 0, y: 848 }
+      size_px: { width: 540, height: 112 }
+      tab_count: 5
+
+assets:
+  required_keys:
+    - dokkaebi.ui.outgame.parchment_card_9slice
+    - dokkaebi.ui.outgame.resource_chip_9slice
+    - dokkaebi.ui.outgame.sortie_cta_9slice
+    - dokkaebi.ui.outgame.bottom_tab_cell_9slice
+    - dokkaebi.ui.outgame.tab_selected_9slice
+    - dokkaebi.ui.outgame.icon_set_v1
+    - dokkaebi.ui.outgame.topbar_imagegen_v2
+    - dokkaebi.ui.outgame.event_cards_imagegen_v2
+    - dokkaebi.ui.outgame.command_bar_imagegen_v2
+    - dokkaebi.ui.outgame.bottom_nav_imagegen_v2
+    - dokkaebi.outgame.background.courtyard_v2
+    - dokkaebi.outgame.hero.haeil_lobby_sprite_v1
+    - dokkaebi.outgame.hero.haeil_lobby_sprite_v2
+    - dokkaebi.outgame.runtime.native_home_shapes
+  nineslice:
+    - key: dokkaebi.ui.outgame.parchment_card_9slice
+      atom: NativePanel
+      usage: stylebox_texture
+      slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+      content_insets: { left: 12, right: 12, top: 10, bottom: 10 }
+      target_size_px: { width: 150, height: 90 }
+    - key: dokkaebi.ui.outgame.resource_chip_9slice
+      atom: NativePanel
+      usage: stylebox_texture
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+      content_insets: { left: 8, right: 8, top: 6, bottom: 6 }
+      target_size_px: { width: 96, height: 46 }
+    - key: dokkaebi.ui.outgame.sortie_cta_9slice
+      atom: IconButton
+      usage: stylebox_texture
+      slice_hints: { left: 24, right: 24, top: 24, bottom: 24 }
+      content_insets: { left: 14, right: 14, top: 12, bottom: 12 }
+      target_size_px: { width: 160, height: 98 }
+    - key: dokkaebi.ui.outgame.bottom_tab_cell_9slice
+      atom: IconButton
+      usage: stylebox_texture
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+      content_insets: { left: 8, right: 8, top: 8, bottom: 8 }
+      target_size_px: { width: 108, height: 92 }
+    - key: dokkaebi.ui.outgame.tab_selected_9slice
+      atom: IconButton
+      usage: stylebox_texture
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+      content_insets: { left: 8, right: 8, top: 8, bottom: 8 }
+      target_size_px: { width: 104, height: 92 }
+  fixed_atoms:
+    - key: dokkaebi.ui.outgame.icon_set_v1
+      usage: resource_event_and_tab_icon_set
+      display_size_px: { width: 34, height: 34 }
+    - key: dokkaebi.ui.outgame.topbar_imagegen_v2
+      usage: profile_resource_mail_chip_texture_set
+      display_size_px: { width: 96, height: 42 }
+    - key: dokkaebi.ui.outgame.event_cards_imagegen_v2
+      usage: right_rail_event_card_texture_set
+      display_size_px: { width: 150, height: 90 }
+    - key: dokkaebi.ui.outgame.command_bar_imagegen_v2
+      usage: reward_training_sortie_texture_set
+      display_size_px: { width: 164, height: 164 }
+    - key: dokkaebi.ui.outgame.bottom_nav_imagegen_v2
+      usage: tab_icon_texture_set
+      display_size_px: { width: 42, height: 42 }
+    - key: dokkaebi.outgame.background.courtyard_v2
+      usage: imagegen_courtyard_background
+      display_size_px: { width: 540, height: 960 }
+    - key: dokkaebi.outgame.hero.haeil_lobby_sprite_v1
+      usage: haeil_lobby_hero
+      display_size_px: { width: 188, height: 252 }
+    - key: dokkaebi.outgame.hero.haeil_lobby_sprite_v2
+      usage: imagegen_haeil_lobby_hero
+      display_size_px: { width: 320, height: 498 }
+  native_controls:
+    - key: dokkaebi.outgame.runtime.native_home_shapes
+      usage: background_panels_cards_cta_dock_labels_progress_and_notification_dots
+
+control_tree:
+  root:
+    atom: ScreenRoot
+    node_name: Root_DokkaebiOutgameHome
+    component: DokkaebiOutgameHome
+    anchors_preset: full_rect
+    children:
+      - atom: SectionGroup
+        node_name: Section_TopResourceBar
+        component: HomeTopResourceBar
+        layout: absolute_top_safe_area
+        position_px: { x: 10, y: 8 }
+        size_px: { width: 520, height: 88 }
+        children:
+          - atom: NativePanel
+            node_name: Panel_Profile
+            component: HomeProfileButton
+            color_token: outgame_home
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 150, height: 72 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_ProfileName
+                component: HomeProfileButton
+                text_binding_or_text_key: meta.player_name
+                font_size: 16
+                color_token: cream_text
+                position_px: { x: 58, y: 12 }
+                size_px: { width: 82, height: 22 }
+              - atom: NativeLabel
+                node_name: Text_ProfileRank
+                component: HomeProfileButton
+                text_binding_or_text_key: meta.rank
+                font_size: 12
+                color_token: water_foam
+                position_px: { x: 58, y: 34 }
+                size_px: { width: 82, height: 18 }
+              - atom: NativeProgress
+                node_name: Progress_ProfileStamina
+                component: HomeProfileButton
+                value_binding: meta.stamina_ratio
+                position_px: { x: 58, y: 55 }
+                size_px: { width: 76, height: 8 }
+          - atom: NativePanel
+            node_name: Panel_StaminaChip
+            component: HomeResourceChip
+            color_token: outgame_home
+            position_px: { x: 160, y: 6 }
+            size_px: { width: 92, height: 46 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_StaminaValue
+                text_binding_or_text_key: meta.resources.stamina
+                font_size: 13
+                color_token: cream_text
+                position_px: { x: 28, y: 11 }
+                size_px: { width: 48, height: 20 }
+          - atom: NativePanel
+            node_name: Panel_CoinChip
+            component: HomeResourceChip
+            color_token: outgame_home
+            position_px: { x: 260, y: 6 }
+            size_px: { width: 96, height: 46 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_CoinValue
+                text_binding_or_text_key: meta.resources.coin
+                font_size: 13
+                color_token: cream_text
+                position_px: { x: 28, y: 11 }
+                size_px: { width: 52, height: 20 }
+          - atom: NativePanel
+            node_name: Panel_GemChip
+            component: HomeResourceChip
+            color_token: outgame_home
+            position_px: { x: 364, y: 6 }
+            size_px: { width: 96, height: 46 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_GemValue
+                text_binding_or_text_key: meta.resources.gem
+                font_size: 13
+                color_token: cream_text
+                position_px: { x: 28, y: 11 }
+                size_px: { width: 52, height: 20 }
+          - atom: IconButton
+            node_name: Btn_Mail
+            component: HomeMailButton
+            button_role: top_icon_button
+            touch_size: { width: 48, height: 48 }
+            position_px: { x: 470, y: 5 }
+            text: ""
+      - atom: SectionGroup
+        node_name: Section_HeroStage
+        component: HomeHeroFigure
+        layout: absolute_middle_left
+        position_px: { x: 0, y: 92 }
+        size_px: { width: 356, height: 610 }
+        children:
+          - atom: TextureAtom
+            node_name: Tex_HaeilLobby
+            component: HomeHeroFigure
+            asset_key: dokkaebi.outgame.hero.haeil_lobby_sprite_v1
+            stretch_mode: keep_aspect_centered
+            position_px: { x: 94, y: 230 }
+            size_px: { width: 188, height: 252 }
+      - atom: SectionGroup
+        node_name: Section_EventRail
+        component: HomeEventRail
+        layout: absolute_right_safe_area
+        position_px: { x: 368, y: 118 }
+        size_px: { width: 158, height: 548 }
+        children:
+          - atom: NativePanel
+            node_name: Panel_EventDaily
+            component: HomeEventCard
+            color_token: outgame_home
+            position_px: { x: 4, y: 0 }
+            size_px: { width: 150, height: 90 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_EventDaily
+                text_binding_or_text_key: meta.home_events.daily.title
+                font_size: 13
+                color_token: ink_black
+                position_px: { x: 12, y: 56 }
+                size_px: { width: 126, height: 20 }
+          - atom: NativePanel
+            node_name: Panel_EventRelic
+            component: HomeEventCard
+            color_token: outgame_home
+            position_px: { x: 4, y: 100 }
+            size_px: { width: 150, height: 90 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_EventRelic
+                text_binding_or_text_key: meta.home_events.relic.title
+                font_size: 13
+                color_token: ink_black
+                position_px: { x: 12, y: 56 }
+                size_px: { width: 126, height: 20 }
+          - atom: NativePanel
+            node_name: Panel_EventBoss
+            component: HomeEventCard
+            color_token: outgame_home
+            position_px: { x: 4, y: 200 }
+            size_px: { width: 150, height: 90 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_EventBoss
+                text_binding_or_text_key: meta.home_events.boss.title
+                font_size: 13
+                color_token: ink_black
+                position_px: { x: 12, y: 56 }
+                size_px: { width: 126, height: 20 }
+          - atom: NativePanel
+            node_name: Panel_EventLocked
+            component: HomeEventCard
+            color_token: outgame_home
+            position_px: { x: 4, y: 300 }
+            size_px: { width: 150, height: 90 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_EventLocked
+                text_binding_or_text_key: meta.home_events.locked.title
+                font_size: 13
+                color_token: muted_text
+                position_px: { x: 12, y: 56 }
+                size_px: { width: 126, height: 20 }
+          - atom: NativePanel
+            node_name: Panel_EventChest
+            component: HomeEventCard
+            color_token: outgame_home
+            position_px: { x: 4, y: 400 }
+            size_px: { width: 150, height: 90 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_EventChest
+                text_binding_or_text_key: meta.home_events.chest.title
+                font_size: 13
+                color_token: ink_black
+                position_px: { x: 12, y: 56 }
+                size_px: { width: 126, height: 20 }
+      - atom: SectionGroup
+        node_name: Section_ProgressionCards
+        component: HomeProgressionCard
+        layout: absolute_lower_content
+        position_px: { x: 12, y: 656 }
+        size_px: { width: 344, height: 172 }
+        children:
+          - atom: NativePanel
+            node_name: Panel_IdleReward
+            component: HomeProgressionCard
+            color_token: outgame_home
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 164, height: 164 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_IdleRewardTitle
+                text_binding_or_text_key: meta.idle_reward.title
+                font_size: 14
+                color_token: ink_black
+                position_px: { x: 12, y: 96 }
+                size_px: { width: 140, height: 22 }
+              - atom: NativeProgress
+                node_name: Progress_IdleReward
+                value_binding: meta.idle_reward.progress_ratio
+                position_px: { x: 16, y: 126 }
+                size_px: { width: 132, height: 12 }
+          - atom: NativePanel
+            node_name: Panel_Training
+            component: HomeTrainingCard
+            color_token: outgame_home
+            position_px: { x: 174, y: 0 }
+            size_px: { width: 164, height: 164 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_TrainingTitle
+                text_binding_or_text_key: meta.training.title
+                font_size: 14
+                color_token: ink_black
+                position_px: { x: 12, y: 96 }
+                size_px: { width: 140, height: 22 }
+              - atom: NativeProgress
+                node_name: Progress_Training
+                value_binding: meta.training.progress_ratio
+                position_px: { x: 16, y: 126 }
+                size_px: { width: 132, height: 12 }
+      - atom: SectionGroup
+        node_name: Section_SortieCta
+        component: HomeSortieButton
+        layout: absolute_lower_right
+        position_px: { x: 360, y: 696 }
+        size_px: { width: 168, height: 124 }
+        children:
+          - atom: IconButton
+            node_name: Btn_Sortie
+            component: HomeSortieButton
+            button_role: primary_cta
+            touch_size: { width: 160, height: 98 }
+            position_px: { x: 4, y: 8 }
+            text: ""
+            children:
+              - atom: NativeLabel
+                node_name: Text_SortieTitle
+                text_binding_or_text_key: meta.next_stage.action_label
+                font_size: 23
+                color_token: cream_text
+                position_px: { x: 0, y: 26 }
+                size_px: { width: 160, height: 30 }
+              - atom: NativeLabel
+                node_name: Text_SortieStage
+                text_binding_or_text_key: meta.next_stage.label
+                font_size: 13
+                color_token: cream_text
+                position_px: { x: 0, y: 60 }
+                size_px: { width: 160, height: 22 }
+      - atom: SectionGroup
+        node_name: Section_BottomNav
+        component: HomeBottomNav
+        layout: bottom_safe_area
+        position_px: { x: 0, y: 848 }
+        size_px: { width: 540, height: 112 }
+        children:
+          - atom: IconButton
+            node_name: Btn_TabHome
+            component: HomeBottomTab
+            button_role: outgame_bottom_tab
+            touch_size: { width: 108, height: 92 }
+            position_px: { x: 0, y: 10 }
+            text: ""
+            children:
+              - atom: TextureAtom
+                node_name: Skin_TabCellNormal
+                component: HomeBottomTab
+                asset_key: dokkaebi.ui.outgame.bottom_tab_cell_9slice
+                position_px: { x: 0, y: 0 }
+                size_px: { width: 108, height: 92 }
+                stretch_mode: scale
+              - atom: TextureAtom
+                node_name: Skin_TabSelected
+                component: HomeBottomTab
+                asset_key: dokkaebi.ui.outgame.tab_selected_9slice
+                position_px: { x: 0, y: 0 }
+                size_px: { width: 108, height: 92 }
+                stretch_mode: scale
+          - atom: IconButton
+            node_name: Btn_TabYokai
+            component: HomeBottomTab
+            button_role: outgame_bottom_tab
+            touch_size: { width: 108, height: 92 }
+            position_px: { x: 108, y: 10 }
+            text: ""
+            children:
+              - atom: TextureAtom
+                node_name: Skin_TabCellNormal
+                component: HomeBottomTab
+                asset_key: dokkaebi.ui.outgame.bottom_tab_cell_9slice
+                position_px: { x: 0, y: 0 }
+                size_px: { width: 108, height: 92 }
+                stretch_mode: scale
+          - atom: IconButton
+            node_name: Btn_TabWeapon
+            component: HomeBottomTab
+            button_role: outgame_bottom_tab
+            touch_size: { width: 108, height: 92 }
+            position_px: { x: 216, y: 10 }
+            text: ""
+            children:
+              - atom: TextureAtom
+                node_name: Skin_TabCellNormal
+                component: HomeBottomTab
+                asset_key: dokkaebi.ui.outgame.bottom_tab_cell_9slice
+                position_px: { x: 0, y: 0 }
+                size_px: { width: 108, height: 92 }
+                stretch_mode: scale
+          - atom: IconButton
+            node_name: Btn_TabTalisman
+            component: HomeBottomTab
+            button_role: outgame_bottom_tab
+            touch_size: { width: 108, height: 92 }
+            position_px: { x: 324, y: 10 }
+            text: ""
+            children:
+              - atom: TextureAtom
+                node_name: Skin_TabCellNormal
+                component: HomeBottomTab
+                asset_key: dokkaebi.ui.outgame.bottom_tab_cell_9slice
+                position_px: { x: 0, y: 0 }
+                size_px: { width: 108, height: 92 }
+                stretch_mode: scale
+          - atom: IconButton
+            node_name: Btn_TabShop
+            component: HomeBottomTab
+            button_role: outgame_bottom_tab
+            touch_size: { width: 108, height: 92 }
+            position_px: { x: 432, y: 10 }
+            text: ""
+            children:
+              - atom: TextureAtom
+                node_name: Skin_TabCellNormal
+                component: HomeBottomTab
+                asset_key: dokkaebi.ui.outgame.bottom_tab_cell_9slice
+                position_px: { x: 0, y: 0 }
+                size_px: { width: 108, height: 92 }
+                stretch_mode: scale
+
+data_contract:
+  content: []
+  runtime_state:
+    - meta.player_name
+    - meta.rank
+    - meta.resources
+    - meta.mail.unread_count
+    - meta.home_events
+    - meta.idle_reward
+    - meta.training
+    - meta.next_stage
+    - meta.nav_tabs
+  fixtures:
+    - "scripts/main.gd owns fixture values for first-pass home smoke and visual capture."
+  hardcoding_allowlist:
+    - "The first pass may draw courtyard, event icons, and dock icons with Godot primitives until outgame UI assets are generated."
+
+validation:
+  commands:
+    - "PYTHONPATH=/private/tmp/codex-pydeps-pyyaml python3 harness/tools/design_blueprint_validate.py dokkaebi"
+    - "PYTHONPATH=/private/tmp/codex-pydeps-pyyaml python3 harness/godot/validators/godot_ui_recipe_validate.py --recipe harness/godot/recipes/ui/dokkaebi-outgame-home.yaml"
+    - "PYTHONPATH=/private/tmp/codex-pydeps-pyyaml python3 harness/godot/builders/godot_ui_recipe_build.py --recipe harness/godot/recipes/ui/dokkaebi-outgame-home.yaml"
+    - "godot --headless --path harness/runtime/godot-dokkaebi --import"
+    - "godot --headless --path harness/runtime/godot-dokkaebi --scene res://scenes/generated/outgame_home.tscn --quit-after 1"
+    - "godot --headless --path harness/runtime/godot-dokkaebi --check-only --script res://scripts/main.gd"
+    - "godot --headless --path harness/runtime/godot-dokkaebi --script res://scripts/tools/home_smoke.gd"
+  screenshot: "harness/runtime/godot-dokkaebi/screenshots/dokkaebi-outgame-home.png"
+  compare_board: "harness/design/dokkaebi/compare/dokkaebi_outgame_home_sections_compare.png"
+  blockers:
+    - no_unknown_atoms
+    - no_missing_asset_keys
+    - no_fullscreen_concept_png_implementation
+    - native_text_values_not_baked_into_assets
+    - generated_texture_assets_must_be_inside_godot_project

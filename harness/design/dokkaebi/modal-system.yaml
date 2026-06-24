@@ -1,0 +1,73 @@
+version: "1.0"
+game: dokkaebi
+status: draft
+updated_at: 2026-06-23T00:52:00+09:00
+
+source_concepts:
+  - dokkaebi_tangtang_ingame_screen_b
+  - dokkaebi_ingame_haeil_concept_a
+
+principles:
+  - "Modal shells are shared; level-up, result, and later shop content own only their body sections."
+  - "Header, body, and footer stay separate semantic groups."
+  - "Underlying battle context can remain visible behind a scrim, but controls are disabled."
+  - "Text, rewards, skill names, timers, and values remain data/runtime-native."
+
+host:
+  root_id: DokkaebiModalHost
+  stacking_policy: single_primary_modal_plus_toast
+  z_order:
+    backdrop: 1000
+    shell: 1010
+    toast: 1100
+  input_policy:
+    trap_pointer: true
+    close_on_back: true
+    close_on_escape: true
+    close_on_backdrop: false
+
+shell:
+  component: DokkaebiModalShell
+  material_language:
+    combat_modal: "warm parchment fill with dark lacquer header accents and talisman-gold outline"
+    lobby_modal: "warmer parchment may become default after lobby systems are extracted"
+  sections:
+    backdrop:
+      role: "Dim battle and block gameplay input while preserving orientation."
+    frame:
+      role: "Own stretchable modal/card frame and fixed corner ornaments."
+    header:
+      role: "Title, level/result state, optional close action."
+    body:
+      role: "Feature-owned choices, rewards, or explanation."
+    footer:
+      role: "Primary action or return command."
+  size_policy:
+    combat_level_choice: { width_px: 512, max_height_px: 430 }
+    run_result: { width_px: 388, max_height_px: 570 }
+    target_mobile: { width_px: 512, max_height_px: 720 }
+  scroll_policy:
+    owner: body
+    header_fixed: true
+    footer_fixed: true
+
+actions:
+  primary_button_role: primary_cta
+  secondary_button_role: skill_choice_card_button
+  placement: footer_or_card_body
+  max_primary_actions: 1
+
+skin_policy:
+  frame_usage: godot_nine_patch_rect
+  slice_hints: { left: 28, right: 28, top: 28, bottom: 28 }
+  content_insets_px: { left: 20, right: 20, top: 24, bottom: 20 }
+  ornament_layer:
+    allowed: true
+    rule: "Fixed transparent sprites above frame skin and below readable content."
+
+review_gate:
+  blockers:
+    - "Modal content is implemented as one full-screen image."
+    - "Header/body/footer are collapsed into one unowned block."
+    - "Footer or card actions bypass the shared button system."
+    - "Backdrop hides the player's combat context without intent."

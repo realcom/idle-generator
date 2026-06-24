@@ -1,0 +1,55 @@
+version: 1
+game: taskstonebar
+purpose: Track Taskstonebar design sources and downstream extraction state.
+
+statuses:
+  draft: Exploratory image, local prototype, or note.
+  selected: Current visual target for implementation.
+  extracted: Tokens and asset plans were derived from this source.
+  approved: Human-approved production design source.
+
+concepts:
+  taskstone_local_prototype:
+    status: selected
+    kind: desktop_taskbar_idle_rpg
+    source_dir: "/Users/yangjinhwan/Downloads/taskstone (1)"
+    asset_registry: ../../assets/taskstonebar/asset-registry.yaml
+    summary: "Brown pixel RPG panels, tiny hero sprite sheet, 32px stones/currencies, transparent taskbar combat strip."
+    extracted_to:
+      - art-direction.yaml
+      - color-tokens.yaml
+      - mvp-roadmap.md
+  stone_raising_2_full_ui_concept_a:
+    status: candidate
+    kind: full_game_ui
+    image: concepts/stone_raising_2_full_ui_concept_a.png
+    note: concepts/stone_raising_2_full_ui_concept_a.md
+    parent: taskstone_local_prototype
+    summary: "돌키우기1 pixel toy assets evolved into a Steam-ready 돌키우기2 cave workshop UI with stone evolution, merge board, cube forging, rewards, and taskbar combat strip."
+  stone_raising_2_taskbar_ui_concept_b:
+    status: selected
+    kind: desktop_overlay_full_ui
+    image: concepts/stone_raising_2_taskbar_ui_concept_b.png
+    note: concepts/stone_raising_2_taskbar_ui_concept_b.md
+    parent: taskstone_local_prototype
+    reference: "user-provided Taskbar Hero screenshot"
+    summary: "Taskbar Hero-like desktop overlay direction: three ornate pixel windows plus bottom taskbar battle, adapted for stone raising, merge board, and cube synthesis."
+  stone_keeper_character_remodel_sheet_a:
+    status: candidate
+    kind: character_sprite_remodel
+    image: concepts/stone_keeper_character_remodel_sheet_a_source.png
+    note: concepts/stone_keeper_character_remodel_sheet_a.md
+    parent: stone_raising_2_taskbar_ui_concept_b
+    runtime_export: ../../assets/taskstonebar/generated/characters/stone_keeper_character_remodel_sheet_a.png
+    placement_mock: concepts/stone_keeper_character_in_taskbar_mock_a.png
+    summary: "돌키우기1 bottom hero remodeled into a moss-stone keeper with stone shoulder guard, rock backpack, throwing glove, and ruby catalyst charm."
+  stone_raising_2_taskbar_ui_with_stone_keeper_prompt_c:
+    status: candidate
+    kind: desktop_overlay_full_ui
+    image: concepts/stone_raising_2_taskbar_ui_with_stone_keeper_prompt_c.png
+    note: concepts/stone_raising_2_taskbar_ui_with_stone_keeper_prompt_c.md
+    parent: stone_raising_2_taskbar_ui_concept_b
+    reference: "one-shot prompt regeneration using the stone keeper identity"
+    summary: "Prompt-generated full UI mockup with the Stone Raising hero redrawn natively inside the bottom taskbar combat strip, avoiding pasted cutout shadows."
+
+current_target: stone_raising_2_taskbar_ui_with_stone_keeper_prompt_c

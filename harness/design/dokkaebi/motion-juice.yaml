@@ -1,0 +1,42 @@
+version: "1.0"
+game: dokkaebi
+status: draft
+source_concepts:
+  - dokkaebi_tangtang_ingame_screen_d_autumn_flat
+  - dokkaebi_tangtang_ingame_screen_c_flat
+  - dokkaebi_tangtang_ingame_screen_b
+
+principles:
+  - "Motion clarifies combat state before decorating it."
+  - "Water VFX should make Haeil readable, not hide enemy pressure or pickups."
+  - "Reward feedback should stay below modal priority and never cover touch controls."
+
+motions:
+  battle_button_press:
+    trigger: pointer_down
+    response: "scale 0.98, brighten gold rim, restore"
+    duration_ms: 90
+  battle_skill_ready:
+    trigger: cooldown_reaches_zero
+    response: "short water-blue rim pulse"
+    duration_ms: 450
+  skill_cast:
+    trigger: active_skill_fire
+    response: "arc/ring burst from Haeil or button source"
+    duration_ms: 130-620
+  pickup_collect:
+    trigger: pickup_enters_collect_radius
+    response: "pickup moves to Haeil, tiny teal/blue pop"
+    duration_ms: 260
+  level_up_modal_enter:
+    trigger: run_level_increased
+    response: "battle dim, parchment panel scale from 0.96 to 1.0"
+    duration_ms: 160
+
+limits:
+  max_overlapping_toasts: 2
+  avoid_covering_sections:
+    - battle_controls
+    - exp_bar
+    - top_hud
+  vfx_alpha_policy: "Large rings stay below 0.45 alpha unless they last under 180ms."

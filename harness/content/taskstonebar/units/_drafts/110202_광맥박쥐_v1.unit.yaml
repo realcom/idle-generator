@@ -1,0 +1,32 @@
+id: 110202
+name: "광맥 박쥐"
+type: Elite
+tags: [Monster]
+armorType: NormalArmor
+
+addStats:
+  - { type: Hp, value: [120.0] }
+  - { type: Attack, value: [12.0] }
+  - { type: Defense, value: [4.0] }
+  - { type: MoveSpeed, value: [3.4] }
+  - { type: ScalePercent, value: [-58.0] }
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 7, maxCount: 14, isCore: true }
+      - { itemDataId: 6, count: 8 }
+  - shouldAddAll: false
+    probPercent: 28
+    addItems:
+      - { itemDataId: 200101, count: 1, weight: 65, group: 1 }
+      - { itemDataId: 200102, count: 1, weight: 35, group: 1, pityGroup: 8 }
+
+prefab: "Units/Taskstonebar/PFB_OreBat.prefab"
+sprite: "Assets/Taskstonebar/taskstone/stone1.png"
+uiScale: 1.0
+animations:
+  idle: "ore_bat_idle"
+  move: "ore_bat_move"
+  dead: "ore_bat_dead"

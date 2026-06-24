@@ -1,0 +1,73 @@
+id: 500101
+name: "작업표시줄 동굴"
+type: Dungeon
+tags: [ContainPlayerInventory, Main, InfiniteWaves]
+scene: "PFB_MAP_Taskstonebar_TaskbarCave"
+prefab: "Maps/Prefabs/PFB_MAP_Taskstonebar_TaskbarCave.prefab"
+targetCameraPivot: { x: 0.5, y: 0.56 }
+fov: 8.8
+
+popupArgs:
+  ClientModeManager: ModeManagerTaskstonebar
+  ClientHomeMapDataId: self
+  ClientAutoAdvance: true
+  ClientNextMapDataId: self
+  ClientRetryMapDataId: self
+
+boardConstants:
+  levelUpChoiceCount: 3
+
+initLevel: 1
+initGold: 120
+enableUnitExp: true
+playerUnitCount: 0
+
+triggers:
+  - MAP_ONSTART_TASKSTONEBARCAVEWAVE1
+  - MAP_ONUPDATE_TASKSTONEBARCAVEUPDATE
+
+locations:
+  - id: -1
+    position: { x: -2.8, y: 0.0 }
+    geometries:
+      - circle:
+          center: { x: 0.0, y: 0.0 }
+          radius: 0.9
+  - id: 101
+    position: { x: 3.1, y: 0.0 }
+    geometries:
+      - circle:
+          center: { x: 0.0, y: 0.0 }
+          radius: 0.75
+
+terrains:
+  - vertices:
+      - { position: { x: -8.0, y: -4.5 }, height: 0.0 }
+      - { position: { x: 8.0, y: -4.5 }, height: 0.0 }
+      - { position: { x: 8.0, y: 4.5 }, height: 0.0 }
+      - { position: { x: -8.0, y: 4.5 }, height: 0.0 }
+    triangles:
+      - { v1: 0, v2: 1, v3: 2 }
+      - { v1: 0, v2: 2, v3: 3 }
+  - type: Skill
+    vertices:
+      - { position: { x: -8.0, y: -4.5 }, height: 0.0 }
+      - { position: { x: 8.0, y: -4.5 }, height: 0.0 }
+      - { position: { x: 8.0, y: 4.5 }, height: 0.0 }
+      - { position: { x: -8.0, y: 4.5 }, height: 0.0 }
+    triangles:
+      - { v1: 0, v2: 1, v3: 2 }
+      - { v1: 0, v2: 2, v3: 3 }
+
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 90, maxCount: 150, isCore: true }
+      - { itemDataId: 6, count: 28 }
+      - { itemDataId: 200101, count: 2 }
+  - shouldAddAll: false
+    probPercent: 20
+    addItems:
+      - { itemDataId: 200102, count: 1, weight: 80, group: 2 }
+      - { itemDataId: 200103, count: 1, weight: 20, group: 2, pityGroup: 10 }

@@ -1,0 +1,701 @@
+:root {
+  --panel-outer: #6b4a2a;
+  --panel-mid: #4a2f1a;
+  --panel-inner: #1a0f06;
+  --title-gold: #ffcf7a;
+  --text-cream: #f3e6c8;
+  --text-muted: #b79a72;
+  --coin-gold: #ffd877;
+  --hp-red: #c0392b;
+  --exp-blue: #2e8fd0;
+  --ruby-red: #d94b74;
+  --moss-green: #6a8f42;
+  --ground: #3a2a18;
+  --shadow: #050302;
+}
+
+@font-face {
+  font-family: TSPixel;
+  src: local("DungGeunMo"), local("Galmuri11"), local("Apple SD Gothic Neo");
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(8, 13, 18, 0.82), rgba(7, 6, 5, 0.92)),
+    radial-gradient(circle at 18% 18%, rgba(106, 143, 66, 0.2), transparent 28%),
+    radial-gradient(circle at 82% 24%, rgba(46, 143, 208, 0.16), transparent 24%),
+    #111;
+  color: var(--text-cream);
+  font-family: TSPixel, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  overflow-x: hidden;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+img,
+.fighter,
+.coin-icon,
+.ruby-icon,
+.stone-cell::before {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.app {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: minmax(460px, 1fr) 132px;
+  gap: 10px;
+  padding: 14px 14px 10px;
+}
+
+.panel-grid {
+  width: min(980px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 300px));
+  gap: 14px;
+  align-items: stretch;
+}
+
+.panel {
+  min-height: 450px;
+  border-image: url("../../assets/taskstonebar/source/taskstone/frame.png") 30 fill / 30px / 0 stretch;
+  display: flex;
+  flex-direction: column;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55));
+}
+
+.titlebar {
+  height: 38px;
+  margin: 6px 12px 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: var(--title-gold);
+  font-size: 16px;
+  font-weight: 800;
+  text-shadow: 0 2px 0 #3a2412, 0 0 8px rgba(255, 160, 40, 0.4);
+}
+
+.panel-body {
+  flex: 1;
+  min-height: 0;
+  margin: 4px 16px 16px;
+  padding: 8px;
+  overflow: auto;
+  background: rgba(20, 12, 6, 0.52);
+  border: 1px solid #5a3c22;
+  border-radius: 6px;
+}
+
+.panel-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.panel-body::-webkit-scrollbar-thumb {
+  background: var(--panel-outer);
+  border-radius: 4px;
+}
+
+.icon-button {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--panel-outer);
+  border-radius: 5px;
+  display: grid;
+  place-items: center;
+  color: #e7c79a;
+  background: rgba(0, 0, 0, 0.26);
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  color: #fff;
+  background: #7a2a1e;
+}
+
+.titlebar .icon-button {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.section-title {
+  margin: 8px 2px 5px;
+  padding-bottom: 3px;
+  color: var(--title-gold);
+  border-bottom: 1px solid #5a3c22;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.ledger {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.resource-line {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--coin-gold);
+}
+
+.resource-line strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.coin-icon,
+.ruby-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.coin-icon {
+  background-image: url("../../assets/taskstonebar/source/taskstone/coin.png");
+}
+
+.ruby-icon {
+  background-image: url("../../assets/taskstonebar/source/taskstone/ruby.png");
+}
+
+.stat-list {
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.stat-list div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 24px;
+  padding: 0 6px;
+  background: rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(107, 74, 42, 0.55);
+  border-radius: 5px;
+}
+
+.stat-list dt {
+  color: var(--text-muted);
+}
+
+.stat-list dd {
+  margin: 0;
+  color: var(--text-cream);
+  font-weight: 800;
+}
+
+.upgrade-list {
+  display: grid;
+  gap: 6px;
+}
+
+.upgrade {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 42px;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(107, 74, 42, 0.55);
+  border-radius: 6px;
+}
+
+.upgrade b {
+  display: block;
+  color: var(--text-cream);
+  font-size: 12px;
+}
+
+.upgrade small {
+  display: block;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.btn {
+  min-width: 74px;
+  min-height: 30px;
+  border: 2px solid var(--panel-outer);
+  border-radius: 6px;
+  background: linear-gradient(#8a5a30, #5e3a1c);
+  color: #ffe9c2;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  text-shadow: 0 1px 0 #3a2412;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn:hover {
+  filter: brightness(1.1);
+}
+
+.btn:disabled {
+  filter: grayscale(0.8) brightness(0.65);
+  cursor: not-allowed;
+}
+
+.stone-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.stone-stage {
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  gap: 10px;
+  align-items: center;
+  min-height: 84px;
+}
+
+.stone-stage img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(130, 200, 255, 0.4));
+}
+
+.stone-stage h1 {
+  margin: 0 0 4px;
+  color: var(--title-gold);
+  font-size: 20px;
+}
+
+.stone-stage p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.meter-block {
+  display: grid;
+  gap: 6px;
+  margin: 6px 0 4px;
+}
+
+.bar {
+  position: relative;
+  height: 18px;
+  background: #1a0f06;
+  border: 1px solid #5a3c22;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bar i {
+  display: block;
+  width: 0%;
+  height: 100%;
+  transition: width 0.16s linear;
+}
+
+.bar.exp i {
+  background: linear-gradient(#7fd6ff, var(--exp-blue));
+}
+
+.bar.hp i {
+  background: linear-gradient(#ff8a6a, var(--hp-red));
+}
+
+.bar span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 10px;
+  text-shadow: 0 1px 1px #000;
+}
+
+.merge-board {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.stone-cell {
+  position: relative;
+  aspect-ratio: 1;
+  border: 0;
+  border-image: url("../../assets/taskstonebar/source/taskstone/slot.png") 28 fill / 18px / 0 stretch;
+  background: transparent;
+  cursor: pointer;
+}
+
+.stone-cell::before {
+  content: "";
+  position: absolute;
+  inset: 20%;
+  background: var(--stone-img) center / contain no-repeat;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.55));
+}
+
+.stone-cell.empty::before {
+  display: none;
+}
+
+.stone-cell.selected {
+  outline: 2px solid var(--title-gold);
+  outline-offset: -4px;
+}
+
+.stone-cell[disabled] {
+  cursor: default;
+}
+
+.stage-list {
+  display: grid;
+  gap: 6px;
+}
+
+.stage-button {
+  width: 100%;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  border: 1px solid rgba(107, 74, 42, 0.75);
+  border-radius: 6px;
+  color: var(--text-cream);
+  background: rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+}
+
+.stage-button.current {
+  border-color: var(--title-gold);
+  background: rgba(255, 207, 122, 0.12);
+}
+
+.stage-button small {
+  color: var(--text-muted);
+}
+
+.event-log {
+  min-height: 128px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.event-log li:first-child {
+  color: var(--text-cream);
+}
+
+.taskbar-strip {
+  width: min(900px, 100%);
+  height: 132px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+}
+
+.ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 30px;
+  background: var(--ground);
+  border-top: 3px solid rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.08), 0 -2px 10px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+}
+
+.fighter.hero {
+  position: absolute;
+  left: 42px;
+  bottom: 22px;
+  width: 60px;
+  height: 60px;
+  background-image: url("../../assets/taskstonebar/source/taskstone/hero.png");
+  background-repeat: no-repeat;
+  background-size: 660px 60px;
+  background-position: 0 0;
+  z-index: 3;
+  transform: scaleX(-1);
+  animation: idleBob 1.6s ease-in-out infinite;
+}
+
+.fighter.hero.throw {
+  animation: throwPose 0.22s ease-out;
+}
+
+@keyframes idleBob {
+  0%,
+  100% {
+    transform: translateY(0) scaleX(-1);
+  }
+  50% {
+    transform: translateY(-4px) scaleX(-1);
+  }
+}
+
+@keyframes throwPose {
+  0% {
+    transform: translateX(-4px) rotate(-8deg) scaleX(-1);
+  }
+  45% {
+    transform: translateX(8px) rotate(8deg) scale(1.06) scaleX(-1);
+  }
+  100% {
+    transform: translateX(0) rotate(0) scaleX(-1);
+  }
+}
+
+.enemy {
+  position: absolute;
+  right: 80px;
+  bottom: 22px;
+  width: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 4;
+  transition: transform 0.12s linear;
+}
+
+.enemy.hit {
+  transform: translateX(5px);
+  filter: brightness(1.35);
+}
+
+.enemy img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  animation: enemyBob 0.55s ease-in-out infinite;
+}
+
+@keyframes enemyBob {
+  0%,
+  100% {
+    transform: translateY(0) scaleX(-1);
+  }
+  50% {
+    transform: translateY(-3px) scaleX(-1);
+  }
+}
+
+.enemy-hp {
+  position: relative;
+  width: 90px;
+  height: 12px;
+  margin-bottom: 2px;
+  overflow: hidden;
+  border: 1px solid #000;
+  border-radius: 6px;
+  background: #1a0f06;
+}
+
+.enemy-hp i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(#ff8a6a, var(--hp-red));
+  transition: width 0.12s linear;
+}
+
+.enemy-hp span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 8px;
+  text-shadow: 0 1px 1px #000;
+}
+
+.enemy-name {
+  margin-bottom: 3px;
+  color: #ffe1b0;
+  font-size: 10px;
+  text-shadow: 0 1px 2px #000;
+}
+
+.fx-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.damage-pop,
+.gold-pop,
+.rock-shot {
+  position: absolute;
+  pointer-events: none;
+  text-shadow: 0 1px 2px #000;
+}
+
+.damage-pop {
+  color: #fff2a8;
+  font-size: 13px;
+  font-weight: 800;
+  animation: floatUp 0.7s ease-out forwards;
+}
+
+.gold-pop {
+  color: var(--coin-gold);
+  font-size: 11px;
+  font-weight: 800;
+  animation: floatUp 0.8s ease-out forwards;
+}
+
+.rock-shot {
+  width: 24px;
+  height: 24px;
+  background: url("../../assets/taskstonebar/source/taskstone/rock.png") center / contain no-repeat;
+  image-rendering: pixelated;
+  animation: rockFly 0.28s linear forwards;
+}
+
+@keyframes rockFly {
+  from {
+    transform: translate(0, 0) rotate(0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(520px, -18px) rotate(260deg);
+    opacity: 0;
+  }
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) scale(0.85);
+    opacity: 0;
+  }
+  20% {
+    transform: translateY(-6px) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-30px) scale(1);
+    opacity: 0;
+  }
+}
+
+.floorhud {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  height: 24px;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 14px;
+  pointer-events: none;
+}
+
+.gold-floor {
+  min-width: 90px;
+  color: #ffe9a8;
+  font-size: 15px;
+  font-weight: 800;
+  text-shadow: 0 1px 2px #000, 0 0 4px rgba(0, 0, 0, 0.8);
+}
+
+.ticker {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #ffe9c2;
+  font-size: 11px;
+  text-shadow: 0 1px 2px #000;
+}
+
+.stage-badge {
+  min-width: 48px;
+  color: var(--title-gold);
+  font-size: 13px;
+  font-weight: 800;
+  text-align: right;
+  text-shadow: 0 1px 2px #000;
+}
+
+.mini-close {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  z-index: 10;
+  width: 18px;
+  height: 18px;
+  color: #c79a6a;
+  border: 0;
+  background: transparent;
+}
+
+@media (max-width: 760px) {
+  .app {
+    grid-template-rows: auto 132px;
+    padding: 10px;
+  }
+
+  .panel-grid {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+  }
+
+  .panel {
+    min-height: 380px;
+  }
+
+  .portal-panel {
+    min-height: 300px;
+  }
+
+  .taskbar-strip {
+    width: 100%;
+  }
+
+  .fighter.hero {
+    left: 20px;
+  }
+
+  .enemy {
+    right: 28px;
+  }
+}

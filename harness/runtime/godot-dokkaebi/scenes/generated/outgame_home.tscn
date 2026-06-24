@@ -1,0 +1,595 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Theme" path="res://themes/generated/dokkaebi_outgame_home.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/generated/units/haeil_player.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/outgame_bottom_tab_cell_9slice.png" id="3_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/outgame_tab_selected_9slice.png" id="4_tex"]
+
+[node name="Root_DokkaebiOutgameHome" type="Control"]
+layout_mode = 3
+theme = ExtResource("1_theme")
+metadata/atom = "ScreenRoot"
+metadata/component = "DokkaebiOutgameHome"
+
+[node name="Section_TopResourceBar" type="Control" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 8.0
+offset_right = 530.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2(520.0, 88.0)
+metadata/atom = "SectionGroup"
+metadata/component = "HomeTopResourceBar"
+
+[node name="Panel_Profile" type="PanelContainer" parent="Section_TopResourceBar"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 150.0
+offset_bottom = 72.0
+custom_minimum_size = Vector2(150.0, 72.0)
+metadata/atom = "NativePanel"
+metadata/component = "HomeProfileButton"
+
+[node name="Text_ProfileName" type="Label" parent="Section_TopResourceBar/Panel_Profile"]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 12.0
+offset_right = 140.0
+offset_bottom = 34.0
+custom_minimum_size = Vector2(82.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "HomeProfileButton"
+metadata/text_binding_or_text_key = "meta.player_name"
+
+[node name="Text_ProfileRank" type="Label" parent="Section_TopResourceBar/Panel_Profile"]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 34.0
+offset_right = 140.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(82.0, 18.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/component = "HomeProfileButton"
+metadata/text_binding_or_text_key = "meta.rank"
+
+[node name="Progress_ProfileStamina" type="ProgressBar" parent="Section_TopResourceBar/Panel_Profile"]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 55.0
+offset_right = 134.0
+offset_bottom = 63.0
+custom_minimum_size = Vector2(76.0, 8.0)
+show_percentage = false
+max_value = 1.0
+value = 0.0
+metadata/atom = "NativeProgress"
+metadata/component = "HomeProfileButton"
+metadata/value_binding = "meta.stamina_ratio"
+
+[node name="Panel_StaminaChip" type="PanelContainer" parent="Section_TopResourceBar"]
+layout_mode = 0
+offset_left = 160.0
+offset_top = 6.0
+offset_right = 252.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(92.0, 46.0)
+metadata/atom = "NativePanel"
+metadata/component = "HomeResourceChip"
+
+[node name="Text_StaminaValue" type="Label" parent="Section_TopResourceBar/Panel_StaminaChip"]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 11.0
+offset_right = 76.0
+offset_bottom = 31.0
+custom_minimum_size = Vector2(48.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/text_binding_or_text_key = "meta.resources.stamina"
+
+[node name="Panel_CoinChip" type="PanelContainer" parent="Section_TopResourceBar"]
+layout_mode = 0
+offset_left = 260.0
+offset_top = 6.0
+offset_right = 356.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(96.0, 46.0)
+metadata/atom = "NativePanel"
+metadata/component = "HomeResourceChip"
+
+[node name="Text_CoinValue" type="Label" parent="Section_TopResourceBar/Panel_CoinChip"]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 11.0
+offset_right = 80.0
+offset_bottom = 31.0
+custom_minimum_size = Vector2(52.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/text_binding_or_text_key = "meta.resources.coin"
+
+[node name="Panel_GemChip" type="PanelContainer" parent="Section_TopResourceBar"]
+layout_mode = 0
+offset_left = 364.0
+offset_top = 6.0
+offset_right = 460.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(96.0, 46.0)
+metadata/atom = "NativePanel"
+metadata/component = "HomeResourceChip"
+
+[node name="Text_GemValue" type="Label" parent="Section_TopResourceBar/Panel_GemChip"]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 11.0
+offset_right = 80.0
+offset_bottom = 31.0
+custom_minimum_size = Vector2(52.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/text_binding_or_text_key = "meta.resources.gem"
+
+[node name="Btn_Mail" type="Button" parent="Section_TopResourceBar"]
+layout_mode = 0
+offset_left = 470.0
+offset_top = 5.0
+offset_right = 518.0
+offset_bottom = 53.0
+custom_minimum_size = Vector2(48.0, 48.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "HomeMailButton"
+metadata/button_role = "top_icon_button"
+
+[node name="Section_HeroStage" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 92.0
+offset_right = 356.0
+offset_bottom = 702.0
+custom_minimum_size = Vector2(356.0, 610.0)
+metadata/atom = "SectionGroup"
+metadata/component = "HomeHeroFigure"
+
+[node name="Tex_HaeilLobby" type="TextureRect" parent="Section_HeroStage"]
+layout_mode = 0
+offset_left = 94.0
+offset_top = 230.0
+offset_right = 282.0
+offset_bottom = 482.0
+custom_minimum_size = Vector2(188.0, 252.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("2_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "HomeHeroFigure"
+metadata/asset_key = "dokkaebi.outgame.hero.haeil_lobby_sprite_v1"
+
+[node name="Section_EventRail" type="Control" parent="."]
+layout_mode = 0
+offset_left = 368.0
+offset_top = 118.0
+offset_right = 526.0
+offset_bottom = 666.0
+custom_minimum_size = Vector2(158.0, 548.0)
+metadata/atom = "SectionGroup"
+metadata/component = "HomeEventRail"
+
+[node name="Panel_EventDaily" type="PanelContainer" parent="Section_EventRail"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 0.0
+offset_right = 154.0
+offset_bottom = 90.0
+custom_minimum_size = Vector2(150.0, 90.0)
+metadata/atom = "NativePanel"
+metadata/component = "HomeEventCard"
+
+[node name="Text_EventDaily" type="Label" parent="Section_EventRail/Panel_EventDaily"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 56.0
+offset_right = 138.0
+offset_bottom = 76.0
+custom_minimum_size = Vector2(126.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/text_binding_or_text_key = "meta.home_events.daily.title"
+
+[node name="Panel_EventRelic" type="PanelContainer" parent="Section_EventRail"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 100.0
+offset_right = 154.0
+offset_bottom = 190.0
+custom_minimum_size = Vector2(150.0, 90.0)
+metadata/atom = "NativePanel"
+metadata/component = "HomeEventCard"
+
+[node name="Text_EventRelic" type="Label" parent="Section_EventRail/Panel_EventRelic"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 56.0
+offset_right = 138.0
+offset_bottom = 76.0
+custom_minimum_size = Vector2(126.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/text_binding_or_text_key = "meta.home_events.relic.title"
+
+[node name="Panel_EventBoss" type="PanelContainer" parent="Section_EventRail"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 200.0
+offset_right = 154.0
+offset_bottom = 290.0
+custom_minimum_size = Vector2(150.0, 90.0)
+metadata/atom = "NativePanel"
+metadata/component = "HomeEventCard"
+
+[node name="Text_EventBoss" type="Label" parent="Section_EventRail/Panel_EventBoss"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 56.0
+offset_right = 138.0
+offset_bottom = 76.0
+custom_minimum_size = Vector2(126.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/text_binding_or_text_key = "meta.home_events.boss.title"
+
+[node name="Panel_EventLocked" type="PanelContainer" parent="Section_EventRail"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 300.0
+offset_right = 154.0
+offset_bottom = 390.0
+custom_minimum_size = Vector2(150.0, 90.0)
+metadata/atom = "NativePanel"
+metadata/component = "HomeEventCard"
+
+[node name="Text_EventLocked" type="Label" parent="Section_EventRail/Panel_EventLocked"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 56.0
+offset_right = 138.0
+offset_bottom = 76.0
+custom_minimum_size = Vector2(126.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/text_binding_or_text_key = "meta.home_events.locked.title"
+
+[node name="Panel_EventChest" type="PanelContainer" parent="Section_EventRail"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 400.0
+offset_right = 154.0
+offset_bottom = 490.0
+custom_minimum_size = Vector2(150.0, 90.0)
+metadata/atom = "NativePanel"
+metadata/component = "HomeEventCard"
+
+[node name="Text_EventChest" type="Label" parent="Section_EventRail/Panel_EventChest"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 56.0
+offset_right = 138.0
+offset_bottom = 76.0
+custom_minimum_size = Vector2(126.0, 20.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/text_binding_or_text_key = "meta.home_events.chest.title"
+
+[node name="Section_ProgressionCards" type="Control" parent="."]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 656.0
+offset_right = 356.0
+offset_bottom = 828.0
+custom_minimum_size = Vector2(344.0, 172.0)
+metadata/atom = "SectionGroup"
+metadata/component = "HomeProgressionCard"
+
+[node name="Panel_IdleReward" type="PanelContainer" parent="Section_ProgressionCards"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 164.0
+offset_bottom = 164.0
+custom_minimum_size = Vector2(164.0, 164.0)
+metadata/atom = "NativePanel"
+metadata/component = "HomeProgressionCard"
+
+[node name="Text_IdleRewardTitle" type="Label" parent="Section_ProgressionCards/Panel_IdleReward"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 96.0
+offset_right = 152.0
+offset_bottom = 118.0
+custom_minimum_size = Vector2(140.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/text_binding_or_text_key = "meta.idle_reward.title"
+
+[node name="Progress_IdleReward" type="ProgressBar" parent="Section_ProgressionCards/Panel_IdleReward"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 126.0
+offset_right = 148.0
+offset_bottom = 138.0
+custom_minimum_size = Vector2(132.0, 12.0)
+show_percentage = false
+max_value = 1.0
+value = 0.0
+metadata/atom = "NativeProgress"
+metadata/value_binding = "meta.idle_reward.progress_ratio"
+
+[node name="Panel_Training" type="PanelContainer" parent="Section_ProgressionCards"]
+layout_mode = 0
+offset_left = 174.0
+offset_top = 0.0
+offset_right = 338.0
+offset_bottom = 164.0
+custom_minimum_size = Vector2(164.0, 164.0)
+metadata/atom = "NativePanel"
+metadata/component = "HomeTrainingCard"
+
+[node name="Text_TrainingTitle" type="Label" parent="Section_ProgressionCards/Panel_Training"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 96.0
+offset_right = 152.0
+offset_bottom = 118.0
+custom_minimum_size = Vector2(140.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/text_binding_or_text_key = "meta.training.title"
+
+[node name="Progress_Training" type="ProgressBar" parent="Section_ProgressionCards/Panel_Training"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 126.0
+offset_right = 148.0
+offset_bottom = 138.0
+custom_minimum_size = Vector2(132.0, 12.0)
+show_percentage = false
+max_value = 1.0
+value = 0.0
+metadata/atom = "NativeProgress"
+metadata/value_binding = "meta.training.progress_ratio"
+
+[node name="Section_SortieCta" type="Control" parent="."]
+layout_mode = 0
+offset_left = 360.0
+offset_top = 696.0
+offset_right = 528.0
+offset_bottom = 820.0
+custom_minimum_size = Vector2(168.0, 124.0)
+metadata/atom = "SectionGroup"
+metadata/component = "HomeSortieButton"
+
+[node name="Btn_Sortie" type="Button" parent="Section_SortieCta"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 8.0
+offset_right = 164.0
+offset_bottom = 106.0
+custom_minimum_size = Vector2(160.0, 98.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "HomeSortieButton"
+metadata/button_role = "primary_cta"
+
+[node name="Text_SortieTitle" type="Label" parent="Section_SortieCta/Btn_Sortie"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 26.0
+offset_right = 160.0
+offset_bottom = 56.0
+custom_minimum_size = Vector2(160.0, 30.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/text_binding_or_text_key = "meta.next_stage.action_label"
+
+[node name="Text_SortieStage" type="Label" parent="Section_SortieCta/Btn_Sortie"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 60.0
+offset_right = 160.0
+offset_bottom = 82.0
+custom_minimum_size = Vector2(160.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+metadata/atom = "NativeLabel"
+metadata/text_binding_or_text_key = "meta.next_stage.label"
+
+[node name="Section_BottomNav" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 848.0
+offset_right = 540.0
+offset_bottom = 960.0
+custom_minimum_size = Vector2(540.0, 112.0)
+metadata/atom = "SectionGroup"
+metadata/component = "HomeBottomNav"
+
+[node name="Btn_TabHome" type="Button" parent="Section_BottomNav"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 10.0
+offset_right = 108.0
+offset_bottom = 102.0
+custom_minimum_size = Vector2(108.0, 92.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "HomeBottomTab"
+metadata/button_role = "outgame_bottom_tab"
+
+[node name="Skin_TabCellNormal" type="TextureRect" parent="Section_BottomNav/Btn_TabHome"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 108.0
+offset_bottom = 92.0
+custom_minimum_size = Vector2(108.0, 92.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("3_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "HomeBottomTab"
+metadata/asset_key = "dokkaebi.ui.outgame.bottom_tab_cell_9slice"
+
+[node name="Skin_TabSelected" type="TextureRect" parent="Section_BottomNav/Btn_TabHome"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 108.0
+offset_bottom = 92.0
+custom_minimum_size = Vector2(108.0, 92.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "HomeBottomTab"
+metadata/asset_key = "dokkaebi.ui.outgame.tab_selected_9slice"
+
+[node name="Btn_TabYokai" type="Button" parent="Section_BottomNav"]
+layout_mode = 0
+offset_left = 108.0
+offset_top = 10.0
+offset_right = 216.0
+offset_bottom = 102.0
+custom_minimum_size = Vector2(108.0, 92.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "HomeBottomTab"
+metadata/button_role = "outgame_bottom_tab"
+
+[node name="Skin_TabCellNormal" type="TextureRect" parent="Section_BottomNav/Btn_TabYokai"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 108.0
+offset_bottom = 92.0
+custom_minimum_size = Vector2(108.0, 92.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("3_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "HomeBottomTab"
+metadata/asset_key = "dokkaebi.ui.outgame.bottom_tab_cell_9slice"
+
+[node name="Btn_TabWeapon" type="Button" parent="Section_BottomNav"]
+layout_mode = 0
+offset_left = 216.0
+offset_top = 10.0
+offset_right = 324.0
+offset_bottom = 102.0
+custom_minimum_size = Vector2(108.0, 92.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "HomeBottomTab"
+metadata/button_role = "outgame_bottom_tab"
+
+[node name="Skin_TabCellNormal" type="TextureRect" parent="Section_BottomNav/Btn_TabWeapon"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 108.0
+offset_bottom = 92.0
+custom_minimum_size = Vector2(108.0, 92.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("3_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "HomeBottomTab"
+metadata/asset_key = "dokkaebi.ui.outgame.bottom_tab_cell_9slice"
+
+[node name="Btn_TabTalisman" type="Button" parent="Section_BottomNav"]
+layout_mode = 0
+offset_left = 324.0
+offset_top = 10.0
+offset_right = 432.0
+offset_bottom = 102.0
+custom_minimum_size = Vector2(108.0, 92.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "HomeBottomTab"
+metadata/button_role = "outgame_bottom_tab"
+
+[node name="Skin_TabCellNormal" type="TextureRect" parent="Section_BottomNav/Btn_TabTalisman"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 108.0
+offset_bottom = 92.0
+custom_minimum_size = Vector2(108.0, 92.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("3_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "HomeBottomTab"
+metadata/asset_key = "dokkaebi.ui.outgame.bottom_tab_cell_9slice"
+
+[node name="Btn_TabShop" type="Button" parent="Section_BottomNav"]
+layout_mode = 0
+offset_left = 432.0
+offset_top = 10.0
+offset_right = 540.0
+offset_bottom = 102.0
+custom_minimum_size = Vector2(108.0, 92.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "HomeBottomTab"
+metadata/button_role = "outgame_bottom_tab"
+
+[node name="Skin_TabCellNormal" type="TextureRect" parent="Section_BottomNav/Btn_TabShop"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 108.0
+offset_bottom = 92.0
+custom_minimum_size = Vector2(108.0, 92.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("3_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "HomeBottomTab"
+metadata/asset_key = "dokkaebi.ui.outgame.bottom_tab_cell_9slice"

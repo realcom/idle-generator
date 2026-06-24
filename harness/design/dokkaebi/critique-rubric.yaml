@@ -1,0 +1,54 @@
+version: "1.0"
+game: dokkaebi
+status: draft
+source_concepts:
+  - dokkaebi_tangtang_ingame_screen_d_autumn_flat
+  - dokkaebi_tangtang_ingame_screen_b
+
+blockers:
+  - "screen is not portrait 9:16"
+  - "Haeil identity is lost or spear/water silhouette is unreadable"
+  - "playfield characters are large illustrated figures instead of flat small 2D runtime sprites"
+  - "active combat HUD covers the central playfield"
+  - "common enemies read as western zombies instead of Korean folklore spirits/goblins"
+  - "cooldowns, Korean labels, timers, or counters are baked into reusable bitmaps"
+  - "Godot recipe uses a full-screen concept PNG as implementation"
+
+weighted_criteria:
+  survivor_rule_match:
+    weight: 25
+    checks:
+      - "top HUD, wave track, central playfield, joystick, action cluster, and EXP bar remain present"
+      - "controls keep mobile touch targets"
+      - "EXP and skill cooldown state are readable during combat"
+  dokkaebi_ip_identity:
+    weight: 25
+    checks:
+      - "Haeil has blue headband, gold talisman plate, spear, and water-blue skill identity"
+      - "Haeil and enemies keep compact flat 2D survivor-game scale"
+      - "background and enemies support Joseon folklore fantasy"
+      - "visuals avoid generic zombie-wave drift"
+  mobile_readability:
+    weight: 20
+    checks:
+      - "enemy/pickup density does not hide Haeil"
+      - "button labels or cooldown numbers do not overlap the EXP bar"
+      - "top HUD values remain readable at 540px"
+  implementation_contract:
+    weight: 20
+    checks:
+      - "component-blueprints define sections and box models"
+      - "asset-plan owns generated skin/icon keys"
+      - "Godot recipe references only declared components and assets"
+  runtime_quality:
+    weight: 10
+    checks:
+      - "Godot smoke passes"
+      - "screenshot capture exists"
+      - "section compare board exists before visual approval"
+
+review_output:
+  verdict: WARN
+  evidence:
+    - "B concept establishes a strong visual target, but generated assets are still planned, not produced."
+  next_edit_scope: "Generate or build the Godot Control HUD recipe output after asset skins/icons are approved."

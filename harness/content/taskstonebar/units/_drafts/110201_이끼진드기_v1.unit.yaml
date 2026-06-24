@@ -1,0 +1,31 @@
+id: 110201
+name: "이끼 진드기"
+type: Normal
+tags: [Monster]
+armorType: NormalArmor
+
+addStats:
+  - { type: Hp, value: [85.0] }
+  - { type: Attack, value: [8.0] }
+  - { type: Defense, value: [2.0] }
+  - { type: MoveSpeed, value: [2.8] }
+  - { type: ScalePercent, value: [-64.0] }
+
+dropAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 3, maxCount: 8, isCore: true }
+      - { itemDataId: 6, count: 4 }
+  - shouldAddAll: false
+    probPercent: 35
+    addItems:
+      - { itemDataId: 200101, count: 1, weight: 100, group: 1 }
+
+prefab: "Units/Taskstonebar/PFB_MossTick.prefab"
+sprite: "Assets/Taskstonebar/taskstone/stone0.png"
+uiScale: 0.9
+animations:
+  idle: "moss_tick_idle"
+  move: "moss_tick_move"
+  dead: "moss_tick_dead"
