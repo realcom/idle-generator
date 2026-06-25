@@ -1,0 +1,126 @@
+id: 200305
+name: 망령 두건
+category: Equipment
+type: Head
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Head
+- WraithSet
+- EquipmentStage05
+- EquipmentGrade05
+- FixedLevelEquipment
+grade: 5
+rarity: 5
+tier: 1
+power: 41
+requiredExps:
+- 0
+equipAddStats:
+- type: Hp
+  value:
+  - 249
+- type: ExpPercent
+  value:
+  - 2.4
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003051
+    grade: 5
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 2.49
+  - id: 2003052
+    grade: 5
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Hp
+      value:
+      - 50
+  - id: 2003053
+    grade: 5
+    group: 1
+    weight: 24
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 1.66
+  - id: 2003054
+    grade: 5
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: ExpPercent
+      value:
+      - 1.2
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 152
+  - itemDataId: 200101
+    count: 5
+popupArgs:
+  ItemDescription: 광산 깊은 곳의 속삭임을 덮어쓴 두건. 돌도 가끔 분위기를 잡는다.
+  EquipmentGrade: '5'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Hp
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_head_05_wraith_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: wraith
+  setName: 망령 세트
+  slot: Head
+  slotName: 머리
+  stage: 5
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_head_05_wraith_imagegen.png
+  grade: 5
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200365
+    nextItemDataId: 200306
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 5
+    resultGrade: 6
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Hp
+    primaryBaseValue: 120
+    primaryValue: 249
+    specialUnlocks:
+    - grade: 4
+      stat: ExpPercent
+      base: 2.0
+    - grade: 7
+      stat: CooldownPercent
+      base: 1.0
+    activeSpecials:
+    - grade: 4
+      stat: ExpPercent
+      value: 2.4

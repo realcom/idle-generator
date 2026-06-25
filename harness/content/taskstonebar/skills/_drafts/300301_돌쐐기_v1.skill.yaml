@@ -1,0 +1,20 @@
+id: 300301
+name: "돌쐐기"
+tags: [Combat, PlayerSkill, SkillTree, Throw, BasicThrow, Taskstonebar]
+damageType: NormalDamage
+projectileType: Straight
+targetRefreshType: Nearest
+cooldown: 0.82
+priority: 31
+projectilePrefab: "FXPrefabs/Taskstonebar/DustGold/StoneSpikeProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/DustGold/VFX_StoneSpike_Cast.prefab" } }
+  - time: 0.12
+    hit:
+      maxHit: 1
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 0.85 }
+      addDamage: { damagePercent: [105.0, 124.0, 145.0, 170.0, 198.0] }
+  - { time: 0.28, playFx: { prefab: "FXPrefabs/Taskstonebar/DustGold/VFX_StoneSpike_Impact.prefab" } }
+  - { time: 0.54, destroy: {} }

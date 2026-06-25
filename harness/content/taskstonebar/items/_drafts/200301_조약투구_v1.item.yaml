@@ -1,0 +1,110 @@
+id: 200301
+name: 조약 투구
+category: Equipment
+type: Head
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Head
+- PebbleSet
+- EquipmentStage01
+- EquipmentGrade01
+- FixedLevelEquipment
+grade: 1
+rarity: 1
+tier: 1
+power: 20
+requiredExps:
+- 0
+equipAddStats:
+- type: Hp
+  value:
+  - 120
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003011
+    grade: 1
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 1.2
+  - id: 2003012
+    grade: 1
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Hp
+      value:
+      - 24
+  - id: 2003013
+    grade: 1
+    group: 1
+    weight: 24
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 0.8
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 62
+  - itemDataId: 200101
+    count: 1
+popupArgs:
+  ItemDescription: 처음 굴러본 조약돌의 각오를 얹은 투구. 아직 작지만 생각은 단단하다.
+  EquipmentGrade: '1'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Hp
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: none
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_head_01_pebble_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: pebble
+  setName: 조약 세트
+  slot: Head
+  slotName: 머리
+  stage: 1
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_head_01_pebble_imagegen.png
+  grade: 1
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200361
+    nextItemDataId: 200302
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 1
+    resultGrade: 2
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Hp
+    primaryBaseValue: 120
+    primaryValue: 120
+    specialUnlocks:
+    - grade: 4
+      stat: ExpPercent
+      base: 2.0
+    - grade: 7
+      stat: CooldownPercent
+      base: 1.0
+    activeSpecials: []

@@ -1,0 +1,50 @@
+id: 200521
+name: "보스분쇄서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 2
+rarity: 3
+group: 200502
+constantDamageRatio: 1.0
+order: 32
+parentId: 200520
+skillDataId: 300313
+unstackable: true
+requiredItemDataIds: [200520]
+requiredAchievementDataIds: [600111]
+targetItemDataIds: [200522]
+addStats:
+  - { type: BossDamageEfficiencyPercent, value: [2.5, 3.8, 5.2, 6.9, 8.9] }
+  - { type: CriticalDamagePercent, value: [3.3, 4.9, 6.9, 9.2, 11.8] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 3 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 4 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "보스3"
+  ChildrenSkillItemDataIds: "200522"
+  UnlockRecipeItemDataId: "200551"
+  UnlockCostLevelPoint: "4"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200520"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "45"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "53"
+  SkillTreeLane: "Boss"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone2.png"

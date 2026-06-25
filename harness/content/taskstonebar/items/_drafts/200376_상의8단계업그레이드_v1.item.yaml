@@ -1,0 +1,96 @@
+id: 200376
+name: 상의 8단계 업그레이드
+category: Recipe
+tags:
+- Recipe
+- EquipmentUpgradeRecipe
+- AutoCombineAvailable
+- PixelEquipment
+- UpgradeToGrade08
+- Chest
+- Taskstonebar
+grade: 8
+rarity: 5
+tier: 1
+targetItemDataIds:
+- 200318
+materialItemGroups:
+- shouldAllValid: false
+  materialItems:
+  - id: 200307
+    count: 1
+  - id: 200317
+    count: 1
+  - id: 200327
+    count: 1
+  - id: 200337
+    count: 1
+  - id: 200347
+    count: 1
+  - id: 200357
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200307
+    count: 1
+  - id: 200317
+    count: 1
+  - id: 200327
+    count: 1
+  - id: 200337
+    count: 1
+  - id: 200347
+    count: 1
+  - id: 200357
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200307
+    count: 1
+  - id: 200317
+    count: 1
+  - id: 200327
+    count: 1
+  - id: 200337
+    count: 1
+  - id: 200347
+    count: 1
+  - id: 200357
+    count: 1
+addItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 200318
+    count: 1
+    level: 1
+    isCore: true
+popupArgs:
+  UpgradeFamily: EquipmentGrade
+  SourceGrade: '7'
+  ResultGrade: '8'
+  RequiredLowerEquipmentCount: '3'
+  CandidateItemDataIds: 200307,200317,200327,200337,200347,200357
+  ResultItemDataId: '200318'
+  ResultLevelPolicy: fixed_1
+  MaterialPolicy: any_lower_equipment_same_grade_count_3
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_chest_08_border_imagegen.png
+_equipmentUpgrade:
+  series: taskstonebar-equipment-upgrade-10-grade
+  slot: Chest
+  slotName: 상의
+  sourceGrade: 7
+  resultGrade: 8
+  targetItemDataId: 200318
+  candidateItemDataIds:
+  - 200307
+  - 200317
+  - 200327
+  - 200337
+  - 200347
+  - 200357
+  requiredCount: 3
+  candidatePolicy: any_lower_equipment_same_grade_count_3
+  resultLevelPolicy: fixed_1
+  compatibleWith: GodotEquipmentUpgradeRuntime

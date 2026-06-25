@@ -1,0 +1,142 @@
+id: 200348
+name: 경계 부적
+category: Equipment
+type: Necklace
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Necklace
+- BorderSet
+- EquipmentStage08
+- EquipmentGrade08
+- FixedLevelEquipment
+grade: 8
+rarity: 5
+tier: 1
+power: 107
+requiredExps:
+- 0
+equipAddStats:
+- type: CriticalDamagePercent
+  value:
+  - 17.92
+- type: BossDamageEfficiencyPercent
+  value:
+  - 4.15
+- type: MonsterDamageEfficiencyPercent
+  value:
+  - 2.4
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003481
+    grade: 8
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 10.75
+  - id: 2003482
+    grade: 8
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 2.15
+  - id: 2003483
+    grade: 8
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 2.87
+  - id: 2003484
+    grade: 8
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: BossDamageEfficiencyPercent
+      value:
+      - 2.07
+  - id: 2003485
+    grade: 8
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: MonsterDamageEfficiencyPercent
+      value:
+      - 1.2
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 235
+  - itemDataId: 200101
+    count: 8
+popupArgs:
+  ItemDescription: 두 세계 사이의 좌표를 새긴 부적. 보스방 입구에서 특히 또렷해진다.
+  EquipmentGrade: '8'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: CriticalDamagePercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_necklace_08_border_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: border
+  setName: 경계 세트
+  slot: Necklace
+  slotName: 목걸이
+  stage: 8
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_necklace_08_border_imagegen.png
+  grade: 8
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200404
+    nextItemDataId: 200349
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 8
+    resultGrade: 9
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: CriticalDamagePercent
+    primaryBaseValue: 5.0
+    primaryValue: 17.92
+    specialUnlocks:
+    - grade: 4
+      stat: BossDamageEfficiencyPercent
+      base: 2.0
+    - grade: 7
+      stat: MonsterDamageEfficiencyPercent
+      base: 2.0
+    activeSpecials:
+    - grade: 4
+      stat: BossDamageEfficiencyPercent
+      value: 4.15
+    - grade: 7
+      stat: MonsterDamageEfficiencyPercent
+      value: 2.4

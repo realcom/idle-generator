@@ -1,0 +1,30 @@
+id: 200563
+name: "철벽성운 학습"
+category: Recipe
+grade: 3
+rarity: 4
+group: 200502
+order: 104
+targetItemDataIds: [200533]
+requiredItemDataIds: [200532]
+requiredAchievementDataIds: [600118]
+exclusiveItemDataIds: [200533]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 6 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200533, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200533"
+  RequiredSkillItemDataIds: "200532"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "95"
+  UnlockCostLevelPoint: "6"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/ruby.png"

@@ -1,0 +1,96 @@
+id: 200379
+name: 장갑 2단계 업그레이드
+category: Recipe
+tags:
+- Recipe
+- EquipmentUpgradeRecipe
+- AutoCombineAvailable
+- PixelEquipment
+- UpgradeToGrade02
+- Gloves
+- Taskstonebar
+grade: 2
+rarity: 2
+tier: 1
+targetItemDataIds:
+- 200322
+materialItemGroups:
+- shouldAllValid: false
+  materialItems:
+  - id: 200301
+    count: 1
+  - id: 200311
+    count: 1
+  - id: 200321
+    count: 1
+  - id: 200331
+    count: 1
+  - id: 200341
+    count: 1
+  - id: 200351
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200301
+    count: 1
+  - id: 200311
+    count: 1
+  - id: 200321
+    count: 1
+  - id: 200331
+    count: 1
+  - id: 200341
+    count: 1
+  - id: 200351
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200301
+    count: 1
+  - id: 200311
+    count: 1
+  - id: 200321
+    count: 1
+  - id: 200331
+    count: 1
+  - id: 200341
+    count: 1
+  - id: 200351
+    count: 1
+addItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 200322
+    count: 1
+    level: 1
+    isCore: true
+popupArgs:
+  UpgradeFamily: EquipmentGrade
+  SourceGrade: '1'
+  ResultGrade: '2'
+  RequiredLowerEquipmentCount: '3'
+  CandidateItemDataIds: 200301,200311,200321,200331,200341,200351
+  ResultItemDataId: '200322'
+  ResultLevelPolicy: fixed_1
+  MaterialPolicy: any_lower_equipment_same_grade_count_3
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_gloves_02_moss_imagegen.png
+_equipmentUpgrade:
+  series: taskstonebar-equipment-upgrade-10-grade
+  slot: Gloves
+  slotName: 장갑
+  sourceGrade: 1
+  resultGrade: 2
+  targetItemDataId: 200322
+  candidateItemDataIds:
+  - 200301
+  - 200311
+  - 200321
+  - 200331
+  - 200341
+  - 200351
+  requiredCount: 3
+  candidatePolicy: any_lower_equipment_same_grade_count_3
+  resultLevelPolicy: fixed_1
+  compatibleWith: GodotEquipmentUpgradeRuntime

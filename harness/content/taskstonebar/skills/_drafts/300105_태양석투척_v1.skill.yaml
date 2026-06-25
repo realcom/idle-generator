@@ -1,0 +1,26 @@
+id: 300105
+name: "태양석 투척"
+tags: [Combat, StoneThrow, StoneWeapon, SolarStone, BossStone, AreaStone, StoneStage04, Taskstonebar]
+damageType: Spell
+projectileType: Parabolic
+targetRefreshType: HighestHp
+cooldown: 3.20
+priority: 14
+projectilePrefab: "FXPrefabs/Taskstonebar/SolarStoneProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_SolarStone_Start.prefab" } }
+  - time: 0.42
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.05 }
+      addDamage: { damagePercent: [185.0] }
+  - time: 0.72
+    hit:
+      maxHit: 4
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.35 }
+      addDamage: { damagePercent: [95.0] }
+  - { time: 0.95, destroy: {} }

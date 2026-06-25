@@ -1,0 +1,50 @@
+id: 200529
+name: "돌껍질서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 1
+rarity: 2
+group: 200502
+constantDamageRatio: 1.0
+order: 40
+parentId: 200504
+skillDataId: 300321
+unstackable: true
+requiredItemDataIds: [200504]
+requiredAchievementDataIds: [600107]
+targetItemDataIds: [200530]
+addStats:
+  - { type: HpPercent, value: [1.2, 1.8, 2.5, 3.3, 4.3] }
+  - { type: DefensePercent, value: [1.1, 1.7, 2.4, 3.2, 4.2] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 2 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "방어1"
+  ChildrenSkillItemDataIds: "200530"
+  UnlockRecipeItemDataId: "200559"
+  UnlockCostLevelPoint: "2"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200504"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "25"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "71"
+  SkillTreeLane: "Guard"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone0.png"

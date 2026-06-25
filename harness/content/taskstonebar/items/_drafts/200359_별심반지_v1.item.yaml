@@ -1,0 +1,142 @@
+id: 200359
+name: 별심 반지
+category: Equipment
+type: Ring
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Ring
+- StarcoreSet
+- EquipmentStage09
+- EquipmentGrade09
+- FixedLevelEquipment
+grade: 9
+rarity: 5
+tier: 1
+power: 129
+requiredExps:
+- 0
+equipAddStats:
+- type: AttackPercent
+  value:
+  - 6.02
+- type: Luck
+  value:
+  - 10
+- type: ItemDropPercent
+  value:
+  - 2.16
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003591
+    grade: 9
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 3.87
+  - id: 2003592
+    grade: 9
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 2.15
+  - id: 2003593
+    grade: 9
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 10.32
+  - id: 2003594
+    grade: 9
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Luck
+      value:
+      - 5
+  - id: 2003595
+    grade: 9
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: SellPricePercent
+      value:
+      - 1.15
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 255
+  - itemDataId: 200101
+    count: 9
+popupArgs:
+  ItemDescription: 별심 조각을 끼운 반지. 돌의 운명선이 잠깐 반짝이며 방향을 바꾼다.
+  EquipmentGrade: '9'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: AttackPercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_ring_09_starcore_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: starcore
+  setName: 별심 세트
+  slot: Ring
+  slotName: 반지
+  stage: 9
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_ring_09_starcore_imagegen.png
+  grade: 9
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200414
+    nextItemDataId: 200360
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 9
+    resultGrade: 10
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: AttackPercent
+    primaryBaseValue: 1.4
+    primaryValue: 6.02
+    specialUnlocks:
+    - grade: 4
+      stat: Luck
+      base: 4.0
+    - grade: 7
+      stat: ItemDropPercent
+      base: 1.5
+    activeSpecials:
+    - grade: 4
+      stat: Luck
+      value: 10
+    - grade: 7
+      stat: ItemDropPercent
+      value: 2.16

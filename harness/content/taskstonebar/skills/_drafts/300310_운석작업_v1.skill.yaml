@@ -1,0 +1,34 @@
+id: 300310
+name: "운석작업"
+tags: [Combat, PlayerSkill, SkillTree, Area, MeteorWork, Taskstonebar]
+damageType: Explosive
+projectileType: Parabolic
+targetRefreshType: Furthest
+cooldown: 5.20
+priority: 45
+projectilePrefab: "FXPrefabs/Taskstonebar/BoomRed/MeteorWorkProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/BoomRed/VFX_MeteorWork_Cast.prefab" } }
+  - time: 0.42
+    hit:
+      maxHit: 10
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 3.00 }
+      addDamage: { damagePercent: [170.0, 204.0, 244.0, 293.0, 352.0] }
+  - time: 0.72
+    hit:
+      maxHit: 10
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.60 }
+      addDamage: { damagePercent: [140.0, 168.0, 202.0, 242.0, 290.0] }
+  - time: 0.96
+    hit:
+      maxHit: 10
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.20 }
+      addDamage: { damagePercent: [110.0, 132.0, 158.0, 190.0, 228.0] }
+  - { time: 1.12, playFx: { prefab: "FXPrefabs/Taskstonebar/BoomRed/VFX_MeteorWork_Impact.prefab" } }
+  - { time: 1.38, destroy: {} }

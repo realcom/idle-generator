@@ -1,0 +1,27 @@
+id: 300312
+name: "달빛절단"
+tags: [Combat, PlayerSkill, SkillTree, Boss, MoonCrit, Taskstonebar]
+damageType: Pierce
+projectileType: Relative
+targetRefreshType: HighestHp
+cooldown: 2.40
+priority: 52
+projectilePrefab: "FXPrefabs/Taskstonebar/MoonWhite/MoonCutterProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/MoonWhite/VFX_MoonCutter_Cast.prefab" } }
+  - time: 0.18
+    hit:
+      maxHit: 2
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.20 }
+      addDamage: { damagePercent: [132.0, 156.0, 184.0, 218.0, 258.0] }
+  - time: 0.42
+    hit:
+      maxHit: 2
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.25 }
+      addDamage: { damagePercent: [132.0, 156.0, 184.0, 218.0, 258.0] }
+  - { time: 0.58, playFx: { prefab: "FXPrefabs/Taskstonebar/MoonWhite/VFX_MoonCutter_Impact.prefab" } }
+  - { time: 0.84, destroy: {} }

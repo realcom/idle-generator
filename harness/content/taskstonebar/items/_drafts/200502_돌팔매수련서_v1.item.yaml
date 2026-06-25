@@ -1,0 +1,47 @@
+id: 200502
+name: "돌팔매 수련서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 1
+rarity: 1
+group: 200502
+constantDamageRatio: 1.0
+order: 1
+parentId: 200502
+skillDataId: 300101
+initialCreate: true
+initialCreateCount: 1
+initialCreateLevel: 1
+unstackable: true
+targetItemDataIds: [200503, 200504]
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 1 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "Root"
+  ChildrenSkillItemDataIds: "200503,200504"
+  UnlockRecipeItemDataId: "0"
+  UnlockCostLevelPoint: "0"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: ""
+  RequiredSkillLevel: "0"
+  RequiredPlayerLevel: "1"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "1"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"

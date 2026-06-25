@@ -1,0 +1,30 @@
+id: 200566
+name: "편성공명 학습"
+category: Recipe
+grade: 2
+rarity: 3
+group: 200502
+order: 107
+targetItemDataIds: [200536]
+requiredItemDataIds: [200535]
+requiredAchievementDataIds: [600114]
+exclusiveItemDataIds: [200536]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 4 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200536, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200536"
+  RequiredSkillItemDataIds: "200535"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "60"
+  UnlockCostLevelPoint: "4"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone2.png"

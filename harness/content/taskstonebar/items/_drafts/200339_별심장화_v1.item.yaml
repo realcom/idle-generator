@@ -1,0 +1,142 @@
+id: 200339
+name: 별심 장화
+category: Equipment
+type: Boots
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Boots
+- StarcoreSet
+- EquipmentStage09
+- EquipmentGrade09
+- FixedLevelEquipment
+grade: 9
+rarity: 5
+tier: 1
+power: 95
+requiredExps:
+- 0
+equipAddStats:
+- type: CriticalPercent
+  value:
+  - 4.3
+- type: AttackSpeedPercent
+  value:
+  - 4.98
+- type: ItemDropPercent
+  value:
+  - 2.16
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003391
+    grade: 9
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 2.58
+  - id: 2003392
+    grade: 9
+    group: 1
+    weight: 32
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackSpeedPercent
+      value:
+      - 3.44
+  - id: 2003393
+    grade: 9
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 8.6
+  - id: 2003394
+    grade: 9
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CooldownPercent
+      value:
+      - 1.24
+  - id: 2003395
+    grade: 9
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: ItemDropPercent
+      value:
+      - 1.15
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 245
+  - itemDataId: 200101
+    count: 9
+popupArgs:
+  ItemDescription: 작업표시줄을 은하수처럼 밟는 장화. 치명적인 발걸음이 꽤 낭만적이다.
+  EquipmentGrade: '9'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: CriticalPercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_boots_09_starcore_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: starcore
+  setName: 별심 세트
+  slot: Boots
+  slotName: 신발
+  stage: 9
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_boots_09_starcore_imagegen.png
+  grade: 9
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200396
+    nextItemDataId: 200340
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 9
+    resultGrade: 10
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: CriticalPercent
+    primaryBaseValue: 1.0
+    primaryValue: 4.3
+    specialUnlocks:
+    - grade: 4
+      stat: AttackSpeedPercent
+      base: 2.0
+    - grade: 7
+      stat: ItemDropPercent
+      base: 1.5
+    activeSpecials:
+    - grade: 4
+      stat: AttackSpeedPercent
+      value: 4.98
+    - grade: 7
+      stat: ItemDropPercent
+      value: 2.16

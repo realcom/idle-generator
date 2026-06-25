@@ -1,0 +1,22 @@
+id: 300103
+name: "이끼돌 투척"
+tags: [Combat, StoneThrow, StoneWeapon, MossStone, StoneStage02, Taskstonebar]
+damageType: NormalDamage
+projectileType: Parabolic
+targetRefreshType: Nearest
+cooldown: 1.25
+priority: 12
+projectilePrefab: "FXPrefabs/Taskstonebar/MossStoneProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_MossThrow_Start.prefab" } }
+  - time: 0.14
+    hit:
+      maxHit: 1
+      addDamage: { damagePercent: [104.0] }
+      addBuffs:
+        - { buffDataId: 400101, level: 1, duration: 2.2 }
+  - time: 0.34
+    hit:
+      maxHit: 1
+      addDamage: { damagePercent: [42.0] }
+  - { time: 0.50, destroy: {} }

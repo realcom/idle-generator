@@ -1,0 +1,30 @@
+id: 200559
+name: "돌껍질 학습"
+category: Recipe
+grade: 1
+rarity: 2
+group: 200502
+order: 100
+targetItemDataIds: [200529]
+requiredItemDataIds: [200504]
+requiredAchievementDataIds: [600107]
+exclusiveItemDataIds: [200529]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 2 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200529, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200529"
+  RequiredSkillItemDataIds: "200504"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "25"
+  UnlockCostLevelPoint: "2"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone0.png"

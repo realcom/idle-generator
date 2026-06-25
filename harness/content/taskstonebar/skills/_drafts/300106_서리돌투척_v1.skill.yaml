@@ -1,0 +1,28 @@
+id: 300106
+name: "서리돌 투척"
+tags: [Combat, StoneThrow, StoneWeapon, FrostStone, ControlStone, StoneStage05, Taskstonebar]
+damageType: Spell
+projectileType: Parabolic
+targetRefreshType: Nearest
+cooldown: 2.85
+priority: 15
+projectilePrefab: "FXPrefabs/Taskstonebar/FrostStoneProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_FrostStone_Start.prefab" } }
+  - time: 0.28
+    hit:
+      maxHit: 5
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.65 }
+      addDamage: { damagePercent: [175.0] }
+      addBuffs:
+        - { buffDataId: 400102, level: 1, duration: 1.8 }
+  - time: 0.58
+    hit:
+      maxHit: 5
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.95 }
+      addDamage: { damagePercent: [62.0] }
+  - { time: 0.82, destroy: {} }

@@ -1,0 +1,126 @@
+id: 200304
+name: 녹슨 관모
+category: Equipment
+type: Head
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Head
+- RustSet
+- EquipmentStage04
+- EquipmentGrade04
+- FixedLevelEquipment
+grade: 4
+rarity: 4
+tier: 1
+power: 35
+requiredExps:
+- 0
+equipAddStats:
+- type: Hp
+  value:
+  - 207
+- type: ExpPercent
+  value:
+  - 2.0
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003041
+    grade: 4
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 2.07
+  - id: 2003042
+    grade: 4
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Hp
+      value:
+      - 41
+  - id: 2003043
+    grade: 4
+    group: 1
+    weight: 24
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 1.38
+  - id: 2003044
+    grade: 4
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: ExpPercent
+      value:
+      - 1.0
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 130
+  - itemDataId: 200101
+    count: 4
+popupArgs:
+  ItemDescription: 오래된 제련소에서 주운 관모. 삐걱거리지만 고집 하나는 새것이다.
+  EquipmentGrade: '4'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Hp
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_head_04_rust_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: rust
+  setName: 녹슨 세트
+  slot: Head
+  slotName: 머리
+  stage: 4
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_head_04_rust_imagegen.png
+  grade: 4
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200364
+    nextItemDataId: 200305
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 4
+    resultGrade: 5
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Hp
+    primaryBaseValue: 120
+    primaryValue: 207
+    specialUnlocks:
+    - grade: 4
+      stat: ExpPercent
+      base: 2.0
+    - grade: 7
+      stat: CooldownPercent
+      base: 1.0
+    activeSpecials:
+    - grade: 4
+      stat: ExpPercent
+      value: 2.0

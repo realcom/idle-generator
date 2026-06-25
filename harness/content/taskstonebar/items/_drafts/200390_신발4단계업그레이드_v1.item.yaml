@@ -1,0 +1,96 @@
+id: 200390
+name: 신발 4단계 업그레이드
+category: Recipe
+tags:
+- Recipe
+- EquipmentUpgradeRecipe
+- AutoCombineAvailable
+- PixelEquipment
+- UpgradeToGrade04
+- Boots
+- Taskstonebar
+grade: 4
+rarity: 4
+tier: 1
+targetItemDataIds:
+- 200334
+materialItemGroups:
+- shouldAllValid: false
+  materialItems:
+  - id: 200303
+    count: 1
+  - id: 200313
+    count: 1
+  - id: 200323
+    count: 1
+  - id: 200333
+    count: 1
+  - id: 200343
+    count: 1
+  - id: 200353
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200303
+    count: 1
+  - id: 200313
+    count: 1
+  - id: 200323
+    count: 1
+  - id: 200333
+    count: 1
+  - id: 200343
+    count: 1
+  - id: 200353
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200303
+    count: 1
+  - id: 200313
+    count: 1
+  - id: 200323
+    count: 1
+  - id: 200333
+    count: 1
+  - id: 200343
+    count: 1
+  - id: 200353
+    count: 1
+addItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 200334
+    count: 1
+    level: 1
+    isCore: true
+popupArgs:
+  UpgradeFamily: EquipmentGrade
+  SourceGrade: '3'
+  ResultGrade: '4'
+  RequiredLowerEquipmentCount: '3'
+  CandidateItemDataIds: 200303,200313,200323,200333,200343,200353
+  ResultItemDataId: '200334'
+  ResultLevelPolicy: fixed_1
+  MaterialPolicy: any_lower_equipment_same_grade_count_3
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_boots_04_rust_imagegen.png
+_equipmentUpgrade:
+  series: taskstonebar-equipment-upgrade-10-grade
+  slot: Boots
+  slotName: 신발
+  sourceGrade: 3
+  resultGrade: 4
+  targetItemDataId: 200334
+  candidateItemDataIds:
+  - 200303
+  - 200313
+  - 200323
+  - 200333
+  - 200343
+  - 200353
+  requiredCount: 3
+  candidatePolicy: any_lower_equipment_same_grade_count_3
+  resultLevelPolicy: fixed_1
+  compatibleWith: GodotEquipmentUpgradeRuntime

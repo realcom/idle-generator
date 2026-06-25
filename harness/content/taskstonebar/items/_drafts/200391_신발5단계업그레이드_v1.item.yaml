@@ -1,0 +1,96 @@
+id: 200391
+name: 신발 5단계 업그레이드
+category: Recipe
+tags:
+- Recipe
+- EquipmentUpgradeRecipe
+- AutoCombineAvailable
+- PixelEquipment
+- UpgradeToGrade05
+- Boots
+- Taskstonebar
+grade: 5
+rarity: 5
+tier: 1
+targetItemDataIds:
+- 200335
+materialItemGroups:
+- shouldAllValid: false
+  materialItems:
+  - id: 200304
+    count: 1
+  - id: 200314
+    count: 1
+  - id: 200324
+    count: 1
+  - id: 200334
+    count: 1
+  - id: 200344
+    count: 1
+  - id: 200354
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200304
+    count: 1
+  - id: 200314
+    count: 1
+  - id: 200324
+    count: 1
+  - id: 200334
+    count: 1
+  - id: 200344
+    count: 1
+  - id: 200354
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200304
+    count: 1
+  - id: 200314
+    count: 1
+  - id: 200324
+    count: 1
+  - id: 200334
+    count: 1
+  - id: 200344
+    count: 1
+  - id: 200354
+    count: 1
+addItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 200335
+    count: 1
+    level: 1
+    isCore: true
+popupArgs:
+  UpgradeFamily: EquipmentGrade
+  SourceGrade: '4'
+  ResultGrade: '5'
+  RequiredLowerEquipmentCount: '3'
+  CandidateItemDataIds: 200304,200314,200324,200334,200344,200354
+  ResultItemDataId: '200335'
+  ResultLevelPolicy: fixed_1
+  MaterialPolicy: any_lower_equipment_same_grade_count_3
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_boots_05_wraith_imagegen.png
+_equipmentUpgrade:
+  series: taskstonebar-equipment-upgrade-10-grade
+  slot: Boots
+  slotName: 신발
+  sourceGrade: 4
+  resultGrade: 5
+  targetItemDataId: 200335
+  candidateItemDataIds:
+  - 200304
+  - 200314
+  - 200324
+  - 200334
+  - 200344
+  - 200354
+  requiredCount: 3
+  candidatePolicy: any_lower_equipment_same_grade_count_3
+  resultLevelPolicy: fixed_1
+  compatibleWith: GodotEquipmentUpgradeRuntime

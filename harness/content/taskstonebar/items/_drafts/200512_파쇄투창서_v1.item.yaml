@@ -1,0 +1,50 @@
+id: 200512
+name: "파쇄투창서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 2
+rarity: 3
+group: 200502
+constantDamageRatio: 1.0
+order: 23
+parentId: 200511
+skillDataId: 300304
+unstackable: true
+requiredItemDataIds: [200511]
+requiredAchievementDataIds: [600112]
+targetItemDataIds: [200513]
+addStats:
+  - { type: AttackPercent, value: [2.4, 3.5, 4.9, 6.5, 8.2] }
+  - { type: CriticalPercent, value: [0.8, 1.4, 2, 2.5, 3.3] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 3 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 4 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 5 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "투척4"
+  ChildrenSkillItemDataIds: "200513"
+  UnlockRecipeItemDataId: "200542"
+  UnlockCostLevelPoint: "5"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200511"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "50"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "34"
+  SkillTreeLane: "Throw"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"

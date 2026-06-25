@@ -1,0 +1,30 @@
+id: 200567
+name: "융합폭주 학습"
+category: Recipe
+grade: 2
+rarity: 3
+group: 200502
+order: 108
+targetItemDataIds: [200537]
+requiredItemDataIds: [200536]
+requiredAchievementDataIds: [600116]
+exclusiveItemDataIds: [200537]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 5 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200537, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200537"
+  RequiredSkillItemDataIds: "200536"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "80"
+  UnlockCostLevelPoint: "5"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"

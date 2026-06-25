@@ -1,0 +1,20 @@
+id: 300322
+name: "방패투척"
+tags: [Combat, PlayerSkill, SkillTree, Guard, ShieldThrow, Taskstonebar]
+damageType: NormalDamage
+projectileType: Straight
+targetRefreshType: Nearest
+cooldown: 1.70
+priority: 72
+projectilePrefab: "FXPrefabs/Taskstonebar/ShieldWhite/ShieldThrowProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/ShieldWhite/VFX_ShieldThrow_Cast.prefab" } }
+  - time: 0.20
+    hit:
+      maxHit: 3
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.10 }
+      addDamage: { damagePercent: [140.0, 166.0, 197.0, 233.0, 276.0] }
+  - { time: 0.36, playFx: { prefab: "FXPrefabs/Taskstonebar/ShieldWhite/VFX_ShieldThrow_Impact.prefab" } }
+  - { time: 0.62, destroy: {} }

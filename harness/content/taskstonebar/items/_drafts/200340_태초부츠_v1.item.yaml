@@ -1,0 +1,136 @@
+id: 200340
+name: 태초 부츠
+category: Equipment
+type: Boots
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Boots
+- OriginSet
+- EquipmentStage10
+- EquipmentGrade10
+- FixedLevelEquipment
+grade: 10
+rarity: 5
+tier: 1
+power: 114
+requiredExps:
+- 0
+equipAddStats:
+- type: CriticalPercent
+  value:
+  - 5.16
+- type: AttackSpeedPercent
+  value:
+  - 5.97
+- type: ItemDropPercent
+  value:
+  - 2.59
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003401
+    grade: 10
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 3.1
+  - id: 2003402
+    grade: 10
+    group: 1
+    weight: 32
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackSpeedPercent
+      value:
+      - 4.13
+  - id: 2003403
+    grade: 10
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 10.32
+  - id: 2003404
+    grade: 10
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CooldownPercent
+      value:
+      - 1.49
+  - id: 2003405
+    grade: 10
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: ItemDropPercent
+      value:
+      - 1.38
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 267
+  - itemDataId: 200101
+    count: 10
+popupArgs:
+  ItemDescription: 첫 번째 데굴을 재현하는 부츠. 한 걸음마다 성장 로그가 새로 찍힌다.
+  EquipmentGrade: '10'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: CriticalPercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_boots_10_origin_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: origin
+  setName: 태초 세트
+  slot: Boots
+  slotName: 신발
+  stage: 10
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_boots_10_origin_imagegen.png
+  grade: 10
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: false
+    terminal: true
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: CriticalPercent
+    primaryBaseValue: 1.0
+    primaryValue: 5.16
+    specialUnlocks:
+    - grade: 4
+      stat: AttackSpeedPercent
+      base: 2.0
+    - grade: 7
+      stat: ItemDropPercent
+      base: 1.5
+    activeSpecials:
+    - grade: 4
+      stat: AttackSpeedPercent
+      value: 5.97
+    - grade: 7
+      stat: ItemDropPercent
+      value: 2.59

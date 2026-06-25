@@ -1,0 +1,27 @@
+id: 300302
+name: "쌍돌비"
+tags: [Combat, PlayerSkill, SkillTree, Throw, RapidThrow, Taskstonebar]
+damageType: NormalDamage
+projectileType: Parabolic
+targetRefreshType: Random
+cooldown: 1.15
+priority: 32
+projectilePrefab: "FXPrefabs/Taskstonebar/AmberOrb/TwinPebbleProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/AmberOrb/VFX_TwinPebble_Cast.prefab" } }
+  - time: 0.12
+    hit:
+      maxHit: 2
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.05 }
+      addDamage: { damagePercent: [72.0, 85.0, 100.0, 118.0, 138.0] }
+  - time: 0.26
+    hit:
+      maxHit: 2
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.05 }
+      addDamage: { damagePercent: [72.0, 85.0, 100.0, 118.0, 138.0] }
+  - { time: 0.42, playFx: { prefab: "FXPrefabs/Taskstonebar/AmberOrb/VFX_TwinPebble_Impact.prefab" } }
+  - { time: 0.68, destroy: {} }

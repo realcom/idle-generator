@@ -1,0 +1,110 @@
+id: 200323
+name: 수정 장갑
+category: Equipment
+type: Gloves
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Gloves
+- CrystalSet
+- EquipmentStage03
+- EquipmentGrade03
+- FixedLevelEquipment
+grade: 3
+rarity: 3
+tier: 1
+power: 40
+requiredExps:
+- 0
+equipAddStats:
+- type: Attack
+  value:
+  - 20
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003231
+    grade: 3
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 1.58
+  - id: 2003232
+    grade: 3
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Attack
+      value:
+      - 6
+  - id: 2003233
+    grade: 3
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 0.72
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 115
+  - itemDataId: 200101
+    count: 3
+popupArgs:
+  ItemDescription: 결정면을 따라 힘이 모인다. 한 번 툭 치면 광석도 자세를 고친다.
+  EquipmentGrade: '3'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Attack
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: none
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_gloves_03_crystal_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: crystal
+  setName: 수정 세트
+  slot: Gloves
+  slotName: 장갑
+  stage: 3
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_gloves_03_crystal_imagegen.png
+  grade: 3
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200381
+    nextItemDataId: 200324
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 3
+    resultGrade: 4
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Attack
+    primaryBaseValue: 14
+    primaryValue: 20
+    specialUnlocks:
+    - grade: 4
+      stat: AttackSpeedPercent
+      base: 2.0
+    - grade: 7
+      stat: CriticalPercent
+      base: 1.2
+    activeSpecials: []

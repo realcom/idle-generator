@@ -1,0 +1,49 @@
+id: 200528
+name: "수확유성서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 3
+rarity: 4
+group: 200502
+constantDamageRatio: 1.0
+order: 39
+parentId: 200527
+skillDataId: 300320
+unstackable: true
+requiredItemDataIds: [200527]
+requiredAchievementDataIds: [600116]
+addStats:
+  - { type: ItemDropPercent, value: [1.8, 3, 4.3, 5.9, 7.8] }
+  - { type: ExpPercent, value: [1.8, 2.7, 3.9, 5.2, 6.8] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 3 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 4 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 5 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 6 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "파밍5"
+  ChildrenSkillItemDataIds: ""
+  UnlockRecipeItemDataId: "200558"
+  UnlockCostLevelPoint: "6"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200527"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "80"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "65"
+  SkillTreeLane: "Farming"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/ruby.png"

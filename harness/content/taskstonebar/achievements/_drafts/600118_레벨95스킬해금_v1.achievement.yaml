@@ -1,0 +1,18 @@
+id: 600118
+name: "레벨 95 스킬 해금"
+type: Normal
+tags: [HideDisplay, SkillTree, Taskstonebar]
+order: 118
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1
+conditionValue2: 95
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+popupArgs:
+  Source: SkillTreeLevelGate
+  SkillTree: Taskstonebar
+  RequiredPlayerLevel: "95"

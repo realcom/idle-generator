@@ -1,0 +1,30 @@
+id: 200557
+name: "상자균열 학습"
+category: Recipe
+grade: 2
+rarity: 3
+group: 200502
+order: 98
+targetItemDataIds: [200527]
+requiredItemDataIds: [200526]
+requiredAchievementDataIds: [600113]
+exclusiveItemDataIds: [200527]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 5 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200527, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200527"
+  RequiredSkillItemDataIds: "200526"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "55"
+  UnlockCostLevelPoint: "5"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"

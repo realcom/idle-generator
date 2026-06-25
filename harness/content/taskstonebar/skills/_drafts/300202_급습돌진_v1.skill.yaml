@@ -1,0 +1,19 @@
+id: 300202
+name: "급습 돌진"
+tags: [Combat, MonsterSkill, Fast, Taskstonebar]
+damageType: Pierce
+projectileType: None
+targetRefreshType: Nearest
+cooldown: 1.60
+priority: 22
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_Lunge_Start.prefab" } }
+  - time: 0.08
+    unitCharge:
+      duration: 0.16
+      distance: 1.25
+  - time: 0.18
+    hit:
+      maxHit: 1
+      addDamage: { damagePercent: [116.0] }
+  - { time: 0.34, destroy: {} }

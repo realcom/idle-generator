@@ -1,132 +1,5082 @@
-version: "1.0"
-updated_at: 2026-06-23T00:00:00+09:00
-
+version: '1.0'
+updated_at: 2026-06-24 00:00:00+09:00
 items:
-  - id: 1
-    name: "플레이어 레벨"
-    file: bootstrap/player_level.item.yaml
-    status: bootstrap
-    created_at: 2026-06-23T00:00:00+09:00
-    created_by: new-content
-    reviewer: null
-    reviewed_at: null
-    tags: [System, Bootstrap, Taskstonebar]
-  - id: 2
-    name: "크레딧"
-    file: bootstrap/credit.item.yaml
-    status: bootstrap
-    created_at: 2026-06-23T00:00:00+09:00
-    created_by: new-content
-    reviewer: null
-    reviewed_at: null
-    tags: [System, Bootstrap, Currency, Taskstonebar]
-  - id: 3
-    name: "루비"
-    file: bootstrap/ruby.item.yaml
-    status: bootstrap
-    created_at: 2026-06-23T00:00:00+09:00
-    created_by: new-content
-    reviewer: null
-    reviewed_at: null
-    tags: [System, Bootstrap, Currency, Taskstonebar]
-  - id: 4
-    name: "무료 루비"
-    file: bootstrap/free_ruby.item.yaml
-    status: bootstrap
-    created_at: 2026-06-23T00:00:00+09:00
-    created_by: new-content
-    reviewer: null
-    reviewed_at: null
-    tags: [System, Bootstrap, Currency, Taskstonebar]
-  - id: 5
-    name: "골드"
-    file: bootstrap/gold.item.yaml
-    status: bootstrap
-    created_at: 2026-06-23T00:00:00+09:00
-    created_by: new-content
-    reviewer: null
-    reviewed_at: null
-    tags: [System, Bootstrap, Currency, Taskstonebar]
-  - id: 6
-    name: "경험치"
-    file: bootstrap/exp.item.yaml
-    status: bootstrap
-    created_at: 2026-06-23T00:00:00+09:00
-    created_by: new-content
-    reviewer: null
-    reviewed_at: null
-    tags: [System, Bootstrap, Currency, Taskstonebar]
-  - id: 7
-    name: "랭크 포인트"
-    file: bootstrap/rank_point.item.yaml
-    status: bootstrap
-    created_at: 2026-06-23T00:00:00+09:00
-    created_by: new-content
-    reviewer: null
-    reviewed_at: null
-    tags: [System, Bootstrap, Currency, Taskstonebar]
-  - id: 8
-    name: "에너지"
-    file: bootstrap/energy.item.yaml
-    status: bootstrap
-    created_at: 2026-06-23T00:00:00+09:00
-    created_by: new-content
-    reviewer: null
-    reviewed_at: null
-    tags: [System, Bootstrap, Currency, Taskstonebar]
-  - id: 110101
-    name: "작업돌지기"
-    file: _drafts/110101_작업돌지기_v1.item.yaml
-    status: draft
-    created_at: 2026-06-23T00:00:00+09:00
-    created_by: new-content
-    reviewer: null
-    reviewed_at: null
-    category: Character
-    refs: { units: [110111], items: [] }
-    tags: [Character, ReservedDefaultCharacter, Taskstonebar]
-  - id: 200101
-    name: "조약돌 파편"
-    file: _drafts/200101_조약돌파편_v1.item.yaml
-    status: draft
-    created_at: 2026-06-23T00:00:00+09:00
-    created_by: new-content
-    reviewer: null
-    reviewed_at: null
-    category: Material
-    refs: { units: [110201, 110202], items: [] }
-    tags: [Material, Stone, Drop, Taskstonebar]
-  - id: 200102
-    name: "이끼 광석"
-    file: _drafts/200102_이끼광석_v1.item.yaml
-    status: draft
-    created_at: 2026-06-23T00:00:00+09:00
-    created_by: new-content
-    reviewer: null
-    reviewed_at: null
-    category: Material
-    refs: { units: [110202, 110501], items: [] }
-    tags: [Material, Ore, Drop, Taskstonebar]
-  - id: 200103
-    name: "큐브 촉매"
-    file: _drafts/200103_큐브촉매_v1.item.yaml
-    status: draft
-    created_at: 2026-06-23T00:00:00+09:00
-    created_by: new-content
-    reviewer: null
-    reviewed_at: null
-    category: Material
-    refs: { units: [110501], items: [] }
-    tags: [Material, Cube, OnlineReward, Taskstonebar]
-  - id: 200201
-    name: "데굴 투석구"
-    file: _drafts/200201_데굴투석구_v1.item.yaml
-    status: draft
-    created_at: 2026-06-23T00:00:00+09:00
-    created_by: new-content
-    reviewer: null
-    reviewed_at: null
-    category: Weapon
-    type: Hammer
-    refs: { units: [], items: [5, 200101, 200103], skills: [300101] }
-    tags: [Weapon, Starter, StoneThrow, Taskstonebar]
+- id: 1
+  name: 플레이어 레벨
+  file: bootstrap/player_level.item.yaml
+  status: bootstrap
+  created_at: 2026-06-23 00:00:00+09:00
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  tags:
+  - System
+  - Bootstrap
+  - Taskstonebar
+- id: 2
+  name: 크레딧
+  file: bootstrap/credit.item.yaml
+  status: bootstrap
+  created_at: 2026-06-23 00:00:00+09:00
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  tags:
+  - System
+  - Bootstrap
+  - Currency
+  - Taskstonebar
+- id: 3
+  name: 루비
+  file: bootstrap/ruby.item.yaml
+  status: bootstrap
+  created_at: 2026-06-23 00:00:00+09:00
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  tags:
+  - System
+  - Bootstrap
+  - Currency
+  - Taskstonebar
+- id: 4
+  name: 무료 루비
+  file: bootstrap/free_ruby.item.yaml
+  status: bootstrap
+  created_at: 2026-06-23 00:00:00+09:00
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  tags:
+  - System
+  - Bootstrap
+  - Currency
+  - Taskstonebar
+- id: 5
+  name: 골드
+  file: bootstrap/gold.item.yaml
+  status: bootstrap
+  created_at: 2026-06-23 00:00:00+09:00
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  tags:
+  - System
+  - Bootstrap
+  - Currency
+  - Taskstonebar
+- id: 6
+  name: 경험치
+  file: bootstrap/exp.item.yaml
+  status: bootstrap
+  created_at: 2026-06-23 00:00:00+09:00
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  tags:
+  - System
+  - Bootstrap
+  - Currency
+  - Taskstonebar
+- id: 7
+  name: 랭크 포인트
+  file: bootstrap/rank_point.item.yaml
+  status: bootstrap
+  created_at: 2026-06-23 00:00:00+09:00
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  tags:
+  - System
+  - Bootstrap
+  - Currency
+  - Taskstonebar
+- id: 8
+  name: 에너지
+  file: bootstrap/energy.item.yaml
+  status: bootstrap
+  created_at: 2026-06-23 00:00:00+09:00
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  tags:
+  - System
+  - Bootstrap
+  - Currency
+  - Taskstonebar
+- id: 110101
+  name: 작업돌지기
+  file: _drafts/110101_작업돌지기_v1.item.yaml
+  status: draft
+  created_at: 2026-06-23 00:00:00+09:00
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Character
+  refs:
+    units:
+    - 110111
+    items: []
+  tags:
+  - Character
+  - ReservedDefaultCharacter
+  - Taskstonebar
+- id: 200101
+  name: 조약돌 파편
+  file: _drafts/200101_조약돌파편_v1.item.yaml
+  status: draft
+  created_at: 2026-06-23 00:00:00+09:00
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Material
+  refs:
+    units:
+    - 110201
+    - 110202
+    items: []
+  tags:
+  - Material
+  - Stone
+  - Drop
+  - Taskstonebar
+- id: 200102
+  name: 이끼 광석
+  file: _drafts/200102_이끼광석_v1.item.yaml
+  status: draft
+  created_at: 2026-06-23 00:00:00+09:00
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Material
+  refs:
+    units:
+    - 110202
+    - 110501
+    items: []
+  tags:
+  - Material
+  - Ore
+  - Drop
+  - Taskstonebar
+- id: 200103
+  name: 큐브 촉매
+  file: _drafts/200103_큐브촉매_v1.item.yaml
+  status: draft
+  created_at: 2026-06-23 00:00:00+09:00
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Material
+  refs:
+    units:
+    - 110501
+    items: []
+  tags:
+  - Material
+  - Cube
+  - OnlineReward
+  - Taskstonebar
+- id: 200201
+  name: 데굴 투석구
+  file: _drafts/200201_데굴투석구_v1.item.yaml
+  status: draft
+  created_at: 2026-06-23 00:00:00+09:00
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Weapon
+  type: Hammer
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200103
+    skills:
+    - 300101
+  tags:
+  - Weapon
+  - Starter
+  - StoneThrow
+  - Taskstonebar
+- id: 200202
+  name: 조약돌
+  file: _drafts/200202_조약돌_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Weapon
+  type: Hammer
+  series: stone-weapon-10-stage
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills:
+    - 300102
+  tags:
+  - Weapon
+  - StoneWeapon
+  - StoneSlot
+  - BasicStone
+  - StoneStage01
+  - Taskstonebar
+- id: 200203
+  name: 이끼돌
+  file: _drafts/200203_이끼돌_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Weapon
+  type: Hammer
+  series: stone-weapon-10-stage
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills:
+    - 300103
+    buffs:
+    - 400101
+  tags:
+  - Weapon
+  - StoneWeapon
+  - StoneSlot
+  - MossStone
+  - UtilityStone
+  - StoneStage02
+  - Taskstonebar
+- id: 200204
+  name: 균열돌
+  file: _drafts/200204_균열돌_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Weapon
+  type: Hammer
+  series: stone-weapon-10-stage
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills:
+    - 300104
+  tags:
+  - Weapon
+  - StoneWeapon
+  - StoneSlot
+  - CrackStone
+  - HeavyStone
+  - StoneStage03
+  - Taskstonebar
+- id: 200205
+  name: 태양석
+  file: _drafts/200205_태양석_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Weapon
+  type: Hammer
+  series: stone-weapon-10-stage
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills:
+    - 300105
+  tags:
+  - Weapon
+  - StoneWeapon
+  - StoneSlot
+  - SolarStone
+  - BossStone
+  - AreaStone
+  - StoneStage04
+  - Taskstonebar
+- id: 200206
+  name: 서리돌
+  file: _drafts/200206_서리돌_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Weapon
+  type: Hammer
+  series: stone-weapon-10-stage
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills:
+    - 300106
+    buffs:
+    - 400102
+  tags:
+  - Weapon
+  - StoneWeapon
+  - StoneSlot
+  - FrostStone
+  - ControlStone
+  - StoneStage05
+  - Taskstonebar
+- id: 200207
+  name: 용암돌
+  file: _drafts/200207_용암돌_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Weapon
+  type: Hammer
+  series: stone-weapon-10-stage
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills:
+    - 300107
+  tags:
+  - Weapon
+  - StoneWeapon
+  - StoneSlot
+  - LavaStone
+  - AreaStone
+  - StoneStage06
+  - Taskstonebar
+- id: 200208
+  name: 번개돌
+  file: _drafts/200208_번개돌_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Weapon
+  type: Hammer
+  series: stone-weapon-10-stage
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills:
+    - 300108
+  tags:
+  - Weapon
+  - StoneWeapon
+  - StoneSlot
+  - ThunderStone
+  - ChainStone
+  - StoneStage07
+  - Taskstonebar
+- id: 200209
+  name: 달빛돌
+  file: _drafts/200209_달빛돌_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Weapon
+  type: Hammer
+  series: stone-weapon-10-stage
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills:
+    - 300109
+  tags:
+  - Weapon
+  - StoneWeapon
+  - StoneSlot
+  - MoonStone
+  - CritStone
+  - StoneStage08
+  - Taskstonebar
+- id: 200210
+  name: 별심돌
+  file: _drafts/200210_별심돌_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Weapon
+  type: Hammer
+  series: stone-weapon-10-stage
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills:
+    - 300110
+  tags:
+  - Weapon
+  - StoneWeapon
+  - StoneSlot
+  - StarcoreStone
+  - BossStone
+  - AreaStone
+  - StoneStage09
+  - Taskstonebar
+- id: 200211
+  name: 태초돌
+  file: _drafts/200211_태초돌_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Weapon
+  type: Hammer
+  series: stone-weapon-10-stage
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills:
+    - 300111
+  tags:
+  - Weapon
+  - StoneWeapon
+  - StoneSlot
+  - OriginStone
+  - UniqueStone
+  - StoneStage10
+  - Taskstonebar
+- id: 200212
+  name: 조약돌 머지
+  file: _drafts/200212_조약돌머지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: stone-weapon-merge-10-stage
+  refs:
+    units: []
+    items:
+    - 200202
+    - 200203
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentCombineRecipe
+  - AutoCombineAvailable
+  - StoneMergeRecipe
+  - StoneStage01
+  - Taskstonebar
+- id: 200213
+  name: 이끼돌 머지
+  file: _drafts/200213_이끼돌머지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: stone-weapon-merge-10-stage
+  refs:
+    units: []
+    items:
+    - 200203
+    - 200204
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentCombineRecipe
+  - AutoCombineAvailable
+  - StoneMergeRecipe
+  - StoneStage02
+  - Taskstonebar
+- id: 200214
+  name: 균열돌 머지
+  file: _drafts/200214_균열돌머지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: stone-weapon-merge-10-stage
+  refs:
+    units: []
+    items:
+    - 200204
+    - 200205
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentCombineRecipe
+  - AutoCombineAvailable
+  - StoneMergeRecipe
+  - StoneStage03
+  - Taskstonebar
+- id: 200215
+  name: 태양석 머지
+  file: _drafts/200215_태양석머지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: stone-weapon-merge-10-stage
+  refs:
+    units: []
+    items:
+    - 200205
+    - 200206
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentCombineRecipe
+  - AutoCombineAvailable
+  - StoneMergeRecipe
+  - StoneStage04
+  - Taskstonebar
+- id: 200216
+  name: 서리돌 머지
+  file: _drafts/200216_서리돌머지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: stone-weapon-merge-10-stage
+  refs:
+    units: []
+    items:
+    - 200206
+    - 200207
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentCombineRecipe
+  - AutoCombineAvailable
+  - StoneMergeRecipe
+  - StoneStage05
+  - Taskstonebar
+- id: 200217
+  name: 용암돌 머지
+  file: _drafts/200217_용암돌머지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: stone-weapon-merge-10-stage
+  refs:
+    units: []
+    items:
+    - 200207
+    - 200208
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentCombineRecipe
+  - AutoCombineAvailable
+  - StoneMergeRecipe
+  - StoneStage06
+  - Taskstonebar
+- id: 200218
+  name: 번개돌 머지
+  file: _drafts/200218_번개돌머지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: stone-weapon-merge-10-stage
+  refs:
+    units: []
+    items:
+    - 200208
+    - 200209
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentCombineRecipe
+  - AutoCombineAvailable
+  - StoneMergeRecipe
+  - StoneStage07
+  - Taskstonebar
+- id: 200219
+  name: 달빛돌 머지
+  file: _drafts/200219_달빛돌머지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: stone-weapon-merge-10-stage
+  refs:
+    units: []
+    items:
+    - 200209
+    - 200210
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentCombineRecipe
+  - AutoCombineAvailable
+  - StoneMergeRecipe
+  - StoneStage08
+  - Taskstonebar
+- id: 200220
+  name: 별심돌 머지
+  file: _drafts/200220_별심돌머지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: new-content+gen-weapons
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: stone-weapon-merge-10-stage
+  refs:
+    units: []
+    items:
+    - 200210
+    - 200211
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentCombineRecipe
+  - AutoCombineAvailable
+  - StoneMergeRecipe
+  - StoneStage09
+  - Taskstonebar
+- id: 200301
+  name: 조약 투구
+  file: _drafts/200301_조약투구_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Head
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Head
+  - PebbleSet
+  - EquipmentStage01
+  - Taskstonebar
+  - EquipmentGrade01
+  - FixedLevelEquipment
+  grade: 1
+  tier: 1
+- id: 200302
+  name: 이끼 두건
+  file: _drafts/200302_이끼두건_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Head
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Head
+  - MossSet
+  - EquipmentStage02
+  - Taskstonebar
+  - EquipmentGrade02
+  - FixedLevelEquipment
+  grade: 2
+  tier: 1
+- id: 200303
+  name: 수정 투구
+  file: _drafts/200303_수정투구_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Head
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Head
+  - CrystalSet
+  - EquipmentStage03
+  - Taskstonebar
+  - EquipmentGrade03
+  - FixedLevelEquipment
+  grade: 3
+  tier: 1
+- id: 200304
+  name: 녹슨 관모
+  file: _drafts/200304_녹슨관모_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Head
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Head
+  - RustSet
+  - EquipmentStage04
+  - Taskstonebar
+  - EquipmentGrade04
+  - FixedLevelEquipment
+  grade: 4
+  tier: 1
+- id: 200305
+  name: 망령 두건
+  file: _drafts/200305_망령두건_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Head
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Head
+  - WraithSet
+  - EquipmentStage05
+  - Taskstonebar
+  - EquipmentGrade05
+  - FixedLevelEquipment
+  grade: 5
+  tier: 1
+- id: 200306
+  name: 용암 투구
+  file: _drafts/200306_용암투구_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Head
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Head
+  - LavaSet
+  - EquipmentStage06
+  - Taskstonebar
+  - EquipmentGrade06
+  - FixedLevelEquipment
+  grade: 6
+  tier: 1
+- id: 200307
+  name: 빙결 관
+  file: _drafts/200307_빙결관_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Head
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Head
+  - FrostSet
+  - EquipmentStage07
+  - Taskstonebar
+  - EquipmentGrade07
+  - FixedLevelEquipment
+  grade: 7
+  tier: 1
+- id: 200308
+  name: 경계 가면
+  file: _drafts/200308_경계가면_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Head
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Head
+  - BorderSet
+  - EquipmentStage08
+  - Taskstonebar
+  - EquipmentGrade08
+  - FixedLevelEquipment
+  grade: 8
+  tier: 1
+- id: 200309
+  name: 별심 왕관
+  file: _drafts/200309_별심왕관_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Head
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Head
+  - StarcoreSet
+  - EquipmentStage09
+  - Taskstonebar
+  - EquipmentGrade09
+  - FixedLevelEquipment
+  grade: 9
+  tier: 1
+- id: 200310
+  name: 태초 관
+  file: _drafts/200310_태초관_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Head
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Head
+  - OriginSet
+  - EquipmentStage10
+  - Taskstonebar
+  - EquipmentGrade10
+  - FixedLevelEquipment
+  grade: 10
+  tier: 1
+- id: 200311
+  name: 조약 갑옷
+  file: _drafts/200311_조약갑옷_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Chest
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Chest
+  - PebbleSet
+  - EquipmentStage01
+  - Taskstonebar
+  - EquipmentGrade01
+  - FixedLevelEquipment
+  grade: 1
+  tier: 1
+- id: 200312
+  name: 이끼 조끼
+  file: _drafts/200312_이끼조끼_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Chest
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Chest
+  - MossSet
+  - EquipmentStage02
+  - Taskstonebar
+  - EquipmentGrade02
+  - FixedLevelEquipment
+  grade: 2
+  tier: 1
+- id: 200313
+  name: 수정 흉갑
+  file: _drafts/200313_수정흉갑_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Chest
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Chest
+  - CrystalSet
+  - EquipmentStage03
+  - Taskstonebar
+  - EquipmentGrade03
+  - FixedLevelEquipment
+  grade: 3
+  tier: 1
+- id: 200314
+  name: 녹슨 갑옷
+  file: _drafts/200314_녹슨갑옷_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Chest
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Chest
+  - RustSet
+  - EquipmentStage04
+  - Taskstonebar
+  - EquipmentGrade04
+  - FixedLevelEquipment
+  grade: 4
+  tier: 1
+- id: 200315
+  name: 망령 망토
+  file: _drafts/200315_망령망토_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Chest
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Chest
+  - WraithSet
+  - EquipmentStage05
+  - Taskstonebar
+  - EquipmentGrade05
+  - FixedLevelEquipment
+  grade: 5
+  tier: 1
+- id: 200316
+  name: 용암 흉갑
+  file: _drafts/200316_용암흉갑_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Chest
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Chest
+  - LavaSet
+  - EquipmentStage06
+  - Taskstonebar
+  - EquipmentGrade06
+  - FixedLevelEquipment
+  grade: 6
+  tier: 1
+- id: 200317
+  name: 빙결 갑주
+  file: _drafts/200317_빙결갑주_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Chest
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Chest
+  - FrostSet
+  - EquipmentStage07
+  - Taskstonebar
+  - EquipmentGrade07
+  - FixedLevelEquipment
+  grade: 7
+  tier: 1
+- id: 200318
+  name: 경계 로브
+  file: _drafts/200318_경계로브_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Chest
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Chest
+  - BorderSet
+  - EquipmentStage08
+  - Taskstonebar
+  - EquipmentGrade08
+  - FixedLevelEquipment
+  grade: 8
+  tier: 1
+- id: 200319
+  name: 별심 갑주
+  file: _drafts/200319_별심갑주_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Chest
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Chest
+  - StarcoreSet
+  - EquipmentStage09
+  - Taskstonebar
+  - EquipmentGrade09
+  - FixedLevelEquipment
+  grade: 9
+  tier: 1
+- id: 200320
+  name: 태초 갑옷
+  file: _drafts/200320_태초갑옷_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Chest
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Chest
+  - OriginSet
+  - EquipmentStage10
+  - Taskstonebar
+  - EquipmentGrade10
+  - FixedLevelEquipment
+  grade: 10
+  tier: 1
+- id: 200321
+  name: 조약 장갑
+  file: _drafts/200321_조약장갑_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Gloves
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Gloves
+  - PebbleSet
+  - EquipmentStage01
+  - Taskstonebar
+  - EquipmentGrade01
+  - FixedLevelEquipment
+  grade: 1
+  tier: 1
+- id: 200322
+  name: 이끼 손띠
+  file: _drafts/200322_이끼손띠_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Gloves
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Gloves
+  - MossSet
+  - EquipmentStage02
+  - Taskstonebar
+  - EquipmentGrade02
+  - FixedLevelEquipment
+  grade: 2
+  tier: 1
+- id: 200323
+  name: 수정 장갑
+  file: _drafts/200323_수정장갑_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Gloves
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Gloves
+  - CrystalSet
+  - EquipmentStage03
+  - Taskstonebar
+  - EquipmentGrade03
+  - FixedLevelEquipment
+  grade: 3
+  tier: 1
+- id: 200324
+  name: 녹슨 건틀릿
+  file: _drafts/200324_녹슨건틀릿_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Gloves
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Gloves
+  - RustSet
+  - EquipmentStage04
+  - Taskstonebar
+  - EquipmentGrade04
+  - FixedLevelEquipment
+  grade: 4
+  tier: 1
+- id: 200325
+  name: 망령 손길
+  file: _drafts/200325_망령손길_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Gloves
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Gloves
+  - WraithSet
+  - EquipmentStage05
+  - Taskstonebar
+  - EquipmentGrade05
+  - FixedLevelEquipment
+  grade: 5
+  tier: 1
+- id: 200326
+  name: 용암 건틀릿
+  file: _drafts/200326_용암건틀릿_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Gloves
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Gloves
+  - LavaSet
+  - EquipmentStage06
+  - Taskstonebar
+  - EquipmentGrade06
+  - FixedLevelEquipment
+  grade: 6
+  tier: 1
+- id: 200327
+  name: 빙결 장갑
+  file: _drafts/200327_빙결장갑_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Gloves
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Gloves
+  - FrostSet
+  - EquipmentStage07
+  - Taskstonebar
+  - EquipmentGrade07
+  - FixedLevelEquipment
+  grade: 7
+  tier: 1
+- id: 200328
+  name: 경계 장갑
+  file: _drafts/200328_경계장갑_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Gloves
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Gloves
+  - BorderSet
+  - EquipmentStage08
+  - Taskstonebar
+  - EquipmentGrade08
+  - FixedLevelEquipment
+  grade: 8
+  tier: 1
+- id: 200329
+  name: 별심 건틀릿
+  file: _drafts/200329_별심건틀릿_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Gloves
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Gloves
+  - StarcoreSet
+  - EquipmentStage09
+  - Taskstonebar
+  - EquipmentGrade09
+  - FixedLevelEquipment
+  grade: 9
+  tier: 1
+- id: 200330
+  name: 태초 장갑
+  file: _drafts/200330_태초장갑_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Gloves
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Gloves
+  - OriginSet
+  - EquipmentStage10
+  - Taskstonebar
+  - EquipmentGrade10
+  - FixedLevelEquipment
+  grade: 10
+  tier: 1
+- id: 200331
+  name: 조약 신발
+  file: _drafts/200331_조약신발_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Boots
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Boots
+  - PebbleSet
+  - EquipmentStage01
+  - Taskstonebar
+  - EquipmentGrade01
+  - FixedLevelEquipment
+  grade: 1
+  tier: 1
+- id: 200332
+  name: 이끼 장화
+  file: _drafts/200332_이끼장화_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Boots
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Boots
+  - MossSet
+  - EquipmentStage02
+  - Taskstonebar
+  - EquipmentGrade02
+  - FixedLevelEquipment
+  grade: 2
+  tier: 1
+- id: 200333
+  name: 수정 장화
+  file: _drafts/200333_수정장화_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Boots
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Boots
+  - CrystalSet
+  - EquipmentStage03
+  - Taskstonebar
+  - EquipmentGrade03
+  - FixedLevelEquipment
+  grade: 3
+  tier: 1
+- id: 200334
+  name: 녹슨 부츠
+  file: _drafts/200334_녹슨부츠_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Boots
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Boots
+  - RustSet
+  - EquipmentStage04
+  - Taskstonebar
+  - EquipmentGrade04
+  - FixedLevelEquipment
+  grade: 4
+  tier: 1
+- id: 200335
+  name: 망령 발걸음
+  file: _drafts/200335_망령발걸음_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Boots
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Boots
+  - WraithSet
+  - EquipmentStage05
+  - Taskstonebar
+  - EquipmentGrade05
+  - FixedLevelEquipment
+  grade: 5
+  tier: 1
+- id: 200336
+  name: 용암 장화
+  file: _drafts/200336_용암장화_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Boots
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Boots
+  - LavaSet
+  - EquipmentStage06
+  - Taskstonebar
+  - EquipmentGrade06
+  - FixedLevelEquipment
+  grade: 6
+  tier: 1
+- id: 200337
+  name: 빙결 부츠
+  file: _drafts/200337_빙결부츠_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Boots
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Boots
+  - FrostSet
+  - EquipmentStage07
+  - Taskstonebar
+  - EquipmentGrade07
+  - FixedLevelEquipment
+  grade: 7
+  tier: 1
+- id: 200338
+  name: 경계 신발
+  file: _drafts/200338_경계신발_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Boots
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Boots
+  - BorderSet
+  - EquipmentStage08
+  - Taskstonebar
+  - EquipmentGrade08
+  - FixedLevelEquipment
+  grade: 8
+  tier: 1
+- id: 200339
+  name: 별심 장화
+  file: _drafts/200339_별심장화_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Boots
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Boots
+  - StarcoreSet
+  - EquipmentStage09
+  - Taskstonebar
+  - EquipmentGrade09
+  - FixedLevelEquipment
+  grade: 9
+  tier: 1
+- id: 200340
+  name: 태초 부츠
+  file: _drafts/200340_태초부츠_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Boots
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Boots
+  - OriginSet
+  - EquipmentStage10
+  - Taskstonebar
+  - EquipmentGrade10
+  - FixedLevelEquipment
+  grade: 10
+  tier: 1
+- id: 200341
+  name: 조약 목걸이
+  file: _drafts/200341_조약목걸이_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Necklace
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Necklace
+  - PebbleSet
+  - EquipmentStage01
+  - Taskstonebar
+  - EquipmentGrade01
+  - FixedLevelEquipment
+  grade: 1
+  tier: 1
+- id: 200342
+  name: 이끼 펜던트
+  file: _drafts/200342_이끼펜던트_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Necklace
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Necklace
+  - MossSet
+  - EquipmentStage02
+  - Taskstonebar
+  - EquipmentGrade02
+  - FixedLevelEquipment
+  grade: 2
+  tier: 1
+- id: 200343
+  name: 수정 목걸이
+  file: _drafts/200343_수정목걸이_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Necklace
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Necklace
+  - CrystalSet
+  - EquipmentStage03
+  - Taskstonebar
+  - EquipmentGrade03
+  - FixedLevelEquipment
+  grade: 3
+  tier: 1
+- id: 200344
+  name: 녹슨 부적
+  file: _drafts/200344_녹슨부적_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Necklace
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Necklace
+  - RustSet
+  - EquipmentStage04
+  - Taskstonebar
+  - EquipmentGrade04
+  - FixedLevelEquipment
+  grade: 4
+  tier: 1
+- id: 200345
+  name: 망령 목걸이
+  file: _drafts/200345_망령목걸이_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Necklace
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Necklace
+  - WraithSet
+  - EquipmentStage05
+  - Taskstonebar
+  - EquipmentGrade05
+  - FixedLevelEquipment
+  grade: 5
+  tier: 1
+- id: 200346
+  name: 용암 펜던트
+  file: _drafts/200346_용암펜던트_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Necklace
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Necklace
+  - LavaSet
+  - EquipmentStage06
+  - Taskstonebar
+  - EquipmentGrade06
+  - FixedLevelEquipment
+  grade: 6
+  tier: 1
+- id: 200347
+  name: 빙결 목걸이
+  file: _drafts/200347_빙결목걸이_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Necklace
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Necklace
+  - FrostSet
+  - EquipmentStage07
+  - Taskstonebar
+  - EquipmentGrade07
+  - FixedLevelEquipment
+  grade: 7
+  tier: 1
+- id: 200348
+  name: 경계 부적
+  file: _drafts/200348_경계부적_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Necklace
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Necklace
+  - BorderSet
+  - EquipmentStage08
+  - Taskstonebar
+  - EquipmentGrade08
+  - FixedLevelEquipment
+  grade: 8
+  tier: 1
+- id: 200349
+  name: 별심 목걸이
+  file: _drafts/200349_별심목걸이_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Necklace
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Necklace
+  - StarcoreSet
+  - EquipmentStage09
+  - Taskstonebar
+  - EquipmentGrade09
+  - FixedLevelEquipment
+  grade: 9
+  tier: 1
+- id: 200350
+  name: 태초 펜던트
+  file: _drafts/200350_태초펜던트_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Necklace
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Necklace
+  - OriginSet
+  - EquipmentStage10
+  - Taskstonebar
+  - EquipmentGrade10
+  - FixedLevelEquipment
+  grade: 10
+  tier: 1
+- id: 200351
+  name: 조약 반지
+  file: _drafts/200351_조약반지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Ring
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Ring
+  - PebbleSet
+  - EquipmentStage01
+  - Taskstonebar
+  - EquipmentGrade01
+  - FixedLevelEquipment
+  grade: 1
+  tier: 1
+- id: 200352
+  name: 이끼 반지
+  file: _drafts/200352_이끼반지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Ring
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Ring
+  - MossSet
+  - EquipmentStage02
+  - Taskstonebar
+  - EquipmentGrade02
+  - FixedLevelEquipment
+  grade: 2
+  tier: 1
+- id: 200353
+  name: 수정 반지
+  file: _drafts/200353_수정반지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Ring
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Ring
+  - CrystalSet
+  - EquipmentStage03
+  - Taskstonebar
+  - EquipmentGrade03
+  - FixedLevelEquipment
+  grade: 3
+  tier: 1
+- id: 200354
+  name: 녹슨 반지
+  file: _drafts/200354_녹슨반지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Ring
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Ring
+  - RustSet
+  - EquipmentStage04
+  - Taskstonebar
+  - EquipmentGrade04
+  - FixedLevelEquipment
+  grade: 4
+  tier: 1
+- id: 200355
+  name: 망령 반지
+  file: _drafts/200355_망령반지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Ring
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Ring
+  - WraithSet
+  - EquipmentStage05
+  - Taskstonebar
+  - EquipmentGrade05
+  - FixedLevelEquipment
+  grade: 5
+  tier: 1
+- id: 200356
+  name: 용암 반지
+  file: _drafts/200356_용암반지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Ring
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Ring
+  - LavaSet
+  - EquipmentStage06
+  - Taskstonebar
+  - EquipmentGrade06
+  - FixedLevelEquipment
+  grade: 6
+  tier: 1
+- id: 200357
+  name: 빙결 반지
+  file: _drafts/200357_빙결반지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Ring
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Ring
+  - FrostSet
+  - EquipmentStage07
+  - Taskstonebar
+  - EquipmentGrade07
+  - FixedLevelEquipment
+  grade: 7
+  tier: 1
+- id: 200358
+  name: 경계 반지
+  file: _drafts/200358_경계반지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Ring
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Ring
+  - BorderSet
+  - EquipmentStage08
+  - Taskstonebar
+  - EquipmentGrade08
+  - FixedLevelEquipment
+  grade: 8
+  tier: 1
+- id: 200359
+  name: 별심 반지
+  file: _drafts/200359_별심반지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Ring
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Ring
+  - StarcoreSet
+  - EquipmentStage09
+  - Taskstonebar
+  - EquipmentGrade09
+  - FixedLevelEquipment
+  grade: 9
+  tier: 1
+- id: 200360
+  name: 태초 반지
+  file: _drafts/200360_태초반지_v1.item.yaml
+  status: draft
+  created_at: 2026-06-24 00:00:00+09:00
+  created_by: gen-equipments
+  reviewer: null
+  reviewed_at: null
+  category: Equipment
+  type: Ring
+  series: taskstonebar-pixel-equipment-10x6
+  refs:
+    units: []
+    items:
+    - 5
+    - 200101
+    - 200102
+    - 200103
+    skills: []
+  tags:
+  - Equipment
+  - PixelEquipment
+  - Ring
+  - OriginSet
+  - EquipmentStage10
+  - Taskstonebar
+  - EquipmentGrade10
+  - FixedLevelEquipment
+  grade: 10
+  tier: 1
+- id: 200361
+  name: 머리 2단계 업그레이드
+  file: _drafts/200361_머리2단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200301
+    - 200311
+    - 200321
+    - 200331
+    - 200341
+    - 200351
+    - 200302
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Head
+  - UpgradeToGrade02
+  - Taskstonebar
+- id: 200362
+  name: 머리 3단계 업그레이드
+  file: _drafts/200362_머리3단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200302
+    - 200312
+    - 200322
+    - 200332
+    - 200342
+    - 200352
+    - 200303
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Head
+  - UpgradeToGrade03
+  - Taskstonebar
+- id: 200363
+  name: 머리 4단계 업그레이드
+  file: _drafts/200363_머리4단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200303
+    - 200313
+    - 200323
+    - 200333
+    - 200343
+    - 200353
+    - 200304
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Head
+  - UpgradeToGrade04
+  - Taskstonebar
+- id: 200364
+  name: 머리 5단계 업그레이드
+  file: _drafts/200364_머리5단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200304
+    - 200314
+    - 200324
+    - 200334
+    - 200344
+    - 200354
+    - 200305
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Head
+  - UpgradeToGrade05
+  - Taskstonebar
+- id: 200365
+  name: 머리 6단계 업그레이드
+  file: _drafts/200365_머리6단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200305
+    - 200315
+    - 200325
+    - 200335
+    - 200345
+    - 200355
+    - 200306
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Head
+  - UpgradeToGrade06
+  - Taskstonebar
+- id: 200366
+  name: 머리 7단계 업그레이드
+  file: _drafts/200366_머리7단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200306
+    - 200316
+    - 200326
+    - 200336
+    - 200346
+    - 200356
+    - 200307
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Head
+  - UpgradeToGrade07
+  - Taskstonebar
+- id: 200367
+  name: 머리 8단계 업그레이드
+  file: _drafts/200367_머리8단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200307
+    - 200317
+    - 200327
+    - 200337
+    - 200347
+    - 200357
+    - 200308
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Head
+  - UpgradeToGrade08
+  - Taskstonebar
+- id: 200368
+  name: 머리 9단계 업그레이드
+  file: _drafts/200368_머리9단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200308
+    - 200318
+    - 200328
+    - 200338
+    - 200348
+    - 200358
+    - 200309
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Head
+  - UpgradeToGrade09
+  - Taskstonebar
+- id: 200369
+  name: 머리 10단계 업그레이드
+  file: _drafts/200369_머리10단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200309
+    - 200319
+    - 200329
+    - 200339
+    - 200349
+    - 200359
+    - 200310
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Head
+  - UpgradeToGrade10
+  - Taskstonebar
+- id: 200370
+  name: 상의 2단계 업그레이드
+  file: _drafts/200370_상의2단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200301
+    - 200311
+    - 200321
+    - 200331
+    - 200341
+    - 200351
+    - 200312
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Chest
+  - UpgradeToGrade02
+  - Taskstonebar
+- id: 200371
+  name: 상의 3단계 업그레이드
+  file: _drafts/200371_상의3단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200302
+    - 200312
+    - 200322
+    - 200332
+    - 200342
+    - 200352
+    - 200313
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Chest
+  - UpgradeToGrade03
+  - Taskstonebar
+- id: 200372
+  name: 상의 4단계 업그레이드
+  file: _drafts/200372_상의4단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200303
+    - 200313
+    - 200323
+    - 200333
+    - 200343
+    - 200353
+    - 200314
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Chest
+  - UpgradeToGrade04
+  - Taskstonebar
+- id: 200373
+  name: 상의 5단계 업그레이드
+  file: _drafts/200373_상의5단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200304
+    - 200314
+    - 200324
+    - 200334
+    - 200344
+    - 200354
+    - 200315
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Chest
+  - UpgradeToGrade05
+  - Taskstonebar
+- id: 200374
+  name: 상의 6단계 업그레이드
+  file: _drafts/200374_상의6단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200305
+    - 200315
+    - 200325
+    - 200335
+    - 200345
+    - 200355
+    - 200316
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Chest
+  - UpgradeToGrade06
+  - Taskstonebar
+- id: 200375
+  name: 상의 7단계 업그레이드
+  file: _drafts/200375_상의7단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200306
+    - 200316
+    - 200326
+    - 200336
+    - 200346
+    - 200356
+    - 200317
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Chest
+  - UpgradeToGrade07
+  - Taskstonebar
+- id: 200376
+  name: 상의 8단계 업그레이드
+  file: _drafts/200376_상의8단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200307
+    - 200317
+    - 200327
+    - 200337
+    - 200347
+    - 200357
+    - 200318
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Chest
+  - UpgradeToGrade08
+  - Taskstonebar
+- id: 200377
+  name: 상의 9단계 업그레이드
+  file: _drafts/200377_상의9단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200308
+    - 200318
+    - 200328
+    - 200338
+    - 200348
+    - 200358
+    - 200319
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Chest
+  - UpgradeToGrade09
+  - Taskstonebar
+- id: 200378
+  name: 상의 10단계 업그레이드
+  file: _drafts/200378_상의10단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200309
+    - 200319
+    - 200329
+    - 200339
+    - 200349
+    - 200359
+    - 200320
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Chest
+  - UpgradeToGrade10
+  - Taskstonebar
+- id: 200379
+  name: 장갑 2단계 업그레이드
+  file: _drafts/200379_장갑2단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200301
+    - 200311
+    - 200321
+    - 200331
+    - 200341
+    - 200351
+    - 200322
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Gloves
+  - UpgradeToGrade02
+  - Taskstonebar
+- id: 200380
+  name: 장갑 3단계 업그레이드
+  file: _drafts/200380_장갑3단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200302
+    - 200312
+    - 200322
+    - 200332
+    - 200342
+    - 200352
+    - 200323
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Gloves
+  - UpgradeToGrade03
+  - Taskstonebar
+- id: 200381
+  name: 장갑 4단계 업그레이드
+  file: _drafts/200381_장갑4단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200303
+    - 200313
+    - 200323
+    - 200333
+    - 200343
+    - 200353
+    - 200324
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Gloves
+  - UpgradeToGrade04
+  - Taskstonebar
+- id: 200382
+  name: 장갑 5단계 업그레이드
+  file: _drafts/200382_장갑5단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200304
+    - 200314
+    - 200324
+    - 200334
+    - 200344
+    - 200354
+    - 200325
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Gloves
+  - UpgradeToGrade05
+  - Taskstonebar
+- id: 200383
+  name: 장갑 6단계 업그레이드
+  file: _drafts/200383_장갑6단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200305
+    - 200315
+    - 200325
+    - 200335
+    - 200345
+    - 200355
+    - 200326
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Gloves
+  - UpgradeToGrade06
+  - Taskstonebar
+- id: 200384
+  name: 장갑 7단계 업그레이드
+  file: _drafts/200384_장갑7단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200306
+    - 200316
+    - 200326
+    - 200336
+    - 200346
+    - 200356
+    - 200327
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Gloves
+  - UpgradeToGrade07
+  - Taskstonebar
+- id: 200385
+  name: 장갑 8단계 업그레이드
+  file: _drafts/200385_장갑8단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200307
+    - 200317
+    - 200327
+    - 200337
+    - 200347
+    - 200357
+    - 200328
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Gloves
+  - UpgradeToGrade08
+  - Taskstonebar
+- id: 200386
+  name: 장갑 9단계 업그레이드
+  file: _drafts/200386_장갑9단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200308
+    - 200318
+    - 200328
+    - 200338
+    - 200348
+    - 200358
+    - 200329
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Gloves
+  - UpgradeToGrade09
+  - Taskstonebar
+- id: 200387
+  name: 장갑 10단계 업그레이드
+  file: _drafts/200387_장갑10단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200309
+    - 200319
+    - 200329
+    - 200339
+    - 200349
+    - 200359
+    - 200330
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Gloves
+  - UpgradeToGrade10
+  - Taskstonebar
+- id: 200388
+  name: 신발 2단계 업그레이드
+  file: _drafts/200388_신발2단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200301
+    - 200311
+    - 200321
+    - 200331
+    - 200341
+    - 200351
+    - 200332
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Boots
+  - UpgradeToGrade02
+  - Taskstonebar
+- id: 200389
+  name: 신발 3단계 업그레이드
+  file: _drafts/200389_신발3단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200302
+    - 200312
+    - 200322
+    - 200332
+    - 200342
+    - 200352
+    - 200333
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Boots
+  - UpgradeToGrade03
+  - Taskstonebar
+- id: 200390
+  name: 신발 4단계 업그레이드
+  file: _drafts/200390_신발4단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200303
+    - 200313
+    - 200323
+    - 200333
+    - 200343
+    - 200353
+    - 200334
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Boots
+  - UpgradeToGrade04
+  - Taskstonebar
+- id: 200391
+  name: 신발 5단계 업그레이드
+  file: _drafts/200391_신발5단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200304
+    - 200314
+    - 200324
+    - 200334
+    - 200344
+    - 200354
+    - 200335
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Boots
+  - UpgradeToGrade05
+  - Taskstonebar
+- id: 200392
+  name: 신발 6단계 업그레이드
+  file: _drafts/200392_신발6단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200305
+    - 200315
+    - 200325
+    - 200335
+    - 200345
+    - 200355
+    - 200336
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Boots
+  - UpgradeToGrade06
+  - Taskstonebar
+- id: 200393
+  name: 신발 7단계 업그레이드
+  file: _drafts/200393_신발7단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200306
+    - 200316
+    - 200326
+    - 200336
+    - 200346
+    - 200356
+    - 200337
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Boots
+  - UpgradeToGrade07
+  - Taskstonebar
+- id: 200394
+  name: 신발 8단계 업그레이드
+  file: _drafts/200394_신발8단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200307
+    - 200317
+    - 200327
+    - 200337
+    - 200347
+    - 200357
+    - 200338
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Boots
+  - UpgradeToGrade08
+  - Taskstonebar
+- id: 200395
+  name: 신발 9단계 업그레이드
+  file: _drafts/200395_신발9단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200308
+    - 200318
+    - 200328
+    - 200338
+    - 200348
+    - 200358
+    - 200339
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Boots
+  - UpgradeToGrade09
+  - Taskstonebar
+- id: 200396
+  name: 신발 10단계 업그레이드
+  file: _drafts/200396_신발10단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200309
+    - 200319
+    - 200329
+    - 200339
+    - 200349
+    - 200359
+    - 200340
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Boots
+  - UpgradeToGrade10
+  - Taskstonebar
+- id: 200397
+  name: 목걸이 2단계 업그레이드
+  file: _drafts/200397_목걸이2단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200301
+    - 200311
+    - 200321
+    - 200331
+    - 200341
+    - 200351
+    - 200342
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Necklace
+  - UpgradeToGrade02
+  - Taskstonebar
+- id: 200398
+  name: 목걸이 3단계 업그레이드
+  file: _drafts/200398_목걸이3단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200302
+    - 200312
+    - 200322
+    - 200332
+    - 200342
+    - 200352
+    - 200343
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Necklace
+  - UpgradeToGrade03
+  - Taskstonebar
+- id: 200399
+  name: 목걸이 4단계 업그레이드
+  file: _drafts/200399_목걸이4단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200303
+    - 200313
+    - 200323
+    - 200333
+    - 200343
+    - 200353
+    - 200344
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Necklace
+  - UpgradeToGrade04
+  - Taskstonebar
+- id: 200400
+  name: 목걸이 5단계 업그레이드
+  file: _drafts/200400_목걸이5단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200304
+    - 200314
+    - 200324
+    - 200334
+    - 200344
+    - 200354
+    - 200345
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Necklace
+  - UpgradeToGrade05
+  - Taskstonebar
+- id: 200401
+  name: 목걸이 6단계 업그레이드
+  file: _drafts/200401_목걸이6단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200305
+    - 200315
+    - 200325
+    - 200335
+    - 200345
+    - 200355
+    - 200346
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Necklace
+  - UpgradeToGrade06
+  - Taskstonebar
+- id: 200402
+  name: 목걸이 7단계 업그레이드
+  file: _drafts/200402_목걸이7단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200306
+    - 200316
+    - 200326
+    - 200336
+    - 200346
+    - 200356
+    - 200347
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Necklace
+  - UpgradeToGrade07
+  - Taskstonebar
+- id: 200403
+  name: 목걸이 8단계 업그레이드
+  file: _drafts/200403_목걸이8단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200307
+    - 200317
+    - 200327
+    - 200337
+    - 200347
+    - 200357
+    - 200348
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Necklace
+  - UpgradeToGrade08
+  - Taskstonebar
+- id: 200404
+  name: 목걸이 9단계 업그레이드
+  file: _drafts/200404_목걸이9단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200308
+    - 200318
+    - 200328
+    - 200338
+    - 200348
+    - 200358
+    - 200349
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Necklace
+  - UpgradeToGrade09
+  - Taskstonebar
+- id: 200405
+  name: 목걸이 10단계 업그레이드
+  file: _drafts/200405_목걸이10단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200309
+    - 200319
+    - 200329
+    - 200339
+    - 200349
+    - 200359
+    - 200350
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Necklace
+  - UpgradeToGrade10
+  - Taskstonebar
+- id: 200406
+  name: 반지 2단계 업그레이드
+  file: _drafts/200406_반지2단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200301
+    - 200311
+    - 200321
+    - 200331
+    - 200341
+    - 200351
+    - 200352
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Ring
+  - UpgradeToGrade02
+  - Taskstonebar
+- id: 200407
+  name: 반지 3단계 업그레이드
+  file: _drafts/200407_반지3단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200302
+    - 200312
+    - 200322
+    - 200332
+    - 200342
+    - 200352
+    - 200353
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Ring
+  - UpgradeToGrade03
+  - Taskstonebar
+- id: 200408
+  name: 반지 4단계 업그레이드
+  file: _drafts/200408_반지4단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200303
+    - 200313
+    - 200323
+    - 200333
+    - 200343
+    - 200353
+    - 200354
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Ring
+  - UpgradeToGrade04
+  - Taskstonebar
+- id: 200409
+  name: 반지 5단계 업그레이드
+  file: _drafts/200409_반지5단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200304
+    - 200314
+    - 200324
+    - 200334
+    - 200344
+    - 200354
+    - 200355
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Ring
+  - UpgradeToGrade05
+  - Taskstonebar
+- id: 200410
+  name: 반지 6단계 업그레이드
+  file: _drafts/200410_반지6단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200305
+    - 200315
+    - 200325
+    - 200335
+    - 200345
+    - 200355
+    - 200356
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Ring
+  - UpgradeToGrade06
+  - Taskstonebar
+- id: 200411
+  name: 반지 7단계 업그레이드
+  file: _drafts/200411_반지7단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200306
+    - 200316
+    - 200326
+    - 200336
+    - 200346
+    - 200356
+    - 200357
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Ring
+  - UpgradeToGrade07
+  - Taskstonebar
+- id: 200412
+  name: 반지 8단계 업그레이드
+  file: _drafts/200412_반지8단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200307
+    - 200317
+    - 200327
+    - 200337
+    - 200347
+    - 200357
+    - 200358
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Ring
+  - UpgradeToGrade08
+  - Taskstonebar
+- id: 200413
+  name: 반지 9단계 업그레이드
+  file: _drafts/200413_반지9단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200308
+    - 200318
+    - 200328
+    - 200338
+    - 200348
+    - 200358
+    - 200359
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Ring
+  - UpgradeToGrade09
+  - Taskstonebar
+- id: 200414
+  name: 반지 10단계 업그레이드
+  file: _drafts/200414_반지10단계업그레이드_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-equipments+gen-recipes
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  series: taskstonebar-equipment-upgrade-10-grade
+  refs:
+    units: []
+    items:
+    - 200309
+    - 200319
+    - 200329
+    - 200339
+    - 200349
+    - 200359
+    - 200360
+    skills: []
+  tags:
+  - Recipe
+  - EquipmentUpgradeRecipe
+  - AutoCombineAvailable
+  - PixelEquipment
+  - Ring
+  - UpgradeToGrade10
+  - Taskstonebar
+- id: 200501
+  name: 스킬 포인트
+  file: _drafts/200501_스킬포인트_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Material
+  refs:
+    units: []
+    items: []
+    skills: []
+  tags: [Material, SkillTree, LevelPoint, Taskstonebar]
+- id: 200502
+  name: 돌팔매 수련서
+  file: _drafts/200502_돌팔매수련서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501]
+    skills: [300101]
+  tags: [Skill, SkillTree, PlayerSkill, Root, Taskstonebar]
+- id: 200503
+  name: 조약돌 난사서
+  file: _drafts/200503_조약돌난사서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200502]
+    skills: [300102]
+  tags: [Skill, SkillTree, PlayerSkill, AoE, level:5, Taskstonebar]
+- id: 200504
+  name: 균열 강타서
+  file: _drafts/200504_균열강타서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200502]
+    skills: [300104]
+  tags: [Skill, SkillTree, PlayerSkill, Boss, level:8, Taskstonebar]
+- id: 200505
+  name: 태양석 파동서
+  file: _drafts/200505_태양석파동서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200503, 200504]
+    skills: [300105]
+  tags: [Skill, SkillTree, PlayerSkill, Solar, level:12, Taskstonebar]
+- id: 200506
+  name: 조약돌 난사 학습
+  file: _drafts/200506_조약돌난사학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200502, 200503]
+    skills: [300102]
+  tags: [Recipe, SkillTree, PlayerSkill, level:5, Taskstonebar]
+- id: 200507
+  name: 균열 강타 학습
+  file: _drafts/200507_균열강타학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200502, 200504]
+    skills: [300104]
+  tags: [Recipe, SkillTree, PlayerSkill, level:8, Taskstonebar]
+- id: 200508
+  name: 태양석 파동 학습
+  file: _drafts/200508_태양석파동학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200503, 200504, 200505]
+    skills: [300105]
+  tags: [Recipe, SkillTree, PlayerSkill, level:12, Taskstonebar]
+- id: 200509
+  name: 돌쐐기서
+  file: _drafts/200509_돌쐐기서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200503, 200539]
+    skills: [300301]
+  tags: [Skill, SkillTree, PlayerSkill, Throw, level:15, Taskstonebar]
+- id: 200510
+  name: 쌍돌비서
+  file: _drafts/200510_쌍돌비서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200509, 200540]
+    skills: [300302]
+  tags: [Skill, SkillTree, PlayerSkill, Throw, level:25, Taskstonebar]
+- id: 200511
+  name: 회전투척서
+  file: _drafts/200511_회전투척서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200510, 200541]
+    skills: [300303]
+  tags: [Skill, SkillTree, PlayerSkill, Throw, level:35, Taskstonebar]
+- id: 200512
+  name: 파쇄투창서
+  file: _drafts/200512_파쇄투창서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200511, 200542]
+    skills: [300304]
+  tags: [Skill, SkillTree, PlayerSkill, Throw, level:50, Taskstonebar]
+- id: 200513
+  name: 태초난사서
+  file: _drafts/200513_태초난사서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200512, 200543]
+    skills: [300305]
+  tags: [Skill, SkillTree, PlayerSkill, Throw, level:70, Taskstonebar]
+- id: 200514
+  name: 자갈소용돌서
+  file: _drafts/200514_자갈소용돌서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200503, 200544]
+    skills: [300306]
+  tags: [Skill, SkillTree, PlayerSkill, Area, level:15, Taskstonebar]
+- id: 200515
+  name: 광석폭우서
+  file: _drafts/200515_광석폭우서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200514, 200545]
+    skills: [300307]
+  tags: [Skill, SkillTree, PlayerSkill, Area, level:25, Taskstonebar]
+- id: 200516
+  name: 지층파동서
+  file: _drafts/200516_지층파동서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200515, 200546]
+    skills: [300308]
+  tags: [Skill, SkillTree, PlayerSkill, Area, level:40, Taskstonebar]
+- id: 200517
+  name: 용암분출서
+  file: _drafts/200517_용암분출서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200516, 200547]
+    skills: [300309]
+  tags: [Skill, SkillTree, PlayerSkill, Area, level:55, Taskstonebar]
+- id: 200518
+  name: 운석작업서
+  file: _drafts/200518_운석작업서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200517, 200548]
+    skills: [300310]
+  tags: [Skill, SkillTree, PlayerSkill, Area, level:80, Taskstonebar]
+- id: 200519
+  name: 균열일격서
+  file: _drafts/200519_균열일격서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200504, 200549]
+    skills: [300311]
+  tags: [Skill, SkillTree, PlayerSkill, Boss, level:20, Taskstonebar]
+- id: 200520
+  name: 달빛절단서
+  file: _drafts/200520_달빛절단서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200519, 200550]
+    skills: [300312]
+  tags: [Skill, SkillTree, PlayerSkill, Boss, level:30, Taskstonebar]
+- id: 200521
+  name: 보스분쇄서
+  file: _drafts/200521_보스분쇄서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200520, 200551]
+    skills: [300313]
+  tags: [Skill, SkillTree, PlayerSkill, Boss, level:45, Taskstonebar]
+- id: 200522
+  name: 심장관통서
+  file: _drafts/200522_심장관통서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200521, 200552]
+    skills: [300314]
+  tags: [Skill, SkillTree, PlayerSkill, Boss, level:60, Taskstonebar]
+- id: 200523
+  name: 혈월파쇄서
+  file: _drafts/200523_혈월파쇄서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200522, 200553]
+    skills: [300315]
+  tags: [Skill, SkillTree, PlayerSkill, Boss, level:90, Taskstonebar]
+- id: 200524
+  name: 채굴탄서
+  file: _drafts/200524_채굴탄서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200503, 200554]
+    skills: [300316]
+  tags: [Skill, SkillTree, PlayerSkill, Farming, level:20, Taskstonebar]
+- id: 200525
+  name: 광맥공명서
+  file: _drafts/200525_광맥공명서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200524, 200555]
+    skills: [300317]
+  tags: [Skill, SkillTree, PlayerSkill, Farming, level:30, Taskstonebar]
+- id: 200526
+  name: 행운분진서
+  file: _drafts/200526_행운분진서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200525, 200556]
+    skills: [300318]
+  tags: [Skill, SkillTree, PlayerSkill, Farming, level:40, Taskstonebar]
+- id: 200527
+  name: 상자균열서
+  file: _drafts/200527_상자균열서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200526, 200557]
+    skills: [300319]
+  tags: [Skill, SkillTree, PlayerSkill, Farming, level:55, Taskstonebar]
+- id: 200528
+  name: 수확유성서
+  file: _drafts/200528_수확유성서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200527, 200558]
+    skills: [300320]
+  tags: [Skill, SkillTree, PlayerSkill, Farming, level:80, Taskstonebar]
+- id: 200529
+  name: 돌껍질서
+  file: _drafts/200529_돌껍질서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200504, 200559]
+    skills: [300321]
+  tags: [Skill, SkillTree, PlayerSkill, Guard, level:25, Taskstonebar]
+- id: 200530
+  name: 방패투척서
+  file: _drafts/200530_방패투척서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200529, 200560]
+    skills: [300322]
+  tags: [Skill, SkillTree, PlayerSkill, Guard, level:35, Taskstonebar]
+- id: 200531
+  name: 수호파동서
+  file: _drafts/200531_수호파동서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200530, 200561]
+    skills: [300323]
+  tags: [Skill, SkillTree, PlayerSkill, Guard, level:50, Taskstonebar]
+- id: 200532
+  name: 반격균열서
+  file: _drafts/200532_반격균열서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200531, 200562]
+    skills: [300324]
+  tags: [Skill, SkillTree, PlayerSkill, Guard, level:70, Taskstonebar]
+- id: 200533
+  name: 철벽성운서
+  file: _drafts/200533_철벽성운서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200532, 200563]
+    skills: [300325]
+  tags: [Skill, SkillTree, PlayerSkill, Guard, level:95, Taskstonebar]
+- id: 200534
+  name: 제련불씨서
+  file: _drafts/200534_제련불씨서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200505, 200564]
+    skills: [300326]
+  tags: [Skill, SkillTree, PlayerSkill, ForgeFormation, level:25, Taskstonebar]
+- id: 200535
+  name: 큐브연쇄서
+  file: _drafts/200535_큐브연쇄서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200534, 200565]
+    skills: [300327]
+  tags: [Skill, SkillTree, PlayerSkill, ForgeFormation, level:40, Taskstonebar]
+- id: 200536
+  name: 편성공명서
+  file: _drafts/200536_편성공명서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200535, 200566]
+    skills: [300328]
+  tags: [Skill, SkillTree, PlayerSkill, ForgeFormation, level:60, Taskstonebar]
+- id: 200537
+  name: 융합폭주서
+  file: _drafts/200537_융합폭주서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200536, 200567]
+    skills: [300329]
+  tags: [Skill, SkillTree, PlayerSkill, ForgeFormation, level:80, Taskstonebar]
+- id: 200538
+  name: 원석심장서
+  file: _drafts/200538_원석심장서_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Skill
+  refs:
+    units: []
+    items: [200501, 200537, 200568]
+    skills: [300330]
+  tags: [Skill, SkillTree, PlayerSkill, ForgeFormation, level:100, Taskstonebar]
+- id: 200539
+  name: 돌쐐기 학습
+  file: _drafts/200539_돌쐐기학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200503, 200509]
+    skills: [300301]
+  tags: [Recipe, SkillTree, PlayerSkill, Throw, level:15, Taskstonebar]
+- id: 200540
+  name: 쌍돌비 학습
+  file: _drafts/200540_쌍돌비학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200509, 200510]
+    skills: [300302]
+  tags: [Recipe, SkillTree, PlayerSkill, Throw, level:25, Taskstonebar]
+- id: 200541
+  name: 회전투척 학습
+  file: _drafts/200541_회전투척학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200510, 200511]
+    skills: [300303]
+  tags: [Recipe, SkillTree, PlayerSkill, Throw, level:35, Taskstonebar]
+- id: 200542
+  name: 파쇄투창 학습
+  file: _drafts/200542_파쇄투창학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200511, 200512]
+    skills: [300304]
+  tags: [Recipe, SkillTree, PlayerSkill, Throw, level:50, Taskstonebar]
+- id: 200543
+  name: 태초난사 학습
+  file: _drafts/200543_태초난사학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200512, 200513]
+    skills: [300305]
+  tags: [Recipe, SkillTree, PlayerSkill, Throw, level:70, Taskstonebar]
+- id: 200544
+  name: 자갈소용돌 학습
+  file: _drafts/200544_자갈소용돌학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200503, 200514]
+    skills: [300306]
+  tags: [Recipe, SkillTree, PlayerSkill, Area, level:15, Taskstonebar]
+- id: 200545
+  name: 광석폭우 학습
+  file: _drafts/200545_광석폭우학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200514, 200515]
+    skills: [300307]
+  tags: [Recipe, SkillTree, PlayerSkill, Area, level:25, Taskstonebar]
+- id: 200546
+  name: 지층파동 학습
+  file: _drafts/200546_지층파동학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200515, 200516]
+    skills: [300308]
+  tags: [Recipe, SkillTree, PlayerSkill, Area, level:40, Taskstonebar]
+- id: 200547
+  name: 용암분출 학습
+  file: _drafts/200547_용암분출학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200516, 200517]
+    skills: [300309]
+  tags: [Recipe, SkillTree, PlayerSkill, Area, level:55, Taskstonebar]
+- id: 200548
+  name: 운석작업 학습
+  file: _drafts/200548_운석작업학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200517, 200518]
+    skills: [300310]
+  tags: [Recipe, SkillTree, PlayerSkill, Area, level:80, Taskstonebar]
+- id: 200549
+  name: 균열일격 학습
+  file: _drafts/200549_균열일격학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200504, 200519]
+    skills: [300311]
+  tags: [Recipe, SkillTree, PlayerSkill, Boss, level:20, Taskstonebar]
+- id: 200550
+  name: 달빛절단 학습
+  file: _drafts/200550_달빛절단학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200519, 200520]
+    skills: [300312]
+  tags: [Recipe, SkillTree, PlayerSkill, Boss, level:30, Taskstonebar]
+- id: 200551
+  name: 보스분쇄 학습
+  file: _drafts/200551_보스분쇄학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200520, 200521]
+    skills: [300313]
+  tags: [Recipe, SkillTree, PlayerSkill, Boss, level:45, Taskstonebar]
+- id: 200552
+  name: 심장관통 학습
+  file: _drafts/200552_심장관통학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200521, 200522]
+    skills: [300314]
+  tags: [Recipe, SkillTree, PlayerSkill, Boss, level:60, Taskstonebar]
+- id: 200553
+  name: 혈월파쇄 학습
+  file: _drafts/200553_혈월파쇄학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200522, 200523]
+    skills: [300315]
+  tags: [Recipe, SkillTree, PlayerSkill, Boss, level:90, Taskstonebar]
+- id: 200554
+  name: 채굴탄 학습
+  file: _drafts/200554_채굴탄학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200503, 200524]
+    skills: [300316]
+  tags: [Recipe, SkillTree, PlayerSkill, Farming, level:20, Taskstonebar]
+- id: 200555
+  name: 광맥공명 학습
+  file: _drafts/200555_광맥공명학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200524, 200525]
+    skills: [300317]
+  tags: [Recipe, SkillTree, PlayerSkill, Farming, level:30, Taskstonebar]
+- id: 200556
+  name: 행운분진 학습
+  file: _drafts/200556_행운분진학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200525, 200526]
+    skills: [300318]
+  tags: [Recipe, SkillTree, PlayerSkill, Farming, level:40, Taskstonebar]
+- id: 200557
+  name: 상자균열 학습
+  file: _drafts/200557_상자균열학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200526, 200527]
+    skills: [300319]
+  tags: [Recipe, SkillTree, PlayerSkill, Farming, level:55, Taskstonebar]
+- id: 200558
+  name: 수확유성 학습
+  file: _drafts/200558_수확유성학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200527, 200528]
+    skills: [300320]
+  tags: [Recipe, SkillTree, PlayerSkill, Farming, level:80, Taskstonebar]
+- id: 200559
+  name: 돌껍질 학습
+  file: _drafts/200559_돌껍질학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200504, 200529]
+    skills: [300321]
+  tags: [Recipe, SkillTree, PlayerSkill, Guard, level:25, Taskstonebar]
+- id: 200560
+  name: 방패투척 학습
+  file: _drafts/200560_방패투척학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200529, 200530]
+    skills: [300322]
+  tags: [Recipe, SkillTree, PlayerSkill, Guard, level:35, Taskstonebar]
+- id: 200561
+  name: 수호파동 학습
+  file: _drafts/200561_수호파동학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200530, 200531]
+    skills: [300323]
+  tags: [Recipe, SkillTree, PlayerSkill, Guard, level:50, Taskstonebar]
+- id: 200562
+  name: 반격균열 학습
+  file: _drafts/200562_반격균열학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200531, 200532]
+    skills: [300324]
+  tags: [Recipe, SkillTree, PlayerSkill, Guard, level:70, Taskstonebar]
+- id: 200563
+  name: 철벽성운 학습
+  file: _drafts/200563_철벽성운학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200532, 200533]
+    skills: [300325]
+  tags: [Recipe, SkillTree, PlayerSkill, Guard, level:95, Taskstonebar]
+- id: 200564
+  name: 제련불씨 학습
+  file: _drafts/200564_제련불씨학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200505, 200534]
+    skills: [300326]
+  tags: [Recipe, SkillTree, PlayerSkill, ForgeFormation, level:25, Taskstonebar]
+- id: 200565
+  name: 큐브연쇄 학습
+  file: _drafts/200565_큐브연쇄학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200534, 200535]
+    skills: [300327]
+  tags: [Recipe, SkillTree, PlayerSkill, ForgeFormation, level:40, Taskstonebar]
+- id: 200566
+  name: 편성공명 학습
+  file: _drafts/200566_편성공명학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200535, 200536]
+    skills: [300328]
+  tags: [Recipe, SkillTree, PlayerSkill, ForgeFormation, level:60, Taskstonebar]
+- id: 200567
+  name: 융합폭주 학습
+  file: _drafts/200567_융합폭주학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200536, 200537]
+    skills: [300329]
+  tags: [Recipe, SkillTree, PlayerSkill, ForgeFormation, level:80, Taskstonebar]
+- id: 200568
+  name: 원석심장 학습
+  file: _drafts/200568_원석심장학습_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: gen-skills
+  reviewer: null
+  reviewed_at: null
+  category: Recipe
+  refs:
+    units: []
+    items: [200501, 200537, 200538]
+    skills: [300330]
+  tags: [Recipe, SkillTree, PlayerSkill, ForgeFormation, level:100, Taskstonebar]
+- id: 200569
+  name: 스탯 포인트
+  file: _drafts/200569_스탯포인트_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Material
+  refs:
+    units: []
+    items: []
+    skills: []
+  tags: [Material, StatGrowth, LevelPoint, Taskstonebar]
+- id: 200570
+  name: 공격력 성장
+  file: _drafts/200570_공격력성장_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Stat
+  refs:
+    units: []
+    items: [200569]
+    skills: []
+  tags: [Stat, StatGrowth, Attack, Taskstonebar]
+- id: 200571
+  name: 체력 성장
+  file: _drafts/200571_체력성장_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Stat
+  refs:
+    units: []
+    items: [200569]
+    skills: []
+  tags: [Stat, StatGrowth, Hp, Taskstonebar]
+- id: 200572
+  name: 방어력 성장
+  file: _drafts/200572_방어력성장_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Stat
+  refs:
+    units: []
+    items: [200569]
+    skills: []
+  tags: [Stat, StatGrowth, Defense, Taskstonebar]
+- id: 200573
+  name: 공격속도 성장
+  file: _drafts/200573_공격속도성장_v1.item.yaml
+  status: draft
+  created_at: '2026-06-24T00:00:00+09:00'
+  created_by: new-content
+  reviewer: null
+  reviewed_at: null
+  category: Stat
+  refs:
+    units: []
+    items: [200569]
+    skills: []
+  tags: [Stat, StatGrowth, AttackSpeed, Taskstonebar]

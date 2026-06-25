@@ -1,0 +1,30 @@
+id: 200508
+name: "태양석 파동 학습"
+category: Recipe
+grade: 1
+rarity: 3
+group: 200502
+order: 4
+targetItemDataIds: [200505]
+requiredItemDataIds: [200503, 200504]
+requiredAchievementDataIds: [600104]
+exclusiveItemDataIds: [200505]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 1 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200505, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200505"
+  RequiredSkillItemDataIds: "200503,200504"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "12"
+  UnlockCostLevelPoint: "1"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone1.png"

@@ -1,0 +1,68 @@
+id: 200210
+parentId: 200209
+name: "별심돌"
+category: Weapon
+type: Hammer
+tags: [Weapon, StoneWeapon, StoneSlot, StarcoreStone, BossStone, AreaStone, StoneStage09, Taskstonebar]
+grade: 1
+rarity: 6
+tier: 5
+power: 320
+requiredExps: [760, 1140, 1710, 2565, 3847, 5770, 8655, 12982, 19473, 29209]
+equipAddStats:
+  - { type: Attack, value: [166.0, 216.0, 281.0, 365.0, 474.0, 616.0, 801.0, 1041.0, 1353.0, 1759.0] }
+  - { type: BossDamageEfficiencyPercent, value: [8.0, 10.0, 12.5, 15.0, 18.0, 21.0, 24.5, 28.0, 32.0, 36.0] }
+equipSkillDataIds: [300110]
+levelUpGoldCost: { itemDataId: 5, levels: "1..9", base: 860, step: 530 }
+levelUpMaterialItemGroups:
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 760 }
+      - { id: 200102, count: 280 }
+      - { id: 200103, count: 30 }
+  - level: 6
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 1350 }
+      - { id: 200102, count: 520 }
+      - { id: 200103, count: 58 }
+  - level: 9
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 2400 }
+      - { id: 200102, count: 940 }
+      - { id: 200103, count: 105 }
+unstackable: true
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200102, count: 42 }
+      - { itemDataId: 200103, count: 7 }
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone2.png"
+
+_stoneWeapon:
+  stage: 9
+  slotRole: starcore
+  cooldownModel: independent
+  throwSkillDataId: 300110
+  equipSlotCost: 1
+  cooldownMultiplier: 1.65
+  effect: "큰 별심 폭발과 보스 피해 효율을 가진 최상위 광역 돌."
+  merge:
+    enabled: true
+    recipeItemDataId: 200220
+    nextItemDataId: 200211
+    requiredCopies: 2
+    resultLevelPolicy: reset_to_1
+    consumePolicy: same_stage_unstackable_instances
+  growth:
+    maxLevel: 10
+    primaryStat: Attack
+    secondaryStat: BossDamageEfficiencyPercent
+    feedXpMaterials: [200101, 200102, 200103]
+  economy:
+    market_lane: equipment
+    bind_on: equip_or_level_up

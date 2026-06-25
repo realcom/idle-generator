@@ -1,0 +1,20 @@
+id: 300329
+name: "융합폭주"
+tags: [Combat, PlayerSkill, SkillTree, ForgeFormation, FusionOverdrive, Taskstonebar]
+damageType: Explosive
+projectileType: Target
+targetRefreshType: HighestHp
+cooldown: 3.60
+priority: 84
+projectilePrefab: "FXPrefabs/Taskstonebar/FusionPink/FusionOverdriveProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/FusionPink/VFX_FusionOverdrive_Cast.prefab" } }
+  - time: 0.36
+    hit:
+      maxHit: 7
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.30 }
+      addDamage: { damagePercent: [220.0, 261.0, 309.0, 366.0, 434.0] }
+  - { time: 0.52, playFx: { prefab: "FXPrefabs/Taskstonebar/FusionPink/VFX_FusionOverdrive_Impact.prefab" } }
+  - { time: 0.78, destroy: {} }

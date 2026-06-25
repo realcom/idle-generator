@@ -1,0 +1,36 @@
+id: 200214
+name: "균열돌 머지"
+category: Recipe
+tags: [EquipmentCombineRecipe, AutoCombineAvailable, StoneMergeRecipe, StoneStage03, Taskstonebar]
+grade: 1
+rarity: 3
+tier: 2
+targetItemDataIds: [200205]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200204, count: 1 }
+  - shouldAllValid: false
+    materialItems:
+      - { id: 200204, count: 1 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200205, count: 1, level: 1, isCore: true }
+popupArgs:
+  MergeFamily: StoneWeapon
+  SourceItemDataId: "200204"
+  ResultItemDataId: "200205"
+  RequiredCopies: "2"
+  ResultLevelPolicy: reset_to_1
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone2.png"
+
+_stoneMergeRecipe:
+  stage: 3
+  sourceItemDataId: 200204
+  resultItemDataId: 200205
+  requiredCopies: 2
+  resultLevelPolicy: reset_to_1
+  compatibleWith: GodotStoneMergeRuntime

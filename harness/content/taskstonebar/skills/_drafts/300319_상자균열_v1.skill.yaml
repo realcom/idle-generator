@@ -1,0 +1,27 @@
+id: 300319
+name: "상자균열"
+tags: [Combat, PlayerSkill, SkillTree, Farming, ChestCrack, Taskstonebar]
+damageType: Explosive
+projectileType: Target
+targetRefreshType: LowestHp
+cooldown: 2.80
+priority: 64
+projectilePrefab: "FXPrefabs/Taskstonebar/CrackGold/ChestCrackProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/CrackGold/VFX_ChestCrack_Cast.prefab" } }
+  - time: 0.28
+    hit:
+      maxHit: 5
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.85 }
+      addDamage: { damagePercent: [116.0, 138.0, 164.0, 194.0, 230.0] }
+  - time: 0.54
+    hit:
+      maxHit: 5
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.20 }
+      addDamage: { damagePercent: [82.0, 98.0, 116.0, 138.0, 164.0] }
+  - { time: 0.70, playFx: { prefab: "FXPrefabs/Taskstonebar/CrackGold/VFX_ChestCrack_Impact.prefab" } }
+  - { time: 0.96, destroy: {} }

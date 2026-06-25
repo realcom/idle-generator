@@ -1,0 +1,50 @@
+id: 200522
+name: "심장관통서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 2
+rarity: 3
+group: 200502
+constantDamageRatio: 1.0
+order: 33
+parentId: 200521
+skillDataId: 300314
+unstackable: true
+requiredItemDataIds: [200521]
+requiredAchievementDataIds: [600114]
+targetItemDataIds: [200523]
+addStats:
+  - { type: BossDamageEfficiencyPercent, value: [2.9, 4.5, 6.3, 8.2, 10.6] }
+  - { type: CriticalDamagePercent, value: [3.9, 5.9, 8.2, 11, 14.1] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 3 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 4 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 5 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "보스4"
+  ChildrenSkillItemDataIds: "200523"
+  UnlockRecipeItemDataId: "200552"
+  UnlockCostLevelPoint: "5"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200521"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "60"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "54"
+  SkillTreeLane: "Boss"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"

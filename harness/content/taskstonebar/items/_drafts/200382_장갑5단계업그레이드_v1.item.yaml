@@ -1,0 +1,96 @@
+id: 200382
+name: 장갑 5단계 업그레이드
+category: Recipe
+tags:
+- Recipe
+- EquipmentUpgradeRecipe
+- AutoCombineAvailable
+- PixelEquipment
+- UpgradeToGrade05
+- Gloves
+- Taskstonebar
+grade: 5
+rarity: 5
+tier: 1
+targetItemDataIds:
+- 200325
+materialItemGroups:
+- shouldAllValid: false
+  materialItems:
+  - id: 200304
+    count: 1
+  - id: 200314
+    count: 1
+  - id: 200324
+    count: 1
+  - id: 200334
+    count: 1
+  - id: 200344
+    count: 1
+  - id: 200354
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200304
+    count: 1
+  - id: 200314
+    count: 1
+  - id: 200324
+    count: 1
+  - id: 200334
+    count: 1
+  - id: 200344
+    count: 1
+  - id: 200354
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200304
+    count: 1
+  - id: 200314
+    count: 1
+  - id: 200324
+    count: 1
+  - id: 200334
+    count: 1
+  - id: 200344
+    count: 1
+  - id: 200354
+    count: 1
+addItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 200325
+    count: 1
+    level: 1
+    isCore: true
+popupArgs:
+  UpgradeFamily: EquipmentGrade
+  SourceGrade: '4'
+  ResultGrade: '5'
+  RequiredLowerEquipmentCount: '3'
+  CandidateItemDataIds: 200304,200314,200324,200334,200344,200354
+  ResultItemDataId: '200325'
+  ResultLevelPolicy: fixed_1
+  MaterialPolicy: any_lower_equipment_same_grade_count_3
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_gloves_05_wraith_imagegen.png
+_equipmentUpgrade:
+  series: taskstonebar-equipment-upgrade-10-grade
+  slot: Gloves
+  slotName: 장갑
+  sourceGrade: 4
+  resultGrade: 5
+  targetItemDataId: 200325
+  candidateItemDataIds:
+  - 200304
+  - 200314
+  - 200324
+  - 200334
+  - 200344
+  - 200354
+  requiredCount: 3
+  candidatePolicy: any_lower_equipment_same_grade_count_3
+  resultLevelPolicy: fixed_1
+  compatibleWith: GodotEquipmentUpgradeRuntime

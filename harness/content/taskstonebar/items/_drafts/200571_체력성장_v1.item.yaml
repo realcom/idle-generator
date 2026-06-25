@@ -1,0 +1,39 @@
+id: 200571
+name: "체력 성장"
+category: Stat
+tab: -1
+priority: 2
+tags: [TaskstonebarStatGrowth, GrowthHp]
+initialCreate: true
+initialCreateCount: 1
+initialCreateLevel: 1
+addStats:
+  - { type: Hp, value: [1.0, 18.0, 37.8, 59.6, 83.5, 109.8, 138.7, 170.5, 205.5, 244.0] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200569, count: 1 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200569, count: 1 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200569, count: 1 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200569, count: 1 }
+  - shouldAllValid: true
+    level: 5
+    materialItems:
+      - { id: 200569, count: 2 }
+popupArgs:
+  StatTree: "TaskstonebarStats"
+  StatPointItemDataId: "200569"
+  MaxStatLevel: "100"
+  SpendTarget: "StatGrowth"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"

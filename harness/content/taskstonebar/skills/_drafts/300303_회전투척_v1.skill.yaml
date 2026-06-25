@@ -1,0 +1,20 @@
+id: 300303
+name: "회전투척"
+tags: [Combat, PlayerSkill, SkillTree, Throw, SpinThrow, Taskstonebar]
+damageType: Pierce
+projectileType: Relative
+targetRefreshType: Nearest
+cooldown: 1.60
+priority: 33
+projectilePrefab: "FXPrefabs/Taskstonebar/WhiteMoon/SpinningStoneProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/WhiteMoon/VFX_SpinThrow_Cast.prefab" } }
+  - time: 0.20
+    hit:
+      maxHit: 3
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.35 }
+      addDamage: { damagePercent: [155.0, 180.0, 210.0, 245.0, 285.0] }
+  - { time: 0.36, playFx: { prefab: "FXPrefabs/Taskstonebar/WhiteMoon/VFX_SpinThrow_Impact.prefab" } }
+  - { time: 0.62, destroy: {} }

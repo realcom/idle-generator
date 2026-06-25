@@ -1,0 +1,126 @@
+id: 200325
+name: 망령 손길
+category: Equipment
+type: Gloves
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Gloves
+- WraithSet
+- EquipmentStage05
+- EquipmentGrade05
+- FixedLevelEquipment
+grade: 5
+rarity: 5
+tier: 1
+power: 58
+requiredExps:
+- 0
+equipAddStats:
+- type: Attack
+  value:
+  - 29
+- type: AttackSpeedPercent
+  value:
+  - 2.4
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003251
+    grade: 5
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 2.28
+  - id: 2003252
+    grade: 5
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Attack
+      value:
+      - 8
+  - id: 2003253
+    grade: 5
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 1.04
+  - id: 2003254
+    grade: 5
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackSpeedPercent
+      value:
+      - 1.2
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 160
+  - itemDataId: 200101
+    count: 5
+popupArgs:
+  ItemDescription: 보이지 않는 손이 하나 더 붙은 느낌. 광석이 슬쩍 인벤토리로 온다.
+  EquipmentGrade: '5'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Attack
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_gloves_05_wraith_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: wraith
+  setName: 망령 세트
+  slot: Gloves
+  slotName: 장갑
+  stage: 5
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_gloves_05_wraith_imagegen.png
+  grade: 5
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200383
+    nextItemDataId: 200326
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 5
+    resultGrade: 6
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Attack
+    primaryBaseValue: 14
+    primaryValue: 29
+    specialUnlocks:
+    - grade: 4
+      stat: AttackSpeedPercent
+      base: 2.0
+    - grade: 7
+      stat: CriticalPercent
+      base: 1.2
+    activeSpecials:
+    - grade: 4
+      stat: AttackSpeedPercent
+      value: 2.4

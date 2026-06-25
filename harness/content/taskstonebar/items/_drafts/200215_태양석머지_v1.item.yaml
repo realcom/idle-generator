@@ -1,0 +1,36 @@
+id: 200215
+name: "태양석 머지"
+category: Recipe
+tags: [EquipmentCombineRecipe, AutoCombineAvailable, StoneMergeRecipe, StoneStage04, Taskstonebar]
+grade: 1
+rarity: 4
+tier: 2
+targetItemDataIds: [200206]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200205, count: 1 }
+  - shouldAllValid: false
+    materialItems:
+      - { id: 200205, count: 1 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200206, count: 1, level: 1, isCore: true }
+popupArgs:
+  MergeFamily: StoneWeapon
+  SourceItemDataId: "200205"
+  ResultItemDataId: "200206"
+  RequiredCopies: "2"
+  ResultLevelPolicy: reset_to_1
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"
+
+_stoneMergeRecipe:
+  stage: 4
+  sourceItemDataId: 200205
+  resultItemDataId: 200206
+  requiredCopies: 2
+  resultLevelPolicy: reset_to_1
+  compatibleWith: GodotStoneMergeRuntime

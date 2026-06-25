@@ -1,0 +1,142 @@
+id: 200327
+name: 빙결 장갑
+category: Equipment
+type: Gloves
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Gloves
+- FrostSet
+- EquipmentStage07
+- EquipmentGrade07
+- FixedLevelEquipment
+grade: 7
+rarity: 5
+tier: 1
+power: 84
+requiredExps:
+- 0
+equipAddStats:
+- type: Attack
+  value:
+  - 42
+- type: AttackSpeedPercent
+  value:
+  - 3.46
+- type: CriticalPercent
+  value:
+  - 1.2
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003271
+    grade: 7
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 3.28
+  - id: 2003272
+    grade: 7
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Attack
+      value:
+      - 12
+  - id: 2003273
+    grade: 7
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 1.49
+  - id: 2003274
+    grade: 7
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackSpeedPercent
+      value:
+      - 1.73
+  - id: 2003275
+    grade: 7
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 3.0
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 205
+  - itemDataId: 200101
+    count: 7
+popupArgs:
+  ItemDescription: 빙결 장갑은 손끝을 차갑게 한다. 그래서 치명타가 더 침착하다.
+  EquipmentGrade: '7'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Attack
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_gloves_07_frost_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: frost
+  setName: 빙결 세트
+  slot: Gloves
+  slotName: 장갑
+  stage: 7
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_gloves_07_frost_imagegen.png
+  grade: 7
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200385
+    nextItemDataId: 200328
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 7
+    resultGrade: 8
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Attack
+    primaryBaseValue: 14
+    primaryValue: 42
+    specialUnlocks:
+    - grade: 4
+      stat: AttackSpeedPercent
+      base: 2.0
+    - grade: 7
+      stat: CriticalPercent
+      base: 1.2
+    activeSpecials:
+    - grade: 4
+      stat: AttackSpeedPercent
+      value: 3.46
+    - grade: 7
+      stat: CriticalPercent
+      value: 1.2

@@ -1,0 +1,96 @@
+id: 200398
+name: 목걸이 3단계 업그레이드
+category: Recipe
+tags:
+- Recipe
+- EquipmentUpgradeRecipe
+- AutoCombineAvailable
+- PixelEquipment
+- UpgradeToGrade03
+- Necklace
+- Taskstonebar
+grade: 3
+rarity: 3
+tier: 1
+targetItemDataIds:
+- 200343
+materialItemGroups:
+- shouldAllValid: false
+  materialItems:
+  - id: 200302
+    count: 1
+  - id: 200312
+    count: 1
+  - id: 200322
+    count: 1
+  - id: 200332
+    count: 1
+  - id: 200342
+    count: 1
+  - id: 200352
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200302
+    count: 1
+  - id: 200312
+    count: 1
+  - id: 200322
+    count: 1
+  - id: 200332
+    count: 1
+  - id: 200342
+    count: 1
+  - id: 200352
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200302
+    count: 1
+  - id: 200312
+    count: 1
+  - id: 200322
+    count: 1
+  - id: 200332
+    count: 1
+  - id: 200342
+    count: 1
+  - id: 200352
+    count: 1
+addItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 200343
+    count: 1
+    level: 1
+    isCore: true
+popupArgs:
+  UpgradeFamily: EquipmentGrade
+  SourceGrade: '2'
+  ResultGrade: '3'
+  RequiredLowerEquipmentCount: '3'
+  CandidateItemDataIds: 200302,200312,200322,200332,200342,200352
+  ResultItemDataId: '200343'
+  ResultLevelPolicy: fixed_1
+  MaterialPolicy: any_lower_equipment_same_grade_count_3
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_necklace_03_crystal_imagegen.png
+_equipmentUpgrade:
+  series: taskstonebar-equipment-upgrade-10-grade
+  slot: Necklace
+  slotName: 목걸이
+  sourceGrade: 2
+  resultGrade: 3
+  targetItemDataId: 200343
+  candidateItemDataIds:
+  - 200302
+  - 200312
+  - 200322
+  - 200332
+  - 200342
+  - 200352
+  requiredCount: 3
+  candidatePolicy: any_lower_equipment_same_grade_count_3
+  resultLevelPolicy: fixed_1
+  compatibleWith: GodotEquipmentUpgradeRuntime

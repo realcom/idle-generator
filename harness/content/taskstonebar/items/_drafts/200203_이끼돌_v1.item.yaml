@@ -1,0 +1,65 @@
+id: 200203
+parentId: 200202
+name: "이끼돌"
+category: Weapon
+type: Hammer
+tags: [Weapon, StoneWeapon, StoneSlot, MossStone, UtilityStone, StoneStage02, Taskstonebar]
+grade: 1
+rarity: 2
+tier: 1
+power: 36
+requiredExps: [75, 112, 168, 252, 378, 567, 850, 1275, 1912, 2868]
+equipAddStats:
+  - { type: Attack, value: [22.0, 29.0, 37.0, 48.0, 61.0, 78.0, 99.0, 125.0, 158.0, 199.0] }
+  - { type: ItemDropPercent, value: [1.0, 1.4, 1.8, 2.2, 2.7, 3.2, 3.7, 4.2, 4.7, 5.2] }
+equipSkillDataIds: [300103]
+levelUpGoldCost: { itemDataId: 5, levels: "1..9", base: 55, step: 34 }
+levelUpMaterialItemGroups:
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 12 }
+      - { id: 200102, count: 2 }
+  - level: 6
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 30 }
+      - { id: 200102, count: 8 }
+  - level: 9
+    shouldAllValid: true
+    materialItems:
+      - { id: 200102, count: 20 }
+      - { id: 200103, count: 2 }
+unstackable: true
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200101, count: 4 }
+      - { itemDataId: 200102, count: 1 }
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone1.png"
+
+_stoneWeapon:
+  stage: 2
+  slotRole: moss
+  cooldownModel: independent
+  throwSkillDataId: 300103
+  equipSlotCost: 1
+  cooldownMultiplier: 1.08
+  effect: "타격한 적에게 이끼 둔화를 부여하고 파밍 스탯을 조금 보조한다."
+  merge:
+    enabled: true
+    recipeItemDataId: 200213
+    nextItemDataId: 200204
+    requiredCopies: 2
+    resultLevelPolicy: reset_to_1
+    consumePolicy: same_stage_unstackable_instances
+  growth:
+    maxLevel: 10
+    primaryStat: Attack
+    secondaryStat: ItemDropPercent
+    feedXpMaterials: [200101, 200102]
+  economy:
+    market_lane: equipment
+    bind_on: equip_or_level_up

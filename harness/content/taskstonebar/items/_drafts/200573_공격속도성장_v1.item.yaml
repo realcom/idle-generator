@@ -1,0 +1,39 @@
+id: 200573
+name: "공격속도 성장"
+category: Stat
+tab: -1
+priority: 4
+tags: [TaskstonebarStatGrowth, GrowthAttackSpeed]
+initialCreate: true
+initialCreateCount: 1
+initialCreateLevel: 1
+addStats:
+  - { type: AttackSpeedPercent, value: [0.0, 0.7, 1.45, 2.25, 3.1, 4.0, 4.95, 5.95, 7.0, 8.1] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200569, count: 1 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200569, count: 1 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200569, count: 1 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200569, count: 1 }
+  - shouldAllValid: true
+    level: 5
+    materialItems:
+      - { id: 200569, count: 2 }
+popupArgs:
+  StatTree: "TaskstonebarStats"
+  StatPointItemDataId: "200569"
+  MaxStatLevel: "100"
+  SpendTarget: "StatGrowth"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone1.png"

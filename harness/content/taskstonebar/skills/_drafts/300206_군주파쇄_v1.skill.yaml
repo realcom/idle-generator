@@ -1,0 +1,25 @@
+id: 300206
+name: "군주 파쇄"
+tags: [Combat, MonsterSkill, GiantBoss, Area, Taskstonebar]
+damageType: Spell
+projectileType: None
+targetRefreshType: HighestHp
+cooldown: 4.20
+priority: 26
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_GiantCrush_Start.prefab" } }
+  - time: 0.45
+    hit:
+      maxHit: 6
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.15 }
+      addDamage: { damagePercent: [172.0] }
+  - time: 0.78
+    hit:
+      maxHit: 4
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.55 }
+      addDamage: { damagePercent: [78.0] }
+  - { time: 1.08, destroy: {} }

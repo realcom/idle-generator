@@ -1,0 +1,20 @@
+id: 300314
+name: "심장관통"
+tags: [Combat, PlayerSkill, SkillTree, Boss, ExecutePierce, Taskstonebar]
+damageType: Pierce
+projectileType: Target
+targetRefreshType: HighestHp
+cooldown: 4.00
+priority: 54
+projectilePrefab: "FXPrefabs/Taskstonebar/BloodRed/HeartPierceProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/BloodRed/VFX_HeartPierce_Cast.prefab" } }
+  - time: 0.44
+    hit:
+      maxHit: 1
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.05 }
+      addDamage: { damagePercent: [420.0, 496.0, 586.0, 692.0, 818.0] }
+  - { time: 0.60, playFx: { prefab: "FXPrefabs/Taskstonebar/BloodRed/VFX_HeartPierce_Impact.prefab" } }
+  - { time: 0.86, destroy: {} }

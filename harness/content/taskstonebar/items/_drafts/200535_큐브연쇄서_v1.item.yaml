@@ -1,0 +1,50 @@
+id: 200535
+name: "큐브연쇄서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 1
+rarity: 2
+group: 200502
+constantDamageRatio: 1.0
+order: 46
+parentId: 200534
+skillDataId: 300327
+unstackable: true
+requiredItemDataIds: [200534]
+requiredAchievementDataIds: [600110]
+targetItemDataIds: [200536]
+addStats:
+  - { type: CooldownPercent, value: [1.1, 1.7, 2.5, 3.4, 4.5] }
+  - { type: AttackSpeedPercent, value: [0.9, 1.4, 2.1, 2.9, 3.8] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 3 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "제련편성2"
+  ChildrenSkillItemDataIds: "200536"
+  UnlockRecipeItemDataId: "200565"
+  UnlockCostLevelPoint: "3"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200534"
+  RequiredSkillLevel: "2"
+  RequiredPlayerLevel: "40"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "82"
+  SkillTreeLane: "ForgeFormation"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone1.png"

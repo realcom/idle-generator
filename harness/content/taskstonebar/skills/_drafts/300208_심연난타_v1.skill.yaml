@@ -1,0 +1,32 @@
+id: 300208
+name: "심연 난타"
+tags: [Combat, MonsterSkill, GiantBoss, Area, Phase3, Taskstonebar]
+damageType: Spell
+projectileType: None
+targetRefreshType: HighestHp
+cooldown: 4.20
+priority: 28
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_AbyssBarrage_Start.prefab" } }
+  - time: 0.24
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.0 }
+      addDamage: { damagePercent: [150.0] }
+  - time: 0.54
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.35 }
+      addDamage: { damagePercent: [150.0] }
+  - time: 0.86
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.7 }
+      addDamage: { damagePercent: [105.0] }
+  - { time: 1.22, destroy: {} }

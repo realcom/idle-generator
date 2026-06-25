@@ -1,0 +1,110 @@
+id: 200313
+name: 수정 흉갑
+category: Equipment
+type: Chest
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Chest
+- CrystalSet
+- EquipmentStage03
+- EquipmentGrade03
+- FixedLevelEquipment
+grade: 3
+rarity: 3
+tier: 1
+power: 35
+requiredExps:
+- 0
+equipAddStats:
+- type: Defense
+  value:
+  - 17
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003131
+    grade: 3
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 1.58
+  - id: 2003132
+    grade: 3
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Defense
+      value:
+      - 4
+  - id: 2003133
+    grade: 3
+    group: 1
+    weight: 24
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 1.44
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 115
+  - itemDataId: 200101
+    count: 3
+popupArgs:
+  ItemDescription: 빛을 머금은 흉갑. 맞을 때마다 반짝여서 아픈 척하기가 어렵다.
+  EquipmentGrade: '3'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Defense
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: none
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_chest_03_crystal_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: crystal
+  setName: 수정 세트
+  slot: Chest
+  slotName: 상의
+  stage: 3
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_chest_03_crystal_imagegen.png
+  grade: 3
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200372
+    nextItemDataId: 200314
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 3
+    resultGrade: 4
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Defense
+    primaryBaseValue: 12
+    primaryValue: 17
+    specialUnlocks:
+    - grade: 4
+      stat: HpPercent
+      base: 2.0
+    - grade: 7
+      stat: DefensePercent
+      base: 1.5
+    activeSpecials: []

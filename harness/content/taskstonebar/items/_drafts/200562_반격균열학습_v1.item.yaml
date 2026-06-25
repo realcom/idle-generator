@@ -1,0 +1,30 @@
+id: 200562
+name: "반격균열 학습"
+category: Recipe
+grade: 2
+rarity: 3
+group: 200502
+order: 103
+targetItemDataIds: [200532]
+requiredItemDataIds: [200531]
+requiredAchievementDataIds: [600115]
+exclusiveItemDataIds: [200532]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 5 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200532, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200532"
+  RequiredSkillItemDataIds: "200531"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "70"
+  UnlockCostLevelPoint: "5"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"

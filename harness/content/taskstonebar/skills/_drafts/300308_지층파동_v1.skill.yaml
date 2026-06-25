@@ -1,0 +1,20 @@
+id: 300308
+name: "지층파동"
+tags: [Combat, PlayerSkill, SkillTree, Area, GroundWave, Taskstonebar]
+damageType: Spell
+projectileType: None
+targetRefreshType: Nearest
+cooldown: 3.20
+priority: 43
+projectilePrefab: "FXPrefabs/Taskstonebar/StoneFusion/GroundWavePulse.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/StoneFusion/VFX_GroundWave_Cast.prefab" } }
+  - time: 0.34
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.40 }
+      addDamage: { damagePercent: [170.0, 200.0, 236.0, 278.0, 328.0] }
+  - { time: 0.50, playFx: { prefab: "FXPrefabs/Taskstonebar/StoneFusion/VFX_GroundWave_Impact.prefab" } }
+  - { time: 0.76, destroy: {} }

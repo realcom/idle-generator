@@ -1,0 +1,34 @@
+id: 300330
+name: "원석심장"
+tags: [Combat, PlayerSkill, SkillTree, ForgeFormation, PrimalHeart, Taskstonebar]
+damageType: Spell
+projectileType: Parabolic
+targetRefreshType: HighestHp
+cooldown: 6.20
+priority: 85
+projectilePrefab: "FXPrefabs/Taskstonebar/PrimalRed/PrimalHeartProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/PrimalRed/VFX_PrimalHeart_Cast.prefab" } }
+  - time: 0.46
+    hit:
+      maxHit: 10
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 3.00 }
+      addDamage: { damagePercent: [220.0, 264.0, 317.0, 381.0, 458.0] }
+  - time: 0.78
+    hit:
+      maxHit: 10
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.70 }
+      addDamage: { damagePercent: [160.0, 192.0, 230.0, 276.0, 331.0] }
+  - time: 1.08
+    hit:
+      maxHit: 10
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 3.20 }
+      addDamage: { damagePercent: [122.0, 146.0, 176.0, 211.0, 253.0] }
+  - { time: 1.24, playFx: { prefab: "FXPrefabs/Taskstonebar/PrimalRed/VFX_PrimalHeart_Impact.prefab" } }
+  - { time: 1.50, destroy: {} }

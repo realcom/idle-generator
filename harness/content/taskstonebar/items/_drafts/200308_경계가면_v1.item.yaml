@@ -1,0 +1,142 @@
+id: 200308
+name: 경계 가면
+category: Equipment
+type: Head
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Head
+- BorderSet
+- EquipmentStage08
+- EquipmentGrade08
+- FixedLevelEquipment
+grade: 8
+rarity: 5
+tier: 1
+power: 72
+requiredExps:
+- 0
+equipAddStats:
+- type: Hp
+  value:
+  - 430
+- type: ExpPercent
+  value:
+  - 4.15
+- type: CooldownPercent
+  value:
+  - 1.2
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003081
+    grade: 8
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 4.3
+  - id: 2003082
+    grade: 8
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Hp
+      value:
+      - 86
+  - id: 2003083
+    grade: 8
+    group: 1
+    weight: 24
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 2.87
+  - id: 2003084
+    grade: 8
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: ExpPercent
+      value:
+      - 2.07
+  - id: 2003085
+    grade: 8
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CooldownPercent
+      value:
+      - 0.48
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 220
+  - itemDataId: 200101
+    count: 8
+popupArgs:
+  ItemDescription: 화면 끝 경계선을 접어 만든 가면. 안쪽과 바깥쪽을 동시에 본다.
+  EquipmentGrade: '8'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Hp
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_head_08_border_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: border
+  setName: 경계 세트
+  slot: Head
+  slotName: 머리
+  stage: 8
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_head_08_border_imagegen.png
+  grade: 8
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200368
+    nextItemDataId: 200309
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 8
+    resultGrade: 9
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Hp
+    primaryBaseValue: 120
+    primaryValue: 430
+    specialUnlocks:
+    - grade: 4
+      stat: ExpPercent
+      base: 2.0
+    - grade: 7
+      stat: CooldownPercent
+      base: 1.0
+    activeSpecials:
+    - grade: 4
+      stat: ExpPercent
+      value: 4.15
+    - grade: 7
+      stat: CooldownPercent
+      value: 1.2

@@ -1,0 +1,110 @@
+id: 200341
+name: 조약 목걸이
+category: Equipment
+type: Necklace
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Necklace
+- PebbleSet
+- EquipmentStage01
+- EquipmentGrade01
+- FixedLevelEquipment
+grade: 1
+rarity: 1
+tier: 1
+power: 30
+requiredExps:
+- 0
+equipAddStats:
+- type: CriticalDamagePercent
+  value:
+  - 5.0
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003411
+    grade: 1
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 3.0
+  - id: 2003412
+    grade: 1
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 0.6
+  - id: 2003413
+    grade: 1
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 0.8
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 77
+  - itemDataId: 200101
+    count: 1
+popupArgs:
+  ItemDescription: 작은 돌이 언젠가 큰 바위가 되겠다고 품은 첫 약속의 목걸이.
+  EquipmentGrade: '1'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: CriticalDamagePercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: none
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_necklace_01_pebble_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: pebble
+  setName: 조약 세트
+  slot: Necklace
+  slotName: 목걸이
+  stage: 1
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_necklace_01_pebble_imagegen.png
+  grade: 1
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200397
+    nextItemDataId: 200342
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 1
+    resultGrade: 2
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: CriticalDamagePercent
+    primaryBaseValue: 5.0
+    primaryValue: 5.0
+    specialUnlocks:
+    - grade: 4
+      stat: BossDamageEfficiencyPercent
+      base: 2.0
+    - grade: 7
+      stat: MonsterDamageEfficiencyPercent
+      base: 2.0
+    activeSpecials: []

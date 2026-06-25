@@ -1,0 +1,142 @@
+id: 200337
+name: 빙결 부츠
+category: Equipment
+type: Boots
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Boots
+- FrostSet
+- EquipmentStage07
+- EquipmentGrade07
+- FixedLevelEquipment
+grade: 7
+rarity: 5
+tier: 1
+power: 66
+requiredExps:
+- 0
+equipAddStats:
+- type: CriticalPercent
+  value:
+  - 2.99
+- type: AttackSpeedPercent
+  value:
+  - 3.46
+- type: ItemDropPercent
+  value:
+  - 1.5
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003371
+    grade: 7
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 1.79
+  - id: 2003372
+    grade: 7
+    group: 1
+    weight: 32
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackSpeedPercent
+      value:
+      - 2.39
+  - id: 2003373
+    grade: 7
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 5.97
+  - id: 2003374
+    grade: 7
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CooldownPercent
+      value:
+      - 0.86
+  - id: 2003375
+    grade: 7
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: ItemDropPercent
+      value:
+      - 0.8
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 200
+  - itemDataId: 200101
+    count: 7
+popupArgs:
+  ItemDescription: 얼음 위를 미끄러지듯 구르는 부츠. 급한 마음만 살짝 얼려 둔다.
+  EquipmentGrade: '7'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: CriticalPercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_boots_07_frost_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: frost
+  setName: 빙결 세트
+  slot: Boots
+  slotName: 신발
+  stage: 7
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_boots_07_frost_imagegen.png
+  grade: 7
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200394
+    nextItemDataId: 200338
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 7
+    resultGrade: 8
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: CriticalPercent
+    primaryBaseValue: 1.0
+    primaryValue: 2.99
+    specialUnlocks:
+    - grade: 4
+      stat: AttackSpeedPercent
+      base: 2.0
+    - grade: 7
+      stat: ItemDropPercent
+      base: 1.5
+    activeSpecials:
+    - grade: 4
+      stat: AttackSpeedPercent
+      value: 3.46
+    - grade: 7
+      stat: ItemDropPercent
+      value: 1.5

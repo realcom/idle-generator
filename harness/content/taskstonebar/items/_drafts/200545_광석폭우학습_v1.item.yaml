@@ -1,0 +1,30 @@
+id: 200545
+name: "광석폭우 학습"
+category: Recipe
+grade: 1
+rarity: 2
+group: 200502
+order: 86
+targetItemDataIds: [200515]
+requiredItemDataIds: [200514]
+requiredAchievementDataIds: [600107]
+exclusiveItemDataIds: [200515]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 3 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200515, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200515"
+  RequiredSkillItemDataIds: "200514"
+  RequiredSkillLevel: "2"
+  RequiredPlayerLevel: "25"
+  UnlockCostLevelPoint: "3"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone1.png"

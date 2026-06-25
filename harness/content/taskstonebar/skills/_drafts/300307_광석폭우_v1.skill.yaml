@@ -1,0 +1,27 @@
+id: 300307
+name: "광석폭우"
+tags: [Combat, PlayerSkill, SkillTree, Area, OreRain, Taskstonebar]
+damageType: Explosive
+projectileType: Parabolic
+targetRefreshType: Random
+cooldown: 2.60
+priority: 42
+projectilePrefab: "FXPrefabs/Taskstonebar/BlueDust/OreRainProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/BlueDust/VFX_OreRain_Cast.prefab" } }
+  - time: 0.24
+    hit:
+      maxHit: 6
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.00 }
+      addDamage: { damagePercent: [96.0, 114.0, 135.0, 160.0, 190.0] }
+  - time: 0.50
+    hit:
+      maxHit: 6
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.20 }
+      addDamage: { damagePercent: [78.0, 92.0, 110.0, 130.0, 154.0] }
+  - { time: 0.66, playFx: { prefab: "FXPrefabs/Taskstonebar/BlueDust/VFX_OreRain_Impact.prefab" } }
+  - { time: 0.92, destroy: {} }

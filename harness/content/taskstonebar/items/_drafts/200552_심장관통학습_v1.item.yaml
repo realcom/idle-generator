@@ -1,0 +1,30 @@
+id: 200552
+name: "심장관통 학습"
+category: Recipe
+grade: 2
+rarity: 3
+group: 200502
+order: 93
+targetItemDataIds: [200522]
+requiredItemDataIds: [200521]
+requiredAchievementDataIds: [600114]
+exclusiveItemDataIds: [200522]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 5 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200522, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200522"
+  RequiredSkillItemDataIds: "200521"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "60"
+  UnlockCostLevelPoint: "5"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"

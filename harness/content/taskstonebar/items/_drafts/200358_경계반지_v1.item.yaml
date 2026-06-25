@@ -1,0 +1,142 @@
+id: 200358
+name: 경계 반지
+category: Equipment
+type: Ring
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Ring
+- BorderSet
+- EquipmentStage08
+- EquipmentGrade08
+- FixedLevelEquipment
+grade: 8
+rarity: 5
+tier: 1
+power: 107
+requiredExps:
+- 0
+equipAddStats:
+- type: AttackPercent
+  value:
+  - 5.02
+- type: Luck
+  value:
+  - 8
+- type: ItemDropPercent
+  value:
+  - 1.8
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003581
+    grade: 8
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 3.22
+  - id: 2003582
+    grade: 8
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 1.79
+  - id: 2003583
+    grade: 8
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 8.6
+  - id: 2003584
+    grade: 8
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Luck
+      value:
+      - 4
+  - id: 2003585
+    grade: 8
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: SellPricePercent
+      value:
+      - 0.96
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 232
+  - itemDataId: 200101
+    count: 8
+popupArgs:
+  ItemDescription: 경계선을 동그랗게 말아 만든 반지. 한계를 넘기 전에 먼저 찌른다.
+  EquipmentGrade: '8'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: AttackPercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_ring_08_border_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: border
+  setName: 경계 세트
+  slot: Ring
+  slotName: 반지
+  stage: 8
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_ring_08_border_imagegen.png
+  grade: 8
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200413
+    nextItemDataId: 200359
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 8
+    resultGrade: 9
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: AttackPercent
+    primaryBaseValue: 1.4
+    primaryValue: 5.02
+    specialUnlocks:
+    - grade: 4
+      stat: Luck
+      base: 4.0
+    - grade: 7
+      stat: ItemDropPercent
+      base: 1.5
+    activeSpecials:
+    - grade: 4
+      stat: Luck
+      value: 8
+    - grade: 7
+      stat: ItemDropPercent
+      value: 1.8

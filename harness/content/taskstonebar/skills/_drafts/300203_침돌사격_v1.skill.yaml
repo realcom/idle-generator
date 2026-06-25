@@ -1,0 +1,16 @@
+id: 300203
+name: "침돌 사격"
+tags: [Combat, MonsterSkill, Ranged, Taskstonebar]
+damageType: Pierce
+projectileType: Straight
+targetRefreshType: Nearest
+cooldown: 2.40
+priority: 23
+projectilePrefab: "FXPrefabs/Taskstonebar/NeedleStoneProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_NeedleStone_Start.prefab" } }
+  - time: 0.16
+    hit:
+      maxHit: 1
+      addDamage: { damagePercent: [126.0] }
+  - { time: 0.36, destroy: {} }

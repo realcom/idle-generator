@@ -1,0 +1,67 @@
+id: 200205
+parentId: 200204
+name: "태양석"
+category: Weapon
+type: Hammer
+tags: [Weapon, StoneWeapon, StoneSlot, SolarStone, BossStone, AreaStone, StoneStage04, Taskstonebar]
+grade: 1
+rarity: 4
+tier: 2
+power: 76
+requiredExps: [160, 240, 360, 540, 810, 1215, 1822, 2733, 4099, 6148]
+equipAddStats:
+  - { type: Attack, value: [40.0, 52.0, 68.0, 89.0, 116.0, 151.0, 197.0, 257.0, 335.0, 436.0] }
+  - { type: BossDamageEfficiencyPercent, value: [4.0, 5.5, 7.0, 9.0, 11.0, 13.5, 16.0, 19.0, 22.0, 26.0] }
+equipSkillDataIds: [300105]
+levelUpGoldCost: { itemDataId: 5, levels: "1..9", base: 140, step: 86 }
+levelUpMaterialItemGroups:
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200102, count: 18 }
+      - { id: 200103, count: 2 }
+  - level: 6
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 100 }
+      - { id: 200102, count: 42 }
+      - { id: 200103, count: 5 }
+  - level: 9
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 240 }
+      - { id: 200102, count: 90 }
+      - { id: 200103, count: 10 }
+unstackable: true
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200102, count: 8 }
+      - { itemDataId: 200103, count: 1 }
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"
+
+_stoneWeapon:
+  stage: 4
+  slotRole: solar
+  cooldownModel: independent
+  throwSkillDataId: 300105
+  equipSlotCost: 1
+  cooldownMultiplier: 1.55
+  effect: "느린 광역 투척. 보스와 미니 웨이브를 함께 처리하는 고가 돌."
+  merge:
+    enabled: true
+    recipeItemDataId: 200215
+    nextItemDataId: 200206
+    requiredCopies: 2
+    resultLevelPolicy: reset_to_1
+    consumePolicy: same_stage_unstackable_instances
+  growth:
+    maxLevel: 10
+    primaryStat: Attack
+    secondaryStat: BossDamageEfficiencyPercent
+    feedXpMaterials: [200102, 200103]
+  economy:
+    market_lane: equipment
+    bind_on: equip_or_level_up

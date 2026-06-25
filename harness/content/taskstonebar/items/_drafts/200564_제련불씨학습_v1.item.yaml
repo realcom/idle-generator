@@ -1,0 +1,30 @@
+id: 200564
+name: "제련불씨 학습"
+category: Recipe
+grade: 1
+rarity: 2
+group: 200502
+order: 105
+targetItemDataIds: [200534]
+requiredItemDataIds: [200505]
+requiredAchievementDataIds: [600107]
+exclusiveItemDataIds: [200534]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 2 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200534, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200534"
+  RequiredSkillItemDataIds: "200505"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "25"
+  UnlockCostLevelPoint: "2"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone0.png"

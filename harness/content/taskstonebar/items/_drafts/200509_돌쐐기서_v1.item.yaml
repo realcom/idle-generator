@@ -1,0 +1,50 @@
+id: 200509
+name: "돌쐐기서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 1
+rarity: 2
+group: 200502
+constantDamageRatio: 1.0
+order: 20
+parentId: 200503
+skillDataId: 300301
+unstackable: true
+requiredItemDataIds: [200503]
+requiredAchievementDataIds: [600105]
+targetItemDataIds: [200510]
+addStats:
+  - { type: AttackPercent, value: [1.2, 1.8, 2.5, 3.3, 4.2] }
+  - { type: CriticalPercent, value: [0.4, 0.7, 1, 1.3, 1.7] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 2 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "투척1"
+  ChildrenSkillItemDataIds: "200510"
+  UnlockRecipeItemDataId: "200539"
+  UnlockCostLevelPoint: "2"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200503"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "15"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "31"
+  SkillTreeLane: "Throw"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone0.png"

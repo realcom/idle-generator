@@ -1,0 +1,50 @@
+id: 200524
+name: "채굴탄서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 1
+rarity: 2
+group: 200502
+constantDamageRatio: 1.0
+order: 35
+parentId: 200503
+skillDataId: 300316
+unstackable: true
+requiredItemDataIds: [200503]
+requiredAchievementDataIds: [600106]
+targetItemDataIds: [200525]
+addStats:
+  - { type: ItemDropPercent, value: [0.8, 1.3, 1.9, 2.6, 3.4] }
+  - { type: ExpPercent, value: [0.8, 1.2, 1.7, 2.3, 3] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 2 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "파밍1"
+  ChildrenSkillItemDataIds: "200525"
+  UnlockRecipeItemDataId: "200554"
+  UnlockCostLevelPoint: "2"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200503"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "20"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "61"
+  SkillTreeLane: "Farming"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone0.png"

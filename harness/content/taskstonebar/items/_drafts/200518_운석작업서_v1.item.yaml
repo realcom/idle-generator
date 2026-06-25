@@ -1,0 +1,49 @@
+id: 200518
+name: "운석작업서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 3
+rarity: 4
+group: 200502
+constantDamageRatio: 1.0
+order: 29
+parentId: 200517
+skillDataId: 300310
+unstackable: true
+requiredItemDataIds: [200517]
+requiredAchievementDataIds: [600116]
+addStats:
+  - { type: MonsterDamageEfficiencyPercent, value: [2.3, 3.6, 5.2, 7.1, 9.1] }
+  - { type: AttackSpeedPercent, value: [1.1, 2, 3, 4.1, 5.5] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 3 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 4 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 5 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 6 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "광역5"
+  ChildrenSkillItemDataIds: ""
+  UnlockRecipeItemDataId: "200548"
+  UnlockCostLevelPoint: "6"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200517"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "80"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "45"
+  SkillTreeLane: "Area"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/ruby.png"

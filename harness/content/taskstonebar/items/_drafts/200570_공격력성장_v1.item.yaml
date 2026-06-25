@@ -1,0 +1,39 @@
+id: 200570
+name: "공격력 성장"
+category: Stat
+tab: -1
+priority: 1
+tags: [TaskstonebarStatGrowth, GrowthAttack]
+initialCreate: true
+initialCreateCount: 1
+initialCreateLevel: 1
+addStats:
+  - { type: Attack, value: [1.0, 2.0, 4.2, 6.6, 9.2, 12.0, 15.0, 18.3, 21.9, 25.8] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200569, count: 1 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200569, count: 1 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200569, count: 1 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200569, count: 1 }
+  - shouldAllValid: true
+    level: 5
+    materialItems:
+      - { id: 200569, count: 2 }
+popupArgs:
+  StatTree: "TaskstonebarStats"
+  StatPointItemDataId: "200569"
+  MaxStatLevel: "100"
+  SpendTarget: "StatGrowth"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone0.png"

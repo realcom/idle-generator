@@ -1,0 +1,50 @@
+id: 200517
+name: "용암분출서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 2
+rarity: 3
+group: 200502
+constantDamageRatio: 1.0
+order: 28
+parentId: 200516
+skillDataId: 300309
+unstackable: true
+requiredItemDataIds: [200516]
+requiredAchievementDataIds: [600113]
+targetItemDataIds: [200518]
+addStats:
+  - { type: MonsterDamageEfficiencyPercent, value: [2, 3.1, 4.5, 6.1, 7.8] }
+  - { type: AttackSpeedPercent, value: [1, 1.8, 2.5, 3.5, 4.7] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 3 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 4 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 5 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "광역4"
+  ChildrenSkillItemDataIds: "200518"
+  UnlockRecipeItemDataId: "200547"
+  UnlockCostLevelPoint: "5"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200516"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "55"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "44"
+  SkillTreeLane: "Area"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"

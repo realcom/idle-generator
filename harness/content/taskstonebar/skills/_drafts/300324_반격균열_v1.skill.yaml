@@ -1,0 +1,20 @@
+id: 300324
+name: "반격균열"
+tags: [Combat, PlayerSkill, SkillTree, Guard, CounterRift, Taskstonebar]
+damageType: Pierce
+projectileType: Relative
+targetRefreshType: Nearest
+cooldown: 3.00
+priority: 74
+projectilePrefab: "FXPrefabs/Taskstonebar/CrackWhite/CounterRiftProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/CrackWhite/VFX_CounterRift_Cast.prefab" } }
+  - time: 0.34
+    hit:
+      maxHit: 6
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.10 }
+      addDamage: { damagePercent: [190.0, 225.0, 267.0, 316.0, 374.0] }
+  - { time: 0.50, playFx: { prefab: "FXPrefabs/Taskstonebar/CrackWhite/VFX_CounterRift_Impact.prefab" } }
+  - { time: 0.76, destroy: {} }

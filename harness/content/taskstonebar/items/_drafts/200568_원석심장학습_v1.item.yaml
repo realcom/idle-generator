@@ -1,0 +1,30 @@
+id: 200568
+name: "원석심장 학습"
+category: Recipe
+grade: 3
+rarity: 4
+group: 200502
+order: 109
+targetItemDataIds: [200538]
+requiredItemDataIds: [200537]
+requiredAchievementDataIds: [600119]
+exclusiveItemDataIds: [200538]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 6 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200538, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200538"
+  RequiredSkillItemDataIds: "200537"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "100"
+  UnlockCostLevelPoint: "6"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/ruby.png"

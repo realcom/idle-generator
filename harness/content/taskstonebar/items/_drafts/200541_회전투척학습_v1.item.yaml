@@ -1,0 +1,30 @@
+id: 200541
+name: "회전투척 학습"
+category: Recipe
+grade: 2
+rarity: 3
+group: 200502
+order: 82
+targetItemDataIds: [200511]
+requiredItemDataIds: [200510]
+requiredAchievementDataIds: [600109]
+exclusiveItemDataIds: [200511]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 4 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200511, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200511"
+  RequiredSkillItemDataIds: "200510"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "35"
+  UnlockCostLevelPoint: "4"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone2.png"

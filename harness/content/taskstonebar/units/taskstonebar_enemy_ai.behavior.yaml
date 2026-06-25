@@ -1,0 +1,64 @@
+name: TaskstonebarBasicStrike
+domain: unit
+
+"on":
+  - event: update
+    every: 2.2s
+    do:
+      - useSkillToTarget: { skillDataId: 300201 }
+
+---
+name: TaskstonebarFastLunge
+domain: unit
+
+"on":
+  - event: update
+    every: 1.6s
+    do:
+      - useSkillToTarget: { skillDataId: 300202 }
+
+---
+name: TaskstonebarRangedShot
+domain: unit
+
+"on":
+  - event: update
+    every: 2.4s
+    do:
+      - useSkillToTarget: { skillDataId: 300203 }
+
+---
+name: TaskstonebarShieldSlam
+domain: unit
+
+"on":
+  - event: update
+    every: 2.8s
+    do:
+      - useSkillToTarget: { skillDataId: 300204 }
+
+---
+name: TaskstonebarKeeperQuake
+domain: unit
+
+"on":
+  - event: update
+    every: 3.4s
+    do:
+      - useSkillToTarget: { skillDataId: 300205 }
+
+---
+name: TaskstonebarGiantCrush
+domain: unit
+
+"on":
+  - event: update
+    every: 4.2s
+    do:
+      - getCurrentHpPercent: {}
+      - when: "return <= 35"
+        useSkillToTarget: { skillDataId: 300208 }
+      - when: "return > 35 and return <= 70"
+        useSkillToTarget: { skillDataId: 300207 }
+      - when: "return > 70"
+        useSkillToTarget: { skillDataId: 300206 }

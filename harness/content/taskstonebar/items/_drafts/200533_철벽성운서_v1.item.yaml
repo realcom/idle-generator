@@ -1,0 +1,49 @@
+id: 200533
+name: "철벽성운서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 3
+rarity: 4
+group: 200502
+constantDamageRatio: 1.0
+order: 44
+parentId: 200532
+skillDataId: 300325
+unstackable: true
+requiredItemDataIds: [200532]
+requiredAchievementDataIds: [600118]
+addStats:
+  - { type: HpPercent, value: [2.7, 4.1, 5.7, 7.5, 9.8] }
+  - { type: DefensePercent, value: [2.5, 3.9, 5.5, 7.3, 9.6] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 3 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 4 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 5 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 6 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "방어5"
+  ChildrenSkillItemDataIds: ""
+  UnlockRecipeItemDataId: "200563"
+  UnlockCostLevelPoint: "6"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200532"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "95"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "75"
+  SkillTreeLane: "Guard"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/ruby.png"

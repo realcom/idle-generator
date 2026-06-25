@@ -1,0 +1,126 @@
+id: 200320
+name: 태초 갑옷
+category: Equipment
+type: Chest
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Chest
+- OriginSet
+- EquipmentStage10
+- EquipmentGrade10
+- FixedLevelEquipment
+grade: 10
+rarity: 5
+tier: 1
+power: 124
+requiredExps:
+- 0
+equipAddStats:
+- type: Defense
+  value:
+  - 62
+- type: HpPercent
+  value:
+  - 5.97
+- type: DefensePercent
+  value:
+  - 2.59
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003201
+    grade: 10
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 5.68
+  - id: 2003202
+    grade: 10
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Defense
+      value:
+      - 15
+  - id: 2003203
+    grade: 10
+    group: 1
+    weight: 24
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 5.16
+  - id: 2003204
+    grade: 10
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Hp
+      value:
+      - 54
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 272
+  - itemDataId: 200101
+    count: 10
+popupArgs:
+  ItemDescription: 태초의 바위를 얇게 깎은 갑옷. 무겁지 않냐고 묻자 돌이 웃었다.
+  EquipmentGrade: '10'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Defense
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_chest_10_origin_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: origin
+  setName: 태초 세트
+  slot: Chest
+  slotName: 상의
+  stage: 10
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_chest_10_origin_imagegen.png
+  grade: 10
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: false
+    terminal: true
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Defense
+    primaryBaseValue: 12
+    primaryValue: 62
+    specialUnlocks:
+    - grade: 4
+      stat: HpPercent
+      base: 2.0
+    - grade: 7
+      stat: DefensePercent
+      base: 1.5
+    activeSpecials:
+    - grade: 4
+      stat: HpPercent
+      value: 5.97
+    - grade: 7
+      stat: DefensePercent
+      value: 2.59

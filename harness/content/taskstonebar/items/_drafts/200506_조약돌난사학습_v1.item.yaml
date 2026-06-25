@@ -1,0 +1,30 @@
+id: 200506
+name: "조약돌 난사 학습"
+category: Recipe
+grade: 1
+rarity: 2
+group: 200502
+order: 2
+targetItemDataIds: [200503]
+requiredItemDataIds: [200502]
+requiredAchievementDataIds: [600102]
+exclusiveItemDataIds: [200503]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 1 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200503, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200503"
+  RequiredSkillItemDataIds: "200502"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "5"
+  UnlockCostLevelPoint: "1"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone0.png"

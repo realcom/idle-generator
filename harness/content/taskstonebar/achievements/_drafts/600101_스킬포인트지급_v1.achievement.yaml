@@ -1,0 +1,25 @@
+id: 600101
+name: "스킬 포인트 지급"
+type: Normal
+tags: [HideDisplay, SkillTree, Taskstonebar]
+order: 101
+initialOpen: true
+clientAchievement: false
+condition: LevelUpItem
+conditionValue1: 1
+conditionValue2: 0
+targetProgress: 1
+initialProgress: 0
+repeatable: true
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200501, count: 1, isCore: true }
+popupArgs:
+  Source: "PlayerLevelUp"
+  PlayerLevelItemDataId: "1"
+  LevelPointItemDataId: "200501"
+  GrantPerLevel: "1"
+  SkillTree: "Taskstonebar"

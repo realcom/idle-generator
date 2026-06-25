@@ -1,0 +1,25 @@
+id: 600120
+name: "스탯 포인트 지급"
+type: Normal
+tags: [HideDisplay, StatGrowth, Taskstonebar]
+order: 120
+initialOpen: true
+clientAchievement: false
+condition: LevelUpItem
+conditionValue1: 1
+conditionValue2: 0
+targetProgress: 1
+initialProgress: 0
+repeatable: true
+autoReward: true
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200569, count: 3, isCore: true }
+popupArgs:
+  Source: "PlayerLevelUp"
+  PlayerLevelItemDataId: "1"
+  StatPointItemDataId: "200569"
+  GrantPerLevel: "3"
+  StatTree: "TaskstonebarStats"

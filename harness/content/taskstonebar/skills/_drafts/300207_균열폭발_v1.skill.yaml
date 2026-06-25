@@ -1,0 +1,25 @@
+id: 300207
+name: "균열 폭발"
+tags: [Combat, MonsterSkill, GiantBoss, Area, Phase2, Taskstonebar]
+damageType: Spell
+projectileType: None
+targetRefreshType: HighestHp
+cooldown: 4.20
+priority: 27
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_GiantRift_Start.prefab" } }
+  - time: 0.38
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.45 }
+      addDamage: { damagePercent: [205.0] }
+  - time: 0.72
+    hit:
+      maxHit: 6
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.85 }
+      addDamage: { damagePercent: [92.0] }
+  - { time: 1.08, destroy: {} }

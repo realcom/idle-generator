@@ -1,0 +1,68 @@
+id: 200209
+parentId: 200208
+name: "달빛돌"
+category: Weapon
+type: Hammer
+tags: [Weapon, StoneWeapon, StoneSlot, MoonStone, CritStone, StoneStage08, Taskstonebar]
+grade: 1
+rarity: 6
+tier: 4
+power: 242
+requiredExps: [560, 840, 1260, 1890, 2835, 4252, 6378, 9567, 14350, 21525]
+equipAddStats:
+  - { type: Attack, value: [126.0, 164.0, 213.0, 277.0, 360.0, 468.0, 608.0, 790.0, 1027.0, 1335.0] }
+  - { type: CriticalPercent, value: [2.0, 2.8, 3.6, 4.6, 5.6, 6.8, 8.0, 9.4, 10.8, 12.5] }
+equipSkillDataIds: [300109]
+levelUpGoldCost: { itemDataId: 5, levels: "1..9", base: 620, step: 380 }
+levelUpMaterialItemGroups:
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 520 }
+      - { id: 200102, count: 180 }
+      - { id: 200103, count: 18 }
+  - level: 6
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 900 }
+      - { id: 200102, count: 340 }
+      - { id: 200103, count: 36 }
+  - level: 9
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 1600 }
+      - { id: 200102, count: 620 }
+      - { id: 200103, count: 64 }
+unstackable: true
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200102, count: 28 }
+      - { itemDataId: 200103, count: 4 }
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"
+
+_stoneWeapon:
+  stage: 8
+  slotRole: moon
+  cooldownModel: independent
+  throwSkillDataId: 300109
+  equipSlotCost: 1
+  cooldownMultiplier: 1.22
+  effect: "치명 확률과 다단 달빛 파동으로 보스/정예를 녹이는 돌."
+  merge:
+    enabled: true
+    recipeItemDataId: 200219
+    nextItemDataId: 200210
+    requiredCopies: 2
+    resultLevelPolicy: reset_to_1
+    consumePolicy: same_stage_unstackable_instances
+  growth:
+    maxLevel: 10
+    primaryStat: Attack
+    secondaryStat: CriticalPercent
+    feedXpMaterials: [200101, 200102, 200103]
+  economy:
+    market_lane: equipment
+    bind_on: equip_or_level_up

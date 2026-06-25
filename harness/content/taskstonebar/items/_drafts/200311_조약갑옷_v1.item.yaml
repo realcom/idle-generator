@@ -1,0 +1,110 @@
+id: 200311
+name: 조약 갑옷
+category: Equipment
+type: Chest
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Chest
+- PebbleSet
+- EquipmentStage01
+- EquipmentGrade01
+- FixedLevelEquipment
+grade: 1
+rarity: 1
+tier: 1
+power: 24
+requiredExps:
+- 0
+equipAddStats:
+- type: Defense
+  value:
+  - 12
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003111
+    grade: 1
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 1.1
+  - id: 2003112
+    grade: 1
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Defense
+      value:
+      - 3
+  - id: 2003113
+    grade: 1
+    group: 1
+    weight: 24
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 1.0
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 70
+  - itemDataId: 200101
+    count: 1
+popupArgs:
+  ItemDescription: 책상 먼지를 갑옷처럼 두른 첫 장비. 맞아도 데굴, 넘어져도 데굴이다.
+  EquipmentGrade: '1'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Defense
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: none
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_chest_01_pebble_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: pebble
+  setName: 조약 세트
+  slot: Chest
+  slotName: 상의
+  stage: 1
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_chest_01_pebble_imagegen.png
+  grade: 1
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200370
+    nextItemDataId: 200312
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 1
+    resultGrade: 2
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Defense
+    primaryBaseValue: 12
+    primaryValue: 12
+    specialUnlocks:
+    - grade: 4
+      stat: HpPercent
+      base: 2.0
+    - grade: 7
+      stat: DefensePercent
+      base: 1.5
+    activeSpecials: []

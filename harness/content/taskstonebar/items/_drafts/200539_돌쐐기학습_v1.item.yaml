@@ -1,0 +1,30 @@
+id: 200539
+name: "돌쐐기 학습"
+category: Recipe
+grade: 1
+rarity: 2
+group: 200502
+order: 80
+targetItemDataIds: [200509]
+requiredItemDataIds: [200503]
+requiredAchievementDataIds: [600105]
+exclusiveItemDataIds: [200509]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 2 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200509, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200509"
+  RequiredSkillItemDataIds: "200503"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "15"
+  UnlockCostLevelPoint: "2"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone0.png"

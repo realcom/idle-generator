@@ -1,0 +1,126 @@
+id: 200355
+name: 망령 반지
+category: Equipment
+type: Ring
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Ring
+- WraithSet
+- EquipmentStage05
+- EquipmentGrade05
+- FixedLevelEquipment
+grade: 5
+rarity: 5
+tier: 1
+power: 62
+requiredExps:
+- 0
+equipAddStats:
+- type: AttackPercent
+  value:
+  - 2.9
+- type: Luck
+  value:
+  - 5
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003551
+    grade: 5
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 1.87
+  - id: 2003552
+    grade: 5
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 1.04
+  - id: 2003553
+    grade: 5
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 4.98
+  - id: 2003554
+    grade: 5
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Luck
+      value:
+      - 2
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 165
+  - itemDataId: 200101
+    count: 5
+popupArgs:
+  ItemDescription: 끼는 순간 채팅창이 조용해지는 반지. 돌의 눈빛만 반짝인다.
+  EquipmentGrade: '5'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: AttackPercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_ring_05_wraith_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: wraith
+  setName: 망령 세트
+  slot: Ring
+  slotName: 반지
+  stage: 5
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_ring_05_wraith_imagegen.png
+  grade: 5
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200410
+    nextItemDataId: 200356
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 5
+    resultGrade: 6
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: AttackPercent
+    primaryBaseValue: 1.4
+    primaryValue: 2.9
+    specialUnlocks:
+    - grade: 4
+      stat: Luck
+      base: 4.0
+    - grade: 7
+      stat: ItemDropPercent
+      base: 1.5
+    activeSpecials:
+    - grade: 4
+      stat: Luck
+      value: 5

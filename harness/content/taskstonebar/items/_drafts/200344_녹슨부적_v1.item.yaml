@@ -1,0 +1,126 @@
+id: 200344
+name: 녹슨 부적
+category: Equipment
+type: Necklace
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Necklace
+- RustSet
+- EquipmentStage04
+- EquipmentGrade04
+- FixedLevelEquipment
+grade: 4
+rarity: 4
+tier: 1
+power: 52
+requiredExps:
+- 0
+equipAddStats:
+- type: CriticalDamagePercent
+  value:
+  - 8.64
+- type: BossDamageEfficiencyPercent
+  value:
+  - 2.0
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003441
+    grade: 4
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 5.18
+  - id: 2003442
+    grade: 4
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 1.04
+  - id: 2003443
+    grade: 4
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 1.38
+  - id: 2003444
+    grade: 4
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: BossDamageEfficiencyPercent
+      value:
+      - 1.0
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 145
+  - itemDataId: 200101
+    count: 4
+popupArgs:
+  ItemDescription: 폐광의 표지판을 깎아 만든 부적. 위험 표시가 곧 공격 표시다.
+  EquipmentGrade: '4'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: CriticalDamagePercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_necklace_04_rust_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: rust
+  setName: 녹슨 세트
+  slot: Necklace
+  slotName: 목걸이
+  stage: 4
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_necklace_04_rust_imagegen.png
+  grade: 4
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200400
+    nextItemDataId: 200345
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 4
+    resultGrade: 5
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: CriticalDamagePercent
+    primaryBaseValue: 5.0
+    primaryValue: 8.64
+    specialUnlocks:
+    - grade: 4
+      stat: BossDamageEfficiencyPercent
+      base: 2.0
+    - grade: 7
+      stat: MonsterDamageEfficiencyPercent
+      base: 2.0
+    activeSpecials:
+    - grade: 4
+      stat: BossDamageEfficiencyPercent
+      value: 2.0

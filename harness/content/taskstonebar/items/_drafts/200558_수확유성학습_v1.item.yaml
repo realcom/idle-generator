@@ -1,0 +1,30 @@
+id: 200558
+name: "수확유성 학습"
+category: Recipe
+grade: 3
+rarity: 4
+group: 200502
+order: 99
+targetItemDataIds: [200528]
+requiredItemDataIds: [200527]
+requiredAchievementDataIds: [600116]
+exclusiveItemDataIds: [200528]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 6 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200528, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200528"
+  RequiredSkillItemDataIds: "200527"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "80"
+  UnlockCostLevelPoint: "6"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/ruby.png"

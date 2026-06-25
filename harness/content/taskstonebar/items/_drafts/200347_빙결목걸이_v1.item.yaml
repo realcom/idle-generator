@@ -1,0 +1,142 @@
+id: 200347
+name: 빙결 목걸이
+category: Equipment
+type: Necklace
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Necklace
+- FrostSet
+- EquipmentStage07
+- EquipmentGrade07
+- FixedLevelEquipment
+grade: 7
+rarity: 5
+tier: 1
+power: 90
+requiredExps:
+- 0
+equipAddStats:
+- type: CriticalDamagePercent
+  value:
+  - 14.93
+- type: BossDamageEfficiencyPercent
+  value:
+  - 3.46
+- type: MonsterDamageEfficiencyPercent
+  value:
+  - 2.0
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003471
+    grade: 7
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 8.96
+  - id: 2003472
+    grade: 7
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 1.79
+  - id: 2003473
+    grade: 7
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 2.39
+  - id: 2003474
+    grade: 7
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: BossDamageEfficiencyPercent
+      value:
+      - 1.73
+  - id: 2003475
+    grade: 7
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: MonsterDamageEfficiencyPercent
+      value:
+      - 1.0
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 212
+  - itemDataId: 200101
+    count: 7
+popupArgs:
+  ItemDescription: 서리 속에 갇힌 목걸이. 몬스터도 보스도 약점이 하얗게 드러난다.
+  EquipmentGrade: '7'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: CriticalDamagePercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_necklace_07_frost_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: frost
+  setName: 빙결 세트
+  slot: Necklace
+  slotName: 목걸이
+  stage: 7
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_necklace_07_frost_imagegen.png
+  grade: 7
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200403
+    nextItemDataId: 200348
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 7
+    resultGrade: 8
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: CriticalDamagePercent
+    primaryBaseValue: 5.0
+    primaryValue: 14.93
+    specialUnlocks:
+    - grade: 4
+      stat: BossDamageEfficiencyPercent
+      base: 2.0
+    - grade: 7
+      stat: MonsterDamageEfficiencyPercent
+      base: 2.0
+    activeSpecials:
+    - grade: 4
+      stat: BossDamageEfficiencyPercent
+      value: 3.46
+    - grade: 7
+      stat: MonsterDamageEfficiencyPercent
+      value: 2.0

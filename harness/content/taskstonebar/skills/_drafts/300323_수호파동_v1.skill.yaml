@@ -1,0 +1,20 @@
+id: 300323
+name: "수호파동"
+tags: [Combat, PlayerSkill, SkillTree, Guard, GuardWave, Taskstonebar]
+damageType: Spell
+projectileType: None
+targetRefreshType: Nearest
+cooldown: 2.50
+priority: 73
+projectilePrefab: "FXPrefabs/Taskstonebar/ShieldBlue/GuardianWavePulse.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/ShieldBlue/VFX_GuardianWave_Cast.prefab" } }
+  - time: 0.30
+    hit:
+      maxHit: 5
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.90 }
+      addDamage: { damagePercent: [146.0, 173.0, 205.0, 243.0, 288.0] }
+  - { time: 0.46, playFx: { prefab: "FXPrefabs/Taskstonebar/ShieldBlue/VFX_GuardianWave_Impact.prefab" } }
+  - { time: 0.72, destroy: {} }

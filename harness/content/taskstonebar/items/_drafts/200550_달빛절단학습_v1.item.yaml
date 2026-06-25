@@ -1,0 +1,30 @@
+id: 200550
+name: "달빛절단 학습"
+category: Recipe
+grade: 1
+rarity: 2
+group: 200502
+order: 91
+targetItemDataIds: [200520]
+requiredItemDataIds: [200519]
+requiredAchievementDataIds: [600108]
+exclusiveItemDataIds: [200520]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 3 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200520, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200520"
+  RequiredSkillItemDataIds: "200519"
+  RequiredSkillLevel: "2"
+  RequiredPlayerLevel: "30"
+  UnlockCostLevelPoint: "3"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone1.png"

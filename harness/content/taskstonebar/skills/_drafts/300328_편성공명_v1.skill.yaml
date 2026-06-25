@@ -1,0 +1,20 @@
+id: 300328
+name: "편성공명"
+tags: [Combat, PlayerSkill, SkillTree, ForgeFormation, FormationPulse, Taskstonebar]
+damageType: NormalDamage
+projectileType: None
+targetRefreshType: Nearest
+cooldown: 2.40
+priority: 83
+projectilePrefab: "FXPrefabs/Taskstonebar/FormationBlue/FormationPulse.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/FormationBlue/VFX_FormationPulse_Cast.prefab" } }
+  - time: 0.28
+    hit:
+      maxHit: 4
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.80 }
+      addDamage: { damagePercent: [160.0, 190.0, 225.0, 267.0, 316.0] }
+  - { time: 0.44, playFx: { prefab: "FXPrefabs/Taskstonebar/FormationBlue/VFX_FormationPulse_Impact.prefab" } }
+  - { time: 0.70, destroy: {} }

@@ -1,0 +1,30 @@
+id: 200540
+name: "쌍돌비 학습"
+category: Recipe
+grade: 1
+rarity: 2
+group: 200502
+order: 81
+targetItemDataIds: [200510]
+requiredItemDataIds: [200509]
+requiredAchievementDataIds: [600107]
+exclusiveItemDataIds: [200510]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 3 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200510, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200510"
+  RequiredSkillItemDataIds: "200509"
+  RequiredSkillLevel: "2"
+  RequiredPlayerLevel: "25"
+  UnlockCostLevelPoint: "3"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone1.png"

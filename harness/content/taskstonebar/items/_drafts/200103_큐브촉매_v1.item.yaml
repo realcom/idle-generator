@@ -10,3 +10,65 @@ sellAddItemGroups:
       - { itemDataId: 5, count: 60 }
 spriteGroups:
   Icon: "Assets/Taskstonebar/taskstone/ruby.png"
+
+_economy:
+  role: catalyst
+  steam:
+    enabled: true
+    itemdefid: 200103
+    itemdef_type: item
+    marketable: true
+    tradable: true
+    auto_stack: true
+    store_hidden: true
+    market_hash_name: "Cube Catalyst"
+    display_type: "Catalyst"
+    tags:
+      rarity: rare
+      family: cube
+      lane: catalyst
+      season: launch
+  stack:
+    inventory_unit: 1
+    market_lot_size: 10
+    notes: "큐브/강화/제련 공통 연료. 가격축 역할을 하므로 오프라인 보상에서 제외한다."
+  supply:
+    online_only: true
+    faucets:
+      - source: boss_drop
+        map_ids: [500101]
+        unit_ids: [110501]
+        expected_per_hour: 8.0
+        cap_per_day: 240
+      - source: synthesis_exchange
+        map_ids: [500101]
+        unit_ids: []
+        expected_per_hour: 12.0
+        cap_per_day: 360
+  sinks:
+    feed_xp: 40
+    cube_xp: 30
+    alchemy_gold: 60
+    recipes:
+      - id: starter_weapon_reforge
+        consumes:
+          - { itemDataId: 200103, count: 3 }
+          - { itemDataId: 200102, count: 30 }
+          - { itemDataId: 200101, count: 300 }
+        produces:
+          - { itemDataId: 200201, count: 1 }
+        steam_exchange: false
+      - id: launch_cube_level_gate
+        consumes:
+          - { itemDataId: 200103, count: 10 }
+          - { itemDataId: 200102, count: 120 }
+        produces: []
+        steam_exchange: false
+    seasonal:
+      - id: launch_cosmetic_craft
+        count_per_attempt: 25
+        reason: "시즌 스킨 제작용 상위 소각"
+  risk:
+    bot_value: low
+    inflation_risk: low
+    knobs: [boss_drop_rate, pity_count, cube_gate_cost, cosmetic_craft_cost]

@@ -1,0 +1,26 @@
+id: 300107
+name: "용암돌 투척"
+tags: [Combat, StoneThrow, StoneWeapon, LavaStone, AreaStone, StoneStage06, Taskstonebar]
+damageType: Explosive
+projectileType: Parabolic
+targetRefreshType: Nearest
+cooldown: 3.65
+priority: 16
+projectilePrefab: "FXPrefabs/Taskstonebar/LavaStoneProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_LavaStone_Start.prefab" } }
+  - time: 0.38
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.0 }
+      addDamage: { damagePercent: [210.0] }
+  - time: 0.88
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.2 }
+      addDamage: { damagePercent: [115.0] }
+  - { time: 1.12, destroy: {} }

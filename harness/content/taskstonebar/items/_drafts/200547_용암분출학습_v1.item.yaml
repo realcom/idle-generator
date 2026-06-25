@@ -1,0 +1,30 @@
+id: 200547
+name: "용암분출 학습"
+category: Recipe
+grade: 2
+rarity: 3
+group: 200502
+order: 88
+targetItemDataIds: [200517]
+requiredItemDataIds: [200516]
+requiredAchievementDataIds: [600113]
+exclusiveItemDataIds: [200517]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 5 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200517, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200517"
+  RequiredSkillItemDataIds: "200516"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "55"
+  UnlockCostLevelPoint: "5"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"

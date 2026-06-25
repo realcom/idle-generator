@@ -1,0 +1,142 @@
+id: 200329
+name: 별심 건틀릿
+category: Equipment
+type: Gloves
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Gloves
+- StarcoreSet
+- EquipmentStage09
+- EquipmentGrade09
+- FixedLevelEquipment
+grade: 9
+rarity: 5
+tier: 1
+power: 120
+requiredExps:
+- 0
+equipAddStats:
+- type: Attack
+  value:
+  - 60
+- type: AttackSpeedPercent
+  value:
+  - 4.98
+- type: CriticalPercent
+  value:
+  - 1.73
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003291
+    grade: 9
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 4.73
+  - id: 2003292
+    grade: 9
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Attack
+      value:
+      - 17
+  - id: 2003293
+    grade: 9
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 2.15
+  - id: 2003294
+    grade: 9
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackSpeedPercent
+      value:
+      - 2.49
+  - id: 2003295
+    grade: 9
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 4.32
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 250
+  - itemDataId: 200101
+    count: 9
+popupArgs:
+  ItemDescription: 별가루가 묻은 건틀릿. 주먹이 지나간 자리에 반짝이는 계산이 남는다.
+  EquipmentGrade: '9'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Attack
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_gloves_09_starcore_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: starcore
+  setName: 별심 세트
+  slot: Gloves
+  slotName: 장갑
+  stage: 9
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_gloves_09_starcore_imagegen.png
+  grade: 9
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200387
+    nextItemDataId: 200330
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 9
+    resultGrade: 10
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Attack
+    primaryBaseValue: 14
+    primaryValue: 60
+    specialUnlocks:
+    - grade: 4
+      stat: AttackSpeedPercent
+      base: 2.0
+    - grade: 7
+      stat: CriticalPercent
+      base: 1.2
+    activeSpecials:
+    - grade: 4
+      stat: AttackSpeedPercent
+      value: 4.98
+    - grade: 7
+      stat: CriticalPercent
+      value: 1.73

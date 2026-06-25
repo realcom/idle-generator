@@ -25,3 +25,51 @@ decomposeAddItemGroups:
       - { itemDataId: 200101, count: 1 }
 spriteGroups:
   Icon: "Assets/Taskstonebar/taskstone/rock.png"
+
+_economy:
+  role: equipment
+  steam:
+    enabled: false
+    itemdefid: null
+    itemdef_type: item
+    marketable: false
+    tradable: false
+    auto_stack: false
+    store_hidden: true
+    market_hash_name: ""
+    display_type: "Bound Weapon"
+    tags:
+      rarity: common
+      family: stone_throw
+      lane: equipment
+      season: launch
+  stack:
+    inventory_unit: 1
+    market_lot_size: 1
+    notes: "초기 무기는 귀속 성장 장비. 출시 초기 Steam Market은 재료/촉매 중심으로 둔다."
+  supply:
+    online_only: false
+    faucets:
+      - source: starter_progression
+        map_ids: [500101]
+        unit_ids: []
+        expected_per_hour: 1.0
+        cap_per_day: 1
+  sinks:
+    feed_xp: 0
+    cube_xp: 20
+    alchemy_gold: 80
+    recipes:
+      - id: starter_weapon_reforge_cost
+        consumes:
+          - { itemDataId: 200103, count: 3 }
+          - { itemDataId: 200102, count: 30 }
+          - { itemDataId: 200101, count: 300 }
+        produces:
+          - { itemDataId: 200201, count: 1 }
+        steam_exchange: false
+    seasonal: []
+  risk:
+    bot_value: low
+    inflation_risk: low
+    knobs: [reforge_cost, decompose_reward, level_up_cost]

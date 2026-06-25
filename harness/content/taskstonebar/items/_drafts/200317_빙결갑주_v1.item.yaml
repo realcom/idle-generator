@@ -1,0 +1,132 @@
+id: 200317
+name: 빙결 갑주
+category: Equipment
+type: Chest
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Chest
+- FrostSet
+- EquipmentStage07
+- EquipmentGrade07
+- FixedLevelEquipment
+grade: 7
+rarity: 5
+tier: 1
+power: 72
+requiredExps:
+- 0
+equipAddStats:
+- type: Defense
+  value:
+  - 36
+- type: HpPercent
+  value:
+  - 3.46
+- type: DefensePercent
+  value:
+  - 1.5
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003171
+    grade: 7
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 3.28
+  - id: 2003172
+    grade: 7
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Defense
+      value:
+      - 9
+  - id: 2003173
+    grade: 7
+    group: 1
+    weight: 24
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 2.99
+  - id: 2003174
+    grade: 7
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Hp
+      value:
+      - 31
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 205
+  - itemDataId: 200101
+    count: 7
+popupArgs:
+  ItemDescription: 차가운 갑주가 충격을 얼린다. 아픔은 잠깐 멈추고 숫자만 오른다.
+  EquipmentGrade: '7'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Defense
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_chest_07_frost_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: frost
+  setName: 빙결 세트
+  slot: Chest
+  slotName: 상의
+  stage: 7
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_chest_07_frost_imagegen.png
+  grade: 7
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200376
+    nextItemDataId: 200318
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 7
+    resultGrade: 8
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Defense
+    primaryBaseValue: 12
+    primaryValue: 36
+    specialUnlocks:
+    - grade: 4
+      stat: HpPercent
+      base: 2.0
+    - grade: 7
+      stat: DefensePercent
+      base: 1.5
+    activeSpecials:
+    - grade: 4
+      stat: HpPercent
+      value: 3.46
+    - grade: 7
+      stat: DefensePercent
+      value: 1.5

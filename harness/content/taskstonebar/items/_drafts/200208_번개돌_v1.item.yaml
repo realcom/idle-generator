@@ -1,0 +1,68 @@
+id: 200208
+parentId: 200207
+name: "번개돌"
+category: Weapon
+type: Hammer
+tags: [Weapon, StoneWeapon, StoneSlot, ThunderStone, ChainStone, StoneStage07, Taskstonebar]
+grade: 1
+rarity: 5
+tier: 4
+power: 184
+requiredExps: [410, 615, 922, 1383, 2074, 3111, 4666, 6999, 10498, 15747]
+equipAddStats:
+  - { type: Attack, value: [95.0, 124.0, 161.0, 209.0, 272.0, 354.0, 460.0, 598.0, 777.0, 1010.0] }
+  - { type: AttackSpeedPercent, value: [5.0, 6.0, 7.0, 8.2, 9.4, 10.8, 12.2, 13.8, 15.4, 17.0] }
+equipSkillDataIds: [300108]
+levelUpGoldCost: { itemDataId: 5, levels: "1..9", base: 430, step: 265 }
+levelUpMaterialItemGroups:
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 360 }
+      - { id: 200102, count: 120 }
+      - { id: 200103, count: 12 }
+  - level: 6
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 650 }
+      - { id: 200102, count: 230 }
+      - { id: 200103, count: 24 }
+  - level: 9
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 1100 }
+      - { id: 200102, count: 420 }
+      - { id: 200103, count: 42 }
+unstackable: true
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200102, count: 20 }
+      - { itemDataId: 200103, count: 3 }
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone2.png"
+
+_stoneWeapon:
+  stage: 7
+  slotRole: thunder
+  cooldownModel: independent
+  throwSkillDataId: 300108
+  equipSlotCost: 1
+  cooldownMultiplier: 0.92
+  effect: "빠른 연쇄 투척. 공격속도 빌드와 잘 맞는 후반 돌."
+  merge:
+    enabled: true
+    recipeItemDataId: 200218
+    nextItemDataId: 200209
+    requiredCopies: 2
+    resultLevelPolicy: reset_to_1
+    consumePolicy: same_stage_unstackable_instances
+  growth:
+    maxLevel: 10
+    primaryStat: Attack
+    secondaryStat: AttackSpeedPercent
+    feedXpMaterials: [200101, 200102, 200103]
+  economy:
+    market_lane: equipment
+    bind_on: equip_or_level_up

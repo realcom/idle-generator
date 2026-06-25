@@ -1,0 +1,46 @@
+id: 200505
+name: "태양석 파동서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 1
+rarity: 3
+group: 200502
+constantDamageRatio: 1.0
+order: 4
+parentId: 200502
+skillDataId: 300105
+unstackable: true
+requiredItemDataIds: [200503, 200504]
+requiredAchievementDataIds: [600104]
+targetItemDataIds: [200534]
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 1 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "Solar"
+  ChildrenSkillItemDataIds: "200534"
+  UnlockRecipeItemDataId: "200508"
+  UnlockCostLevelPoint: "1"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200503,200504"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "12"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "4"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone1.png"

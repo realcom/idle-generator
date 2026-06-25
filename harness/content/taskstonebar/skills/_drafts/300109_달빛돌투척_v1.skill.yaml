@@ -1,0 +1,26 @@
+id: 300109
+name: "달빛돌 투척"
+tags: [Combat, StoneThrow, StoneWeapon, MoonStone, CritStone, StoneStage08, Taskstonebar]
+damageType: Pierce
+projectileType: Parabolic
+targetRefreshType: HighestHp
+cooldown: 4.20
+priority: 18
+projectilePrefab: "FXPrefabs/Taskstonebar/MoonStoneProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_MoonStone_Start.prefab" } }
+  - time: 0.30
+    hit:
+      maxHit: 4
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.65 }
+      addDamage: { damagePercent: [190.0] }
+  - time: 0.62
+    hit:
+      maxHit: 4
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.8 }
+      addDamage: { damagePercent: [145.0] }
+  - { time: 0.90, destroy: {} }

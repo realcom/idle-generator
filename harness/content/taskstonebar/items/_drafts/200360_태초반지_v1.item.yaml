@@ -1,0 +1,136 @@
+id: 200360
+name: 태초 반지
+category: Equipment
+type: Ring
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Ring
+- OriginSet
+- EquipmentStage10
+- EquipmentGrade10
+- FixedLevelEquipment
+grade: 10
+rarity: 5
+tier: 1
+power: 155
+requiredExps:
+- 0
+equipAddStats:
+- type: AttackPercent
+  value:
+  - 7.22
+- type: Luck
+  value:
+  - 12
+- type: ItemDropPercent
+  value:
+  - 2.59
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003601
+    grade: 10
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 4.64
+  - id: 2003602
+    grade: 10
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 2.58
+  - id: 2003603
+    grade: 10
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 12.38
+  - id: 2003604
+    grade: 10
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Luck
+      value:
+      - 6
+  - id: 2003605
+    grade: 10
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: SellPricePercent
+      value:
+      - 1.38
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 277
+  - itemDataId: 200101
+    count: 10
+popupArgs:
+  ItemDescription: 태초의 조약돌을 원으로 깎은 반지. 이제 작은 돌은 자기 전설을 장착한다.
+  EquipmentGrade: '10'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: AttackPercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_ring_10_origin_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: origin
+  setName: 태초 세트
+  slot: Ring
+  slotName: 반지
+  stage: 10
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_ring_10_origin_imagegen.png
+  grade: 10
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: false
+    terminal: true
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: AttackPercent
+    primaryBaseValue: 1.4
+    primaryValue: 7.22
+    specialUnlocks:
+    - grade: 4
+      stat: Luck
+      base: 4.0
+    - grade: 7
+      stat: ItemDropPercent
+      base: 1.5
+    activeSpecials:
+    - grade: 4
+      stat: Luck
+      value: 12
+    - grade: 7
+      stat: ItemDropPercent
+      value: 2.59

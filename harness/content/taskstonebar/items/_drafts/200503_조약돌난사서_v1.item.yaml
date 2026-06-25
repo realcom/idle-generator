@@ -1,0 +1,46 @@
+id: 200503
+name: "조약돌 난사서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 1
+rarity: 2
+group: 200502
+constantDamageRatio: 1.0
+order: 2
+parentId: 200502
+skillDataId: 300102
+unstackable: true
+requiredItemDataIds: [200502]
+requiredAchievementDataIds: [600102]
+targetItemDataIds: [200505, 200509, 200514, 200524]
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 1 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "AoE"
+  ChildrenSkillItemDataIds: "200505,200509,200514,200524"
+  UnlockRecipeItemDataId: "200506"
+  UnlockCostLevelPoint: "1"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200502"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "5"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "2"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone0.png"

@@ -1,0 +1,30 @@
+id: 200553
+name: "혈월파쇄 학습"
+category: Recipe
+grade: 3
+rarity: 4
+group: 200502
+order: 94
+targetItemDataIds: [200523]
+requiredItemDataIds: [200522]
+requiredAchievementDataIds: [600117]
+exclusiveItemDataIds: [200523]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 6 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200523, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200523"
+  RequiredSkillItemDataIds: "200522"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "90"
+  UnlockCostLevelPoint: "6"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/ruby.png"

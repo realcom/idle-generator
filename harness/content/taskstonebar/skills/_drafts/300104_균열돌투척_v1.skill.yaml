@@ -1,0 +1,20 @@
+id: 300104
+name: "균열돌 투척"
+tags: [Combat, StoneThrow, StoneWeapon, CrackStone, HeavyStone, StoneStage03, Taskstonebar]
+damageType: Pierce
+projectileType: Parabolic
+targetRefreshType: HighestHp
+cooldown: 2.35
+priority: 13
+projectilePrefab: "FXPrefabs/Taskstonebar/CrackStoneProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_CrackStone_Start.prefab" } }
+  - time: 0.22
+    hit:
+      maxHit: 3
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.35 }
+      addDamage: { damagePercent: [245.0] }
+  - { time: 0.48, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_CrackStone_Impact.prefab" } }
+  - { time: 0.72, destroy: {} }

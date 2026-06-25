@@ -1,0 +1,20 @@
+id: 300320
+name: "수확유성"
+tags: [Combat, PlayerSkill, SkillTree, Farming, HarvestMeteor, Taskstonebar]
+damageType: Explosive
+projectileType: Parabolic
+targetRefreshType: Random
+cooldown: 4.60
+priority: 65
+projectilePrefab: "FXPrefabs/Taskstonebar/HarvestRed/HarvestMeteorProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/HarvestRed/VFX_HarvestMeteor_Cast.prefab" } }
+  - time: 0.48
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.80 }
+      addDamage: { damagePercent: [230.0, 272.0, 322.0, 381.0, 451.0] }
+  - { time: 0.64, playFx: { prefab: "FXPrefabs/Taskstonebar/HarvestRed/VFX_HarvestMeteor_Impact.prefab" } }
+  - { time: 0.90, destroy: {} }

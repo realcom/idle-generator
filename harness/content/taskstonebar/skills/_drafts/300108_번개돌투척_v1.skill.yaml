@@ -1,0 +1,30 @@
+id: 300108
+name: "번개돌 투척"
+tags: [Combat, StoneThrow, StoneWeapon, ThunderStone, ChainStone, StoneStage07, Taskstonebar]
+damageType: Spell
+projectileType: Parabolic
+targetRefreshType: Random
+cooldown: 1.65
+priority: 17
+projectilePrefab: "FXPrefabs/Taskstonebar/ThunderStoneProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_ThunderStone_Start.prefab" } }
+  - time: 0.12
+    hit:
+      maxHit: 1
+      addDamage: { damagePercent: [125.0] }
+  - time: 0.24
+    hit:
+      maxHit: 3
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.55 }
+      addDamage: { damagePercent: [72.0] }
+  - time: 0.38
+    hit:
+      maxHit: 3
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.85 }
+      addDamage: { damagePercent: [46.0] }
+  - { time: 0.56, destroy: {} }

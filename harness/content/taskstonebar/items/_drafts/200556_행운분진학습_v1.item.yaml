@@ -1,0 +1,30 @@
+id: 200556
+name: "행운분진 학습"
+category: Recipe
+grade: 2
+rarity: 3
+group: 200502
+order: 97
+targetItemDataIds: [200526]
+requiredItemDataIds: [200525]
+requiredAchievementDataIds: [600110]
+exclusiveItemDataIds: [200526]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 4 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200526, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200526"
+  RequiredSkillItemDataIds: "200525"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "40"
+  UnlockCostLevelPoint: "4"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone2.png"

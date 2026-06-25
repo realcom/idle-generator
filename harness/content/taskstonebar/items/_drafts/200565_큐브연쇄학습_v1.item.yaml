@@ -1,0 +1,30 @@
+id: 200565
+name: "큐브연쇄 학습"
+category: Recipe
+grade: 1
+rarity: 2
+group: 200502
+order: 106
+targetItemDataIds: [200535]
+requiredItemDataIds: [200534]
+requiredAchievementDataIds: [600110]
+exclusiveItemDataIds: [200535]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 3 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200535, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200535"
+  RequiredSkillItemDataIds: "200534"
+  RequiredSkillLevel: "2"
+  RequiredPlayerLevel: "40"
+  UnlockCostLevelPoint: "3"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone1.png"

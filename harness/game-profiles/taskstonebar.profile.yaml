@@ -6,9 +6,115 @@
 
 game:
   id: taskstonebar
-  name: "Taskstonebar"
-  genre: afk-idle-rpg-lite
+  name: "돌키우기2 / Taskstonebar"
+  genre: steam-market-mmo-idle-rpg
   engine_ref: idlez-client
+
+runtime:
+  target_engine: Godot
+  client_shape:
+    - taskbar_mode
+    - workshop_mode
+  resource_policy: "harness/assets/growstone2/에 보관된 돌키우기1 원작 리소스를 정본 에셋 풀로 우선 사용한다. 신규 리소스 생성은 원작 에셋으로 해결 불가한 런타임/Steam 요구에 한정한다."
+
+asset_policy:
+  primary_root: "harness/assets/growstone2/"
+  primary_source: "돌키우기1 원작 에셋"
+  priority:
+    - "원작 에셋 그대로 사용"
+    - "Godot 런타임에 맞춘 무손실 슬라이스/스프라이트시트 재패킹"
+    - "색상/스케일/9-slice 힌트 같은 비파괴 가공"
+    - "기존 감성으로 신규 에셋 생성"
+  folders:
+    ui: "harness/assets/growstone2/UI/"
+    unit: "harness/assets/growstone2/unit/"
+    effect: "harness/assets/growstone2/effect/"
+    map: "harness/assets/growstone2/map/"
+  disallow:
+    - "원작 에셋이 있는데 임의의 새 스타일로 대체"
+    - "Godot 편의를 위해 픽셀 아트에 블러/안티앨리어싱 적용"
+    - "Steam Market 아이콘을 원작 정체성과 무관한 새 그림으로 제작"
+
+mmo:
+  enabled: true
+  authority: server
+  production_server_required: true
+  topology:
+    town: "채팅, 클랜, 큐브, 인벤토리, Steam 링크"
+    mine_channel: "20~100명 단위 온라인 자동 파밍 채널"
+    formation_run: "내 계정 캐릭터 1~4명을 편성해 자동 사냥. 편성 시너지와 캐릭터별 장비/펫 빌드가 핵심."
+    boss_raid: "시간제 촉매/코어 faucet"
+    clan_mine: "재료 기부와 시즌 랭킹을 겸하는 집단 소각장"
+  no_ingame_exchange: true
+  server_modes:
+    live:
+      server: required
+      steam_inventory: real
+      marketable_drops: enabled
+      save_migration_from_local: forbidden
+    staging:
+      server: required
+      steam_inventory: sandbox_or_partner_test
+      marketable_drops: test_only
+      save_migration_from_local: forbidden
+    local_sandbox:
+      server: mock_or_embedded
+      steam_inventory: disabled
+      marketable_drops: disabled
+      save_migration_to_live: forbidden
+      purpose: "Godot UI, 전투 연출, 밸런스 감각 검증용"
+  note: "거래소는 인게임 구현 없이 Steam Community Market만 사용한다."
+
+formation_system:
+  enabled: true
+  definition: "파티는 다른 유저와의 실시간 파티가 아니라 내 계정 캐릭터 3~4개 출전 편성이다."
+  formation_size:
+    solo: 1
+    early: 3
+    standard: 4
+  modes:
+    - solo_taskbar_farming
+    - formation_mine
+    - formation_boss
+    - clan_mine_support
+  reward_policy:
+    account_drops: true
+    formation_bonus: true
+    per_character_contribution: true
+    last_hit_ownership: false
+    tradeable_drop_source: "server_roll_per_account"
+  unlocks:
+    slot_1: "start"
+    slot_2: "first_boss_clear"
+    slot_3: "cube_level_4"
+    slot_4: "rune_or_mark_node"
+  rules:
+    - "같은 캐릭터 중복 출전은 기본 금지. 복제/분신 계열은 별도 콘텐츠로만 허용."
+    - "한 캐릭터는 한 편성 슬롯에만 장착 가능."
+    - "캐릭터별 장비/펫/스킬은 별도 저장하되, Steam Market 판매 전에는 장착 해제/귀속 규칙을 따른다."
+    - "편성 보너스는 직업 역할 조합과 돌/펫 속성 조합으로 계산한다."
+
+class_system:
+  enabled: true
+  class_identity: "캐릭터/직업은 편성 역할, 스킬 슬롯, 장착 장비군, 편성 보너스를 결정한다."
+  launch_roles:
+    stone_guardian:
+      name: "돌수호자"
+      role: tank
+      market_assets: [character, class_unlock, skin]
+    stone_thrower:
+      name: "돌팔매꾼"
+      role: ranged_dps
+      market_assets: [character, class_unlock, skin]
+    miner:
+      name: "광부"
+      role: farming_support
+      market_assets: [character, class_unlock, skin]
+    shaman:
+      name: "태양석 주술사"
+      role: buff_heal
+      market_assets: [character, class_unlock, skin]
+  monetization_boundary: "직업 해금권/스킨/조각은 Steam 자산 가능. 레벨, 숙련도, 편성 기여도는 서버 DB 귀속."
 
 stats:
   use:
@@ -93,14 +199,251 @@ balance:
 
 progression:
   core_loop:
-    name: taskbar_stone_loop
-    summary: "하단 스트립 자동전투 -> 광석/상자 획득 -> 큐브 제련/머지 -> 돌 등급 상승 -> 다음 작업구역 진입"
-    online_only_rewards: [상자, 큐브촉매, 고등급광석]
-    offline_rewards: [골드, 경험치]
+    name: steam_market_feed_loop
+    summary: "온라인 광산 파밍 -> Steam Inventory 아이템 획득 -> 먹이/큐브 소각 또는 Steam Market 판매 -> 돌/큐브/클랜 성장 -> 더 깊은 광산과 보스 진입"
+    online_only_rewards: [상자, 큐브촉매, 고등급광석, 거래가능재료, 보스코어]
+    offline_rewards: [골드, 경험치, 기본광석]
+    player_choice: [먹인다, 큐브에태운다, SteamMarket에판다]
   cube:
     name: "작업석 큐브"
     unlock_level: 4
+    role: "거래 가능 아이템 공급을 흡수하는 메인 소각장"
     early_functions: [연금, 합성, 제련]
+  skill_tree:
+    tree_id: Taskstonebar
+    player_level_item_id: 1
+    level_point_item_id: 200501
+    level_point_grant:
+      via: achievement
+      achievement_id: 600101
+      condition: LevelUpItem
+      player_level_item_id: 1
+      grant_per_player_level_up: 1
+    early_spend_each_level_until: 20
+    level_gate_achievements:
+      - { player_level: 5, achievement_id: 600102 }
+      - { player_level: 8, achievement_id: 600103 }
+      - { player_level: 12, achievement_id: 600104 }
+      - { player_level: 15, achievement_id: 600105 }
+      - { player_level: 20, achievement_id: 600106 }
+      - { player_level: 25, achievement_id: 600107 }
+      - { player_level: 30, achievement_id: 600108 }
+      - { player_level: 35, achievement_id: 600109 }
+      - { player_level: 40, achievement_id: 600110 }
+      - { player_level: 45, achievement_id: 600111 }
+      - { player_level: 50, achievement_id: 600112 }
+      - { player_level: 55, achievement_id: 600113 }
+      - { player_level: 60, achievement_id: 600114 }
+      - { player_level: 70, achievement_id: 600115 }
+      - { player_level: 80, achievement_id: 600116 }
+      - { player_level: 90, achievement_id: 600117 }
+      - { player_level: 95, achievement_id: 600118 }
+      - { player_level: 100, achievement_id: 600119 }
+  stat_growth:
+    tree_id: TaskstonebarStats
+    player_level_item_id: 1
+    stat_point_item_id: 200569
+    stat_point_grant:
+      via: achievement
+      achievement_id: 600120
+      condition: LevelUpItem
+      player_level_item_id: 1
+      grant_per_player_level_up: 3
+    max_stat_level: 100
+    spend_items: [200570, 200571, 200572, 200573]
+
+economy:
+  model: burn_first_market_mmo
+  price_goal: "1년 가격 방어가 아니라 시즌 초반 거래량과 소각 압력 극대화"
+  market_provider: SteamCommunityMarket
+  trade_provider: SteamTrading
+  inventory_provider: SteamInventory
+  ingame_exchange: disabled
+  launch_sinks:
+    - stone_feed
+    - cube_xp
+    - synthesis
+    - refining
+    - clan_mine_donation
+    - season_skin_crafting
+  marketable_lanes:
+    - feed_material
+    - catalyst
+    - stone_core
+    - chest
+    - cosmetic
+    - equipment
+    - character
+    - pet
+    - sealed_roll
+    - affix_token
+  nonmarket_lanes:
+    - gold
+    - exp
+    - player_level
+    - rune_or_mark_points
+    - stage_progress
+    - revealed_random_rolls
+  yaml_overlay:
+    key: _economy
+    contract: "harness/design/taskstonebar/yaml-economy-contract.yaml"
+    note: "idlez_compile.py가 `_` prefix 키를 건너뛰므로 엔진 JSON을 오염시키지 않는다."
+
+item_system:
+  categories_in_scope:
+    - Material
+    - Weapon
+    - Equipment
+    - Character
+    - Pet
+    - Unit
+    - Mine
+    - Skill
+    - Trait
+    - Product
+  marketable_policy:
+    materials: "스택형 Steam 자산. 공급/소각 경제의 바닥."
+    equipment: "유한한 슬롯/등급/강화/옵션 계열이 Steam에 보이는 경우만 시장 거래."
+    characters: "캐릭터 본체/조각/스킨 모두 가능. 성장 레벨은 서버 DB 귀속."
+    pets: "펫 알/펫 본체/펫 스킨 가능. 펫 경험치와 세부 훈련값은 서버 DB 귀속."
+    class_unlocks: "직업 해금권과 직업 스킨은 Steam 자산 가능. 전투 레벨/숙련도는 DB 귀속."
+    random_rolls: "마켓 가격에 영향을 주는 옵션은 ItemDef/태그/이름으로 노출한다."
+
+stone_weapon_system:
+  enabled: true
+  summary: "플레이어는 장착한 돌마다 독립 쿨타임을 굴려 자동 투척한다. 돌은 1~10단계 진화 라인을 가진 Weapon 아이템으로 저작하되 StoneWeapon 태그와 _stoneWeapon overlay로 런타임 의도를 선언한다."
+  item_contract:
+    category: Weapon
+    type: Hammer
+    required_tags: [StoneWeapon, StoneSlot]
+    throw_skill_field: equipSkillDataIds
+    overlay_key: _stoneWeapon
+    note: "idlez_compile.py는 '_' prefix 키를 엔진 JSON에서 제외하므로, Godot/서버 런타임만 overlay를 읽는다."
+  slots:
+    initial: 1
+    min: 1
+    max: 10
+    duplicate_policy: "같은 itemDataId 중복 장착은 기본 허용. 단, UniqueStone 태그가 있으면 1개만 허용한다."
+    unlock_curve:
+      - { slots: 1, gate: start }
+      - { slots: 2, gate: clear_map_500110 }
+      - { slots: 3, gate: player_level_12 }
+      - { slots: 4, gate: cube_level_4 }
+      - { slots: 5, gate: clear_map_500140 }
+      - { slots: 6, gate: player_level_35 }
+      - { slots: 7, gate: clear_map_500170 }
+      - { slots: 8, gate: boss_core_crafting }
+      - { slots: 9, gate: player_level_75 }
+      - { slots: 10, gate: clear_map_500200 }
+  combat_model:
+    scheduler: independent_cooldown_per_equipped_stone
+    action: "각 슬롯의 돌이 자신의 equipSkillDataIds[0] 스킬을 쿨타임마다 사용한다."
+    target_policy: "스킬의 targetRefreshType을 따른다. 기본값은 Nearest."
+    cooldown_sources:
+      - "Skill.cooldown"
+      - "장착자의 CooldownPercent / GameplayCooldownPercent"
+      - "돌 _stoneWeapon.cooldownMultiplier"
+    visual_policy: "돌 아이콘/투척체/피격 FX는 원작 growstone2 에셋을 우선 사용한다."
+  growth_axes:
+    evolution:
+      stages: 10
+      source: "_stoneWeapon.stage + StoneStageXX tag"
+      rule: "단계는 돌 정체성/스킬/시장 bucket을 나누고, 각 단계 안에서 item level 1~10 성장을 가진다."
+    level:
+      cap: 10
+      source: "requiredExps + levelUpMaterialItemGroups"
+      primary_gain: "Attack 또는 특화 스탯 value[] 증가"
+    grade:
+      role: "돌의 한계돌파 단계. 같은 돌/코어/촉매를 소각해 올린다."
+      market_visibility: "grade bucket은 Steam itemdef 이름/태그로 노출 가능"
+    rarity:
+      role: "드롭/제작 시 결정되는 타고난 희귀도. 거래 가치 정체성."
+      market_visibility: "rarity는 market-visible tag"
+    effect:
+      role: "각 돌의 전투 개성. 빠른 단일, 둔화, 관통, 광역, 보스 특화 같은 lane으로 제한한다."
+  merge_model:
+    enabled: true
+    family: StoneWeapon
+    recipe_category: Recipe
+    recipe_tags: [EquipmentCombineRecipe, AutoCombineAvailable, StoneMergeRecipe]
+    recipe_item_range: "200212..200220"
+    required_copies: 2
+    source_item_contract: "단계 1~9 돌의 _stoneWeapon.merge.recipeItemDataId/nextItemDataId가 레시피와 다음 돌을 가리킨다."
+    result_item_contract: "단계 2~10 돌은 parentId로 직전 단계 itemDataId를 가진다."
+    material_shape: "같은 단계 돌 2개를 한 materialItems count: 2로 묶지 않고, materialItemGroups 2개에 각각 count: 1로 선언한다."
+    result_level_policy: reset_to_1
+    terminal_stage: 10
+    ui_contract: "Godot StoneMerge UI가 StoneMergeRecipe 태그와 _stoneMergeRecipe overlay를 읽어 source/result/requiredCopies를 표시하고, 선택한 돌 인스턴스 2개로 Recipe 생성 요청을 보낸다."
+    server_path: CashItemManager.CreateItem
+    note: "현 레거시 서버 레시피 지급은 소비한 메인 아이템 레벨을 승계하지 않으므로 결과 돌은 level 1로 명시한다."
+  evolution_stages:
+    - { stage: 1, item: 200202, skill: 300102, recipe: 200212, next: 200203, lane: basic, name: "조약돌", role: "빠른 기본 단일 투척" }
+    - { stage: 2, item: 200203, skill: 300103, parent: 200202, recipe: 200213, next: 200204, lane: moss, name: "이끼돌", role: "둔화와 드롭 보조" }
+    - { stage: 3, item: 200204, skill: 300104, parent: 200203, recipe: 200214, next: 200205, lane: crack, name: "균열돌", role: "느린 고피해 관통/치명" }
+    - { stage: 4, item: 200205, skill: 300105, parent: 200204, recipe: 200215, next: 200206, lane: solar, name: "태양석", role: "초기 광역/보스 특화" }
+    - { stage: 5, item: 200206, skill: 300106, parent: 200205, recipe: 200216, next: 200207, lane: frost, name: "서리돌", role: "제어와 쿨타임 보조" }
+    - { stage: 6, item: 200207, skill: 300107, parent: 200206, recipe: 200217, next: 200208, lane: lava, name: "용암돌", role: "광역 폭발과 몬스터 피해" }
+    - { stage: 7, item: 200208, skill: 300108, parent: 200207, recipe: 200218, next: 200209, lane: thunder, name: "번개돌", role: "빠른 연쇄 투척" }
+    - { stage: 8, item: 200209, skill: 300109, parent: 200208, recipe: 200219, next: 200210, lane: moon, name: "달빛돌", role: "치명 기반 다단 투척" }
+    - { stage: 9, item: 200210, skill: 300110, parent: 200209, recipe: 200220, next: 200211, lane: starcore, name: "별심돌", role: "최상위 보스/광역 폭발" }
+    - { stage: 10, item: 200211, skill: 300111, parent: 200210, recipe: null, next: null, lane: origin, name: "태초돌", role: "유니크 최종 파동과 행운 보너스" }
+  effect_lanes:
+    basic: "짧은 쿨타임 단일 투척"
+    moss: "둔화/파밍 보조"
+    crack: "느리지만 강한 관통/치명"
+    solar: "광역/보스 특화"
+    frost: "제어/쿨타임 보조"
+    lava: "몬스터 파밍 광역"
+    thunder: "빠른 연쇄/공속"
+    moon: "치명 기반 다단타"
+    starcore: "후반 보스/광역"
+    origin: "유니크 최종 돌"
+    cube: "쿨타임 변조/추가 투척 — 후속 시즌 확장"
+  balance_guardrails:
+    early_slots_1_to_3: "총 투척 주기 0.35초보다 빨라지지 않게 한다."
+    late_slots_8_to_10: "개별 돌 쿨타임은 0.8초 이상, 광역 돌은 2.6초 이상을 기본선으로 둔다."
+    damage_budget: "동일 티어 돌 10개 장착 기준 DPS가 같은 레벨 몬스터 HP의 18~28%/sec 범위에 들어오게 한다."
+  economy:
+    marketable_before_equip: true
+    bind_on: equip_or_level_up
+    sinks: [stone_feed, cube_xp, synthesis, refining]
+    feed_materials: [200101, 200102, 200103]
+
+random_option_policy:
+  engine_field: "ResourceItem.options / optionCounts"
+  steam_constraint: "Steam dynamic properties are not market-visible and are cleared on trade, so market-critical option values must not live only there."
+  market_modes:
+    sealed_roll:
+      description: "미감정 장비/펫/캐릭터. Steam Market 거래 가능. 감정하면 Steam 자산을 소비하고 서버 DB 귀속 인스턴스를 생성."
+      marketable: true
+      bind_on: reveal
+    visible_bucket:
+      description: "공격형 S, 드롭형 A 같은 유한 옵션 계열/등급을 이름과 태그로 노출한 Steam 자산."
+      marketable: true
+      bind_on: equip_or_reroll
+    bound_instance:
+      description: "정확한 난수 수치, 강화 이력, 재굴림 이력은 서버 DB에 저장. 거래 불가."
+      marketable: false
+      bind_on: created
+  option_identity_axes:
+    - slot
+    - rarity
+    - grade
+    - enhancement_band
+    - option_family
+    - option_tier
+    - season
+  option_families:
+    attack: [AttackPercent, AttackSpeedPercent, CriticalPercent, CriticalDamagePercent]
+    farming: [ItemDropPercent, ExpPercent, SellPricePercent, Luck]
+    bossing: [BossDamageEfficiencyPercent, BossDamageTakenEfficiencyPercent]
+    survival: [HpPercent, DefensePercent, DamageTakenEfficiencyPercent]
+
+steam_inventory:
+  itemdef_source: "harness/content/taskstonebar/**/_drafts/*.yaml::_economy.steam"
+  itemdef_id_policy: "가능하면 Item.id와 Steam itemdefid를 맞춘다."
+  dynamic_properties_policy: "거래/마켓 가치에 필요한 옵션은 dynamic property가 아니라 ItemDef, 태그, 이름으로 고정한다."
+  initial_marketable_items: [200101, 200102, 200103]
 
 shop:
   product_costs:

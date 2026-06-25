@@ -1,0 +1,20 @@
+id: 300316
+name: "채굴탄"
+tags: [Combat, PlayerSkill, SkillTree, Farming, FarmQuick, Taskstonebar]
+damageType: NormalDamage
+projectileType: Parabolic
+targetRefreshType: Nearest
+cooldown: 0.90
+priority: 61
+projectilePrefab: "FXPrefabs/Taskstonebar/BlueDust/MiningShotProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/BlueDust/VFX_MiningShot_Cast.prefab" } }
+  - time: 0.12
+    hit:
+      maxHit: 1
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 0.85 }
+      addDamage: { damagePercent: [92.0, 109.0, 129.0, 153.0, 181.0] }
+  - { time: 0.28, playFx: { prefab: "FXPrefabs/Taskstonebar/BlueDust/VFX_MiningShot_Impact.prefab" } }
+  - { time: 0.54, destroy: {} }

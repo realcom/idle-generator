@@ -1,0 +1,126 @@
+id: 200306
+name: 용암 투구
+category: Equipment
+type: Head
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Head
+- LavaSet
+- EquipmentStage06
+- EquipmentGrade06
+- FixedLevelEquipment
+grade: 6
+rarity: 5
+tier: 1
+power: 50
+requiredExps:
+- 0
+equipAddStats:
+- type: Hp
+  value:
+  - 299
+- type: ExpPercent
+  value:
+  - 2.88
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003061
+    grade: 6
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 2.99
+  - id: 2003062
+    grade: 6
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Hp
+      value:
+      - 60
+  - id: 2003063
+    grade: 6
+    group: 1
+    weight: 24
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 1.99
+  - id: 2003064
+    grade: 6
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: ExpPercent
+      value:
+      - 1.44
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 175
+  - itemDataId: 200101
+    count: 6
+popupArgs:
+  ItemDescription: 용암 방울이 식어 굳은 투구. 생각이 뜨거워져도 머리는 안 녹는다.
+  EquipmentGrade: '6'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Hp
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_head_06_lava_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: lava
+  setName: 용암 세트
+  slot: Head
+  slotName: 머리
+  stage: 6
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_head_06_lava_imagegen.png
+  grade: 6
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200366
+    nextItemDataId: 200307
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 6
+    resultGrade: 7
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Hp
+    primaryBaseValue: 120
+    primaryValue: 299
+    specialUnlocks:
+    - grade: 4
+      stat: ExpPercent
+      base: 2.0
+    - grade: 7
+      stat: CooldownPercent
+      base: 1.0
+    activeSpecials:
+    - grade: 4
+      stat: ExpPercent
+      value: 2.88

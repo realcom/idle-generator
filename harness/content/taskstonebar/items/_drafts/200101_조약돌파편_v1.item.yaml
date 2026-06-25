@@ -10,3 +10,57 @@ sellAddItemGroups:
       - { itemDataId: 5, count: 6 }
 spriteGroups:
   Icon: "Assets/Taskstonebar/taskstone/stone0.png"
+
+_economy:
+  role: feed_material
+  steam:
+    enabled: true
+    itemdefid: 200101
+    itemdef_type: item
+    marketable: true
+    tradable: true
+    auto_stack: true
+    store_hidden: true
+    market_hash_name: "Pebble Fragment"
+    display_type: "Feed Material"
+    tags:
+      rarity: common
+      family: stone
+      lane: feed
+      season: launch
+  stack:
+    inventory_unit: 1
+    market_lot_size: 100
+    notes: "초보 공급층. 고등급 진화에도 대량 투입되어 바닥 수요를 만든다."
+  supply:
+    online_only: false
+    faucets:
+      - source: normal_monster_drop
+        map_ids: [500101]
+        unit_ids: [110201, 110202]
+        expected_per_hour: 240.0
+        cap_per_day: 12000
+  sinks:
+    feed_xp: 1
+    cube_xp: 1
+    alchemy_gold: 6
+    recipes:
+      - id: moss_ore_seed
+        consumes:
+          - { itemDataId: 200101, count: 9 }
+        produces:
+          - { itemDataId: 200102, count: 1 }
+        steam_exchange: true
+      - id: first_stone_growth
+        consumes:
+          - { itemDataId: 200101, count: 100 }
+        produces: []
+        steam_exchange: false
+    seasonal:
+      - id: launch_clan_mine_donation
+        count_per_attempt: 500
+        reason: "클랜 광산 레벨업용 집단 소각"
+  risk:
+    bot_value: high
+    inflation_risk: high
+    knobs: [drop_rate, daily_cap, feed_xp, clan_donation_cost]

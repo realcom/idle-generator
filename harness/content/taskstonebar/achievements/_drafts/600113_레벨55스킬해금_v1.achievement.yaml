@@ -1,0 +1,18 @@
+id: 600113
+name: "레벨 55 스킬 해금"
+type: Normal
+tags: [HideDisplay, SkillTree, Taskstonebar]
+order: 113
+initialOpen: true
+clientAchievement: false
+condition: HasItemLevel
+conditionValue1: 1
+conditionValue2: 55
+targetProgress: 1
+initialProgress: 0
+repeatable: false
+autoReward: true
+popupArgs:
+  Source: SkillTreeLevelGate
+  SkillTree: Taskstonebar
+  RequiredPlayerLevel: "55"

@@ -1,0 +1,110 @@
+id: 200353
+name: 수정 반지
+category: Equipment
+type: Ring
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Ring
+- CrystalSet
+- EquipmentStage03
+- EquipmentGrade03
+- FixedLevelEquipment
+grade: 3
+rarity: 3
+tier: 1
+power: 43
+requiredExps:
+- 0
+equipAddStats:
+- type: AttackPercent
+  value:
+  - 2.02
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003531
+    grade: 3
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 1.3
+  - id: 2003532
+    grade: 3
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 0.72
+  - id: 2003533
+    grade: 3
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 3.46
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 120
+  - itemDataId: 200101
+    count: 3
+popupArgs:
+  ItemDescription: 수정이 손끝 대신 반짝인다. 운이 아니라 계산된 반짝임이라고 주장한다.
+  EquipmentGrade: '3'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: AttackPercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: none
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_ring_03_crystal_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: crystal
+  setName: 수정 세트
+  slot: Ring
+  slotName: 반지
+  stage: 3
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_ring_03_crystal_imagegen.png
+  grade: 3
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200408
+    nextItemDataId: 200354
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 3
+    resultGrade: 4
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: AttackPercent
+    primaryBaseValue: 1.4
+    primaryValue: 2.02
+    specialUnlocks:
+    - grade: 4
+      stat: Luck
+      base: 4.0
+    - grade: 7
+      stat: ItemDropPercent
+      base: 1.5
+    activeSpecials: []

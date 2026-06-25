@@ -1,0 +1,30 @@
+id: 200548
+name: "운석작업 학습"
+category: Recipe
+grade: 3
+rarity: 4
+group: 200502
+order: 89
+targetItemDataIds: [200518]
+requiredItemDataIds: [200517]
+requiredAchievementDataIds: [600116]
+exclusiveItemDataIds: [200518]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 6 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200518, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200518"
+  RequiredSkillItemDataIds: "200517"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "80"
+  UnlockCostLevelPoint: "6"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/ruby.png"

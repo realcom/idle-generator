@@ -1,0 +1,20 @@
+id: 300313
+name: "보스분쇄"
+tags: [Combat, PlayerSkill, SkillTree, Boss, BossBreak, Taskstonebar]
+damageType: NormalDamage
+projectileType: None
+targetRefreshType: HighestHp
+cooldown: 3.20
+priority: 53
+projectilePrefab: "FXPrefabs/Taskstonebar/CrackLarge/BossBreakerPulse.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/CrackLarge/VFX_BossBreaker_Cast.prefab" } }
+  - time: 0.38
+    hit:
+      maxHit: 3
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.55 }
+      addDamage: { damagePercent: [280.0, 330.0, 390.0, 460.0, 544.0] }
+  - { time: 0.54, playFx: { prefab: "FXPrefabs/Taskstonebar/CrackLarge/VFX_BossBreaker_Impact.prefab" } }
+  - { time: 0.80, destroy: {} }

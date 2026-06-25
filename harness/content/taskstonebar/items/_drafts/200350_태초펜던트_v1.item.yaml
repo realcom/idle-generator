@@ -1,0 +1,136 @@
+id: 200350
+name: 태초 펜던트
+category: Equipment
+type: Necklace
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Necklace
+- OriginSet
+- EquipmentStage10
+- EquipmentGrade10
+- FixedLevelEquipment
+grade: 10
+rarity: 5
+tier: 1
+power: 155
+requiredExps:
+- 0
+equipAddStats:
+- type: CriticalDamagePercent
+  value:
+  - 25.8
+- type: BossDamageEfficiencyPercent
+  value:
+  - 5.97
+- type: MonsterDamageEfficiencyPercent
+  value:
+  - 3.46
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003501
+    grade: 10
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 15.48
+  - id: 2003502
+    grade: 10
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 3.1
+  - id: 2003503
+    grade: 10
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 4.13
+  - id: 2003504
+    grade: 10
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: BossDamageEfficiencyPercent
+      value:
+      - 2.99
+  - id: 2003505
+    grade: 10
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: MonsterDamageEfficiencyPercent
+      value:
+      - 1.73
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 280
+  - itemDataId: 200101
+    count: 10
+popupArgs:
+  ItemDescription: 돌키우기라는 이름이 처음 새겨진 펜던트. 보스 앞에서도 초심을 굴린다.
+  EquipmentGrade: '10'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: CriticalDamagePercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_necklace_10_origin_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: origin
+  setName: 태초 세트
+  slot: Necklace
+  slotName: 목걸이
+  stage: 10
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_necklace_10_origin_imagegen.png
+  grade: 10
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: false
+    terminal: true
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: CriticalDamagePercent
+    primaryBaseValue: 5.0
+    primaryValue: 25.8
+    specialUnlocks:
+    - grade: 4
+      stat: BossDamageEfficiencyPercent
+      base: 2.0
+    - grade: 7
+      stat: MonsterDamageEfficiencyPercent
+      base: 2.0
+    activeSpecials:
+    - grade: 4
+      stat: BossDamageEfficiencyPercent
+      value: 5.97
+    - grade: 7
+      stat: MonsterDamageEfficiencyPercent
+      value: 3.46

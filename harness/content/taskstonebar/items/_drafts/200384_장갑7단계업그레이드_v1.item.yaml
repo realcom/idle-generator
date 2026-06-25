@@ -1,0 +1,96 @@
+id: 200384
+name: 장갑 7단계 업그레이드
+category: Recipe
+tags:
+- Recipe
+- EquipmentUpgradeRecipe
+- AutoCombineAvailable
+- PixelEquipment
+- UpgradeToGrade07
+- Gloves
+- Taskstonebar
+grade: 7
+rarity: 5
+tier: 1
+targetItemDataIds:
+- 200327
+materialItemGroups:
+- shouldAllValid: false
+  materialItems:
+  - id: 200306
+    count: 1
+  - id: 200316
+    count: 1
+  - id: 200326
+    count: 1
+  - id: 200336
+    count: 1
+  - id: 200346
+    count: 1
+  - id: 200356
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200306
+    count: 1
+  - id: 200316
+    count: 1
+  - id: 200326
+    count: 1
+  - id: 200336
+    count: 1
+  - id: 200346
+    count: 1
+  - id: 200356
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200306
+    count: 1
+  - id: 200316
+    count: 1
+  - id: 200326
+    count: 1
+  - id: 200336
+    count: 1
+  - id: 200346
+    count: 1
+  - id: 200356
+    count: 1
+addItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 200327
+    count: 1
+    level: 1
+    isCore: true
+popupArgs:
+  UpgradeFamily: EquipmentGrade
+  SourceGrade: '6'
+  ResultGrade: '7'
+  RequiredLowerEquipmentCount: '3'
+  CandidateItemDataIds: 200306,200316,200326,200336,200346,200356
+  ResultItemDataId: '200327'
+  ResultLevelPolicy: fixed_1
+  MaterialPolicy: any_lower_equipment_same_grade_count_3
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_gloves_07_frost_imagegen.png
+_equipmentUpgrade:
+  series: taskstonebar-equipment-upgrade-10-grade
+  slot: Gloves
+  slotName: 장갑
+  sourceGrade: 6
+  resultGrade: 7
+  targetItemDataId: 200327
+  candidateItemDataIds:
+  - 200306
+  - 200316
+  - 200326
+  - 200336
+  - 200346
+  - 200356
+  requiredCount: 3
+  candidatePolicy: any_lower_equipment_same_grade_count_3
+  resultLevelPolicy: fixed_1
+  compatibleWith: GodotEquipmentUpgradeRuntime

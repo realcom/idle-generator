@@ -1,0 +1,20 @@
+id: 300304
+name: "파쇄투창"
+tags: [Combat, PlayerSkill, SkillTree, Throw, PiercingThrow, Taskstonebar]
+damageType: Pierce
+projectileType: Straight
+targetRefreshType: HighestHp
+cooldown: 2.20
+priority: 34
+projectilePrefab: "FXPrefabs/Taskstonebar/CrackOrange/ShatterJavelinProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/CrackOrange/VFX_ShatterJavelin_Cast.prefab" } }
+  - time: 0.24
+    hit:
+      maxHit: 1
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.05 }
+      addDamage: { damagePercent: [240.0, 280.0, 325.0, 380.0, 445.0] }
+  - { time: 0.40, playFx: { prefab: "FXPrefabs/Taskstonebar/CrackOrange/VFX_ShatterJavelin_Impact.prefab" } }
+  - { time: 0.66, destroy: {} }

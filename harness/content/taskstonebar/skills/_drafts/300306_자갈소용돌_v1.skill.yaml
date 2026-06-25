@@ -1,0 +1,20 @@
+id: 300306
+name: "자갈소용돌"
+tags: [Combat, PlayerSkill, SkillTree, Area, SwirlArea, Taskstonebar]
+damageType: NormalDamage
+projectileType: Relative
+targetRefreshType: Nearest
+cooldown: 2.10
+priority: 41
+projectilePrefab: "FXPrefabs/Taskstonebar/DustGold/GravelVortexProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/DustGold/VFX_GravelVortex_Cast.prefab" } }
+  - time: 0.22
+    hit:
+      maxHit: 5
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.80 }
+      addDamage: { damagePercent: [120.0, 142.0, 168.0, 198.0, 234.0] }
+  - { time: 0.38, playFx: { prefab: "FXPrefabs/Taskstonebar/DustGold/VFX_GravelVortex_Impact.prefab" } }
+  - { time: 0.64, destroy: {} }

@@ -1,0 +1,110 @@
+id: 200351
+name: 조약 반지
+category: Equipment
+type: Ring
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Ring
+- PebbleSet
+- EquipmentStage01
+- EquipmentGrade01
+- FixedLevelEquipment
+grade: 1
+rarity: 1
+tier: 1
+power: 30
+requiredExps:
+- 0
+equipAddStats:
+- type: AttackPercent
+  value:
+  - 1.4
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003511
+    grade: 1
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 0.9
+  - id: 2003512
+    grade: 1
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 0.5
+  - id: 2003513
+    grade: 1
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 2.4
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 75
+  - itemDataId: 200101
+    count: 1
+popupArgs:
+  ItemDescription: 손가락 대신 조약돌 마음에 끼우는 반지. 오늘부터 성장 계약 1일 차다.
+  EquipmentGrade: '1'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: AttackPercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: none
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_ring_01_pebble_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: pebble
+  setName: 조약 세트
+  slot: Ring
+  slotName: 반지
+  stage: 1
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_ring_01_pebble_imagegen.png
+  grade: 1
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200406
+    nextItemDataId: 200352
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 1
+    resultGrade: 2
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: AttackPercent
+    primaryBaseValue: 1.4
+    primaryValue: 1.4
+    specialUnlocks:
+    - grade: 4
+      stat: Luck
+      base: 4.0
+    - grade: 7
+      stat: ItemDropPercent
+      base: 1.5
+    activeSpecials: []

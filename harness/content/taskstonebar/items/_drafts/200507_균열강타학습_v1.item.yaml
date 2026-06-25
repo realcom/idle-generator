@@ -1,0 +1,30 @@
+id: 200507
+name: "균열 강타 학습"
+category: Recipe
+grade: 1
+rarity: 2
+group: 200502
+order: 3
+targetItemDataIds: [200504]
+requiredItemDataIds: [200502]
+requiredAchievementDataIds: [600103]
+exclusiveItemDataIds: [200504]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 1 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200504, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200504"
+  RequiredSkillItemDataIds: "200502"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "8"
+  UnlockCostLevelPoint: "1"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone2.png"

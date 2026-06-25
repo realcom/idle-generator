@@ -1,0 +1,34 @@
+id: 300315
+name: "혈월파쇄"
+tags: [Combat, PlayerSkill, SkillTree, Boss, BloodMoonBoss, Taskstonebar]
+damageType: Spell
+projectileType: Target
+targetRefreshType: HighestHp
+cooldown: 5.60
+priority: 55
+projectilePrefab: "FXPrefabs/Taskstonebar/BloodMoon/BloodMoonBreakProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/BloodMoon/VFX_BloodMoonBreak_Cast.prefab" } }
+  - time: 0.38
+    hit:
+      maxHit: 4
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.80 }
+      addDamage: { damagePercent: [180.0, 213.0, 252.0, 298.0, 352.0] }
+  - time: 0.68
+    hit:
+      maxHit: 4
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.05 }
+      addDamage: { damagePercent: [150.0, 178.0, 210.0, 249.0, 294.0] }
+  - time: 0.98
+    hit:
+      maxHit: 4
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.30 }
+      addDamage: { damagePercent: [130.0, 154.0, 182.0, 216.0, 255.0] }
+  - { time: 1.14, playFx: { prefab: "FXPrefabs/Taskstonebar/BloodMoon/VFX_BloodMoonBreak_Impact.prefab" } }
+  - { time: 1.40, destroy: {} }

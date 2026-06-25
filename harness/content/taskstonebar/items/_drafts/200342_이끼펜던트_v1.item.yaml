@@ -1,0 +1,110 @@
+id: 200342
+name: 이끼 펜던트
+category: Equipment
+type: Necklace
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Necklace
+- MossSet
+- EquipmentStage02
+- EquipmentGrade02
+- FixedLevelEquipment
+grade: 2
+rarity: 2
+tier: 1
+power: 36
+requiredExps:
+- 0
+equipAddStats:
+- type: CriticalDamagePercent
+  value:
+  - 6.0
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003421
+    grade: 2
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 3.6
+  - id: 2003422
+    grade: 2
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 0.72
+  - id: 2003423
+    grade: 2
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 0.96
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 100
+  - itemDataId: 200101
+    count: 2
+popupArgs:
+  ItemDescription: 작은 새싹이 박힌 펜던트. 돌의 심장에 느린 성장을 가르친다.
+  EquipmentGrade: '2'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: CriticalDamagePercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: none
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_necklace_02_moss_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: moss
+  setName: 이끼 세트
+  slot: Necklace
+  slotName: 목걸이
+  stage: 2
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_necklace_02_moss_imagegen.png
+  grade: 2
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200398
+    nextItemDataId: 200343
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 2
+    resultGrade: 3
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: CriticalDamagePercent
+    primaryBaseValue: 5.0
+    primaryValue: 6.0
+    specialUnlocks:
+    - grade: 4
+      stat: BossDamageEfficiencyPercent
+      base: 2.0
+    - grade: 7
+      stat: MonsterDamageEfficiencyPercent
+      base: 2.0
+    activeSpecials: []

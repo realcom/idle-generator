@@ -1,0 +1,110 @@
+id: 200303
+name: 수정 투구
+category: Equipment
+type: Head
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Head
+- CrystalSet
+- EquipmentStage03
+- EquipmentGrade03
+- FixedLevelEquipment
+grade: 3
+rarity: 3
+tier: 1
+power: 29
+requiredExps:
+- 0
+equipAddStats:
+- type: Hp
+  value:
+  - 173
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003031
+    grade: 3
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 1.73
+  - id: 2003032
+    grade: 3
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Hp
+      value:
+      - 35
+  - id: 2003033
+    grade: 3
+    group: 1
+    weight: 24
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 1.15
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 107
+  - itemDataId: 200101
+    count: 3
+popupArgs:
+  ItemDescription: 수정 조각이 이마에서 반짝인다. 좋은 광맥과 나쁜 선택을 살짝 구분한다.
+  EquipmentGrade: '3'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Hp
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: none
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_head_03_crystal_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: crystal
+  setName: 수정 세트
+  slot: Head
+  slotName: 머리
+  stage: 3
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_head_03_crystal_imagegen.png
+  grade: 3
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200363
+    nextItemDataId: 200304
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 3
+    resultGrade: 4
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Hp
+    primaryBaseValue: 120
+    primaryValue: 173
+    specialUnlocks:
+    - grade: 4
+      stat: ExpPercent
+      base: 2.0
+    - grade: 7
+      stat: CooldownPercent
+      base: 1.0
+    activeSpecials: []

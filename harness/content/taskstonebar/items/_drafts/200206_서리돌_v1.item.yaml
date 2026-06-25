@@ -1,0 +1,68 @@
+id: 200206
+parentId: 200205
+name: "서리돌"
+category: Weapon
+type: Hammer
+tags: [Weapon, StoneWeapon, StoneSlot, FrostStone, ControlStone, StoneStage05, Taskstonebar]
+grade: 1
+rarity: 4
+tier: 3
+power: 104
+requiredExps: [220, 330, 495, 742, 1113, 1670, 2505, 3757, 5636, 8454]
+equipAddStats:
+  - { type: Attack, value: [55.0, 72.0, 94.0, 122.0, 159.0, 207.0, 269.0, 350.0, 455.0, 592.0] }
+  - { type: CooldownPercent, value: [1.0, 1.5, 2.0, 2.6, 3.2, 3.8, 4.4, 5.0, 5.7, 6.5] }
+equipSkillDataIds: [300106]
+levelUpGoldCost: { itemDataId: 5, levels: "1..9", base: 210, step: 130 }
+levelUpMaterialItemGroups:
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 160 }
+      - { id: 200102, count: 55 }
+      - { id: 200103, count: 5 }
+  - level: 6
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 280 }
+      - { id: 200102, count: 100 }
+      - { id: 200103, count: 9 }
+  - level: 9
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 520 }
+      - { id: 200102, count: 180 }
+      - { id: 200103, count: 16 }
+unstackable: true
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200102, count: 10 }
+      - { itemDataId: 200103, count: 1 }
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone0.png"
+
+_stoneWeapon:
+  stage: 5
+  slotRole: frost
+  cooldownModel: independent
+  throwSkillDataId: 300106
+  equipSlotCost: 1
+  cooldownMultiplier: 1.35
+  effect: "범위 둔화와 쿨타임 보조를 가진 중반 제어 돌."
+  merge:
+    enabled: true
+    recipeItemDataId: 200216
+    nextItemDataId: 200207
+    requiredCopies: 2
+    resultLevelPolicy: reset_to_1
+    consumePolicy: same_stage_unstackable_instances
+  growth:
+    maxLevel: 10
+    primaryStat: Attack
+    secondaryStat: CooldownPercent
+    feedXpMaterials: [200101, 200102, 200103]
+  economy:
+    market_lane: equipment
+    bind_on: equip_or_level_up

@@ -1,0 +1,15 @@
+id: 300201
+name: "작은 할퀴기"
+tags: [Combat, MonsterSkill, Basic, Taskstonebar]
+damageType: NormalDamage
+projectileType: None
+targetRefreshType: Nearest
+cooldown: 2.20
+priority: 21
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_Claw_Start.prefab" } }
+  - time: 0.12
+    hit:
+      maxHit: 1
+      addDamage: { damagePercent: [88.0] }
+  - { time: 0.28, destroy: {} }

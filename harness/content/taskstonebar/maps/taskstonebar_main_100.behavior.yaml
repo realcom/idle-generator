@@ -1,0 +1,4809 @@
+name: TaskstonebarSet01Wave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111011 }
+  fast_unit: { type: int, default: 111012 }
+  ranged_unit: { type: int, default: 111013 }
+  armored_unit: { type: int, default: 111014 }
+  miniboss_unit: { type: int, default: 111015 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 7
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet01Wave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111011 }
+  fast_unit: { type: int, default: 111012 }
+  ranged_unit: { type: int, default: 111013 }
+  armored_unit: { type: int, default: 111014 }
+  miniboss_unit: { type: int, default: 111015 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet01Wave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111011 }
+  fast_unit: { type: int, default: 111012 }
+  ranged_unit: { type: int, default: 111013 }
+  armored_unit: { type: int, default: 111014 }
+  miniboss_unit: { type: int, default: 111015 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 2
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet01Wave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111011 }
+  fast_unit: { type: int, default: 111012 }
+  ranged_unit: { type: int, default: 111013 }
+  armored_unit: { type: int, default: 111014 }
+  miniboss_unit: { type: int, default: 111015 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet01MiniBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111011 }
+  fast_unit: { type: int, default: 111012 }
+  ranged_unit: { type: int, default: 111013 }
+  armored_unit: { type: int, default: 111014 }
+  miniboss_unit: { type: int, default: 111015 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 1
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 3
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet01Update
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET01WAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET01WAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET01WAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET01MINIBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet01LongWave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111011 }
+  fast_unit: { type: int, default: 111012 }
+  ranged_unit: { type: int, default: 111013 }
+  armored_unit: { type: int, default: 111014 }
+  miniboss_unit: { type: int, default: 111015 }
+  giant_boss_unit: { type: int, default: 111501 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 8
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet01LongWave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111011 }
+  fast_unit: { type: int, default: 111012 }
+  ranged_unit: { type: int, default: 111013 }
+  armored_unit: { type: int, default: 111014 }
+  miniboss_unit: { type: int, default: 111015 }
+  giant_boss_unit: { type: int, default: 111501 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 11 }
+---
+name: TaskstonebarSet01LongWave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111011 }
+  fast_unit: { type: int, default: 111012 }
+  ranged_unit: { type: int, default: 111013 }
+  armored_unit: { type: int, default: 111014 }
+  miniboss_unit: { type: int, default: 111015 }
+  giant_boss_unit: { type: int, default: 111501 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 6
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet01LongWave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111011 }
+  fast_unit: { type: int, default: 111012 }
+  ranged_unit: { type: int, default: 111013 }
+  armored_unit: { type: int, default: 111014 }
+  miniboss_unit: { type: int, default: 111015 }
+  giant_boss_unit: { type: int, default: 111501 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 14 }
+---
+name: TaskstonebarSet01LongWave5
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111011 }
+  fast_unit: { type: int, default: 111012 }
+  ranged_unit: { type: int, default: 111013 }
+  armored_unit: { type: int, default: 111014 }
+  miniboss_unit: { type: int, default: 111015 }
+  giant_boss_unit: { type: int, default: 111501 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 2
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet01GiantBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111011 }
+  fast_unit: { type: int, default: 111012 }
+  ranged_unit: { type: int, default: 111013 }
+  armored_unit: { type: int, default: 111014 }
+  miniboss_unit: { type: int, default: 111015 }
+  giant_boss_unit: { type: int, default: 111501 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $giant_boss_unit
+          count: 1
+          level: bossLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet01LongUpdate
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET01LONGWAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET01LONGWAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET01LONGWAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET01LONGWAVE5 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 6 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET01GIANTBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 6 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet02Wave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111021 }
+  fast_unit: { type: int, default: 111022 }
+  ranged_unit: { type: int, default: 111023 }
+  armored_unit: { type: int, default: 111024 }
+  miniboss_unit: { type: int, default: 111025 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 7
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet02Wave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111021 }
+  fast_unit: { type: int, default: 111022 }
+  ranged_unit: { type: int, default: 111023 }
+  armored_unit: { type: int, default: 111024 }
+  miniboss_unit: { type: int, default: 111025 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet02Wave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111021 }
+  fast_unit: { type: int, default: 111022 }
+  ranged_unit: { type: int, default: 111023 }
+  armored_unit: { type: int, default: 111024 }
+  miniboss_unit: { type: int, default: 111025 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 2
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet02Wave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111021 }
+  fast_unit: { type: int, default: 111022 }
+  ranged_unit: { type: int, default: 111023 }
+  armored_unit: { type: int, default: 111024 }
+  miniboss_unit: { type: int, default: 111025 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet02MiniBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111021 }
+  fast_unit: { type: int, default: 111022 }
+  ranged_unit: { type: int, default: 111023 }
+  armored_unit: { type: int, default: 111024 }
+  miniboss_unit: { type: int, default: 111025 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 1
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 3
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet02Update
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET02WAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET02WAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET02WAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET02MINIBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet02LongWave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111021 }
+  fast_unit: { type: int, default: 111022 }
+  ranged_unit: { type: int, default: 111023 }
+  armored_unit: { type: int, default: 111024 }
+  miniboss_unit: { type: int, default: 111025 }
+  giant_boss_unit: { type: int, default: 111502 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 8
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet02LongWave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111021 }
+  fast_unit: { type: int, default: 111022 }
+  ranged_unit: { type: int, default: 111023 }
+  armored_unit: { type: int, default: 111024 }
+  miniboss_unit: { type: int, default: 111025 }
+  giant_boss_unit: { type: int, default: 111502 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 11 }
+---
+name: TaskstonebarSet02LongWave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111021 }
+  fast_unit: { type: int, default: 111022 }
+  ranged_unit: { type: int, default: 111023 }
+  armored_unit: { type: int, default: 111024 }
+  miniboss_unit: { type: int, default: 111025 }
+  giant_boss_unit: { type: int, default: 111502 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 6
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet02LongWave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111021 }
+  fast_unit: { type: int, default: 111022 }
+  ranged_unit: { type: int, default: 111023 }
+  armored_unit: { type: int, default: 111024 }
+  miniboss_unit: { type: int, default: 111025 }
+  giant_boss_unit: { type: int, default: 111502 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 14 }
+---
+name: TaskstonebarSet02LongWave5
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111021 }
+  fast_unit: { type: int, default: 111022 }
+  ranged_unit: { type: int, default: 111023 }
+  armored_unit: { type: int, default: 111024 }
+  miniboss_unit: { type: int, default: 111025 }
+  giant_boss_unit: { type: int, default: 111502 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 2
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet02GiantBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111021 }
+  fast_unit: { type: int, default: 111022 }
+  ranged_unit: { type: int, default: 111023 }
+  armored_unit: { type: int, default: 111024 }
+  miniboss_unit: { type: int, default: 111025 }
+  giant_boss_unit: { type: int, default: 111502 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $giant_boss_unit
+          count: 1
+          level: bossLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet02LongUpdate
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET02LONGWAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET02LONGWAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET02LONGWAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET02LONGWAVE5 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 6 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET02GIANTBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 6 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet03Wave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111031 }
+  fast_unit: { type: int, default: 111032 }
+  ranged_unit: { type: int, default: 111033 }
+  armored_unit: { type: int, default: 111034 }
+  miniboss_unit: { type: int, default: 111035 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 7
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet03Wave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111031 }
+  fast_unit: { type: int, default: 111032 }
+  ranged_unit: { type: int, default: 111033 }
+  armored_unit: { type: int, default: 111034 }
+  miniboss_unit: { type: int, default: 111035 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet03Wave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111031 }
+  fast_unit: { type: int, default: 111032 }
+  ranged_unit: { type: int, default: 111033 }
+  armored_unit: { type: int, default: 111034 }
+  miniboss_unit: { type: int, default: 111035 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 2
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet03Wave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111031 }
+  fast_unit: { type: int, default: 111032 }
+  ranged_unit: { type: int, default: 111033 }
+  armored_unit: { type: int, default: 111034 }
+  miniboss_unit: { type: int, default: 111035 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet03MiniBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111031 }
+  fast_unit: { type: int, default: 111032 }
+  ranged_unit: { type: int, default: 111033 }
+  armored_unit: { type: int, default: 111034 }
+  miniboss_unit: { type: int, default: 111035 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 1
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 3
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet03Update
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET03WAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET03WAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET03WAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET03MINIBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet03LongWave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111031 }
+  fast_unit: { type: int, default: 111032 }
+  ranged_unit: { type: int, default: 111033 }
+  armored_unit: { type: int, default: 111034 }
+  miniboss_unit: { type: int, default: 111035 }
+  giant_boss_unit: { type: int, default: 111503 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 8
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet03LongWave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111031 }
+  fast_unit: { type: int, default: 111032 }
+  ranged_unit: { type: int, default: 111033 }
+  armored_unit: { type: int, default: 111034 }
+  miniboss_unit: { type: int, default: 111035 }
+  giant_boss_unit: { type: int, default: 111503 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 11 }
+---
+name: TaskstonebarSet03LongWave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111031 }
+  fast_unit: { type: int, default: 111032 }
+  ranged_unit: { type: int, default: 111033 }
+  armored_unit: { type: int, default: 111034 }
+  miniboss_unit: { type: int, default: 111035 }
+  giant_boss_unit: { type: int, default: 111503 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 6
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet03LongWave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111031 }
+  fast_unit: { type: int, default: 111032 }
+  ranged_unit: { type: int, default: 111033 }
+  armored_unit: { type: int, default: 111034 }
+  miniboss_unit: { type: int, default: 111035 }
+  giant_boss_unit: { type: int, default: 111503 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 14 }
+---
+name: TaskstonebarSet03LongWave5
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111031 }
+  fast_unit: { type: int, default: 111032 }
+  ranged_unit: { type: int, default: 111033 }
+  armored_unit: { type: int, default: 111034 }
+  miniboss_unit: { type: int, default: 111035 }
+  giant_boss_unit: { type: int, default: 111503 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 2
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet03GiantBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111031 }
+  fast_unit: { type: int, default: 111032 }
+  ranged_unit: { type: int, default: 111033 }
+  armored_unit: { type: int, default: 111034 }
+  miniboss_unit: { type: int, default: 111035 }
+  giant_boss_unit: { type: int, default: 111503 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $giant_boss_unit
+          count: 1
+          level: bossLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet03LongUpdate
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET03LONGWAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET03LONGWAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET03LONGWAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET03LONGWAVE5 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 6 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET03GIANTBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 6 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet04Wave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111041 }
+  fast_unit: { type: int, default: 111042 }
+  ranged_unit: { type: int, default: 111043 }
+  armored_unit: { type: int, default: 111044 }
+  miniboss_unit: { type: int, default: 111045 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 7
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet04Wave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111041 }
+  fast_unit: { type: int, default: 111042 }
+  ranged_unit: { type: int, default: 111043 }
+  armored_unit: { type: int, default: 111044 }
+  miniboss_unit: { type: int, default: 111045 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet04Wave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111041 }
+  fast_unit: { type: int, default: 111042 }
+  ranged_unit: { type: int, default: 111043 }
+  armored_unit: { type: int, default: 111044 }
+  miniboss_unit: { type: int, default: 111045 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 2
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet04Wave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111041 }
+  fast_unit: { type: int, default: 111042 }
+  ranged_unit: { type: int, default: 111043 }
+  armored_unit: { type: int, default: 111044 }
+  miniboss_unit: { type: int, default: 111045 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet04MiniBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111041 }
+  fast_unit: { type: int, default: 111042 }
+  ranged_unit: { type: int, default: 111043 }
+  armored_unit: { type: int, default: 111044 }
+  miniboss_unit: { type: int, default: 111045 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 1
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 3
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet04Update
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET04WAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET04WAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET04WAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET04MINIBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet04LongWave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111041 }
+  fast_unit: { type: int, default: 111042 }
+  ranged_unit: { type: int, default: 111043 }
+  armored_unit: { type: int, default: 111044 }
+  miniboss_unit: { type: int, default: 111045 }
+  giant_boss_unit: { type: int, default: 111504 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 8
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet04LongWave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111041 }
+  fast_unit: { type: int, default: 111042 }
+  ranged_unit: { type: int, default: 111043 }
+  armored_unit: { type: int, default: 111044 }
+  miniboss_unit: { type: int, default: 111045 }
+  giant_boss_unit: { type: int, default: 111504 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 11 }
+---
+name: TaskstonebarSet04LongWave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111041 }
+  fast_unit: { type: int, default: 111042 }
+  ranged_unit: { type: int, default: 111043 }
+  armored_unit: { type: int, default: 111044 }
+  miniboss_unit: { type: int, default: 111045 }
+  giant_boss_unit: { type: int, default: 111504 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 6
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet04LongWave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111041 }
+  fast_unit: { type: int, default: 111042 }
+  ranged_unit: { type: int, default: 111043 }
+  armored_unit: { type: int, default: 111044 }
+  miniboss_unit: { type: int, default: 111045 }
+  giant_boss_unit: { type: int, default: 111504 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 14 }
+---
+name: TaskstonebarSet04LongWave5
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111041 }
+  fast_unit: { type: int, default: 111042 }
+  ranged_unit: { type: int, default: 111043 }
+  armored_unit: { type: int, default: 111044 }
+  miniboss_unit: { type: int, default: 111045 }
+  giant_boss_unit: { type: int, default: 111504 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 2
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet04GiantBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111041 }
+  fast_unit: { type: int, default: 111042 }
+  ranged_unit: { type: int, default: 111043 }
+  armored_unit: { type: int, default: 111044 }
+  miniboss_unit: { type: int, default: 111045 }
+  giant_boss_unit: { type: int, default: 111504 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $giant_boss_unit
+          count: 1
+          level: bossLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet04LongUpdate
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET04LONGWAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET04LONGWAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET04LONGWAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET04LONGWAVE5 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 6 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET04GIANTBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 6 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet05Wave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111051 }
+  fast_unit: { type: int, default: 111052 }
+  ranged_unit: { type: int, default: 111053 }
+  armored_unit: { type: int, default: 111054 }
+  miniboss_unit: { type: int, default: 111055 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 7
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet05Wave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111051 }
+  fast_unit: { type: int, default: 111052 }
+  ranged_unit: { type: int, default: 111053 }
+  armored_unit: { type: int, default: 111054 }
+  miniboss_unit: { type: int, default: 111055 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet05Wave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111051 }
+  fast_unit: { type: int, default: 111052 }
+  ranged_unit: { type: int, default: 111053 }
+  armored_unit: { type: int, default: 111054 }
+  miniboss_unit: { type: int, default: 111055 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 2
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet05Wave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111051 }
+  fast_unit: { type: int, default: 111052 }
+  ranged_unit: { type: int, default: 111053 }
+  armored_unit: { type: int, default: 111054 }
+  miniboss_unit: { type: int, default: 111055 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet05MiniBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111051 }
+  fast_unit: { type: int, default: 111052 }
+  ranged_unit: { type: int, default: 111053 }
+  armored_unit: { type: int, default: 111054 }
+  miniboss_unit: { type: int, default: 111055 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 1
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 3
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet05Update
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET05WAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET05WAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET05WAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET05MINIBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet05LongWave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111051 }
+  fast_unit: { type: int, default: 111052 }
+  ranged_unit: { type: int, default: 111053 }
+  armored_unit: { type: int, default: 111054 }
+  miniboss_unit: { type: int, default: 111055 }
+  giant_boss_unit: { type: int, default: 111505 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 8
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet05LongWave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111051 }
+  fast_unit: { type: int, default: 111052 }
+  ranged_unit: { type: int, default: 111053 }
+  armored_unit: { type: int, default: 111054 }
+  miniboss_unit: { type: int, default: 111055 }
+  giant_boss_unit: { type: int, default: 111505 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 11 }
+---
+name: TaskstonebarSet05LongWave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111051 }
+  fast_unit: { type: int, default: 111052 }
+  ranged_unit: { type: int, default: 111053 }
+  armored_unit: { type: int, default: 111054 }
+  miniboss_unit: { type: int, default: 111055 }
+  giant_boss_unit: { type: int, default: 111505 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 6
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet05LongWave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111051 }
+  fast_unit: { type: int, default: 111052 }
+  ranged_unit: { type: int, default: 111053 }
+  armored_unit: { type: int, default: 111054 }
+  miniboss_unit: { type: int, default: 111055 }
+  giant_boss_unit: { type: int, default: 111505 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 14 }
+---
+name: TaskstonebarSet05LongWave5
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111051 }
+  fast_unit: { type: int, default: 111052 }
+  ranged_unit: { type: int, default: 111053 }
+  armored_unit: { type: int, default: 111054 }
+  miniboss_unit: { type: int, default: 111055 }
+  giant_boss_unit: { type: int, default: 111505 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 2
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet05GiantBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111051 }
+  fast_unit: { type: int, default: 111052 }
+  ranged_unit: { type: int, default: 111053 }
+  armored_unit: { type: int, default: 111054 }
+  miniboss_unit: { type: int, default: 111055 }
+  giant_boss_unit: { type: int, default: 111505 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $giant_boss_unit
+          count: 1
+          level: bossLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet05LongUpdate
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET05LONGWAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET05LONGWAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET05LONGWAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET05LONGWAVE5 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 6 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET05GIANTBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 6 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet06Wave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111061 }
+  fast_unit: { type: int, default: 111062 }
+  ranged_unit: { type: int, default: 111063 }
+  armored_unit: { type: int, default: 111064 }
+  miniboss_unit: { type: int, default: 111065 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 7
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet06Wave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111061 }
+  fast_unit: { type: int, default: 111062 }
+  ranged_unit: { type: int, default: 111063 }
+  armored_unit: { type: int, default: 111064 }
+  miniboss_unit: { type: int, default: 111065 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet06Wave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111061 }
+  fast_unit: { type: int, default: 111062 }
+  ranged_unit: { type: int, default: 111063 }
+  armored_unit: { type: int, default: 111064 }
+  miniboss_unit: { type: int, default: 111065 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 2
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet06Wave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111061 }
+  fast_unit: { type: int, default: 111062 }
+  ranged_unit: { type: int, default: 111063 }
+  armored_unit: { type: int, default: 111064 }
+  miniboss_unit: { type: int, default: 111065 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet06MiniBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111061 }
+  fast_unit: { type: int, default: 111062 }
+  ranged_unit: { type: int, default: 111063 }
+  armored_unit: { type: int, default: 111064 }
+  miniboss_unit: { type: int, default: 111065 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 1
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 3
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet06Update
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET06WAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET06WAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET06WAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET06MINIBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet06LongWave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111061 }
+  fast_unit: { type: int, default: 111062 }
+  ranged_unit: { type: int, default: 111063 }
+  armored_unit: { type: int, default: 111064 }
+  miniboss_unit: { type: int, default: 111065 }
+  giant_boss_unit: { type: int, default: 111506 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 8
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet06LongWave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111061 }
+  fast_unit: { type: int, default: 111062 }
+  ranged_unit: { type: int, default: 111063 }
+  armored_unit: { type: int, default: 111064 }
+  miniboss_unit: { type: int, default: 111065 }
+  giant_boss_unit: { type: int, default: 111506 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 11 }
+---
+name: TaskstonebarSet06LongWave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111061 }
+  fast_unit: { type: int, default: 111062 }
+  ranged_unit: { type: int, default: 111063 }
+  armored_unit: { type: int, default: 111064 }
+  miniboss_unit: { type: int, default: 111065 }
+  giant_boss_unit: { type: int, default: 111506 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 6
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet06LongWave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111061 }
+  fast_unit: { type: int, default: 111062 }
+  ranged_unit: { type: int, default: 111063 }
+  armored_unit: { type: int, default: 111064 }
+  miniboss_unit: { type: int, default: 111065 }
+  giant_boss_unit: { type: int, default: 111506 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 14 }
+---
+name: TaskstonebarSet06LongWave5
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111061 }
+  fast_unit: { type: int, default: 111062 }
+  ranged_unit: { type: int, default: 111063 }
+  armored_unit: { type: int, default: 111064 }
+  miniboss_unit: { type: int, default: 111065 }
+  giant_boss_unit: { type: int, default: 111506 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 2
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet06GiantBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111061 }
+  fast_unit: { type: int, default: 111062 }
+  ranged_unit: { type: int, default: 111063 }
+  armored_unit: { type: int, default: 111064 }
+  miniboss_unit: { type: int, default: 111065 }
+  giant_boss_unit: { type: int, default: 111506 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $giant_boss_unit
+          count: 1
+          level: bossLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet06LongUpdate
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET06LONGWAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET06LONGWAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET06LONGWAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET06LONGWAVE5 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 6 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET06GIANTBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 6 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet07Wave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111071 }
+  fast_unit: { type: int, default: 111072 }
+  ranged_unit: { type: int, default: 111073 }
+  armored_unit: { type: int, default: 111074 }
+  miniboss_unit: { type: int, default: 111075 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 7
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet07Wave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111071 }
+  fast_unit: { type: int, default: 111072 }
+  ranged_unit: { type: int, default: 111073 }
+  armored_unit: { type: int, default: 111074 }
+  miniboss_unit: { type: int, default: 111075 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet07Wave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111071 }
+  fast_unit: { type: int, default: 111072 }
+  ranged_unit: { type: int, default: 111073 }
+  armored_unit: { type: int, default: 111074 }
+  miniboss_unit: { type: int, default: 111075 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 2
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet07Wave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111071 }
+  fast_unit: { type: int, default: 111072 }
+  ranged_unit: { type: int, default: 111073 }
+  armored_unit: { type: int, default: 111074 }
+  miniboss_unit: { type: int, default: 111075 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet07MiniBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111071 }
+  fast_unit: { type: int, default: 111072 }
+  ranged_unit: { type: int, default: 111073 }
+  armored_unit: { type: int, default: 111074 }
+  miniboss_unit: { type: int, default: 111075 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 1
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 3
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet07Update
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET07WAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET07WAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET07WAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET07MINIBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet07LongWave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111071 }
+  fast_unit: { type: int, default: 111072 }
+  ranged_unit: { type: int, default: 111073 }
+  armored_unit: { type: int, default: 111074 }
+  miniboss_unit: { type: int, default: 111075 }
+  giant_boss_unit: { type: int, default: 111507 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 8
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet07LongWave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111071 }
+  fast_unit: { type: int, default: 111072 }
+  ranged_unit: { type: int, default: 111073 }
+  armored_unit: { type: int, default: 111074 }
+  miniboss_unit: { type: int, default: 111075 }
+  giant_boss_unit: { type: int, default: 111507 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 11 }
+---
+name: TaskstonebarSet07LongWave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111071 }
+  fast_unit: { type: int, default: 111072 }
+  ranged_unit: { type: int, default: 111073 }
+  armored_unit: { type: int, default: 111074 }
+  miniboss_unit: { type: int, default: 111075 }
+  giant_boss_unit: { type: int, default: 111507 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 6
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet07LongWave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111071 }
+  fast_unit: { type: int, default: 111072 }
+  ranged_unit: { type: int, default: 111073 }
+  armored_unit: { type: int, default: 111074 }
+  miniboss_unit: { type: int, default: 111075 }
+  giant_boss_unit: { type: int, default: 111507 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 14 }
+---
+name: TaskstonebarSet07LongWave5
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111071 }
+  fast_unit: { type: int, default: 111072 }
+  ranged_unit: { type: int, default: 111073 }
+  armored_unit: { type: int, default: 111074 }
+  miniboss_unit: { type: int, default: 111075 }
+  giant_boss_unit: { type: int, default: 111507 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 2
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet07GiantBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111071 }
+  fast_unit: { type: int, default: 111072 }
+  ranged_unit: { type: int, default: 111073 }
+  armored_unit: { type: int, default: 111074 }
+  miniboss_unit: { type: int, default: 111075 }
+  giant_boss_unit: { type: int, default: 111507 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $giant_boss_unit
+          count: 1
+          level: bossLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet07LongUpdate
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET07LONGWAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET07LONGWAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET07LONGWAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET07LONGWAVE5 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 6 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET07GIANTBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 6 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet08Wave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111081 }
+  fast_unit: { type: int, default: 111082 }
+  ranged_unit: { type: int, default: 111083 }
+  armored_unit: { type: int, default: 111084 }
+  miniboss_unit: { type: int, default: 111085 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 7
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet08Wave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111081 }
+  fast_unit: { type: int, default: 111082 }
+  ranged_unit: { type: int, default: 111083 }
+  armored_unit: { type: int, default: 111084 }
+  miniboss_unit: { type: int, default: 111085 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet08Wave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111081 }
+  fast_unit: { type: int, default: 111082 }
+  ranged_unit: { type: int, default: 111083 }
+  armored_unit: { type: int, default: 111084 }
+  miniboss_unit: { type: int, default: 111085 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 2
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet08Wave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111081 }
+  fast_unit: { type: int, default: 111082 }
+  ranged_unit: { type: int, default: 111083 }
+  armored_unit: { type: int, default: 111084 }
+  miniboss_unit: { type: int, default: 111085 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet08MiniBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111081 }
+  fast_unit: { type: int, default: 111082 }
+  ranged_unit: { type: int, default: 111083 }
+  armored_unit: { type: int, default: 111084 }
+  miniboss_unit: { type: int, default: 111085 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 1
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 3
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet08Update
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET08WAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET08WAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET08WAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET08MINIBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet08LongWave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111081 }
+  fast_unit: { type: int, default: 111082 }
+  ranged_unit: { type: int, default: 111083 }
+  armored_unit: { type: int, default: 111084 }
+  miniboss_unit: { type: int, default: 111085 }
+  giant_boss_unit: { type: int, default: 111508 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 8
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet08LongWave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111081 }
+  fast_unit: { type: int, default: 111082 }
+  ranged_unit: { type: int, default: 111083 }
+  armored_unit: { type: int, default: 111084 }
+  miniboss_unit: { type: int, default: 111085 }
+  giant_boss_unit: { type: int, default: 111508 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 11 }
+---
+name: TaskstonebarSet08LongWave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111081 }
+  fast_unit: { type: int, default: 111082 }
+  ranged_unit: { type: int, default: 111083 }
+  armored_unit: { type: int, default: 111084 }
+  miniboss_unit: { type: int, default: 111085 }
+  giant_boss_unit: { type: int, default: 111508 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 6
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet08LongWave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111081 }
+  fast_unit: { type: int, default: 111082 }
+  ranged_unit: { type: int, default: 111083 }
+  armored_unit: { type: int, default: 111084 }
+  miniboss_unit: { type: int, default: 111085 }
+  giant_boss_unit: { type: int, default: 111508 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 14 }
+---
+name: TaskstonebarSet08LongWave5
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111081 }
+  fast_unit: { type: int, default: 111082 }
+  ranged_unit: { type: int, default: 111083 }
+  armored_unit: { type: int, default: 111084 }
+  miniboss_unit: { type: int, default: 111085 }
+  giant_boss_unit: { type: int, default: 111508 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 2
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet08GiantBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111081 }
+  fast_unit: { type: int, default: 111082 }
+  ranged_unit: { type: int, default: 111083 }
+  armored_unit: { type: int, default: 111084 }
+  miniboss_unit: { type: int, default: 111085 }
+  giant_boss_unit: { type: int, default: 111508 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $giant_boss_unit
+          count: 1
+          level: bossLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet08LongUpdate
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET08LONGWAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET08LONGWAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET08LONGWAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET08LONGWAVE5 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 6 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET08GIANTBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 6 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet09Wave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111091 }
+  fast_unit: { type: int, default: 111092 }
+  ranged_unit: { type: int, default: 111093 }
+  armored_unit: { type: int, default: 111094 }
+  miniboss_unit: { type: int, default: 111095 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 7
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet09Wave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111091 }
+  fast_unit: { type: int, default: 111092 }
+  ranged_unit: { type: int, default: 111093 }
+  armored_unit: { type: int, default: 111094 }
+  miniboss_unit: { type: int, default: 111095 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet09Wave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111091 }
+  fast_unit: { type: int, default: 111092 }
+  ranged_unit: { type: int, default: 111093 }
+  armored_unit: { type: int, default: 111094 }
+  miniboss_unit: { type: int, default: 111095 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 2
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet09Wave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111091 }
+  fast_unit: { type: int, default: 111092 }
+  ranged_unit: { type: int, default: 111093 }
+  armored_unit: { type: int, default: 111094 }
+  miniboss_unit: { type: int, default: 111095 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet09MiniBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111091 }
+  fast_unit: { type: int, default: 111092 }
+  ranged_unit: { type: int, default: 111093 }
+  armored_unit: { type: int, default: 111094 }
+  miniboss_unit: { type: int, default: 111095 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 1
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 3
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet09Update
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET09WAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET09WAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET09WAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET09MINIBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet09LongWave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111091 }
+  fast_unit: { type: int, default: 111092 }
+  ranged_unit: { type: int, default: 111093 }
+  armored_unit: { type: int, default: 111094 }
+  miniboss_unit: { type: int, default: 111095 }
+  giant_boss_unit: { type: int, default: 111509 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 8
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet09LongWave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111091 }
+  fast_unit: { type: int, default: 111092 }
+  ranged_unit: { type: int, default: 111093 }
+  armored_unit: { type: int, default: 111094 }
+  miniboss_unit: { type: int, default: 111095 }
+  giant_boss_unit: { type: int, default: 111509 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 11 }
+---
+name: TaskstonebarSet09LongWave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111091 }
+  fast_unit: { type: int, default: 111092 }
+  ranged_unit: { type: int, default: 111093 }
+  armored_unit: { type: int, default: 111094 }
+  miniboss_unit: { type: int, default: 111095 }
+  giant_boss_unit: { type: int, default: 111509 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 6
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet09LongWave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111091 }
+  fast_unit: { type: int, default: 111092 }
+  ranged_unit: { type: int, default: 111093 }
+  armored_unit: { type: int, default: 111094 }
+  miniboss_unit: { type: int, default: 111095 }
+  giant_boss_unit: { type: int, default: 111509 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 14 }
+---
+name: TaskstonebarSet09LongWave5
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111091 }
+  fast_unit: { type: int, default: 111092 }
+  ranged_unit: { type: int, default: 111093 }
+  armored_unit: { type: int, default: 111094 }
+  miniboss_unit: { type: int, default: 111095 }
+  giant_boss_unit: { type: int, default: 111509 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 2
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet09GiantBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111091 }
+  fast_unit: { type: int, default: 111092 }
+  ranged_unit: { type: int, default: 111093 }
+  armored_unit: { type: int, default: 111094 }
+  miniboss_unit: { type: int, default: 111095 }
+  giant_boss_unit: { type: int, default: 111509 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $giant_boss_unit
+          count: 1
+          level: bossLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet09LongUpdate
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET09LONGWAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET09LONGWAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET09LONGWAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET09LONGWAVE5 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 6 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET09GIANTBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 6 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet10Wave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111101 }
+  fast_unit: { type: int, default: 111102 }
+  ranged_unit: { type: int, default: 111103 }
+  armored_unit: { type: int, default: 111104 }
+  miniboss_unit: { type: int, default: 111105 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 7
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet10Wave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111101 }
+  fast_unit: { type: int, default: 111102 }
+  ranged_unit: { type: int, default: 111103 }
+  armored_unit: { type: int, default: 111104 }
+  miniboss_unit: { type: int, default: 111105 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet10Wave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111101 }
+  fast_unit: { type: int, default: 111102 }
+  ranged_unit: { type: int, default: 111103 }
+  armored_unit: { type: int, default: 111104 }
+  miniboss_unit: { type: int, default: 111105 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 2
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 7 }
+---
+name: TaskstonebarSet10Wave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111101 }
+  fast_unit: { type: int, default: 111102 }
+  ranged_unit: { type: int, default: 111103 }
+  armored_unit: { type: int, default: 111104 }
+  miniboss_unit: { type: int, default: 111105 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet10MiniBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111101 }
+  fast_unit: { type: int, default: 111102 }
+  ranged_unit: { type: int, default: 111103 }
+  armored_unit: { type: int, default: 111104 }
+  miniboss_unit: { type: int, default: 111105 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 1
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 3
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet10Update
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET10WAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET10WAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET10WAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET10MINIBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        EndGame: { result: win }
+---
+name: TaskstonebarSet10LongWave1
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111101 }
+  fast_unit: { type: int, default: 111102 }
+  ranged_unit: { type: int, default: 111103 }
+  armored_unit: { type: int, default: 111104 }
+  miniboss_unit: { type: int, default: 111105 }
+  giant_boss_unit: { type: int, default: 111510 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardState: { value: Playing }
+      - SetWave: { value: 1 }
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 8
+          level: enemyLevel
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet10LongWave2
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111101 }
+  fast_unit: { type: int, default: 111102 }
+  ranged_unit: { type: int, default: 111103 }
+  armored_unit: { type: int, default: 111104 }
+  miniboss_unit: { type: int, default: 111105 }
+  giant_boss_unit: { type: int, default: 111510 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 5
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 1
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 11 }
+---
+name: TaskstonebarSet10LongWave3
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111101 }
+  fast_unit: { type: int, default: 111102 }
+  ranged_unit: { type: int, default: 111103 }
+  armored_unit: { type: int, default: 111104 }
+  miniboss_unit: { type: int, default: 111105 }
+  giant_boss_unit: { type: int, default: 111510 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 6
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 2
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 9 }
+---
+name: TaskstonebarSet10LongWave4
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111101 }
+  fast_unit: { type: int, default: 111102 }
+  ranged_unit: { type: int, default: 111103 }
+  armored_unit: { type: int, default: 111104 }
+  miniboss_unit: { type: int, default: 111105 }
+  giant_boss_unit: { type: int, default: 111510 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 5
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $fast_unit
+          count: 4
+          level: enemyLevel + 3
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 14 }
+---
+name: TaskstonebarSet10LongWave5
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111101 }
+  fast_unit: { type: int, default: 111102 }
+  ranged_unit: { type: int, default: 111103 }
+  armored_unit: { type: int, default: 111104 }
+  miniboss_unit: { type: int, default: 111105 }
+  giant_boss_unit: { type: int, default: 111510 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $miniboss_unit
+          count: 2
+          level: bossLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $basic_unit
+          count: 6
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 4
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 12 }
+---
+name: TaskstonebarSet10GiantBoss
+domain: map
+
+vars:
+  basic_unit: { type: int, default: 111101 }
+  fast_unit: { type: int, default: 111102 }
+  ranged_unit: { type: int, default: 111103 }
+  armored_unit: { type: int, default: 111104 }
+  miniboss_unit: { type: int, default: 111105 }
+  giant_boss_unit: { type: int, default: 111510 }
+
+  enemy_team: { type: int, default: 4 }
+  enemy_spawn: { type: int, default: 101 }
+  wave_spawned: { type: int, default: 604 }
+
+"on":
+  - event: start
+    do:
+      - SetBoardVariable: { key: $wave_spawned, value: 0 }
+      - SendWaveStartedEvent: {}
+      - AddUnit:
+          unitDataId: $giant_boss_unit
+          count: 1
+          level: bossLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $armored_unit
+          count: 3
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - AddUnit:
+          unitDataId: $ranged_unit
+          count: 4
+          level: enemyLevel + 5
+          team: $enemy_team
+          locationId: $enemy_spawn
+      - SetBoardVariable: { key: $wave_spawned, value: 8 }
+---
+name: TaskstonebarSet10LongUpdate
+domain: map
+
+vars:
+  enemy_team: { type: int, default: 4 }
+  wave_transition_pending: { type: int, default: 603 }
+
+"on":
+  - event: update
+    every: 1s
+    do:
+      - when: "waveTransitionPending == 1"
+        SetBoardVariable: { key: $wave_transition_pending, value: 0 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 1 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 2 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET10LONGWAVE2 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 2 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 3 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET10LONGWAVE3 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 3 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 4 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET10LONGWAVE4 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 4 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 5 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET10LONGWAVE5 }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 5 and return == 0"
+        SetBoardVariable: { key: $wave_transition_pending, value: 1 }
+        SetWave: { value: 6 }
+        SendWaveQueuedEvent: { name: MAP_ONSTART_TASKSTONEBARSET10GIANTBOSS }
+
+      - GetUnitCountByTeam: { team: $enemy_team }
+      - when: "waveTransitionPending == 0 and wave == 6 and return == 0"
+        EndGame: { result: win }

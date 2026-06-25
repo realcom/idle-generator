@@ -1,0 +1,30 @@
+id: 200546
+name: "지층파동 학습"
+category: Recipe
+grade: 2
+rarity: 3
+group: 200502
+order: 87
+targetItemDataIds: [200516]
+requiredItemDataIds: [200515]
+requiredAchievementDataIds: [600110]
+exclusiveItemDataIds: [200516]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 4 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200516, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200516"
+  RequiredSkillItemDataIds: "200515"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "40"
+  UnlockCostLevelPoint: "4"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone2.png"

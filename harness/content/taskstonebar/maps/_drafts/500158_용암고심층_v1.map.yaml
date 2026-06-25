@@ -1,0 +1,77 @@
+id: 500158
+group: 500158
+name: "용암고심층"
+type: Dungeon
+tags: [ContainPlayerInventory, InfiniteWaves, Taskstonebar]
+scene: "PFB_MAP_Taskstonebar_06"
+prefab: "Maps/Prefabs/PFB_MAP_Taskstonebar_06.prefab"
+targetCameraPivot: { x: 0.5, y: 0.56 }
+fov: 8.8
+
+popupArgs:
+  ClientModeManager: ModeManagerTaskstonebar
+  ClientHomeMapDataId: self
+  ClientAutoAdvance: true
+  ClientNextMapDataId: 500159
+  ClientRetryMapDataId: self
+  ClientFarmMapDataId: self
+
+initVariables:
+  - { callerKey: 605, value: 177 }
+  - { callerKey: 606, value: 177 }
+
+boardConstants:
+  levelUpChoiceCount: 3
+
+initLevel: 177
+requiredExps: [28, 57, 90, 126, 165, 206, 249, 294, 341, 389, 439, 489, 541, 594, 648, 704, 760, 817, 875, 933, 993, 1054, 1115, 1177, 1239, 1303, 1367, 1432, 1497, 1563, 1630, 1697, 1765, 1833, 1902, 1972, 2042, 2113, 2184, 2255, 2327, 2400, 2473, 2547, 2621, 2696, 2771, 2846, 2922, 2998, 3075, 3152, 3230, 3308, 3386, 3465, 3544, 3624, 3704, 3784, 3865, 3946, 4028, 4109, 4192, 4274, 4357, 4440, 4524, 4608, 4692, 4777, 4862, 4947, 5033, 5119, 5205, 5291, 5378, 5465, 5553, 5641, 5729, 5817, 5906, 5995, 6084, 6173, 6263, 6353, 6444, 6534, 6625, 6717, 6808, 6900, 6992, 7084, 7177]
+initGold: 1512
+enableUnitExp: true
+playerUnitCount: 0
+
+triggers:
+  - MAP_ONSTART_TASKSTONEBARSET06WAVE1
+  - MAP_ONUPDATE_TASKSTONEBARSET06UPDATE
+
+locations:
+  - id: -1
+    position: { x: -2.8, y: 0.0 }
+    geometries:
+      - circle:
+          center: { x: 0.0, y: 0.0 }
+          radius: 0.9
+  - id: 101
+    position: { x: 3.1, y: 0.0 }
+    geometries:
+      - circle:
+          center: { x: 0.0, y: 0.0 }
+          radius: 0.75
+
+terrains:
+  - vertices:
+      - { position: { x: -8.0, y: -4.5 }, height: 0.0 }
+      - { position: { x: 8.0, y: -4.5 }, height: 0.0 }
+      - { position: { x: 8.0, y: 4.5 }, height: 0.0 }
+      - { position: { x: -8.0, y: 4.5 }, height: 0.0 }
+    triangles:
+      - { v1: 0, v2: 1, v3: 2 }
+      - { v1: 0, v2: 2, v3: 3 }
+  - type: Skill
+    vertices:
+      - { position: { x: -8.0, y: -4.5 }, height: 0.0 }
+      - { position: { x: 8.0, y: -4.5 }, height: 0.0 }
+      - { position: { x: 8.0, y: 4.5 }, height: 0.0 }
+      - { position: { x: -8.0, y: 4.5 }, height: 0.0 }
+    triangles:
+      - { v1: 0, v2: 1, v3: 2 }
+      - { v1: 0, v2: 2, v3: 3 }
+
+rewardAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 5, minCount: 21222, maxCount: 25891, isCore: true }
+  - shouldAddAll: false
+    probPercent: 18
+    addItems:
+      - { itemDataId: 200102, count: 1, weight: 100, group: 6 }

@@ -1,0 +1,61 @@
+id: 200202
+name: "조약돌"
+category: Weapon
+type: Hammer
+tags: [Weapon, StoneWeapon, StoneSlot, BasicStone, StoneStage01, Taskstonebar]
+grade: 1
+rarity: 1
+tier: 1
+power: 26
+requiredExps: [60, 90, 135, 200, 300, 450, 680, 1020, 1530, 2300]
+equipAddStats:
+  - { type: Attack, value: [18.0, 24.0, 31.0, 40.0, 51.0, 65.0, 82.0, 103.0, 129.0, 162.0] }
+  - { type: AttackSpeedPercent, value: [3.0, 3.5, 4.0, 4.6, 5.2, 5.8, 6.4, 7.0, 7.6, 8.2] }
+equipSkillDataIds: [300102]
+levelUpGoldCost: { itemDataId: 5, levels: "1..9", base: 40, step: 25 }
+levelUpMaterialItemGroups:
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 8 }
+  - level: 6
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 24 }
+      - { id: 200102, count: 2 }
+  - level: 9
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 60 }
+      - { id: 200103, count: 1 }
+unstackable: true
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200101, count: 3 }
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone0.png"
+
+_stoneWeapon:
+  stage: 1
+  slotRole: basic
+  cooldownModel: independent
+  throwSkillDataId: 300102
+  equipSlotCost: 1
+  cooldownMultiplier: 1.0
+  effect: "짧은 쿨타임의 기본 단일 투척."
+  merge:
+    enabled: true
+    recipeItemDataId: 200212
+    nextItemDataId: 200203
+    requiredCopies: 2
+    resultLevelPolicy: reset_to_1
+    consumePolicy: same_stage_unstackable_instances
+  growth:
+    maxLevel: 10
+    primaryStat: Attack
+    feedXpMaterials: [200101]
+  economy:
+    market_lane: equipment
+    bind_on: equip_or_level_up

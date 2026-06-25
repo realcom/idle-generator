@@ -1,0 +1,110 @@
+id: 200321
+name: 조약 장갑
+category: Equipment
+type: Gloves
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Gloves
+- PebbleSet
+- EquipmentStage01
+- EquipmentGrade01
+- FixedLevelEquipment
+grade: 1
+rarity: 1
+tier: 1
+power: 28
+requiredExps:
+- 0
+equipAddStats:
+- type: Attack
+  value:
+  - 14
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003211
+    grade: 1
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 1.1
+  - id: 2003212
+    grade: 1
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Attack
+      value:
+      - 4
+  - id: 2003213
+    grade: 1
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 0.5
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 70
+  - itemDataId: 200101
+    count: 1
+popupArgs:
+  ItemDescription: 마우스 클릭보다 빠르게 조약돌을 줍는 장갑. 손끝에 채굴 욕심이 묻었다.
+  EquipmentGrade: '1'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Attack
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: none
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_gloves_01_pebble_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: pebble
+  setName: 조약 세트
+  slot: Gloves
+  slotName: 장갑
+  stage: 1
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_gloves_01_pebble_imagegen.png
+  grade: 1
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200379
+    nextItemDataId: 200322
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 1
+    resultGrade: 2
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Attack
+    primaryBaseValue: 14
+    primaryValue: 14
+    specialUnlocks:
+    - grade: 4
+      stat: AttackSpeedPercent
+      base: 2.0
+    - grade: 7
+      stat: CriticalPercent
+      base: 1.2
+    activeSpecials: []

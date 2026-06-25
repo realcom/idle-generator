@@ -1,0 +1,36 @@
+id: 200219
+name: "달빛돌 머지"
+category: Recipe
+tags: [EquipmentCombineRecipe, AutoCombineAvailable, StoneMergeRecipe, StoneStage08, Taskstonebar]
+grade: 1
+rarity: 6
+tier: 4
+targetItemDataIds: [200210]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200209, count: 1 }
+  - shouldAllValid: false
+    materialItems:
+      - { id: 200209, count: 1 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200210, count: 1, level: 1, isCore: true }
+popupArgs:
+  MergeFamily: StoneWeapon
+  SourceItemDataId: "200209"
+  ResultItemDataId: "200210"
+  RequiredCopies: "2"
+  ResultLevelPolicy: reset_to_1
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"
+
+_stoneMergeRecipe:
+  stage: 8
+  sourceItemDataId: 200209
+  resultItemDataId: 200210
+  requiredCopies: 2
+  resultLevelPolicy: reset_to_1
+  compatibleWith: GodotStoneMergeRuntime

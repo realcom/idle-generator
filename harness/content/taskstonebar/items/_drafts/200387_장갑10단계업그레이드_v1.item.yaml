@@ -1,0 +1,96 @@
+id: 200387
+name: 장갑 10단계 업그레이드
+category: Recipe
+tags:
+- Recipe
+- EquipmentUpgradeRecipe
+- AutoCombineAvailable
+- PixelEquipment
+- UpgradeToGrade10
+- Gloves
+- Taskstonebar
+grade: 10
+rarity: 5
+tier: 1
+targetItemDataIds:
+- 200330
+materialItemGroups:
+- shouldAllValid: false
+  materialItems:
+  - id: 200309
+    count: 1
+  - id: 200319
+    count: 1
+  - id: 200329
+    count: 1
+  - id: 200339
+    count: 1
+  - id: 200349
+    count: 1
+  - id: 200359
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200309
+    count: 1
+  - id: 200319
+    count: 1
+  - id: 200329
+    count: 1
+  - id: 200339
+    count: 1
+  - id: 200349
+    count: 1
+  - id: 200359
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200309
+    count: 1
+  - id: 200319
+    count: 1
+  - id: 200329
+    count: 1
+  - id: 200339
+    count: 1
+  - id: 200349
+    count: 1
+  - id: 200359
+    count: 1
+addItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 200330
+    count: 1
+    level: 1
+    isCore: true
+popupArgs:
+  UpgradeFamily: EquipmentGrade
+  SourceGrade: '9'
+  ResultGrade: '10'
+  RequiredLowerEquipmentCount: '3'
+  CandidateItemDataIds: 200309,200319,200329,200339,200349,200359
+  ResultItemDataId: '200330'
+  ResultLevelPolicy: fixed_1
+  MaterialPolicy: any_lower_equipment_same_grade_count_3
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_gloves_10_origin_imagegen.png
+_equipmentUpgrade:
+  series: taskstonebar-equipment-upgrade-10-grade
+  slot: Gloves
+  slotName: 장갑
+  sourceGrade: 9
+  resultGrade: 10
+  targetItemDataId: 200330
+  candidateItemDataIds:
+  - 200309
+  - 200319
+  - 200329
+  - 200339
+  - 200349
+  - 200359
+  requiredCount: 3
+  candidatePolicy: any_lower_equipment_same_grade_count_3
+  resultLevelPolicy: fixed_1
+  compatibleWith: GodotEquipmentUpgradeRuntime

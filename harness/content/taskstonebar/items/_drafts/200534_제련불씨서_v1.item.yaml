@@ -1,0 +1,50 @@
+id: 200534
+name: "제련불씨서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 1
+rarity: 2
+group: 200502
+constantDamageRatio: 1.0
+order: 45
+parentId: 200505
+skillDataId: 300326
+unstackable: true
+requiredItemDataIds: [200505]
+requiredAchievementDataIds: [600107]
+targetItemDataIds: [200535]
+addStats:
+  - { type: CooldownPercent, value: [0.8, 1.3, 1.9, 2.6, 3.4] }
+  - { type: AttackSpeedPercent, value: [0.7, 1.1, 1.6, 2.2, 2.9] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 2 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "제련편성1"
+  ChildrenSkillItemDataIds: "200535"
+  UnlockRecipeItemDataId: "200564"
+  UnlockCostLevelPoint: "2"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200505"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "25"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "81"
+  SkillTreeLane: "ForgeFormation"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone0.png"

@@ -1,0 +1,142 @@
+id: 200328
+name: 경계 장갑
+category: Equipment
+type: Gloves
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Gloves
+- BorderSet
+- EquipmentStage08
+- EquipmentGrade08
+- FixedLevelEquipment
+grade: 8
+rarity: 5
+tier: 1
+power: 100
+requiredExps:
+- 0
+equipAddStats:
+- type: Attack
+  value:
+  - 50
+- type: AttackSpeedPercent
+  value:
+  - 4.15
+- type: CriticalPercent
+  value:
+  - 1.44
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003281
+    grade: 8
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 3.94
+  - id: 2003282
+    grade: 8
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Attack
+      value:
+      - 14
+  - id: 2003283
+    grade: 8
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 1.79
+  - id: 2003284
+    grade: 8
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackSpeedPercent
+      value:
+      - 2.07
+  - id: 2003285
+    grade: 8
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 3.6
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 227
+  - itemDataId: 200101
+    count: 8
+popupArgs:
+  ItemDescription: 경계의 픽셀을 쥔 장갑. 누를 곳과 부술 곳을 정확히 나눈다.
+  EquipmentGrade: '8'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Attack
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_gloves_08_border_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: border
+  setName: 경계 세트
+  slot: Gloves
+  slotName: 장갑
+  stage: 8
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_gloves_08_border_imagegen.png
+  grade: 8
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200386
+    nextItemDataId: 200329
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 8
+    resultGrade: 9
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Attack
+    primaryBaseValue: 14
+    primaryValue: 50
+    specialUnlocks:
+    - grade: 4
+      stat: AttackSpeedPercent
+      base: 2.0
+    - grade: 7
+      stat: CriticalPercent
+      base: 1.2
+    activeSpecials:
+    - grade: 4
+      stat: AttackSpeedPercent
+      value: 4.15
+    - grade: 7
+      stat: CriticalPercent
+      value: 1.44

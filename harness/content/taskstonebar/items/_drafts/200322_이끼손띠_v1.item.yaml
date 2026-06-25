@@ -1,0 +1,110 @@
+id: 200322
+name: 이끼 손띠
+category: Equipment
+type: Gloves
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Gloves
+- MossSet
+- EquipmentStage02
+- EquipmentGrade02
+- FixedLevelEquipment
+grade: 2
+rarity: 2
+tier: 1
+power: 34
+requiredExps:
+- 0
+equipAddStats:
+- type: Attack
+  value:
+  - 17
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003221
+    grade: 2
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 1.32
+  - id: 2003222
+    grade: 2
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Attack
+      value:
+      - 5
+  - id: 2003223
+    grade: 2
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 0.6
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 92
+  - itemDataId: 200101
+    count: 2
+popupArgs:
+  ItemDescription: 이끼 뿌리가 손목을 감아 광석을 놓치지 않게 잡아 준다.
+  EquipmentGrade: '2'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Attack
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: none
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_gloves_02_moss_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: moss
+  setName: 이끼 세트
+  slot: Gloves
+  slotName: 장갑
+  stage: 2
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_gloves_02_moss_imagegen.png
+  grade: 2
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200380
+    nextItemDataId: 200323
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 2
+    resultGrade: 3
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Attack
+    primaryBaseValue: 14
+    primaryValue: 17
+    specialUnlocks:
+    - grade: 4
+      stat: AttackSpeedPercent
+      base: 2.0
+    - grade: 7
+      stat: CriticalPercent
+      base: 1.2
+    activeSpecials: []

@@ -1,0 +1,27 @@
+id: 300325
+name: "철벽성운"
+tags: [Combat, PlayerSkill, SkillTree, Guard, BulwarkNova, Taskstonebar]
+damageType: Spell
+projectileType: None
+targetRefreshType: HighestHp
+cooldown: 4.80
+priority: 75
+projectilePrefab: "FXPrefabs/Taskstonebar/ShieldStar/BulwarkNovaPulse.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/ShieldStar/VFX_BulwarkNova_Cast.prefab" } }
+  - time: 0.42
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.50 }
+      addDamage: { damagePercent: [188.0, 223.0, 264.0, 313.0, 371.0] }
+  - time: 0.74
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.75 }
+      addDamage: { damagePercent: [132.0, 156.0, 185.0, 219.0, 260.0] }
+  - { time: 0.90, playFx: { prefab: "FXPrefabs/Taskstonebar/ShieldStar/VFX_BulwarkNova_Impact.prefab" } }
+  - { time: 1.16, destroy: {} }

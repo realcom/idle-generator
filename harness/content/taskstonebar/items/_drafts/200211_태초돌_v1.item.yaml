@@ -1,0 +1,65 @@
+id: 200211
+parentId: 200210
+name: "태초돌"
+category: Weapon
+type: Hammer
+tags: [Weapon, StoneWeapon, StoneSlot, OriginStone, UniqueStone, StoneStage10, Taskstonebar]
+grade: 1
+rarity: 7
+tier: 5
+power: 430
+requiredExps: [1000, 1500, 2250, 3375, 5062, 7593, 11389, 17083, 25624, 38436]
+equipAddStats:
+  - { type: Attack, value: [220.0, 286.0, 372.0, 484.0, 629.0, 818.0, 1063.0, 1382.0, 1797.0, 2336.0] }
+  - { type: Luck, value: [3.0, 4.0, 5.0, 6.2, 7.5, 9.0, 10.5, 12.2, 14.0, 16.0] }
+equipSkillDataIds: [300111]
+levelUpGoldCost: { itemDataId: 5, levels: "1..9", base: 1200, step: 740 }
+levelUpMaterialItemGroups:
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 1100 }
+      - { id: 200102, count: 420 }
+      - { id: 200103, count: 45 }
+  - level: 6
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 2100 }
+      - { id: 200102, count: 820 }
+      - { id: 200103, count: 90 }
+  - level: 9
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 3800 }
+      - { id: 200102, count: 1500 }
+      - { id: 200103, count: 180 }
+unstackable: true
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200102, count: 80 }
+      - { itemDataId: 200103, count: 12 }
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"
+
+_stoneWeapon:
+  stage: 10
+  slotRole: origin
+  cooldownModel: independent
+  throwSkillDataId: 300111
+  equipSlotCost: 1
+  cooldownMultiplier: 1.85
+  effect: "유니크 최종 돌. 세 번의 태초 파동과 행운 보너스로 전투/파밍 양쪽을 밀어준다."
+  merge:
+    enabled: false
+    terminal: true
+    resultLevelPolicy: terminal
+  growth:
+    maxLevel: 10
+    primaryStat: Attack
+    secondaryStat: Luck
+    feedXpMaterials: [200101, 200102, 200103]
+  economy:
+    market_lane: equipment
+    bind_on: equip_or_level_up

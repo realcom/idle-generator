@@ -1,0 +1,46 @@
+id: 200504
+name: "균열 강타서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 1
+rarity: 2
+group: 200502
+constantDamageRatio: 1.0
+order: 3
+parentId: 200502
+skillDataId: 300104
+unstackable: true
+requiredItemDataIds: [200502]
+requiredAchievementDataIds: [600103]
+targetItemDataIds: [200505, 200519, 200529]
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 1 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "Boss"
+  ChildrenSkillItemDataIds: "200505,200519,200529"
+  UnlockRecipeItemDataId: "200507"
+  UnlockCostLevelPoint: "1"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200502"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "8"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "3"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone2.png"

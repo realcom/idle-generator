@@ -1,0 +1,96 @@
+id: 200401
+name: 목걸이 6단계 업그레이드
+category: Recipe
+tags:
+- Recipe
+- EquipmentUpgradeRecipe
+- AutoCombineAvailable
+- PixelEquipment
+- UpgradeToGrade06
+- Necklace
+- Taskstonebar
+grade: 6
+rarity: 5
+tier: 1
+targetItemDataIds:
+- 200346
+materialItemGroups:
+- shouldAllValid: false
+  materialItems:
+  - id: 200305
+    count: 1
+  - id: 200315
+    count: 1
+  - id: 200325
+    count: 1
+  - id: 200335
+    count: 1
+  - id: 200345
+    count: 1
+  - id: 200355
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200305
+    count: 1
+  - id: 200315
+    count: 1
+  - id: 200325
+    count: 1
+  - id: 200335
+    count: 1
+  - id: 200345
+    count: 1
+  - id: 200355
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200305
+    count: 1
+  - id: 200315
+    count: 1
+  - id: 200325
+    count: 1
+  - id: 200335
+    count: 1
+  - id: 200345
+    count: 1
+  - id: 200355
+    count: 1
+addItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 200346
+    count: 1
+    level: 1
+    isCore: true
+popupArgs:
+  UpgradeFamily: EquipmentGrade
+  SourceGrade: '5'
+  ResultGrade: '6'
+  RequiredLowerEquipmentCount: '3'
+  CandidateItemDataIds: 200305,200315,200325,200335,200345,200355
+  ResultItemDataId: '200346'
+  ResultLevelPolicy: fixed_1
+  MaterialPolicy: any_lower_equipment_same_grade_count_3
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_necklace_06_lava_imagegen.png
+_equipmentUpgrade:
+  series: taskstonebar-equipment-upgrade-10-grade
+  slot: Necklace
+  slotName: 목걸이
+  sourceGrade: 5
+  resultGrade: 6
+  targetItemDataId: 200346
+  candidateItemDataIds:
+  - 200305
+  - 200315
+  - 200325
+  - 200335
+  - 200345
+  - 200355
+  requiredCount: 3
+  candidatePolicy: any_lower_equipment_same_grade_count_3
+  resultLevelPolicy: fixed_1
+  compatibleWith: GodotEquipmentUpgradeRuntime

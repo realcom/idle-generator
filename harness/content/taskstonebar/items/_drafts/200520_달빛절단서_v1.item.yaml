@@ -1,0 +1,50 @@
+id: 200520
+name: "달빛절단서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 1
+rarity: 2
+group: 200502
+constantDamageRatio: 1.0
+order: 31
+parentId: 200519
+skillDataId: 300312
+unstackable: true
+requiredItemDataIds: [200519]
+requiredAchievementDataIds: [600108]
+targetItemDataIds: [200521]
+addStats:
+  - { type: BossDamageEfficiencyPercent, value: [2, 3, 4.2, 5.5, 7.1] }
+  - { type: CriticalDamagePercent, value: [2.6, 4, 5.5, 7.4, 9.5] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 1 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 3 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "보스2"
+  ChildrenSkillItemDataIds: "200521"
+  UnlockRecipeItemDataId: "200550"
+  UnlockCostLevelPoint: "3"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200519"
+  RequiredSkillLevel: "2"
+  RequiredPlayerLevel: "30"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "52"
+  SkillTreeLane: "Boss"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone1.png"

@@ -1,0 +1,96 @@
+id: 200395
+name: 신발 9단계 업그레이드
+category: Recipe
+tags:
+- Recipe
+- EquipmentUpgradeRecipe
+- AutoCombineAvailable
+- PixelEquipment
+- UpgradeToGrade09
+- Boots
+- Taskstonebar
+grade: 9
+rarity: 5
+tier: 1
+targetItemDataIds:
+- 200339
+materialItemGroups:
+- shouldAllValid: false
+  materialItems:
+  - id: 200308
+    count: 1
+  - id: 200318
+    count: 1
+  - id: 200328
+    count: 1
+  - id: 200338
+    count: 1
+  - id: 200348
+    count: 1
+  - id: 200358
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200308
+    count: 1
+  - id: 200318
+    count: 1
+  - id: 200328
+    count: 1
+  - id: 200338
+    count: 1
+  - id: 200348
+    count: 1
+  - id: 200358
+    count: 1
+- shouldAllValid: false
+  materialItems:
+  - id: 200308
+    count: 1
+  - id: 200318
+    count: 1
+  - id: 200328
+    count: 1
+  - id: 200338
+    count: 1
+  - id: 200348
+    count: 1
+  - id: 200358
+    count: 1
+addItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 200339
+    count: 1
+    level: 1
+    isCore: true
+popupArgs:
+  UpgradeFamily: EquipmentGrade
+  SourceGrade: '8'
+  ResultGrade: '9'
+  RequiredLowerEquipmentCount: '3'
+  CandidateItemDataIds: 200308,200318,200328,200338,200348,200358
+  ResultItemDataId: '200339'
+  ResultLevelPolicy: fixed_1
+  MaterialPolicy: any_lower_equipment_same_grade_count_3
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_boots_09_starcore_imagegen.png
+_equipmentUpgrade:
+  series: taskstonebar-equipment-upgrade-10-grade
+  slot: Boots
+  slotName: 신발
+  sourceGrade: 8
+  resultGrade: 9
+  targetItemDataId: 200339
+  candidateItemDataIds:
+  - 200308
+  - 200318
+  - 200328
+  - 200338
+  - 200348
+  - 200358
+  requiredCount: 3
+  candidatePolicy: any_lower_equipment_same_grade_count_3
+  resultLevelPolicy: fixed_1
+  compatibleWith: GodotEquipmentUpgradeRuntime

@@ -1,0 +1,27 @@
+id: 300309
+name: "용암분출"
+tags: [Combat, PlayerSkill, SkillTree, Area, LavaBurst, Taskstonebar]
+damageType: Explosive
+projectileType: Target
+targetRefreshType: HighestHp
+cooldown: 3.80
+priority: 44
+projectilePrefab: "FXPrefabs/Taskstonebar/FireOrange/LavaBurstProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/FireOrange/VFX_LavaBurst_Cast.prefab" } }
+  - time: 0.36
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.60 }
+      addDamage: { damagePercent: [185.0, 218.0, 258.0, 305.0, 360.0] }
+  - time: 0.72
+    hit:
+      maxHit: 8
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.15 }
+      addDamage: { damagePercent: [105.0, 124.0, 146.0, 173.0, 204.0] }
+  - { time: 0.88, playFx: { prefab: "FXPrefabs/Taskstonebar/FireOrange/VFX_LavaBurst_Impact.prefab" } }
+  - { time: 1.14, destroy: {} }

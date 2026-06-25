@@ -1,0 +1,20 @@
+id: 300318
+name: "행운분진"
+tags: [Combat, PlayerSkill, SkillTree, Farming, LuckDust, Taskstonebar]
+damageType: NormalDamage
+projectileType: Relative
+targetRefreshType: Random
+cooldown: 2.20
+priority: 63
+projectilePrefab: "FXPrefabs/Taskstonebar/GoldDust/LuckDustProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/GoldDust/VFX_LuckDust_Cast.prefab" } }
+  - time: 0.24
+    hit:
+      maxHit: 5
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.00 }
+      addDamage: { damagePercent: [130.0, 154.0, 182.0, 216.0, 255.0] }
+  - { time: 0.40, playFx: { prefab: "FXPrefabs/Taskstonebar/GoldDust/VFX_LuckDust_Impact.prefab" } }
+  - { time: 0.66, destroy: {} }

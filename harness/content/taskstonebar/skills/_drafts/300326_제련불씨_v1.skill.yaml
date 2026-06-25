@@ -1,0 +1,20 @@
+id: 300326
+name: "제련불씨"
+tags: [Combat, PlayerSkill, SkillTree, ForgeFormation, ForgeSpark, Taskstonebar]
+damageType: Spell
+projectileType: Target
+targetRefreshType: Nearest
+cooldown: 1.30
+priority: 81
+projectilePrefab: "FXPrefabs/Taskstonebar/ForgeOrange/ForgeSparkProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/ForgeOrange/VFX_ForgeSpark_Cast.prefab" } }
+  - time: 0.16
+    hit:
+      maxHit: 2
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.00 }
+      addDamage: { damagePercent: [110.0, 130.0, 154.0, 183.0, 217.0] }
+  - { time: 0.32, playFx: { prefab: "FXPrefabs/Taskstonebar/ForgeOrange/VFX_ForgeSpark_Impact.prefab" } }
+  - { time: 0.58, destroy: {} }

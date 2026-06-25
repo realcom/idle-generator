@@ -1,0 +1,50 @@
+id: 200531
+name: "수호파동서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 2
+rarity: 3
+group: 200502
+constantDamageRatio: 1.0
+order: 42
+parentId: 200530
+skillDataId: 300323
+unstackable: true
+requiredItemDataIds: [200530]
+requiredAchievementDataIds: [600112]
+targetItemDataIds: [200532]
+addStats:
+  - { type: HpPercent, value: [2, 3, 4.1, 5.4, 7] }
+  - { type: DefensePercent, value: [1.8, 2.8, 3.9, 5.2, 6.9] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 3 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 4 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "방어3"
+  ChildrenSkillItemDataIds: "200532"
+  UnlockRecipeItemDataId: "200561"
+  UnlockCostLevelPoint: "4"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200530"
+  RequiredSkillLevel: "3"
+  RequiredPlayerLevel: "50"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "73"
+  SkillTreeLane: "Guard"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone2.png"

@@ -1,0 +1,66 @@
+id: 200204
+parentId: 200203
+name: "균열돌"
+category: Weapon
+type: Hammer
+tags: [Weapon, StoneWeapon, StoneSlot, CrackStone, HeavyStone, StoneStage03, Taskstonebar]
+grade: 1
+rarity: 3
+tier: 2
+power: 58
+requiredExps: [120, 180, 270, 405, 607, 910, 1365, 2047, 3070, 4605]
+equipAddStats:
+  - { type: Attack, value: [34.0, 44.0, 57.0, 74.0, 96.0, 125.0, 162.0, 211.0, 274.0, 356.0] }
+  - { type: CriticalDamagePercent, value: [8.0, 10.0, 12.5, 15.0, 18.0, 21.0, 24.5, 28.0, 31.5, 35.0] }
+equipSkillDataIds: [300104]
+levelUpGoldCost: { itemDataId: 5, levels: "1..9", base: 90, step: 55 }
+levelUpMaterialItemGroups:
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 30 }
+      - { id: 200102, count: 6 }
+  - level: 6
+    shouldAllValid: true
+    materialItems:
+      - { id: 200102, count: 18 }
+      - { id: 200103, count: 2 }
+  - level: 9
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 120 }
+      - { id: 200102, count: 36 }
+      - { id: 200103, count: 4 }
+unstackable: true
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200101, count: 10 }
+      - { itemDataId: 200102, count: 3 }
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone2.png"
+
+_stoneWeapon:
+  stage: 3
+  slotRole: crack
+  cooldownModel: independent
+  throwSkillDataId: 300104
+  equipSlotCost: 1
+  cooldownMultiplier: 1.25
+  effect: "느린 투척 대신 높은 피해와 작은 범위 타격을 가진다."
+  merge:
+    enabled: true
+    recipeItemDataId: 200214
+    nextItemDataId: 200205
+    requiredCopies: 2
+    resultLevelPolicy: reset_to_1
+    consumePolicy: same_stage_unstackable_instances
+  growth:
+    maxLevel: 10
+    primaryStat: Attack
+    secondaryStat: CriticalDamagePercent
+    feedXpMaterials: [200101, 200102, 200103]
+  economy:
+    market_lane: equipment
+    bind_on: equip_or_level_up

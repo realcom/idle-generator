@@ -1,0 +1,26 @@
+id: 300110
+name: "별심돌 투척"
+tags: [Combat, StoneThrow, StoneWeapon, StarcoreStone, BossStone, AreaStone, StoneStage09, Taskstonebar]
+damageType: Explosive
+projectileType: Parabolic
+targetRefreshType: HighestHp
+cooldown: 5.20
+priority: 19
+projectilePrefab: "FXPrefabs/Taskstonebar/StarcoreStoneProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_StarcoreStone_Start.prefab" } }
+  - time: 0.48
+    hit:
+      maxHit: 10
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.35 }
+      addDamage: { damagePercent: [260.0] }
+  - time: 0.86
+    hit:
+      maxHit: 6
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.65 }
+      addDamage: { damagePercent: [155.0] }
+  - { time: 1.18, destroy: {} }

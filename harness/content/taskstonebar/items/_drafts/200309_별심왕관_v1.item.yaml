@@ -1,0 +1,142 @@
+id: 200309
+name: 별심 왕관
+category: Equipment
+type: Head
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Head
+- StarcoreSet
+- EquipmentStage09
+- EquipmentGrade09
+- FixedLevelEquipment
+grade: 9
+rarity: 5
+tier: 1
+power: 86
+requiredExps:
+- 0
+equipAddStats:
+- type: Hp
+  value:
+  - 516
+- type: ExpPercent
+  value:
+  - 4.98
+- type: CooldownPercent
+  value:
+  - 1.44
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003091
+    grade: 9
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 5.16
+  - id: 2003092
+    grade: 9
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Hp
+      value:
+      - 103
+  - id: 2003093
+    grade: 9
+    group: 1
+    weight: 24
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 3.44
+  - id: 2003094
+    grade: 9
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: ExpPercent
+      value:
+      - 2.49
+  - id: 2003095
+    grade: 9
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CooldownPercent
+      value:
+      - 0.58
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 242
+  - itemDataId: 200101
+    count: 9
+popupArgs:
+  ItemDescription: 별심이 박힌 왕관. 작은 돌이 우주급 자신감을 갖기 시작했다.
+  EquipmentGrade: '9'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Hp
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_head_09_starcore_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: starcore
+  setName: 별심 세트
+  slot: Head
+  slotName: 머리
+  stage: 9
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_head_09_starcore_imagegen.png
+  grade: 9
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200369
+    nextItemDataId: 200310
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 9
+    resultGrade: 10
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Hp
+    primaryBaseValue: 120
+    primaryValue: 516
+    specialUnlocks:
+    - grade: 4
+      stat: ExpPercent
+      base: 2.0
+    - grade: 7
+      stat: CooldownPercent
+      base: 1.0
+    activeSpecials:
+    - grade: 4
+      stat: ExpPercent
+      value: 4.98
+    - grade: 7
+      stat: CooldownPercent
+      value: 1.44

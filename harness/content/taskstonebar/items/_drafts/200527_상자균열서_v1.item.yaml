@@ -1,0 +1,50 @@
+id: 200527
+name: "상자균열서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 2
+rarity: 3
+group: 200502
+constantDamageRatio: 1.0
+order: 38
+parentId: 200526
+skillDataId: 300319
+unstackable: true
+requiredItemDataIds: [200526]
+requiredAchievementDataIds: [600113]
+targetItemDataIds: [200528]
+addStats:
+  - { type: ItemDropPercent, value: [1.6, 2.5, 3.7, 5.1, 6.7] }
+  - { type: ExpPercent, value: [1.6, 2.4, 3.3, 4.5, 5.9] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 3 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 4 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 5 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "파밍4"
+  ChildrenSkillItemDataIds: "200528"
+  UnlockRecipeItemDataId: "200557"
+  UnlockCostLevelPoint: "5"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200526"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "55"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "64"
+  SkillTreeLane: "Farming"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"

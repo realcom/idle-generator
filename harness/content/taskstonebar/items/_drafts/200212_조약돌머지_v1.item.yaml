@@ -1,0 +1,36 @@
+id: 200212
+name: "조약돌 머지"
+category: Recipe
+tags: [EquipmentCombineRecipe, AutoCombineAvailable, StoneMergeRecipe, StoneStage01, Taskstonebar]
+grade: 1
+rarity: 1
+tier: 1
+targetItemDataIds: [200203]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200202, count: 1 }
+  - shouldAllValid: false
+    materialItems:
+      - { id: 200202, count: 1 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200203, count: 1, level: 1, isCore: true }
+popupArgs:
+  MergeFamily: StoneWeapon
+  SourceItemDataId: "200202"
+  ResultItemDataId: "200203"
+  RequiredCopies: "2"
+  ResultLevelPolicy: reset_to_1
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone0.png"
+
+_stoneMergeRecipe:
+  stage: 1
+  sourceItemDataId: 200202
+  resultItemDataId: 200203
+  requiredCopies: 2
+  resultLevelPolicy: reset_to_1
+  compatibleWith: GodotStoneMergeRuntime

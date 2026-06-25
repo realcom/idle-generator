@@ -1,0 +1,18 @@
+id: 300205
+name: "문지기 진동"
+tags: [Combat, MonsterSkill, MiniBoss, Area, Taskstonebar]
+damageType: NormalDamage
+projectileType: None
+targetRefreshType: Nearest
+cooldown: 3.40
+priority: 25
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_KeeperQuake_Start.prefab" } }
+  - time: 0.34
+    hit:
+      maxHit: 3
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.55 }
+      addDamage: { damagePercent: [158.0] }
+  - { time: 0.62, destroy: {} }

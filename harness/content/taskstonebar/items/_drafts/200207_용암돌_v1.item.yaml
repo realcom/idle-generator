@@ -1,0 +1,68 @@
+id: 200207
+parentId: 200206
+name: "용암돌"
+category: Weapon
+type: Hammer
+tags: [Weapon, StoneWeapon, StoneSlot, LavaStone, AreaStone, StoneStage06, Taskstonebar]
+grade: 1
+rarity: 5
+tier: 3
+power: 138
+requiredExps: [300, 450, 675, 1012, 1518, 2277, 3415, 5122, 7683, 11524]
+equipAddStats:
+  - { type: Attack, value: [72.0, 94.0, 122.0, 159.0, 207.0, 269.0, 350.0, 455.0, 592.0, 770.0] }
+  - { type: MonsterDamageEfficiencyPercent, value: [3.0, 4.2, 5.4, 6.8, 8.2, 9.8, 11.4, 13.2, 15.0, 17.0] }
+equipSkillDataIds: [300107]
+levelUpGoldCost: { itemDataId: 5, levels: "1..9", base: 300, step: 185 }
+levelUpMaterialItemGroups:
+  - level: 3
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 240 }
+      - { id: 200102, count: 80 }
+      - { id: 200103, count: 8 }
+  - level: 6
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 420 }
+      - { id: 200102, count: 150 }
+      - { id: 200103, count: 15 }
+  - level: 9
+    shouldAllValid: true
+    materialItems:
+      - { id: 200101, count: 780 }
+      - { id: 200102, count: 280 }
+      - { id: 200103, count: 26 }
+unstackable: true
+decomposeAddItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200102, count: 14 }
+      - { itemDataId: 200103, count: 2 }
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone1.png"
+
+_stoneWeapon:
+  stage: 6
+  slotRole: lava
+  cooldownModel: independent
+  throwSkillDataId: 300107
+  equipSlotCost: 1
+  cooldownMultiplier: 1.48
+  effect: "느린 광역 폭발과 몬스터 피해 효율을 가진 파밍 돌."
+  merge:
+    enabled: true
+    recipeItemDataId: 200217
+    nextItemDataId: 200208
+    requiredCopies: 2
+    resultLevelPolicy: reset_to_1
+    consumePolicy: same_stage_unstackable_instances
+  growth:
+    maxLevel: 10
+    primaryStat: Attack
+    secondaryStat: MonsterDamageEfficiencyPercent
+    feedXpMaterials: [200101, 200102, 200103]
+  economy:
+    market_lane: equipment
+    bind_on: equip_or_level_up

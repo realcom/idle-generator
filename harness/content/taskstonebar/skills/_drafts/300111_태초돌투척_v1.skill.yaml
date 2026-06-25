@@ -1,0 +1,33 @@
+id: 300111
+name: "태초돌 투척"
+tags: [Combat, StoneThrow, StoneWeapon, OriginStone, UniqueStone, StoneStage10, Taskstonebar]
+damageType: Spell
+projectileType: Parabolic
+targetRefreshType: HighestHp
+cooldown: 6.40
+priority: 20
+projectilePrefab: "FXPrefabs/Taskstonebar/OriginStoneProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_OriginStone_Start.prefab" } }
+  - time: 0.45
+    hit:
+      maxHit: 10
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.4 }
+      addDamage: { damagePercent: [230.0] }
+  - time: 0.82
+    hit:
+      maxHit: 10
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 2.7 }
+      addDamage: { damagePercent: [210.0] }
+  - time: 1.18
+    hit:
+      maxHit: 12
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 3.05 }
+      addDamage: { damagePercent: [185.0] }
+  - { time: 1.55, destroy: {} }

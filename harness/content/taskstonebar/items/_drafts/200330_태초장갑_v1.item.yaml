@@ -1,0 +1,136 @@
+id: 200330
+name: 태초 장갑
+category: Equipment
+type: Gloves
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Gloves
+- OriginSet
+- EquipmentStage10
+- EquipmentGrade10
+- FixedLevelEquipment
+grade: 10
+rarity: 5
+tier: 1
+power: 144
+requiredExps:
+- 0
+equipAddStats:
+- type: Attack
+  value:
+  - 72
+- type: AttackSpeedPercent
+  value:
+  - 5.97
+- type: CriticalPercent
+  value:
+  - 2.07
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003301
+    grade: 10
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 5.68
+  - id: 2003302
+    grade: 10
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Attack
+      value:
+      - 21
+  - id: 2003303
+    grade: 10
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 2.58
+  - id: 2003304
+    grade: 10
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackSpeedPercent
+      value:
+      - 2.99
+  - id: 2003305
+    grade: 10
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 5.18
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 272
+  - itemDataId: 200101
+    count: 10
+popupArgs:
+  ItemDescription: 첫 채굴의 진동이 남은 장갑. 광산은 아직도 그 손맛을 기억한다.
+  EquipmentGrade: '10'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Attack
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_gloves_10_origin_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: origin
+  setName: 태초 세트
+  slot: Gloves
+  slotName: 장갑
+  stage: 10
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_gloves_10_origin_imagegen.png
+  grade: 10
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: false
+    terminal: true
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Attack
+    primaryBaseValue: 14
+    primaryValue: 72
+    specialUnlocks:
+    - grade: 4
+      stat: AttackSpeedPercent
+      base: 2.0
+    - grade: 7
+      stat: CriticalPercent
+      base: 1.2
+    activeSpecials:
+    - grade: 4
+      stat: AttackSpeedPercent
+      value: 5.97
+    - grade: 7
+      stat: CriticalPercent
+      value: 2.07

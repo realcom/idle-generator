@@ -1,0 +1,49 @@
+id: 200523
+name: "혈월파쇄서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 3
+rarity: 4
+group: 200502
+constantDamageRatio: 1.0
+order: 34
+parentId: 200522
+skillDataId: 300315
+unstackable: true
+requiredItemDataIds: [200522]
+requiredAchievementDataIds: [600117]
+addStats:
+  - { type: BossDamageEfficiencyPercent, value: [3.4, 5.2, 7.3, 9.6, 12.3] }
+  - { type: CriticalDamagePercent, value: [4.6, 6.8, 9.6, 12.8, 16.4] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 3 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 4 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 5 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 6 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "보스5"
+  ChildrenSkillItemDataIds: ""
+  UnlockRecipeItemDataId: "200553"
+  UnlockCostLevelPoint: "6"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200522"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "90"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "55"
+  SkillTreeLane: "Boss"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/ruby.png"

@@ -1,0 +1,20 @@
+id: 300317
+name: "광맥공명"
+tags: [Combat, PlayerSkill, SkillTree, Farming, OreResonance, Taskstonebar]
+damageType: Spell
+projectileType: None
+targetRefreshType: LowestHp
+cooldown: 1.80
+priority: 62
+projectilePrefab: "FXPrefabs/Taskstonebar/BlueOrb/OreResonancePulse.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/BlueOrb/VFX_OreResonance_Cast.prefab" } }
+  - time: 0.22
+    hit:
+      maxHit: 4
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.60 }
+      addDamage: { damagePercent: [116.0, 137.0, 162.0, 192.0, 227.0] }
+  - { time: 0.38, playFx: { prefab: "FXPrefabs/Taskstonebar/BlueOrb/VFX_OreResonance_Impact.prefab" } }
+  - { time: 0.64, destroy: {} }

@@ -1,0 +1,27 @@
+id: 300327
+name: "큐브연쇄"
+tags: [Combat, PlayerSkill, SkillTree, ForgeFormation, CubeChain, Taskstonebar]
+damageType: Spell
+projectileType: Relative
+targetRefreshType: Random
+cooldown: 2.00
+priority: 82
+projectilePrefab: "FXPrefabs/Taskstonebar/CubeViolet/CubeChainProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/CubeViolet/VFX_CubeChain_Cast.prefab" } }
+  - time: 0.22
+    hit:
+      maxHit: 5
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.45 }
+      addDamage: { damagePercent: [90.0, 107.0, 127.0, 151.0, 179.0] }
+  - time: 0.44
+    hit:
+      maxHit: 5
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.65 }
+      addDamage: { damagePercent: [90.0, 107.0, 127.0, 151.0, 179.0] }
+  - { time: 0.60, playFx: { prefab: "FXPrefabs/Taskstonebar/CubeViolet/VFX_CubeChain_Impact.prefab" } }
+  - { time: 0.86, destroy: {} }

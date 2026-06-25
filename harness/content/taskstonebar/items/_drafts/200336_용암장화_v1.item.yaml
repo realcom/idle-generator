@@ -1,0 +1,126 @@
+id: 200336
+name: 용암 장화
+category: Equipment
+type: Boots
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Boots
+- LavaSet
+- EquipmentStage06
+- EquipmentGrade06
+- FixedLevelEquipment
+grade: 6
+rarity: 5
+tier: 1
+power: 55
+requiredExps:
+- 0
+equipAddStats:
+- type: CriticalPercent
+  value:
+  - 2.49
+- type: AttackSpeedPercent
+  value:
+  - 2.88
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003361
+    grade: 6
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 1.49
+  - id: 2003362
+    grade: 6
+    group: 1
+    weight: 32
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackSpeedPercent
+      value:
+      - 1.99
+  - id: 2003363
+    grade: 6
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 4.98
+  - id: 2003364
+    grade: 6
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CooldownPercent
+      value:
+      - 0.72
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 177
+  - itemDataId: 200101
+    count: 6
+popupArgs:
+  ItemDescription: 발자국마다 작은 열기가 남는다. 멈춰 있어도 전투 의지는 끓는다.
+  EquipmentGrade: '6'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: CriticalPercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_boots_06_lava_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: lava
+  setName: 용암 세트
+  slot: Boots
+  slotName: 신발
+  stage: 6
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_boots_06_lava_imagegen.png
+  grade: 6
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200393
+    nextItemDataId: 200337
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 6
+    resultGrade: 7
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: CriticalPercent
+    primaryBaseValue: 1.0
+    primaryValue: 2.49
+    specialUnlocks:
+    - grade: 4
+      stat: AttackSpeedPercent
+      base: 2.0
+    - grade: 7
+      stat: ItemDropPercent
+      base: 1.5
+    activeSpecials:
+    - grade: 4
+      stat: AttackSpeedPercent
+      value: 2.88

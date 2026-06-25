@@ -1,0 +1,30 @@
+id: 200543
+name: "태초난사 학습"
+category: Recipe
+grade: 3
+rarity: 4
+group: 200502
+order: 84
+targetItemDataIds: [200513]
+requiredItemDataIds: [200512]
+requiredAchievementDataIds: [600115]
+exclusiveItemDataIds: [200513]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 6 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200513, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200513"
+  RequiredSkillItemDataIds: "200512"
+  RequiredSkillLevel: "5"
+  RequiredPlayerLevel: "70"
+  UnlockCostLevelPoint: "6"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/ruby.png"

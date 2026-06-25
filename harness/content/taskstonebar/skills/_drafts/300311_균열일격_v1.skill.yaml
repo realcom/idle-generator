@@ -1,0 +1,20 @@
+id: 300311
+name: "균열일격"
+tags: [Combat, PlayerSkill, SkillTree, Boss, BossPierce, Taskstonebar]
+damageType: Pierce
+projectileType: Straight
+targetRefreshType: HighestHp
+cooldown: 1.80
+priority: 51
+projectilePrefab: "FXPrefabs/Taskstonebar/CrackOrange/RiftStrikeProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/CrackOrange/VFX_RiftStrike_Cast.prefab" } }
+  - time: 0.20
+    hit:
+      maxHit: 1
+      maxHitByUnit: 1
+      geometries:
+        - circle: { center: { x: 0.0, y: 0.0 }, radius: 0.95 }
+      addDamage: { damagePercent: [190.0, 224.0, 265.0, 313.0, 370.0] }
+  - { time: 0.36, playFx: { prefab: "FXPrefabs/Taskstonebar/CrackOrange/VFX_RiftStrike_Impact.prefab" } }
+  - { time: 0.62, destroy: {} }

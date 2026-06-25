@@ -1,0 +1,30 @@
+id: 200560
+name: "방패투척 학습"
+category: Recipe
+grade: 1
+rarity: 2
+group: 200502
+order: 101
+targetItemDataIds: [200530]
+requiredItemDataIds: [200529]
+requiredAchievementDataIds: [600109]
+exclusiveItemDataIds: [200530]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200501, count: 3 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200530, count: 1, level: 1, isCore: true }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  UnlockSkillItemDataId: "200530"
+  RequiredSkillItemDataIds: "200529"
+  RequiredSkillLevel: "2"
+  RequiredPlayerLevel: "35"
+  UnlockCostLevelPoint: "3"
+  LevelPointItemDataId: "200501"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone1.png"

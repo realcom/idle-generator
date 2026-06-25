@@ -1,0 +1,142 @@
+id: 200357
+name: 빙결 반지
+category: Equipment
+type: Ring
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Ring
+- FrostSet
+- EquipmentStage07
+- EquipmentGrade07
+- FixedLevelEquipment
+grade: 7
+rarity: 5
+tier: 1
+power: 90
+requiredExps:
+- 0
+equipAddStats:
+- type: AttackPercent
+  value:
+  - 4.18
+- type: Luck
+  value:
+  - 7
+- type: ItemDropPercent
+  value:
+  - 1.5
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003571
+    grade: 7
+    group: 1
+    weight: 40
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackPercent
+      value:
+      - 2.69
+  - id: 2003572
+    grade: 7
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 1.49
+  - id: 2003573
+    grade: 7
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 7.17
+  - id: 2003574
+    grade: 7
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Luck
+      value:
+      - 3
+  - id: 2003575
+    grade: 7
+    group: 1
+    weight: 12
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: SellPricePercent
+      value:
+      - 0.8
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 210
+  - itemDataId: 200101
+    count: 7
+popupArgs:
+  ItemDescription: 차가운 반지가 손맛을 정리한다. 이번 타격은 운보다 각도다.
+  EquipmentGrade: '7'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: AttackPercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_ring_07_frost_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: frost
+  setName: 빙결 세트
+  slot: Ring
+  slotName: 반지
+  stage: 7
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_ring_07_frost_imagegen.png
+  grade: 7
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200412
+    nextItemDataId: 200358
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 7
+    resultGrade: 8
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: AttackPercent
+    primaryBaseValue: 1.4
+    primaryValue: 4.18
+    specialUnlocks:
+    - grade: 4
+      stat: Luck
+      base: 4.0
+    - grade: 7
+      stat: ItemDropPercent
+      base: 1.5
+    activeSpecials:
+    - grade: 4
+      stat: Luck
+      value: 7
+    - grade: 7
+      stat: ItemDropPercent
+      value: 1.5

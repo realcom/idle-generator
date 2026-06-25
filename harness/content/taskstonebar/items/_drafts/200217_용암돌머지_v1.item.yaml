@@ -1,0 +1,36 @@
+id: 200217
+name: "용암돌 머지"
+category: Recipe
+tags: [EquipmentCombineRecipe, AutoCombineAvailable, StoneMergeRecipe, StoneStage06, Taskstonebar]
+grade: 1
+rarity: 5
+tier: 3
+targetItemDataIds: [200208]
+materialItemGroups:
+  - shouldAllValid: true
+    materialItems:
+      - { id: 200207, count: 1 }
+  - shouldAllValid: false
+    materialItems:
+      - { id: 200207, count: 1 }
+addItemGroups:
+  - shouldAddAll: true
+    probPercent: 100
+    addItems:
+      - { itemDataId: 200208, count: 1, level: 1, isCore: true }
+popupArgs:
+  MergeFamily: StoneWeapon
+  SourceItemDataId: "200207"
+  ResultItemDataId: "200208"
+  RequiredCopies: "2"
+  ResultLevelPolicy: reset_to_1
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/stone1.png"
+
+_stoneMergeRecipe:
+  stage: 6
+  sourceItemDataId: 200207
+  resultItemDataId: 200208
+  requiredCopies: 2
+  resultLevelPolicy: reset_to_1
+  compatibleWith: GodotStoneMergeRuntime

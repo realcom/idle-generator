@@ -1,0 +1,110 @@
+id: 200302
+name: 이끼 두건
+category: Equipment
+type: Head
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Head
+- MossSet
+- EquipmentStage02
+- EquipmentGrade02
+- FixedLevelEquipment
+grade: 2
+rarity: 2
+tier: 1
+power: 24
+requiredExps:
+- 0
+equipAddStats:
+- type: Hp
+  value:
+  - 144
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003021
+    grade: 2
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 1.44
+  - id: 2003022
+    grade: 2
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Hp
+      value:
+      - 29
+  - id: 2003023
+    grade: 2
+    group: 1
+    weight: 24
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 0.96
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 85
+  - itemDataId: 200101
+    count: 2
+popupArgs:
+  ItemDescription: 동굴 이끼가 머리에 살며시 앉았다. 오래 굴러도 마음이 마르지 않는다.
+  EquipmentGrade: '2'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Hp
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: none
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_head_02_moss_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: moss
+  setName: 이끼 세트
+  slot: Head
+  slotName: 머리
+  stage: 2
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_head_02_moss_imagegen.png
+  grade: 2
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200362
+    nextItemDataId: 200303
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 2
+    resultGrade: 3
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Hp
+    primaryBaseValue: 120
+    primaryValue: 144
+    specialUnlocks:
+    - grade: 4
+      stat: ExpPercent
+      base: 2.0
+    - grade: 7
+      stat: CooldownPercent
+      base: 1.0
+    activeSpecials: []

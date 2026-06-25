@@ -1,0 +1,17 @@
+id: 300102
+name: "조약돌 투척"
+tags: [Combat, StoneThrow, StoneWeapon, BasicStone, StoneStage01, Taskstonebar]
+damageType: NormalDamage
+projectileType: Parabolic
+targetRefreshType: Nearest
+cooldown: 0.95
+priority: 11
+projectilePrefab: "FXPrefabs/Taskstonebar/RockProjectile.prefab"
+timelines:
+  - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_RockThrow_Start.prefab" } }
+  - time: 0.10
+    hit:
+      maxHit: 1
+      addDamage: { damagePercent: [112.0] }
+  - { time: 0.26, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_StoneImpact.prefab" } }
+  - { time: 0.38, destroy: {} }

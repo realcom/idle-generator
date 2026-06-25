@@ -10,3 +10,64 @@ sellAddItemGroups:
       - { itemDataId: 5, count: 18 }
 spriteGroups:
   Icon: "Assets/Taskstonebar/taskstone/stone1.png"
+
+_economy:
+  role: feed_material
+  steam:
+    enabled: true
+    itemdefid: 200102
+    itemdef_type: item
+    marketable: true
+    tradable: true
+    auto_stack: true
+    store_hidden: true
+    market_hash_name: "Moss Ore"
+    display_type: "Feed Material"
+    tags:
+      rarity: uncommon
+      family: ore
+      lane: feed
+      season: launch
+  stack:
+    inventory_unit: 1
+    market_lot_size: 50
+    notes: "초중반 큐브 제련과 첫 진화 병목. 조약돌 파편보다 공급을 낮게 둔다."
+  supply:
+    online_only: true
+    faucets:
+      - source: elite_monster_drop
+        map_ids: [500101]
+        unit_ids: [110202]
+        expected_per_hour: 48.0
+        cap_per_day: 2400
+      - source: boss_clear_reward
+        map_ids: [500101]
+        unit_ids: [110501]
+        expected_per_hour: 24.0
+        cap_per_day: 1200
+  sinks:
+    feed_xp: 8
+    cube_xp: 6
+    alchemy_gold: 18
+    recipes:
+      - id: catalyst_refining_seed
+        consumes:
+          - { itemDataId: 200102, count: 12 }
+          - { itemDataId: 200101, count: 90 }
+        produces:
+          - { itemDataId: 200103, count: 1 }
+        steam_exchange: true
+      - id: first_evolution_gate
+        consumes:
+          - { itemDataId: 200102, count: 40 }
+          - { itemDataId: 200101, count: 400 }
+        produces: []
+        steam_exchange: false
+    seasonal:
+      - id: launch_rank_push
+        count_per_attempt: 120
+        reason: "시즌 랭킹용 돌 먹이/문양 노드 압박"
+  risk:
+    bot_value: medium
+    inflation_risk: medium
+    knobs: [elite_spawn_rate, boss_reward_count, refining_cost, evolution_cost]

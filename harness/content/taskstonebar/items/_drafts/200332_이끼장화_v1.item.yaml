@@ -1,0 +1,110 @@
+id: 200332
+name: 이끼 장화
+category: Equipment
+type: Boots
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Boots
+- MossSet
+- EquipmentStage02
+- EquipmentGrade02
+- FixedLevelEquipment
+grade: 2
+rarity: 2
+tier: 1
+power: 26
+requiredExps:
+- 0
+equipAddStats:
+- type: CriticalPercent
+  value:
+  - 1.2
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003321
+    grade: 2
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalPercent
+      value:
+      - 0.72
+  - id: 2003322
+    grade: 2
+    group: 1
+    weight: 32
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: AttackSpeedPercent
+      value:
+      - 0.96
+  - id: 2003323
+    grade: 2
+    group: 1
+    weight: 26
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: CriticalDamagePercent
+      value:
+      - 2.4
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 87
+  - itemDataId: 200101
+    count: 2
+popupArgs:
+  ItemDescription: 미끄러운 바닥도 착 붙어 구른다. 작업표시줄 먼지쯤은 초원이다.
+  EquipmentGrade: '2'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: CriticalPercent
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: none
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_boots_02_moss_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: moss
+  setName: 이끼 세트
+  slot: Boots
+  slotName: 신발
+  stage: 2
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_boots_02_moss_imagegen.png
+  grade: 2
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200389
+    nextItemDataId: 200333
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 2
+    resultGrade: 3
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: CriticalPercent
+    primaryBaseValue: 1.0
+    primaryValue: 1.2
+    specialUnlocks:
+    - grade: 4
+      stat: AttackSpeedPercent
+      base: 2.0
+    - grade: 7
+      stat: ItemDropPercent
+      base: 1.5
+    activeSpecials: []

@@ -1,0 +1,50 @@
+id: 200532
+name: "반격균열서"
+category: Skill
+type: PlayerUnitActiveSkill
+grade: 2
+rarity: 3
+group: 200502
+constantDamageRatio: 1.0
+order: 43
+parentId: 200531
+skillDataId: 300324
+unstackable: true
+requiredItemDataIds: [200531]
+requiredAchievementDataIds: [600115]
+targetItemDataIds: [200533]
+addStats:
+  - { type: HpPercent, value: [2.4, 3.5, 4.9, 6.5, 8.4] }
+  - { type: DefensePercent, value: [2.2, 3.3, 4.7, 6.3, 8.2] }
+levelUpMaterialItemGroups:
+  - shouldAllValid: true
+    level: 1
+    materialItems:
+      - { id: 200501, count: 2 }
+  - shouldAllValid: true
+    level: 2
+    materialItems:
+      - { id: 200501, count: 3 }
+  - shouldAllValid: true
+    level: 3
+    materialItems:
+      - { id: 200501, count: 4 }
+  - shouldAllValid: true
+    level: 4
+    materialItems:
+      - { id: 200501, count: 5 }
+popupArgs:
+  SkillTree: "Taskstonebar"
+  SkillTreeNode: "방어4"
+  ChildrenSkillItemDataIds: "200533"
+  UnlockRecipeItemDataId: "200562"
+  UnlockCostLevelPoint: "5"
+  LevelPointItemDataId: "200501"
+  RequiredSkillItemDataIds: "200531"
+  RequiredSkillLevel: "4"
+  RequiredPlayerLevel: "70"
+  MaxSkillLevel: "5"
+  AutoUsePriority: "74"
+  SkillTreeLane: "Guard"
+spriteGroups:
+  Icon: "Assets/Taskstonebar/taskstone/rock.png"

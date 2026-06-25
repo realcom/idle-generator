@@ -1,0 +1,132 @@
+id: 200319
+name: 별심 갑주
+category: Equipment
+type: Chest
+tags:
+- Equipment
+- PixelEquipment
+- Taskstonebar
+- Chest
+- StarcoreSet
+- EquipmentStage09
+- EquipmentGrade09
+- FixedLevelEquipment
+grade: 9
+rarity: 5
+tier: 1
+power: 103
+requiredExps:
+- 0
+equipAddStats:
+- type: Defense
+  value:
+  - 52
+- type: HpPercent
+  value:
+  - 4.98
+- type: DefensePercent
+  value:
+  - 2.16
+unstackable: true
+optionCounts:
+- 1
+options:
+- options:
+  - id: 2003191
+    grade: 9
+    group: 1
+    weight: 42
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: DefensePercent
+      value:
+      - 4.73
+  - id: 2003192
+    grade: 9
+    group: 1
+    weight: 34
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Defense
+      value:
+      - 13
+  - id: 2003193
+    grade: 9
+    group: 1
+    weight: 24
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: HpPercent
+      value:
+      - 4.3
+  - id: 2003194
+    grade: 9
+    group: 1
+    weight: 18
+    minLevel: 1
+    maxLevel: 1
+    equipAddStats:
+    - type: Hp
+      value:
+      - 45
+decomposeAddItemGroups:
+- shouldAddAll: true
+  probPercent: 100
+  addItems:
+  - itemDataId: 5
+    count: 250
+  - itemDataId: 200101
+    count: 9
+popupArgs:
+  ItemDescription: 별빛 조각을 엮은 갑주. 맞으면 반짝이고, 반짝이면 더 세 보인다.
+  EquipmentGrade: '9'
+  EquipmentLevelPolicy: fixed_1
+  PrimaryStat: Defense
+  StatGrowthRate: 1.2_per_grade
+  SpecialStatUnlocks: grade4,grade7
+spriteGroups:
+  Icon: Assets/Taskstonebar/equipment/imagegen/icons/icon_chest_09_starcore_imagegen.png
+_equipment:
+  series: taskstonebar-pixel-equipment-10x6
+  setKey: starcore
+  setName: 별심 세트
+  slot: Chest
+  slotName: 상의
+  stage: 9
+  maxLevel: 1
+  artStyle: imagegen pixel-art equipment icon, transparent PNG, 128x128
+  generatedAsset: harness/assets/growstone2/generated/equipment/imagegen/icons/icon_chest_09_starcore_imagegen.png
+  grade: 9
+  levelPolicy: fixed_1
+  upgrade:
+    enabled: true
+    recipeItemDataId: 200378
+    nextItemDataId: 200320
+    requiredLowerGradeItemCount: 3
+    sourceGrade: 9
+    resultGrade: 10
+    candidatePolicy: any_lower_equipment_same_grade_count_3
+    resultLevelPolicy: fixed_1
+  statGrowth:
+    profile: slot_primary_20pct_per_grade_specials_from_grade4
+    perGradeMultiplier: 1.2
+    primaryStat: Defense
+    primaryBaseValue: 12
+    primaryValue: 52
+    specialUnlocks:
+    - grade: 4
+      stat: HpPercent
+      base: 2.0
+    - grade: 7
+      stat: DefensePercent
+      base: 1.5
+    activeSpecials:
+    - grade: 4
+      stat: HpPercent
+      value: 4.98
+    - grade: 7
+      stat: DefensePercent
+      value: 2.16
