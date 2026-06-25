@@ -1,0 +1,2685 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Taskstonebar UI Feature Preview</title>
+  <style>
+    :root {
+      --desktop: #19844f;
+      --desktop-dark: #0e5737;
+      --panel-outer: #6b4a2a;
+      --panel-mid: #4a2f1a;
+      --panel-inner: #1a0f06;
+      --title-red: #7d1f1e;
+      --title-red-dark: #4d1114;
+      --title-gold: #ffcf7a;
+      --text-cream: #f3e6c8;
+      --text-muted: #b79a72;
+      --coin-gold: #ffd877;
+      --hp-red: #c0392b;
+      --exp-blue: #2e8fd0;
+      --ruby-red: #d94b74;
+      --moss-green: #6a8f42;
+      --taskbar-ground: #3a2a18;
+      --shadow: #050302;
+      --line: #1f160f;
+      --focus: #40d577;
+      --market: #3aa3ff;
+      --warning: #ffc247;
+      --danger: #d84836;
+      --slot: #24170d;
+      --slot-top: #4c3320;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      color: var(--text-cream);
+      background: var(--desktop);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 1120px;
+      min-height: 720px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+        radial-gradient(circle at 50% 0%, rgba(255,255,255,0.10), transparent 520px),
+        linear-gradient(180deg, #1da861, var(--desktop) 48%, var(--desktop-dark));
+      background-size: 48px 48px, 48px 48px, auto, auto;
+      overflow: auto;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: minmax(820px, 1fr) 360px;
+      gap: 14px;
+      min-height: 720px;
+      padding: 14px 14px 54px;
+    }
+
+    .desktop {
+      position: relative;
+      min-height: 650px;
+      border: 2px solid rgba(5, 3, 2, 0.35);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+
+    .desktop-icons {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      display: grid;
+      grid-template-columns: repeat(4, 64px);
+      gap: 10px;
+      z-index: 1;
+    }
+
+    .desktop-icon {
+      display: grid;
+      justify-items: center;
+      gap: 5px;
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      text-shadow: 0 2px 0 #111;
+    }
+
+    .desktop-icon .icon-box {
+      width: 35px;
+      height: 32px;
+      border: 3px solid #101010;
+      background: linear-gradient(#8fd4ff, #307ea0);
+      box-shadow: inset 0 0 0 2px #d9f5ff;
+    }
+
+    .desktop-icon:nth-child(2) .icon-box { background: linear-gradient(#f9cf66, #b7791f); }
+    .desktop-icon:nth-child(3) .icon-box { background: linear-gradient(#f2d389, #7a3e28); }
+    .desktop-icon:nth-child(4) .icon-box { background: linear-gradient(#d9e1e7, #7a8790); }
+
+    .top-bar {
+      position: absolute;
+      top: 12px;
+      left: 270px;
+      right: 142px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      z-index: 8;
+    }
+
+    .counter {
+      min-width: 116px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 9px;
+      color: var(--title-gold);
+      font-weight: 900;
+      background: linear-gradient(#262626, #0c0c0c);
+      border: 3px solid #070707;
+      box-shadow: inset 0 0 0 2px #464646, 0 3px 0 rgba(0,0,0,0.32);
+      text-shadow: 0 2px 0 #000;
+    }
+
+    .counter .res-icon {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 auto;
+      border: 2px solid #131313;
+      background: var(--coin-gold);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.28);
+      transform: rotate(45deg);
+    }
+
+    .counter:nth-child(2) .res-icon { background: var(--ruby-red); }
+    .counter:nth-child(3) .res-icon { background: #8e9b75; }
+    .counter:nth-child(4) .res-icon { background: var(--moss-green); }
+    .counter:nth-child(5) .res-icon { background: #8bd9ff; }
+
+    .top-actions {
+      position: absolute;
+      top: 13px;
+      right: 18px;
+      display: flex;
+      gap: 9px;
+      z-index: 5;
+    }
+
+    .icon-button,
+    .window-button {
+      display: grid;
+      place-items: center;
+      border: 3px solid #070707;
+      background: linear-gradient(#3a3a3a, #111);
+      color: var(--text-cream);
+      box-shadow: inset 0 0 0 2px #585858, 0 3px 0 rgba(0,0,0,0.35);
+      cursor: pointer;
+    }
+
+    .icon-button {
+      width: 34px;
+      height: 34px;
+      font-weight: 900;
+    }
+
+    .window-button {
+      width: 28px;
+      height: 28px;
+      color: var(--title-gold);
+      font-size: 17px;
+    }
+
+    .window-grid {
+      position: absolute;
+      top: 76px;
+      left: 14px;
+      right: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1.35fr 1.08fr;
+      gap: 14px;
+      align-items: start;
+      z-index: 3;
+    }
+
+    .game-window {
+      position: relative;
+      min-height: 426px;
+      background: var(--panel-mid);
+      border: 4px solid #050302;
+      box-shadow:
+        inset 0 0 0 2px var(--panel-outer),
+        inset 0 0 0 5px #22160e,
+        0 5px 0 rgba(0,0,0,0.42);
+      cursor: pointer;
+    }
+
+    .game-window[data-component].active,
+    .combat-strip[data-component].active,
+    .center-icon-dock[data-component].active {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+      box-shadow:
+        inset 0 0 0 2px var(--panel-outer),
+        inset 0 0 0 5px #22160e,
+        0 0 0 4px rgba(64, 213, 119, 0.18),
+        0 5px 0 rgba(0,0,0,0.42);
+    }
+
+    .title-bar {
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 48px;
+      color: var(--title-gold);
+      font-size: clamp(19px, 1.6vw, 26px);
+      font-weight: 1000;
+      text-shadow: 0 3px 0 #160604;
+      border-bottom: 4px solid #070707;
+      background:
+        linear-gradient(90deg, #160606 0 9%, transparent 9% 91%, #160606 91%),
+        linear-gradient(#932926, var(--title-red-dark));
+    }
+
+    .title-controls {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 5px;
+    }
+
+    .window-body {
+      padding: 10px;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.24)),
+        var(--panel-mid);
+    }
+
+    .parchment {
+      background: #bda57a;
+      color: #2a1b10;
+      border: 4px solid #21160d;
+      box-shadow: inset 0 0 0 2px #dcc995;
+    }
+
+    .stone-portrait {
+      position: relative;
+      min-height: 165px;
+      padding: 8px;
+    }
+
+    .status-summary {
+      display: grid;
+      grid-template-columns: 94px minmax(0, 1fr);
+      gap: 7px;
+      align-items: stretch;
+    }
+
+    .status-portrait-card {
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      gap: 5px;
+      min-width: 0;
+      padding: 7px 5px;
+      background: rgba(79, 54, 30, .2);
+      border: 3px solid rgba(95, 65, 34, .48);
+      box-shadow: inset 0 0 0 2px rgba(236, 213, 159, .24);
+      overflow: hidden;
+    }
+
+    .status-nameplate {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      gap: 5px;
+      padding: 3px 5px;
+      color: #37230e;
+      background: #d6bd82;
+      border: 3px solid #70512d;
+      font-size: 10px;
+      font-weight: 1000;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .status-stat-card {
+      min-width: 0;
+      display: grid;
+      gap: 5px;
+      padding: 6px 7px;
+      background: #d8c18e;
+      border: 3px solid #6b4b2a;
+      box-shadow: inset 0 0 0 2px #efdcaa;
+      overflow: hidden;
+    }
+
+    .stat-lines {
+      display: grid;
+      gap: 3px;
+      font-size: 10.5px;
+      font-weight: 800;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      border-bottom: 1px solid rgba(42,27,16,0.2);
+      white-space: nowrap;
+      min-width: 0;
+    }
+
+    .stat-row span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stat-row b {
+      color: #221207;
+    }
+
+    .status-badges {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3px;
+      margin-top: 4px;
+    }
+
+    .status-badge {
+      min-height: 20px;
+      display: grid;
+      place-items: center;
+      color: var(--title-gold);
+      background: linear-gradient(#4d321c, #21130b);
+      border: 3px solid #110905;
+      box-shadow: inset 0 0 0 2px #7d5731;
+      font-size: 10px;
+      font-weight: 1000;
+      text-shadow: 0 2px 0 #000;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .bar {
+      position: relative;
+      height: 13px;
+      background: #1c120b;
+      border: 2px solid #0b0704;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--exp-blue), #80c9ff);
+    }
+
+    .status-list-panel {
+      position: relative;
+      min-height: 142px;
+      padding: 28px 14px 12px;
+      background: #806b49;
+      overflow: hidden;
+    }
+
+    .status-class-ribbon {
+      position: absolute;
+      top: 8px;
+      left: 42px;
+      right: 42px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      color: #49311a;
+      background: linear-gradient(#d9c89f, #bca77a);
+      border: 3px solid #6d4b2b;
+      box-shadow: inset 0 0 0 2px #eadbb8;
+      font-size: 13px;
+      font-weight: 1000;
+      white-space: nowrap;
+    }
+
+    .status-scroll-window {
+      position: relative;
+      display: grid;
+      gap: 2px;
+      max-height: 106px;
+      padding: 6px 17px 4px 4px;
+      overflow: hidden;
+    }
+
+    .status-list-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 7px;
+      color: #ffd06c;
+      font-size: 12px;
+      font-weight: 1000;
+      line-height: 1.16;
+      text-shadow: 0 2px 0 rgba(40, 20, 8, .55);
+      white-space: nowrap;
+    }
+
+    .status-list-row b {
+      color: #f6ead0;
+      font-weight: 1000;
+      text-shadow: 0 2px 0 rgba(0, 0, 0, .55);
+    }
+
+    .status-scroll-thumb {
+      position: absolute;
+      top: 38px;
+      right: 8px;
+      width: 9px;
+      height: 54px;
+      background: linear-gradient(#d2c0a0, #87745a);
+      border: 2px solid #3e2a19;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
+    }
+
+    .status-search-button {
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(#5a1f13, #220b06);
+      border: 4px solid #130805;
+      box-shadow: inset 0 0 0 2px #a76536;
+    }
+
+    .status-search-button::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border: 3px solid #fff1cf;
+      border-radius: 50%;
+    }
+
+    .status-search-button::after {
+      content: "";
+      position: absolute;
+      left: 19px;
+      top: 20px;
+      width: 10px;
+      height: 4px;
+      background: #fff1cf;
+      transform: rotate(45deg);
+      transform-origin: left center;
+    }
+
+    .skill-panel {
+      margin-top: 10px;
+      padding: 8px 8px 10px;
+      background: linear-gradient(#1d1d1d, #070707);
+      border: 3px solid #090909;
+      box-shadow: inset 0 0 0 2px #3a332d;
+    }
+
+    .skill-head {
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      margin: 0 22px 8px;
+      color: #f5ead2;
+      background: linear-gradient(#343434, #151515);
+      border-left: 4px solid #090909;
+      border-right: 4px solid #090909;
+      box-shadow: inset 0 0 0 2px #4a4a4a;
+      font-size: 16px;
+      font-weight: 1000;
+      text-shadow: 0 2px 0 #000;
+    }
+
+    .skill-cross {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      color: #ffe190;
+      background: #7a241b;
+      border: 3px solid #1a0805;
+      box-shadow: inset 0 0 0 2px #d29545;
+      line-height: 1;
+    }
+
+    .skill-tree {
+      display: grid;
+      grid-template-columns: 53px minmax(0, 1fr);
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .skill-level-track {
+      position: relative;
+      min-height: 244px;
+    }
+
+    .skill-level-track::before {
+      content: "";
+      position: absolute;
+      top: 20px;
+      left: 25px;
+      bottom: 14px;
+      width: 9px;
+      background: linear-gradient(#ff6e6e, #d8283b);
+      border-left: 2px solid #ffc0a2;
+      border-right: 2px solid #690b13;
+      box-shadow: 0 0 0 2px #090909;
+    }
+
+    .track-mark {
+      position: absolute;
+      left: 13px;
+      width: 35px;
+      height: 2px;
+      background: #f3e6c8;
+      box-shadow: 0 2px 0 #090909;
+    }
+
+    .track-mark.zero { top: 31px; }
+    .track-mark.ten { top: 111px; }
+    .track-mark.thirty { top: 213px; }
+
+    .track-label {
+      position: absolute;
+      left: 0;
+      color: #f6ead0;
+      font-size: 13px;
+      font-weight: 1000;
+      text-shadow: 0 2px 0 #000;
+    }
+
+    .track-label.zero { top: 20px; }
+    .track-label.ten { top: 100px; }
+    .track-label.thirty { top: 202px; }
+
+    .skill-rows {
+      display: grid;
+      gap: 8px;
+    }
+
+    .skill-tier {
+      position: relative;
+      min-height: 74px;
+      display: grid;
+      grid-template-columns: 28px repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      align-items: center;
+      padding: 7px 7px 7px 0;
+      background:
+        radial-gradient(circle at 70% 30%, rgba(255,255,255,.05), transparent 58px),
+        linear-gradient(#4d4d4d, #222);
+      border-top: 3px solid #998675;
+      border-bottom: 3px solid #0b0b0b;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.06);
+    }
+
+    .tier-arrow {
+      width: 25px;
+      height: 25px;
+      border-left: 5px solid #d6c9a5;
+      border-bottom: 5px solid #d6c9a5;
+      transform: rotate(45deg);
+      filter: drop-shadow(0 2px 0 #090909);
+    }
+
+    .skill-slot {
+      min-width: 0;
+      min-height: 54px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background: linear-gradient(#f0ead8, #c9bd9c);
+      border: 4px solid #17100b;
+      box-shadow: inset 0 0 0 2px #ffffff, 0 3px 0 rgba(0,0,0,.36);
+    }
+
+    .skill-slot small {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -18px;
+      color: #f3e6c8;
+      font-size: 11px;
+      font-weight: 1000;
+      text-align: center;
+      text-shadow: 0 2px 0 #000;
+    }
+
+    .skill-glyph {
+      width: 30px;
+      height: 30px;
+      position: relative;
+      display: block;
+      border-radius: 50%;
+      border: 3px solid #761c12;
+      background: radial-gradient(circle at 38% 32%, #ffeb8f, #d64b18 58%, #6c160e 59%);
+      box-shadow: inset 0 0 0 2px #fff0c4;
+    }
+
+    .skill-glyph.guard {
+      border-color: #7a6d29;
+      background: radial-gradient(circle at 50% 28%, #fff6a9, #78a83f 55%, #4b642b 56%);
+      clip-path: polygon(50% 0, 88% 16%, 78% 72%, 50% 100%, 22% 72%, 12% 16%);
+    }
+
+    .skill-glyph.flame {
+      border-color: #8a2410;
+      background: radial-gradient(circle at 60% 62%, #ffe68a, #ff7531 46%, #bd2917 62%, #5b0d09 63%);
+      border-radius: 45% 45% 55% 55%;
+      transform: rotate(18deg);
+    }
+
+    .skill-glyph.focus {
+      border-color: #1c2f7a;
+      background: radial-gradient(circle, #91f4ff 0 22%, #2b63d6 23% 55%, #162168 56%);
+    }
+
+    .skill-glyph.gold {
+      border-color: #8e5a12;
+      background: radial-gradient(circle at 42% 35%, #fff2a5, #f2b52e 55%, #84510d 56%);
+      border-radius: 24%;
+    }
+
+    .skill-glyph.stone-throw {
+      border-color: #80311d;
+      background:
+        radial-gradient(circle at 52% 42%, #d2d4c7 0 8px, #737b6e 9px 15px, transparent 16px),
+        linear-gradient(#e14728, #7e1b12);
+    }
+
+    .rune-panel,
+    .dark-panel {
+      margin-top: 10px;
+      padding: 10px;
+      background: linear-gradient(#1d1d1d, #070707);
+      border: 3px solid #090909;
+      box-shadow: inset 0 0 0 2px #3a332d;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      color: var(--title-gold);
+      font-weight: 1000;
+      text-shadow: 0 2px 0 #000;
+    }
+
+    .rune-grid {
+      display: grid;
+      grid-template-columns: 44px repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      align-items: center;
+    }
+
+    .rune-line {
+      height: 138px;
+      grid-row: span 3;
+      position: relative;
+      border-left: 4px solid #b98228;
+      margin-left: 20px;
+    }
+
+    .rune-line::before,
+    .rune-line::after {
+      content: "";
+      position: absolute;
+      left: -13px;
+      width: 22px;
+      height: 22px;
+      background: #7a4dd6;
+      border: 3px solid #d9ae52;
+      transform: rotate(45deg);
+    }
+
+    .rune-line::before { top: 8px; }
+    .rune-line::after { bottom: 8px; }
+
+    .trait-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 3px solid #090909;
+    }
+
+    .trait-card {
+      min-height: 38px;
+      display: grid;
+      place-items: center;
+      color: var(--text-cream);
+      background: linear-gradient(#352313, #140c07);
+      border: 3px solid #0b0704;
+      box-shadow: inset 0 0 0 2px #5f4529;
+      font-size: 11px;
+      font-weight: 1000;
+      text-align: center;
+      text-shadow: 0 2px 0 #000;
+    }
+
+    .slot {
+      min-height: 45px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      color: var(--text-cream);
+      background: linear-gradient(var(--slot-top), var(--slot));
+      border: 3px solid #0b0704;
+      box-shadow: inset 0 0 0 2px #6a4b2b;
+      font-size: 12px;
+      font-weight: 900;
+      text-shadow: 0 2px 0 #000;
+    }
+
+    .slot.locked {
+      filter: grayscale(1) brightness(0.58);
+    }
+
+    .slot .item-gem,
+    .slot .item-rock,
+    .slot .item-cube {
+      width: 25px;
+      height: 25px;
+      border: 2px solid #111;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.18);
+    }
+
+    .item-rock {
+      border-radius: 42% 58% 50% 45%;
+      background: linear-gradient(135deg, #a5a99c, #52594f);
+    }
+
+    .item-gem {
+      transform: rotate(45deg);
+      background: linear-gradient(135deg, #70ddff, #165a91);
+    }
+
+    .item-cube {
+      background: linear-gradient(135deg, #92ba53, #3e542a);
+    }
+
+    .slot small {
+      position: absolute;
+      right: 3px;
+      bottom: 1px;
+      color: var(--title-gold);
+      font-size: 11px;
+    }
+
+    .workshop-hero {
+      display: grid;
+      grid-template-columns: minmax(170px, 1fr) 178px;
+      gap: 10px;
+    }
+
+    .pedestal {
+      position: relative;
+      min-height: 192px;
+      padding: 15px;
+      background:
+        radial-gradient(circle at 50% 62%, rgba(255,207,122,0.30), transparent 112px),
+        linear-gradient(#352619, #17100a);
+      border: 3px solid #090604;
+      box-shadow: inset 0 0 0 2px #594229;
+    }
+
+    .pedestal .living-stone {
+      width: 132px;
+      height: 120px;
+      margin: 9px auto 13px;
+    }
+
+    .pedestal-base {
+      width: 170px;
+      height: 28px;
+      margin: -14px auto 0;
+      border: 4px solid #120c08;
+      background: linear-gradient(#8a6f42, #42301d);
+      box-shadow: inset 0 0 0 2px #c6a367;
+    }
+
+    .feed-meter {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: 58px 1fr 42px;
+      align-items: center;
+      gap: 8px;
+      color: var(--title-gold);
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .feed-meter .bar span {
+      width: 60%;
+      background: linear-gradient(90deg, #4ba52f, #b1f26d);
+    }
+
+    .recipe-side {
+      display: grid;
+      gap: 8px;
+    }
+
+    .mini-card {
+      padding: 9px;
+      background: #20150d;
+      border: 3px solid #080503;
+      box-shadow: inset 0 0 0 2px #5c3f22;
+    }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .text-button {
+      min-height: 43px;
+      color: var(--title-gold);
+      font-weight: 1000;
+      text-shadow: 0 2px 0 #000;
+      border: 3px solid #090604;
+      background: linear-gradient(#a04428, #5b1c12);
+      box-shadow: inset 0 0 0 2px #d47a3e, 0 3px 0 rgba(0,0,0,0.38);
+      cursor: pointer;
+    }
+
+    .text-button.green {
+      color: #f1ffd2;
+      background: linear-gradient(#739d32, #355319);
+      box-shadow: inset 0 0 0 2px #a0d251, 0 3px 0 rgba(0,0,0,0.38);
+    }
+
+    .text-button.purple {
+      background: linear-gradient(#7251a3, #3b245d);
+      box-shadow: inset 0 0 0 2px #a983de, 0 3px 0 rgba(0,0,0,0.38);
+    }
+
+    .material-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .hero-panel {
+      display: grid;
+      grid-template-columns: 116px minmax(130px, 1fr) 116px;
+      gap: 8px;
+      padding: 10px;
+      background: #9f7a49;
+      border: 4px solid #17100a;
+      box-shadow: inset 0 0 0 2px #caa36c;
+    }
+
+    .gear-column {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      align-content: start;
+    }
+
+    .keeper-card {
+      position: relative;
+      min-height: 160px;
+      display: grid;
+      justify-items: center;
+      align-content: end;
+      padding: 10px 4px 8px;
+      background: linear-gradient(#3c2a1c, #1b120b);
+      border: 3px solid #100a06;
+      box-shadow: inset 0 0 0 2px #6b4a2a;
+      overflow: hidden;
+    }
+
+    .class-chip {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 92px;
+      padding: 4px 8px;
+      text-align: center;
+      color: #4a2f1a;
+      background: #d8c39c;
+      border: 3px solid #6c4f31;
+      font-size: 13px;
+      font-weight: 1000;
+    }
+
+    .keeper-sprite {
+      position: relative;
+      width: 72px;
+      height: 86px;
+      margin-bottom: 3px;
+    }
+
+    .keeper-sprite .k-head {
+      position: absolute;
+      left: 23px;
+      top: 19px;
+      width: 34px;
+      height: 33px;
+      border: 3px solid #101010;
+      border-radius: 40%;
+      background: #f0c09a;
+      z-index: 2;
+    }
+
+    .keeper-sprite .k-cap {
+      position: absolute;
+      left: 14px;
+      top: 4px;
+      width: 48px;
+      height: 25px;
+      border: 3px solid #101010;
+      border-radius: 48% 48% 20% 20%;
+      background: #efe7cb;
+      transform: rotate(8deg);
+      z-index: 3;
+    }
+
+    .keeper-sprite .k-body {
+      position: absolute;
+      left: 19px;
+      top: 48px;
+      width: 40px;
+      height: 35px;
+      border: 3px solid #101010;
+      background: linear-gradient(#7e5331, #3e2618);
+    }
+
+    .keeper-sprite .k-scarf {
+      position: absolute;
+      left: 20px;
+      top: 44px;
+      width: 42px;
+      height: 10px;
+      border: 2px solid #101010;
+      background: #314c24;
+      z-index: 4;
+    }
+
+    .keeper-sprite .k-pack {
+      position: absolute;
+      left: 0;
+      top: 35px;
+      width: 29px;
+      height: 32px;
+      border: 3px solid #101010;
+      border-radius: 45%;
+      background: linear-gradient(135deg, #9ea394, #565c51);
+    }
+
+    .keeper-sprite .k-charm {
+      position: absolute;
+      left: 10px;
+      bottom: 4px;
+      width: 12px;
+      height: 12px;
+      border: 2px solid #111;
+      background: var(--ruby-red);
+      transform: rotate(45deg);
+    }
+
+    .level-chip {
+      position: relative;
+      z-index: 4;
+      color: var(--title-gold);
+      font-size: 22px;
+      font-weight: 1000;
+      text-shadow: 0 3px 0 #000;
+    }
+
+    .slot-legend {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-top: 4px;
+      color: var(--text-cream);
+      font-size: 12px;
+      font-weight: 1000;
+      text-shadow: 0 2px 0 #000;
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      background: #48e061;
+      border: 2px solid #090909;
+      box-shadow: 0 0 0 2px rgba(72, 224, 97, .25);
+    }
+
+    .inventory-shell {
+      display: grid;
+      margin-top: 8px;
+    }
+
+    .inventory-tabbar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: -3px;
+      padding: 0 4px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .inventory-tab {
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text-muted);
+      background: linear-gradient(#55331f, #20130b);
+      border: 3px solid #090604;
+      box-shadow: inset 0 0 0 2px #805931;
+      font-weight: 1000;
+      text-shadow: 0 2px 0 #000;
+      cursor: pointer;
+    }
+
+    .inventory-tab small {
+      color: #f4d989;
+      font-size: 11px;
+    }
+
+    .inventory-tab.active {
+      color: var(--title-gold);
+      background: linear-gradient(#a64f20, #5e290d);
+      box-shadow: inset 0 0 0 2px #d78a37, 0 -2px 0 rgba(255, 215, 109, .18);
+    }
+
+    .stone-inventory-panel,
+    .equipment-storage-panel {
+      padding: 8px;
+      background: linear-gradient(#1d1d1d, #070707);
+      border: 3px solid #090909;
+      box-shadow: inset 0 0 0 2px #3a332d;
+      min-width: 0;
+    }
+
+    .inventory-tab-panel[hidden] {
+      display: none;
+    }
+
+    .stone-inventory-panel[data-component].active,
+    .equipment-storage-panel[data-component].active {
+      outline: 3px solid var(--focus);
+      outline-offset: -3px;
+    }
+
+    .stone-inventory-grid,
+    .equipment-storage-grid {
+      display: grid;
+      gap: 6px;
+      margin-top: 7px;
+    }
+
+    .stone-inventory-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .equipment-storage-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .slot.stone-slot {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(#304d25, #152513);
+      box-shadow: inset 0 0 0 2px #6ea24b;
+    }
+
+    .slot.stone-slot.active-slot {
+      outline: 3px solid #48e061;
+      outline-offset: -3px;
+    }
+
+    .slot.stone-slot.inactive-slot {
+      opacity: .78;
+      box-shadow: inset 0 0 0 2px #5d6546;
+    }
+
+    .slot.stone-slot.drag-source {
+      transform: translateY(-2px);
+      box-shadow: inset 0 0 0 2px #e8cb73, 0 0 0 2px rgba(232, 203, 115, .28);
+    }
+
+    .slot.stone-slot.drag-target {
+      outline: 3px dashed #48e061;
+      outline-offset: -6px;
+      background: linear-gradient(#3f6b2c, #1d3415);
+    }
+
+    .cooldown-ring {
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      background: conic-gradient(#7ee07c 0deg 236deg, rgba(0,0,0,.45) 236deg 360deg);
+      opacity: .55;
+      z-index: 0;
+    }
+
+    .cooldown-ring.slow {
+      background: conic-gradient(#f0c25d 0deg 114deg, rgba(0,0,0,.48) 114deg 360deg);
+    }
+
+    .slot.stone-slot > span:not(.cooldown-ring),
+    .slot.stone-slot > small {
+      position: relative;
+      z-index: 1;
+    }
+
+    .slot-tag {
+      position: absolute;
+      right: 3px;
+      top: 3px;
+      z-index: 2;
+      padding: 1px 3px;
+      color: #241405;
+      background: var(--title-gold);
+      border: 2px solid #0b0704;
+      font-size: 9px;
+      font-weight: 1000;
+      line-height: 1;
+    }
+
+    .center-icon-dock {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+      margin-top: 8px;
+      padding: 6px 8px;
+      background: linear-gradient(#2b221a, #14100c);
+      border: 3px solid #090604;
+      box-shadow: inset 0 0 0 2px #514131;
+    }
+
+    .keeper-icon-button {
+      position: relative;
+      min-height: 46px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(#7c371f, #35130c);
+      border: 4px solid #140906;
+      box-shadow: inset 0 0 0 2px #a85e2f, 0 3px 0 rgba(0,0,0,.4);
+      cursor: pointer;
+    }
+
+    .keeper-icon-button.active {
+      background: linear-gradient(#b8611f, #713010);
+      box-shadow: inset 0 0 0 2px #f0a143, 0 0 0 2px rgba(255,196,82,.22), 0 3px 0 rgba(0,0,0,.4);
+    }
+
+    .keeper-icon {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      display: block;
+    }
+
+    .keeper-icon.chest {
+      border: 4px solid #2b1509;
+      background: linear-gradient(#d39435 0 45%, #8f4f19 46% 100%);
+      box-shadow: inset 0 0 0 3px #f3c45e;
+    }
+
+    .keeper-icon.chest::before {
+      content: "";
+      position: absolute;
+      left: 5px;
+      right: 5px;
+      top: 9px;
+      height: 4px;
+      background: #3a1c0c;
+    }
+
+    .keeper-icon.cross::before,
+    .keeper-icon.cross::after {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 2px;
+      width: 7px;
+      height: 24px;
+      background: var(--title-gold);
+      border: 3px solid #2a1208;
+    }
+
+    .keeper-icon.cross::after {
+      left: 2px;
+      top: 11px;
+      width: 24px;
+      height: 7px;
+    }
+
+    .keeper-icon.ribbon::before,
+    .keeper-icon.ribbon::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      width: 10px;
+      height: 22px;
+      border: 4px solid #262626;
+      background: #aeb2aa;
+      transform: skewY(28deg);
+    }
+
+    .keeper-icon.ribbon::before {
+      left: 3px;
+    }
+
+    .keeper-icon.ribbon::after {
+      right: 3px;
+      transform: skewY(-28deg);
+    }
+
+    .keeper-icon.box {
+      width: 30px;
+      height: 24px;
+      border: 4px solid #221309;
+      background: linear-gradient(135deg, #c9974b 0 48%, #7e491b 49% 100%);
+      box-shadow: inset 0 0 0 3px #e5be69;
+    }
+
+    .keeper-icon.crystal {
+      width: 22px;
+      height: 30px;
+      background: linear-gradient(135deg, #9af2ff, #1677bd 55%, #0b3865);
+      border: 4px solid #122331;
+      transform: rotate(34deg);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.36);
+    }
+
+    .slot.equip {
+      background: linear-gradient(#80385b, #40182c);
+      box-shadow: inset 0 0 0 2px #c16592;
+    }
+
+    .slot.blue {
+      background: linear-gradient(#21527d, #10293f);
+      box-shadow: inset 0 0 0 2px #4385bd;
+    }
+
+    .slot.green {
+      background: linear-gradient(#335f24, #172c11);
+      box-shadow: inset 0 0 0 2px #6ea24b;
+    }
+
+    .portal-controls {
+      padding: 8px 10px 10px;
+      margin-bottom: 8px;
+      background: linear-gradient(#242424, #111);
+      border: 3px solid #090604;
+      box-shadow: inset 0 0 0 2px #3d3328;
+    }
+
+    .difficulty-select {
+      width: 154px;
+      min-height: 32px;
+      margin: 0 auto 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text-cream);
+      background: linear-gradient(#69301b, #371509);
+      border: 3px solid #160905;
+      box-shadow: inset 0 0 0 2px #9e6540, 0 3px 0 rgba(0,0,0,.32);
+      font-size: 13px;
+      font-weight: 1000;
+      text-shadow: 0 2px 0 #000;
+    }
+
+    .difficulty-select .mode-icon {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #160905;
+      background: radial-gradient(circle at 45% 35%, #f4d8a5, #9b6b35);
+      transform: rotate(45deg);
+    }
+
+    .act-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .act-tab {
+      min-height: 33px;
+      color: #caa177;
+      background: linear-gradient(#703019, #321107);
+      border: 3px solid #170804;
+      box-shadow: inset 0 0 0 2px #a05a23;
+      font-size: 12px;
+      font-weight: 1000;
+      text-shadow: 0 2px 0 #000;
+    }
+
+    .act-tab.active {
+      color: var(--title-gold);
+      background: linear-gradient(#b55b1e, #7b2d08);
+      box-shadow: inset 0 0 0 2px #f09a32, 0 0 0 2px rgba(255, 174, 61, .24);
+    }
+
+    .portal-map {
+      position: relative;
+      min-height: 314px;
+      padding: 14px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 22% 80%, rgba(124, 91, 55, .34) 0 12px, transparent 13px),
+        radial-gradient(circle at 77% 25%, rgba(124, 91, 55, .25) 0 10px, transparent 11px),
+        radial-gradient(circle at 86% 74%, rgba(124, 91, 55, .20) 0 16px, transparent 17px),
+        linear-gradient(27deg, transparent 0 46%, rgba(123, 93, 58, .22) 47% 49%, transparent 50%),
+        repeating-linear-gradient(90deg, rgba(90, 70, 45, .16) 0 2px, transparent 2px 54px),
+        repeating-linear-gradient(0deg, rgba(90, 70, 45, .12) 0 2px, transparent 2px 54px),
+        #d5c38c;
+      border: 4px solid #17100a;
+      box-shadow: inset 0 0 0 3px #68563c, inset 0 0 0 7px #2a2925;
+    }
+
+    .portal-map::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      background:
+        linear-gradient(150deg, transparent 0 56%, rgba(96, 75, 48, .2) 57% 59%, transparent 60%),
+        radial-gradient(circle at 18% 28%, rgba(114, 92, 61, .25) 0 3px, transparent 4px),
+        radial-gradient(circle at 36% 62%, rgba(114, 92, 61, .26) 0 4px, transparent 5px),
+        radial-gradient(circle at 69% 50%, rgba(114, 92, 61, .23) 0 3px, transparent 4px);
+      opacity: .9;
+      pointer-events: none;
+    }
+
+    .map-title {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      z-index: 4;
+      width: 178px;
+      padding: 6px 10px;
+      transform: translateX(-50%);
+      text-align: center;
+      color: #60431f;
+      font-weight: 1000;
+      border: 3px solid #74542e;
+      background: #dcca9b;
+      box-shadow: 0 3px 0 rgba(70, 42, 20, .25);
+    }
+
+    .map-compass {
+      position: absolute;
+      left: 15px;
+      bottom: 38px;
+      width: 86px;
+      height: 86px;
+      border: 3px solid rgba(99, 76, 48, .52);
+      border-radius: 50%;
+      opacity: .6;
+    }
+
+    .map-compass::before,
+    .map-compass::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -14px;
+      width: 3px;
+      height: 112px;
+      background: rgba(99, 76, 48, .54);
+      transform: translateX(-50%);
+    }
+
+    .map-compass::after {
+      top: 50%;
+      left: -14px;
+      width: 112px;
+      height: 3px;
+      transform: translateY(-50%);
+    }
+
+    .map-ruin {
+      position: absolute;
+      z-index: 1;
+      width: 42px;
+      height: 28px;
+      border: 3px solid rgba(94, 70, 43, .54);
+      background: rgba(163, 134, 84, .35);
+      box-shadow: inset 0 0 0 3px rgba(222, 199, 143, .25);
+    }
+
+    .map-ruin.one {
+      left: 20px;
+      top: 92px;
+      transform: rotate(-11deg);
+    }
+
+    .map-ruin.two {
+      right: 18px;
+      bottom: 34px;
+      transform: rotate(8deg);
+    }
+
+    .route-svg {
+      position: absolute;
+      left: 54px;
+      top: 68px;
+      z-index: 2;
+      width: 188px;
+      height: 246px;
+      overflow: visible;
+    }
+
+    .route-shadow {
+      fill: none;
+      stroke: rgba(73, 55, 33, .42);
+      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .route-line {
+      fill: none;
+      stroke: rgba(231, 209, 149, .72);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1 10;
+    }
+
+    .stage-node {
+      position: absolute;
+      z-index: 5;
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      color: #f8e8bd;
+      font-size: 11px;
+      font-weight: 1000;
+      border-radius: 50%;
+      border: 4px solid #4a3320;
+      background: radial-gradient(circle at 35% 32%, #fff2c8, #b89255 60%, #4a3320 61%);
+      box-shadow: 0 2px 0 rgba(0,0,0,.35), 0 0 0 2px rgba(68, 48, 28, .38);
+      text-shadow: 0 2px 0 #000;
+    }
+
+    .stage-node.locked {
+      background: radial-gradient(circle at 35% 32%, #8a7b5a, #4b3b29 62%, #21170f 63%);
+      color: #2f2216;
+    }
+
+    .stage-node.current {
+      width: 34px;
+      height: 34px;
+      color: #f9f7d7;
+      border-color: #f8f6d2;
+      background: radial-gradient(circle at 35% 32%, #fff7dc, #d4af64 62%, #51331d 63%);
+      box-shadow: 0 0 0 5px #1fd957, 0 0 0 8px rgba(31, 217, 87, .28), 0 3px 0 rgba(0,0,0,.4);
+    }
+
+    .stage-node.boss {
+      width: 36px;
+      height: 36px;
+      background: radial-gradient(circle at 35% 32%, #ad9d74, #59412a 60%, #21140d 61%);
+      box-shadow: 0 0 0 3px #9d793e, 0 3px 0 rgba(0,0,0,.35);
+    }
+
+    .stage-flag {
+      position: absolute;
+      left: 13px;
+      bottom: 28px;
+      width: 4px;
+      height: 34px;
+      background: #3d2818;
+      border: 1px solid #150d08;
+    }
+
+    .stage-flag::before {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 1px;
+      width: 28px;
+      height: 19px;
+      background: linear-gradient(#ed4b65, #b21f39);
+      border: 3px solid #170b08;
+      clip-path: polygon(0 0, 100% 10%, 74% 52%, 100% 92%, 0 100%);
+    }
+
+    .reward-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .reward-card {
+      min-height: 72px;
+      padding: 8px;
+      text-align: center;
+      background: linear-gradient(#2c2c2c, #090909);
+      border: 3px solid #090604;
+      box-shadow: inset 0 0 0 2px #5d4730;
+      color: var(--text-cream);
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 38px;
+      min-height: 18px;
+      padding: 1px 5px;
+      color: #101010;
+      background: var(--warning);
+      border: 2px solid #111;
+      font-size: 10px;
+      font-weight: 1000;
+      text-shadow: none;
+    }
+
+    .badge.market {
+      background: var(--market);
+      color: white;
+      text-shadow: 0 1px 0 #001d31;
+    }
+
+    .badge.online {
+      background: #67d35f;
+    }
+
+    .badge.bound {
+      background: #a49c8b;
+    }
+
+    .combat-strip {
+      position: absolute;
+      left: 72px;
+      width: min(34%, 360px);
+      bottom: 176px;
+      min-height: 96px;
+      display: block;
+      background:
+        radial-gradient(circle at 16% 35%, rgba(255,255,255,.4) 0 14px, transparent 15px),
+        linear-gradient(135deg, transparent 0 16%, rgba(97, 113, 85, .72) 17% 23%, transparent 24%),
+        linear-gradient(155deg, transparent 0 28%, rgba(139, 151, 101, .82) 29% 37%, transparent 38%),
+        linear-gradient(180deg, rgba(116,191,225,0.96) 0 43%, #7ebd63 44% 70%, #315d28 70% 74%, #4a2e1b 74%);
+      border: 4px solid #070707;
+      box-shadow: inset 0 0 0 2px #426e2f, 0 5px 0 rgba(0,0,0,0.38);
+      cursor: pointer;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .stage-info {
+      position: absolute;
+      left: 50%;
+      bottom: 8px;
+      z-index: 5;
+      min-width: 132px;
+      padding: 2px 10px;
+      transform: translateX(-50%);
+      color: white;
+      text-align: center;
+      font-weight: 1000;
+      text-shadow: 0 3px 0 #000;
+    }
+
+    .stage-info small {
+      display: block;
+      color: #e9f4d3;
+      font-size: 13px;
+    }
+
+    .combat-lane {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .combat-lane::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 20px;
+      height: 13px;
+      background: linear-gradient(#86d76e, #4b943c);
+      border-top: 3px solid #d6f0a5;
+      border-bottom: 4px solid #202f1b;
+    }
+
+    .combat-lane::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 21px;
+      background:
+        repeating-linear-gradient(90deg, rgba(0,0,0,.18) 0 8px, transparent 8px 22px),
+        linear-gradient(#5b3821, #2f1d12);
+    }
+
+    .hero {
+      position: absolute;
+      left: 22px;
+      bottom: 18px;
+      width: 68px;
+      height: 78px;
+      z-index: 4;
+    }
+
+    .hero .head {
+      position: absolute;
+      left: 22px;
+      top: 12px;
+      width: 34px;
+      height: 33px;
+      border: 3px solid #101010;
+      border-radius: 40%;
+      background: #f0c09a;
+    }
+
+    .hero .cap {
+      position: absolute;
+      left: 14px;
+      top: 0;
+      width: 46px;
+      height: 24px;
+      border: 3px solid #101010;
+      border-radius: 48% 48% 20% 20%;
+      background: #efe7cb;
+      transform: rotate(8deg);
+      z-index: 2;
+    }
+
+    .hero .body {
+      position: absolute;
+      left: 18px;
+      top: 39px;
+      width: 39px;
+      height: 34px;
+      border: 3px solid #101010;
+      background: linear-gradient(#7e5331, #3e2618);
+    }
+
+    .hero .scarf {
+      position: absolute;
+      left: 19px;
+      top: 35px;
+      width: 41px;
+      height: 10px;
+      border: 2px solid #101010;
+      background: #314c24;
+      z-index: 3;
+    }
+
+    .hero .rockpack {
+      position: absolute;
+      left: -2px;
+      top: 27px;
+      width: 30px;
+      height: 32px;
+      border: 3px solid #101010;
+      border-radius: 45%;
+      background: linear-gradient(135deg, #9ea394, #565c51);
+    }
+
+    .hero .arm {
+      position: absolute;
+      right: 0;
+      top: 43px;
+      width: 26px;
+      height: 12px;
+      border: 3px solid #101010;
+      background: #7e5331;
+    }
+
+    .hero .charm {
+      position: absolute;
+      left: 7px;
+      bottom: 7px;
+      width: 12px;
+      height: 12px;
+      border: 2px solid #111;
+      background: var(--ruby-red);
+      transform: rotate(45deg);
+    }
+
+    .hero .shadow {
+      position: absolute;
+      left: 13px;
+      bottom: 0;
+      width: 52px;
+      height: 6px;
+      background: rgba(0,0,0,0.35);
+      border-radius: 50%;
+    }
+
+    .projectile {
+      position: absolute;
+      left: 88px;
+      bottom: 66px;
+      width: 28px;
+      height: 26px;
+      border: 3px solid #111;
+      border-radius: 45%;
+      background: linear-gradient(135deg, #a5a99c, #53594e);
+      animation: throwRock 1.6s linear infinite;
+      z-index: 4;
+    }
+
+    @keyframes throwRock {
+      0% { transform: translateX(0) translateY(0); opacity: 0; }
+      15% { opacity: 1; }
+      70% { transform: translateX(142px) translateY(-8px); opacity: 1; }
+      100% { transform: translateX(186px) translateY(5px); opacity: 0; }
+    }
+
+    .enemy {
+      position: absolute;
+      right: 66px;
+      bottom: 23px;
+      width: 62px;
+      height: 52px;
+      border: 4px solid #111;
+      border-radius: 48%;
+      background:
+        radial-gradient(circle at 35% 55%, #111 0 4px, transparent 5px),
+        radial-gradient(circle at 65% 55%, #111 0 4px, transparent 5px),
+        linear-gradient(135deg, #9ba08f, #4e554b);
+      box-shadow: inset -6px -7px 0 rgba(0,0,0,0.18);
+      z-index: 3;
+    }
+
+    .enemy::before {
+      content: "";
+      position: absolute;
+      left: 15px;
+      top: -13px;
+      width: 32px;
+      height: 18px;
+      border: 3px solid #253b1b;
+      background: var(--moss-green);
+      border-radius: 50%;
+    }
+
+    .enemy.two {
+      right: 22px;
+      transform: scale(0.82);
+      filter: brightness(0.9);
+    }
+
+    .enemy-hp {
+      position: absolute;
+      right: 22px;
+      top: 10px;
+      width: 132px;
+      height: 16px;
+      border: 3px solid #070707;
+      background: #1b0d0d;
+      z-index: 5;
+    }
+
+    .enemy-hp span {
+      display: block;
+      width: 68%;
+      height: 100%;
+      background: linear-gradient(90deg, #d2392e, #f07a5e);
+    }
+
+    .damage {
+      position: absolute;
+      right: 158px;
+      top: 35px;
+      color: #fff;
+      font-size: 26px;
+      font-weight: 1000;
+      text-shadow: 0 3px 0 #000;
+      z-index: 5;
+    }
+
+    .rare-drop {
+      position: absolute;
+      left: 44%;
+      top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      color: #eaffd5;
+      background: rgba(0,0,0,0.55);
+      border: 2px solid #9fff74;
+      font-weight: 1000;
+      font-size: 12px;
+      text-shadow: 0 2px 0 #000;
+      z-index: 6;
+    }
+
+    .combat-mini-dock {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      z-index: 7;
+      display: flex;
+      gap: 6px;
+    }
+
+    .combat-mini-button {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 3px solid #090604;
+      background: linear-gradient(#7c371f, #35130c);
+      box-shadow: inset 0 0 0 2px #a85e2f, 0 2px 0 rgba(0,0,0,.4);
+    }
+
+    .combat-mini-button .keeper-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .taskbar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      z-index: 10;
+      background: linear-gradient(#1f2527, #121719);
+      border-top: 2px solid #354044;
+      color: #e7e7e7;
+      font-weight: 800;
+    }
+
+    .start-button {
+      width: 76px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      background: #29343a;
+      border: 1px solid #50616a;
+    }
+
+    .task-app {
+      height: 34px;
+      min-width: 210px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      background: #273846;
+      border-bottom: 3px solid #3da9ff;
+    }
+
+    .tray {
+      margin-left: auto;
+      display: flex;
+      gap: 13px;
+      color: #d8d8d8;
+    }
+
+    .inspector {
+      min-height: 650px;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 10px;
+      padding: 12px;
+      background: #11100e;
+      border: 4px solid #050302;
+      box-shadow: inset 0 0 0 2px #4a3928;
+    }
+
+    .inspector h1 {
+      margin: 0;
+      color: var(--title-gold);
+      font-size: 23px;
+      line-height: 1.15;
+      text-shadow: 0 3px 0 #000;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .segmented button {
+      min-height: 34px;
+      color: var(--text-cream);
+      background: #211811;
+      border: 2px solid #5e4630;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .segmented button.active {
+      color: #10200e;
+      background: var(--title-gold);
+      border-color: #fff0b5;
+    }
+
+    .inspector-body {
+      min-height: 0;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .inspector-card {
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #1a130d;
+      border: 2px solid #4b3522;
+    }
+
+    .inspector-card h2,
+    .inspector-card h3 {
+      margin: 0 0 8px;
+      color: var(--title-gold);
+      font-size: 16px;
+    }
+
+    .inspector-card p {
+      margin: 0 0 8px;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 23px;
+      padding: 2px 7px;
+      color: var(--text-cream);
+      background: #272019;
+      border: 1px solid #684b31;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .component-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .component-list button {
+      min-height: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-cream);
+      background: #201712;
+      border: 2px solid #4a3421;
+      padding: 5px 8px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .component-list button.active {
+      border-color: var(--focus);
+      color: #efffde;
+      background: #1b2817;
+    }
+
+    .scope {
+      color: #111;
+      background: var(--moss-green);
+      padding: 1px 4px;
+      font-size: 10px;
+      font-weight: 1000;
+      white-space: nowrap;
+    }
+
+    .scope.expansion {
+      background: #8aa0ff;
+    }
+
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      display: none;
+      place-items: center;
+      background: rgba(0,0,0,0.55);
+      z-index: 8;
+    }
+
+    .modal-backdrop.open {
+      display: grid;
+    }
+
+    .modal {
+      width: min(460px, 92%);
+      background: var(--panel-mid);
+      border: 4px solid #050302;
+      box-shadow: inset 0 0 0 2px var(--panel-outer), 0 12px 0 rgba(0,0,0,0.35);
+    }
+
+    .modal .title-bar {
+      height: 42px;
+      font-size: 20px;
+    }
+
+    .modal-body {
+      padding: 14px;
+      color: var(--text-cream);
+      background: #1b120b;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 12px;
+      background: #100a06;
+    }
+
+    @media (max-width: 1260px) {
+      body {
+        min-width: 980px;
+      }
+
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .inspector {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="desktop" aria-label="Taskstonebar main UI preview">
+      <div class="desktop-icons">
+        <div class="desktop-icon"><div class="icon-box"></div><span>내 PC</span></div>
+        <div class="desktop-icon"><div class="icon-box"></div><span>문서</span></div>
+        <div class="desktop-icon"><div class="icon-box"></div><span>자료.zip</span></div>
+        <div class="desktop-icon"><div class="icon-box"></div><span>휴지통</span></div>
+      </div>
+
+      <div class="top-bar" data-component="TopResourceBar">
+        <div class="counter"><i class="res-icon"></i><span>12.8A</span></div>
+        <div class="counter"><i class="res-icon"></i><span>3,450</span></div>
+        <div class="counter"><i class="res-icon"></i><span>28,170</span></div>
+        <div class="counter"><i class="res-icon"></i><span>5,860</span></div>
+        <div class="counter"><i class="res-icon"></i><span>1,240</span></div>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-button" data-component-trigger="SteamSyncStatus" title="Steam sync">S</button>
+        <button class="icon-button" data-component-trigger="ServerModeBadge" title="Server mode">M</button>
+        <button class="icon-button" title="Menu">≡</button>
+      </div>
+
+      <div class="window-grid">
+        <article class="game-window" data-component="StatusWindow">
+          <header class="title-bar">스테이터스</header>
+          <div class="title-controls">
+            <button class="window-button">−</button>
+            <button class="window-button">×</button>
+          </div>
+          <div class="window-body">
+            <section class="parchment status-list-panel">
+              <div class="status-class-ribbon">Stone Keeper</div>
+              <div class="status-scroll-window">
+                <div class="status-list-row"><span>Level</span><b>27</b></div>
+                <div class="status-list-row"><span>EXP</span><b>3,354,766 / 9,866,299</b></div>
+                <div class="status-list-row"><span>Basic Attack DPS</span><b>48.3</b></div>
+                <div class="status-list-row"><span>Attack Damage</span><b>57</b></div>
+                <div class="status-list-row"><span>Max HP</span><b>65</b></div>
+                <div class="status-list-row"><span>Move Speed</span><b>0.90</b></div>
+                <div class="status-list-row"><span>Stone Drop Bonus</span><b>+65%</b></div>
+                <div class="status-list-row"><span>Boss Damage</span><b>+18%</b></div>
+              </div>
+              <div class="status-scroll-thumb"></div>
+              <button class="status-search-button" aria-label="스탯 상세 보기"></button>
+            </section>
+
+            <section class="skill-panel">
+              <div class="skill-head"><span class="skill-cross">+</span><span>Skill Points: 0</span></div>
+              <div class="skill-tree">
+                <div class="skill-level-track">
+                  <span class="track-label zero">0</span>
+                  <span class="track-label ten">10</span>
+                  <span class="track-label thirty">30</span>
+                  <span class="track-mark zero"></span>
+                  <span class="track-mark ten"></span>
+                  <span class="track-mark thirty"></span>
+                </div>
+                <div class="skill-rows">
+                  <div class="skill-tier">
+                    <div class="tier-arrow"></div>
+                    <div class="skill-slot"><span class="skill-glyph stone-throw"></span><small>2/2</small></div>
+                    <div class="skill-slot"><span class="skill-glyph guard"></span><small>4/8</small></div>
+                    <div class="skill-slot"><span class="skill-glyph flame"></span><small>4/5</small></div>
+                  </div>
+                  <div class="skill-tier">
+                    <div class="tier-arrow"></div>
+                    <div class="skill-slot"><span class="skill-glyph"></span><small>1/8</small></div>
+                    <div class="skill-slot"><span class="skill-glyph focus"></span><small>1/3</small></div>
+                    <div class="skill-slot"><span class="skill-glyph gold"></span><small>5/5</small></div>
+                  </div>
+                  <div class="skill-tier">
+                    <div class="tier-arrow"></div>
+                    <div class="skill-slot"><span class="skill-glyph flame"></span></div>
+                    <div class="skill-slot"><span class="skill-glyph stone-throw"></span></div>
+                    <div class="skill-slot"><span class="skill-glyph guard"></span></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </article>
+
+        <article class="game-window active" data-component="HeroInventoryWindow">
+          <header class="title-bar">돌지기</header>
+          <div class="title-controls">
+            <button class="window-button">?</button>
+            <button class="window-button">×</button>
+          </div>
+          <div class="window-body">
+            <section class="hero-panel">
+              <div class="gear-column">
+                <div class="slot equip"><span class="item-rock"></span><small>무기</small></div>
+                <div class="slot equip"><span class="item-gem"></span><small>룬</small></div>
+                <div class="slot equip"><span class="item-cube"></span><small>장갑</small></div>
+                <div class="slot equip"><span class="item-cube"></span><small>신발</small></div>
+                <div class="slot locked">잠금</div>
+                <div class="slot locked">잠금</div>
+              </div>
+
+              <div class="keeper-card">
+                <div class="class-chip">돌팔매꾼</div>
+                <div class="keeper-sprite" aria-label="돌지기 캐릭터">
+                  <div class="k-pack"></div>
+                  <div class="k-cap"></div>
+                  <div class="k-head"></div>
+                  <div class="k-scarf"></div>
+                  <div class="k-body"></div>
+                  <div class="k-charm"></div>
+                </div>
+                <div class="level-chip">Lv. 27</div>
+                <div class="slot-legend">
+                  <span class="pulse-dot"></span>
+                  <span>활성 돌 4/30</span>
+                </div>
+              </div>
+
+              <div class="gear-column">
+                <div class="slot blue"><span class="item-gem"></span><small>목걸</small></div>
+                <div class="slot blue"><span class="item-gem"></span><small>반지</small></div>
+                <div class="slot equip"><span class="item-rock"></span><small>스킬</small></div>
+                <div class="slot equip"><span class="item-cube"></span><small>보조</small></div>
+                <div class="slot green"><span class="item-cube"></span><small>성장</small></div>
+                <div class="slot locked">잠금</div>
+              </div>
+            </section>
+
+            <section class="inventory-shell">
+              <div class="inventory-tabbar" role="tablist" aria-label="인벤토리 탭">
+                <button class="inventory-tab active" type="button" data-inventory-tab="stone" data-inventory-component="StoneInventoryPanel">
+                  <span>돌</span><small>활성 4/30</small>
+                </button>
+                <button class="inventory-tab" type="button" data-inventory-tab="equipment" data-inventory-component="EquipmentStoragePanel">
+                  <span>장비</span><small>18/40</small>
+                </button>
+              </div>
+
+              <section class="inventory-tab-panel stone-inventory-panel" data-inventory-panel="stone" data-component="StoneInventoryPanel">
+                <div class="section-head"><span>돌 전용 인벤토리</span><span>활성 4/30</span></div>
+                <div class="stone-inventory-grid">
+                  <div class="slot stone-slot active-slot"><span class="cooldown-ring"></span><span class="slot-tag">A1</span><span class="item-rock"></span><small>1.2s</small></div>
+                  <div class="slot stone-slot active-slot drag-source"><span class="cooldown-ring slow"></span><span class="slot-tag">A2</span><span class="item-rock"></span><small>T3</small></div>
+                  <div class="slot stone-slot active-slot drag-target"><span class="cooldown-ring"></span><span class="slot-tag">A3</span><span class="item-rock"></span><small>T3</small></div>
+                  <div class="slot stone-slot active-slot"><span class="cooldown-ring slow"></span><span class="slot-tag">A4</span><span class="item-cube"></span><small>2.8s</small></div>
+                  <div class="slot stone-slot inactive-slot"><span class="item-rock"></span><small>대기</small></div>
+                  <div class="slot stone-slot inactive-slot"><span class="item-cube"></span><small>대기</small></div>
+                  <div class="slot stone-slot inactive-slot"><span class="item-rock"></span><small>T2</small></div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                </div>
+              </section>
+
+              <section class="inventory-tab-panel equipment-storage-panel" data-inventory-panel="equipment" data-component="EquipmentStoragePanel" hidden>
+                <div class="section-head"><span>장비 보관함</span><span>18/40</span></div>
+                <div class="equipment-storage-grid">
+                  <div class="slot equip"><span class="item-rock"></span><small>+3</small></div>
+                  <div class="slot blue"><span class="item-gem"></span><small>S</small></div>
+                  <div class="slot equip"><span class="item-cube"></span><small>갑옷</small></div>
+                  <div class="slot blue"><span class="item-gem"></span><small>반지</small></div>
+                  <div class="slot equip"><span class="item-rock"></span><small>스킬</small></div>
+                  <div class="slot"><span class="item-gem"></span><small>룬</small></div>
+                  <div class="slot"><span class="item-rock"></span><small>재료</small></div>
+                  <div class="slot locked">캐릭터</div>
+                  <div class="slot locked">펫</div>
+                  <div class="slot equip"><span class="item-cube"></span><small>보조</small></div>
+                  <div class="slot blue"><span class="item-gem"></span><small>목걸</small></div>
+                  <div class="slot locked">상자</div>
+                  <div class="slot equip"><span class="item-rock"></span><small>망치</small></div>
+                  <div class="slot blue"><span class="item-gem"></span><small>팔찌</small></div>
+                  <div class="slot"><span class="item-cube"></span><small>석판</small></div>
+                  <div class="slot"><span class="item-rock"></span><small>파편</small></div>
+                  <div class="slot locked">스킨</div>
+                  <div class="slot locked">상자</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                  <div class="slot locked">잠금</div>
+                </div>
+              </section>
+            </section>
+
+            <div class="center-icon-dock" data-component="KeeperIconDock" aria-label="돌지기 메뉴">
+              <button class="keeper-icon-button active" type="button" title="돌 인벤토리" data-inventory-tab="stone" data-inventory-component="StoneInventoryPanel"><span class="keeper-icon chest"></span></button>
+              <button class="keeper-icon-button" type="button" title="성장" data-component-trigger="StatusWindow"><span class="keeper-icon cross"></span></button>
+              <button class="keeper-icon-button" type="button" title="편성"><span class="keeper-icon ribbon"></span></button>
+              <button class="keeper-icon-button" type="button" title="장비 보관함" data-inventory-tab="equipment" data-inventory-component="EquipmentStoragePanel"><span class="keeper-icon box"></span></button>
+              <button class="keeper-icon-button" type="button" title="Steam 자산" data-component-trigger="InventoryWindow"><span class="keeper-icon crystal"></span></button>
+            </div>
+          </div>
+        </article>
+
+        <article class="game-window" data-component="PortalWindow">
+          <header class="title-bar">포탈</header>
+          <div class="title-controls">
+            <button class="window-button">−</button>
+            <button class="window-button">×</button>
+          </div>
+          <div class="window-body">
+            <section class="portal-controls" data-component="PortalActTabs">
+              <div class="difficulty-select"><span class="mode-icon"></span><span>Normal</span><span>▼</span></div>
+              <div class="act-tabs">
+                <button class="act-tab">Act 1</button>
+                <button class="act-tab active">Act 2</button>
+                <button class="act-tab">Act 3</button>
+              </div>
+            </section>
+            <section class="parchment portal-map">
+              <div class="map-title">그림자 초원</div>
+              <div class="map-compass"></div>
+              <div class="map-ruin one"></div>
+              <div class="map-ruin two"></div>
+              <svg class="route-svg" viewBox="0 0 188 246" aria-hidden="true">
+                <path class="route-shadow" d="M80 224 C86 198 97 185 89 163 C82 141 94 125 112 111 C134 93 129 76 110 61 C93 47 92 32 111 18" />
+                <path class="route-line" d="M80 224 C86 198 97 185 89 163 C82 141 94 125 112 111 C134 93 129 76 110 61 C93 47 92 32 111 18" />
+              </svg>
+              <div class="stage-node" style="left:42%;top:84%;">2-1</div>
+              <div class="stage-node" style="left:47%;top:73%;">2-2</div>
+              <div class="stage-node current" style="left:54%;top:61%;"><span class="stage-flag"></span>2-3</div>
+              <div class="stage-node" style="left:66%;top:49%;">2-4</div>
+              <div class="stage-node" style="left:57%;top:38%;">2-5</div>
+              <div class="stage-node" style="left:48%;top:28%;">2-6</div>
+              <div class="stage-node locked" style="left:56%;top:18%;">2-7</div>
+              <div class="stage-node boss" style="left:70%;top:15%;">B</div>
+            </section>
+          </div>
+        </article>
+      </div>
+
+      <section class="combat-strip" data-component="TaskbarCombatStrip">
+        <div class="combat-lane">
+          <div class="stage-info">
+            <small>그림자 초원</small>
+            <div>Stage 1-2</div>
+          </div>
+          <div class="enemy-hp"><span></span></div>
+          <div class="hero">
+            <div class="shadow"></div>
+            <div class="rockpack"></div>
+            <div class="cap"></div>
+            <div class="head"></div>
+            <div class="scarf"></div>
+            <div class="body"></div>
+            <div class="arm"></div>
+            <div class="charm"></div>
+          </div>
+          <div class="projectile"></div>
+          <div class="enemy"></div>
+          <div class="enemy two"></div>
+          <div class="damage">128</div>
+          <div class="rare-drop"><span class="item-cube" style="width:18px;height:18px"></span>큐브 x1</div>
+          <div class="combat-mini-dock">
+            <button class="combat-mini-button" type="button" title="자동 전투"><span class="keeper-icon cross"></span></button>
+            <button class="combat-mini-button" type="button" title="드롭"><span class="keeper-icon box"></span></button>
+            <button class="combat-mini-button" type="button" title="Steam 자산"><span class="keeper-icon crystal"></span></button>
+          </div>
+        </div>
+      </section>
+
+      <div class="modal-backdrop" id="modalBackdrop">
+        <div class="modal">
+          <header class="title-bar" id="modalTitle">소모 확인</header>
+          <div class="modal-body" id="modalBody"></div>
+          <div class="modal-actions">
+            <button class="text-button green" id="modalPrimary">확인</button>
+            <button class="text-button" id="modalClose">닫기</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="inspector">
+      <header>
+        <h1>UI 성분 인벤토리</h1>
+      </header>
+      <nav class="segmented" aria-label="Inspector tabs">
+        <button class="active" data-tab="selected">선택</button>
+        <button data-tab="mvp">MVP</button>
+        <button data-tab="future">확장</button>
+      </nav>
+      <div class="inspector-body" id="inspectorBody"></div>
+    </aside>
+  </main>
+
+  <footer class="taskbar">
+    <div class="start-button">시작</div>
+    <div class="task-app"><span class="item-cube" style="width:20px;height:20px"></span><span>돌키우기2 / Taskstonebar</span></div>
+    <div class="tray"><span>서버 LIVE</span><span>Steam SYNC</span><span>오후 04:32</span></div>
+  </footer>
+
+  <script>
+    const components = {
+      DesktopOverlayRoot: {
+        scope: "mvp",
+        role: "데스크톱 오버레이, 창 스택, 상단 자원, 작업표시줄 안전영역을 소유한다.",
+        states: ["taskbar_only", "workshop_expanded", "modal_open", "disconnected", "local_sandbox"],
+        data: ["runtime_mode", "server_mode", "steam_auth_state", "connection_state"],
+        actions: ["expand_workshop", "collapse_windows", "show_server_mode"]
+      },
+      TopResourceBar: {
+        scope: "mvp",
+        role: "골드, 루비, 재료, 촉매, 상자 대기열을 작게 보여준다.",
+        states: ["normal", "gain_animating", "capped", "stale"],
+        data: ["item_counts", "inventory_capacity", "steam_inventory_sync_state"],
+        actions: ["show_tooltip", "open_inventory_filter"]
+      },
+      StatusWindow: {
+        scope: "mvp",
+        role: "돌지기 스탯, 성장 보너스, 룬/마크 진행을 담당한다.",
+        states: ["default", "points_available", "node_unlockable", "stat_detail_open"],
+        data: ["unit_stats", "account_bonuses", "rune_or_mark_points", "stage_progress"],
+        actions: ["open_detail_stats", "invest_mark_node"]
+      },
+      HeroInventoryWindow: {
+        scope: "mvp",
+        role: "TBH Hero 패널 구조를 참고한 중앙 창. 돌/장비 탭바, 돌 전용 인벤토리, 장비 보관 인벤토리, 하단 아이콘 독, 드래그 합성을 담당한다.",
+        states: ["idle", "stone_tab_active", "equipment_tab_active", "active_slot_ready", "cooldown_running", "drag_merge_ready", "drag_hover_valid"],
+        data: ["selected_character", "selected_inventory_tab", "active_stone_slot_unlock_count", "stone_slot_cooldowns", "stone_inventory_items", "equipment_storage_items", "material_counts", "merge_recipes"],
+        actions: ["switch_inventory_tab", "drag_merge_stones", "move_stone_between_slots", "equip_item", "open_icon_shortcut"]
+      },
+      KeeperIconDock: {
+        scope: "mvp",
+        role: "돌지기 창 하단의 TBH식 아이콘 메뉴다. 텍스트 CTA 대신 돌, 성장, 편성, 장비, Steam 자산 진입을 아이콘으로 제공한다.",
+        states: ["stone_active", "equipment_active", "shortcut_hover", "shortcut_disabled"],
+        data: ["selected_inventory_tab", "available_shortcuts"],
+        actions: ["switch_inventory_tab", "open_status", "open_formation_preview", "open_inventory"]
+      },
+      StoneEquipmentTabBar: {
+        scope: "mvp",
+        role: "중앙 창의 돌/장비 인벤토리 본문을 전환하는 TBH식 상단 탭바다.",
+        states: ["stone_active", "equipment_active", "tab_locked", "tab_alert"],
+        data: ["selected_inventory_tab", "active_stone_slot_unlock_count", "equipment_storage_capacity"],
+        actions: ["switch_inventory_tab"]
+      },
+      StoneInventoryPanel: {
+        scope: "mvp",
+        role: "돌만 들어가는 전용 격자다. 왼쪽 위부터 열린 활성 슬롯의 돌만 쿨타임을 돌며 공격하고, 같은 티어 돌은 드래그로 합성한다.",
+        states: ["active_slot_ready", "inactive_storage", "cooldown_running", "drag_source", "drag_hover_valid", "drag_hover_invalid", "slot_locked"],
+        data: ["stone_inventory_items", "active_stone_slot_unlock_count", "stone_slot_cooldowns", "merge_recipes"],
+        actions: ["drag_merge_stones", "move_stone_between_slots", "inspect_stone"]
+      },
+      EquipmentStoragePanel: {
+        scope: "mvp",
+        role: "장비, 룬, 펫, 액세서리, 상자처럼 돌이 아닌 보관 아이템을 모아두는 분리 인벤토리다.",
+        states: ["normal", "filtered", "full", "item_selected", "locked_capacity"],
+        data: ["equipment_storage_items", "inventory_capacity", "filters", "server_bound_items"],
+        actions: ["equip_item", "inspect_item", "open_steam_market", "sort_storage"]
+      },
+      PortalWindow: {
+        scope: "mvp",
+        role: "난이도, Act 탭, 양피지 경로 맵, 현재 스테이지, 보스 게이트를 담당한다.",
+        states: ["difficulty_selected", "act_selected", "current_stage", "next_available", "locked", "boss_ready"],
+        data: ["selected_difficulty", "selected_act", "map_progress", "current_map", "enemy_drop_groups"],
+        actions: ["change_difficulty", "switch_act", "enter_stage", "open_boss_gate"]
+      },
+      PortalActTabs: {
+        scope: "mvp",
+        role: "포탈 상단의 난이도 선택과 Act 탭 전환을 담당한다.",
+        states: ["normal_selected", "act_selected", "locked_act", "alert"],
+        data: ["selected_difficulty", "selected_act", "act_unlock_state"],
+        actions: ["change_difficulty", "switch_act"]
+      },
+      InventoryWindow: {
+        scope: "mvp",
+        role: "Steam Inventory 자산과 서버 귀속 아이템을 같은 화면에서 구분해 보여준다.",
+        states: ["loading", "stale", "synced", "empty", "filtered", "action_menu_open"],
+        data: ["item_instances", "steam_inventory_assets", "server_bound_items", "economy_overlay", "filters"],
+        actions: ["feed", "cube", "synthesize", "refine", "equip", "reveal", "open_steam_market"]
+      },
+      TaskbarCombatStrip: {
+        scope: "mvp",
+        role: "작업표시줄 위에 항상 켜져 있는 전투 씬이다. 하단 인벤토리 독 대신 지역, 돌 투척, 적, 드롭, 작은 전투 아이콘을 보여준다.",
+        states: ["farming", "elite_encounter", "boss_encounter", "rare_drop", "offline_disabled", "local_sandbox"],
+        data: ["current_map", "current_stage", "wave_state", "player_unit_state", "enemy_unit_state", "drop_events"],
+        actions: ["toggle_auto_combat", "open_loot_detail", "open_steam_asset"]
+      },
+      SteamSyncStatus: {
+        scope: "mvp",
+        role: "Steam 로그인, 인벤토리 동기화, stale/error/local_sandbox 상태를 보여준다.",
+        states: ["not_logged_in", "syncing", "synced", "stale", "error", "disabled_local_sandbox"],
+        data: ["auth_state", "inventory_sync_state", "server_mode"],
+        actions: ["login", "refresh", "open_inventory"]
+      },
+      ServerModeBadge: {
+        scope: "mvp",
+        role: "live, staging, local_sandbox 경제 모드를 명확히 표시한다.",
+        states: ["live", "staging", "local_sandbox"],
+        data: ["server_mode", "marketable_drops_enabled"],
+        actions: ["open_mode_warning"]
+      },
+      FormationPanel: {
+        scope: "expansion",
+        role: "실시간 파티 모집이 아니라 내 계정 캐릭터 1~4명 편성을 담당한다.",
+        states: ["solo", "slot_locked", "slot_empty", "role_bonus_active", "contribution_view"],
+        data: ["owned_characters", "formation_slots", "class_roles", "unlock_conditions"],
+        actions: ["assign_character", "show_bonus", "unlock_slot"]
+      },
+      EquipmentPanel: {
+        scope: "expansion",
+        role: "장비 슬롯, sealed roll, visible bucket, bound instance, 강화/귀속 경고를 담당한다.",
+        states: ["no_equipment", "sealed", "visible_bucket", "bound_instance", "equipped", "bind_warning"],
+        data: ["equipment_items", "random_option_mode", "option_family", "option_tier", "enhancement_band"],
+        actions: ["reveal", "equip", "reroll", "enhance", "reforge"]
+      },
+      PetCollectionPanel: {
+        scope: "expansion",
+        role: "펫 알/본체/스킨, 부화, 패시브 보너스, 장착 슬롯을 담당한다.",
+        states: ["egg_tradeable", "hatch_ready", "bound_pet", "equipped", "passive_active"],
+        data: ["pet_assets", "pet_instances", "pet_passives", "equip_state"],
+        actions: ["hatch", "equip_pet", "inspect_passive"]
+      },
+      ClanMinePanel: {
+        scope: "expansion",
+        role: "재료 기부, 클랜 광산 진행, 그룹 버프, 시즌 랭킹 압박을 담당한다.",
+        states: ["not_joined", "donation_ready", "insufficient_materials", "buff_unlocked"],
+        data: ["clan_state", "donation_requirements", "clan_mine_progress", "season_rank"],
+        actions: ["donate", "confirm_burn", "claim_clan_buff"]
+      }
+    };
+
+    const atoms = [
+      "WindowFrame", "WindowTitleBar", "IconButton", "TextButton", "ToggleButton",
+      "TabBar", "ProgressBar", "Slot", "SlotGrid", "Badge", "ModalFrame",
+      "TooltipFrame", "ToastFrame", "ItemIcon", "ItemCard", "CostLine", "ResultPreview"
+    ];
+
+    let selected = "HeroInventoryWindow";
+    let activeTab = "selected";
+    const body = document.getElementById("inspectorBody");
+
+    function pillList(items) {
+      return `<div class="pill-list">${items.map(item => `<span class="pill">${item}</span>`).join("")}</div>`;
+    }
+
+    function scopeLabel(scope) {
+      return `<span class="scope ${scope === "expansion" ? "expansion" : ""}">${scope === "mvp" ? "MVP" : "EXP"}</span>`;
+    }
+
+    function renderSelected() {
+      const c = components[selected];
+      body.innerHTML = `
+        <section class="inspector-card">
+          <h2>${selected} ${scopeLabel(c.scope)}</h2>
+          <p>${c.role}</p>
+        </section>
+        <section class="inspector-card">
+          <h3>States</h3>
+          ${pillList(c.states)}
+        </section>
+        <section class="inspector-card">
+          <h3>Data</h3>
+          ${pillList(c.data)}
+        </section>
+        <section class="inspector-card">
+          <h3>Actions</h3>
+          ${pillList(c.actions)}
+        </section>
+        <section class="inspector-card">
+          <h3>Atoms</h3>
+          ${pillList(atoms)}
+        </section>
+      `;
+    }
+
+    function renderList(scope) {
+      const entries = Object.entries(components).filter(([, value]) => value.scope === scope);
+      body.innerHTML = `
+        <section class="inspector-card">
+          <h2>${scope === "mvp" ? "MVP 필수 표면" : "확장 대비 표면"}</h2>
+          <div class="component-list">
+            ${entries.map(([key, value]) => `
+              <button data-select="${key}" class="${selected === key ? "active" : ""}">
+                <span>${key}</span>${scopeLabel(value.scope)}
+              </button>
+            `).join("")}
+          </div>
+        </section>
+      `;
+    }
+
+    function setInventoryTab(tabName) {
+      document.querySelectorAll("[data-inventory-tab]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.inventoryTab === tabName);
+      });
+      document.querySelectorAll("[data-inventory-panel]").forEach(panel => {
+        panel.hidden = panel.dataset.inventoryPanel !== tabName;
+      });
+    }
+
+    function render() {
+      if (selected === "StoneInventoryPanel") setInventoryTab("stone");
+      if (selected === "EquipmentStoragePanel") setInventoryTab("equipment");
+      document.querySelectorAll("[data-component]").forEach(el => {
+        el.classList.toggle("active", el.dataset.component === selected);
+      });
+      document.querySelectorAll(".segmented button").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === activeTab);
+      });
+      if (activeTab === "selected") renderSelected();
+      if (activeTab === "mvp") renderList("mvp");
+      if (activeTab === "future") renderList("expansion");
+    }
+
+    document.addEventListener("click", event => {
+      const inventoryTabNode = event.target.closest("[data-inventory-tab]");
+      const componentNode = event.target.closest("[data-component]");
+      const triggerNode = event.target.closest("[data-component-trigger]");
+      const selectNode = event.target.closest("[data-select]");
+      const tabNode = event.target.closest("[data-tab]");
+      const modalNode = event.target.closest("[data-modal]");
+
+      if (inventoryTabNode) {
+        setInventoryTab(inventoryTabNode.dataset.inventoryTab);
+        selected = inventoryTabNode.dataset.inventoryComponent;
+        activeTab = "selected";
+        render();
+        return;
+      }
+      if (componentNode) {
+        selected = componentNode.dataset.component;
+        activeTab = "selected";
+        render();
+      }
+      if (triggerNode) {
+        selected = triggerNode.dataset.componentTrigger;
+        activeTab = "selected";
+        render();
+      }
+      if (selectNode) {
+        selected = selectNode.dataset.select;
+        activeTab = "selected";
+        render();
+      }
+      if (tabNode) {
+        activeTab = tabNode.dataset.tab;
+        render();
+      }
+      if (modalNode) {
+        openModal(modalNode.dataset.modal);
+      }
+    });
+
+    const modalContent = {
+      default: {
+        title: "작업 확인",
+        body: "선택한 작업을 확인합니다."
+      },
+      synthesis: {
+        title: "합성 미리보기",
+        body: "조약돌 파편 9개를 소모해 이끼 광석 1개를 생성합니다. marketable 자산은 서버 교환 요청 후 반영됩니다."
+      },
+      external: {
+        title: "외부 Steam 링크",
+        body: "인게임 거래소는 없습니다. 선택한 아이템의 Steam Inventory 또는 Steam Market 페이지를 외부로 엽니다."
+      },
+      sync: {
+        title: "Steam Inventory 새로고침",
+        body: "서버가 Steam Inventory 상태를 다시 확인합니다. local_sandbox 모드에서는 marketable 드롭과 실제 동기화가 비활성화됩니다."
+      }
+    };
+
+    function openModal(kind) {
+      const data = modalContent[kind] || modalContent.default;
+      document.getElementById("modalTitle").textContent = data.title;
+      document.getElementById("modalBody").textContent = data.body;
+      document.getElementById("modalBackdrop").classList.add("open");
+      selected = kind === "external" || kind === "sync" ? "SteamSyncStatus" : "HeroInventoryWindow";
+      activeTab = "selected";
+      render();
+    }
+
+    document.getElementById("modalClose").addEventListener("click", () => {
+      document.getElementById("modalBackdrop").classList.remove("open");
+    });
+    document.getElementById("modalPrimary").addEventListener("click", () => {
+      document.getElementById("modalBackdrop").classList.remove("open");
+    });
+
+    render();
+  </script>
+</body>
+</html>

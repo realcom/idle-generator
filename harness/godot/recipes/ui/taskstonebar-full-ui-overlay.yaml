@@ -1,0 +1,1420 @@
+version: 1
+game: taskstonebar
+slug: taskstonebar-full-ui-overlay
+status: implemented
+backend: godot_control
+
+target:
+  project: ../../../runtime/godot-taskstonebar/project.godot
+  owner_scene: ../../../runtime/godot-taskstonebar/scenes/main.tscn
+  owner_script: ../../../runtime/godot-taskstonebar/scripts/main.gd
+  output:
+    scene: ../../../runtime/godot-taskstonebar/scenes/generated/full_ui_overlay.tscn
+    theme: ../../../runtime/godot-taskstonebar/themes/generated/taskstonebar_full_ui_overlay.tres
+  generation_policy: "Generated from harness/godot recipe; do not hand-edit generated output."
+
+sources:
+  ui_system_inventory: ../../../design/taskstonebar/ui-system-inventory.yaml
+  button_system: ../../../design/taskstonebar/button-system.yaml
+  modal_system: ../../../design/taskstonebar/modal-system.yaml
+  color_tokens: ../../../design/taskstonebar/color-tokens.yaml
+  art_direction: ../../../design/taskstonebar/art-direction.yaml
+  layout_tokens: ../../../design/taskstonebar/layout-tokens.yaml
+  component_blueprints: ../../../design/taskstonebar/component-blueprints.yaml
+  component_skins: ../../../design/taskstonebar/component-skins.yaml
+  asset_plan: ../../../design/taskstonebar/asset-plan.yaml
+  concepts:
+    - ../../../design/taskstonebar/concepts/main_ui_concept_e_refined_current_mockup_b.md
+    - ../../../design/taskstonebar/concepts/stone_raising_2_full_ui_concept_a.md
+    - ../../../design/taskstonebar/concepts/status_window_concept_c_tbh_stat_skill_layout.md
+
+blueprint_refs:
+  surface: TaskstonebarFullUiOverlay
+  sections: [desktop_scaffold, window_stack, bottom_combat_strip, modal_host]
+  components:
+    - DesktopOverlayRoot
+    - SteamSyncStatus
+    - WindowFrame
+    - WindowTitleBar
+    - StatusWindow
+    - StatusStatScrollPanel
+    - StatList
+    - StatusSearchButton
+    - SkillPointHeader
+    - SkillLevelTrack
+    - SkillTierRow
+    - SkillIconSlot
+    - HeroInventoryWindow
+    - CharacterPortrait
+    - EquipmentSlotGrid
+    - StoneEquipmentTabBar
+    - StoneInventoryPanel
+    - Slot
+    - KeeperIconDock
+    - PortalWindow
+    - PortalDifficultySelect
+    - ActTabBar
+    - ParchmentRouteMap
+    - StageNode
+    - TaskbarCombatStrip
+    - HeroCombatSprite
+    - EnemyStack
+    - EnemyHpBar
+    - DamageNumberLayer
+    - ProjectileLayer
+    - AutoCombatToggle
+    - AutoSkillToggle
+    - StageBadge
+    - LootTicker
+    - RareDropToast
+    - CombatSceneShortcutDock
+    - ModalHost
+    - ModalShell
+    - ItemDetailModal
+    - ItemDetailIdentityPanel
+    - ItemDetailStatList
+    - ItemDetailWarningChipRow
+    - ItemDetailActionFooter
+    - EquipmentUpgradeModal
+    - EquipmentUpgradeSourceTray
+    - EquipmentUpgradeResultPreview
+    - EquipmentUpgradeActionFooter
+  shared_button_roles:
+    - window_close
+    - utility_icon
+    - resource_chip
+    - inventory_tab
+    - act_tab
+    - keeper_dock_icon
+    - active_stone_slot
+    - portal_stage_node
+  shared_modal_sections:
+    - ConsumeConfirmModal
+    - EquipmentUpgradeModal
+    - BossGateModal
+    - RewardClaimModal
+    - DetailedStatsModal
+    - SyncErrorModal
+  color_token_groups:
+    - panel
+    - progress
+    - reward
+    - taskbar_strip
+
+screen:
+  orientation: landscape_desktop_overlay
+  reference_size_px: { width: 1586, height: 992 }
+  safe_area_policy: "Last 52px are reserved for the OS taskbar motif; generated Control scene must leave empty desktop regions transparent."
+  product_metaphor: "Desktop companion app: floating RPG windows above an always-on taskbar combat strip."
+  transparency_policy: "No full-screen background fill. Empty pixels between floating windows and above the combat strip must show the user's real desktop through the transparent Godot window."
+  runtime_modes:
+    taskbar_mode: "Workshop windows are collapsed/minimized; bottom combat strip and OS taskbar-safe status remain readable."
+    workshop_mode: "Status, inventory, and portal windows expand as desktop-style floating windows above the combat strip."
+  modal_policy: "Feed, merge, reward, boss, and sync modals must use desktop-window chrome and preserve taskbar combat context unless they block account/security state."
+
+layout:
+  anchor: full_rect_overlay
+  regions:
+    desktop_scaffold:
+      position_px: { x: 0, y: 0 }
+      size_px: { width: 1586, height: 992 }
+    status_window:
+      position_px: { x: 37, y: 103 }
+      size_px: { width: 458, height: 574 }
+    hero_inventory_window:
+      position_px: { x: 518, y: 50 }
+      size_px: { width: 552, height: 700 }
+    portal_window:
+      position_px: { x: 1089, y: 103 }
+      size_px: { width: 432, height: 610 }
+    taskbar_combat_strip:
+      position_px: { x: 0, y: 704 }
+      size_px: { width: 1586, height: 236 }
+    modal_host:
+      position_px: { x: 0, y: 0 }
+      size_px: { width: 1586, height: 992 }
+      scrim_bounds_px: { x: 0, y: 0, width: 1586, height: 704 }
+      equipment_upgrade_modal_px: { x: 556, y: 168, width: 474, height: 372 }
+      preserve_combat_strip: true
+    os_taskbar_safe_band:
+      position_px: { x: 0, y: 940 }
+      size_px: { width: 1586, height: 52 }
+
+assets:
+  required_keys:
+    - taskstonebar.ui.window_frame_9slice
+    - taskstonebar.ui.window_title_bar_9slice
+    - taskstonebar.ui.dark_inner_well_9slice
+    - taskstonebar.ui.status_stat_card_9slice
+    - taskstonebar.ui.resource_chip_9slice
+    - taskstonebar.ui.tab_burgundy_9slice
+    - taskstonebar.ui.slot_frame_9slice
+    - taskstonebar.ui.icon_dock_button_9slice
+    - taskstonebar.ui.keeper_dock_icon_set
+    - taskstonebar.ui.rare_drop_toast_9slice
+    - taskstonebar.ui.close_icon
+    - taskstonebar.ui.stone_icon_set
+    - taskstonebar.ui.resource_icon_set
+    - taskstonebar.ui.stone_keeper_sheet
+    - taskstonebar.ui.portal_parchment_map
+    - taskstonebar.ui.combat_ground_strip
+    - taskstonebar.ui.window_ornament_set
+    - taskstonebar.ui.native_overlay_controls
+  nineslice:
+    - key: taskstonebar.ui.window_frame_9slice
+      atom: NinePatchPanel
+      usage: nine_patch_rect
+      slice_hints: { left: 30, right: 30, top: 34, bottom: 30 }
+      content_insets: { left: 18, right: 18, top: 72, bottom: 16 }
+      target_size_px: { width: 552, height: 640 }
+    - key: taskstonebar.ui.window_title_bar_9slice
+      atom: NativePanel
+      usage: stylebox_texture
+      slice_hints: { left: 26, right: 26, top: 18, bottom: 18 }
+      content_insets: { left: 40, right: 52, top: 10, bottom: 8 }
+      target_size_px: { width: 480, height: 54 }
+    - key: taskstonebar.ui.dark_inner_well_9slice
+      atom: NinePatchPanel
+      usage: nine_patch_rect
+      slice_hints: { left: 22, right: 22, top: 22, bottom: 22 }
+      content_insets: { left: 14, right: 14, top: 14, bottom: 14 }
+      target_size_px: { width: 420, height: 410 }
+    - key: taskstonebar.ui.resource_chip_9slice
+      atom: NativePanel
+      usage: stylebox_texture
+      slice_hints: { left: 16, right: 16, top: 14, bottom: 14 }
+      content_insets: { left: 10, right: 10, top: 7, bottom: 7 }
+      target_size_px: { width: 132, height: 38 }
+    - key: taskstonebar.ui.status_stat_card_9slice
+      atom: NinePatchPanel
+      usage: nine_patch_rect
+      slice_hints: { left: 14, right: 14, top: 14, bottom: 14 }
+      content_insets: { left: 12, right: 12, top: 12, bottom: 12 }
+      target_size_px: { width: 220, height: 204 }
+    - key: taskstonebar.ui.tab_burgundy_9slice
+      atom: NativePanel
+      usage: stylebox_texture
+      slice_hints: { left: 18, right: 18, top: 16, bottom: 16 }
+      content_insets: { left: 14, right: 14, top: 8, bottom: 8 }
+      target_size_px: { width: 132, height: 44 }
+    - key: taskstonebar.ui.slot_frame_9slice
+      atom: NinePatchPanel
+      usage: nine_patch_rect
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+      content_insets: { left: 6, right: 6, top: 6, bottom: 6 }
+      target_size_px: { width: 56, height: 56 }
+    - key: taskstonebar.ui.icon_dock_button_9slice
+      atom: NativePanel
+      usage: stylebox_texture
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+      content_insets: { left: 7, right: 7, top: 7, bottom: 7 }
+      target_size_px: { width: 58, height: 58 }
+    - key: taskstonebar.ui.rare_drop_toast_9slice
+      atom: NinePatchPanel
+      usage: nine_patch_rect
+      slice_hints: { left: 22, right: 22, top: 18, bottom: 18 }
+      content_insets: { left: 12, right: 12, top: 10, bottom: 10 }
+      target_size_px: { width: 220, height: 70 }
+  fixed_atoms:
+    - key: taskstonebar.ui.close_icon
+      usage: window_close_icon
+      display_size_px: { width: 42, height: 42 }
+    - key: taskstonebar.ui.stone_icon_set
+      usage: stone_slot_enemy_and_projectile_icons
+      display_size_px: { width: 32, height: 32 }
+    - key: taskstonebar.ui.resource_icon_set
+      usage: top_resource_and_drop_icons
+      display_size_px: { width: 32, height: 32 }
+    - key: taskstonebar.ui.stone_keeper_sheet
+      usage: center_portrait_and_bottom_combat_hero
+      display_size_px: { width: 96, height: 96 }
+    - key: taskstonebar.ui.portal_parchment_map
+      usage: fixed_portal_route_map_background
+      display_size_px: { width: 372, height: 404 }
+    - key: taskstonebar.ui.combat_ground_strip
+      usage: bottom_combat_ground_backdrop
+      display_size_px: { width: 1586, height: 236 }
+    - key: taskstonebar.ui.window_ornament_set
+      usage: fixed_window_crests_and_corners
+      display_size_px: { width: 160, height: 64 }
+    - key: taskstonebar.ui.keeper_dock_icon_set
+      usage: center_keeper_dock_shortcut_icons
+      display_size_px: { width: 38, height: 38 }
+  native_controls:
+    - key: taskstonebar.ui.native_overlay_controls
+      usage: labels_progress_bars_hit_areas_damage_numbers_cooldowns_and_stage_nodes
+
+control_tree:
+  root:
+    atom: ScreenRoot
+    node_name: Root_TaskstonebarFullUiOverlay
+    component: DesktopOverlayRoot
+    anchors_preset: full_rect
+    children:
+      - atom: SectionGroup
+        node_name: Section_DesktopScaffold
+        component: DesktopOverlayRoot
+        layout: full_rect
+        position_px: { x: 0, y: 0 }
+        size_px: { width: 1586, height: 992 }
+        children:
+          - atom: NativePanel
+            node_name: Panel_OsTaskbarBand
+            component: SteamSyncStatus
+            color_token: panel_inner
+            position_px: { x: 0, y: 940 }
+            size_px: { width: 1586, height: 52 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_SteamSyncStatus
+                component: SteamSyncStatus
+                text_binding_or_text_key: steam.sync_status
+                preview_text: "local_sandbox · Steam Inventory disabled"
+                font_size: 15
+                color_token: text_cream
+                position_px: { x: 1240, y: 14 }
+                size_px: { width: 300, height: 24 }
+      - atom: SectionGroup
+        node_name: Section_WindowStack
+        component: WindowFrame
+        layout: absolute_window_stack
+        position_px: { x: 0, y: 0 }
+        size_px: { width: 1586, height: 720 }
+        children:
+          - atom: NinePatchPanel
+            node_name: Panel_StatusWindowFrame
+            component: StatusWindow
+            asset_key: taskstonebar.ui.window_frame_9slice
+            slice_hints: { left: 30, right: 30, top: 34, bottom: 30 }
+            content_insets: { left: 18, right: 18, top: 72, bottom: 16 }
+            position_px: { x: 37, y: 103 }
+            size_px: { width: 458, height: 574 }
+            children:
+              - atom: NinePatchPanel
+                node_name: Panel_StatusTitleBar
+                component: WindowTitleBar
+                asset_key: taskstonebar.ui.window_title_bar_9slice
+                slice_hints: { left: 26, right: 26, top: 18, bottom: 18 }
+                content_insets: { left: 40, right: 52, top: 10, bottom: 8 }
+                position_px: { x: 20, y: 12 }
+                size_px: { width: 418, height: 54 }
+              - atom: TextureAtom
+                node_name: Tex_StatusWindowOrnament
+                component: WindowFrame
+                asset_key: taskstonebar.ui.window_ornament_set
+                stretch_mode: keep_aspect_centered
+                position_px: { x: 126, y: -30 }
+                size_px: { width: 206, height: 76 }
+              - atom: NinePatchPanel
+                node_name: Panel_StatusBodyWell
+                component: StatusWindow
+                asset_key: taskstonebar.ui.dark_inner_well_9slice
+                slice_hints: { left: 22, right: 22, top: 22, bottom: 22 }
+                content_insets: { left: 14, right: 14, top: 14, bottom: 14 }
+                position_px: { x: 18, y: 72 }
+                size_px: { width: 422, height: 484 }
+              - atom: NativeLabel
+                node_name: Text_StatusTitle
+                component: WindowTitleBar
+                text_binding_or_text_key: window.status.title
+                preview_text: "스테이터스"
+                font_size: 25
+                color_token: title_gold
+                position_px: { x: 120, y: 18 }
+                size_px: { width: 220, height: 34 }
+              - atom: IconButton
+                node_name: Btn_StatusClose
+                component: WindowFrame
+                button_role: window_close
+                touch_size: { width: 42, height: 42 }
+                position_px: { x: 404, y: 20 }
+              - atom: NinePatchPanel
+                node_name: Panel_StatusStatScroll
+                component: StatusStatScrollPanel
+                asset_key: taskstonebar.ui.status_stat_card_9slice
+                slice_hints: { left: 14, right: 14, top: 14, bottom: 14 }
+                content_insets: { left: 16, right: 28, top: 34, bottom: 12 }
+                position_px: { x: 24, y: 76 }
+                size_px: { width: 410, height: 154 }
+                children:
+                  - atom: NativePanel
+                    node_name: Panel_ClassRibbon
+                    component: StatusStatScrollPanel
+                    color_token: panel_outer
+                    position_px: { x: 92, y: 9 }
+                    size_px: { width: 226, height: 28 }
+                    children:
+                      - atom: NativeLabel
+                        node_name: Text_ClassName
+                        component: StatusStatScrollPanel
+                        text_binding_or_text_key: selected_character.class_name
+                        preview_text: "Stone Keeper"
+                        font_size: 13
+                        color_token: text_cream
+                        position_px: { x: 8, y: 3 }
+                        size_px: { width: 210, height: 22 }
+                  - atom: SectionGroup
+                    node_name: Group_StatusRows
+                    component: StatList
+                    position_px: { x: 54, y: 41 }
+                    size_px: { width: 286, height: 94 }
+                    children:
+                      - atom: NativeLabel
+                        node_name: Text_StatusLevelLabel
+                        component: StatList
+                        text_binding_or_text_key: stats.level.label
+                        preview_text: "Level"
+                        font_size: 13
+                        color_token: shadow
+                        horizontal_alignment: left
+                        position_px: { x: 0, y: 0 }
+                        size_px: { width: 166, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusLevelValue
+                        component: StatList
+                        text_binding_or_text_key: stats.level.value
+                        preview_text: "27"
+                        font_size: 13
+                        color_token: shadow
+                        horizontal_alignment: right
+                        position_px: { x: 166, y: 0 }
+                        size_px: { width: 120, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusExpLabel
+                        component: StatList
+                        text_binding_or_text_key: stats.exp.label
+                        preview_text: "EXP"
+                        font_size: 13
+                        color_token: shadow
+                        horizontal_alignment: left
+                        position_px: { x: 0, y: 15 }
+                        size_px: { width: 80, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusExpValue
+                        component: StatList
+                        text_binding_or_text_key: stats.exp.value
+                        preview_text: "3,354,766 / 9,866,299"
+                        font_size: 13
+                        color_token: shadow
+                        horizontal_alignment: right
+                        position_px: { x: 80, y: 15 }
+                        size_px: { width: 206, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusDpsLabel
+                        component: StatList
+                        text_binding_or_text_key: stats.basic_attack_dps.label
+                        preview_text: "Basic Attack DPS"
+                        font_size: 13
+                        color_token: shadow
+                        horizontal_alignment: left
+                        position_px: { x: 0, y: 30 }
+                        size_px: { width: 166, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusDpsValue
+                        component: StatList
+                        text_binding_or_text_key: stats.basic_attack_dps.value
+                        preview_text: "48.3"
+                        font_size: 13
+                        color_token: shadow
+                        horizontal_alignment: right
+                        position_px: { x: 166, y: 30 }
+                        size_px: { width: 120, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusAttackDamageLabel
+                        component: StatList
+                        text_binding_or_text_key: stats.attack_damage.label
+                        preview_text: "Attack Damage"
+                        font_size: 13
+                        color_token: shadow
+                        horizontal_alignment: left
+                        position_px: { x: 0, y: 45 }
+                        size_px: { width: 166, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusAttackDamageValue
+                        component: StatList
+                        text_binding_or_text_key: stats.attack_damage.value
+                        preview_text: "57"
+                        font_size: 13
+                        color_token: shadow
+                        horizontal_alignment: right
+                        position_px: { x: 166, y: 45 }
+                        size_px: { width: 120, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusMaxHpLabel
+                        component: StatList
+                        text_binding_or_text_key: stats.max_hp.label
+                        preview_text: "Max HP"
+                        font_size: 13
+                        color_token: shadow
+                        horizontal_alignment: left
+                        position_px: { x: 0, y: 60 }
+                        size_px: { width: 166, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusMaxHpValue
+                        component: StatList
+                        text_binding_or_text_key: stats.max_hp.value
+                        preview_text: "65"
+                        font_size: 13
+                        color_token: shadow
+                        horizontal_alignment: right
+                        position_px: { x: 166, y: 60 }
+                        size_px: { width: 120, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusMoveSpeedLabel
+                        component: StatList
+                        text_binding_or_text_key: stats.move_speed.label
+                        preview_text: "Move Speed"
+                        font_size: 13
+                        color_token: shadow
+                        horizontal_alignment: left
+                        position_px: { x: 0, y: 75 }
+                        size_px: { width: 166, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusMoveSpeedValue
+                        component: StatList
+                        text_binding_or_text_key: stats.move_speed.value
+                        preview_text: "0.90"
+                        font_size: 13
+                        color_token: shadow
+                        horizontal_alignment: right
+                        position_px: { x: 166, y: 75 }
+                        size_px: { width: 120, height: 15 }
+                  - atom: NativePanel
+                    node_name: Panel_StatusScrollbar
+                    component: StatusStatScrollPanel
+                    color_token: text_muted
+                    position_px: { x: 374, y: 43 }
+                    size_px: { width: 8, height: 72 }
+                  - atom: IconButton
+                    node_name: Btn_StatusSearch
+                    component: StatusSearchButton
+                    button_role: utility_icon
+                    touch_size: { width: 38, height: 38 }
+                    position_px: { x: 10, y: 106 }
+                    children:
+                      - atom: NativeLabel
+                        node_name: Text_SearchGlyph
+                        component: StatusSearchButton
+                        text_binding_or_text_key: ui.status.search_glyph
+                        preview_text: "⌕"
+                        font_size: 20
+                        color_token: text_cream
+                        position_px: { x: 4, y: 3 }
+                        size_px: { width: 30, height: 30 }
+              - atom: SectionGroup
+                node_name: Panel_SkillPointHeader
+                component: SkillPointHeader
+                position_px: { x: 82, y: 244 }
+                size_px: { width: 294, height: 40 }
+                children:
+                  - atom: NativePanel
+                    node_name: Panel_SkillPointHeaderBg
+                    component: SkillPointHeader
+                    color_token: panel_inner
+                    position_px: { x: 0, y: 0 }
+                    size_px: { width: 294, height: 40 }
+                  - atom: NativeLabel
+                    node_name: Text_SkillPointPlus
+                    component: SkillPointHeader
+                    text_binding_or_text_key: skill_points.plus_icon
+                    preview_text: "+"
+                    font_size: 22
+                    color_token: title_gold
+                    position_px: { x: 16, y: 3 }
+                    size_px: { width: 28, height: 30 }
+                  - atom: NativeLabel
+                    node_name: Text_SkillPoints
+                    component: SkillPointHeader
+                    text_binding_or_text_key: selected_character.skill_points
+                    preview_text: "Skill Points: 0"
+                    font_size: 18
+                    color_token: text_cream
+                    position_px: { x: 58, y: 7 }
+                    size_px: { width: 210, height: 26 }
+              - atom: SectionGroup
+                node_name: Section_SkillTree
+                component: StatusWindow
+                position_px: { x: 24, y: 296 }
+                size_px: { width: 410, height: 248 }
+                children:
+                  - atom: NativePanel
+                    node_name: Panel_LevelTrackRail
+                    component: SkillLevelTrack
+                    color_token: hp_red
+                    position_px: { x: 28, y: 18 }
+                    size_px: { width: 10, height: 214 }
+                  - atom: NativeLabel
+                    node_name: Text_LevelTick0
+                    component: SkillLevelTrack
+                    text_binding_or_text_key: skill_tier.0.level
+                    preview_text: "0"
+                    font_size: 14
+                    color_token: text_cream
+                    position_px: { x: 0, y: 8 }
+                    size_px: { width: 24, height: 24 }
+                  - atom: NativeLabel
+                    node_name: Text_LevelTick10
+                    component: SkillLevelTrack
+                    text_binding_or_text_key: skill_tier.10.level
+                    preview_text: "10"
+                    font_size: 14
+                    color_token: text_cream
+                    position_px: { x: 0, y: 90 }
+                    size_px: { width: 28, height: 24 }
+                  - atom: NativeLabel
+                    node_name: Text_LevelTick30
+                    component: SkillLevelTrack
+                    text_binding_or_text_key: skill_tier.30.level
+                    preview_text: "30"
+                    font_size: 14
+                    color_token: text_cream
+                    position_px: { x: 0, y: 194 }
+                    size_px: { width: 28, height: 24 }
+                  - atom: NativePanel
+                    node_name: Panel_LevelTickLine0
+                    component: SkillLevelTrack
+                    color_token: text_cream
+                    position_px: { x: 20, y: 28 }
+                    size_px: { width: 35, height: 3 }
+                  - atom: NativePanel
+                    node_name: Panel_LevelTickLine10
+                    component: SkillLevelTrack
+                    color_token: text_cream
+                    position_px: { x: 20, y: 110 }
+                    size_px: { width: 35, height: 3 }
+                  - atom: NativePanel
+                    node_name: Panel_LevelTickLine30
+                    component: SkillLevelTrack
+                    color_token: text_cream
+                    position_px: { x: 20, y: 214 }
+                    size_px: { width: 35, height: 3 }
+                  - atom: Grid
+                    node_name: Grid_StatusSkillSlots
+                    component: SkillTierRow
+                    columns: 3
+                    separation: 34
+                    position_px: { x: 74, y: 0 }
+                    size_px: { width: 330, height: 236 }
+                    children:
+                      - atom: NinePatchPanel
+                        node_name: Panel_SkillStoneThrow
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.slot_frame_9slice
+                        slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                        content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                        position_px: { x: 0, y: 0 }
+                        size_px: { width: 58, height: 58 }
+                        children:
+                          - atom: TextureAtom
+                            node_name: Icon_SkillStoneThrow
+                            component: SkillIconSlot
+                            asset_key: taskstonebar.ui.stone_icon_set
+                            stretch_mode: keep_aspect_centered
+                            position_px: { x: 13, y: 8 }
+                            size_px: { width: 32, height: 32 }
+                          - atom: NativeLabel
+                            node_name: Text_SkillStoneThrowLevel
+                            component: SkillIconSlot
+                            text_binding_or_text_key: skill.stone_throw.level
+                            preview_text: "2/2"
+                            font_size: 11
+                            color_token: text_cream
+                            position_px: { x: 4, y: 39 }
+                            size_px: { width: 50, height: 16 }
+                      - atom: NinePatchPanel
+                        node_name: Panel_SkillGuard
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.slot_frame_9slice
+                        slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                        content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                        size_px: { width: 58, height: 58 }
+                        children:
+                          - atom: TextureAtom
+                            node_name: Icon_SkillGuard
+                            component: SkillIconSlot
+                            asset_key: taskstonebar.ui.resource_icon_set
+                            stretch_mode: keep_aspect_centered
+                            position_px: { x: 13, y: 8 }
+                            size_px: { width: 32, height: 32 }
+                          - atom: NativeLabel
+                            node_name: Text_SkillGuardLevel
+                            component: SkillIconSlot
+                            text_binding_or_text_key: skill.guard.level
+                            preview_text: "4/8"
+                            font_size: 11
+                            color_token: text_cream
+                            position_px: { x: 4, y: 39 }
+                            size_px: { width: 50, height: 16 }
+                      - atom: NinePatchPanel
+                        node_name: Panel_SkillImpact
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.slot_frame_9slice
+                        slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                        content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                        size_px: { width: 58, height: 58 }
+                        children:
+                          - atom: TextureAtom
+                            node_name: Icon_SkillImpact
+                            component: SkillIconSlot
+                            asset_key: taskstonebar.ui.resource_icon_set
+                            stretch_mode: keep_aspect_centered
+                            position_px: { x: 13, y: 8 }
+                            size_px: { width: 32, height: 32 }
+                          - atom: NativeLabel
+                            node_name: Text_SkillImpactLevel
+                            component: SkillIconSlot
+                            text_binding_or_text_key: skill.impact.level
+                            preview_text: "4/5"
+                            font_size: 11
+                            color_token: text_cream
+                            position_px: { x: 4, y: 39 }
+                            size_px: { width: 50, height: 16 }
+                      - atom: NinePatchPanel
+                        node_name: Panel_SkillCrit
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.slot_frame_9slice
+                        slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                        content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                        size_px: { width: 58, height: 58 }
+                        children:
+                          - atom: TextureAtom
+                            node_name: Icon_SkillCrit
+                            component: SkillIconSlot
+                            asset_key: taskstonebar.ui.resource_icon_set
+                            stretch_mode: keep_aspect_centered
+                            position_px: { x: 13, y: 8 }
+                            size_px: { width: 32, height: 32 }
+                          - atom: NativeLabel
+                            node_name: Text_SkillCritLevel
+                            component: SkillIconSlot
+                            text_binding_or_text_key: skill.crit.level
+                            preview_text: "1/8"
+                            font_size: 11
+                            color_token: text_cream
+                            position_px: { x: 4, y: 39 }
+                            size_px: { width: 50, height: 16 }
+                      - atom: NinePatchPanel
+                        node_name: Panel_SkillPortal
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.slot_frame_9slice
+                        slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                        content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                        size_px: { width: 58, height: 58 }
+                        children:
+                          - atom: TextureAtom
+                            node_name: Icon_SkillPortal
+                            component: SkillIconSlot
+                            asset_key: taskstonebar.ui.stone_icon_set
+                            stretch_mode: keep_aspect_centered
+                            position_px: { x: 13, y: 8 }
+                            size_px: { width: 32, height: 32 }
+                          - atom: NativeLabel
+                            node_name: Text_SkillPortalLevel
+                            component: SkillIconSlot
+                            text_binding_or_text_key: skill.portal.level
+                            preview_text: "1/3"
+                            font_size: 11
+                            color_token: text_cream
+                            position_px: { x: 4, y: 39 }
+                            size_px: { width: 50, height: 16 }
+                      - atom: NinePatchPanel
+                        node_name: Panel_SkillDrop
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.slot_frame_9slice
+                        slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                        content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                        size_px: { width: 58, height: 58 }
+                        children:
+                          - atom: TextureAtom
+                            node_name: Icon_SkillDrop
+                            component: SkillIconSlot
+                            asset_key: taskstonebar.ui.resource_icon_set
+                            stretch_mode: keep_aspect_centered
+                            position_px: { x: 13, y: 8 }
+                            size_px: { width: 32, height: 32 }
+                          - atom: NativeLabel
+                            node_name: Text_SkillDropLevel
+                            component: SkillIconSlot
+                            text_binding_or_text_key: skill.drop.level
+                            preview_text: "5/5"
+                            font_size: 11
+                            color_token: text_cream
+                            position_px: { x: 4, y: 39 }
+                            size_px: { width: 50, height: 16 }
+                      - atom: NinePatchPanel
+                        node_name: Panel_SkillBoss
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.slot_frame_9slice
+                        slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                        content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                        size_px: { width: 58, height: 58 }
+                        children:
+                          - atom: TextureAtom
+                            node_name: Icon_SkillBoss
+                            component: SkillIconSlot
+                            asset_key: taskstonebar.ui.resource_icon_set
+                            stretch_mode: keep_aspect_centered
+                            position_px: { x: 13, y: 8 }
+                            size_px: { width: 32, height: 32 }
+                          - atom: NativeLabel
+                            node_name: Text_SkillBossLevel
+                            component: SkillIconSlot
+                            text_binding_or_text_key: skill.boss.level
+                            preview_text: "2/2"
+                            font_size: 11
+                            color_token: text_cream
+                            position_px: { x: 4, y: 39 }
+                            size_px: { width: 50, height: 16 }
+                      - atom: NinePatchPanel
+                        node_name: Panel_SkillMarket
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.slot_frame_9slice
+                        slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                        content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                        size_px: { width: 58, height: 58 }
+                        children:
+                          - atom: TextureAtom
+                            node_name: Icon_SkillMarket
+                            component: SkillIconSlot
+                            asset_key: taskstonebar.ui.stone_icon_set
+                            stretch_mode: keep_aspect_centered
+                            position_px: { x: 13, y: 8 }
+                            size_px: { width: 32, height: 32 }
+                          - atom: NativeLabel
+                            node_name: Text_SkillMarketLevel
+                            component: SkillIconSlot
+                            text_binding_or_text_key: skill.market.level
+                            preview_text: "4/5"
+                            font_size: 11
+                            color_token: text_cream
+                            position_px: { x: 4, y: 39 }
+                            size_px: { width: 50, height: 16 }
+                      - atom: NinePatchPanel
+                        node_name: Panel_SkillTreasure
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.slot_frame_9slice
+                        slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                        content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                        size_px: { width: 58, height: 58 }
+                        children:
+                          - atom: TextureAtom
+                            node_name: Icon_SkillTreasure
+                            component: SkillIconSlot
+                            asset_key: taskstonebar.ui.resource_icon_set
+                            stretch_mode: keep_aspect_centered
+                            position_px: { x: 13, y: 8 }
+                            size_px: { width: 32, height: 32 }
+                          - atom: NativeLabel
+                            node_name: Text_SkillTreasureLevel
+                            component: SkillIconSlot
+                            text_binding_or_text_key: skill.treasure.level
+                            preview_text: "5/5"
+                            font_size: 11
+                            color_token: text_cream
+                            position_px: { x: 4, y: 39 }
+                            size_px: { width: 50, height: 16 }
+          - atom: NinePatchPanel
+            node_name: Panel_HeroInventoryWindowFrame
+            component: HeroInventoryWindow
+            asset_key: taskstonebar.ui.window_frame_9slice
+            slice_hints: { left: 30, right: 30, top: 34, bottom: 30 }
+            content_insets: { left: 18, right: 18, top: 72, bottom: 16 }
+            position_px: { x: 518, y: 50 }
+            size_px: { width: 552, height: 700 }
+            children:
+              - atom: NinePatchPanel
+                node_name: Panel_HeroInventoryTitleBar
+                component: WindowTitleBar
+                asset_key: taskstonebar.ui.window_title_bar_9slice
+                slice_hints: { left: 26, right: 26, top: 18, bottom: 18 }
+                content_insets: { left: 40, right: 52, top: 10, bottom: 8 }
+                position_px: { x: 20, y: 12 }
+                size_px: { width: 512, height: 54 }
+              - atom: TextureAtom
+                node_name: Tex_HeroInventoryWindowOrnament
+                component: WindowFrame
+                asset_key: taskstonebar.ui.window_ornament_set
+                stretch_mode: keep_aspect_centered
+                position_px: { x: 173, y: -30 }
+                size_px: { width: 206, height: 76 }
+              - atom: NinePatchPanel
+                node_name: Panel_HeroInventoryBodyWell
+                component: HeroInventoryWindow
+                asset_key: taskstonebar.ui.dark_inner_well_9slice
+                slice_hints: { left: 22, right: 22, top: 22, bottom: 22 }
+                content_insets: { left: 14, right: 14, top: 14, bottom: 14 }
+                position_px: { x: 18, y: 72 }
+                size_px: { width: 516, height: 606 }
+              - atom: NativeLabel
+                node_name: Text_HeroInventoryTitle
+                component: WindowTitleBar
+                text_binding_or_text_key: window.hero_inventory.title
+                preview_text: "돌지기"
+                font_size: 25
+                color_token: title_gold
+                position_px: { x: 210, y: 18 }
+                size_px: { width: 150, height: 34 }
+              - atom: IconButton
+                node_name: Btn_HeroInventoryClose
+                component: WindowFrame
+                button_role: window_close
+                touch_size: { width: 42, height: 42 }
+                position_px: { x: 498, y: 20 }
+              - atom: TextureAtom
+                node_name: Tex_StoneKeeperPortrait
+                component: CharacterPortrait
+                asset_key: taskstonebar.ui.stone_keeper_sheet
+                stretch_mode: keep_aspect_centered
+                position_px: { x: 198, y: 86 }
+                size_px: { width: 158, height: 170 }
+              - atom: NativeLabel
+                node_name: Text_KeeperLevel
+                component: CharacterPortrait
+                text_binding_or_text_key: selected_character.level
+                preview_text: "Lv.27"
+                font_size: 22
+                color_token: title_gold
+                position_px: { x: 238, y: 234 }
+                size_px: { width: 92, height: 30 }
+              - atom: Grid
+                node_name: Grid_EquipmentSlotsLeft
+                component: EquipmentSlotGrid
+                columns: 2
+                position_px: { x: 26, y: 88 }
+                size_px: { width: 120, height: 128 }
+              - atom: Grid
+                node_name: Grid_EquipmentSlotsRight
+                component: EquipmentSlotGrid
+                columns: 2
+                position_px: { x: 402, y: 88 }
+                size_px: { width: 120, height: 128 }
+              - atom: HBox
+                node_name: Tabs_StoneEquipment
+                component: StoneEquipmentTabBar
+                separation: 8
+                position_px: { x: 52, y: 302 }
+                size_px: { width: 448, height: 36 }
+                children:
+                  - atom: IconButton
+                    node_name: Btn_StoneTab
+                    component: StoneEquipmentTabBar
+                    button_role: inventory_tab
+                    touch_size: { width: 220, height: 36 }
+                    text: "돌 활성 0/12"
+                  - atom: IconButton
+                    node_name: Btn_EquipmentTab
+                    component: StoneEquipmentTabBar
+                    button_role: inventory_tab
+                    touch_size: { width: 220, height: 36 }
+                    text: "장비 0/40"
+              - atom: Grid
+                node_name: Grid_StoneInventory
+                component: StoneInventoryPanel
+                columns: 8
+                position_px: { x: 52, y: 352 }
+                size_px: { width: 448, height: 216 }
+                children:
+                  - atom: NinePatchPanel
+                    node_name: Panel_StoneSlotPrototype
+                    component: Slot
+                    asset_key: taskstonebar.ui.slot_frame_9slice
+                    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                    content_insets: { left: 6, right: 6, top: 6, bottom: 6 }
+                    size_px: { width: 48, height: 48 }
+              - atom: HBox
+                node_name: Dock_KeeperIconDock
+                component: KeeperIconDock
+                separation: 14
+                position_px: { x: 58, y: 608 }
+                size_px: { width: 410, height: 64 }
+                children:
+                  - atom: IconButton
+                    node_name: Btn_DockInventory
+                    component: KeeperIconDock
+                    button_role: keeper_dock_icon
+                    touch_size: { width: 58, height: 58 }
+                  - atom: IconButton
+                    node_name: Btn_DockGrowth
+                    component: KeeperIconDock
+                    button_role: keeper_dock_icon
+                    touch_size: { width: 58, height: 58 }
+                  - atom: IconButton
+                    node_name: Btn_DockFormation
+                    component: KeeperIconDock
+                    button_role: keeper_dock_icon
+                    touch_size: { width: 58, height: 58 }
+                  - atom: IconButton
+                    node_name: Btn_DockStorage
+                    component: KeeperIconDock
+                    button_role: keeper_dock_icon
+                    touch_size: { width: 58, height: 58 }
+                  - atom: IconButton
+                    node_name: Btn_DockSteamAssets
+                    component: KeeperIconDock
+                    button_role: keeper_dock_icon
+                    touch_size: { width: 58, height: 58 }
+          - atom: NinePatchPanel
+            node_name: Panel_PortalWindowFrame
+            component: PortalWindow
+            asset_key: taskstonebar.ui.window_frame_9slice
+            slice_hints: { left: 30, right: 30, top: 34, bottom: 30 }
+            content_insets: { left: 18, right: 18, top: 72, bottom: 16 }
+            position_px: { x: 1089, y: 103 }
+            size_px: { width: 432, height: 610 }
+            children:
+              - atom: NinePatchPanel
+                node_name: Panel_PortalTitleBar
+                component: WindowTitleBar
+                asset_key: taskstonebar.ui.window_title_bar_9slice
+                slice_hints: { left: 26, right: 26, top: 18, bottom: 18 }
+                content_insets: { left: 40, right: 52, top: 10, bottom: 8 }
+                position_px: { x: 20, y: 12 }
+                size_px: { width: 392, height: 54 }
+              - atom: TextureAtom
+                node_name: Tex_PortalWindowOrnament
+                component: WindowFrame
+                asset_key: taskstonebar.ui.window_ornament_set
+                stretch_mode: keep_aspect_centered
+                position_px: { x: 113, y: -30 }
+                size_px: { width: 206, height: 76 }
+              - atom: NinePatchPanel
+                node_name: Panel_PortalBodyWell
+                component: PortalWindow
+                asset_key: taskstonebar.ui.dark_inner_well_9slice
+                slice_hints: { left: 22, right: 22, top: 22, bottom: 22 }
+                content_insets: { left: 14, right: 14, top: 14, bottom: 14 }
+                position_px: { x: 18, y: 72 }
+                size_px: { width: 396, height: 520 }
+              - atom: NativeLabel
+                node_name: Text_PortalTitle
+                component: WindowTitleBar
+                text_binding_or_text_key: window.portal.title
+                preview_text: "포탈"
+                font_size: 25
+                color_token: title_gold
+                position_px: { x: 154, y: 18 }
+                size_px: { width: 130, height: 34 }
+              - atom: IconButton
+                node_name: Btn_PortalClose
+                component: WindowFrame
+                button_role: window_close
+                touch_size: { width: 42, height: 42 }
+                position_px: { x: 378, y: 20 }
+              - atom: NativePanel
+                node_name: Panel_DifficultySelect
+                component: PortalDifficultySelect
+                color_token: panel_mid
+                position_px: { x: 104, y: 88 }
+                size_px: { width: 240, height: 40 }
+                children:
+                  - atom: NativeLabel
+                    node_name: Text_Difficulty
+                    component: PortalDifficultySelect
+                    text_binding_or_text_key: portal.selected_difficulty
+                    preview_text: "Normal"
+                    font_size: 16
+                    color_token: text_cream
+                    position_px: { x: 42, y: 8 }
+                    size_px: { width: 152, height: 24 }
+              - atom: HBox
+                node_name: Tabs_Act
+                component: ActTabBar
+                separation: 8
+                position_px: { x: 54, y: 142 }
+                size_px: { width: 324, height: 42 }
+                children:
+                  - atom: IconButton
+                    node_name: Btn_Act1
+                    component: ActTabBar
+                    button_role: act_tab
+                    touch_size: { width: 96, height: 42 }
+                  - atom: IconButton
+                    node_name: Btn_Act2
+                    component: ActTabBar
+                    button_role: act_tab
+                    touch_size: { width: 96, height: 42 }
+                  - atom: IconButton
+                    node_name: Btn_Act3
+                    component: ActTabBar
+                    button_role: act_tab
+                    touch_size: { width: 96, height: 42 }
+              - atom: TextureAtom
+                node_name: Tex_ParchmentRouteMap
+                component: ParchmentRouteMap
+                asset_key: taskstonebar.ui.portal_parchment_map
+                stretch_mode: keep_aspect_centered
+                position_px: { x: 30, y: 190 }
+                size_px: { width: 372, height: 404 }
+              - atom: IconButton
+                node_name: Btn_CurrentStageNode
+                component: StageNode
+                button_role: portal_stage_node
+                touch_size: { width: 44, height: 44 }
+                position_px: { x: 246, y: 404 }
+      - atom: SectionGroup
+        node_name: Section_BottomCombatStrip
+        component: TaskbarCombatStrip
+        layout: bottom_above_os_taskbar
+        position_px: { x: 0, y: 704 }
+        size_px: { width: 1586, height: 236 }
+        children:
+          - atom: TextureAtom
+            node_name: Tex_CombatGroundStrip
+            component: TaskbarCombatStrip
+            asset_key: taskstonebar.ui.combat_ground_strip
+            stretch_mode: scale
+            position_px: { x: 0, y: 0 }
+            size_px: { width: 1586, height: 236 }
+          - atom: TextureAtom
+            node_name: Tex_HeroCombatSprite
+            component: HeroCombatSprite
+            asset_key: taskstonebar.ui.stone_keeper_sheet
+            stretch_mode: keep_aspect_centered
+            position_px: { x: 360, y: 38 }
+            size_px: { width: 96, height: 96 }
+          - atom: SectionGroup
+            node_name: Layer_Projectile
+            component: ProjectileLayer
+            position_px: { x: 456, y: 34 }
+            size_px: { width: 444, height: 104 }
+            children:
+              - atom: TextureAtom
+                node_name: Tex_StoneProjectile
+                component: ProjectileLayer
+                asset_key: taskstonebar.ui.stone_icon_set
+                stretch_mode: keep_aspect_centered
+                position_px: { x: 198, y: 36 }
+                size_px: { width: 32, height: 32 }
+              - atom: NativeLabel
+                node_name: Text_SkillTrigger
+                component: AutoSkillToggle
+                text_binding_or_text_key: combat.skill_trigger
+                preview_text: "돌팔매 0.8s"
+                font_size: 15
+                color_token: title_gold
+                position_px: { x: 136, y: 72 }
+                size_px: { width: 180, height: 24 }
+          - atom: TextureAtom
+            node_name: Tex_EnemyStackPrototype
+            component: EnemyStack
+            asset_key: taskstonebar.ui.stone_icon_set
+            stretch_mode: keep_aspect_centered
+            position_px: { x: 900, y: 60 }
+            size_px: { width: 72, height: 72 }
+          - atom: NativeLabel
+            node_name: Text_DamageNumber
+            component: DamageNumberLayer
+            text_binding_or_text_key: combat.latest_damage
+            preview_text: "-128 CRIT"
+            font_size: 22
+            color_token: title_gold
+            position_px: { x: 782, y: 44 }
+            size_px: { width: 132, height: 30 }
+          - atom: NativeLabel
+            node_name: Text_EnemyName
+            component: EnemyHpBar
+            text_binding_or_text_key: combat.focus_enemy.name
+            preview_text: "이끼 돌무더기"
+            font_size: 14
+            color_token: text_cream
+            horizontal_alignment: left
+            position_px: { x: 850, y: 24 }
+            size_px: { width: 190, height: 22 }
+          - atom: NativeProgress
+            node_name: Progress_EnemyHp
+            component: EnemyHpBar
+            value_binding: combat.focus_enemy.hp_ratio
+            position_px: { x: 850, y: 52 }
+            size_px: { width: 128, height: 12 }
+          - atom: NativeLabel
+            node_name: Text_EnemyHpValue
+            component: EnemyHpBar
+            text_binding_or_text_key: combat.focus_enemy.hp_text
+            preview_text: "HP 420 / 960"
+            font_size: 12
+            color_token: text_cream
+            horizontal_alignment: left
+            position_px: { x: 982, y: 47 }
+            size_px: { width: 118, height: 22 }
+          - atom: NativePanel
+            node_name: Panel_AutoCombatToggle
+            component: AutoCombatToggle
+            color_token: panel_inner
+            position_px: { x: 284, y: 146 }
+            size_px: { width: 104, height: 32 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_AutoCombat
+                component: AutoCombatToggle
+                text_binding_or_text_key: combat.auto_combat
+                preview_text: "AUTO ON"
+                font_size: 13
+                color_token: moss_green
+                position_px: { x: 8, y: 5 }
+                size_px: { width: 88, height: 22 }
+          - atom: NativePanel
+            node_name: Panel_AutoSkillToggle
+            component: AutoSkillToggle
+            color_token: panel_inner
+            position_px: { x: 396, y: 146 }
+            size_px: { width: 126, height: 32 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_AutoSkill
+                component: AutoSkillToggle
+                text_binding_or_text_key: combat.auto_skill
+                preview_text: "SKILL 돌팔매"
+                font_size: 13
+                color_token: exp_blue
+                position_px: { x: 8, y: 5 }
+                size_px: { width: 110, height: 22 }
+          - atom: NativeLabel
+            node_name: Text_StageBadge
+            component: StageBadge
+            text_binding_or_text_key: current_stage.label
+            preview_text: "작업표시줄 동굴\nStage 1-2"
+            font_size: 22
+            color_token: text_cream
+            position_px: { x: 710, y: 142 }
+            size_px: { width: 166, height: 58 }
+          - atom: NativePanel
+            node_name: Panel_LootTicker
+            component: LootTicker
+            color_token: panel_inner
+            position_px: { x: 1012, y: 146 }
+            size_px: { width: 290, height: 34 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_LootTicker
+                component: LootTicker
+                text_binding_or_text_key: combat.latest_drop
+                preview_text: "+3 조약돌 파편  +1 이끼 광석"
+                font_size: 13
+                color_token: text_cream
+                horizontal_alignment: left
+                position_px: { x: 10, y: 6 }
+                size_px: { width: 270, height: 22 }
+          - atom: NativePanel
+            node_name: Panel_CombatShortcutDock
+            component: CombatSceneShortcutDock
+            color_token: panel_outer
+            position_px: { x: 1328, y: 148 }
+            size_px: { width: 148, height: 38 }
+            children:
+              - atom: NativeLabel
+                node_name: Text_RestoreWorkshop
+                component: CombatSceneShortcutDock
+                text_binding_or_text_key: ui.restore_workshop
+                preview_text: "창 복원"
+                font_size: 14
+                color_token: title_gold
+                position_px: { x: 12, y: 7 }
+                size_px: { width: 124, height: 22 }
+          - atom: NinePatchPanel
+            node_name: Panel_RareDropToast
+            component: RareDropToast
+            asset_key: taskstonebar.ui.rare_drop_toast_9slice
+            slice_hints: { left: 22, right: 22, top: 18, bottom: 18 }
+            content_insets: { left: 12, right: 12, top: 10, bottom: 10 }
+            position_px: { x: 1276, y: 60 }
+            size_px: { width: 220, height: 70 }
+            children:
+              - atom: TextureAtom
+                node_name: Icon_RareDrop
+                component: RareDropToast
+                asset_key: taskstonebar.ui.resource_icon_set
+                stretch_mode: keep_aspect_centered
+                position_px: { x: 12, y: 12 }
+                size_px: { width: 42, height: 42 }
+              - atom: NativeLabel
+                node_name: Text_RareDropTitle
+                component: RareDropToast
+                text_binding_or_text_key: combat.latest_rare_drop.title
+                preview_text: "희귀 드롭"
+                font_size: 14
+                color_token: text_cream
+                position_px: { x: 64, y: 10 }
+                size_px: { width: 138, height: 22 }
+              - atom: NativeLabel
+                node_name: Text_RareDropBody
+                component: RareDropToast
+                text_binding_or_text_key: combat.latest_rare_drop.body
+                preview_text: "이끼 광석 x1"
+                font_size: 13
+                color_token: moss_green
+                position_px: { x: 64, y: 34 }
+                size_px: { width: 138, height: 22 }
+      - atom: SectionGroup
+        node_name: ModalHost
+        component: ModalHost
+        layout: modal_overlay_preserve_combat_strip
+        position_px: { x: 0, y: 0 }
+        size_px: { width: 1586, height: 992 }
+
+modal_contract:
+  host:
+    node_name: ModalHost
+    component: ModalHost
+    atom: SectionGroup
+    position_px: { x: 0, y: 0 }
+    size_px: { width: 1586, height: 992 }
+    z_index: 1000
+    scrim_policy: "Scrim covers desktop_scaffold and window_stack only; bottom_combat_strip stays visible and readable."
+  equipment_upgrade_modal:
+    component: EquipmentUpgradeModal
+    modal_section: EquipmentUpgradeModal
+    owner_action: runtime:inventory_item_detail/Btn_ItemDetailUpgrade
+    shell:
+      atom: ModalShell
+      frame_asset_key: taskstonebar.ui.window_frame_9slice
+      title_asset_key: taskstonebar.ui.window_title_bar_9slice
+      body_asset_key: taskstonebar.ui.dark_inner_well_9slice
+      position_px: { x: 556, y: 168 }
+      size_px: { width: 474, height: 372 }
+      title_bar_px: { x: 24, y: 20, width: 426, height: 48 }
+      body_px: { x: 34, y: 84, width: 406, height: 210 }
+      footer_px: { x: 86, y: 310, width: 302, height: 40 }
+      close_button_px: { x: 382, y: 6, width: 36, height: 36 }
+      optional_minimize_button: false
+    body_sections:
+      summary_label:
+        atom: NativeLabel
+        text_binding_or_text_key: equipment.upgrade.message
+        text_clamp: two_line_clamp
+      consumed_equipment:
+        component: EquipmentUpgradeSourceTray
+        required_slots: 3
+        atom: NinePatchPanel
+        asset_key: taskstonebar.ui.slot_frame_9slice
+        slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+        content_insets: { left: 6, right: 6, top: 6, bottom: 6 }
+      result_preview:
+        component: EquipmentUpgradeResultPreview
+        atom: NinePatchPanel
+        asset_key: taskstonebar.ui.slot_frame_9slice
+        slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+        content_insets: { left: 6, right: 6, top: 6, bottom: 6 }
+      irreversible_warning:
+        atom: NativeLabel
+        text_binding_or_text_key: equipment.upgrade.warning
+        color_token: title_gold
+    footer_actions:
+      cancel:
+        component: EquipmentUpgradeActionFooter
+        button_role: utility_icon
+        text_binding_or_text_key: ui.cancel
+      confirm:
+        component: EquipmentUpgradeActionFooter
+        button_role: inventory_tab
+        text_binding_or_text_key: equipment.upgrade.confirm
+        enabled_binding: equipment.upgrade.can_confirm
+    qa:
+      screenshot: ../../../runtime/godot-taskstonebar/screenshots/taskstonebar-equipment-upgrade-modal.png
+      pass_conditions:
+        - "Three source equipment slots and one result slot are visible as native slot controls."
+        - "Title chrome, close affordance, body well, and footer actions are visually separated."
+        - "TaskbarCombatStrip remains visible behind the modal."
+  item_detail_modal:
+    component: ItemDetailModal
+    modal_section: ItemDetailModal
+    owner_action: runtime:inventory_slot/click
+    source_concept: ../../../design/taskstonebar/concepts/item_detail_modal_concept_a.md
+    shell:
+      atom: ModalShell
+      frame_asset_key: taskstonebar.ui.window_frame_9slice
+      title_asset_key: taskstonebar.ui.window_title_bar_9slice
+      body_asset_key: taskstonebar.ui.dark_inner_well_9slice
+      position_px: { x: 519, y: 108 }
+      size_px: { width: 548, height: 500 }
+      title_bar_px: { x: 20, y: 18, width: 508, height: 48 }
+      body_px: { x: 34, y: 86, width: 480, height: 326 }
+      footer_px: { x: 54, y: 418, width: 440, height: 40 }
+      close_button_px: { x: 464, y: 6, width: 36, height: 36 }
+      optional_minimize_button: false
+    body_sections:
+      identity:
+        component: ItemDetailIdentityPanel
+        atom: SectionGroup
+        preview_slot_asset_key: taskstonebar.ui.slot_frame_9slice
+        text_bindings: [item.name, item.category_grade_level, item.safe_use_hint]
+      stat_list:
+        component: ItemDetailStatList
+        atom: SectionGroup
+        text_binding_or_text_key: item.detail_lines
+        max_rows: 5
+      warning_chips:
+        component: ItemDetailWarningChipRow
+        atom: SectionGroup
+        text_bindings: [item.ownership_summary, item.action_warning]
+    footer_actions:
+      close:
+        component: ItemDetailActionFooter
+        button_role: utility_icon
+        text_binding_or_text_key: ui.close
+      primary:
+        component: ItemDetailActionFooter
+        button_role: inventory_tab
+        text_binding_or_text_key: item.primary_action
+      secondary:
+        component: ItemDetailActionFooter
+        button_role: inventory_tab
+        text_binding_or_text_key: item.secondary_action
+    qa:
+      screenshot_equipment: ../../../runtime/godot-taskstonebar/screenshots/taskstonebar-equipment-detail-modal.png
+      screenshot_stone: ../../../runtime/godot-taskstonebar/screenshots/taskstonebar-stone-detail-modal.png
+      compare_board: ../../../design/taskstonebar/qa/item-detail-modal-compare-iteration-1.png
+      pass_conditions:
+        - "Large selected item slot, identity labels, stat/source rows, warning chips, and footer actions are separate native regions."
+        - "Item text, counts, warnings, and action labels are not baked into bitmap assets."
+        - "TaskbarCombatStrip remains visible behind the modal."
+
+data_contract:
+  content:
+    - resources.gold
+    - resources.ruby
+    - resources.pebble_fragment
+    - resources.moss_ore
+    - resources.cube_catalyst
+    - selected_character
+    - inventory.stone_slots
+    - portal.map_progress
+    - combat.snapshot
+  runtime_state:
+    - ui.focus_window
+    - ui.window_stack_collapsed
+    - ui.active_modal
+    - ui.inventory_tab
+    - ui.drag_merge_state
+    - equipment.upgrade.can_confirm
+    - steam_inventory_sync_state
+    - combat.latest_rare_drop
+  fixtures:
+    - harness/build/taskstonebar/Items.json
+    - harness/build/taskstonebar/Units.json
+    - harness/build/taskstonebar/Maps.json
+  hardcoding_allowlist:
+    - "Reference positions and sizes are allowed in this recipe; labels, numbers, cooldowns, and item counts are not."
+    - "Portal parchment and combat ground may use cropped concept-derived placeholders until original asset extraction is complete."
+
+validation:
+  commands:
+    - "python3 harness/tools/design_blueprint_validate.py taskstonebar"
+    - "python3 harness/godot/validators/godot_ui_recipe_validate.py --recipe harness/godot/recipes/ui/taskstonebar-full-ui-overlay.yaml"
+    - "python3 harness/godot/builders/godot_ui_recipe_build.py --recipe harness/godot/recipes/ui/taskstonebar-full-ui-overlay.yaml"
+    - "godot --headless --path harness/runtime/godot-taskstonebar --import"
+    - "godot --headless --path harness/runtime/godot-taskstonebar --scene res://scenes/generated/full_ui_overlay.tscn --quit-after 1"
+    - "godot --headless --path harness/runtime/godot-taskstonebar --check-only --script res://scripts/main.gd"
+    - "godot --headless --path harness/runtime/godot-taskstonebar --script res://scripts/tools/full_ui_overlay_smoke.gd"
+    - "godot --headless --path harness/runtime/godot-taskstonebar --script res://scripts/tools/smoke.gd"
+    - "godot --path harness/runtime/godot-taskstonebar --script res://scripts/tools/capture_full_ui_overlay.gd"
+    - "godot --path harness/runtime/godot-taskstonebar --script res://scripts/tools/capture_equipment_upgrade_modal.gd"
+    - "godot --path harness/runtime/godot-taskstonebar --script res://scripts/tools/capture_combat.gd"
+  screenshot: harness/runtime/godot-taskstonebar/screenshots/taskstonebar-full-ui-overlay.png
+  screenshot_paths:
+    full_overlay: harness/runtime/godot-taskstonebar/screenshots/taskstonebar-full-ui-overlay.png
+    equipment_upgrade_modal: harness/runtime/godot-taskstonebar/screenshots/taskstonebar-equipment-upgrade-modal.png
+    taskbar_combat_strip: harness/runtime/godot-taskstonebar/screenshots/taskstonebar-combat-smoke.png
+  blockers:
+    - "Korean pixel font, exact resource/stone icon atlas variants, and fixed window ornament extraction need asset pass before visual approval."
+    - "Floating windows or modals read as full-screen mobile menus instead of desktop windows with title chrome."
+    - "The bottom combat strip cannot remain readable as the minimized/taskbar-mode game surface."

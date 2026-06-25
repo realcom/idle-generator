@@ -1,0 +1,30 @@
+; Godot 4.6 Standard project for the Taskstonebar combat runtime.
+
+config_version=5
+
+[application]
+
+config/name="Taskstonebar Godot Runtime"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.6")
+
+[display]
+
+window/size/viewport_width=1586
+window/size/viewport_height=992
+window/size/window_width_override=1586
+window/size/window_height_override=992
+window/size/borderless=true
+window/size/always_on_top=true
+window/size/transparent=true
+window/per_pixel_transparency/allowed=true
+window/per_pixel_transparency/enabled=true
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[rendering]
+
+renderer/rendering_method="mobile"
+viewport/transparent_background=true
+textures/canvas_textures/default_texture_filter=0
+textures/vram_compression/import_etc2_astc=true

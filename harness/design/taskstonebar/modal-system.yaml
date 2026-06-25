@@ -1,0 +1,112 @@
+version: "1.0"
+game: taskstonebar
+status: draft
+purpose: "Shared modal/dialog contract for Taskstonebar irreversible actions and future Godot overlays."
+source_standard: "ui-decision-standard-kit/UI_DECISION_STANDARD.md"
+source_concepts:
+  - main_ui_concept_e_refined_current_mockup_b
+
+principles:
+  - "The main overlay recipe does not open a modal, but modal ownership is reserved for feed, merge, boss gate, reward, and sync errors."
+  - "Every modal must feel like a small desktop window, not a full-screen mobile dialog: visible title bar, close affordance, framed body, focused shadow, and native header/body/footer regions."
+  - "Modal shell sections stay separate: scrim, frame, header, body, footer."
+  - "Text, costs, warning copy, rewards, and item counts are runtime-native."
+  - "Destructive actions use the shared button roles from button-system.yaml."
+  - "Backdrop dimming must preserve the always-on taskbar combat strip as readable context unless the modal blocks account/security state."
+
+host:
+  root_id: ModalHost
+  stacking_policy: "one primary desktop-window modal above the floating window stack; toast layer remains above combat strip."
+  z_order:
+    backdrop: 1000
+    shell: 1010
+    toast: 1100
+  input_policy:
+    trap_pointer: true
+    close_on_escape: true
+    close_on_backdrop: configurable
+
+shell:
+  component: ModalShell
+  window_metaphor:
+    required: true
+    chrome: [title_bar, close_button, frame_shadow, focus_ring]
+    minimize_policy: "Modals do not expose a minimize button; closing or backing out returns focus to the owning floating window while combat simulation remains visible and running."
+    forbidden: [full_screen_opaque_dialog, baked_static_text_panel]
+  sections:
+    backdrop:
+      role: "Dim or separate desktop overlay while preserving taskbar combat context."
+    frame:
+      role: "Own stretchable modal skin and fixed iron/stone ornaments."
+    header:
+      role: "Title, close action, optional item or warning icon."
+    body:
+      role: "Feature-owned content such as consumed items, result preview, or boss warning."
+    footer:
+      role: "Primary/secondary actions and irreversible cost note."
+  size_policy:
+    desktop_reference: { width_px: 480, max_height_px: 680 }
+    compact: { width: "min(440px, calc(100vw - 32px))", max_height: "calc(100vh - 96px)" }
+  scroll_policy:
+    owner: body
+    header_fixed: true
+    footer_fixed: true
+
+actions:
+  primary_button_role: primary_cta
+  secondary_button_role: secondary
+  destructive_button_role: destructive
+  placement: footer
+  max_primary_actions: 1
+
+  modal_sections:
+    ConsumeConfirmModal:
+      role: "Confirm feed, drag-merge, synthesis, or donation burn."
+      sections: [header, consumed_items, result_preview, irreversible_warning, footer]
+    EquipmentUpgradeModal:
+      role: "Confirm equipment synthesis: consume three matching equipment instances and preview one higher-tier result."
+      sections: [header, consumed_equipment_slots, result_preview, irreversible_warning, footer]
+      preserve_taskbar_combat_strip: true
+      source_count: 3
+      confirm_rule: "Enable only when all three source slots share equipment slot and grade."
+    BossGateModal:
+      role: "Confirm portal boss entry and recommended level."
+      sections: [header, boss_preview, requirement_summary, footer]
+  RewardClaimModal:
+    role: "Claim online, offline, or boss rewards with correct online-only separation."
+    sections: [header, reward_grid, source_note, footer]
+  DetailedStatsModal:
+    role: "Expand stat rows from the left status window."
+    sections: [header, stat_breakdown, bonus_sources, footer]
+  SyncErrorModal:
+    role: "Explain Steam auth or inventory refresh failure."
+    sections: [header, error_body, retry_actions, footer]
+
+skin_policy:
+  frame_usage: godot_nine_patch_rect
+  slice_hints: { left: 28, right: 28, top: 30, bottom: 28 }
+  content_insets_px: { left: 22, right: 22, top: 42, bottom: 20 }
+  ornament_layer:
+    allowed: true
+    rule: "Fixed transparent crests and corner brackets sit above the frame skin and below readable content."
+
+data_contract:
+  modal_id_source: runtime_route
+  title_source: text_key
+  body_content_source: data_or_scenario
+  action_source: runtime_state
+  hardcoding_allowlist: []
+
+runtime_mapping:
+  godot_modal_host: Root_TaskstonebarFullUiOverlay.ModalHost
+  owner_recipe: harness/godot/recipes/ui/taskstonebar-full-ui-overlay.yaml
+
+review_gate:
+  pass_conditions:
+    - "Modal screenshots still read as independent desktop windows with title chrome and close affordance."
+    - "Taskbar combat context remains visible behind ordinary feed/merge/reward modals."
+  blockers:
+    - "Modal content is implemented as one full-screen image."
+    - "Header/body/footer are collapsed into one unowned block."
+    - "Footer action buttons do not use the shared button system."
+    - "A modal hides or replaces the taskbar combat strip without an account/security reason."

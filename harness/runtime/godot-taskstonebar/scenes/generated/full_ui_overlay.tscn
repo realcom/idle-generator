@@ -1,0 +1,1900 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Theme" path="res://themes/generated/taskstonebar_full_ui_overlay.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/window_frame_9slice.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/window_title_bar_9slice.png" id="3_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/window_ornament_set.png" id="4_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/dark_inner_well_9slice.png" id="5_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/status_stat_card_9slice.png" id="6_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/slot_frame_9slice.png" id="7_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/stone_icon_set.png" id="8_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/resource_icon_set.png" id="9_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/stone_keeper_sheet.png" id="10_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/portal_parchment_map.png" id="11_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/combat_ground_strip.png" id="12_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/rare_drop_toast_9slice.png" id="13_tex"]
+
+[node name="Root_TaskstonebarFullUiOverlay" type="Control"]
+layout_mode = 3
+theme = ExtResource("1_theme")
+metadata/atom = "ScreenRoot"
+metadata/component = "DesktopOverlayRoot"
+
+[node name="Section_DesktopScaffold" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1586.0
+offset_bottom = 992.0
+custom_minimum_size = Vector2(1586.0, 992.0)
+metadata/atom = "SectionGroup"
+metadata/component = "DesktopOverlayRoot"
+
+[node name="Panel_OsTaskbarBand" type="PanelContainer" parent="Section_DesktopScaffold"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 940.0
+offset_right = 1586.0
+offset_bottom = 992.0
+custom_minimum_size = Vector2(1586.0, 52.0)
+metadata/atom = "NativePanel"
+metadata/component = "SteamSyncStatus"
+metadata/color_token = "panel_inner"
+
+[node name="Text_SteamSyncStatus" type="Label" parent="Section_DesktopScaffold/Panel_OsTaskbarBand"]
+layout_mode = 0
+offset_left = 1240.0
+offset_top = 14.0
+offset_right = 1540.0
+offset_bottom = 38.0
+custom_minimum_size = Vector2(300.0, 24.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "local_sandbox · Steam Inventory disabled"
+theme_override_font_sizes/font_size = 15.0
+metadata/atom = "NativeLabel"
+metadata/component = "SteamSyncStatus"
+metadata/text_binding_or_text_key = "steam.sync_status"
+metadata/color_token = "text_cream"
+metadata/font_size = 15.0
+
+[node name="Section_WindowStack" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1586.0
+offset_bottom = 720.0
+custom_minimum_size = Vector2(1586.0, 720.0)
+metadata/atom = "SectionGroup"
+metadata/component = "WindowFrame"
+
+[node name="Panel_StatusWindowFrame" type="NinePatchRect" parent="Section_WindowStack"]
+layout_mode = 0
+offset_left = 37.0
+offset_top = 103.0
+offset_right = 495.0
+offset_bottom = 677.0
+custom_minimum_size = Vector2(458.0, 574.0)
+texture = ExtResource("2_tex")
+patch_margin_left = 30.0
+patch_margin_right = 30.0
+patch_margin_top = 34.0
+patch_margin_bottom = 30.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "StatusWindow"
+metadata/asset_key = "taskstonebar.ui.window_frame_9slice"
+
+[node name="Panel_StatusTitleBar" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 12.0
+offset_right = 438.0
+offset_bottom = 66.0
+custom_minimum_size = Vector2(418.0, 54.0)
+texture = ExtResource("3_tex")
+patch_margin_left = 26.0
+patch_margin_right = 26.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "WindowTitleBar"
+metadata/asset_key = "taskstonebar.ui.window_title_bar_9slice"
+
+[node name="Tex_StatusWindowOrnament" type="TextureRect" parent="Section_WindowStack/Panel_StatusWindowFrame"]
+layout_mode = 0
+offset_left = 126.0
+offset_top = -30.0
+offset_right = 332.0
+offset_bottom = 46.0
+custom_minimum_size = Vector2(206.0, 76.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "WindowFrame"
+metadata/asset_key = "taskstonebar.ui.window_ornament_set"
+
+[node name="Panel_StatusBodyWell" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 72.0
+offset_right = 440.0
+offset_bottom = 556.0
+custom_minimum_size = Vector2(422.0, 484.0)
+texture = ExtResource("5_tex")
+patch_margin_left = 22.0
+patch_margin_right = 22.0
+patch_margin_top = 22.0
+patch_margin_bottom = 22.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "StatusWindow"
+metadata/asset_key = "taskstonebar.ui.dark_inner_well_9slice"
+
+[node name="Text_StatusTitle" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame"]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 18.0
+offset_right = 340.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(220.0, 34.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "스테이터스"
+theme_override_font_sizes/font_size = 25.0
+metadata/atom = "NativeLabel"
+metadata/component = "WindowTitleBar"
+metadata/text_binding_or_text_key = "window.status.title"
+metadata/color_token = "title_gold"
+metadata/font_size = 25.0
+
+[node name="Btn_StatusClose" type="Button" parent="Section_WindowStack/Panel_StatusWindowFrame"]
+layout_mode = 0
+offset_left = 404.0
+offset_top = 20.0
+offset_right = 446.0
+offset_bottom = 62.0
+custom_minimum_size = Vector2(42.0, 42.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "WindowFrame"
+metadata/button_role = "window_close"
+
+[node name="Panel_StatusStatScroll" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 76.0
+offset_right = 434.0
+offset_bottom = 230.0
+custom_minimum_size = Vector2(410.0, 154.0)
+texture = ExtResource("6_tex")
+patch_margin_left = 14.0
+patch_margin_right = 14.0
+patch_margin_top = 14.0
+patch_margin_bottom = 14.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "StatusStatScrollPanel"
+metadata/asset_key = "taskstonebar.ui.status_stat_card_9slice"
+
+[node name="Panel_ClassRibbon" type="PanelContainer" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll"]
+layout_mode = 0
+offset_left = 92.0
+offset_top = 9.0
+offset_right = 318.0
+offset_bottom = 37.0
+custom_minimum_size = Vector2(226.0, 28.0)
+metadata/atom = "NativePanel"
+metadata/component = "StatusStatScrollPanel"
+metadata/color_token = "panel_outer"
+
+[node name="Text_ClassName" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Panel_ClassRibbon"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 3.0
+offset_right = 218.0
+offset_bottom = 25.0
+custom_minimum_size = Vector2(210.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Stone Keeper"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatusStatScrollPanel"
+metadata/text_binding_or_text_key = "selected_character.class_name"
+metadata/color_token = "text_cream"
+metadata/font_size = 13.0
+
+[node name="Group_StatusRows" type="Control" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll"]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 41.0
+offset_right = 340.0
+offset_bottom = 135.0
+custom_minimum_size = Vector2(286.0, 94.0)
+metadata/atom = "SectionGroup"
+metadata/component = "StatList"
+
+[node name="Text_StatusLevelLabel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 166.0
+offset_bottom = 15.0
+custom_minimum_size = Vector2(166.0, 15.0)
+horizontal_alignment = 0
+vertical_alignment = 1
+text = "Level"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatList"
+metadata/text_binding_or_text_key = "stats.level.label"
+metadata/color_token = "shadow"
+metadata/font_size = 13.0
+
+[node name="Text_StatusLevelValue" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows"]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 0.0
+offset_right = 286.0
+offset_bottom = 15.0
+custom_minimum_size = Vector2(120.0, 15.0)
+horizontal_alignment = 2
+vertical_alignment = 1
+text = "27"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatList"
+metadata/text_binding_or_text_key = "stats.level.value"
+metadata/color_token = "shadow"
+metadata/font_size = 13.0
+
+[node name="Text_StatusExpLabel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 15.0
+offset_right = 80.0
+offset_bottom = 30.0
+custom_minimum_size = Vector2(80.0, 15.0)
+horizontal_alignment = 0
+vertical_alignment = 1
+text = "EXP"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatList"
+metadata/text_binding_or_text_key = "stats.exp.label"
+metadata/color_token = "shadow"
+metadata/font_size = 13.0
+
+[node name="Text_StatusExpValue" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows"]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 15.0
+offset_right = 286.0
+offset_bottom = 30.0
+custom_minimum_size = Vector2(206.0, 15.0)
+horizontal_alignment = 2
+vertical_alignment = 1
+text = "3,354,766 / 9,866,299"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatList"
+metadata/text_binding_or_text_key = "stats.exp.value"
+metadata/color_token = "shadow"
+metadata/font_size = 13.0
+
+[node name="Text_StatusDpsLabel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 30.0
+offset_right = 166.0
+offset_bottom = 45.0
+custom_minimum_size = Vector2(166.0, 15.0)
+horizontal_alignment = 0
+vertical_alignment = 1
+text = "Basic Attack DPS"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatList"
+metadata/text_binding_or_text_key = "stats.basic_attack_dps.label"
+metadata/color_token = "shadow"
+metadata/font_size = 13.0
+
+[node name="Text_StatusDpsValue" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows"]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 30.0
+offset_right = 286.0
+offset_bottom = 45.0
+custom_minimum_size = Vector2(120.0, 15.0)
+horizontal_alignment = 2
+vertical_alignment = 1
+text = "48.3"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatList"
+metadata/text_binding_or_text_key = "stats.basic_attack_dps.value"
+metadata/color_token = "shadow"
+metadata/font_size = 13.0
+
+[node name="Text_StatusAttackDamageLabel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 45.0
+offset_right = 166.0
+offset_bottom = 60.0
+custom_minimum_size = Vector2(166.0, 15.0)
+horizontal_alignment = 0
+vertical_alignment = 1
+text = "Attack Damage"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatList"
+metadata/text_binding_or_text_key = "stats.attack_damage.label"
+metadata/color_token = "shadow"
+metadata/font_size = 13.0
+
+[node name="Text_StatusAttackDamageValue" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows"]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 45.0
+offset_right = 286.0
+offset_bottom = 60.0
+custom_minimum_size = Vector2(120.0, 15.0)
+horizontal_alignment = 2
+vertical_alignment = 1
+text = "57"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatList"
+metadata/text_binding_or_text_key = "stats.attack_damage.value"
+metadata/color_token = "shadow"
+metadata/font_size = 13.0
+
+[node name="Text_StatusMaxHpLabel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 60.0
+offset_right = 166.0
+offset_bottom = 75.0
+custom_minimum_size = Vector2(166.0, 15.0)
+horizontal_alignment = 0
+vertical_alignment = 1
+text = "Max HP"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatList"
+metadata/text_binding_or_text_key = "stats.max_hp.label"
+metadata/color_token = "shadow"
+metadata/font_size = 13.0
+
+[node name="Text_StatusMaxHpValue" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows"]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 60.0
+offset_right = 286.0
+offset_bottom = 75.0
+custom_minimum_size = Vector2(120.0, 15.0)
+horizontal_alignment = 2
+vertical_alignment = 1
+text = "65"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatList"
+metadata/text_binding_or_text_key = "stats.max_hp.value"
+metadata/color_token = "shadow"
+metadata/font_size = 13.0
+
+[node name="Text_StatusMoveSpeedLabel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 75.0
+offset_right = 166.0
+offset_bottom = 90.0
+custom_minimum_size = Vector2(166.0, 15.0)
+horizontal_alignment = 0
+vertical_alignment = 1
+text = "Move Speed"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatList"
+metadata/text_binding_or_text_key = "stats.move_speed.label"
+metadata/color_token = "shadow"
+metadata/font_size = 13.0
+
+[node name="Text_StatusMoveSpeedValue" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows"]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 75.0
+offset_right = 286.0
+offset_bottom = 90.0
+custom_minimum_size = Vector2(120.0, 15.0)
+horizontal_alignment = 2
+vertical_alignment = 1
+text = "0.90"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatList"
+metadata/text_binding_or_text_key = "stats.move_speed.value"
+metadata/color_token = "shadow"
+metadata/font_size = 13.0
+
+[node name="Panel_StatusScrollbar" type="PanelContainer" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll"]
+layout_mode = 0
+offset_left = 374.0
+offset_top = 43.0
+offset_right = 382.0
+offset_bottom = 115.0
+custom_minimum_size = Vector2(8.0, 72.0)
+metadata/atom = "NativePanel"
+metadata/component = "StatusStatScrollPanel"
+metadata/color_token = "text_muted"
+
+[node name="Btn_StatusSearch" type="Button" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 106.0
+offset_right = 48.0
+offset_bottom = 144.0
+custom_minimum_size = Vector2(38.0, 38.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "StatusSearchButton"
+metadata/button_role = "utility_icon"
+
+[node name="Text_SearchGlyph" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Btn_StatusSearch"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 3.0
+offset_right = 34.0
+offset_bottom = 33.0
+custom_minimum_size = Vector2(30.0, 30.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "⌕"
+theme_override_font_sizes/font_size = 20.0
+metadata/atom = "NativeLabel"
+metadata/component = "StatusSearchButton"
+metadata/text_binding_or_text_key = "ui.status.search_glyph"
+metadata/color_token = "text_cream"
+metadata/font_size = 20.0
+
+[node name="Panel_SkillPointHeader" type="Control" parent="Section_WindowStack/Panel_StatusWindowFrame"]
+layout_mode = 0
+offset_left = 82.0
+offset_top = 244.0
+offset_right = 376.0
+offset_bottom = 284.0
+custom_minimum_size = Vector2(294.0, 40.0)
+metadata/atom = "SectionGroup"
+metadata/component = "SkillPointHeader"
+
+[node name="Panel_SkillPointHeaderBg" type="PanelContainer" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_SkillPointHeader"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 294.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2(294.0, 40.0)
+metadata/atom = "NativePanel"
+metadata/component = "SkillPointHeader"
+metadata/color_token = "panel_inner"
+
+[node name="Text_SkillPointPlus" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_SkillPointHeader"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 3.0
+offset_right = 44.0
+offset_bottom = 33.0
+custom_minimum_size = Vector2(28.0, 30.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "+"
+theme_override_font_sizes/font_size = 22.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillPointHeader"
+metadata/text_binding_or_text_key = "skill_points.plus_icon"
+metadata/color_token = "title_gold"
+metadata/font_size = 22.0
+
+[node name="Text_SkillPoints" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Panel_SkillPointHeader"]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 7.0
+offset_right = 268.0
+offset_bottom = 33.0
+custom_minimum_size = Vector2(210.0, 26.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Skill Points: 0"
+theme_override_font_sizes/font_size = 18.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillPointHeader"
+metadata/text_binding_or_text_key = "selected_character.skill_points"
+metadata/color_token = "text_cream"
+metadata/font_size = 18.0
+
+[node name="Section_SkillTree" type="Control" parent="Section_WindowStack/Panel_StatusWindowFrame"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 296.0
+offset_right = 434.0
+offset_bottom = 544.0
+custom_minimum_size = Vector2(410.0, 248.0)
+metadata/atom = "SectionGroup"
+metadata/component = "StatusWindow"
+
+[node name="Panel_LevelTrackRail" type="PanelContainer" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree"]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 18.0
+offset_right = 38.0
+offset_bottom = 232.0
+custom_minimum_size = Vector2(10.0, 214.0)
+metadata/atom = "NativePanel"
+metadata/component = "SkillLevelTrack"
+metadata/color_token = "hp_red"
+
+[node name="Text_LevelTick0" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 32.0
+custom_minimum_size = Vector2(24.0, 24.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "0"
+theme_override_font_sizes/font_size = 14.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillLevelTrack"
+metadata/text_binding_or_text_key = "skill_tier.0.level"
+metadata/color_token = "text_cream"
+metadata/font_size = 14.0
+
+[node name="Text_LevelTick10" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 90.0
+offset_right = 28.0
+offset_bottom = 114.0
+custom_minimum_size = Vector2(28.0, 24.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "10"
+theme_override_font_sizes/font_size = 14.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillLevelTrack"
+metadata/text_binding_or_text_key = "skill_tier.10.level"
+metadata/color_token = "text_cream"
+metadata/font_size = 14.0
+
+[node name="Text_LevelTick30" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 194.0
+offset_right = 28.0
+offset_bottom = 218.0
+custom_minimum_size = Vector2(28.0, 24.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "30"
+theme_override_font_sizes/font_size = 14.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillLevelTrack"
+metadata/text_binding_or_text_key = "skill_tier.30.level"
+metadata/color_token = "text_cream"
+metadata/font_size = 14.0
+
+[node name="Panel_LevelTickLine0" type="PanelContainer" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 28.0
+offset_right = 55.0
+offset_bottom = 31.0
+custom_minimum_size = Vector2(35.0, 3.0)
+metadata/atom = "NativePanel"
+metadata/component = "SkillLevelTrack"
+metadata/color_token = "text_cream"
+
+[node name="Panel_LevelTickLine10" type="PanelContainer" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 110.0
+offset_right = 55.0
+offset_bottom = 113.0
+custom_minimum_size = Vector2(35.0, 3.0)
+metadata/atom = "NativePanel"
+metadata/component = "SkillLevelTrack"
+metadata/color_token = "text_cream"
+
+[node name="Panel_LevelTickLine30" type="PanelContainer" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 214.0
+offset_right = 55.0
+offset_bottom = 217.0
+custom_minimum_size = Vector2(35.0, 3.0)
+metadata/atom = "NativePanel"
+metadata/component = "SkillLevelTrack"
+metadata/color_token = "text_cream"
+
+[node name="Grid_StatusSkillSlots" type="GridContainer" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree"]
+layout_mode = 0
+offset_left = 74.0
+offset_top = 0.0
+offset_right = 404.0
+offset_bottom = 236.0
+custom_minimum_size = Vector2(330.0, 236.0)
+columns = 3
+theme_override_constants/h_separation = 34.0
+theme_override_constants/v_separation = 34.0
+metadata/atom = "Grid"
+metadata/component = "SkillTierRow"
+
+[node name="Panel_SkillStoneThrow" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+texture = ExtResource("7_tex")
+patch_margin_left = 18.0
+patch_margin_right = 18.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.slot_frame_9slice"
+
+[node name="Icon_SkillStoneThrow" type="TextureRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillStoneThrow"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 8.0
+offset_right = 45.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2(32.0, 32.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("8_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.stone_icon_set"
+
+[node name="Text_SkillStoneThrowLevel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillStoneThrow"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 39.0
+offset_right = 54.0
+offset_bottom = 55.0
+custom_minimum_size = Vector2(50.0, 16.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "2/2"
+theme_override_font_sizes/font_size = 11.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillIconSlot"
+metadata/text_binding_or_text_key = "skill.stone_throw.level"
+metadata/color_token = "text_cream"
+metadata/font_size = 11.0
+
+[node name="Panel_SkillGuard" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+texture = ExtResource("7_tex")
+patch_margin_left = 18.0
+patch_margin_right = 18.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.slot_frame_9slice"
+
+[node name="Icon_SkillGuard" type="TextureRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillGuard"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 8.0
+offset_right = 45.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2(32.0, 32.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("9_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.resource_icon_set"
+
+[node name="Text_SkillGuardLevel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillGuard"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 39.0
+offset_right = 54.0
+offset_bottom = 55.0
+custom_minimum_size = Vector2(50.0, 16.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "4/8"
+theme_override_font_sizes/font_size = 11.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillIconSlot"
+metadata/text_binding_or_text_key = "skill.guard.level"
+metadata/color_token = "text_cream"
+metadata/font_size = 11.0
+
+[node name="Panel_SkillImpact" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+texture = ExtResource("7_tex")
+patch_margin_left = 18.0
+patch_margin_right = 18.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.slot_frame_9slice"
+
+[node name="Icon_SkillImpact" type="TextureRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillImpact"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 8.0
+offset_right = 45.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2(32.0, 32.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("9_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.resource_icon_set"
+
+[node name="Text_SkillImpactLevel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillImpact"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 39.0
+offset_right = 54.0
+offset_bottom = 55.0
+custom_minimum_size = Vector2(50.0, 16.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "4/5"
+theme_override_font_sizes/font_size = 11.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillIconSlot"
+metadata/text_binding_or_text_key = "skill.impact.level"
+metadata/color_token = "text_cream"
+metadata/font_size = 11.0
+
+[node name="Panel_SkillCrit" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+texture = ExtResource("7_tex")
+patch_margin_left = 18.0
+patch_margin_right = 18.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.slot_frame_9slice"
+
+[node name="Icon_SkillCrit" type="TextureRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillCrit"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 8.0
+offset_right = 45.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2(32.0, 32.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("9_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.resource_icon_set"
+
+[node name="Text_SkillCritLevel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillCrit"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 39.0
+offset_right = 54.0
+offset_bottom = 55.0
+custom_minimum_size = Vector2(50.0, 16.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "1/8"
+theme_override_font_sizes/font_size = 11.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillIconSlot"
+metadata/text_binding_or_text_key = "skill.crit.level"
+metadata/color_token = "text_cream"
+metadata/font_size = 11.0
+
+[node name="Panel_SkillPortal" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+texture = ExtResource("7_tex")
+patch_margin_left = 18.0
+patch_margin_right = 18.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.slot_frame_9slice"
+
+[node name="Icon_SkillPortal" type="TextureRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillPortal"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 8.0
+offset_right = 45.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2(32.0, 32.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("8_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.stone_icon_set"
+
+[node name="Text_SkillPortalLevel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillPortal"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 39.0
+offset_right = 54.0
+offset_bottom = 55.0
+custom_minimum_size = Vector2(50.0, 16.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "1/3"
+theme_override_font_sizes/font_size = 11.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillIconSlot"
+metadata/text_binding_or_text_key = "skill.portal.level"
+metadata/color_token = "text_cream"
+metadata/font_size = 11.0
+
+[node name="Panel_SkillDrop" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+texture = ExtResource("7_tex")
+patch_margin_left = 18.0
+patch_margin_right = 18.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.slot_frame_9slice"
+
+[node name="Icon_SkillDrop" type="TextureRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillDrop"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 8.0
+offset_right = 45.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2(32.0, 32.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("9_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.resource_icon_set"
+
+[node name="Text_SkillDropLevel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillDrop"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 39.0
+offset_right = 54.0
+offset_bottom = 55.0
+custom_minimum_size = Vector2(50.0, 16.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "5/5"
+theme_override_font_sizes/font_size = 11.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillIconSlot"
+metadata/text_binding_or_text_key = "skill.drop.level"
+metadata/color_token = "text_cream"
+metadata/font_size = 11.0
+
+[node name="Panel_SkillBoss" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+texture = ExtResource("7_tex")
+patch_margin_left = 18.0
+patch_margin_right = 18.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.slot_frame_9slice"
+
+[node name="Icon_SkillBoss" type="TextureRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillBoss"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 8.0
+offset_right = 45.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2(32.0, 32.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("9_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.resource_icon_set"
+
+[node name="Text_SkillBossLevel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillBoss"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 39.0
+offset_right = 54.0
+offset_bottom = 55.0
+custom_minimum_size = Vector2(50.0, 16.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "2/2"
+theme_override_font_sizes/font_size = 11.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillIconSlot"
+metadata/text_binding_or_text_key = "skill.boss.level"
+metadata/color_token = "text_cream"
+metadata/font_size = 11.0
+
+[node name="Panel_SkillMarket" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+texture = ExtResource("7_tex")
+patch_margin_left = 18.0
+patch_margin_right = 18.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.slot_frame_9slice"
+
+[node name="Icon_SkillMarket" type="TextureRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillMarket"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 8.0
+offset_right = 45.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2(32.0, 32.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("8_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.stone_icon_set"
+
+[node name="Text_SkillMarketLevel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillMarket"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 39.0
+offset_right = 54.0
+offset_bottom = 55.0
+custom_minimum_size = Vector2(50.0, 16.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "4/5"
+theme_override_font_sizes/font_size = 11.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillIconSlot"
+metadata/text_binding_or_text_key = "skill.market.level"
+metadata/color_token = "text_cream"
+metadata/font_size = 11.0
+
+[node name="Panel_SkillTreasure" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+texture = ExtResource("7_tex")
+patch_margin_left = 18.0
+patch_margin_right = 18.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.slot_frame_9slice"
+
+[node name="Icon_SkillTreasure" type="TextureRect" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillTreasure"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 8.0
+offset_right = 45.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2(32.0, 32.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("9_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "SkillIconSlot"
+metadata/asset_key = "taskstonebar.ui.resource_icon_set"
+
+[node name="Text_SkillTreasureLevel" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillTreasure"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 39.0
+offset_right = 54.0
+offset_bottom = 55.0
+custom_minimum_size = Vector2(50.0, 16.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "5/5"
+theme_override_font_sizes/font_size = 11.0
+metadata/atom = "NativeLabel"
+metadata/component = "SkillIconSlot"
+metadata/text_binding_or_text_key = "skill.treasure.level"
+metadata/color_token = "text_cream"
+metadata/font_size = 11.0
+
+[node name="Panel_HeroInventoryWindowFrame" type="NinePatchRect" parent="Section_WindowStack"]
+layout_mode = 0
+offset_left = 518.0
+offset_top = 50.0
+offset_right = 1070.0
+offset_bottom = 750.0
+custom_minimum_size = Vector2(552.0, 700.0)
+texture = ExtResource("2_tex")
+patch_margin_left = 30.0
+patch_margin_right = 30.0
+patch_margin_top = 34.0
+patch_margin_bottom = 30.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "HeroInventoryWindow"
+metadata/asset_key = "taskstonebar.ui.window_frame_9slice"
+
+[node name="Panel_HeroInventoryTitleBar" type="NinePatchRect" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 12.0
+offset_right = 532.0
+offset_bottom = 66.0
+custom_minimum_size = Vector2(512.0, 54.0)
+texture = ExtResource("3_tex")
+patch_margin_left = 26.0
+patch_margin_right = 26.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "WindowTitleBar"
+metadata/asset_key = "taskstonebar.ui.window_title_bar_9slice"
+
+[node name="Tex_HeroInventoryWindowOrnament" type="TextureRect" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
+layout_mode = 0
+offset_left = 173.0
+offset_top = -30.0
+offset_right = 379.0
+offset_bottom = 46.0
+custom_minimum_size = Vector2(206.0, 76.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "WindowFrame"
+metadata/asset_key = "taskstonebar.ui.window_ornament_set"
+
+[node name="Panel_HeroInventoryBodyWell" type="NinePatchRect" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 72.0
+offset_right = 534.0
+offset_bottom = 678.0
+custom_minimum_size = Vector2(516.0, 606.0)
+texture = ExtResource("5_tex")
+patch_margin_left = 22.0
+patch_margin_right = 22.0
+patch_margin_top = 22.0
+patch_margin_bottom = 22.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "HeroInventoryWindow"
+metadata/asset_key = "taskstonebar.ui.dark_inner_well_9slice"
+
+[node name="Text_HeroInventoryTitle" type="Label" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
+layout_mode = 0
+offset_left = 210.0
+offset_top = 18.0
+offset_right = 360.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(150.0, 34.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "돌지기"
+theme_override_font_sizes/font_size = 25.0
+metadata/atom = "NativeLabel"
+metadata/component = "WindowTitleBar"
+metadata/text_binding_or_text_key = "window.hero_inventory.title"
+metadata/color_token = "title_gold"
+metadata/font_size = 25.0
+
+[node name="Btn_HeroInventoryClose" type="Button" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
+layout_mode = 0
+offset_left = 498.0
+offset_top = 20.0
+offset_right = 540.0
+offset_bottom = 62.0
+custom_minimum_size = Vector2(42.0, 42.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "WindowFrame"
+metadata/button_role = "window_close"
+
+[node name="Tex_StoneKeeperPortrait" type="TextureRect" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 86.0
+offset_right = 356.0
+offset_bottom = 256.0
+custom_minimum_size = Vector2(158.0, 170.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("10_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "CharacterPortrait"
+metadata/asset_key = "taskstonebar.ui.stone_keeper_sheet"
+
+[node name="Text_KeeperLevel" type="Label" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
+layout_mode = 0
+offset_left = 238.0
+offset_top = 234.0
+offset_right = 330.0
+offset_bottom = 264.0
+custom_minimum_size = Vector2(92.0, 30.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Lv.27"
+theme_override_font_sizes/font_size = 22.0
+metadata/atom = "NativeLabel"
+metadata/component = "CharacterPortrait"
+metadata/text_binding_or_text_key = "selected_character.level"
+metadata/color_token = "title_gold"
+metadata/font_size = 22.0
+
+[node name="Grid_EquipmentSlotsLeft" type="GridContainer" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 88.0
+offset_right = 146.0
+offset_bottom = 216.0
+custom_minimum_size = Vector2(120.0, 128.0)
+columns = 2
+metadata/atom = "Grid"
+metadata/component = "EquipmentSlotGrid"
+
+[node name="Grid_EquipmentSlotsRight" type="GridContainer" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
+layout_mode = 0
+offset_left = 402.0
+offset_top = 88.0
+offset_right = 522.0
+offset_bottom = 216.0
+custom_minimum_size = Vector2(120.0, 128.0)
+columns = 2
+metadata/atom = "Grid"
+metadata/component = "EquipmentSlotGrid"
+
+[node name="Tabs_StoneEquipment" type="HBoxContainer" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
+layout_mode = 0
+offset_left = 52.0
+offset_top = 302.0
+offset_right = 500.0
+offset_bottom = 338.0
+custom_minimum_size = Vector2(448.0, 36.0)
+theme_override_constants/h_separation = 8.0
+metadata/atom = "HBox"
+metadata/component = "StoneEquipmentTabBar"
+
+[node name="Btn_StoneTab" type="Button" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame/Tabs_StoneEquipment"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 220.0
+offset_bottom = 36.0
+custom_minimum_size = Vector2(220.0, 36.0)
+flat = true
+text = "돌 활성 0/12"
+metadata/atom = "IconButton"
+metadata/component = "StoneEquipmentTabBar"
+metadata/button_role = "inventory_tab"
+
+[node name="Btn_EquipmentTab" type="Button" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame/Tabs_StoneEquipment"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 220.0
+offset_bottom = 36.0
+custom_minimum_size = Vector2(220.0, 36.0)
+flat = true
+text = "장비 0/40"
+metadata/atom = "IconButton"
+metadata/component = "StoneEquipmentTabBar"
+metadata/button_role = "inventory_tab"
+
+[node name="Grid_StoneInventory" type="GridContainer" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
+layout_mode = 0
+offset_left = 52.0
+offset_top = 352.0
+offset_right = 500.0
+offset_bottom = 568.0
+custom_minimum_size = Vector2(448.0, 216.0)
+columns = 8
+metadata/atom = "Grid"
+metadata/component = "StoneInventoryPanel"
+
+[node name="Panel_StoneSlotPrototype" type="NinePatchRect" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame/Grid_StoneInventory"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 48.0
+offset_bottom = 48.0
+custom_minimum_size = Vector2(48.0, 48.0)
+texture = ExtResource("7_tex")
+patch_margin_left = 18.0
+patch_margin_right = 18.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "Slot"
+metadata/asset_key = "taskstonebar.ui.slot_frame_9slice"
+
+[node name="Dock_KeeperIconDock" type="HBoxContainer" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 608.0
+offset_right = 468.0
+offset_bottom = 672.0
+custom_minimum_size = Vector2(410.0, 64.0)
+theme_override_constants/h_separation = 14.0
+metadata/atom = "HBox"
+metadata/component = "KeeperIconDock"
+
+[node name="Btn_DockInventory" type="Button" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "KeeperIconDock"
+metadata/button_role = "keeper_dock_icon"
+
+[node name="Btn_DockGrowth" type="Button" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "KeeperIconDock"
+metadata/button_role = "keeper_dock_icon"
+
+[node name="Btn_DockFormation" type="Button" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "KeeperIconDock"
+metadata/button_role = "keeper_dock_icon"
+
+[node name="Btn_DockStorage" type="Button" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "KeeperIconDock"
+metadata/button_role = "keeper_dock_icon"
+
+[node name="Btn_DockSteamAssets" type="Button" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 58.0
+custom_minimum_size = Vector2(58.0, 58.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "KeeperIconDock"
+metadata/button_role = "keeper_dock_icon"
+
+[node name="Panel_PortalWindowFrame" type="NinePatchRect" parent="Section_WindowStack"]
+layout_mode = 0
+offset_left = 1089.0
+offset_top = 103.0
+offset_right = 1521.0
+offset_bottom = 713.0
+custom_minimum_size = Vector2(432.0, 610.0)
+texture = ExtResource("2_tex")
+patch_margin_left = 30.0
+patch_margin_right = 30.0
+patch_margin_top = 34.0
+patch_margin_bottom = 30.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "PortalWindow"
+metadata/asset_key = "taskstonebar.ui.window_frame_9slice"
+
+[node name="Panel_PortalTitleBar" type="NinePatchRect" parent="Section_WindowStack/Panel_PortalWindowFrame"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 12.0
+offset_right = 412.0
+offset_bottom = 66.0
+custom_minimum_size = Vector2(392.0, 54.0)
+texture = ExtResource("3_tex")
+patch_margin_left = 26.0
+patch_margin_right = 26.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "WindowTitleBar"
+metadata/asset_key = "taskstonebar.ui.window_title_bar_9slice"
+
+[node name="Tex_PortalWindowOrnament" type="TextureRect" parent="Section_WindowStack/Panel_PortalWindowFrame"]
+layout_mode = 0
+offset_left = 113.0
+offset_top = -30.0
+offset_right = 319.0
+offset_bottom = 46.0
+custom_minimum_size = Vector2(206.0, 76.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "WindowFrame"
+metadata/asset_key = "taskstonebar.ui.window_ornament_set"
+
+[node name="Panel_PortalBodyWell" type="NinePatchRect" parent="Section_WindowStack/Panel_PortalWindowFrame"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 72.0
+offset_right = 414.0
+offset_bottom = 592.0
+custom_minimum_size = Vector2(396.0, 520.0)
+texture = ExtResource("5_tex")
+patch_margin_left = 22.0
+patch_margin_right = 22.0
+patch_margin_top = 22.0
+patch_margin_bottom = 22.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "PortalWindow"
+metadata/asset_key = "taskstonebar.ui.dark_inner_well_9slice"
+
+[node name="Text_PortalTitle" type="Label" parent="Section_WindowStack/Panel_PortalWindowFrame"]
+layout_mode = 0
+offset_left = 154.0
+offset_top = 18.0
+offset_right = 284.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(130.0, 34.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "포탈"
+theme_override_font_sizes/font_size = 25.0
+metadata/atom = "NativeLabel"
+metadata/component = "WindowTitleBar"
+metadata/text_binding_or_text_key = "window.portal.title"
+metadata/color_token = "title_gold"
+metadata/font_size = 25.0
+
+[node name="Btn_PortalClose" type="Button" parent="Section_WindowStack/Panel_PortalWindowFrame"]
+layout_mode = 0
+offset_left = 378.0
+offset_top = 20.0
+offset_right = 420.0
+offset_bottom = 62.0
+custom_minimum_size = Vector2(42.0, 42.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "WindowFrame"
+metadata/button_role = "window_close"
+
+[node name="Panel_DifficultySelect" type="PanelContainer" parent="Section_WindowStack/Panel_PortalWindowFrame"]
+layout_mode = 0
+offset_left = 104.0
+offset_top = 88.0
+offset_right = 344.0
+offset_bottom = 128.0
+custom_minimum_size = Vector2(240.0, 40.0)
+metadata/atom = "NativePanel"
+metadata/component = "PortalDifficultySelect"
+metadata/color_token = "panel_mid"
+
+[node name="Text_Difficulty" type="Label" parent="Section_WindowStack/Panel_PortalWindowFrame/Panel_DifficultySelect"]
+layout_mode = 0
+offset_left = 42.0
+offset_top = 8.0
+offset_right = 194.0
+offset_bottom = 32.0
+custom_minimum_size = Vector2(152.0, 24.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Normal"
+theme_override_font_sizes/font_size = 16.0
+metadata/atom = "NativeLabel"
+metadata/component = "PortalDifficultySelect"
+metadata/text_binding_or_text_key = "portal.selected_difficulty"
+metadata/color_token = "text_cream"
+metadata/font_size = 16.0
+
+[node name="Tabs_Act" type="HBoxContainer" parent="Section_WindowStack/Panel_PortalWindowFrame"]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 142.0
+offset_right = 378.0
+offset_bottom = 184.0
+custom_minimum_size = Vector2(324.0, 42.0)
+theme_override_constants/h_separation = 8.0
+metadata/atom = "HBox"
+metadata/component = "ActTabBar"
+
+[node name="Btn_Act1" type="Button" parent="Section_WindowStack/Panel_PortalWindowFrame/Tabs_Act"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 96.0
+offset_bottom = 42.0
+custom_minimum_size = Vector2(96.0, 42.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "ActTabBar"
+metadata/button_role = "act_tab"
+
+[node name="Btn_Act2" type="Button" parent="Section_WindowStack/Panel_PortalWindowFrame/Tabs_Act"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 96.0
+offset_bottom = 42.0
+custom_minimum_size = Vector2(96.0, 42.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "ActTabBar"
+metadata/button_role = "act_tab"
+
+[node name="Btn_Act3" type="Button" parent="Section_WindowStack/Panel_PortalWindowFrame/Tabs_Act"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 96.0
+offset_bottom = 42.0
+custom_minimum_size = Vector2(96.0, 42.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "ActTabBar"
+metadata/button_role = "act_tab"
+
+[node name="Tex_ParchmentRouteMap" type="TextureRect" parent="Section_WindowStack/Panel_PortalWindowFrame"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 190.0
+offset_right = 402.0
+offset_bottom = 594.0
+custom_minimum_size = Vector2(372.0, 404.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("11_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "ParchmentRouteMap"
+metadata/asset_key = "taskstonebar.ui.portal_parchment_map"
+
+[node name="Btn_CurrentStageNode" type="Button" parent="Section_WindowStack/Panel_PortalWindowFrame"]
+layout_mode = 0
+offset_left = 246.0
+offset_top = 404.0
+offset_right = 290.0
+offset_bottom = 448.0
+custom_minimum_size = Vector2(44.0, 44.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "StageNode"
+metadata/button_role = "portal_stage_node"
+
+[node name="Section_BottomCombatStrip" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 704.0
+offset_right = 1586.0
+offset_bottom = 940.0
+custom_minimum_size = Vector2(1586.0, 236.0)
+metadata/atom = "SectionGroup"
+metadata/component = "TaskbarCombatStrip"
+
+[node name="Tex_CombatGroundStrip" type="TextureRect" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1586.0
+offset_bottom = 236.0
+custom_minimum_size = Vector2(1586.0, 236.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("12_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "TaskbarCombatStrip"
+metadata/asset_key = "taskstonebar.ui.combat_ground_strip"
+
+[node name="Tex_HeroCombatSprite" type="TextureRect" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 360.0
+offset_top = 38.0
+offset_right = 456.0
+offset_bottom = 134.0
+custom_minimum_size = Vector2(96.0, 96.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("10_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "HeroCombatSprite"
+metadata/asset_key = "taskstonebar.ui.stone_keeper_sheet"
+
+[node name="Layer_Projectile" type="Control" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 456.0
+offset_top = 34.0
+offset_right = 900.0
+offset_bottom = 138.0
+custom_minimum_size = Vector2(444.0, 104.0)
+metadata/atom = "SectionGroup"
+metadata/component = "ProjectileLayer"
+
+[node name="Tex_StoneProjectile" type="TextureRect" parent="Section_BottomCombatStrip/Layer_Projectile"]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 36.0
+offset_right = 230.0
+offset_bottom = 68.0
+custom_minimum_size = Vector2(32.0, 32.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("8_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "ProjectileLayer"
+metadata/asset_key = "taskstonebar.ui.stone_icon_set"
+
+[node name="Text_SkillTrigger" type="Label" parent="Section_BottomCombatStrip/Layer_Projectile"]
+layout_mode = 0
+offset_left = 136.0
+offset_top = 72.0
+offset_right = 316.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2(180.0, 24.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "돌팔매 0.8s"
+theme_override_font_sizes/font_size = 15.0
+metadata/atom = "NativeLabel"
+metadata/component = "AutoSkillToggle"
+metadata/text_binding_or_text_key = "combat.skill_trigger"
+metadata/color_token = "title_gold"
+metadata/font_size = 15.0
+
+[node name="Tex_EnemyStackPrototype" type="TextureRect" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 900.0
+offset_top = 60.0
+offset_right = 972.0
+offset_bottom = 132.0
+custom_minimum_size = Vector2(72.0, 72.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("8_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "EnemyStack"
+metadata/asset_key = "taskstonebar.ui.stone_icon_set"
+
+[node name="Text_DamageNumber" type="Label" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 782.0
+offset_top = 44.0
+offset_right = 914.0
+offset_bottom = 74.0
+custom_minimum_size = Vector2(132.0, 30.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "-128 CRIT"
+theme_override_font_sizes/font_size = 22.0
+metadata/atom = "NativeLabel"
+metadata/component = "DamageNumberLayer"
+metadata/text_binding_or_text_key = "combat.latest_damage"
+metadata/color_token = "title_gold"
+metadata/font_size = 22.0
+
+[node name="Text_EnemyName" type="Label" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 850.0
+offset_top = 24.0
+offset_right = 1040.0
+offset_bottom = 46.0
+custom_minimum_size = Vector2(190.0, 22.0)
+horizontal_alignment = 0
+vertical_alignment = 1
+text = "이끼 돌무더기"
+theme_override_font_sizes/font_size = 14.0
+metadata/atom = "NativeLabel"
+metadata/component = "EnemyHpBar"
+metadata/text_binding_or_text_key = "combat.focus_enemy.name"
+metadata/color_token = "text_cream"
+metadata/font_size = 14.0
+
+[node name="Progress_EnemyHp" type="ProgressBar" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 850.0
+offset_top = 52.0
+offset_right = 978.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2(128.0, 12.0)
+show_percentage = false
+max_value = 1.0
+value = 0.0
+metadata/atom = "NativeProgress"
+metadata/component = "EnemyHpBar"
+metadata/value_binding = "combat.focus_enemy.hp_ratio"
+
+[node name="Text_EnemyHpValue" type="Label" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 982.0
+offset_top = 47.0
+offset_right = 1100.0
+offset_bottom = 69.0
+custom_minimum_size = Vector2(118.0, 22.0)
+horizontal_alignment = 0
+vertical_alignment = 1
+text = "HP 420 / 960"
+theme_override_font_sizes/font_size = 12.0
+metadata/atom = "NativeLabel"
+metadata/component = "EnemyHpBar"
+metadata/text_binding_or_text_key = "combat.focus_enemy.hp_text"
+metadata/color_token = "text_cream"
+metadata/font_size = 12.0
+
+[node name="Panel_AutoCombatToggle" type="PanelContainer" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 284.0
+offset_top = 146.0
+offset_right = 388.0
+offset_bottom = 178.0
+custom_minimum_size = Vector2(104.0, 32.0)
+metadata/atom = "NativePanel"
+metadata/component = "AutoCombatToggle"
+metadata/color_token = "panel_inner"
+
+[node name="Text_AutoCombat" type="Label" parent="Section_BottomCombatStrip/Panel_AutoCombatToggle"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 5.0
+offset_right = 96.0
+offset_bottom = 27.0
+custom_minimum_size = Vector2(88.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "AUTO ON"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "AutoCombatToggle"
+metadata/text_binding_or_text_key = "combat.auto_combat"
+metadata/color_token = "moss_green"
+metadata/font_size = 13.0
+
+[node name="Panel_AutoSkillToggle" type="PanelContainer" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 396.0
+offset_top = 146.0
+offset_right = 522.0
+offset_bottom = 178.0
+custom_minimum_size = Vector2(126.0, 32.0)
+metadata/atom = "NativePanel"
+metadata/component = "AutoSkillToggle"
+metadata/color_token = "panel_inner"
+
+[node name="Text_AutoSkill" type="Label" parent="Section_BottomCombatStrip/Panel_AutoSkillToggle"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 5.0
+offset_right = 118.0
+offset_bottom = 27.0
+custom_minimum_size = Vector2(110.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "SKILL 돌팔매"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "AutoSkillToggle"
+metadata/text_binding_or_text_key = "combat.auto_skill"
+metadata/color_token = "exp_blue"
+metadata/font_size = 13.0
+
+[node name="Text_StageBadge" type="Label" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 710.0
+offset_top = 142.0
+offset_right = 876.0
+offset_bottom = 200.0
+custom_minimum_size = Vector2(166.0, 58.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "작업표시줄 동굴
+Stage 1-2"
+theme_override_font_sizes/font_size = 22.0
+metadata/atom = "NativeLabel"
+metadata/component = "StageBadge"
+metadata/text_binding_or_text_key = "current_stage.label"
+metadata/color_token = "text_cream"
+metadata/font_size = 22.0
+
+[node name="Panel_LootTicker" type="PanelContainer" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 1012.0
+offset_top = 146.0
+offset_right = 1302.0
+offset_bottom = 180.0
+custom_minimum_size = Vector2(290.0, 34.0)
+metadata/atom = "NativePanel"
+metadata/component = "LootTicker"
+metadata/color_token = "panel_inner"
+
+[node name="Text_LootTicker" type="Label" parent="Section_BottomCombatStrip/Panel_LootTicker"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 6.0
+offset_right = 280.0
+offset_bottom = 28.0
+custom_minimum_size = Vector2(270.0, 22.0)
+horizontal_alignment = 0
+vertical_alignment = 1
+text = "+3 조약돌 파편  +1 이끼 광석"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "LootTicker"
+metadata/text_binding_or_text_key = "combat.latest_drop"
+metadata/color_token = "text_cream"
+metadata/font_size = 13.0
+
+[node name="Panel_CombatShortcutDock" type="PanelContainer" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 1328.0
+offset_top = 148.0
+offset_right = 1476.0
+offset_bottom = 186.0
+custom_minimum_size = Vector2(148.0, 38.0)
+metadata/atom = "NativePanel"
+metadata/component = "CombatSceneShortcutDock"
+metadata/color_token = "panel_outer"
+
+[node name="Text_RestoreWorkshop" type="Label" parent="Section_BottomCombatStrip/Panel_CombatShortcutDock"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 7.0
+offset_right = 136.0
+offset_bottom = 29.0
+custom_minimum_size = Vector2(124.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "창 복원"
+theme_override_font_sizes/font_size = 14.0
+metadata/atom = "NativeLabel"
+metadata/component = "CombatSceneShortcutDock"
+metadata/text_binding_or_text_key = "ui.restore_workshop"
+metadata/color_token = "title_gold"
+metadata/font_size = 14.0
+
+[node name="Panel_RareDropToast" type="NinePatchRect" parent="Section_BottomCombatStrip"]
+layout_mode = 0
+offset_left = 1276.0
+offset_top = 60.0
+offset_right = 1496.0
+offset_bottom = 130.0
+custom_minimum_size = Vector2(220.0, 70.0)
+texture = ExtResource("13_tex")
+patch_margin_left = 22.0
+patch_margin_right = 22.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "RareDropToast"
+metadata/asset_key = "taskstonebar.ui.rare_drop_toast_9slice"
+
+[node name="Icon_RareDrop" type="TextureRect" parent="Section_BottomCombatStrip/Panel_RareDropToast"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 54.0
+offset_bottom = 54.0
+custom_minimum_size = Vector2(42.0, 42.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("9_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "RareDropToast"
+metadata/asset_key = "taskstonebar.ui.resource_icon_set"
+
+[node name="Text_RareDropTitle" type="Label" parent="Section_BottomCombatStrip/Panel_RareDropToast"]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 10.0
+offset_right = 202.0
+offset_bottom = 32.0
+custom_minimum_size = Vector2(138.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "희귀 드롭"
+theme_override_font_sizes/font_size = 14.0
+metadata/atom = "NativeLabel"
+metadata/component = "RareDropToast"
+metadata/text_binding_or_text_key = "combat.latest_rare_drop.title"
+metadata/color_token = "text_cream"
+metadata/font_size = 14.0
+
+[node name="Text_RareDropBody" type="Label" parent="Section_BottomCombatStrip/Panel_RareDropToast"]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 34.0
+offset_right = 202.0
+offset_bottom = 56.0
+custom_minimum_size = Vector2(138.0, 22.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "이끼 광석 x1"
+theme_override_font_sizes/font_size = 13.0
+metadata/atom = "NativeLabel"
+metadata/component = "RareDropToast"
+metadata/text_binding_or_text_key = "combat.latest_rare_drop.body"
+metadata/color_token = "moss_green"
+metadata/font_size = 13.0
+
+[node name="ModalHost" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1586.0
+offset_bottom = 992.0
+custom_minimum_size = Vector2(1586.0, 992.0)
+metadata/atom = "SectionGroup"
+metadata/component = "ModalHost"

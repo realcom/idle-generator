@@ -4,6 +4,7 @@ status: extracted
 updated_at: 2026-06-23T00:00:00+09:00
 
 source_concepts:
+  - growstone2_original_assets
   - taskstone_local_prototype
 
 art_anchor:
@@ -14,6 +15,7 @@ art_anchor:
     ui: "brown 9-slice RPG panels with warm gold titles and dark inner wells"
   must_keep:
     - "transparent lower combat strip that can sit above a desktop/taskbar"
+    - "돌키우기1 원작 리소스의 픽셀 밀도, UI 질감, 이펙트 감각"
     - "32px pixel stones and currency icons scaled with crisp nearest-neighbor rendering"
     - "rounded but low-radius brown frames, gold text, black drop shadows"
     - "merge-board slot language for stone growth"
@@ -23,6 +25,21 @@ art_anchor:
     - "large mobile hero-page composition"
     - "smooth vector-only UI that loses the pixel toy feel"
     - "overly dark unreadable panels"
+    - "원작 에셋이 존재하는 UI/유닛/맵/이펙트를 새 그림으로 먼저 대체하는 작업"
+
+asset_policy:
+  primary_root: "harness/assets/growstone2/"
+  mandate: "돌키우기2의 기본 룩은 돌키우기1 원작 에셋 재사용으로 만든다."
+  reuse_order:
+    - "원본 PNG/GIF/스프라이트시트를 그대로 참조"
+    - "Godot용 atlas, frame, 9-slice, import preset으로 재패킹"
+    - "필요 시 팔레트/스케일/투명도 같은 비파괴 변형"
+    - "누락된 Steam Market 아이콘/신규 시즌물만 원작 톤으로 생성"
+  key_folders:
+    UI: "팝업, 탭, 슬롯, 상점 프레임"
+    unit: "원작 유닛/캐릭터/정렬 자료"
+    effect: "스킬, 레벨업, 크리티컬, 보호막, 태양석 계열 이펙트"
+    map: "마을, 광산, 던전, 필드 배경"
 
 palette:
   panel_outer: "#6b4a2a"

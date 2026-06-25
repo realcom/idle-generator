@@ -1,0 +1,126 @@
+version: "1.0"
+game: taskstonebar
+status: draft
+source_concepts:
+  - main_ui_concept_e_refined_current_mockup_b
+
+foundation_systems:
+  buttons: button-system.yaml
+  modals: modal-system.yaml
+  colors: color-tokens.yaml
+
+skins:
+  window_frame_black_iron:
+    component: WindowFrame
+    mode: hybrid
+    states:
+      normal:
+        asset_key: taskstonebar.ui.window_frame_9slice
+        visual_role: "Black iron and brown RPG desktop window frame."
+        godot_usage: nine_patch_rect
+    content_insets_px: { left: 18, right: 18, top: 72, bottom: 16 }
+    slice_hints_px: { left: 30, right: 30, top: 34, bottom: 30 }
+    ornament_layer: taskstonebar.ui.window_ornament_set
+    semantic_color_tokens: [panel_outer, panel_mid, panel_inner, title_gold]
+    must_not_bake: [text, numbers, prices, timers, localized_labels]
+
+  window_title_burgundy:
+    component: WindowTitleBar
+    mode: hybrid
+    states:
+      normal:
+        asset_key: taskstonebar.ui.window_title_bar_9slice
+        visual_role: "Burgundy strip with gold title text drawn natively."
+        godot_usage: stylebox_texture
+    content_insets_px: { left: 40, right: 52, top: 10, bottom: 8 }
+    slice_hints_px: { left: 26, right: 26, top: 18, bottom: 18 }
+    semantic_color_tokens: [panel_mid, title_gold]
+    must_not_bake: [text, localized_labels]
+
+  dark_inner_well:
+    component: StatusWindow
+    mode: hybrid
+    states:
+      normal:
+        asset_key: taskstonebar.ui.dark_inner_well_9slice
+        visual_role: "Dark readable content well inside framed windows."
+        godot_usage: nine_patch_rect
+    content_insets_px: { left: 14, right: 14, top: 14, bottom: 14 }
+    slice_hints_px: { left: 22, right: 22, top: 22, bottom: 22 }
+    semantic_color_tokens: [panel_inner, text_cream, text_muted]
+    must_not_bake: [text, numbers, localized_labels]
+
+  resource_counter_chip:
+    component: ResourceCounter
+    mode: hybrid
+    states:
+      normal:
+        asset_key: taskstonebar.ui.resource_chip_9slice
+        visual_role: "Compact top resource frame."
+        godot_usage: stylebox_texture
+    content_insets_px: { left: 10, right: 10, top: 7, bottom: 7 }
+    slice_hints_px: { left: 16, right: 16, top: 14, bottom: 14 }
+    semantic_color_tokens: [panel_inner, title_gold]
+    button_role: resource_chip
+    must_not_bake: [numbers, prices, localized_labels]
+
+  burgundy_tab_button:
+    component: StoneEquipmentTabBar
+    mode: hybrid
+    states:
+      normal:
+        asset_key: taskstonebar.ui.tab_burgundy_9slice
+        visual_role: "Tab strip for stone/equipment and act navigation."
+        godot_usage: stylebox_texture
+    content_insets_px: { left: 14, right: 14, top: 8, bottom: 8 }
+    slice_hints_px: { left: 18, right: 18, top: 16, bottom: 16 }
+    semantic_color_tokens: [panel_mid, title_gold, text_muted]
+    button_role: inventory_tab
+    must_not_bake: [text, numbers, localized_labels]
+
+  stone_slot_frame:
+    component: Slot
+    mode: hybrid
+    states:
+      normal:
+        asset_key: taskstonebar.ui.slot_frame_9slice
+        visual_role: "Square inventory and active stone slot frame."
+        godot_usage: nine_patch_rect
+    content_insets_px: { left: 6, right: 6, top: 6, bottom: 6 }
+    slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
+    semantic_color_tokens: [panel_inner, moss_green, ruby_red]
+    button_role: active_stone_slot
+    must_not_bake: [numbers, cooldowns, localized_labels]
+
+  keeper_dock_icon_button:
+    component: KeeperIconDock
+    mode: hybrid
+    states:
+      normal:
+        asset_key: taskstonebar.ui.icon_dock_button_9slice
+        visual_role: "Octagonal or square bottom dock button frame."
+        godot_usage: stylebox_texture
+    content_insets_px: { left: 7, right: 7, top: 7, bottom: 7 }
+    slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
+    semantic_color_tokens: [panel_outer, title_gold]
+    button_role: keeper_dock_icon
+    must_not_bake: [text, numbers, localized_labels]
+
+  rare_drop_toast:
+    component: RareDropToast
+    mode: hybrid
+    states:
+      normal:
+        asset_key: taskstonebar.ui.rare_drop_toast_9slice
+        visual_role: "Right-side combat rare drop toast with native labels."
+        godot_usage: nine_patch_rect
+    content_insets_px: { left: 12, right: 12, top: 10, bottom: 10 }
+    slice_hints_px: { left: 22, right: 22, top: 18, bottom: 18 }
+    semantic_color_tokens: [panel_inner, ruby_red, text_cream]
+    must_not_bake: [text, numbers, localized_labels]
+
+native_primitives:
+  progress_bar:
+    usage: "Use Godot ProgressBar or native ColorRect fill; frame/fill assets may be TextureAtom if exact pixel bar is required."
+  cooldown_ring:
+    usage: "Use native draw or ProgressBar overlay until a dedicated circular cooldown asset is approved."

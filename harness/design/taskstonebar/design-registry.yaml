@@ -51,5 +51,167 @@ concepts:
     parent: stone_raising_2_taskbar_ui_concept_b
     reference: "one-shot prompt regeneration using the stone keeper identity"
     summary: "Prompt-generated full UI mockup with the Stone Raising hero redrawn natively inside the bottom taskbar combat strip, avoiding pasted cutout shadows."
+  main_ui_concept_a_orthodox_taskbar_overlay:
+    status: candidate
+    kind: desktop_overlay_full_ui
+    image: concepts/main_ui_concept_a_orthodox_taskbar_overlay.png
+    note: concepts/main_ui_concept_a_orthodox_taskbar_overlay.md
+    parent: main_ui_design
+    variation: "Orthodox Taskbar Overlay"
+    summary: "Balanced three-window desktop overlay concept with strong taskbar-game identity and conservative runtime decomposition."
+  main_ui_concept_b_stone_workshop_priority:
+    status: candidate
+    kind: desktop_overlay_full_ui
+    image: concepts/main_ui_concept_b_stone_workshop_priority.png
+    note: concepts/main_ui_concept_b_stone_workshop_priority.md
+    parent: main_ui_design
+    variation: "Stone Workshop Priority"
+    summary: "Central 작업석-first concept emphasizing the living stone, feeding, merge board, and cube forging as the emotional core."
+  main_ui_concept_c_steam_market_mmo_priority:
+    status: candidate
+    kind: desktop_overlay_full_ui
+    image: concepts/main_ui_concept_c_steam_market_mmo_priority.png
+    note: concepts/main_ui_concept_c_steam_market_mmo_priority.md
+    parent: main_ui_design
+    variation: "Steam Market MMO Priority"
+    summary: "Economy-forward concept showing online-only rare drops, marketable badges, Steam Inventory refresh language, and material burn loops."
+  main_ui_concept_d_minimal_taskbar_first:
+    status: candidate
+    kind: desktop_overlay_full_ui
+    image: concepts/main_ui_concept_d_minimal_taskbar_first.png
+    note: concepts/main_ui_concept_d_minimal_taskbar_first.md
+    parent: main_ui_design
+    variation: "Minimal Taskbar First"
+    summary: "Always-on taskbar combat concept with compact collapsible widgets and more visible desktop negative space."
+  main_ui_concept_e_refined_current_mockup_a:
+    status: draft
+    kind: desktop_overlay_full_ui
+    image: concepts/main_ui_concept_e_refined_current_mockup_a.png
+    note: concepts/main_ui_concept_e_refined_current_mockup_a.md
+    parent: ui_feature_preview_html
+    variation: "Refined Current Mockup Draft"
+    reference: "latest HTML preview plus stone keeper sprite sheet"
+    summary: "Generated draft based on the latest HTML mockup, with stronger Steam-ready pixel polish, integrated stone keeper combat, tabbed center inventory, and parchment portal map."
+  main_ui_concept_e_refined_current_mockup_b:
+    status: candidate
+    kind: desktop_overlay_full_ui
+    image: concepts/main_ui_concept_e_refined_current_mockup_b.png
+    note: concepts/main_ui_concept_e_refined_current_mockup_b.md
+    parent: ui_feature_preview_html
+    variation: "Refined Current Mockup Candidate"
+    reference: "latest HTML preview plus stone keeper sprite sheet"
+    summary: "Current strongest concept candidate: three-window desktop overlay with 돌/장비 tabbed center inventory, portal route map without reward cards, and bottom combat scene replacing the old inventory dock."
+  status_window_concept_a_refined_stone_status:
+    status: draft
+    kind: status_window_ui
+    image: concepts/status_window_concept_a_refined_stone_status.png
+    note: concepts/status_window_concept_a_refined_stone_status.md
+    parent: ui_feature_preview_html
+    variation: "Refined Stone Status Window"
+    reference: "latest HTML status window plus built-in image_gen prompt"
+    summary: "Superseded as main StatusWindow because it treats the stone as the status subject; keep only as possible future stone detail popup reference."
+  status_window_concept_b_character_status:
+    status: draft
+    kind: status_window_ui
+    image: concepts/status_window_concept_b_character_status.png
+    note: concepts/status_window_concept_b_character_status.md
+    parent: ui_feature_preview_html
+    variation: "Character Status Window"
+    reference: "corrected character-status image_gen prompt"
+    summary: "Superseded because it still duplicates the character visual already present in the central hero window; keep only as character art direction reference."
+  status_window_concept_c_tbh_stat_skill_layout:
+    status: candidate
+    kind: status_window_ui
+    image: concepts/status_window_concept_c_tbh_stat_skill_layout.png
+    note: concepts/status_window_concept_c_tbh_stat_skill_layout.md
+    parent: ui_feature_preview_html
+    variation: "TBH Stat Skill Layout"
+    reference: "user-provided STATUS reference image"
+    summary: "Correct StatusWindow target: no character portrait, no stone portrait, only a scrollable stat list, Skill Points header, vertical level track, and tiered skill slot rows."
+  item_detail_modal_concept_a:
+    status: candidate
+    kind: item_detail_modal_ui
+    image: concepts/item_detail_modal_concept_a.png
+    note: concepts/item_detail_modal_concept_a.md
+    parent: main_ui_concept_e_refined_current_mockup_b
+    variation: "Desktop Item Detail Modal"
+    reference: "gen-ui-concept pass for item detail page over Godot ModalHost"
+    summary: "Focused item detail modal concept: shared desktop-window chrome, large selected item slot, native identity text, stat list, warning chips, and footer actions while the taskbar combat strip remains visible."
 
-current_target: stone_raising_2_taskbar_ui_with_stone_keeper_prompt_c
+documents:
+  main_ui_design:
+    status: draft
+    kind: main_ui_spec
+    file: main-ui-design.md
+    sources:
+      - "TBH system summary attachment"
+      - art-direction.yaml
+      - color-tokens.yaml
+      - steam-market-mmo-system.md
+      - yaml-economy-contract.yaml
+      - concepts/stone_raising_2_taskbar_ui_with_stone_keeper_prompt_c.md
+    summary: "Main UI design brief for generating and comparing multiple Taskstonebar / 돌키우기2 desktop taskbar UI concepts."
+  ui_feature_requirements:
+    status: draft
+    kind: ui_function_spec
+    file: ui-feature-requirements.md
+    sources:
+      - harness/game-profiles/taskstonebar.profile.yaml
+      - main-ui-design.md
+      - mvp-roadmap.md
+      - steam-market-mmo-system.md
+      - yaml-economy-contract.yaml
+      - harness/content/taskstonebar
+      - "TBH system summary attachment"
+    summary: "Functional UI requirements derived from planning docs, split into MVP and expansion-ready systems."
+  ui_system_inventory:
+    status: draft
+    kind: ui_component_inventory
+    file: ui-system-inventory.yaml
+    parent: ui_feature_requirements
+    summary: "Component, surface, state, modal, toast, and data dependency inventory for Taskstonebar UI."
+  modal_system:
+    status: draft
+    kind: modal_window_system
+    file: modal-system.yaml
+    parent: main_ui_concept_e_refined_current_mockup_b
+    summary: "Godot-ready desktop window manager contract where each floating window has its own window_id and X closes only that instance."
+  button_system:
+    status: draft
+    kind: shared_button_roles
+    file: button-system.yaml
+    parent: modal_system
+    summary: "Shared pixel button roles for title-bar X, tabs, icon docks, and dialog CTAs."
+  component_blueprints:
+    status: draft
+    kind: component_blueprints
+    file: component-blueprints.yaml
+    parent: modal_system
+    summary: "Semantic component decomposition for the Taskstonebar floating window modal system."
+  component_skins:
+    status: draft
+    kind: component_skins
+    file: component-skins.yaml
+    parent: component_blueprints
+    summary: "Skin and material mapping for window frames, title crests, close icon, tabs, body wells, and slot frames."
+  asset_plan:
+    status: draft
+    kind: asset_plan
+    file: asset-plan.yaml
+    parent: component_blueprints
+    summary: "Reuse-first asset plan for growstone2 UI skins and Godot project-local target paths."
+  godot_window_modal_recipe:
+    status: draft
+    kind: godot_ui_recipe
+    file: ../../godot/recipes/ui/taskstonebar-window-modal-system.yaml
+    parent: component_blueprints
+    summary: "Godot Control recipe for the Taskstonebar multi-window modal system."
+  ui_feature_preview_html:
+    status: draft
+    kind: interactive_html_preview
+    file: ui-feature-preview.html
+    parent: ui_system_inventory
+    summary: "Standalone HTML prototype showing the MVP taskbar/workshop UI surfaces and clickable component inspector."
+
+current_target: main_ui_concept_e_refined_current_mockup_b
+current_status_window_target: status_window_concept_c_tbh_stat_skill_layout

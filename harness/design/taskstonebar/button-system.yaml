@@ -1,0 +1,150 @@
+version: "1.0"
+game: taskstonebar
+status: draft
+purpose: "Shared button contract for the Taskstonebar desktop overlay and Godot Control recipe."
+source_standard: "ui-decision-standard-kit/UI_DECISION_STANDARD.md"
+source_concepts:
+  - main_ui_concept_e_refined_current_mockup_b
+
+principles:
+  - "Icon-only commands stay icon-first; labels and counters remain runtime-native."
+  - "Tabs, dock buttons, and square utility buttons keep stable dimensions across hover, selected, cooldown, and disabled states."
+  - "Reusable rectangular button skins must be declared in asset-plan.yaml before Godot use."
+  - "Close, settings, menu, and shortcut controls use native Button hit areas with TextureAtom children."
+
+roles:
+  window_close:
+    intent: "Close or collapse a desktop-style floating window."
+    visual_priority: high
+    default_component: IconButton
+    min_size_px: { width: 42, height: 42 }
+    asset_keys: [taskstonebar.ui.close_icon]
+  utility_icon:
+    intent: "Small top-right commands such as settings, menu, and sync."
+    visual_priority: contextual
+    default_component: IconButton
+    min_size_px: { width: 40, height: 40 }
+    asset_keys: [taskstonebar.ui.icon_dock_button_9slice]
+  resource_chip:
+    intent: "Top resource counter with optional icon and gain feedback."
+    visual_priority: readout
+    default_component: ResourceCounter
+    min_size_px: { width: 128, height: 38 }
+    asset_keys: [taskstonebar.ui.resource_chip_9slice]
+  inventory_tab:
+    intent: "Switch center inventory body between stone and equipment."
+    visual_priority: navigational
+    default_component: StoneEquipmentTabBar
+    min_size_px: { width: 220, height: 36 }
+    asset_keys: [taskstonebar.ui.tab_burgundy_9slice]
+  act_tab:
+    intent: "Switch portal route map act."
+    visual_priority: navigational
+    default_component: ActTabBar
+    min_size_px: { width: 86, height: 42 }
+    asset_keys: [taskstonebar.ui.tab_burgundy_9slice]
+  keeper_dock_icon:
+    intent: "Bottom center shortcut dock for inventory, growth, formation, storage, and Steam assets."
+    visual_priority: navigational
+    default_component: KeeperIconDock
+    min_size_px: { width: 58, height: 58 }
+    asset_keys: [taskstonebar.ui.icon_dock_button_9slice]
+  active_stone_slot:
+    intent: "Stone inventory slot that may also trigger attack cooldown."
+    visual_priority: gameplay
+    default_component: Slot
+    min_size_px: { width: 56, height: 56 }
+    asset_keys: [taskstonebar.ui.slot_frame_9slice]
+  portal_stage_node:
+    intent: "Clickable or inspectable portal stage node on parchment map."
+    visual_priority: gameplay
+    default_component: StageNode
+    min_size_px: { width: 44, height: 44 }
+    asset_keys: [taskstonebar.ui.icon_dock_button_9slice]
+
+anatomy:
+  slots:
+    skin: "NinePatchRect, StyleBoxTexture, fixed sprite, or native flat style."
+    icon: "TextureAtom child when art is needed."
+    label: "Runtime Label; never baked into reusable button skins."
+    badge: "Runtime-native count, cooldown, selected ring, or lock."
+    hit_target: "Native Button or Control pointer area."
+  forbidden_baked_content:
+    - labels
+    - prices
+    - counters
+    - cooldowns
+    - localized_text
+    - stage_numbers
+
+sizes:
+  min_touch_px: 40
+  desktop_icon_button_px: 42
+  dock_icon_px: 58
+  tab_height_px: 44
+  center_inventory_tab_height_px: 36
+  stable_dimensions: true
+
+states:
+  normal: {}
+  hover_focus:
+    allowed_runtime_effects: [outline, brightness]
+  pressed:
+    allowed_runtime_effects: [brightness_down, translate_y_1px]
+  selected:
+    allowed_runtime_effects: [skin_swap, gold_outline, selected_marker]
+  disabled:
+    allowed_runtime_effects: [opacity_down, desaturate, block_pointer]
+  cooldown_running:
+    allowed_runtime_effects: [native_progress_overlay, cooldown_label]
+    must_preserve_width: true
+  alert:
+    allowed_runtime_effects: [small_badge, pulse_outline]
+
+text_rules:
+  max_lines: 1
+  overflow: ellipsis
+  localization_policy: "Use runtime text keys and reduce label content before resizing stable controls."
+
+skin_policy:
+  godot_stylebox_texture_candidates:
+    - resource_chip
+    - inventory_tab
+    - act_tab
+    - keeper_dock_icon
+  godot_nine_patch_candidates:
+    - active_stone_slot
+  native_primitive_candidates:
+    - window_close
+    - utility_icon
+    - portal_stage_node
+  ornament_policy: "Non-stretch-safe iron crests, chains, and title decorations stay fixed TextureAtom overlays."
+
+asset_contract:
+  asset_plan_required: true
+  asset_keys:
+    - taskstonebar.ui.resource_chip_9slice
+    - taskstonebar.ui.tab_burgundy_9slice
+    - taskstonebar.ui.icon_dock_button_9slice
+    - taskstonebar.ui.slot_frame_9slice
+    - taskstonebar.ui.close_icon
+  component_skins:
+    - resource_counter_chip
+    - burgundy_tab_button
+    - keeper_dock_icon_button
+    - stone_slot_frame
+
+runtime_mapping:
+  godot_button_roles:
+    window_close: Btn_Close*
+    utility_icon: Btn_Utility*
+    inventory_tab: Btn_StoneTab, Btn_EquipmentTab
+    act_tab: Btn_Act*
+    keeper_dock_icon: Btn_Dock*
+    active_stone_slot: Btn_StoneSlot*
+
+review_gate:
+  blockers:
+    - "Button label, count, stage number, or cooldown is baked into a reusable skin."
+    - "Selected and disabled states resize the control."
+    - "A generated Godot scene uses an asset key that is missing from asset-plan.yaml."

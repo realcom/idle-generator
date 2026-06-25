@@ -1,0 +1,795 @@
+version: "1.0"
+game: taskstonebar
+status: draft
+updated_at: 2026-06-24T00:00:00+09:00
+
+purpose: >
+  UI component inventory derived from taskstonebar planning documents.
+  This file defines required surfaces, reusable components, states, and data
+  dependencies before visual concept selection or Godot recipe generation.
+
+source_documents:
+  - harness/game-profiles/taskstonebar.profile.yaml
+  - harness/design/taskstonebar/ui-feature-requirements.md
+  - harness/design/taskstonebar/main-ui-design.md
+  - harness/design/taskstonebar/mvp-roadmap.md
+  - harness/design/taskstonebar/steam-market-mmo-system.md
+  - harness/design/taskstonebar/yaml-economy-contract.yaml
+  - harness/content/taskstonebar
+  - TBH system summary attachment
+
+ui_principles:
+  - "Taskbar combat is the always-on anchor."
+  - "Workshop mode expands from the taskbar strip instead of replacing the desktop fantasy."
+  - "Marketable items are assets, but the game never shows an internal exchange."
+  - "Feed, drag-merge, and donation actions are irreversible burns and require clear confirmation."
+  - "Offline rewards must never imply chest, catalyst, high ore, or rare marketable drops."
+  - "MVP exposes future systems as disabled tabs only when they clarify the roadmap."
+
+runtime_modes:
+  taskbar_mode:
+    scope: mvp
+    description: "Compact always-on combat strip above OS taskbar."
+    required_surfaces:
+      - DesktopOverlayRoot
+      - TaskbarCombatStrip
+      - LootTicker
+      - SteamSyncStatus
+  workshop_mode:
+    scope: mvp
+    description: "Expanded desktop overlay with workshop/status/portal/inventory surfaces."
+    required_surfaces:
+      - WorkshopWindowSet
+      - StatusWindow
+      - HeroInventoryWindow
+      - PortalWindow
+      - InventoryWindow
+  local_sandbox_mode:
+    scope: mvp
+    description: "Mock economy mode; Steam Inventory and marketable drops disabled."
+    required_surfaces:
+      - ServerModeBadge
+      - ServerModeWarningBanner
+
+surface_inventory:
+  DesktopOverlayRoot:
+    scope: mvp
+    role: "Owns desktop overlay composition, window stack, top resources, and OS taskbar-safe area."
+    contains:
+      - TopResourceBar
+      - UtilityIconCluster
+      - ServerModeBadge
+      - SteamSyncStatus
+      - TaskbarCombatStrip
+      - WorkshopWindowSet
+    states: [taskbar_only, workshop_expanded, modal_open, disconnected, local_sandbox]
+    data_dependencies: [runtime_mode, server_mode, steam_auth_state, connection_state]
+
+  TopResourceBar:
+    scope: mvp
+    role: "Compact counters for account resources and key market lanes."
+    contains: [ResourceCounter, InventoryCapacityChip]
+    required_counters:
+      - gold
+      - ruby
+      - exp_or_level
+      - pebble_fragment
+      - moss_ore
+      - cube_catalyst
+      - chest_queue
+    states: [normal, gain_animating, capped, stale]
+    data_dependencies:
+      - item_counts
+      - inventory_capacity
+      - steam_inventory_sync_state
+
+  UtilityIconCluster:
+    scope: mvp
+    role: "Small icon controls for events, settings, menu, inventory refresh."
+    contains: [IconButton]
+    actions:
+      - open_settings
+      - open_menu
+      - open_events
+      - refresh_steam_inventory
+    states: [normal, disabled, syncing, error]
+
+  TaskbarCombatStrip:
+    scope: mvp
+    role: "Always-on combat and drop feedback surface."
+    contains:
+      - StageBadge
+      - CombatLane
+      - HeroCombatSprite
+      - EnemyStack
+      - EnemyHpBar
+      - DamageNumberLayer
+      - ProjectileLayer
+      - AutoCombatToggle
+      - AutoSkillToggle
+      - LootTicker
+      - RareDropToast
+      - CombatSceneShortcutDock
+    states:
+      - farming
+      - elite_encounter
+      - boss_encounter
+      - rare_drop
+      - offline_disabled
+      - local_sandbox
+    data_dependencies:
+      - current_map
+      - current_stage
+      - wave_state
+      - player_unit_state
+      - enemy_unit_state
+      - skill_cooldowns
+      - drop_events
+
+  WorkshopWindowSet:
+    scope: mvp
+    role: "Container for desktop-style draggable/collapsible gameplay windows."
+    contains:
+      - StatusWindow
+      - HeroInventoryWindow
+      - PortalWindow
+      - InventoryWindow
+    states: [expanded, compact, collapsed, dragging, focused]
+
+  StatusWindow:
+    scope: mvp
+    role: "Character status list and skill growth tree for the stone keeper; no character portrait or stone portrait."
+    contains:
+      - StatusStatScrollPanel
+      - StatList
+      - StatusSearchButton
+      - SkillPointHeader
+      - SkillLevelTrack
+      - SkillTierRow
+      - SkillIconSlot
+      - DetailedStatsModal
+    states: [default, points_available, skill_unlockable, stat_detail_open]
+    data_dependencies:
+      - unit_stats
+      - account_bonuses
+      - skill_points
+      - skill_nodes
+      - stage_progress
+
+  HeroInventoryWindow:
+    scope: mvp
+    role: "TBH-style center hero panel adapted for stone keeper inventory, stone-only drag merge, equipment storage, and icon dock shortcuts."
+    contains:
+      - CharacterPortrait
+      - EquipmentSlotGrid
+      - StoneEquipmentTabBar
+      - StoneInventoryPanel
+      - EquipmentStoragePanel
+      - ActiveStoneSlot
+      - StoneCooldownIndicator
+      - DragMergeGhost
+      - DragMergePreview
+      - KeeperIconDock
+    primary_actions:
+      - switch_inventory_tab
+      - drag_merge_stones
+      - move_stone_between_slots
+      - equip_item
+      - open_icon_shortcut
+    states:
+      - idle
+      - stone_tab_active
+      - equipment_tab_active
+      - active_slot_ready
+      - cooldown_running
+      - drag_merge_ready
+      - drag_hover_valid
+      - drag_hover_invalid
+    data_dependencies:
+      - selected_character
+      - selected_inventory_tab
+      - active_stone_slot_unlock_count
+      - stone_slot_cooldowns
+      - stone_inventory_items
+      - equipment_storage_items
+      - merge_recipes
+      - equipment_slots
+
+  PortalWindow:
+    scope: mvp
+    role: "Difficulty selection, act tabs, parchment route map, current stage, and boss gates."
+    contains:
+      - PortalDifficultySelect
+      - ActTabBar
+      - ParchmentRouteMap
+      - StageNode
+      - CurrentStageFlag
+      - BossNode
+      - BossGateModal
+    states: [difficulty_selected, act_selected, current_stage, next_available, locked, boss_ready]
+    data_dependencies:
+      - selected_difficulty
+      - selected_act
+      - map_progress
+      - current_map
+      - enemy_drop_groups
+
+  InventoryWindow:
+    scope: mvp
+    role: "Unified view for Steam Inventory assets and server-bound items."
+    contains:
+      - InventoryTabBar
+      - ItemGrid
+      - ItemCard
+      - ItemTooltip
+      - ItemActionMenu
+      - OwnershipBadge
+      - SteamInventoryRefreshButton
+    tabs:
+      - all
+      - materials
+      - catalysts
+      - equipment
+      - characters
+      - pets
+      - chests
+      - cosmetics
+    states: [loading, stale, synced, empty, filtered, action_menu_open]
+    data_dependencies:
+      - item_instances
+      - steam_inventory_assets
+      - server_bound_items
+      - economy_overlay
+      - filters
+
+  FormationPanel:
+    scope: expansion_ready
+    role: "Account-owned 1-4 character formation, not public party matchmaking."
+    contains:
+      - FormationSlot
+      - CharacterCard
+      - ClassRoleBadge
+      - FormationBonusPanel
+      - ClassUnlockModal
+    states: [solo, slot_locked, slot_empty, role_bonus_active, contribution_view]
+    data_dependencies:
+      - owned_characters
+      - formation_slots
+      - class_roles
+      - unlock_conditions
+      - formation_bonuses
+
+  EquipmentPanel:
+    scope: expansion_ready
+    role: "Equipment slots, random option buckets, reveal/bind/enhance flows."
+    contains:
+      - EquipmentSlot
+      - SealedItemCard
+      - OptionBucketBadge
+      - RevealConfirmModal
+      - BindWarningModal
+      - ReforgePanel
+      - EnhancePanel
+    states: [no_equipment, sealed, visible_bucket, bound_instance, equipped, bind_warning]
+    data_dependencies:
+      - equipment_items
+      - random_option_mode
+      - option_family
+      - option_tier
+      - enhancement_band
+
+  PetCollectionPanel:
+    scope: expansion_ready
+    role: "Pet eggs, pet assets, hatching, passive bonuses, and equip slots."
+    contains:
+      - PetCard
+      - PetSlot
+      - PetHatchModal
+      - PetPassiveList
+    states: [egg_tradeable, hatch_ready, bound_pet, equipped, passive_active]
+    data_dependencies:
+      - pet_assets
+      - pet_instances
+      - pet_passives
+      - equip_state
+
+  ClanMinePanel:
+    scope: expansion_ready
+    role: "Group material sink, clan buffs, and season ranking pressure."
+    contains:
+      - DonationPanel
+      - SeasonRankList
+      - DonationConfirmModal
+    states: [not_joined, donation_ready, insufficient_materials, buff_unlocked]
+    data_dependencies:
+      - clan_state
+      - donation_requirements
+      - clan_mine_progress
+      - season_rank
+
+  SeasonPanel:
+    scope: expansion_ready
+    role: "Season burn targets, ranking, and skin crafting."
+    contains:
+      - SeasonCraftPanel
+      - SeasonRankList
+      - RewardPreviewPanel
+      - DonationConfirmModal
+    states: [season_active, season_ending, craft_ready, reward_claimable]
+    data_dependencies:
+      - season_id
+      - season_progress
+      - craft_requirements
+      - ranking_state
+
+component_inventory:
+  WindowFrame:
+    scope: mvp
+    role: "Reusable desktop-widget panel frame."
+    props: [title, icon, focused, draggable, closable]
+    parts:
+      - WindowTitleBar
+      - WindowBody
+      - CornerOrnaments
+      - CloseButton
+    states: [focused, unfocused, dragging, disabled]
+
+  WindowTitleBar:
+    scope: mvp
+    role: "Burgundy/gold title strip for all main windows."
+    props: [title_text, left_icon, right_controls]
+    states: [normal, focused, alert]
+
+  IconButton:
+    scope: mvp
+    role: "Small square icon command button."
+    props: [icon, tooltip, action, disabled_reason]
+    states: [normal, hover, pressed, disabled, alert, syncing]
+
+  TextButton:
+    scope: mvp
+    role: "Command button for clear gameplay actions."
+    variants: [primary, secondary, danger, disabled, external_link]
+    props: [label, icon, cost, action, disabled_reason]
+    states: [normal, hover, pressed, disabled, loading, success]
+
+  ToggleButton:
+    scope: mvp
+    role: "Binary taskbar controls such as auto combat and auto skill."
+    props: [label, icon, value, action]
+    states: [on, off, disabled]
+
+  TabBar:
+    scope: mvp
+    role: "Switches between act, inventory category, or workshop submode."
+    props: [tabs, selected_tab, locked_tabs]
+    states: [normal, locked, alert]
+
+  StoneEquipmentTabBar:
+    scope: mvp
+    role: "TBH-style top tab bar that toggles the center inventory body between stone inventory and equipment storage."
+    props:
+      - selected_inventory_tab
+      - active_stone_slot_unlock_count
+      - equipment_storage_capacity
+    tabs:
+      - stone
+      - equipment
+    states: [stone_active, equipment_active, tab_locked, tab_alert]
+
+  KeeperIconDock:
+    scope: mvp
+    role: "TBH-style bottom icon dock for stone keeper shortcuts, replacing text CTA buttons."
+    props:
+      - selected_inventory_tab
+      - available_shortcuts
+      - disabled_shortcuts
+    shortcut_slots:
+      - stone_inventory
+      - growth
+      - formation_preview
+      - equipment_storage
+      - steam_assets
+    states: [stone_active, equipment_active, shortcut_hover, shortcut_disabled]
+
+  ProgressBar:
+    scope: mvp
+    role: "Displays HP, EXP, feed progress, active slot unlock progress, or sync progress."
+    variants: [hp, exp, feed, cast, sync, capacity]
+    props: [value, max_value, label, color_token]
+    states: [normal, full, warning, locked, animating]
+
+  Slot:
+    scope: mvp
+    role: "Single inventory/material/equipment/rune slot."
+    props: [icon, count, rarity, locked, selected, badge]
+    states: [empty, filled, selected, locked, insufficient, new, disabled]
+
+  SlotGrid:
+    scope: mvp
+    role: "Grid container for inventory, material tray, rune marks, and synthesis inputs."
+    props: [columns, rows, slots, capacity_label, filter]
+    states: [normal, full, filtered, drag_target, disabled]
+
+  StoneInventoryPanel:
+    scope: mvp
+    role: "Stone-only inventory and merge board. Only stones in unlocked active slots attack through cooldown ticks."
+    props:
+      - active_slot_unlock_count
+      - stone_slots
+      - visible_columns
+      - visible_rows
+      - cooldowns
+      - selected_drag_source
+      - merge_preview
+    parts:
+      - ActiveStoneSlot
+      - StoneCooldownIndicator
+      - DragMergeGhost
+      - DragMergePreview
+    states:
+      - active_slot_ready
+      - inactive_storage
+      - cooldown_running
+      - drag_source
+      - drag_hover_valid
+      - drag_hover_invalid
+      - slot_locked
+
+  EquipmentStoragePanel:
+    scope: mvp
+    role: "Separate storage for equipment, runes, pets, accessories, chests, and non-stone items."
+    props: [capacity, visible_columns, visible_rows, filters, item_instances, selected_item]
+    parts:
+      - SlotGrid
+      - ItemCard
+      - ItemTooltip
+      - ItemDetailModal
+      - ItemActionMenu
+    states: [normal, filtered, full, item_selected, locked_capacity]
+
+  ActiveStoneSlot:
+    scope: mvp
+    role: "Unlocked stone inventory slot that contributes attacks while occupied."
+    props: [slot_index, stone_item, cooldown_value, attack_enabled]
+    states: [empty, occupied, cooldown_ready, cooldown_running, drag_target]
+
+  StoneCooldownIndicator:
+    scope: mvp
+    role: "Per-slot attack cooldown ring shown only on active stone slots."
+    props: [value, max_value, ready_flash]
+    states: [ready, running, paused, disabled]
+
+  DragMergeGhost:
+    scope: mvp
+    role: "Dragged stone preview that follows pointer/touch while merging inside StoneInventoryPanel."
+    props: [source_slot, stone_icon, tier, valid_targets]
+    states: [dragging, valid, invalid, returning]
+
+  DragMergePreview:
+    scope: mvp
+    role: "Inline result preview for same-tier stone drag merge."
+    props: [input_stones, output_stone, burn_warning]
+    states: [hidden, preview, valid, invalid, committing, result_ready]
+
+  Badge:
+    scope: mvp
+    role: "Small visual state marker attached to item cards, slots, buttons, and rewards."
+    variants:
+      - market
+      - online_only
+      - bound
+      - sealed
+      - visible_bucket
+      - burnable
+      - local_sandbox
+      - stale
+      - locked
+    props: [kind, tooltip, severity]
+    states: [normal, warning, disabled]
+
+  ModalFrame:
+    scope: mvp
+    role: "Reusable confirmation/result/error container."
+    props: [title, body, primary_action, secondary_action, danger]
+    states: [normal, loading, success, error]
+
+  TooltipFrame:
+    scope: mvp
+    role: "Reusable hover/focus detail panel."
+    props: [anchor, sections, max_width]
+    states: [hidden, visible, pinned]
+
+  ToastFrame:
+    scope: mvp
+    role: "Transient event card for drops, sync, warnings, and rewards."
+    props: [tier, icon, title, body, click_action, timeout]
+    states: [entering, visible, exiting, pinned]
+
+  ItemIcon:
+    scope: mvp
+    role: "32px pixel icon with rarity/market overlays."
+    props: [sprite, rarity, badge, stack_count]
+    states: [normal, new, selected, disabled, stale]
+
+  CharacterPortrait:
+    scope: mvp
+    role: "Small character or living stone portrait for status and keeper focus."
+    props: [sprite, level, class_role, hp_state, selected]
+    states: [normal, selected, locked, injured, ready]
+
+  CostLine:
+    scope: mvp
+    role: "Shows consumed materials and affordability."
+    props: [item_id, required_count, owned_count, satisfied]
+    states: [satisfied, missing, online_only, marketable_burn_warning]
+
+  ResultPreview:
+    scope: mvp
+    role: "Shows expected output before feed/drag-merge/synthesis/reveal."
+    props: [result_items, stat_delta, xp_delta, market_state, bind_state]
+    states: [preview, success, failure, unknown]
+
+  ResourceCounter:
+    scope: mvp
+    props: [icon, label, value, delta, cap, stale, online_only]
+    states: [normal, gain, spend, capped, disabled]
+
+  ItemCard:
+    scope: mvp
+    props:
+      - item_id
+      - icon
+      - name
+      - count
+      - rarity
+      - category
+      - economy_role
+      - ownership_state
+      - market_state
+      - online_only
+      - stack_unit
+      - market_lot_size
+    badges:
+      - MarketBadge
+      - OnlineOnlyBadge
+      - BoundBadge
+      - SealedBadge
+      - OptionBucketBadge
+      - LocalSandboxBadge
+    actions:
+      - feed
+      - drag_merge
+      - synthesize
+      - equip
+      - reveal
+      - open_steam_market
+      - inspect
+    states: [normal, selected, disabled, insufficient, newly_acquired, stale]
+
+  ItemTooltip:
+    scope: mvp
+    sections:
+      - identity
+      - ownership
+      - source
+      - sinks
+      - recipes
+      - market
+      - warnings
+    required_fields:
+      - category
+      - economy_role
+      - marketable
+      - tradable
+      - online_only
+      - feed_xp
+      - merge_recipe
+      - market_lot_size
+
+  ItemDetailModal:
+    scope: mvp
+    role: "Click-open desktop item page for stones and equipment, replacing tooltip-only inspection for touch and taskbar use."
+    contains:
+      - ModalFrame
+      - ItemDetailIdentityPanel
+      - ItemDetailStatList
+      - ItemDetailWarningChipRow
+      - ItemDetailActionFooter
+    required_fields:
+      - item_name
+      - category
+      - grade_or_tier
+      - ownership_summary
+      - stat_or_source_lines
+      - action_warning
+      - valid_actions
+    states: [stone_detail, equipment_detail, action_disabled, upgrade_available, merge_available]
+    data_dependencies:
+      - selected_inventory_item
+      - item_instance
+      - equipment_upgrade_candidates
+      - stone_merge_candidates
+
+  ItemDetailIdentityPanel:
+    scope: mvp
+    role: "Large selected item slot plus native identity labels."
+    props: [icon, badge, item_name, subtitle, safe_use_hint]
+    states: [normal, selected, locked, stale]
+
+  ItemDetailStatList:
+    scope: mvp
+    role: "Dense but readable detail rows for stats, source, ownership, and recipe hints."
+    props: [rows, max_rows, highlighted_row]
+    states: [normal, empty, clipped]
+
+  ItemDetailWarningChipRow:
+    scope: mvp
+    role: "Compact chips for owned count, online-only, market/bound, and irreversible warnings."
+    props: [ownership_chip, warning_chip]
+    states: [normal, warning, disabled]
+
+  ItemDetailActionFooter:
+    scope: mvp
+    role: "Footer actions for close plus context-specific equip, merge, or upgrade preview commands."
+    actions:
+      - close
+      - equip
+      - drag_merge
+      - upgrade_preview
+    states: [normal, disabled, action_available]
+
+  ItemActionMenu:
+    scope: mvp
+    rules:
+      - "Show only actions valid for current item ownership and server mode."
+      - "Disable Steam actions in local_sandbox."
+      - "Route destructive actions through ConsumeConfirmModal."
+    actions:
+      - feed
+      - drag_merge
+      - synthesize
+      - reforge
+      - equip
+      - reveal
+      - open_steam_market
+      - open_steam_inventory
+
+  ConsumeConfirmModal:
+    scope: mvp
+    role: "Irreversible burn confirmation for feed/drag-merge/synthesis/donation."
+    required_copy:
+      - consumed_items
+      - result_preview
+      - irreversible_warning
+      - ownership_warning
+      - server_mode_warning
+    states: [ready, confirming, success, error]
+
+  ExternalLinkConfirmModal:
+    scope: mvp
+    role: "Confirms leaving game UI for Steam Market/Inventory."
+    required_copy:
+      - destination
+      - selected_item
+      - no_ingame_exchange_note
+    states: [ready, opening, blocked]
+
+  RewardClaimModal:
+    scope: mvp
+    role: "Claims chest/offline/boss rewards."
+    variants: [online_reward, offline_return, boss_reward]
+    rules:
+      - "Offline variant must not include catalyst/high ore/chest unless design changes."
+
+  RareDropToast:
+    scope: mvp
+    role: "High-emotion drop feedback in taskbar strip."
+    tiers: [minor, notable, rare, system]
+    fields: [item_icon, item_name, count, market_badge, source, click_action]
+
+  SteamSyncStatus:
+    scope: mvp
+    role: "Displays Steam auth/inventory sync state."
+    states: [not_logged_in, syncing, synced, stale, error, disabled_local_sandbox]
+    actions: [login, refresh, open_inventory]
+
+state_tags:
+  marketable:
+    meaning: "Can become a Steam Market asset."
+    display: MarketBadge
+  tradable:
+    meaning: "Can be traded through Steam."
+    display: TradeBadge
+  bound:
+    meaning: "Server DB-bound and not marketable."
+    display: BoundBadge
+  sealed:
+    meaning: "Tradeable before reveal; reveal consumes Steam asset."
+    display: SealedBadge
+  visible_bucket:
+    meaning: "Market-facing option family/tier is visible."
+    display: OptionBucketBadge
+  online_only:
+    meaning: "Cannot be earned offline."
+    display: OnlineOnlyBadge
+  burnable:
+    meaning: "Can be consumed by feed/drag-merge/donation."
+    display: BurnableBadge
+  irreversible:
+    meaning: "Action cannot be undone."
+    display: ConfirmWarning
+  local_sandbox_only:
+    meaning: "Mock data; cannot migrate to live."
+    display: LocalSandboxBadge
+  stale_inventory:
+    meaning: "Steam Inventory cache needs refresh."
+    display: StaleBadge
+
+modal_inventory:
+  mvp:
+    - ConsumeConfirmModal
+    - ExternalLinkConfirmModal
+    - OfflineReturnModal
+    - RewardClaimModal
+    - SyncErrorModal
+    - ServerModeWarningBanner
+    - BossGateModal
+    - DetailedStatsModal
+  expansion_ready:
+    - RevealConfirmModal
+    - BindWarningModal
+    - ClassUnlockModal
+    - PetHatchModal
+    - DonationConfirmModal
+    - SeasonCraftConfirmModal
+
+toast_inventory:
+  minor:
+    examples: [gold_gain, exp_gain, pebble_fragment]
+  notable:
+    examples: [moss_ore, chest, elite_drop]
+  rare:
+    examples: [cube_catalyst, boss_core, sealed_item]
+  system:
+    examples: [steam_sync, inventory_stale, local_sandbox_warning, server_error]
+
+data_contracts:
+  mvp_items:
+    - { id: 200101, name: "조약돌 파편", role: feed_material, marketable: true, online_only: false }
+    - { id: 200102, name: "이끼 광석", role: feed_material, marketable: true, online_only: true }
+    - { id: 200103, name: "큐브 촉매", role: catalyst, marketable: true, online_only: true }
+    - { id: 200201, name: "데굴 투석구", role: equipment, marketable: false, online_only: false }
+  mvp_units:
+    - { id: 110111, name: "작업돌지기", type: Player }
+    - { id: 110201, name: "이끼 진드기", type: Normal }
+    - { id: 110202, name: "광맥 박쥐", type: Elite }
+    - { id: 110501, name: "고대 작업석", type: Boss }
+  mvp_map:
+    id: 500101
+    name: "작업표시줄 동굴"
+  mvp_skill:
+    id: 300101
+    name: "돌팔매"
+
+implementation_order:
+  - TaskbarCombatStrip
+  - TopResourceBar
+  - HeroInventoryWindow
+  - InventoryWindow
+  - ConsumeConfirmModal
+  - PortalWindow
+  - StatusWindow
+  - SteamSyncStatus
+  - RewardClaimModal
+  - EquipmentPanel
+  - PetCollectionPanel
+  - ClanMinePanel
+  - SeasonPanel
+
+open_questions:
+  - "Should the center window title be 돌지기, Hero, or 인벤토리?"
+  - "Should early UI avoid the word party and use 편성 only?"
+  - "Should Steam Market wording be explicit in MVP, or use an external-trade neutral label until policy copy is final?"
+  - "Should chest opening be implemented before chest itemdefs exist, or shown only as reward preview?"
+  - "How much random option UI should be visible before marketable equipment content ships?"

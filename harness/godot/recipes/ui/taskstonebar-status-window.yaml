@@ -1,0 +1,796 @@
+version: 1
+game: taskstonebar
+slug: taskstonebar-status-window
+status: draft
+backend: godot_control
+
+target:
+  project: "../../../runtime/godot-taskstonebar/project.godot"
+  owner_scene: "../../../runtime/godot-taskstonebar/scenes/main.tscn"
+  owner_script: "../../../runtime/godot-taskstonebar/scripts/main.gd"
+  output:
+    scene: "../../../runtime/godot-taskstonebar/scenes/generated/status_window.tscn"
+    theme: "../../../runtime/godot-taskstonebar/themes/generated/taskstonebar_status_window.tres"
+  generation_policy: "Generated from harness/godot recipe; keep this status window independent from main.gd integration until the full overlay is refreshed."
+
+sources:
+  ui_system_inventory: "../../../design/taskstonebar/ui-system-inventory.yaml"
+  button_system: "../../../design/taskstonebar/button-system.yaml"
+  modal_system: "../../../design/taskstonebar/modal-system.yaml"
+  color_tokens: "../../../design/taskstonebar/color-tokens.yaml"
+  art_direction: "../../../design/taskstonebar/art-direction.yaml"
+  layout_tokens: "../../../design/taskstonebar/layout-tokens.yaml"
+  component_blueprints: "../../../design/taskstonebar/component-blueprints.yaml"
+  component_skins: "../../../design/taskstonebar/component-skins.yaml"
+  asset_plan: "../../../design/taskstonebar/asset-plan.yaml"
+  concepts:
+    - "../../../design/taskstonebar/concepts/status_window_concept_c_tbh_stat_skill_layout.md"
+
+blueprint_refs:
+  surface: TaskstonebarFullUiOverlay
+  sections: [window_stack]
+  components:
+    - WindowFrame
+    - WindowTitleBar
+    - StatusWindow
+    - StatusStatScrollPanel
+    - StatList
+    - StatusSearchButton
+    - SkillPointHeader
+    - SkillLevelTrack
+    - SkillTierRow
+    - SkillIconSlot
+  shared_button_roles:
+    - window_close
+    - utility_icon
+    - active_stone_slot
+  shared_modal_sections:
+    - DetailedStatsModal
+  color_token_groups:
+    - panel
+    - progress
+
+screen:
+  orientation: standalone_window
+  reference_size_px: { width: 458, height: 574 }
+  concept_reference_size_px: { width: 458, height: 574 }
+  safe_area_policy: "Standalone generated Control scene; it should later be mounted at the left StatusWindow position inside the full desktop overlay."
+
+layout:
+  anchor: standalone_control
+  regions:
+    status_window:
+      position_px: { x: 0, y: 0 }
+      size_px: { width: 458, height: 574 }
+    title_bar:
+      position_px: { x: 18, y: 10 }
+      size_px: { width: 422, height: 54 }
+    stat_scroll_panel:
+      position_px: { x: 24, y: 76 }
+      size_px: { width: 410, height: 154 }
+      content_insets_px: { left: 16, right: 28, top: 34, bottom: 12 }
+    skill_point_header:
+      position_px: { x: 82, y: 244 }
+      size_px: { width: 294, height: 40 }
+    skill_tree:
+      position_px: { x: 24, y: 296 }
+      size_px: { width: 410, height: 248 }
+      level_track_px: { x: 0, y: 0, width: 58, height: 248 }
+      row_area_px: { x: 70, y: 0, width: 340, height: 248 }
+
+assets:
+  required_keys:
+    - taskstonebar.ui.window_frame_9slice
+    - taskstonebar.ui.window_title_bar_9slice
+    - taskstonebar.ui.dark_inner_well_9slice
+    - taskstonebar.ui.status_stat_card_9slice
+    - taskstonebar.ui.slot_frame_9slice
+    - taskstonebar.ui.close_icon
+    - taskstonebar.ui.stone_icon_set
+    - taskstonebar.ui.resource_icon_set
+    - taskstonebar.ui.native_overlay_controls
+  nineslice:
+    - key: taskstonebar.ui.window_frame_9slice
+      atom: NinePatchPanel
+      usage: status_window_outer_frame
+      godot_usage: nine_patch_rect
+      slice_hints: { left: 30, right: 30, top: 34, bottom: 30 }
+      content_insets: { left: 18, right: 18, top: 72, bottom: 16 }
+      target_size_px: { width: 458, height: 574 }
+    - key: taskstonebar.ui.window_title_bar_9slice
+      atom: NinePatchPanel
+      usage: status_window_title_bar
+      godot_usage: nine_patch_rect
+      slice_hints: { left: 26, right: 26, top: 18, bottom: 18 }
+      content_insets: { left: 40, right: 52, top: 10, bottom: 8 }
+      target_size_px: { width: 418, height: 54 }
+    - key: taskstonebar.ui.dark_inner_well_9slice
+      atom: NinePatchPanel
+      usage: stat_scroll_and_skill_row_wells
+      godot_usage: nine_patch_rect
+      slice_hints: { left: 22, right: 22, top: 22, bottom: 22 }
+      content_insets: { left: 14, right: 14, top: 14, bottom: 14 }
+      target_size_px: { width: 410, height: 154 }
+    - key: taskstonebar.ui.status_stat_card_9slice
+      atom: NinePatchPanel
+      usage: character_status_stat_card
+      godot_usage: nine_patch_rect
+      slice_hints: { left: 14, right: 14, top: 14, bottom: 14 }
+      content_insets: { left: 16, right: 28, top: 34, bottom: 12 }
+      target_size_px: { width: 410, height: 154 }
+    - key: taskstonebar.ui.slot_frame_9slice
+      atom: NinePatchPanel
+      usage: skill_icon_slot
+      godot_usage: nine_patch_rect
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+      content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+      target_size_px: { width: 58, height: 58 }
+  fixed_atoms:
+    - key: taskstonebar.ui.close_icon
+      usage: status_window_close_icon
+      atom: TextureAtom
+      display_size_px: { width: 42, height: 42 }
+    - key: taskstonebar.ui.stone_icon_set
+      usage: stone_throw_skill_icon
+      atom: TextureAtom
+      display_size_px: { width: 32, height: 32 }
+    - key: taskstonebar.ui.resource_icon_set
+      usage: loot_or_bonus_skill_icon
+      atom: TextureAtom
+      display_size_px: { width: 32, height: 32 }
+  native_controls:
+    - key: taskstonebar.ui.native_overlay_controls
+      usage: stat_labels_values_scrollbar_tick_labels_skill_points_native_shapes
+
+control_tree:
+  root:
+    atom: ScreenRoot
+    node_name: Root_StatusWindow
+    component: StatusWindow
+    anchors_preset: full_rect
+    size_px: { width: 458, height: 574 }
+    children:
+      - atom: NinePatchPanel
+        node_name: Panel_StatusWindowFrame
+        component: WindowFrame
+        asset_key: taskstonebar.ui.window_frame_9slice
+        slice_hints: { left: 30, right: 30, top: 34, bottom: 30 }
+        content_insets: { left: 18, right: 18, top: 72, bottom: 16 }
+        position_px: { x: 0, y: 0 }
+        size_px: { width: 458, height: 574 }
+        children:
+          - atom: NinePatchPanel
+            node_name: Panel_StatusTitleBar
+            component: WindowTitleBar
+            asset_key: taskstonebar.ui.window_title_bar_9slice
+            slice_hints: { left: 26, right: 26, top: 18, bottom: 18 }
+            content_insets: { left: 40, right: 52, top: 10, bottom: 8 }
+            position_px: { x: 20, y: 12 }
+            size_px: { width: 418, height: 54 }
+          - atom: NativeLabel
+            node_name: Text_StatusTitle
+            component: WindowTitleBar
+            text_binding_or_text_key: window.status.title
+            preview_text: "스테이터스"
+            font_size: 25
+            color_token: title_gold
+            position_px: { x: 112, y: 18 }
+            size_px: { width: 234, height: 34 }
+          - atom: IconButton
+            node_name: Btn_StatusClose
+            component: WindowFrame
+            button_role: window_close
+            touch_size: { width: 42, height: 42 }
+            position_px: { x: 404, y: 18 }
+            children:
+              - atom: TextureAtom
+                node_name: Icon_StatusClose
+                component: WindowFrame
+                asset_key: taskstonebar.ui.close_icon
+                stretch_mode: keep_aspect_centered
+                position_px: { x: 5, y: 5 }
+                size_px: { width: 32, height: 32 }
+          - atom: NinePatchPanel
+            node_name: Panel_StatusStatScroll
+            component: StatusStatScrollPanel
+            asset_key: taskstonebar.ui.status_stat_card_9slice
+            slice_hints: { left: 14, right: 14, top: 14, bottom: 14 }
+            content_insets: { left: 16, right: 28, top: 34, bottom: 12 }
+            position_px: { x: 24, y: 76 }
+            size_px: { width: 410, height: 154 }
+            children:
+              - atom: NativePanel
+                node_name: Panel_ClassRibbon
+                component: StatusStatScrollPanel
+                color_token: panel_outer
+                position_px: { x: 92, y: 9 }
+                size_px: { width: 226, height: 28 }
+                children:
+                  - atom: NativeLabel
+                    node_name: Text_ClassName
+                    component: StatusStatScrollPanel
+                    text_binding_or_text_key: selected_character.class_name
+                    preview_text: "Stone Keeper"
+                    font_size: 13
+                    color_token: text_cream
+                    position_px: { x: 8, y: 3 }
+                    size_px: { width: 210, height: 22 }
+              - atom: SectionGroup
+                node_name: Group_StatusRows
+                component: StatList
+                position_px: { x: 54, y: 41 }
+                size_px: { width: 286, height: 94 }
+                children:
+                  - atom: SectionGroup
+                    node_name: Row_StatusLevel
+                    component: StatList
+                    position_px: { x: 0, y: 0 }
+                    size_px: { width: 286, height: 15 }
+                    children:
+                      - atom: NativeLabel
+                        node_name: Text_StatusLevelLabel
+                        component: StatList
+                        text_binding_or_text_key: stats.level.label
+                        preview_text: "Level"
+                        font_size: 13
+                        color_token: title_gold
+                        horizontal_alignment: left
+                        position_px: { x: 0, y: 0 }
+                        size_px: { width: 166, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusLevelValue
+                        component: StatList
+                        text_binding_or_text_key: stats.level.value
+                        preview_text: "27"
+                        font_size: 13
+                        color_token: text_cream
+                        horizontal_alignment: right
+                        position_px: { x: 166, y: 0 }
+                        size_px: { width: 120, height: 15 }
+                  - atom: SectionGroup
+                    node_name: Row_StatusExp
+                    component: StatList
+                    position_px: { x: 0, y: 15 }
+                    size_px: { width: 286, height: 15 }
+                    children:
+                      - atom: NativeLabel
+                        node_name: Text_StatusExpLabel
+                        component: StatList
+                        text_binding_or_text_key: stats.exp.label
+                        preview_text: "EXP"
+                        font_size: 13
+                        color_token: title_gold
+                        horizontal_alignment: left
+                        position_px: { x: 0, y: 0 }
+                        size_px: { width: 80, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusExpValue
+                        component: StatList
+                        text_binding_or_text_key: stats.exp.value
+                        preview_text: "3,354,766 / 9,866,299"
+                        font_size: 13
+                        color_token: text_cream
+                        horizontal_alignment: right
+                        position_px: { x: 80, y: 0 }
+                        size_px: { width: 206, height: 15 }
+                  - atom: SectionGroup
+                    node_name: Row_StatusDps
+                    component: StatList
+                    position_px: { x: 0, y: 30 }
+                    size_px: { width: 286, height: 15 }
+                    children:
+                      - atom: NativeLabel
+                        node_name: Text_StatusDpsLabel
+                        component: StatList
+                        text_binding_or_text_key: stats.basic_attack_dps.label
+                        preview_text: "Basic Attack DPS"
+                        font_size: 13
+                        color_token: title_gold
+                        horizontal_alignment: left
+                        position_px: { x: 0, y: 0 }
+                        size_px: { width: 166, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusDpsValue
+                        component: StatList
+                        text_binding_or_text_key: stats.basic_attack_dps.value
+                        preview_text: "48.3"
+                        font_size: 13
+                        color_token: text_cream
+                        horizontal_alignment: right
+                        position_px: { x: 166, y: 0 }
+                        size_px: { width: 120, height: 15 }
+                  - atom: SectionGroup
+                    node_name: Row_StatusAttackDamage
+                    component: StatList
+                    position_px: { x: 0, y: 45 }
+                    size_px: { width: 286, height: 15 }
+                    children:
+                      - atom: NativeLabel
+                        node_name: Text_StatusAttackDamageLabel
+                        component: StatList
+                        text_binding_or_text_key: stats.attack_damage.label
+                        preview_text: "Attack Damage"
+                        font_size: 13
+                        color_token: title_gold
+                        horizontal_alignment: left
+                        position_px: { x: 0, y: 0 }
+                        size_px: { width: 166, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusAttackDamageValue
+                        component: StatList
+                        text_binding_or_text_key: stats.attack_damage.value
+                        preview_text: "57"
+                        font_size: 13
+                        color_token: text_cream
+                        horizontal_alignment: right
+                        position_px: { x: 166, y: 0 }
+                        size_px: { width: 120, height: 15 }
+                  - atom: SectionGroup
+                    node_name: Row_StatusMaxHp
+                    component: StatList
+                    position_px: { x: 0, y: 60 }
+                    size_px: { width: 286, height: 15 }
+                    children:
+                      - atom: NativeLabel
+                        node_name: Text_StatusMaxHpLabel
+                        component: StatList
+                        text_binding_or_text_key: stats.max_hp.label
+                        preview_text: "Max HP"
+                        font_size: 13
+                        color_token: title_gold
+                        horizontal_alignment: left
+                        position_px: { x: 0, y: 0 }
+                        size_px: { width: 166, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusMaxHpValue
+                        component: StatList
+                        text_binding_or_text_key: stats.max_hp.value
+                        preview_text: "65"
+                        font_size: 13
+                        color_token: text_cream
+                        horizontal_alignment: right
+                        position_px: { x: 166, y: 0 }
+                        size_px: { width: 120, height: 15 }
+                  - atom: SectionGroup
+                    node_name: Row_StatusMoveSpeed
+                    component: StatList
+                    position_px: { x: 0, y: 75 }
+                    size_px: { width: 286, height: 15 }
+                    children:
+                      - atom: NativeLabel
+                        node_name: Text_StatusMoveSpeedLabel
+                        component: StatList
+                        text_binding_or_text_key: stats.move_speed.label
+                        preview_text: "Move Speed"
+                        font_size: 13
+                        color_token: title_gold
+                        horizontal_alignment: left
+                        position_px: { x: 0, y: 0 }
+                        size_px: { width: 166, height: 15 }
+                      - atom: NativeLabel
+                        node_name: Text_StatusMoveSpeedValue
+                        component: StatList
+                        text_binding_or_text_key: stats.move_speed.value
+                        preview_text: "0.90"
+                        font_size: 13
+                        color_token: text_cream
+                        horizontal_alignment: right
+                        position_px: { x: 166, y: 0 }
+                        size_px: { width: 120, height: 15 }
+              - atom: NativePanel
+                node_name: Panel_StatusScrollbar
+                component: StatusStatScrollPanel
+                color_token: text_muted
+                position_px: { x: 374, y: 43 }
+                size_px: { width: 8, height: 72 }
+              - atom: IconButton
+                node_name: Btn_StatusSearch
+                component: StatusSearchButton
+                button_role: utility_icon
+                touch_size: { width: 38, height: 38 }
+                position_px: { x: 10, y: 106 }
+                children:
+                  - atom: NativeLabel
+                    node_name: Text_SearchGlyph
+                    component: StatusSearchButton
+                    text_binding_or_text_key: ui.status.search_glyph
+                    preview_text: "⌕"
+                    font_size: 20
+                    color_token: text_cream
+                    position_px: { x: 4, y: 3 }
+                    size_px: { width: 30, height: 30 }
+          - atom: SectionGroup
+            node_name: Panel_SkillPointHeader
+            component: SkillPointHeader
+            position_px: { x: 82, y: 244 }
+            size_px: { width: 294, height: 40 }
+            children:
+              - atom: NativePanel
+                node_name: Panel_SkillPointHeaderBg
+                component: SkillPointHeader
+                color_token: panel_inner
+                position_px: { x: 0, y: 0 }
+                size_px: { width: 294, height: 40 }
+              - atom: NativeLabel
+                node_name: Text_SkillPointPlus
+                component: SkillPointHeader
+                text_binding_or_text_key: skill_points.plus_icon
+                preview_text: "+"
+                font_size: 22
+                color_token: title_gold
+                position_px: { x: 16, y: 3 }
+                size_px: { width: 28, height: 30 }
+              - atom: NativeLabel
+                node_name: Text_SkillPoints
+                component: SkillPointHeader
+                text_binding_or_text_key: selected_character.skill_points
+                preview_text: "Skill Points: 0"
+                font_size: 18
+                color_token: text_cream
+                position_px: { x: 58, y: 7 }
+                size_px: { width: 210, height: 26 }
+          - atom: SectionGroup
+            node_name: Section_SkillTree
+            component: StatusWindow
+            position_px: { x: 24, y: 296 }
+            size_px: { width: 410, height: 248 }
+            children:
+              - atom: NativePanel
+                node_name: Panel_LevelTrackRail
+                component: SkillLevelTrack
+                color_token: hp_red
+                position_px: { x: 28, y: 18 }
+                size_px: { width: 10, height: 214 }
+              - atom: NativeLabel
+                node_name: Text_LevelTick0
+                component: SkillLevelTrack
+                text_binding_or_text_key: skill_tier.0.level
+                preview_text: "0"
+                font_size: 14
+                color_token: text_cream
+                position_px: { x: 0, y: 8 }
+                size_px: { width: 24, height: 24 }
+              - atom: NativeLabel
+                node_name: Text_LevelTick10
+                component: SkillLevelTrack
+                text_binding_or_text_key: skill_tier.10.level
+                preview_text: "10"
+                font_size: 14
+                color_token: text_cream
+                position_px: { x: 0, y: 90 }
+                size_px: { width: 28, height: 24 }
+              - atom: NativeLabel
+                node_name: Text_LevelTick30
+                component: SkillLevelTrack
+                text_binding_or_text_key: skill_tier.30.level
+                preview_text: "30"
+                font_size: 14
+                color_token: text_cream
+                position_px: { x: 0, y: 194 }
+                size_px: { width: 28, height: 24 }
+              - atom: NativePanel
+                node_name: Panel_LevelTickLine0
+                component: SkillLevelTrack
+                color_token: text_cream
+                position_px: { x: 20, y: 28 }
+                size_px: { width: 35, height: 3 }
+              - atom: NativePanel
+                node_name: Panel_LevelTickLine10
+                component: SkillLevelTrack
+                color_token: text_cream
+                position_px: { x: 20, y: 110 }
+                size_px: { width: 35, height: 3 }
+              - atom: NativePanel
+                node_name: Panel_LevelTickLine30
+                component: SkillLevelTrack
+                color_token: text_cream
+                position_px: { x: 20, y: 214 }
+                size_px: { width: 35, height: 3 }
+              - atom: NinePatchPanel
+                node_name: Panel_SkillTier0
+                component: SkillTierRow
+                asset_key: taskstonebar.ui.dark_inner_well_9slice
+                slice_hints: { left: 22, right: 22, top: 22, bottom: 22 }
+                content_insets: { left: 8, right: 8, top: 7, bottom: 7 }
+                position_px: { x: 70, y: 0 }
+                size_px: { width: 340, height: 72 }
+                children:
+                  - atom: NativeLabel
+                    node_name: Text_Tier0Arrow
+                    component: SkillTierRow
+                    text_binding_or_text_key: skill_tier.0.arrow
+                    preview_text: "<"
+                    font_size: 26
+                    color_token: text_cream
+                    position_px: { x: 8, y: 18 }
+                    size_px: { width: 24, height: 32 }
+                  - atom: NinePatchPanel
+                    node_name: Panel_SkillStoneThrow
+                    component: SkillIconSlot
+                    asset_key: taskstonebar.ui.slot_frame_9slice
+                    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                    content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                    position_px: { x: 52, y: 7 }
+                    size_px: { width: 58, height: 58 }
+                    children:
+                      - atom: TextureAtom
+                        node_name: Icon_StoneThrow
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.stone_icon_set
+                        stretch_mode: keep_aspect_centered
+                        position_px: { x: 13, y: 8 }
+                        size_px: { width: 32, height: 32 }
+                      - atom: NativeLabel
+                        node_name: Text_StoneThrowLevel
+                        component: SkillIconSlot
+                        text_binding_or_text_key: skill.stone_throw.level
+                        preview_text: "2/2"
+                        font_size: 11
+                        color_token: text_cream
+                        position_px: { x: 4, y: 39 }
+                        size_px: { width: 50, height: 16 }
+                  - atom: NinePatchPanel
+                    node_name: Panel_SkillGuard
+                    component: SkillIconSlot
+                    asset_key: taskstonebar.ui.slot_frame_9slice
+                    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                    content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                    position_px: { x: 144, y: 7 }
+                    size_px: { width: 58, height: 58 }
+                    children:
+                      - atom: TextureAtom
+                        node_name: Icon_Guard
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.resource_icon_set
+                        stretch_mode: keep_aspect_centered
+                        position_px: { x: 13, y: 8 }
+                        size_px: { width: 32, height: 32 }
+                      - atom: NativeLabel
+                        node_name: Text_GuardLevel
+                        component: SkillIconSlot
+                        text_binding_or_text_key: skill.guard.level
+                        preview_text: "4/8"
+                        font_size: 11
+                        color_token: text_cream
+                        position_px: { x: 4, y: 39 }
+                        size_px: { width: 50, height: 16 }
+                  - atom: NinePatchPanel
+                    node_name: Panel_SkillFlame
+                    component: SkillIconSlot
+                    asset_key: taskstonebar.ui.slot_frame_9slice
+                    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                    content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                    position_px: { x: 236, y: 7 }
+                    size_px: { width: 58, height: 58 }
+                    children:
+                      - atom: TextureAtom
+                        node_name: Icon_Flame
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.resource_icon_set
+                        stretch_mode: keep_aspect_centered
+                        position_px: { x: 13, y: 8 }
+                        size_px: { width: 32, height: 32 }
+                      - atom: NativeLabel
+                        node_name: Text_FlameLevel
+                        component: SkillIconSlot
+                        text_binding_or_text_key: skill.flame.level
+                        preview_text: "4/5"
+                        font_size: 11
+                        color_token: text_cream
+                        position_px: { x: 4, y: 39 }
+                        size_px: { width: 50, height: 16 }
+              - atom: NinePatchPanel
+                node_name: Panel_SkillTier10
+                component: SkillTierRow
+                asset_key: taskstonebar.ui.dark_inner_well_9slice
+                slice_hints: { left: 22, right: 22, top: 22, bottom: 22 }
+                content_insets: { left: 8, right: 8, top: 7, bottom: 7 }
+                position_px: { x: 70, y: 88 }
+                size_px: { width: 340, height: 72 }
+                children:
+                  - atom: NativeLabel
+                    node_name: Text_Tier10Arrow
+                    component: SkillTierRow
+                    text_binding_or_text_key: skill_tier.10.arrow
+                    preview_text: "<"
+                    font_size: 26
+                    color_token: text_cream
+                    position_px: { x: 8, y: 18 }
+                    size_px: { width: 24, height: 32 }
+                  - atom: NinePatchPanel
+                    node_name: Panel_SkillFocus
+                    component: SkillIconSlot
+                    asset_key: taskstonebar.ui.slot_frame_9slice
+                    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                    content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                    position_px: { x: 52, y: 7 }
+                    size_px: { width: 58, height: 58 }
+                    children:
+                      - atom: TextureAtom
+                        node_name: Icon_Focus
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.resource_icon_set
+                        stretch_mode: keep_aspect_centered
+                        position_px: { x: 13, y: 8 }
+                        size_px: { width: 32, height: 32 }
+                      - atom: NativeLabel
+                        node_name: Text_FocusLevel
+                        component: SkillIconSlot
+                        text_binding_or_text_key: skill.focus.level
+                        preview_text: "1/8"
+                        font_size: 11
+                        color_token: text_cream
+                        position_px: { x: 4, y: 39 }
+                        size_px: { width: 50, height: 16 }
+                  - atom: NinePatchPanel
+                    node_name: Panel_SkillPierce
+                    component: SkillIconSlot
+                    asset_key: taskstonebar.ui.slot_frame_9slice
+                    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                    content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                    position_px: { x: 144, y: 7 }
+                    size_px: { width: 58, height: 58 }
+                    children:
+                      - atom: TextureAtom
+                        node_name: Icon_Pierce
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.stone_icon_set
+                        stretch_mode: keep_aspect_centered
+                        position_px: { x: 13, y: 8 }
+                        size_px: { width: 32, height: 32 }
+                      - atom: NativeLabel
+                        node_name: Text_PierceLevel
+                        component: SkillIconSlot
+                        text_binding_or_text_key: skill.pierce.level
+                        preview_text: "1/3"
+                        font_size: 11
+                        color_token: text_cream
+                        position_px: { x: 4, y: 39 }
+                        size_px: { width: 50, height: 16 }
+                  - atom: NinePatchPanel
+                    node_name: Panel_SkillGoldSense
+                    component: SkillIconSlot
+                    asset_key: taskstonebar.ui.slot_frame_9slice
+                    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                    content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                    position_px: { x: 236, y: 7 }
+                    size_px: { width: 58, height: 58 }
+                    children:
+                      - atom: TextureAtom
+                        node_name: Icon_GoldSense
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.resource_icon_set
+                        stretch_mode: keep_aspect_centered
+                        position_px: { x: 13, y: 8 }
+                        size_px: { width: 32, height: 32 }
+                      - atom: NativeLabel
+                        node_name: Text_GoldSenseLevel
+                        component: SkillIconSlot
+                        text_binding_or_text_key: skill.gold_sense.level
+                        preview_text: "5/5"
+                        font_size: 11
+                        color_token: text_cream
+                        position_px: { x: 4, y: 39 }
+                        size_px: { width: 50, height: 16 }
+              - atom: NinePatchPanel
+                node_name: Panel_SkillTier30
+                component: SkillTierRow
+                asset_key: taskstonebar.ui.dark_inner_well_9slice
+                slice_hints: { left: 22, right: 22, top: 22, bottom: 22 }
+                content_insets: { left: 8, right: 8, top: 7, bottom: 7 }
+                position_px: { x: 70, y: 176 }
+                size_px: { width: 340, height: 72 }
+                children:
+                  - atom: NativeLabel
+                    node_name: Text_Tier30Arrow
+                    component: SkillTierRow
+                    text_binding_or_text_key: skill_tier.30.arrow
+                    preview_text: "<"
+                    font_size: 26
+                    color_token: text_cream
+                    position_px: { x: 8, y: 18 }
+                    size_px: { width: 24, height: 32 }
+                  - atom: NinePatchPanel
+                    node_name: Panel_SkillRareDetect
+                    component: SkillIconSlot
+                    asset_key: taskstonebar.ui.slot_frame_9slice
+                    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                    content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                    position_px: { x: 52, y: 7 }
+                    size_px: { width: 58, height: 58 }
+                    children:
+                      - atom: TextureAtom
+                        node_name: Icon_RareDetect
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.resource_icon_set
+                        stretch_mode: keep_aspect_centered
+                        position_px: { x: 13, y: 8 }
+                        size_px: { width: 32, height: 32 }
+                      - atom: NativeLabel
+                        node_name: Text_RareDetectLevel
+                        component: SkillIconSlot
+                        text_binding_or_text_key: skill.rare_detect.level
+                        preview_text: "2/2"
+                        font_size: 11
+                        color_token: text_cream
+                        position_px: { x: 4, y: 39 }
+                        size_px: { width: 50, height: 16 }
+                  - atom: NinePatchPanel
+                    node_name: Panel_SkillCrusher
+                    component: SkillIconSlot
+                    asset_key: taskstonebar.ui.slot_frame_9slice
+                    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                    content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                    position_px: { x: 144, y: 7 }
+                    size_px: { width: 58, height: 58 }
+                    children:
+                      - atom: TextureAtom
+                        node_name: Icon_Crusher
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.stone_icon_set
+                        stretch_mode: keep_aspect_centered
+                        position_px: { x: 13, y: 8 }
+                        size_px: { width: 32, height: 32 }
+                      - atom: NativeLabel
+                        node_name: Text_CrusherLevel
+                        component: SkillIconSlot
+                        text_binding_or_text_key: skill.crusher.level
+                        preview_text: "4/5"
+                        font_size: 11
+                        color_token: text_cream
+                        position_px: { x: 4, y: 39 }
+                        size_px: { width: 50, height: 16 }
+                  - atom: NinePatchPanel
+                    node_name: Panel_SkillTreasureEye
+                    component: SkillIconSlot
+                    asset_key: taskstonebar.ui.slot_frame_9slice
+                    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                    content_insets: { left: 6, right: 6, top: 6, bottom: 16 }
+                    position_px: { x: 236, y: 7 }
+                    size_px: { width: 58, height: 58 }
+                    children:
+                      - atom: TextureAtom
+                        node_name: Icon_TreasureEye
+                        component: SkillIconSlot
+                        asset_key: taskstonebar.ui.resource_icon_set
+                        stretch_mode: keep_aspect_centered
+                        position_px: { x: 13, y: 8 }
+                        size_px: { width: 32, height: 32 }
+                      - atom: NativeLabel
+                        node_name: Text_TreasureEyeLevel
+                        component: SkillIconSlot
+                        text_binding_or_text_key: skill.treasure_eye.level
+                        preview_text: "5/5"
+                        font_size: 11
+                        color_token: text_cream
+                        position_px: { x: 4, y: 39 }
+                        size_px: { width: 50, height: 16 }
+
+data_contract:
+  content:
+    - selected_character.class_name
+    - selected_character.stat_rows
+    - selected_character.skill_points
+    - selected_character.skill_nodes
+  runtime_state:
+    - ui.open_detailed_stats
+    - ui.skill_node_focus
+  fixtures:
+    - harness/build/taskstonebar/Units.json
+    - harness/build/taskstonebar/Skills.json
+  hardcoding_allowlist:
+    - "Preview text and reference positions are allowed in this standalone recipe; production labels and skill levels stay runtime-native bindings."
+
+validation:
+  commands:
+    - "/Users/yangjinhwan/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 harness/tools/design_blueprint_validate.py taskstonebar"
+    - "/Users/yangjinhwan/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 harness/godot/validators/godot_ui_recipe_validate.py --recipe harness/godot/recipes/ui/taskstonebar-status-window.yaml"
+    - "/Users/yangjinhwan/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 harness/godot/builders/godot_ui_recipe_build.py --recipe harness/godot/recipes/ui/taskstonebar-status-window.yaml"
+    - "godot --headless --path harness/runtime/godot-taskstonebar --import"
+    - "godot --headless --path harness/runtime/godot-taskstonebar --scene res://scenes/generated/status_window.tscn --quit-after 1"
+    - "godot --headless --path harness/runtime/godot-taskstonebar --check-only --script res://scripts/main.gd"
+    - "godot --headless --path harness/runtime/godot-taskstonebar --script res://scripts/tools/status_window_smoke.gd"
+  screenshot: harness/runtime/godot-taskstonebar/screenshots/taskstonebar-status-window.png
+  blockers:
+    - "Standalone recipe intentionally does not integrate into main.gd yet, to avoid collision with parallel full-overlay work."
+    - "Exact Korean pixel font and final skill icon sheet are pending a dedicated asset pass."

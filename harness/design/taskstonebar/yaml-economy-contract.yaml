@@ -1,0 +1,309 @@
+version: "1.0"
+game: taskstonebar
+updated_at: 2026-06-24T00:00:00+09:00
+status: draft
+
+purpose: >
+  Steam Community Market-only MMO economy overlay for Taskstonebar / 돌키우기2.
+  Engine JSON keeps using the existing idlez resource schema. Economy metadata
+  lives under `_economy` so harness/tools/idlez_compile.py skips it.
+
+compile_contract:
+  ignored_prefix: "_"
+  overlay_key: "_economy"
+  engine_content_source: "harness/content/taskstonebar/**/*.yaml"
+  godot_runtime_source: "engine JSON + economy overlay manifest"
+  steam_itemdef_source: "_economy.steam blocks"
+
+ownership_layers:
+  server_db:
+    owns:
+      - account_level
+      - character_level
+      - gold
+      - exp
+      - stage_progress
+      - mine_depth
+      - rune_or_mark_tree
+      - cooldowns
+      - anti_abuse_logs
+    rule: "DB values are never marketable and never leave the authoritative server."
+  steam_inventory:
+    owns:
+      - marketable_materials
+      - marketable_catalysts
+      - marketable_stones
+      - marketable_chests
+      - marketable_equipment
+      - marketable_characters
+      - marketable_class_unlocks
+      - marketable_pets
+      - marketable_cosmetics
+    rule: "Anything a user can sell must be a Steam Inventory asset."
+  godot_client:
+    owns:
+      - visuals
+      - input
+      - local_cache
+      - market_deep_links
+    rule: "Client can request, preview, and animate; it cannot mint marketable assets."
+
+asset_contract:
+  primary_root: "harness/assets/growstone2/"
+  source: "돌키우기1 원작 에셋"
+  rule: "Use original Grow Stone assets before generating or replacing art."
+  allowed_processing:
+    - godot_import_preset
+    - atlas_repack
+    - sprite_frame_slice
+    - nine_slice_hint
+    - palette_preserving_adjustment
+  new_asset_policy: "Only create new art for missing Steam/Godot/season requirements, and match original asset identity."
+
+server_modes:
+  live:
+    server_required: true
+    steam_inventory: real
+    marketable_drops: enabled
+    local_save_migration: forbidden
+  staging:
+    server_required: true
+    steam_inventory: sandbox_or_partner_test
+    marketable_drops: test_only
+    local_save_migration: forbidden
+  local_sandbox:
+    server_required: false
+    server: mock_or_embedded
+    steam_inventory: disabled
+    marketable_drops: disabled
+    live_save_migration: forbidden
+    purpose: "Godot UI/combat/balance iteration without economic risk."
+
+market_policy:
+  ingame_exchange: disabled
+  provider: SteamCommunityMarket
+  user_trade_provider: SteamTrading
+  purchase_provider: SteamWallet
+  launch_positioning: "Farm it, feed it, burn it, or sell it on Steam."
+  price_goal: "No one-year price defense. Optimize season-1 velocity and burn pressure."
+
+item_overlay_schema:
+  _economy:
+    role:
+      enum:
+        - feed_material
+        - catalyst
+        - stone_core
+        - equipment
+        - optioned_equipment
+        - character
+        - class_unlock
+        - class_shard
+        - pet
+        - mine
+        - affix_token
+        - sealed_roll
+        - revealed_bound_item
+        - cosmetic
+        - chest
+        - ticket
+        - non_market_progress
+    steam:
+      enabled: bool
+      itemdefid: int
+      itemdef_type:
+        enum: [item, generator, playtimegenerator, bundle]
+      marketable: bool
+      tradable: bool
+      auto_stack: bool
+      store_hidden: bool
+      market_hash_name: string
+      display_type: string
+      tags:
+        rarity: string
+        family: string
+        lane: string
+        season: string
+      market_identity:
+        base_item_key: string
+        slot: string
+        archetype: string
+        option_family: string
+        option_tier: string
+        enhancement_band: string
+        roll_visibility:
+          enum: [none, sealed, visible_bucket, bound_hidden]
+    stack:
+      inventory_unit: int
+      market_lot_size: int
+      notes: string
+    random_options:
+      uses_engine_options: bool
+      option_counts_field: optionCounts
+      option_pool_field: options
+      market_mode:
+        enum: [none, sealed_roll, visible_bucket, bound_instance]
+      bind_on:
+        enum: [never, reveal, equip, reroll, enhance, feed, cube]
+      visible_bucket_axes:
+        - slot
+        - rarity
+        - grade
+        - enhancement_band
+        - option_family
+        - option_tier
+      server_persisted_rolls: bool
+    supply:
+      online_only: bool
+      faucets:
+        - source: string
+          map_ids: [int]
+          unit_ids: [int]
+          expected_per_hour: float
+          cap_per_day: int
+    sinks:
+      feed_xp: int
+      cube_xp: int
+      alchemy_gold: int
+      recipes:
+        - id: string
+          consumes:
+            - { itemDataId: int, count: int }
+          produces:
+            - { itemDataId: int, count: int }
+          steam_exchange: bool
+      seasonal:
+        - id: string
+          count_per_attempt: int
+          reason: string
+    risk:
+      bot_value: string
+      inflation_risk: string
+      knobs: [string]
+
+system_lanes:
+  feed_loop:
+    summary: "Every marketable farm drop is also required as food."
+    decisions:
+      - "Low-tier materials remain useful in high-tier upgrades."
+      - "High-tier players buy from low-tier farmers instead of only replacing them."
+      - "Feeding is irreversible and creates server-side progress, not Steam assets."
+  cube_loop:
+    summary: "Main burn engine for inventory oversupply."
+    functions:
+      - Alchemy: "Burn marketable or bound items into gold + cube XP."
+      - Synthesis: "Consume N same-lane items into a higher lane item."
+      - Refining: "Consume catalyst + ore to mint limited higher-grade marketable outputs."
+      - Inscription: "Late-season high-cost sink for prestige and leaderboards."
+  steam_market_loop:
+    summary: "No in-game order book. Godot opens Steam Inventory/Market surfaces."
+    ui:
+      - inventory_badges
+      - sell_on_steam_button
+      - buy_on_steam_button
+      - market_price_hint_cache
+    rule: "Market execution is external to the game; game server reacts to refreshed Steam inventory."
+  random_option_loop:
+    summary: "Random options exist, but market value must be visible before trade."
+    decisions:
+      - "Full hidden numeric rolls become server DB-bound after reveal/equip/reroll."
+      - "Tradeable random gear uses sealed items or visible option buckets."
+      - "Steam dynamic properties are not the source of market-critical option value."
+  mmo_loop:
+    summary: "Server-authoritative farming channels produce Steam assets at controlled rates."
+    topology:
+      - Town: "chat, clan, cube, inventory, Steam links"
+      - MineChannel: "20-100 players, automatic farming, online-only drops"
+      - FormationRun: "1-4 account-owned characters, class composition bonuses, account drop rolls"
+      - BossRaid: "timed catalyst/core faucet"
+      - ClanMine: "group sink, ranking pressure, seasonal burn"
+  class_formation_loop:
+    summary: "Classes, equipment, skills, and pets create small-window formation RPG depth."
+    decisions:
+      - "Party means 3-4 owned characters deployed by one account, not multiplayer matchmaking."
+      - "Classes define formation role, skill slots, equipment affinity, and formation bonus."
+      - "Formation hunting uses account-level drops with per-character contribution."
+      - "Marketable class/pet/equipment assets can be traded before binding."
+      - "Class level, mastery, and formation contribution are server DB-bound."
+
+initial_item_lanes:
+  materials:
+    - { id: 200101, name: "조약돌 파편", role: feed_material, market: true }
+    - { id: 200102, name: "이끼 광석", role: feed_material, market: true }
+    - { id: 200103, name: "큐브 촉매", role: catalyst, market: true }
+  next_needed:
+    - { id: 200104, name: "태양석 조각", role: feed_material, market: true }
+    - { id: 200105, name: "고대석 코어", role: stone_core, market: true }
+    - { id: 200106, name: "별가루 광석", role: feed_material, market: true }
+    - { id: 200301, name: "일반 작업석 상자", role: chest, market: true }
+    - { id: 200401, name: "돌지기 스킨 조각", role: cosmetic, market: true }
+  equipment:
+    - { id: 210101, name: "데굴 투석구 상자", role: sealed_roll, market: true }
+    - { id: 210201, name: "광산 장갑", role: optioned_equipment, market: true }
+  characters:
+    - { id: 220101, name: "돌지기 소환석", role: character, market: true }
+    - { id: 220201, name: "돌지기 스킨", role: cosmetic, market: true }
+  classes:
+    - { id: 221101, name: "돌수호자 해금권", role: class_unlock, market: true }
+    - { id: 221102, name: "돌팔매꾼 해금권", role: class_unlock, market: true }
+    - { id: 221103, name: "광부 해금권", role: class_unlock, market: true }
+    - { id: 221104, name: "태양석 주술사 해금권", role: class_unlock, market: true }
+  pets:
+    - { id: 230101, name: "광맥 박쥐 알", role: pet, market: true }
+    - { id: 230201, name: "태양석 펫 조각", role: pet, market: true }
+
+formation_policy:
+  formation_size:
+    min: 1
+    max: 4
+    launch_target: 3
+  drop_model: account_rolls_with_character_contribution
+  marketable_drop_owner: "account"
+  composition_bonus_axes:
+    - class_role
+    - pet_family
+    - equipment_affinity
+    - clan_buff
+    - stone_attribute
+  slot_unlocks:
+    slot_1: start
+    slot_2: first_boss_clear
+    slot_3: cube_level_4
+    slot_4: rune_or_mark_node
+  anti_conflict_rules:
+    - "No last-hit ownership."
+    - "No duplicate character deployment by default."
+    - "No multiplayer shared loot rolling in launch version."
+    - "Formation bonus changes expected value but not item ownership."
+
+random_option_policy:
+  source_schema: "ResourceItem.options / optionCounts"
+  steam_rule: "Market-critical options must be represented by immutable item definition data, item tags, or market_hash_name."
+  avoid_for_market_value:
+    - "hidden decimal dynamic_props"
+    - "client-settable properties"
+    - "post-trade-cleared properties"
+  modes:
+    sealed_roll:
+      market_behavior: "Tradeable before reveal."
+      game_behavior: "Reveal consumes Steam item and creates a server-bound rolled instance."
+      best_for: [equipment, pet_egg, character_ticket]
+    visible_bucket:
+      market_behavior: "Tradeable with option family/tier visible in item name and tags."
+      game_behavior: "Exact stat values are constrained to that bucket; equip/reroll may bind."
+      best_for: [high_value_equipment, rare_pet, rare_character]
+    bound_instance:
+      market_behavior: "Not tradeable."
+      game_behavior: "Full random values, enhance history, reroll history live in server DB."
+      best_for: [equipped_gear, trained_pet, leveled_character]
+
+launch_burn_targets:
+  day_1:
+    - "First stone evolution consumes 100+ low-tier fragments."
+    - "Cube unlock consumes catalyst and ore, not only gold."
+  week_1:
+    - "Top rank attempts consume low-tier stacks, mid-tier ore, and boss cores."
+    - "Clan mine donations burn materials for group buffs."
+  season_1:
+    - "Prestige inscriptions consume massive low-tier lots plus rare catalyst."
+    - "Season cosmetic crafting burns old materials before new faucets arrive."

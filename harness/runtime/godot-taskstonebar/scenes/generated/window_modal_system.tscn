@@ -1,0 +1,456 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Theme" path="res://themes/generated/taskstonebar_window_modal_system.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/window_frame_9slice.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/window_ornament_set.png" id="3_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/dark_inner_well_9slice.png" id="4_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/portal_parchment_map.png" id="5_tex"]
+
+[node name="Root_TaskstoneWindowModalSystem" type="Control"]
+layout_mode = 3
+theme = ExtResource("1_theme")
+metadata/atom = "ScreenRoot"
+metadata/component = "TaskstoneWindowModalSystem"
+
+[node name="Section_WindowModalStage" type="Control" parent="."]
+layout_mode = 0
+metadata/atom = "SectionGroup"
+metadata/component = "WindowModalStage"
+metadata/slot = "window_stage"
+
+[node name="Shell_StatusWindow" type="Control" parent="Section_WindowModalStage"]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 104.0
+offset_right = 498.0
+offset_bottom = 679.0
+custom_minimum_size = Vector2(460.0, 575.0)
+metadata/atom = "ModalShell"
+metadata/component = "TaskstoneWindowShell"
+metadata/slot = "shell"
+
+[node name="Btn_StatusWindowInertScrim" type="Button" parent="Section_WindowModalStage/Shell_StatusWindow"]
+layout_mode = 0
+flat = true
+text = ""
+metadata/atom = "ModalScrim"
+metadata/slot = "scrim"
+metadata/color_token = "shadow"
+
+[node name="Panel_StatusWindowFrame" type="NinePatchRect" parent="Section_WindowModalStage/Shell_StatusWindow"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 460.0
+offset_bottom = 575.0
+custom_minimum_size = Vector2(460.0, 575.0)
+texture = ExtResource("2_tex")
+patch_margin_left = 32.0
+patch_margin_right = 32.0
+patch_margin_top = 40.0
+patch_margin_bottom = 30.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "TaskstoneWindowShell"
+metadata/slot = "frame"
+metadata/asset_key = "taskstonebar.ui.window_frame_9slice"
+
+[node name="Section_StatusWindowHeader" type="Control" parent="Section_WindowModalStage/Shell_StatusWindow"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 8.0
+offset_right = 442.0
+offset_bottom = 66.0
+custom_minimum_size = Vector2(424.0, 58.0)
+metadata/atom = "SectionGroup"
+metadata/component = "WindowTitleBar"
+metadata/slot = "header"
+
+[node name="Tex_StatusWindowCrest" type="TextureRect" parent="Section_WindowModalStage/Shell_StatusWindow/Section_StatusWindowHeader"]
+layout_mode = 0
+offset_left = 166.0
+offset_top = -28.0
+offset_right = 258.0
+offset_bottom = 36.0
+custom_minimum_size = Vector2(92.0, 64.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("3_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "FrameOrnamentLayer"
+metadata/slot = "crest"
+metadata/asset_key = "taskstonebar.ui.window_ornament_set"
+
+[node name="Text_StatusWindowTitle" type="Label" parent="Section_WindowModalStage/Shell_StatusWindow/Section_StatusWindowHeader"]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 12.0
+offset_right = 354.0
+offset_bottom = 44.0
+custom_minimum_size = Vector2(300.0, 32.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "ui.window.status.title"
+theme_override_font_sizes/font_size = 24.0
+metadata/atom = "NativeLabel"
+metadata/slot = "title"
+metadata/text_binding_or_text_key = "ui.window.status.title"
+metadata/color_token = "title_gold"
+metadata/font_size = 24.0
+
+[node name="Btn_Close_status" type="Button" parent="Section_WindowModalStage/Shell_StatusWindow/Section_StatusWindowHeader"]
+layout_mode = 0
+offset_left = 378.0
+offset_top = 4.0
+offset_right = 422.0
+offset_bottom = 48.0
+custom_minimum_size = Vector2(44.0, 44.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "WindowCloseButton"
+metadata/slot = "close_button"
+metadata/button_role = "window_close"
+
+[node name="Section_StatusWindowBody" type="Control" parent="Section_WindowModalStage/Shell_StatusWindow"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 78.0
+offset_right = 442.0
+offset_bottom = 554.0
+custom_minimum_size = Vector2(424.0, 476.0)
+metadata/atom = "SectionGroup"
+metadata/component = "StatusStatsBody"
+metadata/slot = "body"
+
+[node name="Panel_StatusBodyDarkWell" type="NinePatchRect" parent="Section_WindowModalStage/Shell_StatusWindow/Section_StatusWindowBody"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 424.0
+offset_bottom = 476.0
+custom_minimum_size = Vector2(424.0, 476.0)
+texture = ExtResource("4_tex")
+patch_margin_left = 18.0
+patch_margin_right = 18.0
+patch_margin_top = 22.0
+patch_margin_bottom = 22.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "WindowBodyFrame"
+metadata/slot = "dark_body"
+metadata/asset_key = "taskstonebar.ui.dark_inner_well_9slice"
+
+[node name="Section_StatusWindowFooter" type="Control" parent="Section_WindowModalStage/Shell_StatusWindow"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 554.0
+offset_right = 442.0
+offset_bottom = 554.0
+custom_minimum_size = Vector2(424.0, 0.0)
+metadata/atom = "SectionGroup"
+metadata/component = "ModalFooterActionRow"
+metadata/slot = "footer"
+
+[node name="Shell_HeroInventoryWindow" type="Control" parent="Section_WindowModalStage"]
+layout_mode = 0
+offset_left = 522.0
+offset_top = 74.0
+offset_right = 1074.0
+offset_bottom = 724.0
+custom_minimum_size = Vector2(552.0, 650.0)
+metadata/atom = "ModalShell"
+metadata/component = "TaskstoneWindowShell"
+metadata/slot = "shell"
+
+[node name="Btn_HeroInventoryInertScrim" type="Button" parent="Section_WindowModalStage/Shell_HeroInventoryWindow"]
+layout_mode = 0
+flat = true
+text = ""
+metadata/atom = "ModalScrim"
+metadata/slot = "scrim"
+metadata/color_token = "shadow"
+
+[node name="Panel_HeroInventoryFrame" type="NinePatchRect" parent="Section_WindowModalStage/Shell_HeroInventoryWindow"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 552.0
+offset_bottom = 650.0
+custom_minimum_size = Vector2(552.0, 650.0)
+texture = ExtResource("2_tex")
+patch_margin_left = 32.0
+patch_margin_right = 32.0
+patch_margin_top = 40.0
+patch_margin_bottom = 30.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "TaskstoneWindowShell"
+metadata/slot = "frame"
+metadata/asset_key = "taskstonebar.ui.window_frame_9slice"
+
+[node name="Section_HeroInventoryHeader" type="Control" parent="Section_WindowModalStage/Shell_HeroInventoryWindow"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 8.0
+offset_right = 534.0
+offset_bottom = 66.0
+custom_minimum_size = Vector2(516.0, 58.0)
+metadata/atom = "SectionGroup"
+metadata/component = "WindowTitleBar"
+metadata/slot = "header"
+
+[node name="Text_HeroInventoryTitle" type="Label" parent="Section_WindowModalStage/Shell_HeroInventoryWindow/Section_HeroInventoryHeader"]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 12.0
+offset_right = 446.0
+offset_bottom = 44.0
+custom_minimum_size = Vector2(392.0, 32.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "ui.window.hero_inventory.title"
+theme_override_font_sizes/font_size = 24.0
+metadata/atom = "NativeLabel"
+metadata/slot = "title"
+metadata/text_binding_or_text_key = "ui.window.hero_inventory.title"
+metadata/color_token = "title_gold"
+metadata/font_size = 24.0
+
+[node name="Btn_Close_hero_inventory" type="Button" parent="Section_WindowModalStage/Shell_HeroInventoryWindow/Section_HeroInventoryHeader"]
+layout_mode = 0
+offset_left = 470.0
+offset_top = 4.0
+offset_right = 514.0
+offset_bottom = 48.0
+custom_minimum_size = Vector2(44.0, 44.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "WindowCloseButton"
+metadata/slot = "close_button"
+metadata/button_role = "window_close"
+
+[node name="Section_HeroInventoryControls" type="Control" parent="Section_WindowModalStage/Shell_HeroInventoryWindow"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 344.0
+offset_right = 534.0
+offset_bottom = 386.0
+custom_minimum_size = Vector2(516.0, 42.0)
+metadata/atom = "SectionGroup"
+metadata/component = "WindowTabBar"
+metadata/slot = "controls"
+
+[node name="Row_StoneEquipmentTabs" type="HBoxContainer" parent="Section_WindowModalStage/Shell_HeroInventoryWindow/Section_HeroInventoryControls"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 516.0
+offset_bottom = 42.0
+custom_minimum_size = Vector2(516.0, 42.0)
+theme_override_constants/h_separation = 6.0
+metadata/atom = "HBox"
+metadata/slot = "tab_buttons"
+
+[node name="Section_HeroInventoryBody" type="Control" parent="Section_WindowModalStage/Shell_HeroInventoryWindow"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 78.0
+offset_right = 534.0
+offset_bottom = 578.0
+custom_minimum_size = Vector2(516.0, 500.0)
+metadata/atom = "SectionGroup"
+metadata/component = "KeeperInventoryBody"
+metadata/slot = "body"
+
+[node name="Panel_HeroInventoryDarkWell" type="NinePatchRect" parent="Section_WindowModalStage/Shell_HeroInventoryWindow/Section_HeroInventoryBody"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 516.0
+offset_bottom = 500.0
+custom_minimum_size = Vector2(516.0, 500.0)
+texture = ExtResource("4_tex")
+patch_margin_left = 18.0
+patch_margin_right = 18.0
+patch_margin_top = 22.0
+patch_margin_bottom = 22.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "WindowBodyFrame"
+metadata/slot = "dark_body"
+metadata/asset_key = "taskstonebar.ui.dark_inner_well_9slice"
+
+[node name="Grid_StoneInventorySlots" type="GridContainer" parent="Section_WindowModalStage/Shell_HeroInventoryWindow/Section_HeroInventoryBody"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 320.0
+offset_right = 348.0
+offset_bottom = 592.0
+custom_minimum_size = Vector2(328.0, 272.0)
+columns = 6
+metadata/atom = "Grid"
+metadata/component = "KeeperInventoryBody"
+metadata/slot = "inventory_grid"
+
+[node name="Section_HeroInventoryFooter" type="Control" parent="Section_WindowModalStage/Shell_HeroInventoryWindow"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 584.0
+offset_right = 534.0
+offset_bottom = 636.0
+custom_minimum_size = Vector2(516.0, 52.0)
+metadata/atom = "SectionGroup"
+metadata/component = "ModalFooterActionRow"
+metadata/slot = "footer"
+
+[node name="Shell_PortalWindow" type="Control" parent="Section_WindowModalStage"]
+layout_mode = 0
+offset_left = 1098.0
+offset_top = 104.0
+offset_right = 1530.0
+offset_bottom = 719.0
+custom_minimum_size = Vector2(432.0, 615.0)
+metadata/atom = "ModalShell"
+metadata/component = "TaskstoneWindowShell"
+metadata/slot = "shell"
+
+[node name="Btn_PortalWindowInertScrim" type="Button" parent="Section_WindowModalStage/Shell_PortalWindow"]
+layout_mode = 0
+flat = true
+text = ""
+metadata/atom = "ModalScrim"
+metadata/slot = "scrim"
+metadata/color_token = "shadow"
+
+[node name="Panel_PortalWindowFrame" type="NinePatchRect" parent="Section_WindowModalStage/Shell_PortalWindow"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 432.0
+offset_bottom = 615.0
+custom_minimum_size = Vector2(432.0, 615.0)
+texture = ExtResource("2_tex")
+patch_margin_left = 32.0
+patch_margin_right = 32.0
+patch_margin_top = 40.0
+patch_margin_bottom = 30.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "TaskstoneWindowShell"
+metadata/slot = "frame"
+metadata/asset_key = "taskstonebar.ui.window_frame_9slice"
+
+[node name="Section_PortalWindowHeader" type="Control" parent="Section_WindowModalStage/Shell_PortalWindow"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 8.0
+offset_right = 414.0
+offset_bottom = 66.0
+custom_minimum_size = Vector2(396.0, 58.0)
+metadata/atom = "SectionGroup"
+metadata/component = "WindowTitleBar"
+metadata/slot = "header"
+
+[node name="Tex_PortalWindowCrest" type="TextureRect" parent="Section_WindowModalStage/Shell_PortalWindow/Section_PortalWindowHeader"]
+layout_mode = 0
+offset_left = 152.0
+offset_top = -28.0
+offset_right = 244.0
+offset_bottom = 36.0
+custom_minimum_size = Vector2(92.0, 64.0)
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("3_tex")
+metadata/atom = "TextureAtom"
+metadata/component = "FrameOrnamentLayer"
+metadata/slot = "crest"
+metadata/asset_key = "taskstonebar.ui.window_ornament_set"
+
+[node name="Text_PortalWindowTitle" type="Label" parent="Section_WindowModalStage/Shell_PortalWindow/Section_PortalWindowHeader"]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 12.0
+offset_right = 330.0
+offset_bottom = 44.0
+custom_minimum_size = Vector2(276.0, 32.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "ui.window.portal.title"
+theme_override_font_sizes/font_size = 24.0
+metadata/atom = "NativeLabel"
+metadata/slot = "title"
+metadata/text_binding_or_text_key = "ui.window.portal.title"
+metadata/color_token = "title_gold"
+metadata/font_size = 24.0
+
+[node name="Btn_Close_portal" type="Button" parent="Section_WindowModalStage/Shell_PortalWindow/Section_PortalWindowHeader"]
+layout_mode = 0
+offset_left = 350.0
+offset_top = 4.0
+offset_right = 394.0
+offset_bottom = 48.0
+custom_minimum_size = Vector2(44.0, 44.0)
+flat = true
+text = ""
+metadata/atom = "IconButton"
+metadata/component = "WindowCloseButton"
+metadata/slot = "close_button"
+metadata/button_role = "window_close"
+
+[node name="Section_PortalControls" type="Control" parent="Section_WindowModalStage/Shell_PortalWindow"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 78.0
+offset_right = 414.0
+offset_bottom = 170.0
+custom_minimum_size = Vector2(396.0, 92.0)
+metadata/atom = "SectionGroup"
+metadata/component = "WindowControlStrip"
+metadata/slot = "controls"
+
+[node name="Row_PortalActTabs" type="HBoxContainer" parent="Section_WindowModalStage/Shell_PortalWindow/Section_PortalControls"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 48.0
+offset_right = 396.0
+offset_bottom = 88.0
+custom_minimum_size = Vector2(396.0, 40.0)
+theme_override_constants/h_separation = 6.0
+metadata/atom = "HBox"
+metadata/slot = "tab_buttons"
+
+[node name="Section_PortalBody" type="Control" parent="Section_WindowModalStage/Shell_PortalWindow"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 176.0
+offset_right = 414.0
+offset_bottom = 592.0
+custom_minimum_size = Vector2(396.0, 416.0)
+metadata/atom = "SectionGroup"
+metadata/component = "PortalRouteMapBody"
+metadata/slot = "body"
+
+[node name="Panel_PortalParchmentBody" type="NinePatchRect" parent="Section_WindowModalStage/Shell_PortalWindow/Section_PortalBody"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 396.0
+offset_bottom = 416.0
+custom_minimum_size = Vector2(396.0, 416.0)
+texture = ExtResource("5_tex")
+patch_margin_left = 18.0
+patch_margin_right = 18.0
+patch_margin_top = 18.0
+patch_margin_bottom = 18.0
+metadata/atom = "NinePatchPanel"
+metadata/component = "PortalRouteMapBody"
+metadata/slot = "parchment_body"
+metadata/asset_key = "taskstonebar.ui.portal_parchment_map"
+
+[node name="Section_PortalFooter" type="Control" parent="Section_WindowModalStage/Shell_PortalWindow"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 592.0
+offset_right = 414.0
+offset_bottom = 592.0
+custom_minimum_size = Vector2(396.0, 0.0)
+metadata/atom = "SectionGroup"
+metadata/component = "ModalFooterActionRow"
+metadata/slot = "footer"

@@ -1,0 +1,489 @@
+version: 1
+game: taskstonebar
+slug: taskstonebar-window-modal-system
+status: draft
+backend: godot_control
+
+target:
+  project: ../../../runtime/godot-taskstonebar/project.godot
+  owner_scene: ../../../runtime/godot-taskstonebar/scenes/main.tscn
+  owner_script: ../../../runtime/godot-taskstonebar/scripts/main.gd
+  output:
+    scene: ../../../runtime/godot-taskstonebar/scenes/generated/window_modal_system.tscn
+    theme: ../../../runtime/godot-taskstonebar/themes/generated/taskstonebar_window_modal_system.tres
+  generation_policy: "Recipe only in this pass; build-godot-ui-runtime should generate the Control scene and theme later."
+
+sources:
+  ui_system_inventory: ../../../design/taskstonebar/ui-system-inventory.yaml
+  button_system: ../../../design/taskstonebar/button-system.yaml
+  modal_system: ../../../design/taskstonebar/modal-system.yaml
+  color_tokens: ../../../design/taskstonebar/color-tokens.yaml
+  art_direction: ../../../design/taskstonebar/art-direction.yaml
+  layout_tokens: ../../../design/taskstonebar/layout-tokens.yaml
+  component_blueprints: ../../../design/taskstonebar/component-blueprints.yaml
+  component_skins: ../../../design/taskstonebar/component-skins.yaml
+  asset_plan: ../../../design/taskstonebar/asset-plan.yaml
+  concepts:
+    - ../../../design/taskstonebar/concepts/main_ui_concept_e_refined_current_mockup_b.md
+    - ../../../design/taskstonebar/concepts/taskstonebar_window_modal_system.md
+
+current_godot_reference:
+  owner_scene: ../../../runtime/godot-taskstonebar/scenes/main.tscn
+  owner_script: ../../../runtime/godot-taskstonebar/scripts/main.gd
+  screenshot: ../../../runtime/godot-taskstonebar/screenshots/taskstonebar-combat-smoke.png
+  note: "Current Godot runtime is a single combat smoke Control; window modal UI is not implemented yet."
+
+blueprint_refs:
+  surface: TaskstoneWindowModalSystem
+  sections:
+    - window_stage
+    - window_header
+    - window_controls
+    - window_body
+    - window_footer
+  components:
+    - WindowModalStage
+    - TaskstoneWindowShell
+    - WindowTitleBar
+    - WindowCloseButton
+    - FrameOrnamentLayer
+    - WindowControlStrip
+    - WindowTabBar
+    - WindowBodyFrame
+    - PortalRouteMapBody
+    - StatusStatsBody
+    - KeeperInventoryBody
+    - ConfirmDialogBody
+    - ModalFooterActionRow
+  shared_button_roles:
+    - window_close
+    - title_icon
+    - tab_button
+    - icon_dock
+    - primary_cta
+    - danger_consume
+    - secondary_cta
+  shared_modal_sections:
+    - shell
+    - scrim
+    - header
+    - controls
+    - body
+    - footer
+  color_token_groups:
+    - panel
+    - progress
+    - reward
+    - taskbar_strip
+
+screen:
+  orientation: landscape_desktop
+  reference_size_px: { width: 1600, height: 900 }
+  concept_reference_size_px: { width: 1600, height: 900 }
+  safe_area_policy: "Floating windows live above the combat strip and OS taskbar-safe area; combat strip survives all window closes."
+
+layout:
+  stage:
+    anchor: full_rect
+    safe_area_px: { left: 24, right: 24, top: 72, bottom: 206 }
+    mouse_filter: pass
+    z_index_base: 10
+  default_windows:
+    status:
+      window_id: status
+      title_key: ui.window.status.title
+      position_px: { x: 38, y: 104 }
+      size_px: { width: 460, height: 575 }
+      body_variant: dark_well
+    hero_inventory:
+      window_id: hero_inventory
+      title_key: ui.window.hero_inventory.title
+      position_px: { x: 522, y: 74 }
+      size_px: { width: 552, height: 650 }
+      body_variant: dark_well
+    portal:
+      window_id: portal
+      title_key: ui.window.portal.title
+      position_px: { x: 1098, y: 104 }
+      size_px: { width: 432, height: 615 }
+      body_variant: parchment_map
+  shell:
+    title_bar_height_px: 58
+    content_insets_px: { left: 18, right: 18, top: 64, bottom: 18 }
+    close_button_px: { width: 38, height: 38 }
+    close_hit_px: { width: 44, height: 44 }
+    drag_policy: title_bar_raises_and_drags_window
+  body:
+    padding_px: { left: 14, right: 14, top: 14, bottom: 14 }
+    text_clamp:
+      title: { max_lines: 1, overflow: ellipsis }
+      body: { max_lines: 3, overflow: clamp }
+  footer:
+    min_height_px: 58
+    action_gap_px: 10
+
+assets:
+  required_keys:
+    - taskstonebar.ui.window_frame_9slice
+    - taskstonebar.ui.dark_inner_well_9slice
+    - taskstonebar.ui.portal_parchment_map
+    - taskstonebar.ui.tab_burgundy_9slice
+    - taskstonebar.ui.slot_frame_9slice
+    - taskstonebar.ui.close_icon
+    - taskstonebar.ui.window_ornament_set
+  nineslice:
+    - key: taskstonebar.ui.window_frame_9slice
+      atom: NinePatchPanel
+      usage: window_outer_shell
+      godot_usage: nine_patch_rect
+      slice_hints: { left: 32, right: 32, top: 40, bottom: 30 }
+      content_insets: { left: 18, right: 18, top: 64, bottom: 18 }
+      intended_godot_target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/window/popup_frame_9slice.png
+    - key: taskstonebar.ui.dark_inner_well_9slice
+      atom: NinePatchPanel
+      usage: dark_window_body
+      godot_usage: nine_patch_rect
+      slice_hints: { left: 18, right: 18, top: 22, bottom: 22 }
+      content_insets: { left: 14, right: 14, top: 14, bottom: 14 }
+      intended_godot_target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/window/popup_inner_dark_9slice.png
+    - key: taskstonebar.ui.portal_parchment_map
+      atom: NinePatchPanel
+      usage: portal_and_dialog_body
+      godot_usage: nine_patch_rect
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+      content_insets: { left: 18, right: 18, top: 18, bottom: 18 }
+      intended_godot_target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/window/parchment_body_9slice.png
+    - key: taskstonebar.ui.tab_burgundy_9slice
+      atom: NinePatchPanel
+      usage: native_tab_button_theme_source
+      godot_usage: stylebox_texture
+      slice_hints: { left: 24, right: 24, top: 18, bottom: 18 }
+      content_insets: { left: 12, right: 12, top: 8, bottom: 8 }
+      intended_godot_target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/window/tab_button_9slice.png
+    - key: taskstonebar.ui.slot_frame_9slice
+      atom: NinePatchPanel
+      usage: inventory_slot_skin
+      godot_usage: nine_patch_rect
+      slice_hints: { left: 8, right: 8, top: 8, bottom: 8 }
+      content_insets: { left: 5, right: 5, top: 5, bottom: 5 }
+      intended_godot_target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/window/item_slot_9slice.png
+  fixed_atoms:
+    - key: taskstonebar.ui.close_icon
+      usage: window_close_button_texture
+      atom: TextureAtom
+      display_size_px: { width: 38, height: 38 }
+      intended_godot_target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/window/popup_close_button.png
+      not_nine_slice: true
+    - key: taskstonebar.ui.window_ornament_set
+      usage: optional_title_crest_texture
+      atom: TextureAtom
+      display_size_px: { width: 92, height: 64 }
+      intended_godot_target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/window/title_crest_emblem.png
+      not_nine_slice: true
+  native_controls:
+    - id: TaskstoneWindowManager
+      usage: instance_registry_and_focus
+      bindings: [open_windows, focused_window_id]
+    - id: WindowCloseButton
+      usage: close_button_hit_area
+      bindings: [window_id]
+    - id: PortalStageNodeLayer
+      usage: native_stage_nodes_over_parchment_body
+      bindings: [selected_act, current_map, map_progress]
+    - id: KeeperInventoryGrid
+      usage: native_slots_with_slot_frame_skin
+      bindings: [stone_inventory_items, selected_inventory_tab, active_slot_cooldowns]
+  godot_asset_warnings:
+    - "Project-local copies under harness/runtime/godot-taskstonebar/assets/generated/ui/window are declared but not generated in this recipe pass."
+
+control_tree:
+  root:
+    atom: ScreenRoot
+    node_name: Root_TaskstoneWindowModalSystem
+    component: TaskstoneWindowModalSystem
+    anchors_preset: full_rect
+    children:
+      - atom: SectionGroup
+        slot: window_stage
+        node_name: Section_WindowModalStage
+        component: WindowModalStage
+        anchors_preset: full_rect
+        children:
+          - atom: ModalShell
+            slot: shell
+            node_name: Shell_StatusWindow
+            component: TaskstoneWindowShell
+            window_id: status
+            position_px: { x: 38, y: 104 }
+            size_px: { width: 460, height: 575 }
+            children:
+              - atom: ModalScrim
+                slot: scrim
+                node_name: Btn_StatusWindowInertScrim
+                color_token: shadow
+                alpha: 0.0
+                close_policy: ignore_backdrop
+              - atom: NinePatchPanel
+                slot: frame
+                node_name: Panel_StatusWindowFrame
+                component: TaskstoneWindowShell
+                asset_key: taskstonebar.ui.window_frame_9slice
+                slice_hints: { left: 32, right: 32, top: 40, bottom: 30 }
+                content_insets: { left: 18, right: 18, top: 64, bottom: 18 }
+                size_px: { width: 460, height: 575 }
+              - atom: SectionGroup
+                slot: header
+                node_name: Section_StatusWindowHeader
+                component: WindowTitleBar
+                position_px: { x: 18, y: 8 }
+                size_px: { width: 424, height: 58 }
+                children:
+                  - atom: TextureAtom
+                    slot: crest
+                    node_name: Tex_StatusWindowCrest
+                    component: FrameOrnamentLayer
+                    asset_key: taskstonebar.ui.window_ornament_set
+                    stretch_mode: keep_aspect_centered
+                    position_px: { x: 166, y: -28 }
+                    size_px: { width: 92, height: 64 }
+                  - atom: NativeLabel
+                    slot: title
+                    node_name: Text_StatusWindowTitle
+                    text_binding_or_text_key: ui.window.status.title
+                    font_size: 24
+                    color_token: title_gold
+                    position_px: { x: 54, y: 12 }
+                    size_px: { width: 300, height: 32 }
+                  - atom: IconButton
+                    slot: close_button
+                    node_name: Btn_Close_status
+                    component: WindowCloseButton
+                    button_role: window_close
+                    touch_size: { width: 44, height: 44 }
+                    position_px: { x: 378, y: 4 }
+                    size_px: { width: 44, height: 44 }
+                    action: close_window(status)
+              - atom: SectionGroup
+                slot: body
+                node_name: Section_StatusWindowBody
+                component: StatusStatsBody
+                position_px: { x: 18, y: 78 }
+                size_px: { width: 424, height: 476 }
+                children:
+                  - atom: NinePatchPanel
+                    slot: dark_body
+                    node_name: Panel_StatusBodyDarkWell
+                    component: WindowBodyFrame
+                    asset_key: taskstonebar.ui.dark_inner_well_9slice
+                    slice_hints: { left: 18, right: 18, top: 22, bottom: 22 }
+                    content_insets: { left: 14, right: 14, top: 14, bottom: 14 }
+                    size_px: { width: 424, height: 476 }
+              - atom: SectionGroup
+                slot: footer
+                node_name: Section_StatusWindowFooter
+                component: ModalFooterActionRow
+                position_px: { x: 18, y: 554 }
+                size_px: { width: 424, height: 0 }
+          - atom: ModalShell
+            slot: shell
+            node_name: Shell_HeroInventoryWindow
+            component: TaskstoneWindowShell
+            window_id: hero_inventory
+            position_px: { x: 522, y: 74 }
+            size_px: { width: 552, height: 650 }
+            children:
+              - atom: ModalScrim
+                slot: scrim
+                node_name: Btn_HeroInventoryInertScrim
+                color_token: shadow
+                alpha: 0.0
+                close_policy: ignore_backdrop
+              - atom: NinePatchPanel
+                slot: frame
+                node_name: Panel_HeroInventoryFrame
+                component: TaskstoneWindowShell
+                asset_key: taskstonebar.ui.window_frame_9slice
+                slice_hints: { left: 32, right: 32, top: 40, bottom: 30 }
+                content_insets: { left: 18, right: 18, top: 64, bottom: 18 }
+                size_px: { width: 552, height: 650 }
+              - atom: SectionGroup
+                slot: header
+                node_name: Section_HeroInventoryHeader
+                component: WindowTitleBar
+                position_px: { x: 18, y: 8 }
+                size_px: { width: 516, height: 58 }
+                children:
+                  - atom: NativeLabel
+                    slot: title
+                    node_name: Text_HeroInventoryTitle
+                    text_binding_or_text_key: ui.window.hero_inventory.title
+                    font_size: 24
+                    color_token: title_gold
+                    position_px: { x: 54, y: 12 }
+                    size_px: { width: 392, height: 32 }
+                  - atom: IconButton
+                    slot: close_button
+                    node_name: Btn_Close_hero_inventory
+                    component: WindowCloseButton
+                    button_role: window_close
+                    touch_size: { width: 44, height: 44 }
+                    position_px: { x: 470, y: 4 }
+                    size_px: { width: 44, height: 44 }
+                    action: close_window(hero_inventory)
+              - atom: SectionGroup
+                slot: controls
+                node_name: Section_HeroInventoryControls
+                component: WindowTabBar
+                position_px: { x: 18, y: 344 }
+                size_px: { width: 516, height: 42 }
+                children:
+                  - atom: HBox
+                    slot: tab_buttons
+                    node_name: Row_StoneEquipmentTabs
+                    separation: 6
+                    position_px: { x: 0, y: 0 }
+                    size_px: { width: 516, height: 42 }
+              - atom: SectionGroup
+                slot: body
+                node_name: Section_HeroInventoryBody
+                component: KeeperInventoryBody
+                position_px: { x: 18, y: 78 }
+                size_px: { width: 516, height: 500 }
+                children:
+                  - atom: NinePatchPanel
+                    slot: dark_body
+                    node_name: Panel_HeroInventoryDarkWell
+                    component: WindowBodyFrame
+                    asset_key: taskstonebar.ui.dark_inner_well_9slice
+                    slice_hints: { left: 18, right: 18, top: 22, bottom: 22 }
+                    content_insets: { left: 14, right: 14, top: 14, bottom: 14 }
+                    size_px: { width: 516, height: 500 }
+                  - atom: Grid
+                    slot: inventory_grid
+                    node_name: Grid_StoneInventorySlots
+                    component: KeeperInventoryBody
+                    columns: 6
+                    position_px: { x: 20, y: 320 }
+                    size_px: { width: 328, height: 272 }
+              - atom: SectionGroup
+                slot: footer
+                node_name: Section_HeroInventoryFooter
+                component: ModalFooterActionRow
+                position_px: { x: 18, y: 584 }
+                size_px: { width: 516, height: 52 }
+          - atom: ModalShell
+            slot: shell
+            node_name: Shell_PortalWindow
+            component: TaskstoneWindowShell
+            window_id: portal
+            position_px: { x: 1098, y: 104 }
+            size_px: { width: 432, height: 615 }
+            children:
+              - atom: ModalScrim
+                slot: scrim
+                node_name: Btn_PortalWindowInertScrim
+                color_token: shadow
+                alpha: 0.0
+                close_policy: ignore_backdrop
+              - atom: NinePatchPanel
+                slot: frame
+                node_name: Panel_PortalWindowFrame
+                component: TaskstoneWindowShell
+                asset_key: taskstonebar.ui.window_frame_9slice
+                slice_hints: { left: 32, right: 32, top: 40, bottom: 30 }
+                content_insets: { left: 18, right: 18, top: 64, bottom: 18 }
+                size_px: { width: 432, height: 615 }
+              - atom: SectionGroup
+                slot: header
+                node_name: Section_PortalWindowHeader
+                component: WindowTitleBar
+                position_px: { x: 18, y: 8 }
+                size_px: { width: 396, height: 58 }
+                children:
+                  - atom: TextureAtom
+                    slot: crest
+                    node_name: Tex_PortalWindowCrest
+                    component: FrameOrnamentLayer
+                    asset_key: taskstonebar.ui.window_ornament_set
+                    stretch_mode: keep_aspect_centered
+                    position_px: { x: 152, y: -28 }
+                    size_px: { width: 92, height: 64 }
+                  - atom: NativeLabel
+                    slot: title
+                    node_name: Text_PortalWindowTitle
+                    text_binding_or_text_key: ui.window.portal.title
+                    font_size: 24
+                    color_token: title_gold
+                    position_px: { x: 54, y: 12 }
+                    size_px: { width: 276, height: 32 }
+                  - atom: IconButton
+                    slot: close_button
+                    node_name: Btn_Close_portal
+                    component: WindowCloseButton
+                    button_role: window_close
+                    touch_size: { width: 44, height: 44 }
+                    position_px: { x: 350, y: 4 }
+                    size_px: { width: 44, height: 44 }
+                    action: close_window(portal)
+              - atom: SectionGroup
+                slot: controls
+                node_name: Section_PortalControls
+                component: WindowControlStrip
+                position_px: { x: 18, y: 78 }
+                size_px: { width: 396, height: 92 }
+                children:
+                  - atom: HBox
+                    slot: tab_buttons
+                    node_name: Row_PortalActTabs
+                    separation: 6
+                    position_px: { x: 0, y: 48 }
+                    size_px: { width: 396, height: 40 }
+              - atom: SectionGroup
+                slot: body
+                node_name: Section_PortalBody
+                component: PortalRouteMapBody
+                position_px: { x: 18, y: 176 }
+                size_px: { width: 396, height: 416 }
+                children:
+                  - atom: NinePatchPanel
+                    slot: parchment_body
+                    node_name: Panel_PortalParchmentBody
+                    component: PortalRouteMapBody
+                    asset_key: taskstonebar.ui.portal_parchment_map
+                    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+                    content_insets: { left: 18, right: 18, top: 18, bottom: 18 }
+                    size_px: { width: 396, height: 416 }
+              - atom: SectionGroup
+                slot: footer
+                node_name: Section_PortalFooter
+                component: ModalFooterActionRow
+                position_px: { x: 18, y: 592 }
+                size_px: { width: 396, height: 0 }
+
+data_bindings:
+  window_manager:
+    open_windows: ui.window_manager.open_windows
+    focused_window_id: ui.window_manager.focused_window_id
+  status:
+    title: ui.window.status.title
+    stats: unit_stats
+  hero_inventory:
+    title: ui.window.hero_inventory.title
+    selected_tab: selected_inventory_tab
+    slots: stone_inventory_items
+  portal:
+    title: ui.window.portal.title
+    difficulty: selected_difficulty
+    act: selected_act
+    route_nodes: map_progress
+  close:
+    action: close_window(window_id)
+
+validation:
+  commands:
+    - "python3 harness/tools/design_blueprint_validate.py taskstonebar"
+    - "python3 harness/godot/validators/godot_ui_recipe_validate.py --recipe harness/godot/recipes/ui/taskstonebar-window-modal-system.yaml"
+  screenshot: "harness/runtime/godot-taskstonebar/screenshots/taskstonebar-window-modal-system.png"
+  blockers:
+    - "Godot project-local texture copies are not generated in this design recipe pass."
+    - "No WindowManager runtime script exists yet; build-godot-ui-runtime should add instance registry and close_window(window_id)."

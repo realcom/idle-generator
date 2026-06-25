@@ -91,6 +91,7 @@ def build(recipe_path: Path, atoms_path: Path, dry_run: bool = False) -> list[st
         dry_run=dry_run,
     )
     state.ext_resources.append(ExtResource("Theme", theme_res_path, "1_theme"))
+    ensure_required_texture_targets(recipe, state)
 
     root = recipe.get("control_tree", {}).get("root") if isinstance(recipe.get("control_tree"), dict) else None
     if not isinstance(root, dict):
@@ -112,6 +113,29 @@ def build(recipe_path: Path, atoms_path: Path, dry_run: bool = False) -> list[st
         f"ext_resources: {len(state.ext_resources)}",
         f"copied_assets: {len(state.copied_assets)}",
     ]
+
+
+def ensure_required_texture_targets(recipe: dict[str, Any], state: BuildState) -> None:
+    assets = recipe.get("assets") if isinstance(recipe.get("assets"), dict) else {}
+    required_keys = assets.get("required_keys") if isinstance(assets.get("required_keys"), list) else []
+    for key in required_keys:
+        if not isinstance(key, str):
+            continue
+        entry = state.asset_index.get(key)
+        if not isinstance(entry, dict):
+            continue
+        godot = entry.get("godot") if isinstance(entry.get("godot"), dict) else {}
+        if str(godot.get("usage", "")) == "native_control":
+            continue
+        target_path = godot.get("target_path")
+        if not isinstance(target_path, str) or not target_path:
+            continue
+        if not target_path.lower().endswith((".png", ".jpg", ".jpeg", ".webp")):
+            continue
+        target = (ROOT / target_path).resolve() if not Path(target_path).is_absolute() else Path(target_path)
+        if not is_relative_to(target, state.project_root):
+            raise BuildError(f"Godot TextureAtom target_path must live inside the Godot project: {key} -> {target}")
+        ensure_texture_target(entry, target, state)
 
 
 def render_scene(root: dict[str, Any], state: BuildState) -> str:
@@ -209,15 +233,45 @@ def render_common_properties(node: dict[str, Any], state: BuildState, atom: str,
         text = node.get("text") or node.get("text_key") or ""
         lines.append(f"text = {gd_value(text)}")
     elif godot_type == "Label":
-        lines.append("horizontal_alignment = 1")
-        lines.append("vertical_alignment = 1")
-        lines.append(f"text = {gd_value(node.get('text', ''))}")
+        lines.append(f"horizontal_alignment = {alignment_value(node.get('horizontal_alignment'), 1)}")
+        lines.append(f"vertical_alignment = {alignment_value(node.get('vertical_alignment'), 1)}")
+        text = node.get("text")
+        if text is None:
+            text = node.get("preview_text")
+        if text is None:
+            text = node.get("text_binding_or_text_key", "")
+        lines.append(f"text = {gd_value(text)}")
+        font_size = node.get("font_size")
+        if isinstance(font_size, (int, float)):
+            lines.append(f"theme_override_font_sizes/font_size = {gd_number(float(font_size))}")
     elif godot_type == "ProgressBar":
         lines.append("show_percentage = false")
         lines.append("max_value = 1.0")
         lines.append("value = 0.0")
+    elif godot_type == "GridContainer":
+        columns = node.get("columns")
+        if isinstance(columns, (int, float)):
+            lines.append(f"columns = {int(columns)}")
 
-    for key in ("atom", "component", "slot", "button_role", "asset_key", "text_binding_or_text_key", "value_binding"):
+    separation = node.get("separation")
+    if isinstance(separation, (int, float)) and godot_type in ("HBoxContainer", "VBoxContainer", "GridContainer"):
+        if godot_type in ("HBoxContainer", "GridContainer"):
+            lines.append(f"theme_override_constants/h_separation = {gd_number(float(separation))}")
+        if godot_type in ("VBoxContainer", "GridContainer"):
+            lines.append(f"theme_override_constants/v_separation = {gd_number(float(separation))}")
+
+    for key in (
+        "atom",
+        "component",
+        "slot",
+        "button_role",
+        "asset_key",
+        "text_binding_or_text_key",
+        "value_binding",
+        "color_token",
+        "stylebox_key",
+        "font_size",
+    ):
         value = node.get(key)
         if value is not None:
             lines.append(f"metadata/{key} = {gd_value(value)}")
@@ -285,11 +339,11 @@ def godot_target_path(godot: dict[str, Any], variant: str) -> Any:
 
 
 def ensure_texture_target(entry: dict[str, Any], target: Path, state: BuildState, variant: str = "") -> None:
-    if target.exists():
-        return
     source = source_texture_path(entry, variant)
     if source is None:
         raise BuildError(f"Cannot find source texture for Godot target: {target}")
+    if target.exists() and target.read_bytes() == source.read_bytes():
+        return
     if state.dry_run:
         state.copied_assets.append((source, target))
         return
@@ -416,6 +470,25 @@ def gd_number(value: float) -> str:
     if float(value).is_integer():
         return f"{int(value)}.0"
     return f"{value:.4f}".rstrip("0").rstrip(".")
+
+
+def alignment_value(value: Any, default: int) -> int:
+    if isinstance(value, (int, float)):
+        return int(value)
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        mapping = {
+            "left": 0,
+            "top": 0,
+            "center": 1,
+            "middle": 1,
+            "right": 2,
+            "bottom": 2,
+            "fill": 3,
+        }
+        if normalized in mapping:
+            return mapping[normalized]
+    return default
 
 
 def escape_string(value: str) -> str:

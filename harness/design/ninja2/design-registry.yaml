@@ -502,6 +502,28 @@ concepts:
     orientation: portrait
     critique: "모바일 서바이버 HUD 문법을 따르되 목재/석재/영혼불/코인을 전투 중 수집 장부로 노출해, 하우징/성소 장기 성장 루프와 직접 연결되는 상단바 후보."
     tags: [Ninja2, CasualSanctuary, Survival, SurvivorsLike, TopHUD, ResourceLedger, LongTermResources, MobilePortrait, CandidateForPhaser]
+  - id: ninja2_beacon_survival_hud_concept_a
+    title: "Beacon Survival HUD Concept A"
+    image: concepts/ninja2_beacon_survival_hud_concept_a.png
+    notes: concepts/ninja2_beacon_survival_hud_concept_a.md
+    status: candidate
+    created_at: 2026-06-24T18:40:00+09:00
+    created_by: gen-ui-concept
+    screen: SurvivalBattle
+    orientation: portrait
+    critique: "나뭇잎마을 인게임 검증기획서의 봉화 탐색/상호작용/하단 HUD 제거 원칙을 반영한 후보. 기존 selected SurvivalBattle의 조이스틱/3버튼 독과 입력 계약이 달라, 런타임 반영 전 별도 BeaconSurvivalBattle 변형으로 검증하는 편이 안전함."
+    tags: [Ninja2, LeafVillage, Survival, BeaconObjective, TopHUD, NoBottomHUD, InteractionRings, ResourceLedger, MobilePortrait, CandidateForPhaser]
+  - id: ninja2_beacon_survival_skill_sweep_concept_b
+    title: "Beacon Survival Skill Sweep Concept B"
+    image: concepts/ninja2_beacon_survival_skill_sweep_concept_b.png
+    notes: concepts/ninja2_beacon_survival_skill_sweep_concept_b.md
+    status: candidate
+    created_at: 2026-06-24T18:55:00+09:00
+    created_by: gen-ui-concept
+    screen: SurvivalBattle
+    orientation: portrait
+    critique: "A안이 봉화 탐색/상호작용을 설명하는 화면이라면, B안은 몬스터 물량과 광역 스킬 청소감을 검증하는 피크 전투 화면. 하단 HUD 제거 계약은 유지하지만 VFX/피해숫자/픽업 밀도가 높아 런타임에서는 readability budget과 damage-number 샘플링이 필요함."
+    tags: [Ninja2, LeafVillage, Survival, SkillSweep, MonsterHorde, BeaconObjective, TopHUD, NoBottomHUD, DamageNumbers, PickupBurst, MobilePortrait, CandidateForPhaser]
   - id: ninja2_building_tech_tree_research_a
     title: "Building Tech Tree Research A"
     image: concepts/ninja2_building_tech_tree_research_a.png

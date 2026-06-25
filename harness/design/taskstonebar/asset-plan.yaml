@@ -1,0 +1,477 @@
+version: "1.0"
+game: taskstonebar
+status: draft
+source_concepts:
+  - main_ui_concept_e_refined_current_mockup_b
+
+foundation_systems:
+  buttons: button-system.yaml
+  modals: modal-system.yaml
+  colors: color-tokens.yaml
+
+assetization_summary:
+  generate_image:
+    - taskstonebar.ui.keeper_dock_icon_set
+  native_ui:
+    - taskstonebar.ui.native_overlay_controls
+  hybrid:
+    - taskstonebar.ui.window_frame_9slice
+    - taskstonebar.ui.window_title_bar_9slice
+    - taskstonebar.ui.dark_inner_well_9slice
+    - taskstonebar.ui.status_stat_card_9slice
+    - taskstonebar.ui.resource_chip_9slice
+    - taskstonebar.ui.tab_burgundy_9slice
+    - taskstonebar.ui.slot_frame_9slice
+    - taskstonebar.ui.icon_dock_button_9slice
+    - taskstonebar.ui.rare_drop_toast_9slice
+  reuse:
+    - taskstonebar.ui.close_icon
+    - taskstonebar.ui.status_stone_portrait
+    - taskstonebar.ui.stone_icon_set
+    - taskstonebar.ui.resource_icon_set
+    - taskstonebar.ui.stone_keeper_sheet
+    - taskstonebar.ui.portal_parchment_map
+    - taskstonebar.ui.combat_ground_strip
+    - taskstonebar.ui.window_ornament_set
+
+assets:
+  - key: taskstonebar.ui.window_frame_9slice
+    type: nine_slice_panel
+    mode: hybrid
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:WindowFrame.skin
+      - component-skins.yaml:window_frame_black_iron
+    background: transparent
+    target_size: { width: 552, height: 640 }
+    slice_hints: { left: 30, right: 30, top: 34, bottom: 30 }
+    component_contract:
+      slice_hints: "Bitmap stretch borders only."
+      content_insets:
+        WindowFrame: { left: 18, right: 18, top: 72, bottom: 16 }
+      semantic_color_tokens: [panel_outer, panel_mid, panel_inner]
+    godot:
+      usage: nine_patch_rect
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/window_frame_9slice.png
+      import_preset: ui_texture
+      slice_hints: { left: 30, right: 30, top: 34, bottom: 30 }
+    priority: must
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/window_frame_refined_9slice.png
+    generation_notes: "Refined Godot pass: black iron frame with dark interior and gold/brown trim, matching the selected desktop-window mockup more closely."
+
+  - key: taskstonebar.ui.window_title_bar_9slice
+    type: tab_skin
+    mode: hybrid
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:WindowTitleBar.skin
+      - component-skins.yaml:window_title_burgundy
+    background: transparent
+    target_size: { width: 480, height: 54 }
+    slice_hints: { left: 26, right: 26, top: 18, bottom: 18 }
+    component_contract:
+      slice_hints: "Bitmap stretch borders only."
+      content_insets:
+        WindowTitleBar: { left: 40, right: 52, top: 10, bottom: 8 }
+      semantic_color_tokens: [panel_mid, title_gold]
+    godot:
+      usage: stylebox_texture
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/window_title_bar_9slice.png
+      import_preset: ui_texture
+      slice_hints: { left: 26, right: 26, top: 18, bottom: 18 }
+    priority: must
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/window_title_bar_refined_9slice.png
+    generation_notes: "Refined Godot pass: burgundy title strip with dark side caps; title text remains native."
+
+  - key: taskstonebar.ui.dark_inner_well_9slice
+    type: panel_skin
+    mode: hybrid
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:StatusWindow.inner_well
+      - component-blueprints.yaml:HeroInventoryWindow.inner_well
+      - component-blueprints.yaml:PortalWindow.inner_well
+      - component-skins.yaml:dark_inner_well
+    background: transparent
+    target_size: { width: 420, height: 410 }
+    slice_hints: { left: 22, right: 22, top: 22, bottom: 22 }
+    component_contract:
+      slice_hints: "Bitmap stretch borders only."
+      content_insets:
+        StatusWindow: { left: 14, right: 14, top: 14, bottom: 14 }
+        HeroInventoryWindow: { left: 14, right: 14, top: 14, bottom: 14 }
+        PortalWindow: { left: 14, right: 14, top: 14, bottom: 14 }
+      semantic_color_tokens: [panel_inner, text_cream]
+    godot:
+      usage: nine_patch_rect
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/dark_inner_well_9slice.png
+      import_preset: ui_texture
+      slice_hints: { left: 22, right: 22, top: 22, bottom: 22 }
+    priority: must
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/dark_inner_well_refined_9slice.png
+    generation_notes: "Refined Godot pass: near-black content well to restore the original mockup contrast."
+
+  - key: taskstonebar.ui.resource_chip_9slice
+    type: chip_skin
+    mode: hybrid
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:ResourceCounter.skin
+      - component-skins.yaml:resource_counter_chip
+      - button-system.yaml:resource_chip
+    background: transparent
+    target_size: { width: 132, height: 38 }
+    slice_hints: { left: 16, right: 16, top: 14, bottom: 14 }
+    component_contract:
+      slice_hints: "Bitmap stretch borders only."
+      content_insets:
+        ResourceCounter: { left: 10, right: 10, top: 7, bottom: 7 }
+      semantic_color_tokens: [panel_inner, title_gold]
+    godot:
+      usage: stylebox_texture
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/resource_chip_9slice.png
+      import_preset: ui_texture
+      slice_hints: { left: 16, right: 16, top: 14, bottom: 14 }
+    priority: must
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/resource_chip_refined_9slice.png
+    generation_notes: "Refined Godot pass: compact black chip with gold trim for top counters."
+
+  - key: taskstonebar.ui.tab_burgundy_9slice
+    type: tab_skin
+    mode: hybrid
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:StoneEquipmentTabBar.skin
+      - component-blueprints.yaml:ActTabBar.skin
+      - component-skins.yaml:burgundy_tab_button
+      - button-system.yaml:inventory_tab
+      - button-system.yaml:act_tab
+    background: transparent
+    target_size: { width: 132, height: 44 }
+    slice_hints: { left: 18, right: 18, top: 16, bottom: 16 }
+    component_contract:
+      slice_hints: "Bitmap stretch borders only."
+      content_insets:
+        StoneEquipmentTabBar: { left: 14, right: 14, top: 8, bottom: 8 }
+        ActTabBar: { left: 14, right: 14, top: 8, bottom: 8 }
+      semantic_color_tokens: [panel_mid, title_gold]
+    godot:
+      usage: stylebox_texture
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/tab_burgundy_9slice.png
+      import_preset: ui_texture
+      slice_hints: { left: 18, right: 18, top: 16, bottom: 16 }
+    priority: must
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/tab_burgundy_refined_9slice.png
+    generation_notes: "Refined Godot pass: burgundy tab strip instead of light shop tab art."
+
+  - key: taskstonebar.ui.slot_frame_9slice
+    type: slot_frame
+    mode: hybrid
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:Slot.skin
+      - component-skins.yaml:stone_slot_frame
+      - button-system.yaml:active_stone_slot
+    background: transparent
+    target_size: { width: 64, height: 64 }
+    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+    component_contract:
+      slice_hints: "Bitmap stretch borders only."
+      content_insets:
+        Slot: { left: 6, right: 6, top: 6, bottom: 6 }
+      semantic_color_tokens: [panel_inner, moss_green, ruby_red]
+    godot:
+      usage: nine_patch_rect
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/slot_frame_9slice.png
+      import_preset: ui_texture
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+    priority: must
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/slot_frame_refined_9slice.png
+    generation_notes: "Refined Godot pass: dark active-slot frame with green pixel rim instead of blue placeholder slot."
+
+  - key: taskstonebar.ui.icon_dock_button_9slice
+    type: button_skin
+    mode: hybrid
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:KeeperIconDock.button_skin
+      - component-skins.yaml:keeper_dock_icon_button
+      - button-system.yaml:keeper_dock_icon
+    background: transparent
+    target_size: { width: 64, height: 64 }
+    slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+    component_contract:
+      slice_hints: "Bitmap stretch borders only."
+      content_insets:
+        KeeperIconDock: { left: 7, right: 7, top: 7, bottom: 7 }
+        UtilityIconCluster: { left: 6, right: 6, top: 6, bottom: 6 }
+        StageNode: { left: 4, right: 4, top: 4, bottom: 4 }
+      semantic_color_tokens: [panel_outer, title_gold]
+    godot:
+      usage: stylebox_texture
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/icon_dock_button_9slice.png
+      import_preset: ui_texture
+      slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
+    priority: must
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/icon_dock_button_refined_9slice.png
+    generation_notes: "Refined Godot pass: dark/gold dock button skin; button glyphs stay native or separate atoms."
+
+  - key: taskstonebar.ui.keeper_dock_icon_set
+    type: ui_icon_set
+    mode: generate_image
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:KeeperIconDock.icon_atoms
+      - button-system.yaml:keeper_dock_icon
+    background: transparent
+    target_size: { width: 320, height: 64 }
+    variants:
+      - inventory
+      - growth
+      - skill_tree
+      - synthesis_storage
+      - steam_assets
+    slice_hints: null
+    component_contract:
+      icon_cells: "Five 64x64 transparent cells in a single horizontal atlas; no labels, counts, or button frames are baked."
+      semantic_color_tokens: [panel_outer, title_gold, moss_green, ruby_red, exp_blue]
+    godot:
+      usage: texture_rect_atlas
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/keeper_dock_icon_set.png
+      import_preset: pixel_sprite
+      cell_size: { width: 64, height: 64 }
+    priority: must
+    status: generated
+    generated_with: image_gen
+    source_path: harness/design/taskstonebar/assets/ui/keeper_dock_icon_set_imagegen_alpha.png
+    imagegen_source_path: /Users/yangjinhwan/.codex/generated_images/019ef875-8b80-7e73-b57e-20283646ddb0/ig_08305d076a438749016a3bcd79ec3c81948fd48420439626e4.png
+    generation_notes: "Generated as a five-icon transparent dock atlas, then alpha-cleaned and packed from the imagegen source. Icons map to inventory, growth/feed, skill tree, synthesis/storage, and Steam asset wallet shortcuts."
+
+  - key: taskstonebar.ui.rare_drop_toast_9slice
+    type: toast_skin
+    mode: hybrid
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:RareDropToast.skin
+      - component-skins.yaml:rare_drop_toast
+    background: transparent
+    target_size: { width: 220, height: 70 }
+    slice_hints: { left: 22, right: 22, top: 18, bottom: 18 }
+    component_contract:
+      slice_hints: "Bitmap stretch borders only."
+      content_insets:
+        RareDropToast: { left: 12, right: 12, top: 10, bottom: 10 }
+      semantic_color_tokens: [panel_inner, ruby_red, text_cream]
+    godot:
+      usage: nine_patch_rect
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/rare_drop_toast_9slice.png
+      import_preset: ui_texture
+      slice_hints: { left: 22, right: 22, top: 18, bottom: 18 }
+    priority: must
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/rare_drop_toast_refined_9slice.png
+    generation_notes: "Refined Godot pass: black toast frame with gold trim."
+
+  - key: taskstonebar.ui.close_icon
+    type: icon
+    mode: reuse
+    platforms: [godot]
+    usage:
+      - button-system.yaml:window_close
+      - component-blueprints.yaml:WindowFrame.close_button
+    background: transparent
+    target_size: { width: 42, height: 42 }
+    slice_hints: null
+    godot:
+      usage: texture_rect
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/close_icon.png
+      import_preset: pixel_sprite
+    priority: must
+    status: planned
+    source_path: harness/assets/growstone2/source/taskstone/close.png
+
+  - key: taskstonebar.ui.status_stone_portrait
+    type: portrait
+    mode: reuse
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:StonePortraitPanel.portrait_sprite
+    background: opaque
+    target_size: { width: 188, height: 207 }
+    slice_hints: null
+    godot:
+      usage: texture_rect
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/status_stone_portrait.png
+      import_preset: pixel_sprite
+    priority: must
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/status_stone_portrait_refined.png
+    generation_notes: "Refined Godot pass: cropped status stone portrait atom from the attached target mockup; no labels or counters are baked."
+
+  - key: taskstonebar.ui.status_stat_card_9slice
+    type: panel_skin
+    mode: hybrid
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:StatusWindow.stat_card
+    background: opaque
+    target_size: { width: 220, height: 204 }
+    slice_hints: { left: 14, right: 14, top: 14, bottom: 14 }
+    component_contract:
+      slice_hints: "Bitmap stretch borders only."
+      content_insets:
+        StatusWindow.stat_card: { left: 12, right: 12, top: 12, bottom: 12 }
+      semantic_color_tokens: [panel_inner, text_cream]
+    godot:
+      usage: nine_patch_rect
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/status_stat_card_9slice.png
+      import_preset: ui_texture
+      slice_hints: { left: 14, right: 14, top: 14, bottom: 14 }
+    priority: should
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/status_stat_card_refined_9slice.png
+    generation_notes: "Refined Godot pass: parchment stat card behind native status labels."
+
+  - key: taskstonebar.ui.stone_icon_set
+    type: icon_set
+    mode: reuse
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:StonePortraitPanel.sprite
+      - component-blueprints.yaml:Slot.icon
+      - component-blueprints.yaml:EnemyStack.sprite
+    background: transparent
+    target_size: { width: 32, height: 32 }
+    slice_hints: null
+    godot:
+      usage: texture_rect_set
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/stone_icon_set.png
+      import_preset: pixel_sprite
+    priority: must
+    status: planned
+    source_path: harness/assets/growstone2/source/taskstone/stone0.png
+    generation_notes: "Pack stone0, stone1, and stone2 into a Godot-local atlas or copy as individual textures during build."
+
+  - key: taskstonebar.ui.resource_icon_set
+    type: icon_set
+    mode: reuse
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:ResourceCounter.icon
+      - component-blueprints.yaml:RareDropToast.icon
+    background: transparent
+    target_size: { width: 32, height: 32 }
+    slice_hints: null
+    godot:
+      usage: texture_rect_set
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/resource_icon_set.png
+      import_preset: pixel_sprite
+    priority: must
+    status: planned
+    source_path: harness/assets/growstone2/source/taskstone/coin.png
+    generation_notes: "Pack coin, ruby, moss ore, cube catalyst, and fragment icons into a Godot-local atlas."
+
+  - key: taskstonebar.ui.stone_keeper_sheet
+    type: sprite
+    mode: reuse
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:CharacterPortrait.sprite
+      - component-blueprints.yaml:HeroCombatSprite.sprite
+    background: transparent
+    target_size: { width: 128, height: 128 }
+    slice_hints: null
+    godot:
+      usage: texture_rect
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/stone_keeper_sheet.png
+      import_preset: pixel_sprite
+    priority: must
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/stone_keeper_portrait_placeholder.png
+    generation_notes: "Godot overlay uses a single nearest-neighbor crop from the hero sprite strip so TextureRect portrait and combat sprite do not render the full strip."
+
+  - key: taskstonebar.ui.portal_parchment_map
+    type: background
+    mode: reuse
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:ParchmentRouteMap.background
+    background: opaque
+    target_size: { width: 370, height: 406 }
+    slice_hints: null
+    godot:
+      usage: texture_rect
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/portal_parchment_map.png
+      import_preset: ui_texture
+    priority: must
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/portal_parchment_map_refined.png
+    generation_notes: "Refined Godot pass: parchment route art without baked labels or stage numbers."
+
+  - key: taskstonebar.ui.combat_ground_strip
+    type: background
+    mode: reuse
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:TaskbarCombatStrip.ground
+    background: transparent
+    target_size: { width: 1586, height: 236 }
+    slice_hints: null
+    godot:
+      usage: texture_rect
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/combat_ground_strip.png
+      import_preset: pixel_sprite
+    priority: must
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/combat_ground_strip_refined.png
+    generation_notes: "Refined Godot pass: green sky, grass ledge, and rocky platform closer to the selected mockup; runtime units, labels, and damage numbers stay native."
+
+  - key: taskstonebar.ui.window_ornament_set
+    type: frame_ornament_set
+    mode: reuse
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:WindowFrame.ornament_layer
+    background: transparent
+    target_size: { width: 160, height: 64 }
+    slice_hints: null
+    godot:
+      usage: texture_rect_set
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/window_ornament_set.png
+      import_preset: pixel_sprite
+    priority: should
+    status: planned
+    source_path: harness/design/taskstonebar/assets/ui/window_ornament_set_refined.png
+    generation_notes: "Refined Godot pass: fixed black/gold ornament atlas for title crests; not stretch-safe."
+
+  - key: taskstonebar.ui.native_overlay_controls
+    type: native_control
+    mode: native_ui
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:DesktopOverlayRoot.native_controls
+      - component-blueprints.yaml:TopResourceBar.labels
+      - component-blueprints.yaml:StatusStatScrollPanel.labels
+      - component-blueprints.yaml:StatList.labels
+      - component-blueprints.yaml:SkillPointHeader.labels
+      - component-blueprints.yaml:SkillLevelTrack.labels
+      - component-blueprints.yaml:SkillTierRow.native_shapes
+      - component-blueprints.yaml:SkillIconSlot.level_label
+      - component-blueprints.yaml:StageNode.labels
+    background: transparent
+    target_size: null
+    slice_hints: null
+    godot:
+      usage: native_control
+      target_path: harness/runtime/godot-taskstonebar/scenes/generated/full_ui_overlay.tscn
+      import_preset: none
+    priority: must
+    status: planned
+    source_path: ""

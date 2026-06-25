@@ -1,0 +1,93 @@
+version: "1.0"
+game: taskstonebar
+status: draft
+source_concepts:
+  - main_ui_concept_e_refined_current_mockup_b
+
+screen:
+  orientation: landscape_desktop_overlay
+  reference_size_px: { width: 1586, height: 992 }
+  safe_area_policy: "Keep the last 52px reserved for the OS taskbar motif; combat strip sits above it."
+  responsive_policy: "Preserve three-window ownership first, then reduce horizontal gaps; do not shrink slot grids below readable 44px cells."
+
+spacing:
+  xs: 4
+  sm: 8
+  md: 12
+  lg: 16
+  xl: 24
+
+regions:
+  top_resource_bar:
+    anchor: top_center
+    position_px: { x: 402, y: 15 }
+    size_px: { width: 744, height: 42 }
+    gap_px: 8
+  utility_icon_cluster:
+    anchor: top_right
+    position_px: { x: 1020, y: 16 }
+    size_px: { width: 128, height: 40 }
+    gap_px: 8
+  status_window:
+    anchor: upper_left
+    position_px: { x: 37, y: 103 }
+    size_px: { width: 458, height: 574 }
+  hero_inventory_window:
+    anchor: upper_center
+    position_px: { x: 518, y: 50 }
+    size_px: { width: 552, height: 700 }
+  portal_window:
+    anchor: upper_right
+    position_px: { x: 1089, y: 103 }
+    size_px: { width: 432, height: 610 }
+  taskbar_combat_strip:
+    anchor: bottom_above_os_taskbar
+    position_px: { x: 0, y: 704 }
+    size_px: { width: 1586, height: 236 }
+  os_taskbar_safe_band:
+    anchor: bottom
+    position_px: { x: 0, y: 940 }
+    size_px: { width: 1586, height: 52 }
+
+window_metrics:
+  title_bar_height_px: 58
+  outer_frame_border_px: 12
+  body_insets_px: { left: 18, right: 18, top: 72, bottom: 16 }
+  header_ornament_height_px: 38
+  close_button_px: 42
+
+inventory_metrics:
+  stone_grid_columns: 8
+  stone_grid_rows: 4
+  slot_size_px: 48
+  slot_gap_px: 8
+  grid_well_padding_px: { left: 8, right: 8, top: 10, bottom: 6 }
+  tab_to_slot_gap_px: 14
+  active_slot_outline_px: 3
+  center_dock_button_px: 58
+  center_dock_gap_px: 14
+
+portal_metrics:
+  act_tab_height_px: 42
+  map_body_insets_px: { left: 18, right: 18, top: 16, bottom: 18 }
+  stage_node_px: 44
+
+combat_metrics:
+  hero_visual_px: { width: 96, height: 96 }
+  enemy_visual_px: { width: 72, height: 72 }
+  projectile_px: { width: 32, height: 32 }
+  damage_label_min_px: { width: 64, height: 30 }
+  rare_drop_toast_size_px: { width: 220, height: 70 }
+
+touch_targets:
+  min_size_px: 40
+  icon_button_px: 42
+  slot_px: 56
+
+text:
+  clamp_policy: "single_line_ellipsis_or_two_line_clamp"
+  overflow_policy: "never resize stable controls on text change"
+  title_font_px: 25
+  body_font_px: 16
+  stat_font_px: 14
+  small_label_font_px: 12
