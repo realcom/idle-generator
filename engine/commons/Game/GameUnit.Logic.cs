@@ -175,6 +175,12 @@ namespace Commons.Game
             }
             var newLevel = level_;
 
+            if (levelUp > 0)
+            {
+                SetStatDirty();
+                RefreshDirtyStat();
+            }
+
             HandleLevelUpAddItems(prevLevel, newLevel);
 
             return levelUp;
@@ -374,6 +380,8 @@ namespace Commons.Game
             }
             
             tick_ += 1;
+
+            RefreshDirtyStat();
             
             if (IsAlive)
             {
@@ -389,12 +397,7 @@ namespace Commons.Game
                 }
             }
 
-            if (_statDirty)
-            {
-                _statDirty = false;
-                RecalculateStat();
-                ApplyAddShield();
-            }
+            RefreshDirtyStat();
         }
 
         private void RunPlayerLogic()

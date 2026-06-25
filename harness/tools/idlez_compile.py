@@ -534,6 +534,7 @@ ACTIONS = {
     ),
     "useSkill": ("unitMethod", "UseSkill", {"skillDataId": "SkillDataId"}),
     "useSkillToTarget": ("unitMethod", "UseSkillToTarget", {"skillDataId": "SkillDataId"}),
+    "getCurrentHpPercent": ("unitMethod", "GetCurrentHpPercent", {}),
     "spawnUnit": ("boardMethod", "AddUnit", {"unitDataId": "UnitDataId", "count": "Count"}),
     "moveTo": ("unitMethod", "SetMoveDestination", {"x": "PositionX", "y": "PositionY"}),
     "SetMoveDestination": (
@@ -1815,6 +1816,115 @@ def validate_skill_tree(profile, bundles, errors):
             )
 
 
+def validate_stat_growth(profile, bundles, errors):
+    config = (profile.get("progression", {}) or {}).get("stat_growth")
+    if not config:
+        return
+
+    items = bundles.get("item", [])
+    achievements = bundles.get("achievement", [])
+    item_by_id = {entry.get("id"): entry for entry in items}
+    achievement_by_id = {entry.get("id"): entry for entry in achievements}
+
+    tree_id = str(
+        config.get("tree_id")
+        or profile.get("game", {}).get("name")
+        or profile.get("game", {}).get("id")
+        or ""
+    )
+    stat_point_item_id = _int_or_none(
+        config.get("stat_point_item_id"),
+        "progression.stat_growth.stat_point_item_id",
+        errors,
+    )
+    grant_config = config.get("stat_point_grant", {}) or {}
+    player_level_item_id = _int_or_none(
+        config.get("player_level_item_id")
+        or grant_config.get("player_level_item_id")
+        or profile.get("reserved_ids", {}).get("playerLevel"),
+        "progression.stat_growth.player_level_item_id",
+        errors,
+    )
+    if stat_point_item_id is None or player_level_item_id is None:
+        return
+    if stat_point_item_id not in item_by_id:
+        errors.append(f"stat_growth: stat_point_item_id {stat_point_item_id} 아이템 누락")
+    if player_level_item_id not in item_by_id:
+        errors.append(f"stat_growth: player_level_item_id {player_level_item_id} 아이템 누락")
+
+    grant_per_level = _int_or_none(
+        grant_config.get("grant_per_player_level_up", 1),
+        "progression.stat_growth.stat_point_grant.grant_per_player_level_up",
+        errors,
+    )
+    if grant_per_level is None:
+        return
+
+    if grant_config.get("via") == "achievement":
+        achievement_id = _int_or_none(
+            grant_config.get("achievement_id"),
+            "progression.stat_growth.stat_point_grant.achievement_id",
+            errors,
+        )
+        achievement = achievement_by_id.get(achievement_id)
+        ctx = f"stat_growth grant achievement {achievement_id}"
+        if achievement is None:
+            errors.append(f"{ctx}: 업적 리소스 누락")
+        else:
+            if achievement.get("condition") != grant_config.get("condition", "LevelUpItem"):
+                errors.append(f"{ctx}: condition은 LevelUpItem이어야 함")
+            if achievement.get("conditionValue1") != player_level_item_id:
+                errors.append(f"{ctx}: conditionValue1은 player_level_item_id여야 함")
+            if achievement.get("targetProgress") != 1:
+                errors.append(f"{ctx}: targetProgress는 1이어야 함")
+            if not achievement.get("repeatable"):
+                errors.append(f"{ctx}: repeatable=true 필요")
+            if not achievement.get("autoReward"):
+                errors.append(f"{ctx}: autoReward=true 필요")
+            reward_count = _add_item_total(
+                achievement.get("rewardAddItemGroups", []),
+                stat_point_item_id,
+            )
+            if reward_count < grant_per_level:
+                errors.append(
+                    f"{ctx}: 스탯 포인트 {stat_point_item_id} 보상이 "
+                    f"{grant_per_level}개 이상이어야 함"
+                )
+
+    max_stat_level = _int_or_none(
+        config.get("max_stat_level", 1),
+        "progression.stat_growth.max_stat_level",
+        errors,
+    )
+    configured_spend_ids = set(config.get("spend_items") or [])
+    stat_items = [
+        item for item in items
+        if item.get("category") == "Stat"
+        and (item.get("popupArgs") or {}).get("StatTree") == tree_id
+    ]
+    if not stat_items:
+        errors.append(f"stat_growth {tree_id}: StatTree popupArgs를 가진 Stat 아이템이 없음")
+        return
+    missing_spend_items = sorted(configured_spend_ids - {item["id"] for item in stat_items})
+    if missing_spend_items:
+        errors.append(f"stat_growth {tree_id}: spend_items {missing_spend_items} 리소스 누락")
+
+    for item in stat_items:
+        item_id = item["id"]
+        ctx = f"stat_growth item {item_id}"
+        if not item.get("initialCreate"):
+            errors.append(f"{ctx}: initialCreate=true 필요")
+        if _popup_int(item, "StatPointItemDataId", ctx, errors) != stat_point_item_id:
+            errors.append(f"{ctx}: StatPointItemDataId가 프로필과 다름")
+        item_max_level = _popup_int(item, "MaxStatLevel", ctx, errors)
+        if max_stat_level is not None and item_max_level != max_stat_level:
+            errors.append(f"{ctx}: MaxStatLevel이 프로필과 다름")
+        if _material_item_total(item.get("levelUpMaterialItemGroups", []), stat_point_item_id) <= 0:
+            errors.append(f"{ctx}: 성장 비용에 스탯 포인트 {stat_point_item_id}가 없음")
+        if not item.get("addStats"):
+            errors.append(f"{ctx}: addStats 필요")
+
+
 # ============================================================
 # 검증
 # ============================================================
@@ -1941,6 +2051,7 @@ def validate(game, bundles, triggers, globals_out, warns, errors):
 
     validate_unit_visual_scale(profile, bundles, errors)
     validate_skill_tree(profile, bundles, errors)
+    validate_stat_growth(profile, bundles, errors)
     validate_id_ranges(profile, bundles, warns, errors)
     validate_reward_groups(bundles, warns, errors)
 

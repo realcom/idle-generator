@@ -166,6 +166,16 @@ namespace Commons.Game
             _statDirty = true;
         }
 
+        private void RefreshDirtyStat()
+        {
+            if (!_statDirty)
+                return;
+
+            _statDirty = false;
+            RecalculateStat();
+            ApplyAddShield();
+        }
+
         private void RecalculateStat(bool applyMaxHpMpChange = true)
         {
             RecalculateUnitStat(applyMaxHpMpChange);

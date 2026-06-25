@@ -14,6 +14,13 @@ spec.loader.exec_module(idlez_compile)
 
 
 class IdlezCompileTests(unittest.TestCase):
+    @staticmethod
+    def taskstonebar_difficulty_level(stage_no):
+        level = 1
+        for previous_stage in range(1, stage_no):
+            level += (6 if previous_stage % 10 == 0 else 5) - 2
+        return level
+
     def test_compile_game_emits_required_bootstrap_globals(self):
         bundles, _, globals_out, warns, errors = idlez_compile.compile_game("idlez")
 
@@ -284,6 +291,299 @@ class IdlezCompileTests(unittest.TestCase):
             ],
             level_shapes,
         )
+
+    def test_taskstonebar_main_100_closed_set_progression(self):
+        bundles, triggers, _, _, errors = idlez_compile.compile_game("taskstonebar")
+
+        self.assertEqual([], errors)
+        maps_by_id = {entry["id"]: entry for entry in bundles["map"]}
+        units_by_id = {entry["id"]: entry for entry in bundles["unit"]}
+        progression_ids = list(range(500101, 500201))
+
+        self.assertEqual(progression_ids, sorted(maps_by_id))
+        self.assertEqual(
+            [500101],
+            [entry["id"] for entry in bundles["map"] if "Main" in entry.get("tags", [])],
+        )
+
+        for offset, map_id in enumerate(progression_ids, start=1):
+            game_map = maps_by_id[map_id]
+            expected_next = "self" if map_id == 500200 else str(map_id + 1)
+            expected_difficulty_level = self.taskstonebar_difficulty_level(offset)
+            self.assertEqual(map_id, game_map["group"])
+            self.assertIn("InfiniteWaves", game_map["tags"])
+            self.assertEqual("true", game_map["popupArgs"]["ClientAutoAdvance"])
+            self.assertEqual(expected_next, game_map["popupArgs"]["ClientNextMapDataId"])
+            self.assertEqual("self", game_map["popupArgs"]["ClientRetryMapDataId"])
+            self.assertEqual("self", game_map["popupArgs"]["ClientFarmMapDataId"])
+            self.assertEqual(
+                [
+                    {"callerKey": 605, "value": expected_difficulty_level},
+                    {"callerKey": 606, "value": expected_difficulty_level},
+                ],
+                game_map["initVariables"],
+            )
+            self.assertEqual(expected_difficulty_level, game_map["initLevel"])
+            self.assertNotIn("taskstonebarRewardPolicy", game_map)
+            if offset % 10 == 0:
+                self.assertIn("ChapterBoss", game_map["tags"])
+                self.assertIn("LONG", game_map["triggers"][0])
+            else:
+                self.assertNotIn("ChapterBoss", game_map["tags"])
+
+        generated_enemy_ids = [uid for uid in units_by_id if 111000 <= uid <= 111599]
+        self.assertEqual(60, len(generated_enemy_ids))
+        self.assertEqual(1, maps_by_id[500101]["initLevel"])
+        self.assertEqual(28, maps_by_id[500110]["initLevel"])
+        self.assertEqual(307, maps_by_id[500200]["initLevel"])
+        trigger_names = {trigger["name"] for trigger in triggers}
+        monster_skill_ids = {300201, 300202, 300203, 300204, 300205, 300206, 300207, 300208}
+        self.assertTrue(monster_skill_ids.issubset({entry["id"] for entry in bundles["skill"]}))
+        for unit_id in [111011, 111015, 111501, 111101, 111105, 111510]:
+            unit = units_by_id[unit_id]
+            hp = next(stat for stat in unit["addStats"] if stat.get("type", "Hp") == "Hp")
+            attack = next(stat for stat in unit["addStats"] if stat.get("type", "Hp") == "Attack")
+            self.assertEqual(360, len(hp["value"]))
+            self.assertGreater(hp["value"][-1], hp["value"][0])
+            self.assertGreater(attack["value"][-1], attack["value"][0])
+            self.assertEqual(1, len(unit.get("triggers", [])))
+            self.assertIn(unit["triggers"][0], trigger_names)
+            self.assertNotIn("taskstonebarDropPolicy", unit)
+
+        basic_worker = units_by_id[111011]
+        basic_hp = next(stat for stat in basic_worker["addStats"] if stat.get("type", "Hp") == "Hp")
+        basic_attack = next(stat for stat in basic_worker["addStats"] if stat.get("type", "Hp") == "Attack")
+        self.assertEqual(440.0, basic_hp["value"][0])
+        self.assertEqual(5.0, basic_attack["value"][0])
+        self.assertGreater(basic_hp["value"][27], 1600.0)
+        second_set_basic = units_by_id[111021]
+        second_set_hp = next(stat for stat in second_set_basic["addStats"] if stat.get("type", "Hp") == "Hp")
+        self.assertEqual(100.0, second_set_hp["value"][0])
+
+        def drop_group(unit, item_id):
+            for group in unit.get("dropAddItemGroups", []):
+                for add_item in group.get("addItems", []):
+                    if add_item.get("itemDataId") == item_id:
+                        return group
+            return {}
+
+        def has_drop(unit, item_id):
+            return bool(drop_group(unit, item_id))
+
+        self.assertEqual(3.0, drop_group(units_by_id[111011], 200301)["probPercent"])
+        self.assertEqual(8.0, drop_group(units_by_id[111011], 200202)["probPercent"])
+        self.assertEqual(35.0, drop_group(units_by_id[111015], 200301)["probPercent"])
+        self.assertEqual(8.0, drop_group(units_by_id[111015], 200202)["probPercent"])
+        self.assertEqual(0.18, drop_group(units_by_id[111021], 200202)["probPercent"])
+
+        chapter_boss = units_by_id[111510]
+        self.assertEqual(100.0, drop_group(chapter_boss, 200306)["probPercent"])
+        self.assertEqual(12.0, drop_group(chapter_boss, 200207)["probPercent"])
+        for item_id in [200306, 200316, 200326, 200336, 200346, 200356]:
+            self.assertTrue(has_drop(chapter_boss, item_id))
+        self.assertFalse(has_drop(chapter_boss, 200307))
+        self.assertFalse(has_drop(chapter_boss, 200208))
+
+        monster_trigger_names = {
+            "UNIT_ONUPDATE_TASKSTONEBARBASICSTRIKE",
+            "UNIT_ONUPDATE_TASKSTONEBARFASTLUNGE",
+            "UNIT_ONUPDATE_TASKSTONEBARRANGEDSHOT",
+            "UNIT_ONUPDATE_TASKSTONEBARSHIELDSLAM",
+            "UNIT_ONUPDATE_TASKSTONEBARKEEPERQUAKE",
+            "UNIT_ONUPDATE_TASKSTONEBARGIANTCRUSH",
+        }
+        self.assertTrue(monster_trigger_names.issubset(trigger_names))
+        boss_trigger = next(trigger for trigger in triggers if trigger["name"] == "UNIT_ONUPDATE_TASKSTONEBARGIANTCRUSH")
+
+        def walk_calls(statements):
+            for statement in statements or []:
+                if "call" in statement:
+                    yield statement["call"]
+                condition = statement.get("condition")
+                if condition:
+                    yield from walk_calls(condition.get("statements", []))
+                    yield from walk_calls(condition.get("elseStatements", []))
+
+        boss_methods = [
+            call.get("method", {}).get("unitMethod", {}).get("type")
+            for call in walk_calls(boss_trigger.get("statements", []))
+        ]
+        boss_skill_ids = []
+        for call in walk_calls(boss_trigger.get("statements", [])):
+            unit_method = call.get("method", {}).get("unitMethod", {})
+            if unit_method.get("type") != "UseSkillToTarget":
+                continue
+            for assignment in call.get("assignments", []):
+                if assignment.get("variable", {}).get("parameter", {}).get("type") != "SkillDataId":
+                    continue
+                postfix = assignment.get("expression", {}).get("postfix", [])
+                if len(postfix) == 1:
+                    boss_skill_ids.append(int(postfix[0]["operand"]["constant"]["value"]))
+
+        self.assertIn("GetCurrentHpPercent", boss_methods)
+        self.assertEqual({300206, 300207, 300208}, set(boss_skill_ids))
+
+    def test_taskstonebar_player_skill_tree_links_skill_points_and_level_gates(self):
+        bundles, _, _, _, errors = idlez_compile.compile_game("taskstonebar")
+
+        self.assertEqual([], errors)
+        item_by_id = {entry["id"]: entry for entry in bundles["item"]}
+        achievement_by_id = {entry["id"]: entry for entry in bundles["achievement"]}
+
+        grant = achievement_by_id[600101]
+        self.assertEqual("LevelUpItem", grant["condition"])
+        self.assertEqual(1, grant["conditionValue1"])
+        self.assertTrue(grant["repeatable"])
+        self.assertTrue(grant["autoReward"])
+        self.assertEqual(
+            1,
+            sum(
+                int(add["count"])
+                for group in grant["rewardAddItemGroups"]
+                for add in group["addItems"]
+                if add["itemDataId"] == 200501
+            ),
+        )
+
+        for level, achievement_id in [(5, 600102), (8, 600103), (12, 600104)]:
+            achievement = achievement_by_id[achievement_id]
+            self.assertEqual("HasItemLevel", achievement["condition"])
+            self.assertEqual(1, achievement["conditionValue1"])
+            self.assertEqual(level, achievement["conditionValue2"])
+            self.assertEqual(1, achievement["targetProgress"])
+            self.assertIn("HideDisplay", achievement["tags"])
+
+        expected_nodes = {
+            200502: (1, None, 0, 300101),
+            200503: (5, 600102, 200506, 300102),
+            200504: (8, 600103, 200507, 300104),
+            200505: (12, 600104, 200508, 300105),
+        }
+        for item_id, (player_level, gate_id, recipe_id, skill_id) in expected_nodes.items():
+            item = item_by_id[item_id]
+            popup_args = item["popupArgs"]
+            self.assertEqual("Skill", item["category"])
+            self.assertEqual(skill_id, item["skillDataId"])
+            self.assertEqual("Taskstonebar", popup_args["SkillTree"])
+            self.assertEqual("200501", popup_args["LevelPointItemDataId"])
+            self.assertEqual(str(player_level), popup_args["RequiredPlayerLevel"])
+            self.assertEqual("5", popup_args["MaxSkillLevel"])
+            for group in item["levelUpMaterialItemGroups"]:
+                self.assertEqual([200501], [material["id"] for material in group["materialItems"]])
+
+            if gate_id:
+                self.assertIn(gate_id, item["requiredAchievementDataIds"])
+                recipe = item_by_id[recipe_id]
+                self.assertEqual("Recipe", recipe["category"])
+                self.assertIn(gate_id, recipe["requiredAchievementDataIds"])
+                self.assertEqual(str(player_level), recipe["popupArgs"]["RequiredPlayerLevel"])
+                self.assertEqual(str(item_id), recipe["popupArgs"]["UnlockSkillItemDataId"])
+                self.assertEqual(
+                    1,
+                    sum(
+                        int(add["count"])
+                        for group in recipe["addItemGroups"]
+                        for add in group["addItems"]
+                        if add["itemDataId"] == item_id
+                    ),
+                )
+
+    def test_taskstonebar_player_level_grants_stat_and_skill_points(self):
+        bundles, _, _, _, errors = idlez_compile.compile_game("taskstonebar")
+
+        self.assertEqual([], errors)
+        item_by_id = {entry["id"]: entry for entry in bundles["item"]}
+        achievement_by_id = {entry["id"]: entry for entry in bundles["achievement"]}
+
+        skill_point_grant = achievement_by_id[600101]
+        stat_point_grant = achievement_by_id[600120]
+        for achievement in [skill_point_grant, stat_point_grant]:
+            self.assertEqual("LevelUpItem", achievement["condition"])
+            self.assertEqual(1, achievement["conditionValue1"])
+            self.assertTrue(achievement["repeatable"])
+            self.assertTrue(achievement["autoReward"])
+
+        self.assertEqual(
+            1,
+            sum(
+                int(add["count"])
+                for group in skill_point_grant["rewardAddItemGroups"]
+                for add in group["addItems"]
+                if add["itemDataId"] == 200501
+            ),
+        )
+        self.assertEqual(
+            3,
+            sum(
+                int(add["count"])
+                for group in stat_point_grant["rewardAddItemGroups"]
+                for add in group["addItems"]
+                if add["itemDataId"] == 200569
+            ),
+        )
+
+        stat_point = item_by_id[200569]
+        self.assertEqual("Material", stat_point["category"])
+        self.assertEqual("StatGrowth", stat_point["popupArgs"]["SpendTarget"])
+
+        player_level = item_by_id[1]
+        required_exps = [int(value) for value in player_level["requiredExps"]]
+        self.assertEqual(99, len(required_exps))
+        self.assertEqual([25, 48, 76], required_exps[:3])
+        self.assertTrue(all(a < b for a, b in zip(required_exps, required_exps[1:])))
+
+        first_map = next(entry for entry in bundles["map"] if entry["id"] == 500101)
+        map_required_exps = [int(value) for value in first_map["requiredExps"]]
+        self.assertTrue(first_map.get("enableUnitExp", False))
+        self.assertEqual(99, len(map_required_exps))
+        self.assertEqual([28, 57, 90], map_required_exps[:3])
+        reward_adds = [
+            add
+            for group in first_map["rewardAddItemGroups"]
+            for add in group["addItems"]
+        ]
+        self.assertFalse(any(add.get("itemDataId") == 1 and "exp" in add for add in reward_adds))
+        self.assertFalse(any(add.get("itemDataId") == 6 for add in reward_adds))
+
+        basic_worker = next(entry for entry in bundles["unit"] if entry["id"] == 111011)
+        drop_adds = [
+            add
+            for group in basic_worker["dropAddItemGroups"]
+            for add in group["addItems"]
+        ]
+        self.assertIn({"itemDataId": 1, "exp": "5"}, drop_adds)
+        self.assertFalse(any(add.get("itemDataId") == 6 for add in drop_adds))
+
+        player_unit = next(entry for entry in bundles["unit"] if entry["id"] == 110111)
+        player_stats = {stat.get("type", "Hp"): stat["value"] for stat in player_unit["addStats"]}
+        self.assertEqual(100, len(player_stats["Hp"]))
+        self.assertEqual(100, len(player_stats["Attack"]))
+        self.assertGreater(player_stats["Hp"][1], player_stats["Hp"][0])
+        self.assertGreater(player_stats["Attack"][1], player_stats["Attack"][0])
+
+        expected_stat_nodes = {
+            200570: "Attack",
+            200571: "Hp",
+            200572: "Defense",
+            200573: "AttackSpeedPercent",
+        }
+        for item_id, stat_type in expected_stat_nodes.items():
+            item = item_by_id[item_id]
+            self.assertEqual("Stat", item["category"])
+            self.assertTrue(item["initialCreate"])
+            self.assertEqual("TaskstonebarStats", item["popupArgs"]["StatTree"])
+            self.assertEqual("200569", item["popupArgs"]["StatPointItemDataId"])
+            self.assertEqual("100", item["popupArgs"]["MaxStatLevel"])
+            self.assertEqual(stat_type, item["addStats"][0].get("type", "Hp"))
+            self.assertGreater(
+                sum(
+                    int(material["count"])
+                    for group in item["levelUpMaterialItemGroups"]
+                    for material in group["materialItems"]
+                    if material["id"] == 200569
+                ),
+                0,
+            )
 
     def test_mushroomer_behavior_seconds_compile_to_engine_ticks(self):
         _, triggers, _, _, errors = idlez_compile.compile_game("mushroomer")

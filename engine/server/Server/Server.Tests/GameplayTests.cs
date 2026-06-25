@@ -1,8 +1,11 @@
 using Commons.Game;
+using Commons.Game.Interfaces;
 using Commons.Packets.Requests;
 using Commons.Resources;
 using Commons.Types;
+using Commons.Types.Geometry;
 using Commons.Types.Players;
+using Commons.Types.Units;
 using Google.Protobuf.WellKnownTypes;
 using Server.Managers;
 using Server.Player;
@@ -13,6 +16,146 @@ namespace Server.Tests;
 
 public sealed class GameplayTests
 {
+    [Fact]
+    public void GameUnit_exp_uses_map_required_exps_for_runtime_level_up()
+    {
+        const int mapId = 950101;
+        const int unitId = 950111;
+        using var resources = new TestResourceScope(
+            maps:
+            [
+                new ResourceMap
+                {
+                    Id = mapId,
+                    Type = ResourceMap.Types.Type.Dungeon,
+                    EnableUnitExp = true,
+                    RequiredExps = { 28, 57, 90 },
+                },
+            ],
+            units:
+            [
+                new ResourceUnit
+                {
+                    Id = unitId,
+                    Type = ResourceUnit.Types.Type.Player,
+                    AddStats =
+                    {
+                        new AddUnitStat { Type = UnitStatType.Hp, Value = { 520f, 548.6f, 578.773f, 610.606f } },
+                        new AddUnitStat { Type = UnitStatType.Attack, Value = { 42f, 44.184f, 46.482f, 48.899f } },
+                    },
+                },
+            ]);
+
+        var board = new GameBoard { DataId = mapId }.Init();
+        var unit = new GameUnit
+        {
+            Id = 1,
+            DataId = unitId,
+            Level = 1,
+            Team = 1,
+            Position = new Vector2Message { X = 0, Y = 0 },
+        };
+        board.AddUnit(unit);
+
+        unit.AddExp(27, applyExpStat: false);
+        Assert.Equal(1, unit.Level);
+        Assert.Equal(27, unit.Exp);
+        Assert.Equal((FixedFloat)42, unit.Attack);
+
+        unit.AddExp(1, applyExpStat: false);
+        Assert.Equal(2, unit.Level);
+        Assert.Equal(0, unit.Exp);
+        Assert.Equal((FixedFloat)44.184f, unit.Attack);
+
+        unit.AddExp(147, applyExpStat: false);
+        Assert.Equal(4, unit.Level);
+        Assert.Equal(0, unit.Exp);
+        Assert.Equal((FixedFloat)48.899f, unit.Attack);
+    }
+
+    [Fact]
+    public void GameUnit_death_drop_exp_levels_attacker_on_unit_exp_maps()
+    {
+        const int mapId = 950102;
+        const int attackerUnitId = 950112;
+        const int enemyUnitId = 950113;
+        using var resources = new TestResourceScope(
+            maps:
+            [
+                new ResourceMap
+                {
+                    Id = mapId,
+                    Type = ResourceMap.Types.Type.Dungeon,
+                    EnableUnitExp = true,
+                    RequiredExps = { 28 },
+                },
+            ],
+            units:
+            [
+                new ResourceUnit
+                {
+                    Id = attackerUnitId,
+                    Type = ResourceUnit.Types.Type.Player,
+                    AddStats =
+                    {
+                        new AddUnitStat { Type = UnitStatType.Hp, Value = { 520f, 548.6f } },
+                        new AddUnitStat { Type = UnitStatType.Attack, Value = { 42f, 44.184f } },
+                    },
+                },
+                new ResourceUnit
+                {
+                    Id = enemyUnitId,
+                    Type = ResourceUnit.Types.Type.Normal,
+                    AddStats =
+                    {
+                        new AddUnitStat { Type = UnitStatType.Hp, Value = { 1f } },
+                    },
+                    DropAddItemGroups =
+                    {
+                        new AddItemGroup
+                        {
+                            ShouldAddAll = true,
+                            ProbPercent = 100,
+                            AddItems = { new AddItem { ItemDataId = 1, Exp = 28 } },
+                        },
+                    },
+                },
+            ]);
+
+        var board = new GameBoard { DataId = mapId }.Init();
+        var attacker = new GameUnit
+        {
+            DataId = attackerUnitId,
+            Level = 1,
+            Team = 1,
+            Position = new Vector2Message { X = 0, Y = 0 },
+        };
+        var enemy = new GameUnit
+        {
+            DataId = enemyUnitId,
+            Level = 1,
+            Team = 2,
+            Position = new Vector2Message { X = 1, Y = 0 },
+        };
+        board.AddUnit(attacker);
+        board.AddUnit(enemy);
+
+        enemy.HandleDead(new TestAttackSource(attacker));
+
+        Assert.Equal(2, attacker.Level);
+        Assert.Equal(0, attacker.Exp);
+        Assert.Equal((FixedFloat)44.184f, attacker.Attack);
+    }
+
+    private sealed class TestAttackSource(GameUnit attacker) : IAttackSource
+    {
+        public long AttackerUnitId => attacker.Id;
+        public GameUnit Attacker => attacker;
+        public void HandleKill(GameUnit target)
+        {
+        }
+    }
+
     [Fact]
     public void BoardValidationProbe_round_trips_tick_and_hash_parts()
     {

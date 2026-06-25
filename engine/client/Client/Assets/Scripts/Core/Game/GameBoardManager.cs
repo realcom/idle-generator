@@ -1045,6 +1045,7 @@ public partial class GameBoardManager : WrappedEventBehaviour
 
             myUnit.PlayerId = MyPlayer.Player.Id;
             myUnit.Team = GameBoard.Team.Player;
+            myUnit.Level = _gameBoard.ResMap?.InitLevel > 0 ? _gameBoard.ResMap.InitLevel : Math.Max(1, MyPlayer.PlayerLevel);
             myUnit.PlayerAvatar = new PlayerAvatar
             {
                 Character = new PlayerItemMessage { Id = 3, ItemDataId = characterItemDataId.Value }
@@ -1094,6 +1095,7 @@ public partial class GameBoardManager : WrappedEventBehaviour
                 },
             },
             DataId = resItem.UnitDataId,
+            Level = _gameBoard.ResMap?.InitLevel > 0 ? _gameBoard.ResMap.InitLevel : Math.Max(1, MyPlayer.PlayerLevel),
             Team = GameBoard.Team.Player
         };
 
