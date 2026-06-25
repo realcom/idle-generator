@@ -3,27 +3,175 @@
  "skills": [
   {
    "id": 300101,
-   "name": "포자 충격",
-   "tags": [
-    "UseToTarget",
-    "TargetPosition"
-   ],
-   "cooldown": 1.6,
+   "name": "돌팔매",
+   "cooldown": 1.2,
    "priority": 1,
-   "targetRefreshType": "Nearest",
-   "prefab": "FXPrefabs/VFX_LiquidHitGreen.prefab",
-   "sprite": "UIAssets/Images/ingame_icn_start.png",
-   "itemDataId": 200401,
+   "projectileType": "Projectile",
+   "projectilePrefab": "FXPrefabs/Taskstonebar/RockProjectile.prefab",
    "timelines": [
     {
      "time": 0.0,
-     "unitPlayAnimation": {
-      "animation": "Attack"
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_RockThrow_Start.prefab"
+     }
+    },
+    {
+     "time": 0.12,
+     "hit": {
+      "maxHit": 1,
+      "addDamage": {
+       "attackPercentDamages": [
+        1.35
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.32,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_StoneImpact.prefab"
+     }
+    },
+    {
+     "time": 0.45,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300102,
+   "name": "조약돌 투척",
+   "tags": [
+    "Combat",
+    "StoneThrow",
+    "StoneWeapon",
+    "BasicStone",
+    "StoneStage01",
+    "Taskstonebar"
+   ],
+   "projectileType": "Parabolic",
+   "targetRefreshType": "Nearest",
+   "cooldown": 0.95,
+   "priority": 11,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/RockProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_RockThrow_Start.prefab"
      }
     },
     {
      "time": 0.1,
      "hit": {
+      "maxHit": 1,
+      "addDamage": {
+       "attackPercentDamages": [
+        1.12
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.26,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_StoneImpact.prefab"
+     }
+    },
+    {
+     "time": 0.38,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300103,
+   "name": "이끼돌 투척",
+   "tags": [
+    "Combat",
+    "StoneThrow",
+    "StoneWeapon",
+    "MossStone",
+    "StoneStage02",
+    "Taskstonebar"
+   ],
+   "projectileType": "Parabolic",
+   "targetRefreshType": "Nearest",
+   "cooldown": 1.25,
+   "priority": 12,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/MossStoneProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_MossThrow_Start.prefab"
+     }
+    },
+    {
+     "time": 0.14,
+     "hit": {
+      "maxHit": 1,
+      "addDamage": {
+       "attackPercentDamages": [
+        1.04
+       ]
+      },
+      "addBuffs": [
+       {
+        "buffDataId": 400101,
+        "level": 1,
+        "duration": 2.2
+       }
+      ]
+     }
+    },
+    {
+     "time": 0.34,
+     "hit": {
+      "maxHit": 1,
+      "addDamage": {
+       "attackPercentDamages": [
+        0.42
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.5,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300104,
+   "name": "균열돌 투척",
+   "tags": [
+    "Combat",
+    "StoneThrow",
+    "StoneWeapon",
+    "CrackStone",
+    "HeavyStone",
+    "StoneStage03",
+    "Taskstonebar"
+   ],
+   "damageType": "Pierce",
+   "projectileType": "Parabolic",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 2.35,
+   "priority": 13,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/CrackStoneProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_CrackStone_Start.prefab"
+     }
+    },
+    {
+     "time": 0.22,
+     "hit": {
+      "maxHit": 3,
+      "maxHitByUnit": 1,
       "geometries": [
        {
         "circle": {
@@ -31,48 +179,2580 @@
           "x": 0.0,
           "y": 0.0
          },
-         "radius": 5.0
+         "radius": 1.35
         }
        }
       ],
+      "addDamage": {
+       "attackPercentDamages": [
+        2.45
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.48,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_CrackStone_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.72,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300105,
+   "name": "태양석 투척",
+   "tags": [
+    "Combat",
+    "StoneThrow",
+    "StoneWeapon",
+    "SolarStone",
+    "BossStone",
+    "AreaStone",
+    "StoneStage04",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "projectileType": "Parabolic",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 3.2,
+   "priority": 14,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/SolarStoneProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_SolarStone_Start.prefab"
+     }
+    },
+    {
+     "time": 0.42,
+     "hit": {
+      "maxHit": 8,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.05
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.85
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.72,
+     "hit": {
+      "maxHit": 4,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.35
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.95
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.95,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300106,
+   "name": "서리돌 투척",
+   "tags": [
+    "Combat",
+    "StoneThrow",
+    "StoneWeapon",
+    "FrostStone",
+    "ControlStone",
+    "StoneStage05",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "projectileType": "Parabolic",
+   "targetRefreshType": "Nearest",
+   "cooldown": 2.85,
+   "priority": 15,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/FrostStoneProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_FrostStone_Start.prefab"
+     }
+    },
+    {
+     "time": 0.28,
+     "hit": {
+      "maxHit": 5,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.65
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.75
+       ]
+      },
+      "addBuffs": [
+       {
+        "buffDataId": 400102,
+        "level": 1,
+        "duration": 1.8
+       }
+      ]
+     }
+    },
+    {
+     "time": 0.58,
+     "hit": {
+      "maxHit": 5,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.95
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.62
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.82,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300107,
+   "name": "용암돌 투척",
+   "tags": [
+    "Combat",
+    "StoneThrow",
+    "StoneWeapon",
+    "LavaStone",
+    "AreaStone",
+    "StoneStage06",
+    "Taskstonebar"
+   ],
+   "damageType": "Explosive",
+   "projectileType": "Parabolic",
+   "targetRefreshType": "Nearest",
+   "cooldown": 3.65,
+   "priority": 16,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/LavaStoneProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_LavaStone_Start.prefab"
+     }
+    },
+    {
+     "time": 0.38,
+     "hit": {
+      "maxHit": 8,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.0
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        2.1
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.88,
+     "hit": {
+      "maxHit": 8,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.2
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.15
+       ]
+      }
+     }
+    },
+    {
+     "time": 1.12,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300108,
+   "name": "번개돌 투척",
+   "tags": [
+    "Combat",
+    "StoneThrow",
+    "StoneWeapon",
+    "ThunderStone",
+    "ChainStone",
+    "StoneStage07",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "projectileType": "Parabolic",
+   "targetRefreshType": "Random",
+   "cooldown": 1.65,
+   "priority": 17,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/ThunderStoneProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_ThunderStone_Start.prefab"
+     }
+    },
+    {
+     "time": 0.12,
+     "hit": {
       "maxHit": 1,
       "addDamage": {
        "attackPercentDamages": [
-        1.1
+        1.25
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.24,
+     "hit": {
+      "maxHit": 3,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.55
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.72
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.38,
+     "hit": {
+      "maxHit": 3,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.85
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.46
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.56,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300109,
+   "name": "달빛돌 투척",
+   "tags": [
+    "Combat",
+    "StoneThrow",
+    "StoneWeapon",
+    "MoonStone",
+    "CritStone",
+    "StoneStage08",
+    "Taskstonebar"
+   ],
+   "damageType": "Pierce",
+   "projectileType": "Parabolic",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 4.2,
+   "priority": 18,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/MoonStoneProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_MoonStone_Start.prefab"
+     }
+    },
+    {
+     "time": 0.3,
+     "hit": {
+      "maxHit": 4,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.65
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.9
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.62,
+     "hit": {
+      "maxHit": 4,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.8
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.45
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.9,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300110,
+   "name": "별심돌 투척",
+   "tags": [
+    "Combat",
+    "StoneThrow",
+    "StoneWeapon",
+    "StarcoreStone",
+    "BossStone",
+    "AreaStone",
+    "StoneStage09",
+    "Taskstonebar"
+   ],
+   "damageType": "Explosive",
+   "projectileType": "Parabolic",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 5.2,
+   "priority": 19,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/StarcoreStoneProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_StarcoreStone_Start.prefab"
+     }
+    },
+    {
+     "time": 0.48,
+     "hit": {
+      "maxHit": 10,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.35
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        2.6
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.86,
+     "hit": {
+      "maxHit": 6,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.65
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.55
+       ]
+      }
+     }
+    },
+    {
+     "time": 1.18,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300111,
+   "name": "태초돌 투척",
+   "tags": [
+    "Combat",
+    "StoneThrow",
+    "StoneWeapon",
+    "OriginStone",
+    "UniqueStone",
+    "StoneStage10",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "projectileType": "Parabolic",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 6.4,
+   "priority": 20,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/OriginStoneProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_OriginStone_Start.prefab"
+     }
+    },
+    {
+     "time": 0.45,
+     "hit": {
+      "maxHit": 10,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.4
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        2.3
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.82,
+     "hit": {
+      "maxHit": 10,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.7
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        2.1
+       ]
+      }
+     }
+    },
+    {
+     "time": 1.18,
+     "hit": {
+      "maxHit": 12,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 3.05
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.85
+       ]
+      }
+     }
+    },
+    {
+     "time": 1.55,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300201,
+   "name": "작은 할퀴기",
+   "tags": [
+    "Combat",
+    "MonsterSkill",
+    "Basic",
+    "Taskstonebar"
+   ],
+   "targetRefreshType": "Nearest",
+   "cooldown": 2.2,
+   "priority": 21,
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_Claw_Start.prefab"
+     }
+    },
+    {
+     "time": 0.12,
+     "hit": {
+      "maxHit": 1,
+      "addDamage": {
+       "attackPercentDamages": [
+        0.88
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.28,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300202,
+   "name": "급습 돌진",
+   "tags": [
+    "Combat",
+    "MonsterSkill",
+    "Fast",
+    "Taskstonebar"
+   ],
+   "damageType": "Pierce",
+   "targetRefreshType": "Nearest",
+   "cooldown": 1.6,
+   "priority": 22,
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_Lunge_Start.prefab"
+     }
+    },
+    {
+     "time": 0.08,
+     "unitCharge": {
+      "duration": 0.16,
+      "distance": 1.25
+     }
+    },
+    {
+     "time": 0.18,
+     "hit": {
+      "maxHit": 1,
+      "addDamage": {
+       "attackPercentDamages": [
+        1.16
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.34,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300203,
+   "name": "침돌 사격",
+   "tags": [
+    "Combat",
+    "MonsterSkill",
+    "Ranged",
+    "Taskstonebar"
+   ],
+   "damageType": "Pierce",
+   "projectileType": "Straight",
+   "targetRefreshType": "Nearest",
+   "cooldown": 2.4,
+   "priority": 23,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/NeedleStoneProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_NeedleStone_Start.prefab"
+     }
+    },
+    {
+     "time": 0.16,
+     "hit": {
+      "maxHit": 1,
+      "addDamage": {
+       "attackPercentDamages": [
+        1.26
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.36,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300204,
+   "name": "방패 강타",
+   "tags": [
+    "Combat",
+    "MonsterSkill",
+    "Armored",
+    "Taskstonebar"
+   ],
+   "targetRefreshType": "Nearest",
+   "cooldown": 2.8,
+   "priority": 24,
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_ShieldSlam_Start.prefab"
+     }
+    },
+    {
+     "time": 0.22,
+     "hit": {
+      "maxHit": 1,
+      "addDamage": {
+       "attackPercentDamages": [
+        1.42
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.24,
+     "unitKnockback": {
+      "duration": 0.12,
+      "distance": 0.65
+     }
+    },
+    {
+     "time": 0.46,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300205,
+   "name": "문지기 진동",
+   "tags": [
+    "Combat",
+    "MonsterSkill",
+    "MiniBoss",
+    "Area",
+    "Taskstonebar"
+   ],
+   "targetRefreshType": "Nearest",
+   "cooldown": 3.4,
+   "priority": 25,
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_KeeperQuake_Start.prefab"
+     }
+    },
+    {
+     "time": 0.34,
+     "hit": {
+      "maxHit": 3,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.55
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.58
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.62,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300206,
+   "name": "군주 파쇄",
+   "tags": [
+    "Combat",
+    "MonsterSkill",
+    "GiantBoss",
+    "Area",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 4.2,
+   "priority": 26,
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_GiantCrush_Start.prefab"
+     }
+    },
+    {
+     "time": 0.45,
+     "hit": {
+      "maxHit": 6,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.15
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.72
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.78,
+     "hit": {
+      "maxHit": 4,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.55
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.78
+       ]
+      }
+     }
+    },
+    {
+     "time": 1.08,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300207,
+   "name": "균열 폭발",
+   "tags": [
+    "Combat",
+    "MonsterSkill",
+    "GiantBoss",
+    "Area",
+    "Phase2",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 4.2,
+   "priority": 27,
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_GiantRift_Start.prefab"
+     }
+    },
+    {
+     "time": 0.38,
+     "hit": {
+      "maxHit": 8,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.45
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        2.05
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.72,
+     "hit": {
+      "maxHit": 6,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.85
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.92
+       ]
+      }
+     }
+    },
+    {
+     "time": 1.08,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300208,
+   "name": "심연 난타",
+   "tags": [
+    "Combat",
+    "MonsterSkill",
+    "GiantBoss",
+    "Area",
+    "Phase3",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 4.2,
+   "priority": 28,
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/VFX_AbyssBarrage_Start.prefab"
+     }
+    },
+    {
+     "time": 0.24,
+     "hit": {
+      "maxHit": 8,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.0
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.5
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.54,
+     "hit": {
+      "maxHit": 8,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.35
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.5
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.86,
+     "hit": {
+      "maxHit": 8,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.7
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.05
+       ]
+      }
+     }
+    },
+    {
+     "time": 1.22,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300301,
+   "name": "돌쐐기",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Throw",
+    "BasicThrow",
+    "Taskstonebar"
+   ],
+   "projectileType": "Straight",
+   "targetRefreshType": "Nearest",
+   "cooldown": 0.82,
+   "priority": 31,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/DustGold/StoneSpikeProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/DustGold/VFX_StoneSpike_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.12,
+     "hit": {
+      "maxHit": 1,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 0.85
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.05,
+        1.24,
+        1.45,
+        1.7,
+        1.98
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.28,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/DustGold/VFX_StoneSpike_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.54,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300302,
+   "name": "쌍돌비",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Throw",
+    "RapidThrow",
+    "Taskstonebar"
+   ],
+   "projectileType": "Parabolic",
+   "targetRefreshType": "Random",
+   "cooldown": 1.15,
+   "priority": 32,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/AmberOrb/TwinPebbleProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/AmberOrb/VFX_TwinPebble_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.12,
+     "hit": {
+      "maxHit": 2,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.05
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.72,
+        0.85,
+        1.0,
+        1.18,
+        1.38
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.26,
+     "hit": {
+      "maxHit": 2,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.05
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.72,
+        0.85,
+        1.0,
+        1.18,
+        1.38
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.42,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/AmberOrb/VFX_TwinPebble_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.68,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300303,
+   "name": "회전투척",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Throw",
+    "SpinThrow",
+    "Taskstonebar"
+   ],
+   "damageType": "Pierce",
+   "projectileType": "Relative",
+   "targetRefreshType": "Nearest",
+   "cooldown": 1.6,
+   "priority": 33,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/WhiteMoon/SpinningStoneProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/WhiteMoon/VFX_SpinThrow_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.2,
+     "hit": {
+      "maxHit": 3,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.35
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.55,
+        1.8,
+        2.1,
+        2.45,
+        2.85
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.36,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/WhiteMoon/VFX_SpinThrow_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.62,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300304,
+   "name": "파쇄투창",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Throw",
+    "PiercingThrow",
+    "Taskstonebar"
+   ],
+   "damageType": "Pierce",
+   "projectileType": "Straight",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 2.2,
+   "priority": 34,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/CrackOrange/ShatterJavelinProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/CrackOrange/VFX_ShatterJavelin_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.24,
+     "hit": {
+      "maxHit": 1,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.05
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        2.4,
+        2.8,
+        3.25,
+        3.8,
+        4.45
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.4,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/CrackOrange/VFX_ShatterJavelin_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.66,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300305,
+   "name": "태초난사",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Throw",
+    "OriginBarrage",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "projectileType": "Parabolic",
+   "targetRefreshType": "Random",
+   "cooldown": 3.0,
+   "priority": 35,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/OriginViolet/OriginBarrageProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/OriginViolet/VFX_OriginBarrage_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.16,
+     "hit": {
+      "maxHit": 4,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.4
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.12,
+        1.32,
+        1.55,
+        1.83,
+        2.15
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.32,
+     "hit": {
+      "maxHit": 4,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.55
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.96,
+        1.14,
+        1.34,
+        1.58,
+        1.86
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.48,
+     "hit": {
+      "maxHit": 4,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.7
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.86,
+        1.02,
+        1.2,
+        1.42,
+        1.68
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.64,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/OriginViolet/VFX_OriginBarrage_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.9,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300306,
+   "name": "자갈소용돌",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Area",
+    "SwirlArea",
+    "Taskstonebar"
+   ],
+   "projectileType": "Relative",
+   "targetRefreshType": "Nearest",
+   "cooldown": 2.1,
+   "priority": 41,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/DustGold/GravelVortexProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/DustGold/VFX_GravelVortex_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.22,
+     "hit": {
+      "maxHit": 5,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.8
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.2,
+        1.42,
+        1.68,
+        1.98,
+        2.34
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.38,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/DustGold/VFX_GravelVortex_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.64,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300307,
+   "name": "광석폭우",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Area",
+    "OreRain",
+    "Taskstonebar"
+   ],
+   "damageType": "Explosive",
+   "projectileType": "Parabolic",
+   "targetRefreshType": "Random",
+   "cooldown": 2.6,
+   "priority": 42,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/BlueDust/OreRainProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/BlueDust/VFX_OreRain_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.24,
+     "hit": {
+      "maxHit": 6,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.0
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.96,
+        1.14,
+        1.35,
+        1.6,
+        1.9
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.5,
+     "hit": {
+      "maxHit": 6,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.2
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.78,
+        0.92,
+        1.1,
+        1.3,
+        1.54
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.66,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/BlueDust/VFX_OreRain_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.92,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300308,
+   "name": "지층파동",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Area",
+    "GroundWave",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "targetRefreshType": "Nearest",
+   "cooldown": 3.2,
+   "priority": 43,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/StoneFusion/GroundWavePulse.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/StoneFusion/VFX_GroundWave_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.34,
+     "hit": {
+      "maxHit": 8,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.4
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.7,
+        2.0,
+        2.36,
+        2.78,
+        3.28
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.5,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/StoneFusion/VFX_GroundWave_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.76,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300309,
+   "name": "용암분출",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Area",
+    "LavaBurst",
+    "Taskstonebar"
+   ],
+   "damageType": "Explosive",
+   "projectileType": "Target",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 3.8,
+   "priority": 44,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/FireOrange/LavaBurstProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/FireOrange/VFX_LavaBurst_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.36,
+     "hit": {
+      "maxHit": 8,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.6
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.85,
+        2.18,
+        2.58,
+        3.05,
+        3.6
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.72,
+     "hit": {
+      "maxHit": 8,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.15
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.05,
+        1.24,
+        1.46,
+        1.73,
+        2.04
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.88,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/FireOrange/VFX_LavaBurst_Impact.prefab"
+     }
+    },
+    {
+     "time": 1.14,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300310,
+   "name": "운석작업",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Area",
+    "MeteorWork",
+    "Taskstonebar"
+   ],
+   "damageType": "Explosive",
+   "projectileType": "Parabolic",
+   "targetRefreshType": "Furthest",
+   "cooldown": 5.2,
+   "priority": 45,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/BoomRed/MeteorWorkProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/BoomRed/VFX_MeteorWork_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.42,
+     "hit": {
+      "maxHit": 10,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 3.0
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.7,
+        2.04,
+        2.44,
+        2.93,
+        3.52
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.72,
+     "hit": {
+      "maxHit": 10,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.6
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.4,
+        1.68,
+        2.02,
+        2.42,
+        2.9
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.96,
+     "hit": {
+      "maxHit": 10,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.2
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.1,
+        1.32,
+        1.58,
+        1.9,
+        2.28
+       ]
+      }
+     }
+    },
+    {
+     "time": 1.12,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/BoomRed/VFX_MeteorWork_Impact.prefab"
+     }
+    },
+    {
+     "time": 1.38,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300311,
+   "name": "균열일격",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Boss",
+    "BossPierce",
+    "Taskstonebar"
+   ],
+   "damageType": "Pierce",
+   "projectileType": "Straight",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 1.8,
+   "priority": 51,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/CrackOrange/RiftStrikeProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/CrackOrange/VFX_RiftStrike_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.2,
+     "hit": {
+      "maxHit": 1,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 0.95
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.9,
+        2.24,
+        2.65,
+        3.13,
+        3.7
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.36,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/CrackOrange/VFX_RiftStrike_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.62,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300312,
+   "name": "달빛절단",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Boss",
+    "MoonCrit",
+    "Taskstonebar"
+   ],
+   "damageType": "Pierce",
+   "projectileType": "Relative",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 2.4,
+   "priority": 52,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/MoonWhite/MoonCutterProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/MoonWhite/VFX_MoonCutter_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.18,
+     "hit": {
+      "maxHit": 2,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.2
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.32,
+        1.56,
+        1.84,
+        2.18,
+        2.58
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.42,
+     "hit": {
+      "maxHit": 2,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.25
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.32,
+        1.56,
+        1.84,
+        2.18,
+        2.58
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.58,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/MoonWhite/VFX_MoonCutter_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.84,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300313,
+   "name": "보스분쇄",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Boss",
+    "BossBreak",
+    "Taskstonebar"
+   ],
+   "targetRefreshType": "HighestHp",
+   "cooldown": 3.2,
+   "priority": 53,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/CrackLarge/BossBreakerPulse.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/CrackLarge/VFX_BossBreaker_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.38,
+     "hit": {
+      "maxHit": 3,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.55
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        2.8,
+        3.3,
+        3.9,
+        4.6,
+        5.44
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.54,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/CrackLarge/VFX_BossBreaker_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.8,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300314,
+   "name": "심장관통",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Boss",
+    "ExecutePierce",
+    "Taskstonebar"
+   ],
+   "damageType": "Pierce",
+   "projectileType": "Target",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 4.0,
+   "priority": 54,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/BloodRed/HeartPierceProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/BloodRed/VFX_HeartPierce_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.44,
+     "hit": {
+      "maxHit": 1,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.05
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        4.2,
+        4.96,
+        5.86,
+        6.92,
+        8.18
        ]
       }
      }
     },
     {
      "time": 0.6,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/BloodRed/VFX_HeartPierce_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.86,
      "destroy": {}
     }
    ]
   },
   {
-   "id": 300102,
-   "name": "균사 폭발",
+   "id": 300315,
+   "name": "혈월파쇄",
    "tags": [
-    "UseToTarget",
-    "TargetPosition",
-    "AoE"
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Boss",
+    "BloodMoonBoss",
+    "Taskstonebar"
    ],
-   "cooldown": 5.5,
-   "priority": 2,
-   "targetRefreshType": "Nearest",
-   "prefab": "FXPrefabs/VFX_LiquidHitGreen.prefab",
-   "sprite": "UIAssets/Images/ingame_icn_start.png",
-   "itemDataId": 200402,
+   "damageType": "Spell",
+   "projectileType": "Target",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 5.6,
+   "priority": 55,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/BloodMoon/BloodMoonBreakProjectile.prefab",
    "timelines": [
     {
      "time": 0.0,
-     "unitPlayAnimation": {
-      "animation": "Attack"
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/BloodMoon/VFX_BloodMoonBreak_Cast.prefab"
      }
     },
     {
-     "time": 0.25,
+     "time": 0.38,
      "hit": {
+      "maxHit": 4,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.8
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.8,
+        2.13,
+        2.52,
+        2.98,
+        3.52
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.68,
+     "hit": {
+      "maxHit": 4,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.05
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.5,
+        1.78,
+        2.1,
+        2.49,
+        2.94
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.98,
+     "hit": {
+      "maxHit": 4,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.3
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.3,
+        1.54,
+        1.82,
+        2.16,
+        2.55
+       ]
+      }
+     }
+    },
+    {
+     "time": 1.14,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/BloodMoon/VFX_BloodMoonBreak_Impact.prefab"
+     }
+    },
+    {
+     "time": 1.4,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300316,
+   "name": "채굴탄",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Farming",
+    "FarmQuick",
+    "Taskstonebar"
+   ],
+   "projectileType": "Parabolic",
+   "targetRefreshType": "Nearest",
+   "cooldown": 0.9,
+   "priority": 61,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/BlueDust/MiningShotProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/BlueDust/VFX_MiningShot_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.12,
+     "hit": {
+      "maxHit": 1,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 0.85
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.92,
+        1.09,
+        1.29,
+        1.53,
+        1.81
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.28,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/BlueDust/VFX_MiningShot_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.54,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300317,
+   "name": "광맥공명",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Farming",
+    "OreResonance",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "targetRefreshType": "LowestHp",
+   "cooldown": 1.8,
+   "priority": 62,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/BlueOrb/OreResonancePulse.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/BlueOrb/VFX_OreResonance_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.22,
+     "hit": {
+      "maxHit": 4,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.6
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.16,
+        1.37,
+        1.62,
+        1.92,
+        2.27
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.38,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/BlueOrb/VFX_OreResonance_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.64,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300318,
+   "name": "행운분진",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Farming",
+    "LuckDust",
+    "Taskstonebar"
+   ],
+   "projectileType": "Relative",
+   "targetRefreshType": "Random",
+   "cooldown": 2.2,
+   "priority": 63,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/GoldDust/LuckDustProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/GoldDust/VFX_LuckDust_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.24,
+     "hit": {
+      "maxHit": 5,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.0
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.3,
+        1.54,
+        1.82,
+        2.16,
+        2.55
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.4,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/GoldDust/VFX_LuckDust_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.66,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300319,
+   "name": "상자균열",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Farming",
+    "ChestCrack",
+    "Taskstonebar"
+   ],
+   "damageType": "Explosive",
+   "projectileType": "Target",
+   "targetRefreshType": "LowestHp",
+   "cooldown": 2.8,
+   "priority": 64,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/CrackGold/ChestCrackProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/CrackGold/VFX_ChestCrack_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.28,
+     "hit": {
+      "maxHit": 5,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.85
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.16,
+        1.38,
+        1.64,
+        1.94,
+        2.3
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.54,
+     "hit": {
+      "maxHit": 5,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.2
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.82,
+        0.98,
+        1.16,
+        1.38,
+        1.64
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.7,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/CrackGold/VFX_ChestCrack_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.96,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300320,
+   "name": "수확유성",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Farming",
+    "HarvestMeteor",
+    "Taskstonebar"
+   ],
+   "damageType": "Explosive",
+   "projectileType": "Parabolic",
+   "targetRefreshType": "Random",
+   "cooldown": 4.6,
+   "priority": 65,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/HarvestRed/HarvestMeteorProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/HarvestRed/VFX_HarvestMeteor_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.48,
+     "hit": {
+      "maxHit": 8,
+      "maxHitByUnit": 1,
       "geometries": [
        {
         "circle": {
@@ -84,52 +2764,180 @@
         }
        }
       ],
-      "maxHit": 6,
       "addDamage": {
        "attackPercentDamages": [
-        1.65
+        2.3,
+        2.72,
+        3.22,
+        3.81,
+        4.51
        ]
       }
      }
     },
     {
-     "time": 0.55,
+     "time": 0.64,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/HarvestRed/VFX_HarvestMeteor_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.9,
      "destroy": {}
     }
    ]
   },
   {
-   "id": 300103,
-   "name": "왕포자 강타",
+   "id": 300321,
+   "name": "돌껍질",
    "tags": [
-    "UseToTarget",
-    "TargetPosition",
-    "Boss"
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Guard",
+    "GuardSkin",
+    "Taskstonebar"
    ],
-   "cooldown": 8.0,
-   "priority": 3,
-   "targetRefreshType": "HighestHp",
-   "prefab": "FXPrefabs/VFX_LiquidHitGreen.prefab",
-   "sprite": "UIAssets/Images/ingame_icn_start.png",
-   "itemDataId": 200403,
+   "targetRefreshType": "Nearest",
+   "cooldown": 1.4,
+   "priority": 71,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/ShieldWhite/StoneSkinPulse.prefab",
    "timelines": [
     {
      "time": 0.0,
-     "unitPlayAnimation": {
-      "animation": "Attack"
-     }
-    },
-    {
-     "time": 0.0,
-     "unitCharge": {
-      "duration": 0.16,
-      "distance": 0.7,
-      "adjustDistanceToTarget": true
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/ShieldWhite/VFX_StoneSkin_Cast.prefab"
      }
     },
     {
      "time": 0.18,
      "hit": {
+      "maxHit": 2,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.2
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.96,
+        1.14,
+        1.35,
+        1.6,
+        1.9
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.34,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/ShieldWhite/VFX_StoneSkin_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.6,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300322,
+   "name": "방패투척",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Guard",
+    "ShieldThrow",
+    "Taskstonebar"
+   ],
+   "projectileType": "Straight",
+   "targetRefreshType": "Nearest",
+   "cooldown": 1.7,
+   "priority": 72,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/ShieldWhite/ShieldThrowProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/ShieldWhite/VFX_ShieldThrow_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.2,
+     "hit": {
+      "maxHit": 3,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.1
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.4,
+        1.66,
+        1.97,
+        2.33,
+        2.76
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.36,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/ShieldWhite/VFX_ShieldThrow_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.62,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300323,
+   "name": "수호파동",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Guard",
+    "GuardWave",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "targetRefreshType": "Nearest",
+   "cooldown": 2.5,
+   "priority": 73,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/ShieldBlue/GuardianWavePulse.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/ShieldBlue/VFX_GuardianWave_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.3,
+     "hit": {
+      "maxHit": 5,
+      "maxHitByUnit": 1,
       "geometries": [
        {
         "circle": {
@@ -141,12 +2949,387 @@
         }
        }
       ],
-      "maxHit": 1,
       "addDamage": {
        "attackPercentDamages": [
-        3.6
+        1.46,
+        1.73,
+        2.05,
+        2.43,
+        2.88
        ]
       }
+     }
+    },
+    {
+     "time": 0.46,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/ShieldBlue/VFX_GuardianWave_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.72,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300324,
+   "name": "반격균열",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Guard",
+    "CounterRift",
+    "Taskstonebar"
+   ],
+   "damageType": "Pierce",
+   "projectileType": "Relative",
+   "targetRefreshType": "Nearest",
+   "cooldown": 3.0,
+   "priority": 74,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/CrackWhite/CounterRiftProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/CrackWhite/VFX_CounterRift_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.34,
+     "hit": {
+      "maxHit": 6,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.1
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.9,
+        2.25,
+        2.67,
+        3.16,
+        3.74
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.5,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/CrackWhite/VFX_CounterRift_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.76,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300325,
+   "name": "철벽성운",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "Guard",
+    "BulwarkNova",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 4.8,
+   "priority": 75,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/ShieldStar/BulwarkNovaPulse.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/ShieldStar/VFX_BulwarkNova_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.42,
+     "hit": {
+      "maxHit": 8,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.5
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.88,
+        2.23,
+        2.64,
+        3.13,
+        3.71
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.74,
+     "hit": {
+      "maxHit": 8,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.75
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.32,
+        1.56,
+        1.85,
+        2.19,
+        2.6
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.9,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/ShieldStar/VFX_BulwarkNova_Impact.prefab"
+     }
+    },
+    {
+     "time": 1.16,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300326,
+   "name": "제련불씨",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "ForgeFormation",
+    "ForgeSpark",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "projectileType": "Target",
+   "targetRefreshType": "Nearest",
+   "cooldown": 1.3,
+   "priority": 81,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/ForgeOrange/ForgeSparkProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/ForgeOrange/VFX_ForgeSpark_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.16,
+     "hit": {
+      "maxHit": 2,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.0
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.1,
+        1.3,
+        1.54,
+        1.83,
+        2.17
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.32,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/ForgeOrange/VFX_ForgeSpark_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.58,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300327,
+   "name": "큐브연쇄",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "ForgeFormation",
+    "CubeChain",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "projectileType": "Relative",
+   "targetRefreshType": "Random",
+   "cooldown": 2.0,
+   "priority": 82,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/CubeViolet/CubeChainProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/CubeViolet/VFX_CubeChain_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.22,
+     "hit": {
+      "maxHit": 5,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.45
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.9,
+        1.07,
+        1.27,
+        1.51,
+        1.79
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.44,
+     "hit": {
+      "maxHit": 5,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.65
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        0.9,
+        1.07,
+        1.27,
+        1.51,
+        1.79
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.6,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/CubeViolet/VFX_CubeChain_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.86,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300328,
+   "name": "편성공명",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "ForgeFormation",
+    "FormationPulse",
+    "Taskstonebar"
+   ],
+   "targetRefreshType": "Nearest",
+   "cooldown": 2.4,
+   "priority": 83,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/FormationBlue/FormationPulse.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/FormationBlue/VFX_FormationPulse_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.28,
+     "hit": {
+      "maxHit": 4,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 1.8
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.6,
+        1.9,
+        2.25,
+        2.67,
+        3.16
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.44,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/FormationBlue/VFX_FormationPulse_Impact.prefab"
      }
     },
     {
@@ -156,33 +3339,181 @@
    ]
   },
   {
-   "id": 300104,
-   "name": "포자 각성",
+   "id": 300329,
+   "name": "융합폭주",
    "tags": [
-    "Self",
-    "Buff"
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "ForgeFormation",
+    "FusionOverdrive",
+    "Taskstonebar"
    ],
-   "cooldown": 18.0,
-   "priority": 4,
-   "prefab": "FXPrefabs/VFX_LiquidHitGreen.prefab",
-   "sprite": "UIAssets/Images/ingame_icn_start.png",
-   "itemDataId": 200404,
-   "selfAddBuffs": [
-    {
-     "buffDataId": 400101,
-     "level": 1,
-     "duration": 8.0
-    }
-   ],
+   "damageType": "Explosive",
+   "projectileType": "Target",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 3.6,
+   "priority": 84,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/FusionPink/FusionOverdriveProjectile.prefab",
    "timelines": [
     {
      "time": 0.0,
-     "unitPlayAnimation": {
-      "animation": "Cast"
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/FusionPink/VFX_FusionOverdrive_Cast.prefab"
      }
     },
     {
-     "time": 0.6,
+     "time": 0.36,
+     "hit": {
+      "maxHit": 7,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.3
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        2.2,
+        2.61,
+        3.09,
+        3.66,
+        4.34
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.52,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/FusionPink/VFX_FusionOverdrive_Impact.prefab"
+     }
+    },
+    {
+     "time": 0.78,
+     "destroy": {}
+    }
+   ]
+  },
+  {
+   "id": 300330,
+   "name": "원석심장",
+   "tags": [
+    "Combat",
+    "PlayerSkill",
+    "SkillTree",
+    "ForgeFormation",
+    "PrimalHeart",
+    "Taskstonebar"
+   ],
+   "damageType": "Spell",
+   "projectileType": "Parabolic",
+   "targetRefreshType": "HighestHp",
+   "cooldown": 6.2,
+   "priority": 85,
+   "projectilePrefab": "FXPrefabs/Taskstonebar/PrimalRed/PrimalHeartProjectile.prefab",
+   "timelines": [
+    {
+     "time": 0.0,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/PrimalRed/VFX_PrimalHeart_Cast.prefab"
+     }
+    },
+    {
+     "time": 0.46,
+     "hit": {
+      "maxHit": 10,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 3.0
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        2.2,
+        2.64,
+        3.17,
+        3.81,
+        4.58
+       ]
+      }
+     }
+    },
+    {
+     "time": 0.78,
+     "hit": {
+      "maxHit": 10,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 2.7
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.6,
+        1.92,
+        2.3,
+        2.76,
+        3.31
+       ]
+      }
+     }
+    },
+    {
+     "time": 1.08,
+     "hit": {
+      "maxHit": 10,
+      "maxHitByUnit": 1,
+      "geometries": [
+       {
+        "circle": {
+         "center": {
+          "x": 0.0,
+          "y": 0.0
+         },
+         "radius": 3.2
+        }
+       }
+      ],
+      "addDamage": {
+       "attackPercentDamages": [
+        1.22,
+        1.46,
+        1.76,
+        2.11,
+        2.53
+       ]
+      }
+     }
+    },
+    {
+     "time": 1.24,
+     "playFx": {
+      "prefab": "FXPrefabs/Taskstonebar/PrimalRed/VFX_PrimalHeart_Impact.prefab"
+     }
+    },
+    {
+     "time": 1.5,
      "destroy": {}
     }
    ]

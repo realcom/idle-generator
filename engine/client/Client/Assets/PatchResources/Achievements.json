@@ -1,214 +1,16 @@
 {
- "achievementGlobal": {
-  "dataId": {
-   "tutorialComplete": 610000,
-   "ingameTutorialEnter": 610001,
-   "chapterEnterAgainCondition": 610010,
-   "tutorialSteps": [
-    610101,
-    610102,
-    610103,
-    610201,
-    610202,
-    610203,
-    610204,
-    610205
-   ]
-  }
- },
+ "achievementGlobal": {},
  "achievements": [
   {
    "id": 600101,
-   "name": "첫 승리",
-   "type": "Normal",
-   "tags": [],
-   "order": 101,
-   "initialOpen": true,
-   "clientAchievement": false,
-   "condition": "WinGame",
-   "conditionValue1": 500101,
-   "conditionValue2": 0,
-   "targetProgress": 1,
-   "initialProgress": 0,
-   "repeatable": false,
-   "autoReward": true,
-   "rewardAddItemGroups": [
-    {
-     "shouldAddAll": true,
-     "probPercent": 100.0,
-     "addItems": [
-      {
-       "itemDataId": 5,
-       "count": "500"
-      },
-      {
-       "itemDataId": 6,
-       "count": "60"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": 600102,
-   "name": "포자 사냥꾼",
-   "type": "Normal",
-   "tags": [],
-   "order": 102,
-   "initialOpen": true,
-   "clientAchievement": false,
-   "condition": "KillUnitAny",
-   "conditionValue1": 0,
-   "conditionValue2": 0,
-   "targetProgress": 100,
-   "initialProgress": 0,
-   "repeatable": false,
-   "autoReward": true,
-   "rewardAddItemGroups": [
-    {
-     "shouldAddAll": true,
-     "probPercent": 100.0,
-     "addItems": [
-      {
-       "itemDataId": 5,
-       "count": "1200"
-      },
-      {
-       "itemDataId": 200103,
-       "count": "5"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": 600103,
-   "name": "강화석 수집",
-   "type": "Normal",
-   "tags": [],
-   "order": 103,
-   "initialOpen": true,
-   "clientAchievement": false,
-   "condition": "AcquireItem",
-   "conditionValue1": 200103,
-   "conditionValue2": 0,
-   "targetProgress": 10,
-   "initialProgress": 0,
-   "repeatable": false,
-   "autoReward": true,
-   "rewardAddItemGroups": [
-    {
-     "shouldAddAll": true,
-     "probPercent": 100.0,
-     "addItems": [
-      {
-       "itemDataId": 200103,
-       "count": "10"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": 600104,
-   "name": "스킬 수련",
-   "type": "Normal",
-   "tags": [],
-   "order": 104,
-   "initialOpen": true,
-   "clientAchievement": false,
-   "condition": "UseSkill",
-   "conditionValue1": 300101,
-   "conditionValue2": 0,
-   "targetProgress": 20,
-   "initialProgress": 0,
-   "repeatable": false,
-   "autoReward": true,
-   "rewardAddItemGroups": [
-    {
-     "shouldAddAll": true,
-     "probPercent": 100.0,
-     "addItems": [
-      {
-       "itemDataId": 200104,
-       "count": "20"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": 600105,
-   "name": "골드 던전 돌파",
-   "type": "Normal",
-   "tags": [],
-   "order": 105,
-   "initialOpen": true,
-   "clientAchievement": false,
-   "condition": "WinGame",
-   "conditionValue1": 500201,
-   "conditionValue2": 0,
-   "targetProgress": 1,
-   "initialProgress": 0,
-   "repeatable": false,
-   "autoReward": true,
-   "rewardAddItemGroups": [
-    {
-     "shouldAddAll": true,
-     "probPercent": 100.0,
-     "addItems": [
-      {
-       "itemDataId": 5,
-       "count": "3000"
-      },
-      {
-       "itemDataId": 6,
-       "count": "150"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": 600106,
-   "name": "요일 던전 입문",
-   "type": "Normal",
-   "tags": [],
-   "order": 106,
-   "initialOpen": true,
-   "clientAchievement": false,
-   "condition": "WinGame",
-   "conditionValue1": 500301,
-   "conditionValue2": 0,
-   "targetProgress": 1,
-   "initialProgress": 0,
-   "repeatable": false,
-   "autoReward": true,
-   "rewardAddItemGroups": [
-    {
-     "shouldAddAll": true,
-     "probPercent": 100.0,
-     "addItems": [
-      {
-       "itemDataId": 200105,
-       "count": "1"
-      },
-      {
-       "itemDataId": 200503,
-       "count": "1"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": 600107,
-   "name": "레벨 포인트 지급",
+   "name": "스킬 포인트 지급",
    "type": "Normal",
    "tags": [
-    "HideDisplay"
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
    ],
-   "order": 107,
+   "order": 101,
    "initialOpen": true,
    "clientAchievement": false,
    "condition": "LevelUpItem",
@@ -224,7 +26,7 @@
      "probPercent": 100.0,
      "addItems": [
       {
-       "itemDataId": 200107,
+       "itemDataId": 200501,
        "count": "1",
        "isCore": true
       }
@@ -234,403 +36,500 @@
    "popupArgs": {
     "Source": "PlayerLevelUp",
     "PlayerLevelItemDataId": "1",
-    "LevelPointItemDataId": "200107",
-    "GrantPerLevel": "1"
+    "LevelPointItemDataId": "200501",
+    "GrantPerLevel": "1",
+    "SkillTree": "Taskstonebar"
+   }
+  },
+  {
+   "id": 600102,
+   "name": "레벨 5 스킬 해금",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
+   ],
+   "order": 102,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 5,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "popupArgs": {
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "5"
+   }
+  },
+  {
+   "id": 600103,
+   "name": "레벨 8 스킬 해금",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
+   ],
+   "order": 103,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 8,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "popupArgs": {
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "8"
+   }
+  },
+  {
+   "id": 600104,
+   "name": "레벨 12 스킬 해금",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
+   ],
+   "order": 104,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 12,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "popupArgs": {
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "12"
+   }
+  },
+  {
+   "id": 600105,
+   "name": "레벨 15 스킬 해금",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
+   ],
+   "order": 105,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 15,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "popupArgs": {
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "15"
+   }
+  },
+  {
+   "id": 600106,
+   "name": "레벨 20 스킬 해금",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
+   ],
+   "order": 106,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 20,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "popupArgs": {
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "20"
+   }
+  },
+  {
+   "id": 600107,
+   "name": "레벨 25 스킬 해금",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
+   ],
+   "order": 107,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 25,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "popupArgs": {
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "25"
    }
   },
   {
    "id": 600108,
-   "name": "포자초원 1회 돌파",
+   "name": "레벨 30 스킬 해금",
    "type": "Normal",
    "tags": [
-    "Wave"
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
    ],
    "order": 108,
    "initialOpen": true,
    "clientAchievement": false,
-   "condition": "WinWave",
-   "conditionValue1": 500101,
-   "conditionValue2": 0,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 30,
    "targetProgress": 1,
    "initialProgress": 0,
    "repeatable": false,
    "autoReward": true,
    "popupArgs": {
-    "WaveDisplayType": "Normal"
-   },
-   "rewardAddItemGroups": [
-    {
-     "shouldAddAll": true,
-     "probPercent": 100.0,
-     "addItems": [
-      {
-       "itemDataId": 5,
-       "count": "300"
-      },
-      {
-       "itemDataId": 6,
-       "count": "30"
-      }
-     ]
-    }
-   ]
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "30"
+   }
   },
   {
    "id": 600109,
-   "name": "포자초원 3회 돌파",
+   "name": "레벨 35 스킬 해금",
    "type": "Normal",
    "tags": [
-    "Wave"
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
    ],
    "order": 109,
    "initialOpen": true,
    "clientAchievement": false,
-   "condition": "WinWave",
-   "conditionValue1": 500101,
-   "conditionValue2": 0,
-   "targetProgress": 3,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 35,
+   "targetProgress": 1,
    "initialProgress": 0,
    "repeatable": false,
    "autoReward": true,
    "popupArgs": {
-    "WaveDisplayType": "Elite"
-   },
-   "rewardAddItemGroups": [
-    {
-     "shouldAddAll": true,
-     "probPercent": 100.0,
-     "addItems": [
-      {
-       "itemDataId": 5,
-       "count": "900"
-      },
-      {
-       "itemDataId": 6,
-       "count": "90"
-      },
-      {
-       "itemDataId": 200103,
-       "count": "3"
-      }
-     ]
-    }
-   ]
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "35"
+   }
   },
   {
    "id": 600110,
-   "name": "포자초원 5회 돌파",
+   "name": "레벨 40 스킬 해금",
    "type": "Normal",
    "tags": [
-    "Wave"
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
    ],
    "order": 110,
    "initialOpen": true,
    "clientAchievement": false,
-   "condition": "WinWave",
-   "conditionValue1": 500101,
-   "conditionValue2": 0,
-   "targetProgress": 5,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 40,
+   "targetProgress": 1,
    "initialProgress": 0,
    "repeatable": false,
    "autoReward": true,
    "popupArgs": {
-    "WaveDisplayType": "Elite"
-   },
-   "rewardAddItemGroups": [
-    {
-     "shouldAddAll": true,
-     "probPercent": 100.0,
-     "addItems": [
-      {
-       "itemDataId": 5,
-       "count": "1600"
-      },
-      {
-       "itemDataId": 6,
-       "count": "150"
-      },
-      {
-       "itemDataId": 200103,
-       "count": "6"
-      }
-     ]
-    }
-   ]
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "40"
+   }
   },
   {
    "id": 600111,
-   "name": "포자초원 10회 돌파",
+   "name": "레벨 45 스킬 해금",
    "type": "Normal",
    "tags": [
-    "Wave"
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
    ],
    "order": 111,
    "initialOpen": true,
    "clientAchievement": false,
-   "condition": "WinWave",
-   "conditionValue1": 500101,
-   "conditionValue2": 0,
-   "targetProgress": 10,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 45,
+   "targetProgress": 1,
    "initialProgress": 0,
    "repeatable": false,
    "autoReward": true,
    "popupArgs": {
-    "WaveDisplayType": "Boss"
-   },
-   "rewardAddItemGroups": [
-    {
-     "shouldAddAll": true,
-     "probPercent": 100.0,
-     "addItems": [
-      {
-       "itemDataId": 5,
-       "count": "3600"
-      },
-      {
-       "itemDataId": 6,
-       "count": "300"
-      },
-      {
-       "itemDataId": 200103,
-       "count": "12"
-      },
-      {
-       "itemDataId": 200503,
-       "count": "1"
-      }
-     ]
-    }
-   ]
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "45"
+   }
   },
   {
    "id": 600112,
-   "name": "포자초원 20회 돌파",
+   "name": "레벨 50 스킬 해금",
    "type": "Normal",
    "tags": [
-    "Wave"
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
    ],
    "order": 112,
    "initialOpen": true,
    "clientAchievement": false,
-   "condition": "WinWave",
-   "conditionValue1": 500101,
-   "conditionValue2": 0,
-   "targetProgress": 20,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 50,
+   "targetProgress": 1,
    "initialProgress": 0,
    "repeatable": false,
    "autoReward": true,
    "popupArgs": {
-    "WaveDisplayType": "Boss"
-   },
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "50"
+   }
+  },
+  {
+   "id": 600113,
+   "name": "레벨 55 스킬 해금",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
+   ],
+   "order": 113,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 55,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "popupArgs": {
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "55"
+   }
+  },
+  {
+   "id": 600114,
+   "name": "레벨 60 스킬 해금",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
+   ],
+   "order": 114,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 60,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "popupArgs": {
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "60"
+   }
+  },
+  {
+   "id": 600115,
+   "name": "레벨 70 스킬 해금",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
+   ],
+   "order": 115,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 70,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "popupArgs": {
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "70"
+   }
+  },
+  {
+   "id": 600116,
+   "name": "레벨 80 스킬 해금",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
+   ],
+   "order": 116,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 80,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "popupArgs": {
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "80"
+   }
+  },
+  {
+   "id": 600117,
+   "name": "레벨 90 스킬 해금",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
+   ],
+   "order": 117,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 90,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "popupArgs": {
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "90"
+   }
+  },
+  {
+   "id": 600118,
+   "name": "레벨 95 스킬 해금",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
+   ],
+   "order": 118,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 95,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "popupArgs": {
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "95"
+   }
+  },
+  {
+   "id": 600119,
+   "name": "레벨 100 스킬 해금",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "SkillTree",
+    "Taskstonebar"
+   ],
+   "order": 119,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "HasItemLevel",
+   "conditionValue1": 1,
+   "conditionValue2": 100,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": false,
+   "autoReward": true,
+   "popupArgs": {
+    "Source": "SkillTreeLevelGate",
+    "SkillTree": "Taskstonebar",
+    "RequiredPlayerLevel": "100"
+   }
+  },
+  {
+   "id": 600120,
+   "name": "스탯 포인트 지급",
+   "type": "Normal",
+   "tags": [
+    "HideDisplay",
+    "StatGrowth",
+    "Taskstonebar"
+   ],
+   "order": 120,
+   "initialOpen": true,
+   "clientAchievement": false,
+   "condition": "LevelUpItem",
+   "conditionValue1": 1,
+   "conditionValue2": 0,
+   "targetProgress": 1,
+   "initialProgress": 0,
+   "repeatable": true,
+   "autoReward": true,
    "rewardAddItemGroups": [
     {
      "shouldAddAll": true,
      "probPercent": 100.0,
      "addItems": [
       {
-       "itemDataId": 5,
-       "count": "8000"
-      },
-      {
-       "itemDataId": 6,
-       "count": "700"
-      },
-      {
-       "itemDataId": 200103,
-       "count": "24"
-      },
-      {
-       "itemDataId": 200503,
-       "count": "2"
+       "itemDataId": 200569,
+       "count": "3",
+       "isCore": true
       }
      ]
     }
-   ]
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "id": 610000,
-   "initialOpen": true,
-   "clientAchievement": true
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "id": 610001,
-   "initialOpen": true,
-   "clientAchievement": true,
-   "childAchievementDataIds": [
-    610301
-   ]
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "id": 610010,
-   "initialOpen": true,
-   "condition": "WinGame",
-   "conditionValue1": 100001,
-   "parentAchievementDataId": 610011,
-   "progressParentOnComplete": true
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 2,
-   "autoReward": true,
-   "id": 610011,
-   "initialOpen": true,
-   "childAchievementDataIds": [
-    610306
-   ]
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "initialOpen": true,
-   "clientAchievement": true,
-   "childAchievementDataIds": [
-    610102
    ],
-   "id": 610101
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "clientAchievement": true,
-   "childAchievementDataIds": [
-    610103
-   ],
-   "id": 610102
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "clientAchievement": true,
-   "id": 610103
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "condition": "HasItem",
-   "conditionValue1": 1000,
-   "conditionValue2": 16,
-   "childAchievementDataIds": [
-    610302
-   ],
-   "id": 610201
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": false,
-   "condition": "BuyItemProductAction",
-   "conditionValue1": 20801000,
-   "childAchievementDataIds": [
-    610203
-   ],
-   "id": 610202
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "clientAchievement": true,
-   "parentAchievementDataId": 610011,
-   "id": 610203
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "condition": "AcquireItem",
-   "conditionValue1": 1111005,
-   "id": 610204
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "condition": "BuyItemProductAction",
-   "conditionValue1": 20401000,
-   "id": 610205
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "id": 610301,
-   "clientAchievement": true,
-   "childAchievementDataIds": [
-    610201
-   ]
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "id": 610302,
-   "clientAchievement": true,
-   "childAchievementDataIds": [
-    610303
-   ]
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "id": 610303,
-   "clientAchievement": true,
-   "childAchievementDataIds": [
-    610202
-   ]
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "id": 610304,
-   "clientAchievement": true,
-   "childAchievementDataIds": [
-    610305
-   ]
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "id": 610305,
-   "clientAchievement": true,
-   "childAchievementDataIds": [
-    610205
-   ]
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "id": 610306,
-   "clientAchievement": true,
-   "childAchievementDataIds": [
-    610204
-   ]
-  },
-  {
-   "type": "Normal",
-   "targetProgress": 1,
-   "autoReward": true,
-   "id": 610307,
-   "clientAchievement": true,
-   "childAchievementDataIds": [
-    610304
-   ]
+   "popupArgs": {
+    "Source": "PlayerLevelUp",
+    "PlayerLevelItemDataId": "1",
+    "StatPointItemDataId": "200569",
+    "GrantPerLevel": "3",
+    "StatTree": "TaskstonebarStats"
+   }
   }
  ]
 }
