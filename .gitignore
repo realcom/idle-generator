@@ -62,5 +62,13 @@ outputs/
 # ========== Godot editor cache ==========
 **/.godot/
 
+# ========== Godot generated/export artifacts ==========
+harness/runtime/godot-*/builds/
+harness/runtime/godot-*/export_data/
+harness/runtime/godot-*/**/*.import
+harness/runtime/godot-*/*.zip
+harness/runtime/godot-*/**/*.exe
+harness/runtime/godot-*/**/*.app/
+
 # ========== Local server overrides ==========
 **/Config.local.json
