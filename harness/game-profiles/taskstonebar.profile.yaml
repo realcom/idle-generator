@@ -15,10 +15,10 @@ runtime:
   client_shape:
     - taskbar_mode
     - workshop_mode
-  resource_policy: "harness/assets/growstone2/에 보관된 돌키우기1 원작 리소스를 정본 에셋 풀로 우선 사용한다. 신규 리소스 생성은 원작 에셋으로 해결 불가한 런타임/Steam 요구에 한정한다."
+  resource_policy: "assets/growstone2/에 보관된 돌키우기1 원작 리소스를 정본 에셋 풀로 우선 사용한다. harness/assets/growstone2는 구 경로 호환 symlink로만 유지한다. 신규 리소스 생성은 원작 에셋으로 해결 불가한 런타임/Steam 요구에 한정한다."
 
 asset_policy:
-  primary_root: "harness/assets/growstone2/"
+  primary_root: "assets/growstone2/"
   primary_source: "돌키우기1 원작 에셋"
   priority:
     - "원작 에셋 그대로 사용"
@@ -26,10 +26,12 @@ asset_policy:
     - "색상/스케일/9-slice 힌트 같은 비파괴 가공"
     - "기존 감성으로 신규 에셋 생성"
   folders:
-    ui: "harness/assets/growstone2/UI/"
-    unit: "harness/assets/growstone2/unit/"
-    effect: "harness/assets/growstone2/effect/"
-    map: "harness/assets/growstone2/map/"
+    runtime_unit: "assets/growstone2/runtime/units/"
+    raw_ui: "assets/growstone2/raw/original/ui/"
+    raw_unit: "assets/growstone2/raw/original/unit/"
+    effect: "assets/growstone2/effect/"
+    raw_map: "assets/growstone2/raw/original/map/"
+    raw_item: "assets/growstone2/raw/original/item/"
   disallow:
     - "원작 에셋이 있는데 임의의 새 스타일로 대체"
     - "Godot 편의를 위해 픽셀 아트에 블러/안티앨리어싱 적용"
