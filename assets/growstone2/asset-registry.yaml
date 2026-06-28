@@ -1,0 +1,161 @@
+version: 1
+game: taskstonebar
+updated_at: 2026-06-29T00:00:00+09:00
+
+source:
+  name: taskstone-local-prototype
+  path: "/Users/yangjinhwan/Downloads/taskstone (1)/assets/img"
+  license_hint: "Task Stone package.json declares MIT; verify before redistribution."
+  note: "Imported as style/reference and MVP runtime seed assets for Taskstonebar."
+
+collections:
+  - name: growstone2-runtime-unit-sprites
+    prefix: assets/growstone2/runtime/units/
+    type: unit-sprite
+    status: review
+    source: growstone2-legacy-import
+  - name: taskstonebar-derived-monster-variants
+    prefix: assets/growstone2/runtime/units/monsters/taskstonebar_s
+    type: unit-sprite
+    status: review
+    source: growstone2-runtime-unit-sprites
+    note: "60 palette/framing variants for the 10 Taskstonebar combat map themes."
+  - name: taskstone-imported-pixel-ui
+    prefix: assets/growstone2/source/taskstone/
+    type: ui-sprite
+    status: ai-draft
+    source: taskstone-local-prototype
+  - name: taskstone-imported-stone-icons
+    prefix: assets/growstone2/source/taskstone/stone
+    type: item-icon
+    status: ai-draft
+    source: taskstone-local-prototype
+  - name: growstone2-generated-equipment-icons
+    prefix: assets/growstone2/generated/equipment/imagegen/icons/
+    type: item-icon
+    status: ai-draft
+    source: imagegen
+
+assets:
+  taskstonebar_monster_roster:
+    file: runtime/units/monsters/taskstonebar-monster-roster.yaml
+    type: asset-manifest
+    status: review
+    used_by:
+      - unit-series:taskstonebar-main-100
+      - runtime:godot-taskstonebar-combat-strip
+    source: growstone2-runtime-unit-sprites
+    note: "Maps 10 visual themes to 50 normal monster sprites plus 10 boss sprites."
+  stone_keeper_remodel_sheet_a:
+    file: generated/characters/stone_keeper_character_remodel_sheet_a.png
+    source_file: ../../design/taskstonebar/concepts/stone_keeper_character_remodel_sheet_a_source.png
+    type: sprite-sheet-concept
+    dimensions: "2172x724"
+    status: review
+    used_by:
+      - unit:110111
+      - runtime:taskstonebar_bottom_combat_hero
+    note: "Transparent chroma-key extraction from imagegen concept. Needs recut to exact 48x48 or 64x64 frames before runtime replacement."
+  hero_sheet:
+    file: source/taskstone/hero.png
+    type: sprite-sheet
+    dimensions: "528x48"
+    frames: 11
+    frame_size: "48x48"
+    used_by:
+      - unit:110111
+    status: ai-draft
+  panel_frame:
+    file: source/taskstone/frame.png
+    type: nine-slice-source
+    dimensions: "128x128"
+    slice_hint: 30
+    used_by:
+      - ui:status_panel
+      - ui:portal_panel
+      - ui:stone_panel
+    status: ai-draft
+  inner_panel:
+    file: source/taskstone/inner.png
+    type: nine-slice-source
+    dimensions: "128x256"
+    used_by:
+      - ui:panel_body
+    status: ai-draft
+  slot_frame:
+    file: source/taskstone/slot.png
+    type: cell-frame
+    dimensions: "128x128"
+    used_by:
+      - ui:stone_merge_slot
+    status: ai-draft
+  stone_0:
+    file: source/taskstone/stone0.png
+    type: item-icon
+    dimensions: "32x32"
+    used_by:
+      - item:200101
+      - unit:110201
+    status: ai-draft
+  stone_1:
+    file: source/taskstone/stone1.png
+    type: item-icon
+    dimensions: "32x32"
+    used_by:
+      - item:200102
+      - unit:110202
+    status: ai-draft
+  stone_2:
+    file: source/taskstone/stone2.png
+    type: item-icon
+    dimensions: "37x30"
+    used_by:
+      - unit:110501
+    status: ai-draft
+  rock_projectile:
+    file: source/taskstone/rock.png
+    type: projectile-icon
+    dimensions: "32x32"
+    used_by:
+      - skill:300101
+      - item:200201
+    status: ai-draft
+  coin:
+    file: source/taskstone/coin.png
+    type: currency-icon
+    dimensions: "32x32"
+    used_by:
+      - item:5
+    status: ai-draft
+  ruby:
+    file: source/taskstone/ruby.png
+    type: currency-icon
+    dimensions: "32x32"
+    used_by:
+      - item:3
+      - item:4
+      - item:200103
+    status: ai-draft
+  bar_frame:
+    file: source/taskstone/bar_frame.png
+    type: progress-frame
+    dimensions: "192x34"
+    used_by:
+      - ui:hp_bar
+      - ui:exp_bar
+    status: ai-draft
+  bar_fill:
+    file: source/taskstone/bar_fill.png
+    type: progress-fill
+    dimensions: "192x34"
+    used_by:
+      - ui:hp_bar
+      - ui:exp_bar
+    status: ai-draft
+  close_button:
+    file: source/taskstone/close.png
+    type: button-icon
+    dimensions: "112x84"
+    used_by:
+      - ui:close_button
+    status: ai-draft

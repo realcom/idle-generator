@@ -30,7 +30,11 @@ from phaser_asset_audit import (  # noqa: E402
 )
 
 
-DEFAULT_REGISTRY_ROOT = ROOT / "harness" / "assets"
+DEFAULT_REGISTRY_ROOT = ROOT / "assets"
+LEGACY_REGISTRY_ROOT = ROOT / "harness" / "assets"
+GAME_REGISTRY_ALIASES = {
+    "taskstonebar": "growstone2",
+}
 ALLOWED_STATUSES = {"requested", "ai-draft", "review", "approved", "final"}
 RELEASE_STATUSES = {"approved", "final"}
 
@@ -75,9 +79,9 @@ class RegistryAuditResult:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("game", nargs="?", default="mushroomer", help="Game id under harness/build and harness/assets.")
-    parser.add_argument("--registry", help="Path to asset-registry.yaml. Defaults to harness/assets/<game>/asset-registry.yaml.")
-    parser.add_argument("--runtime-dir", default=str(RUNTIME_DIR), help="Runtime directory containing assets/.")
+    parser.add_argument("game", nargs="?", default="mushroomer", help="Game id under harness/build and assets.")
+    parser.add_argument("--registry", help="Path to asset-registry.yaml. Defaults to assets/<game>/asset-registry.yaml, with harness/assets fallback.")
+    parser.add_argument("--runtime-dir", help="Runtime directory containing assets/. Defaults to a game-specific Godot runtime when present, otherwise harness/runtime.")
     parser.add_argument("--build-dir", default=str(BUILD_DIR), help="Build directory containing <game>/*.json.")
     parser.add_argument("--release", action="store_true", help="Require referenced assets to be approved/final.")
     parser.add_argument("--json", action="store_true", help="Print machine-readable JSON.")
@@ -86,11 +90,11 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    registry_path = Path(args.registry).resolve() if args.registry else DEFAULT_REGISTRY_ROOT / args.game / "asset-registry.yaml"
+    registry_path = Path(args.registry).resolve() if args.registry else default_registry_path(args.game)
     result = audit(
         game=args.game,
         registry_path=registry_path,
-        runtime_dir=Path(args.runtime_dir),
+        runtime_dir=Path(args.runtime_dir) if args.runtime_dir else default_runtime_dir(args.game),
         build_dir=Path(args.build_dir),
         release=args.release,
     )
@@ -99,6 +103,26 @@ def main() -> int:
     else:
         print_report(result, release=args.release)
     return 0 if result.ok else 1
+
+
+def default_registry_path(game: str) -> Path:
+    registry_names = [game]
+    alias = GAME_REGISTRY_ALIASES.get(game)
+    if alias and alias not in registry_names:
+        registry_names.append(alias)
+
+    for registry_name in registry_names:
+        registry_path = DEFAULT_REGISTRY_ROOT / registry_name / "asset-registry.yaml"
+        if registry_path.exists():
+            return registry_path
+    return LEGACY_REGISTRY_ROOT / game / "asset-registry.yaml"
+
+
+def default_runtime_dir(game: str) -> Path:
+    game_runtime = ROOT / "harness" / "runtime" / f"godot-{game}"
+    if game_runtime.exists():
+        return game_runtime
+    return RUNTIME_DIR
 
 
 def audit(
