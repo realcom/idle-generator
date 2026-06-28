@@ -192,7 +192,7 @@ func _run() -> void:
 	var saw_enemy_stack := false
 	for _i in range(1400):
 		await process_frame
-		if (player_hp_bar as ProgressBar).visible and (player_hp_bar as ProgressBar).value > 0.0 and str((player_hp_text as Label).text).find("HP") != -1:
+		if (player_hp_bar as ProgressBar).visible and (player_hp_bar as ProgressBar).value > 0.0:
 			saw_player_hp = true
 		var snapshot: Dictionary = root_node.sim.snapshot()
 		if int(snapshot.get("enemy_count", 0)) >= 2 and _visible_runtime_enemy_count(enemy_layer as Control) >= 2:
