@@ -129,18 +129,22 @@ func _assert_shared_chrome(window: Control, title_name: String, close_name: Stri
 		if minimize_button == null or not minimize_button is Button:
 			_fail("minimize button is missing on %s" % str(window.name))
 			return false
-		if (minimize_button as Button).size.x > 44.0 or (minimize_button as Button).size.y > 44.0:
-			_fail("minimize button is not fixed to compact title chrome size on %s" % str(window.name))
+		if _is_visible_control(minimize_button):
+			_fail("minimize button should be hidden by default on %s" % str(window.name))
+			return false
+		if not (minimize_button as Button).disabled:
+			_fail("hidden minimize button should be disabled on %s" % str(window.name))
+			return false
+		if (minimize_button as Button).mouse_filter != Control.MOUSE_FILTER_IGNORE:
+			_fail("hidden minimize button should ignore pointer input on %s" % str(window.name))
 			return false
 		if minimize_button.get_node_or_null("Icon_Close") != null:
 			_fail("minimize button is rendering as a second close button on %s" % str(window.name))
 			return false
-		if not _is_visible_control(minimize_button.get_node_or_null("Line_TitleBarMinimizeGlyph")):
-			_fail("minimize button line glyph is missing on %s" % str(window.name))
-			return false
-		if not _has_button_detail(minimize_button as Button):
-			_fail("minimize button forged detail is missing on %s" % str(window.name))
-			return false
+		for hidden_detail in ["Line_TitleBarMinimizeGlyph", "Line_TitleBarButtonTopHighlight", "Line_TitleBarButtonInnerShadow"]:
+			if _is_visible_control(minimize_button.get_node_or_null(hidden_detail)):
+				_fail("hidden minimize button still has visible detail on %s: %s" % [str(window.name), hidden_detail])
+				return false
 	return true
 
 

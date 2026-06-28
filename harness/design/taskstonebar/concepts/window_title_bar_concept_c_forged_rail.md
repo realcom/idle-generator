@@ -17,7 +17,7 @@
 - Use Variant C as the selected runtime direction: black-iron cap, burgundy plate, gold lower rail, small center crest notch, ruby focus bead, and tiny moss accents.
 - Title text remains a native centered `Label`; generated image text is placeholder only.
 - The close button is a native square icon button on the far right.
-- Optional minimize/collapse button sits directly left of the close button and must not reuse the close icon.
+- Optional minimize/collapse button is hidden by default; only opt-in windows may show it directly left of the close button, and it must not reuse the close icon.
 - Avoid the previous large diagonal hatch, oversized rivets, and crowded help button.
 
 ## UI Direction
@@ -27,7 +27,7 @@ The title bar should read as a compact forged UI rail rather than a decorative b
 ## Implementation Notes
 
 - Implement as native Godot `Control` composition, not a single baked title-bar bitmap.
-- Preserve stable layout constants: 42px title height, 10px inset, 42px close/minimize hit areas, 82px title label side inset.
+- Preserve stable layout constants: 42px title height, 10px inset, 42px close hit area, optional 42px minimize hit area, 82px title label side inset.
 - Runtime atoms:
   - `ProgramTitleBar`
   - `Rect_ProgramTitleBarBurgundyFill`
@@ -55,7 +55,7 @@ The title bar should read as a compact forged UI rail rather than a decorative b
   - `Panel_TitleBarMossAccent2`
   - `Line_TitleBarButtonTopHighlight`
   - `Line_TitleBarButtonInnerShadow`
-  - `Line_TitleBarMinimizeGlyph`
+  - `Line_TitleBarMinimizeGlyph` (opt-in minimize only; absent/hidden by default)
 - Keep text, state labels, title names, and button glyphs runtime-native.
 
 ## Target Runtime Notes

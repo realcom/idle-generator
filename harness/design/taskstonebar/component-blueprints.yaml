@@ -556,10 +556,11 @@ components:
       color_tokens: [panel_outer, panel_mid, panel_inner, title_gold]
 
   WindowTitleBar:
-    role: "Forged burgundy desktop title rail with native centered Korean title, black-iron cap, small crest/ruby focus bead, sparse moss accents, and compact close/minimize controls."
+    role: "Forged burgundy desktop title rail with native centered Korean title, black-iron cap, small crest/ruby focus bead, sparse moss accents, compact close control, and an opt-in minimize control that is hidden by default."
     mode: hybrid
     anatomy: [title_bar_skin, black_iron_cap, iron_endcaps, iron_highlight_shadow, burgundy_plate, plate_highlight_shadow, left_stone_badge, left_stone_chip, gold_bottom_rail, gold_rail_highlight_shadow, gold_tick_marks, center_crest, center_crest_inner, ruby_focus_bead, ruby_bead_glow, moss_accent_pixels, title_label, minimize_button_slot, minimize_line_glyph, close_button_slot, button_inner_lines]
     data_bindings: { title_text: window.title_key, alert_state: window.alert }
+    minimize_policy: "hidden_by_default; opt-in windows may show the minimize slot with a native line glyph."
     box_model:
       min_width_px: 360
       min_height_px: 54
