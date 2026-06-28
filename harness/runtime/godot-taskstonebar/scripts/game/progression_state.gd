@@ -308,6 +308,132 @@ func learn_skill(skill_item_data_id: int, level := 1) -> Dictionary:
 	}
 
 
+func skill_unlock_preview(skill_item_data_id: int, player_level := 1) -> Dictionary:
+	var item: Dictionary = _item(skill_item_data_id)
+	if item.is_empty():
+		return _fail("unknown_skill_item", "Unknown skill itemDataId %d" % int(skill_item_data_id))
+	if str(item.get("category", "")) != "Skill":
+		return _fail("not_skill_item", "Item is not a skill")
+
+	var skill_item_id := int(item.get("id", skill_item_data_id))
+	var safe_player_level := maxi(1, int(player_level))
+	var required_player_level := _skill_required_player_level(item)
+	var required_skill_level := _skill_required_level(item)
+	var required_ids := _skill_required_ids(item)
+	var cost := _skill_unlock_cost(item)
+	var can_afford := _can_afford(cost)
+	var missing_cost := _missing_cost(cost)
+	var required_skills := []
+	var missing_requirements := []
+	var requirements_ready := true
+	var first_error := ""
+	var first_message := ""
+
+	if skills.has(skill_item_id):
+		return {
+			"ok": false,
+			"error": "skill_already_owned",
+			"message": "Skill is already owned",
+			"skill_item_data_id": skill_item_id,
+			"owned": true,
+			"level": int(skills[skill_item_id].get("level", 1)) if typeof(skills[skill_item_id]) == TYPE_DICTIONARY else 1,
+			"max_level": _max_skill_level(item),
+			"player_level": safe_player_level,
+			"required_player_level": required_player_level,
+			"required_skill_level": required_skill_level,
+			"required_skills": required_skills,
+			"missing_requirements": missing_requirements,
+			"cost": cost,
+			"can_afford": true,
+			"missing_cost": [],
+			"requirements_ready": true,
+		}
+
+	if safe_player_level < required_player_level:
+		requirements_ready = false
+		first_error = "player_level_locked"
+		first_message = "Player level %d required" % required_player_level
+		missing_requirements.append({
+			"type": "player_level",
+			"need": required_player_level,
+			"have": safe_player_level,
+		})
+
+	for required_id in required_ids:
+		var required_item: Dictionary = _item(int(required_id))
+		var required_entry: Dictionary = skills[int(required_id)] if skills.has(int(required_id)) and typeof(skills[int(required_id)]) == TYPE_DICTIONARY else {}
+		var current_level := int(required_entry.get("level", 0))
+		var ready := current_level >= required_skill_level
+		var required_summary := {
+			"item_data_id": int(required_id),
+			"name": str(required_item.get("name", str(required_id))),
+			"level": current_level,
+			"required_level": required_skill_level,
+			"ok": ready,
+		}
+		required_skills.append(required_summary)
+		if ready:
+			continue
+		requirements_ready = false
+		var missing_type := "required_skill_level" if current_level > 0 else "required_skill_missing"
+		missing_requirements.append({
+			"type": missing_type,
+			"item_data_id": int(required_id),
+			"name": str(required_item.get("name", str(required_id))),
+			"need": required_skill_level,
+			"have": current_level,
+		})
+		if first_error == "":
+			first_error = missing_type
+			first_message = "%s Lv.%d required" % [str(required_item.get("name", str(required_id))), required_skill_level]
+
+	if not can_afford and first_error == "":
+		first_error = "insufficient_materials"
+		first_message = "Not enough skill unlock materials"
+
+	var ok := requirements_ready and can_afford
+	var result := {
+		"ok": ok,
+		"skill_item_data_id": skill_item_id,
+		"skill_data_id": int(item.get("skillDataId", 0)),
+		"name": str(item.get("name", "")),
+		"owned": false,
+		"level": 0,
+		"max_level": _max_skill_level(item),
+		"player_level": safe_player_level,
+		"required_player_level": required_player_level,
+		"required_skill_level": required_skill_level,
+		"required_skills": required_skills,
+		"missing_requirements": missing_requirements,
+		"requirements_ready": requirements_ready,
+		"cost": cost,
+		"can_afford": can_afford,
+		"missing_cost": missing_cost,
+	}
+	if not ok:
+		result["error"] = first_error
+		result["message"] = first_message
+	return result
+
+
+func unlock_skill(skill_item_data_id: int, player_level := 1) -> Dictionary:
+	var preview := skill_unlock_preview(skill_item_data_id, player_level)
+	if not bool(preview.get("ok", false)):
+		return preview
+	var cost: Array = preview.get("cost", [])
+	_consume_cost(cost)
+	var learned := learn_skill(skill_item_data_id)
+	if not bool(learned.get("ok", false)):
+		return learned
+	return {
+		"ok": true,
+		"skill": learned.get("skill", {}),
+		"preview": preview,
+		"cost": cost,
+		"materials": materials.duplicate(true),
+	}
+
+
 func skill_level_up_preview(skill_item_data_id: int) -> Dictionary:
 	var skill_item_id := int(skill_item_data_id)
 	if not skills.has(skill_item_id):
@@ -553,6 +679,45 @@ func _skill_level_cost(skill_item: Dictionary, current_level: int) -> Array:
 	return result
 
 
+func _skill_unlock_cost(skill_item: Dictionary) -> Array:
+	var popup := _skill_popup(skill_item)
+	var point_item_id := int(str(popup.get("LevelPointItemDataId", "200501")))
+	if point_item_id <= 0:
+		point_item_id = 200501
+	var count := maxi(0, int(str(popup.get("UnlockCostLevelPoint", "0"))))
+	if count <= 0:
+		return []
+	var point_item := _item(point_item_id)
+	return [{
+		"item_data_id": point_item_id,
+		"name": str(point_item.get("name", "Skill Point")),
+		"count": count,
+	}]
+
+
+func _skill_required_ids(skill_item: Dictionary) -> Array:
+	var popup := _skill_popup(skill_item)
+	var ids := _parse_int_list(popup.get("RequiredSkillItemDataIds", ""))
+	if ids.is_empty():
+		ids = _parse_int_list(skill_item.get("requiredItemDataIds", []))
+	return ids
+
+
+func _skill_required_level(skill_item: Dictionary) -> int:
+	var popup := _skill_popup(skill_item)
+	return maxi(0, int(str(popup.get("RequiredSkillLevel", "0"))))
+
+
+func _skill_required_player_level(skill_item: Dictionary) -> int:
+	var popup := _skill_popup(skill_item)
+	return maxi(1, int(str(popup.get("RequiredPlayerLevel", "1"))))
+
+
+func _skill_popup(skill_item: Dictionary) -> Dictionary:
+	var popup = skill_item.get("popupArgs", {})
+	return popup if typeof(popup) == TYPE_DICTIONARY else {}
+
+
 func _skill_effect(skill_item: Dictionary, level: int) -> Dictionary:
 	var skill_id := int(skill_item.get("skillDataId", 0))
 	var skill_def := _skill(skill_id)
@@ -607,12 +772,48 @@ func _can_afford(cost: Array) -> bool:
 	return true
 
 
+func _missing_cost(cost: Array) -> Array:
+	var missing := []
+	for entry in cost:
+		if typeof(entry) != TYPE_DICTIONARY:
+			continue
+		var item_id := int(entry.get("item_data_id", 0))
+		var need := int(entry.get("count", 0))
+		var have := material_count(item_id)
+		if have < need:
+			missing.append({
+				"item_data_id": item_id,
+				"name": str(entry.get("name", "")),
+				"need": need,
+				"have": have,
+			})
+	return missing
+
+
 func _consume_cost(cost: Array) -> void:
 	for entry in cost:
 		if typeof(entry) != TYPE_DICTIONARY:
 			continue
 		var item_id := int(entry.get("item_data_id", 0))
 		materials[item_id] = material_count(item_id) - int(entry.get("count", 0))
+
+
+func _parse_int_list(value) -> Array:
+	var result := []
+	if typeof(value) == TYPE_ARRAY:
+		for entry in value:
+			var parsed := int(entry)
+			if parsed > 0:
+				result.append(parsed)
+		return result
+	var text := str(value).strip_edges()
+	if text == "":
+		return result
+	for token in text.split(",", false):
+		var parsed := int(str(token).strip_edges())
+		if parsed > 0:
+			result.append(parsed)
+	return result
 
 
 func _instances_for_ids(instance_ids: Array) -> Dictionary:

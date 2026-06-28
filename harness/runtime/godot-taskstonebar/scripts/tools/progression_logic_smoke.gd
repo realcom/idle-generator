@@ -21,8 +21,9 @@ func _init() -> void:
 	_smoke_equipment_synthesis(store)
 	_smoke_dynamic_player_level_up(store)
 	_smoke_skill_level_up(store)
+	_smoke_skill_unlock_requirements(store)
 
-	print("progression logic smoke ok: stone synthesis, stone equip loadout, direct loot drops, equipment synthesis, dynamic player level-up, skill level-up")
+	print("progression logic smoke ok: stone synthesis, stone equip loadout, direct loot drops, equipment synthesis, dynamic player level-up, skill unlock/level-up")
 	quit(0)
 
 
@@ -298,6 +299,35 @@ func _smoke_skill_level_up(store) -> void:
 	_assert(int(upgraded.get("skill", {}).get("level", 0)) == 2, "skill did not reach level 2")
 	_assert(state.material_count(200501) == 2, "skill point was not consumed")
 	_assert(float(upgraded.get("effect_after", {}).get("damage_ratio", 0.0)) > float(upgraded.get("effect_before", {}).get("damage_ratio", 0.0)), "skill effect did not increase")
+
+
+func _smoke_skill_unlock_requirements(store) -> void:
+	var state = ProgressionState.new(store)
+	state.add_material(200501, 3)
+	var low_level_preview: Dictionary = state.skill_unlock_preview(200509, 1)
+	_assert(not bool(low_level_preview.get("ok", false)), "branch skill should be locked below player level gate")
+	_assert(str(low_level_preview.get("error", "")) == "player_level_locked", "branch skill should report the player level gate first")
+
+	var missing_parent_preview: Dictionary = state.skill_unlock_preview(200509, 15)
+	_assert(not bool(missing_parent_preview.get("ok", false)), "branch skill should require parent skill ownership")
+	_assert(str(missing_parent_preview.get("error", "")) == "required_skill_missing", "missing parent skill was not reported")
+
+	state.learn_skill(200503, 2)
+	var parent_level_preview: Dictionary = state.skill_unlock_preview(200509, 15)
+	_assert(not bool(parent_level_preview.get("ok", false)), "branch skill should require parent skill level")
+	_assert(str(parent_level_preview.get("error", "")) == "required_skill_level", "parent skill level gate was not reported")
+
+	state.learn_skill(200503, 3)
+	var ready_preview: Dictionary = state.skill_unlock_preview(200509, 15)
+	_assert(bool(ready_preview.get("ok", false)), "branch skill should unlock when level, parent level, and SP are ready")
+	_assert(int(ready_preview.get("required_player_level", 0)) == 15, "unlock preview lost the player level requirement")
+	_assert(int(ready_preview.get("required_skill_level", 0)) == 3, "unlock preview lost the parent skill level requirement")
+	_assert(int(ready_preview.get("cost", [])[0].get("count", 0)) == 2, "unlock preview lost the SP cost")
+
+	var unlocked: Dictionary = state.unlock_skill(200509, 15)
+	_assert(bool(unlocked.get("ok", false)), "unlock_skill failed after ready preview")
+	_assert(int(unlocked.get("skill", {}).get("level", 0)) == 1, "unlocked branch skill should start at level 1")
+	_assert(state.material_count(200501) == 1, "unlock_skill did not consume the branch unlock SP cost")
 
 
 func _has_instance_with_item(snapshot: Dictionary, item_data_id: int) -> bool:

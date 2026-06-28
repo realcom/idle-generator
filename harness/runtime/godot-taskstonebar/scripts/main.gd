@@ -2971,30 +2971,22 @@ func _runtime_learn_selected_skill() -> void:
 		_refresh_generated_overlay_now()
 		return
 	var item: Dictionary = store.get_item(generated_selected_skill_item_id) if store != null else {}
-	var snapshot := _progression_snapshot()
-	var skills: Dictionary = snapshot.get("skills", {}) if typeof(snapshot.get("skills", {})) == TYPE_DICTIONARY else {}
-	if _runtime_skill_level(generated_selected_skill_item_id, skills) > 0:
-		generated_action_message = "이미 학습한 스킬입니다"
+	var preview: Dictionary = progression.skill_unlock_preview(generated_selected_skill_item_id, _runtime_player_level())
+	if not bool(preview.get("ok", false)):
+		generated_action_message = "스킬 학습 불가: %s" % _runtime_skill_preview_reason(preview)
 		_refresh_generated_overlay_now()
 		return
-	if not _runtime_skill_requirements_ready(item, skills):
-		generated_action_message = "스킬 잠김: 선행 노드 %s 필요" % _runtime_skill_requirement_names(item)
-		_refresh_generated_overlay_now()
-		return
-	var cost := _runtime_skill_unlock_cost(item)
-	if progression.material_count(200501) < cost:
-		generated_action_message = "스킬 포인트 부족: %d SP 필요" % cost
-		_refresh_generated_overlay_now()
-		return
-	var result: Dictionary = progression.learn_skill(generated_selected_skill_item_id)
+	var result: Dictionary = progression.unlock_skill(generated_selected_skill_item_id, _runtime_player_level())
 	if not bool(result.get("ok", false)):
-		generated_action_message = "스킬 학습 실패: %s" % str(result.get("message", result.get("error", "")))
+		generated_action_message = "스킬 학습 실패: %s" % _runtime_skill_preview_reason(result)
 		_refresh_generated_overlay_now()
 		return
-	if cost > 0:
-		progression.materials[200501] = maxi(0, progression.material_count(200501) - cost)
 	var skill: Dictionary = result.get("skill", {}) if typeof(result.get("skill", {})) == TYPE_DICTIONARY else {}
-	generated_action_message = "스킬 학습: %s Lv.%d" % [str(skill.get("name", item.get("name", "스킬"))), int(skill.get("level", 1))]
+	generated_action_message = "스킬 학습: %s Lv.%d | %s" % [
+		str(skill.get("name", item.get("name", "스킬"))),
+		int(skill.get("level", 1)),
+		_runtime_skill_cost_label(result.get("cost", [])),
+	]
 	_refresh_generated_overlay_now()
 
 
@@ -3009,6 +3001,8 @@ func _runtime_level_selected_skill() -> void:
 			generated_action_message = "스킬 레벨업: 먼저 학습 필요"
 		elif str(result.get("error", "")) == "skill_max_level":
 			generated_action_message = "스킬 레벨업: 최대 레벨"
+		elif str(result.get("error", "")) == "insufficient_materials":
+			generated_action_message = "스킬 레벨업 불가: %s" % _runtime_skill_cost_missing_label(result.get("missing", []))
 		else:
 			generated_action_message = "스킬 레벨업 실패: %s" % str(result.get("message", result.get("error", "")))
 		_refresh_generated_overlay_now()
@@ -3276,9 +3270,11 @@ func _sync_runtime_skill_tree_window(model: Dictionary) -> void:
 	var skills: Dictionary = progression_snapshot.get("skills", {}) if typeof(progression_snapshot.get("skills", {})) == TYPE_DICTIONARY else {}
 	var materials: Dictionary = progression_snapshot.get("materials", {}) if typeof(progression_snapshot.get("materials", {})) == TYPE_DICTIONARY else {}
 	var points := int(materials.get(200501, 0))
+	var player_level := _runtime_player_level()
 	var summary: Variant = generated_runtime_nodes.get("skill_tree_summary", null)
 	if summary != null and summary is Label:
-		(summary as Label).text = "SkillTree: Taskstonebar | SP %d | 신규 노드 %d | %s" % [
+		(summary as Label).text = "SkillTree: Taskstonebar | Lv.%d | SP %d | 신규 노드 %d | %s" % [
+			player_level,
 			points,
 			RUNTIME_SKILL_TREE_ITEM_IDS.size(),
 			"Taskbar mode" if generated_taskbar_mode else "Workshop mode",
@@ -3290,19 +3286,13 @@ func _sync_runtime_skill_tree_window(model: Dictionary) -> void:
 		var item: Dictionary = store.get_item(int(item_id)) if store != null else {}
 		var level := _runtime_skill_level(int(item_id), skills)
 		var max_level := _runtime_skill_max_level(item)
-		var ready := _runtime_skill_requirements_ready(item, skills)
 		var selected := int(item_id) == generated_selected_skill_item_id
-		(button as Button).text = "%s\n%d/%d" % [_runtime_skill_short_name(item), level, max_level]
+		var unlock_preview: Dictionary = _runtime_skill_unlock_preview(int(item_id), player_level)
+		var level_preview: Dictionary = _runtime_skill_level_preview(int(item_id))
+		(button as Button).text = _runtime_skill_node_text(item, level, max_level, unlock_preview)
 		(button as Button).disabled = false
-		(button as Button).tooltip_text = _runtime_skill_tooltip(item, level, ready, points)
-		if selected:
-			(button as Button).modulate = Color(1.22, 1.1, 0.72, 1.0)
-		elif level > 0:
-			(button as Button).modulate = Color(0.88, 1.12, 0.92, 1.0)
-		elif ready:
-			(button as Button).modulate = Color(1.0, 0.92, 0.72, 0.96)
-		else:
-			(button as Button).modulate = Color(0.48, 0.48, 0.48, 0.72)
+		(button as Button).tooltip_text = _runtime_skill_tooltip(item, level, unlock_preview, level_preview, points, player_level)
+		(button as Button).modulate = _runtime_skill_node_modulate(level, max_level, unlock_preview, level_preview, selected)
 	_sync_runtime_skill_tree_footer(points, skills)
 
 
@@ -3313,22 +3303,26 @@ func _sync_runtime_skill_tree_footer(points: int, skills: Dictionary) -> void:
 	var item: Dictionary = store.get_item(generated_selected_skill_item_id) if store != null else {}
 	var level := _runtime_skill_level(generated_selected_skill_item_id, skills)
 	var max_level := _runtime_skill_max_level(item)
-	var ready := _runtime_skill_requirements_ready(item, skills)
-	var cost := _runtime_skill_unlock_cost(item)
+	var player_level := _runtime_player_level()
+	var unlock_preview: Dictionary = _runtime_skill_unlock_preview(generated_selected_skill_item_id, player_level)
+	var level_preview: Dictionary = _runtime_skill_level_preview(generated_selected_skill_item_id)
 	if footer != null and footer is Label:
 		var skill: Dictionary = store.get_skill(int(item.get("skillDataId", 0))) if store != null else {}
-		(footer as Label).text = "%s | Lv %d/%d | CD %.1fs | 선행 %s | 학습 %dSP" % [
-			str(item.get("name", "Skill %d" % generated_selected_skill_item_id)),
+		var label := footer as Label
+		label.text = "%s | Lv %d/%d | CD %.1fs | %s" % [
+			_runtime_skill_short_name(item),
 			level,
 			max_level,
 			float(skill.get("cooldown", 0.0)),
-			_runtime_skill_requirement_names(item),
-			cost,
+			_runtime_skill_preview_reason(unlock_preview) if level <= 0 else _runtime_skill_level_status_text(level_preview, level, max_level),
 		]
+		label.tooltip_text = _runtime_skill_tooltip(item, level, unlock_preview, level_preview, points, player_level)
 	if learn_button != null and learn_button is Button:
-		(learn_button as Button).disabled = level > 0 or not ready or points < cost
+		(learn_button as Button).disabled = level > 0 or not bool(unlock_preview.get("ok", false))
+		(learn_button as Button).tooltip_text = _runtime_skill_preview_reason(unlock_preview)
 	if level_button != null and level_button is Button:
-		(level_button as Button).disabled = level <= 0 or level >= max_level
+		(level_button as Button).disabled = level <= 0 or level >= max_level or not bool(level_preview.get("ok", false)) or not bool(level_preview.get("can_afford", false))
+		(level_button as Button).tooltip_text = _runtime_skill_level_status_text(level_preview, level, max_level)
 
 
 func _runtime_skill_level(item_id: int, skills: Dictionary) -> int:
@@ -3356,9 +3350,19 @@ func _runtime_skill_unlock_cost(item: Dictionary) -> int:
 	return maxi(0, int(str(popup.get("UnlockCostLevelPoint", "0"))))
 
 
-func _runtime_skill_requirements_ready(item: Dictionary, skills: Dictionary) -> bool:
+func _runtime_skill_unlock_point_item_id(item: Dictionary) -> int:
+	var popup: Dictionary = item.get("popupArgs", {}) if typeof(item.get("popupArgs", {})) == TYPE_DICTIONARY else {}
+	var point_item_id := int(str(popup.get("LevelPointItemDataId", "200501")))
+	return 200501 if point_item_id <= 0 else point_item_id
+
+
+func _runtime_skill_requirements_ready(item: Dictionary, skills: Dictionary, player_level := -1) -> bool:
+	var safe_player_level := _runtime_player_level() if int(player_level) < 0 else int(player_level)
+	if safe_player_level < _runtime_skill_required_player_level(item):
+		return false
+	var required_level := _runtime_skill_required_level(item)
 	for required_id in _runtime_skill_required_ids(item):
-		if not skills.has(int(required_id)):
+		if _runtime_skill_level(int(required_id), skills) < required_level:
 			return false
 	return true
 
@@ -3371,14 +3375,31 @@ func _runtime_skill_required_ids(item: Dictionary) -> Array:
 	return ids
 
 
+func _runtime_skill_required_level(item: Dictionary) -> int:
+	var popup: Dictionary = item.get("popupArgs", {}) if typeof(item.get("popupArgs", {})) == TYPE_DICTIONARY else {}
+	return maxi(0, int(str(popup.get("RequiredSkillLevel", "0"))))
+
+
+func _runtime_skill_required_player_level(item: Dictionary) -> int:
+	var popup: Dictionary = item.get("popupArgs", {}) if typeof(item.get("popupArgs", {})) == TYPE_DICTIONARY else {}
+	return maxi(1, int(str(popup.get("RequiredPlayerLevel", "1"))))
+
+
 func _runtime_skill_requirement_names(item: Dictionary) -> String:
 	var ids := _runtime_skill_required_ids(item)
-	if ids.is_empty():
-		return "없음"
 	var names := []
+	var required_level := _runtime_skill_required_level(item)
 	for required_id in ids:
 		var required_item: Dictionary = store.get_item(int(required_id)) if store != null else {}
-		names.append(str(required_item.get("name", str(required_id))))
+		if required_level > 0:
+			names.append("%s Lv.%d" % [str(required_item.get("name", str(required_id))), required_level])
+		else:
+			names.append(str(required_item.get("name", str(required_id))))
+	var required_player_level := _runtime_skill_required_player_level(item)
+	if required_player_level > 1:
+		names.append("플레이어 Lv.%d" % required_player_level)
+	if names.is_empty():
+		return "없음"
 	return ", ".join(names)
 
 
@@ -3391,15 +3412,162 @@ func _runtime_skill_short_name(item: Dictionary) -> String:
 	return item_name
 
 
-func _runtime_skill_tooltip(item: Dictionary, level: int, ready: bool, points: int) -> String:
-	var cost := _runtime_skill_unlock_cost(item)
+func _runtime_skill_unlock_preview(item_id: int, player_level: int) -> Dictionary:
+	if progression == null:
+		return {
+			"ok": false,
+			"error": "progression_missing",
+			"message": "진행 상태가 준비되지 않음",
+			"skill_item_data_id": int(item_id),
+		}
+	return progression.skill_unlock_preview(int(item_id), player_level)
+
+
+func _runtime_skill_level_preview(item_id: int) -> Dictionary:
+	if progression == null:
+		return {"ok": false, "error": "progression_missing", "message": "진행 상태가 준비되지 않음"}
+	return progression.skill_level_up_preview(int(item_id))
+
+
+func _runtime_skill_node_text(item: Dictionary, level: int, max_level: int, unlock_preview: Dictionary) -> String:
+	var second_line := "%d/%d" % [level, max_level]
 	if level > 0:
-		return "%s Lv.%d / 레벨업 가능" % [str(item.get("name", "스킬")), level]
-	if not ready:
-		return "%s / 선행: %s" % [str(item.get("name", "스킬")), _runtime_skill_requirement_names(item)]
-	if points < cost:
-		return "%s / SP %d 필요" % [str(item.get("name", "스킬")), cost]
-	return "%s / 학습 가능" % str(item.get("name", "스킬"))
+		return "%s\n%s" % [_runtime_skill_short_name(item), second_line]
+	if bool(unlock_preview.get("ok", false)):
+		second_line = "학습"
+	else:
+		match str(unlock_preview.get("error", "")):
+			"player_level_locked":
+				second_line = "Lv%d" % int(unlock_preview.get("required_player_level", _runtime_skill_required_player_level(item)))
+			"required_skill_missing", "required_skill_level":
+				second_line = "선행"
+			"insufficient_materials":
+				second_line = "SP%d" % _runtime_skill_unlock_cost(item)
+			"skill_already_owned":
+				second_line = "%d/%d" % [int(unlock_preview.get("level", level)), max_level]
+			_:
+				second_line = "잠김"
+	return "%s\n%s" % [_runtime_skill_short_name(item), second_line]
+
+
+func _runtime_skill_node_modulate(level: int, max_level: int, unlock_preview: Dictionary, level_preview: Dictionary, selected: bool) -> Color:
+	if selected:
+		return Color(1.22, 1.1, 0.72, 1.0)
+	if level > 0 and level >= max_level:
+		return Color(0.74, 1.02, 0.96, 1.0)
+	if level > 0:
+		return Color(0.88, 1.12, 0.92, 1.0) if bool(level_preview.get("can_afford", false)) else Color(0.72, 0.92, 0.78, 0.92)
+	if bool(unlock_preview.get("ok", false)):
+		return Color(1.0, 0.92, 0.72, 0.98)
+	match str(unlock_preview.get("error", "")):
+		"insufficient_materials":
+			return Color(0.78, 0.64, 0.48, 0.86)
+		"player_level_locked":
+			return Color(0.48, 0.58, 0.68, 0.72)
+		_:
+			return Color(0.48, 0.48, 0.48, 0.72)
+
+
+func _runtime_skill_tooltip(item: Dictionary, level: int, unlock_preview: Dictionary, level_preview: Dictionary, points: int, player_level: int) -> String:
+	var lines := [
+		str(item.get("name", "스킬")),
+		"플레이어 Lv.%d / 보유 SP %d" % [player_level, points],
+		"요구: %s" % _runtime_skill_requirement_names(item),
+	]
+	if level > 0:
+		lines.append("스킬 Lv.%d/%d" % [level, _runtime_skill_max_level(item)])
+		lines.append(_runtime_skill_level_status_text(level_preview, level, _runtime_skill_max_level(item)))
+	else:
+		lines.append("학습 비용: %s" % _runtime_skill_unlock_cost_label(item))
+		lines.append("상태: %s" % _runtime_skill_preview_reason(unlock_preview))
+	return "\n".join(lines)
+
+
+func _runtime_skill_preview_reason(preview: Dictionary) -> String:
+	if bool(preview.get("ok", false)):
+		return "학습 가능"
+	match str(preview.get("error", "")):
+		"skill_already_owned":
+			return "이미 학습함"
+		"player_level_locked":
+			return "플레이어 Lv.%d 필요" % int(preview.get("required_player_level", 1))
+		"required_skill_missing", "required_skill_level":
+			return _runtime_skill_requirement_missing_label(preview)
+		"insufficient_materials":
+			return _runtime_skill_cost_missing_label(preview.get("missing_cost", []))
+		"progression_missing":
+			return "진행 상태 준비 중"
+	var message := str(preview.get("message", "잠김"))
+	return message if message != "" else "잠김"
+
+
+func _runtime_skill_requirement_missing_label(preview: Dictionary) -> String:
+	var missing = preview.get("missing_requirements", [])
+	if typeof(missing) == TYPE_ARRAY:
+		for entry in missing:
+			if typeof(entry) != TYPE_DICTIONARY:
+				continue
+			if str(entry.get("type", "")) == "player_level":
+				return "플레이어 Lv.%d 필요" % int(entry.get("need", 1))
+			return "%s Lv.%d 필요" % [
+				str(entry.get("name", "선행 스킬")),
+				int(entry.get("need", 1)),
+			]
+	return "선행 조건 필요"
+
+
+func _runtime_skill_level_status_text(preview: Dictionary, level: int, max_level: int) -> String:
+	if level <= 0:
+		return "먼저 학습 필요"
+	if level >= max_level:
+		return "최대 레벨"
+	if not bool(preview.get("ok", false)):
+		return str(preview.get("message", preview.get("error", "레벨업 불가")))
+	if not bool(preview.get("can_afford", false)):
+		return _runtime_skill_cost_missing_label(preview.get("missing", []))
+	return "레벨업 가능: %s" % _runtime_skill_cost_label(preview.get("cost", []))
+
+
+func _runtime_skill_unlock_cost_label(item: Dictionary) -> String:
+	var cost := _runtime_skill_unlock_cost(item)
+	if cost <= 0:
+		return "무료"
+	var point_item: Dictionary = store.get_item(_runtime_skill_unlock_point_item_id(item)) if store != null else {}
+	return "%s %d" % [str(point_item.get("name", "SP")), cost]
+
+
+func _runtime_skill_cost_label(cost) -> String:
+	if typeof(cost) != TYPE_ARRAY or cost.is_empty():
+		return "무료"
+	var labels := []
+	for entry in cost:
+		if typeof(entry) != TYPE_DICTIONARY:
+			continue
+		labels.append("%s %d" % [str(entry.get("name", "재료")), int(entry.get("count", 0))])
+	return ", ".join(labels) if not labels.is_empty() else "무료"
+
+
+func _runtime_skill_cost_missing_label(missing) -> String:
+	if typeof(missing) != TYPE_ARRAY or missing.is_empty():
+		return "재료 부족"
+	var labels := []
+	for entry in missing:
+		if typeof(entry) != TYPE_DICTIONARY:
+			continue
+		labels.append("%s %d/%d" % [
+			str(entry.get("name", "재료")),
+			int(entry.get("have", 0)),
+			int(entry.get("need", 0)),
+		])
+	return "부족: %s" % ", ".join(labels)
+
+
+func _runtime_player_level() -> int:
+	if sim != null:
+		var snapshot: Dictionary = sim.snapshot()
+		var player: Dictionary = snapshot.get("player", {}) if typeof(snapshot.get("player", {})) == TYPE_DICTIONARY else {}
+		return maxi(1, int(player.get("level", 1)))
+	return 1
 
 
 func _parse_int_list(value) -> Array:

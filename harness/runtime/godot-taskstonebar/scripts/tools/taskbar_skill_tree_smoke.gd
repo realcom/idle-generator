@@ -115,12 +115,36 @@ func _run() -> void:
 		_fail("skill tree learn button is missing")
 		return
 	if not (learn_button as Button).disabled:
-		(learn_button as Button).pressed.emit()
-		for _i in range(8):
-			await process_frame
-		if str((stone_throw_level as Label).text) == initial_stone_throw_text or str((stone_throw_level as Label).text).find("1/") == -1:
-			_fail("status window skill slot did not update after learning a real progression skill")
-			return
+		_fail("skill tree learn button should start locked by player/parent-skill requirements")
+		return
+	var learn_tooltip := str((learn_button as Button).tooltip_text)
+	if learn_tooltip.find("Lv.") == -1:
+		_fail("skill tree learn button tooltip does not expose the level/skill gate")
+		return
+	for _level_step in range(14):
+		var player: Dictionary = root_node.sim.snapshot().get("player", {})
+		var required_exp := int(player.get("required_exp", 0))
+		if required_exp <= 0:
+			break
+		root_node.sim._add_reward_item({"itemDataId": 1, "exp": required_exp})
+	root_node.progression.learn_skill(200503, 3)
+	for _i in range(8):
+		await process_frame
+	if int(root_node.sim.snapshot().get("player", {}).get("level", 0)) < 15:
+		_fail("skill tree smoke setup did not reach the first branch player level gate")
+		return
+	if (learn_button as Button).disabled:
+		_fail("skill tree learn button did not unlock after meeting player/parent-skill requirements")
+		return
+	(learn_button as Button).pressed.emit()
+	for _i in range(8):
+		await process_frame
+	if str((stone_throw_level as Label).text) == initial_stone_throw_text or str((stone_throw_level as Label).text).find("1/") == -1:
+		_fail("status window skill slot did not update after learning a real progression skill")
+		return
+	root_node.sim.start(int(root_node.sim.snapshot().get("map_id", 500101)))
+	for _i in range(8):
+		await process_frame
 
 	var player_hp_bar := overlay.get_node_or_null("Section_BottomCombatStrip/Progress_RuntimePlayerHp")
 	var player_hp_text := overlay.get_node_or_null("Section_BottomCombatStrip/Text_RuntimePlayerHp")
@@ -180,7 +204,16 @@ func _run() -> void:
 		_fail("combat simulation did not advance while windows were hidden")
 		return
 	if not saw_player_hp:
-		_fail("player hp did not become visible on the combat strip")
+		var snapshot: Dictionary = root_node.sim.snapshot()
+		var player: Dictionary = snapshot.get("player", {})
+		_fail("player hp did not become visible on the combat strip: bar_visible=%s value=%.3f player_hp=%.1f max=%.1f running=%s result=%s" % [
+			str((player_hp_bar as ProgressBar).visible),
+			float((player_hp_bar as ProgressBar).value),
+			float(player.get("hp", 0.0)),
+			float(player.get("max_hp", 0.0)),
+			str(snapshot.get("running", false)),
+			str(snapshot.get("result", "")),
+		])
 		return
 	if not saw_enemy_stack:
 		_fail("multiple runtime enemies were not visible on the combat strip")
