@@ -10,7 +10,7 @@
 
 ## 2. Visual Slice
 
-- Primary asset root: `harness/assets/growstone2/`.
+- Primary asset root: `assets/growstone2/`.
 - Use the original 돌키우기1 assets first:
   - `UI/` for popup/tab/button/slot/shop frames
   - `unit/` for original unit and character references

@@ -1,18 +1,17 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Theme" path="res://themes/generated/taskstonebar_full_ui_overlay.tres" id="1_theme"]
 [ext_resource type="Texture2D" path="res://assets/generated/ui/window_frame_9slice.png" id="2_tex"]
 [ext_resource type="Texture2D" path="res://assets/generated/ui/window_title_bar_9slice.png" id="3_tex"]
-[ext_resource type="Texture2D" path="res://assets/generated/ui/window_ornament_set.png" id="4_tex"]
-[ext_resource type="Texture2D" path="res://assets/generated/ui/dark_inner_well_9slice.png" id="5_tex"]
-[ext_resource type="Texture2D" path="res://assets/generated/ui/status_stat_card_9slice.png" id="6_tex"]
-[ext_resource type="Texture2D" path="res://assets/generated/ui/slot_frame_9slice.png" id="7_tex"]
-[ext_resource type="Texture2D" path="res://assets/generated/ui/stone_icon_set.png" id="8_tex"]
-[ext_resource type="Texture2D" path="res://assets/generated/ui/resource_icon_set.png" id="9_tex"]
-[ext_resource type="Texture2D" path="res://assets/generated/ui/stone_keeper_sheet.png" id="10_tex"]
-[ext_resource type="Texture2D" path="res://assets/generated/ui/portal_parchment_map.png" id="11_tex"]
-[ext_resource type="Texture2D" path="res://assets/generated/ui/combat_ground_strip.png" id="12_tex"]
-[ext_resource type="Texture2D" path="res://assets/generated/ui/rare_drop_toast_9slice.png" id="13_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/dark_inner_well_9slice.png" id="4_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/status_stat_card_9slice.png" id="5_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/slot_frame_9slice.png" id="6_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/stone_icon_set.png" id="7_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/resource_icon_set.png" id="8_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/stone_keeper_sheet.png" id="9_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/portal_parchment_map.png" id="10_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/combat_ground_strip.png" id="11_tex"]
+[ext_resource type="Texture2D" path="res://assets/generated/ui/rare_drop_toast_9slice.png" id="12_tex"]
 
 [node name="Root_TaskstonebarFullUiOverlay" type="Control"]
 layout_mode = 3
@@ -70,11 +69,11 @@ metadata/component = "WindowFrame"
 
 [node name="Panel_StatusWindowFrame" type="NinePatchRect" parent="Section_WindowStack"]
 layout_mode = 0
-offset_left = 37.0
-offset_top = 103.0
-offset_right = 495.0
-offset_bottom = 677.0
-custom_minimum_size = Vector2(458.0, 574.0)
+offset_left = 225.0
+offset_top = 72.0
+offset_right = 663.0
+offset_bottom = 632.0
+custom_minimum_size = Vector2(438.0, 560.0)
 texture = ExtResource("2_tex")
 patch_margin_left = 30.0
 patch_margin_right = 30.0
@@ -86,11 +85,11 @@ metadata/asset_key = "taskstonebar.ui.window_frame_9slice"
 
 [node name="Panel_StatusTitleBar" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame"]
 layout_mode = 0
-offset_left = 20.0
-offset_top = 12.0
-offset_right = 438.0
-offset_bottom = 66.0
-custom_minimum_size = Vector2(418.0, 54.0)
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 428.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(418.0, 42.0)
 texture = ExtResource("3_tex")
 patch_margin_left = 26.0
 patch_margin_right = 26.0
@@ -100,28 +99,14 @@ metadata/atom = "NinePatchPanel"
 metadata/component = "WindowTitleBar"
 metadata/asset_key = "taskstonebar.ui.window_title_bar_9slice"
 
-[node name="Tex_StatusWindowOrnament" type="TextureRect" parent="Section_WindowStack/Panel_StatusWindowFrame"]
-layout_mode = 0
-offset_left = 126.0
-offset_top = -30.0
-offset_right = 332.0
-offset_bottom = 46.0
-custom_minimum_size = Vector2(206.0, 76.0)
-expand_mode = 1
-stretch_mode = 5
-texture = ExtResource("4_tex")
-metadata/atom = "TextureAtom"
-metadata/component = "WindowFrame"
-metadata/asset_key = "taskstonebar.ui.window_ornament_set"
-
 [node name="Panel_StatusBodyWell" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame"]
 layout_mode = 0
-offset_left = 18.0
-offset_top = 72.0
-offset_right = 440.0
-offset_bottom = 556.0
-custom_minimum_size = Vector2(422.0, 484.0)
-texture = ExtResource("5_tex")
+offset_left = 14.0
+offset_top = 58.0
+offset_right = 424.0
+offset_bottom = 544.0
+custom_minimum_size = Vector2(410.0, 486.0)
+texture = ExtResource("4_tex")
 patch_margin_left = 22.0
 patch_margin_right = 22.0
 patch_margin_top = 22.0
@@ -132,11 +117,11 @@ metadata/asset_key = "taskstonebar.ui.dark_inner_well_9slice"
 
 [node name="Text_StatusTitle" type="Label" parent="Section_WindowStack/Panel_StatusWindowFrame"]
 layout_mode = 0
-offset_left = 120.0
-offset_top = 18.0
-offset_right = 340.0
-offset_bottom = 52.0
-custom_minimum_size = Vector2(220.0, 34.0)
+offset_left = 56.0
+offset_top = 12.0
+offset_right = 382.0
+offset_bottom = 42.0
+custom_minimum_size = Vector2(326.0, 30.0)
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "스테이터스"
@@ -149,10 +134,10 @@ metadata/font_size = 25.0
 
 [node name="Btn_StatusClose" type="Button" parent="Section_WindowStack/Panel_StatusWindowFrame"]
 layout_mode = 0
-offset_left = 404.0
-offset_top = 20.0
-offset_right = 446.0
-offset_bottom = 62.0
+offset_left = 392.0
+offset_top = 14.0
+offset_right = 434.0
+offset_bottom = 56.0
 custom_minimum_size = Vector2(42.0, 42.0)
 flat = true
 text = ""
@@ -162,12 +147,12 @@ metadata/button_role = "window_close"
 
 [node name="Panel_StatusStatScroll" type="NinePatchRect" parent="Section_WindowStack/Panel_StatusWindowFrame"]
 layout_mode = 0
-offset_left = 24.0
-offset_top = 76.0
-offset_right = 434.0
-offset_bottom = 230.0
-custom_minimum_size = Vector2(410.0, 154.0)
-texture = ExtResource("6_tex")
+offset_left = 20.0
+offset_top = 64.0
+offset_right = 418.0
+offset_bottom = 212.0
+custom_minimum_size = Vector2(398.0, 148.0)
+texture = ExtResource("5_tex")
 patch_margin_left = 14.0
 patch_margin_right = 14.0
 patch_margin_top = 14.0
@@ -461,11 +446,11 @@ metadata/font_size = 20.0
 
 [node name="Panel_SkillPointHeader" type="Control" parent="Section_WindowStack/Panel_StatusWindowFrame"]
 layout_mode = 0
-offset_left = 82.0
-offset_top = 244.0
-offset_right = 376.0
-offset_bottom = 284.0
-custom_minimum_size = Vector2(294.0, 40.0)
+offset_left = 72.0
+offset_top = 224.0
+offset_right = 366.0
+offset_bottom = 260.0
+custom_minimum_size = Vector2(294.0, 36.0)
 metadata/atom = "SectionGroup"
 metadata/component = "SkillPointHeader"
 
@@ -474,8 +459,8 @@ layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
 offset_right = 294.0
-offset_bottom = 40.0
-custom_minimum_size = Vector2(294.0, 40.0)
+offset_bottom = 36.0
+custom_minimum_size = Vector2(294.0, 36.0)
 metadata/atom = "NativePanel"
 metadata/component = "SkillPointHeader"
 metadata/color_token = "panel_inner"
@@ -516,11 +501,11 @@ metadata/font_size = 18.0
 
 [node name="Section_SkillTree" type="Control" parent="Section_WindowStack/Panel_StatusWindowFrame"]
 layout_mode = 0
-offset_left = 24.0
-offset_top = 296.0
-offset_right = 434.0
-offset_bottom = 544.0
-custom_minimum_size = Vector2(410.0, 248.0)
+offset_left = 22.0
+offset_top = 274.0
+offset_right = 418.0
+offset_bottom = 524.0
+custom_minimum_size = Vector2(396.0, 250.0)
 metadata/atom = "SectionGroup"
 metadata/component = "StatusWindow"
 
@@ -639,7 +624,7 @@ offset_top = 0.0
 offset_right = 58.0
 offset_bottom = 58.0
 custom_minimum_size = Vector2(58.0, 58.0)
-texture = ExtResource("7_tex")
+texture = ExtResource("6_tex")
 patch_margin_left = 18.0
 patch_margin_right = 18.0
 patch_margin_top = 18.0
@@ -657,7 +642,7 @@ offset_bottom = 40.0
 custom_minimum_size = Vector2(32.0, 32.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("8_tex")
+texture = ExtResource("7_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "SkillIconSlot"
 metadata/asset_key = "taskstonebar.ui.stone_icon_set"
@@ -686,7 +671,7 @@ offset_top = 0.0
 offset_right = 58.0
 offset_bottom = 58.0
 custom_minimum_size = Vector2(58.0, 58.0)
-texture = ExtResource("7_tex")
+texture = ExtResource("6_tex")
 patch_margin_left = 18.0
 patch_margin_right = 18.0
 patch_margin_top = 18.0
@@ -704,7 +689,7 @@ offset_bottom = 40.0
 custom_minimum_size = Vector2(32.0, 32.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("9_tex")
+texture = ExtResource("8_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "SkillIconSlot"
 metadata/asset_key = "taskstonebar.ui.resource_icon_set"
@@ -733,7 +718,7 @@ offset_top = 0.0
 offset_right = 58.0
 offset_bottom = 58.0
 custom_minimum_size = Vector2(58.0, 58.0)
-texture = ExtResource("7_tex")
+texture = ExtResource("6_tex")
 patch_margin_left = 18.0
 patch_margin_right = 18.0
 patch_margin_top = 18.0
@@ -751,7 +736,7 @@ offset_bottom = 40.0
 custom_minimum_size = Vector2(32.0, 32.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("9_tex")
+texture = ExtResource("8_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "SkillIconSlot"
 metadata/asset_key = "taskstonebar.ui.resource_icon_set"
@@ -780,7 +765,7 @@ offset_top = 0.0
 offset_right = 58.0
 offset_bottom = 58.0
 custom_minimum_size = Vector2(58.0, 58.0)
-texture = ExtResource("7_tex")
+texture = ExtResource("6_tex")
 patch_margin_left = 18.0
 patch_margin_right = 18.0
 patch_margin_top = 18.0
@@ -798,7 +783,7 @@ offset_bottom = 40.0
 custom_minimum_size = Vector2(32.0, 32.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("9_tex")
+texture = ExtResource("8_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "SkillIconSlot"
 metadata/asset_key = "taskstonebar.ui.resource_icon_set"
@@ -827,7 +812,7 @@ offset_top = 0.0
 offset_right = 58.0
 offset_bottom = 58.0
 custom_minimum_size = Vector2(58.0, 58.0)
-texture = ExtResource("7_tex")
+texture = ExtResource("6_tex")
 patch_margin_left = 18.0
 patch_margin_right = 18.0
 patch_margin_top = 18.0
@@ -845,7 +830,7 @@ offset_bottom = 40.0
 custom_minimum_size = Vector2(32.0, 32.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("8_tex")
+texture = ExtResource("7_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "SkillIconSlot"
 metadata/asset_key = "taskstonebar.ui.stone_icon_set"
@@ -874,7 +859,7 @@ offset_top = 0.0
 offset_right = 58.0
 offset_bottom = 58.0
 custom_minimum_size = Vector2(58.0, 58.0)
-texture = ExtResource("7_tex")
+texture = ExtResource("6_tex")
 patch_margin_left = 18.0
 patch_margin_right = 18.0
 patch_margin_top = 18.0
@@ -892,7 +877,7 @@ offset_bottom = 40.0
 custom_minimum_size = Vector2(32.0, 32.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("9_tex")
+texture = ExtResource("8_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "SkillIconSlot"
 metadata/asset_key = "taskstonebar.ui.resource_icon_set"
@@ -921,7 +906,7 @@ offset_top = 0.0
 offset_right = 58.0
 offset_bottom = 58.0
 custom_minimum_size = Vector2(58.0, 58.0)
-texture = ExtResource("7_tex")
+texture = ExtResource("6_tex")
 patch_margin_left = 18.0
 patch_margin_right = 18.0
 patch_margin_top = 18.0
@@ -939,7 +924,7 @@ offset_bottom = 40.0
 custom_minimum_size = Vector2(32.0, 32.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("9_tex")
+texture = ExtResource("8_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "SkillIconSlot"
 metadata/asset_key = "taskstonebar.ui.resource_icon_set"
@@ -968,7 +953,7 @@ offset_top = 0.0
 offset_right = 58.0
 offset_bottom = 58.0
 custom_minimum_size = Vector2(58.0, 58.0)
-texture = ExtResource("7_tex")
+texture = ExtResource("6_tex")
 patch_margin_left = 18.0
 patch_margin_right = 18.0
 patch_margin_top = 18.0
@@ -986,7 +971,7 @@ offset_bottom = 40.0
 custom_minimum_size = Vector2(32.0, 32.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("8_tex")
+texture = ExtResource("7_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "SkillIconSlot"
 metadata/asset_key = "taskstonebar.ui.stone_icon_set"
@@ -1015,7 +1000,7 @@ offset_top = 0.0
 offset_right = 58.0
 offset_bottom = 58.0
 custom_minimum_size = Vector2(58.0, 58.0)
-texture = ExtResource("7_tex")
+texture = ExtResource("6_tex")
 patch_margin_left = 18.0
 patch_margin_right = 18.0
 patch_margin_top = 18.0
@@ -1033,7 +1018,7 @@ offset_bottom = 40.0
 custom_minimum_size = Vector2(32.0, 32.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("9_tex")
+texture = ExtResource("8_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "SkillIconSlot"
 metadata/asset_key = "taskstonebar.ui.resource_icon_set"
@@ -1057,11 +1042,11 @@ metadata/font_size = 11.0
 
 [node name="Panel_HeroInventoryWindowFrame" type="NinePatchRect" parent="Section_WindowStack"]
 layout_mode = 0
-offset_left = 518.0
-offset_top = 50.0
-offset_right = 1070.0
-offset_bottom = 750.0
-custom_minimum_size = Vector2(552.0, 700.0)
+offset_left = 591.0
+offset_top = 48.0
+offset_right = 1095.0
+offset_bottom = 672.0
+custom_minimum_size = Vector2(504.0, 624.0)
 texture = ExtResource("2_tex")
 patch_margin_left = 30.0
 patch_margin_right = 30.0
@@ -1073,11 +1058,11 @@ metadata/asset_key = "taskstonebar.ui.window_frame_9slice"
 
 [node name="Panel_HeroInventoryTitleBar" type="NinePatchRect" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
 layout_mode = 0
-offset_left = 20.0
-offset_top = 12.0
-offset_right = 532.0
-offset_bottom = 66.0
-custom_minimum_size = Vector2(512.0, 54.0)
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 494.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(484.0, 42.0)
 texture = ExtResource("3_tex")
 patch_margin_left = 26.0
 patch_margin_right = 26.0
@@ -1087,28 +1072,14 @@ metadata/atom = "NinePatchPanel"
 metadata/component = "WindowTitleBar"
 metadata/asset_key = "taskstonebar.ui.window_title_bar_9slice"
 
-[node name="Tex_HeroInventoryWindowOrnament" type="TextureRect" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
-layout_mode = 0
-offset_left = 173.0
-offset_top = -30.0
-offset_right = 379.0
-offset_bottom = 46.0
-custom_minimum_size = Vector2(206.0, 76.0)
-expand_mode = 1
-stretch_mode = 5
-texture = ExtResource("4_tex")
-metadata/atom = "TextureAtom"
-metadata/component = "WindowFrame"
-metadata/asset_key = "taskstonebar.ui.window_ornament_set"
-
 [node name="Panel_HeroInventoryBodyWell" type="NinePatchRect" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
 layout_mode = 0
-offset_left = 18.0
-offset_top = 72.0
-offset_right = 534.0
-offset_bottom = 678.0
-custom_minimum_size = Vector2(516.0, 606.0)
-texture = ExtResource("5_tex")
+offset_left = 14.0
+offset_top = 58.0
+offset_right = 490.0
+offset_bottom = 606.0
+custom_minimum_size = Vector2(476.0, 548.0)
+texture = ExtResource("4_tex")
 patch_margin_left = 22.0
 patch_margin_right = 22.0
 patch_margin_top = 22.0
@@ -1119,11 +1090,11 @@ metadata/asset_key = "taskstonebar.ui.dark_inner_well_9slice"
 
 [node name="Text_HeroInventoryTitle" type="Label" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
 layout_mode = 0
-offset_left = 210.0
-offset_top = 18.0
-offset_right = 360.0
-offset_bottom = 52.0
-custom_minimum_size = Vector2(150.0, 34.0)
+offset_left = 56.0
+offset_top = 12.0
+offset_right = 448.0
+offset_bottom = 42.0
+custom_minimum_size = Vector2(392.0, 30.0)
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "돌지기"
@@ -1136,10 +1107,10 @@ metadata/font_size = 25.0
 
 [node name="Btn_HeroInventoryClose" type="Button" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
 layout_mode = 0
-offset_left = 498.0
-offset_top = 20.0
-offset_right = 540.0
-offset_bottom = 62.0
+offset_left = 458.0
+offset_top = 14.0
+offset_right = 500.0
+offset_bottom = 56.0
 custom_minimum_size = Vector2(42.0, 42.0)
 flat = true
 text = ""
@@ -1149,25 +1120,25 @@ metadata/button_role = "window_close"
 
 [node name="Tex_StoneKeeperPortrait" type="TextureRect" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
 layout_mode = 0
-offset_left = 198.0
-offset_top = 86.0
-offset_right = 356.0
-offset_bottom = 256.0
-custom_minimum_size = Vector2(158.0, 170.0)
+offset_left = 181.0
+offset_top = 76.0
+offset_right = 323.0
+offset_bottom = 218.0
+custom_minimum_size = Vector2(142.0, 142.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("10_tex")
+texture = ExtResource("9_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "CharacterPortrait"
 metadata/asset_key = "taskstonebar.ui.stone_keeper_sheet"
 
 [node name="Text_KeeperLevel" type="Label" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
 layout_mode = 0
-offset_left = 238.0
-offset_top = 234.0
-offset_right = 330.0
-offset_bottom = 264.0
-custom_minimum_size = Vector2(92.0, 30.0)
+offset_left = 206.0
+offset_top = 204.0
+offset_right = 298.0
+offset_bottom = 232.0
+custom_minimum_size = Vector2(92.0, 28.0)
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "Lv.27"
@@ -1180,33 +1151,33 @@ metadata/font_size = 22.0
 
 [node name="Grid_EquipmentSlotsLeft" type="GridContainer" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
 layout_mode = 0
-offset_left = 26.0
-offset_top = 88.0
-offset_right = 146.0
-offset_bottom = 216.0
-custom_minimum_size = Vector2(120.0, 128.0)
+offset_left = 30.0
+offset_top = 78.0
+offset_right = 132.0
+offset_bottom = 180.0
+custom_minimum_size = Vector2(102.0, 102.0)
 columns = 2
 metadata/atom = "Grid"
 metadata/component = "EquipmentSlotGrid"
 
 [node name="Grid_EquipmentSlotsRight" type="GridContainer" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
 layout_mode = 0
-offset_left = 402.0
-offset_top = 88.0
-offset_right = 522.0
-offset_bottom = 216.0
-custom_minimum_size = Vector2(120.0, 128.0)
+offset_left = 370.0
+offset_top = 78.0
+offset_right = 472.0
+offset_bottom = 180.0
+custom_minimum_size = Vector2(102.0, 102.0)
 columns = 2
 metadata/atom = "Grid"
 metadata/component = "EquipmentSlotGrid"
 
 [node name="Tabs_StoneEquipment" type="HBoxContainer" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
 layout_mode = 0
-offset_left = 52.0
-offset_top = 302.0
-offset_right = 500.0
-offset_bottom = 338.0
-custom_minimum_size = Vector2(448.0, 36.0)
+offset_left = 42.0
+offset_top = 266.0
+offset_right = 462.0
+offset_bottom = 300.0
+custom_minimum_size = Vector2(420.0, 34.0)
 theme_override_constants/h_separation = 8.0
 metadata/atom = "HBox"
 metadata/component = "StoneEquipmentTabBar"
@@ -1215,9 +1186,9 @@ metadata/component = "StoneEquipmentTabBar"
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 220.0
-offset_bottom = 36.0
-custom_minimum_size = Vector2(220.0, 36.0)
+offset_right = 207.0
+offset_bottom = 34.0
+custom_minimum_size = Vector2(207.0, 34.0)
 flat = true
 text = "돌 활성 0/12"
 metadata/atom = "IconButton"
@@ -1228,9 +1199,9 @@ metadata/button_role = "inventory_tab"
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 220.0
-offset_bottom = 36.0
-custom_minimum_size = Vector2(220.0, 36.0)
+offset_right = 207.0
+offset_bottom = 34.0
+custom_minimum_size = Vector2(207.0, 34.0)
 flat = true
 text = "장비 0/40"
 metadata/atom = "IconButton"
@@ -1239,11 +1210,11 @@ metadata/button_role = "inventory_tab"
 
 [node name="Grid_StoneInventory" type="GridContainer" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
 layout_mode = 0
-offset_left = 52.0
-offset_top = 352.0
-offset_right = 500.0
-offset_bottom = 568.0
-custom_minimum_size = Vector2(448.0, 216.0)
+offset_left = 54.0
+offset_top = 314.0
+offset_right = 448.0
+offset_bottom = 508.0
+custom_minimum_size = Vector2(394.0, 194.0)
 columns = 8
 metadata/atom = "Grid"
 metadata/component = "StoneInventoryPanel"
@@ -1252,10 +1223,10 @@ metadata/component = "StoneInventoryPanel"
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 48.0
-offset_bottom = 48.0
-custom_minimum_size = Vector2(48.0, 48.0)
-texture = ExtResource("7_tex")
+offset_right = 44.0
+offset_bottom = 44.0
+custom_minimum_size = Vector2(44.0, 44.0)
+texture = ExtResource("6_tex")
 patch_margin_left = 18.0
 patch_margin_right = 18.0
 patch_margin_top = 18.0
@@ -1266,12 +1237,12 @@ metadata/asset_key = "taskstonebar.ui.slot_frame_9slice"
 
 [node name="Dock_KeeperIconDock" type="HBoxContainer" parent="Section_WindowStack/Panel_HeroInventoryWindowFrame"]
 layout_mode = 0
-offset_left = 58.0
-offset_top = 608.0
-offset_right = 468.0
-offset_bottom = 672.0
-custom_minimum_size = Vector2(410.0, 64.0)
-theme_override_constants/h_separation = 14.0
+offset_left = 76.0
+offset_top = 542.0
+offset_right = 428.0
+offset_bottom = 598.0
+custom_minimum_size = Vector2(352.0, 56.0)
+theme_override_constants/h_separation = 12.0
 metadata/atom = "HBox"
 metadata/component = "KeeperIconDock"
 
@@ -1279,9 +1250,9 @@ metadata/component = "KeeperIconDock"
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 58.0
-offset_bottom = 58.0
-custom_minimum_size = Vector2(58.0, 58.0)
+offset_right = 52.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(52.0, 52.0)
 flat = true
 text = ""
 metadata/atom = "IconButton"
@@ -1292,9 +1263,9 @@ metadata/button_role = "keeper_dock_icon"
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 58.0
-offset_bottom = 58.0
-custom_minimum_size = Vector2(58.0, 58.0)
+offset_right = 52.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(52.0, 52.0)
 flat = true
 text = ""
 metadata/atom = "IconButton"
@@ -1305,9 +1276,9 @@ metadata/button_role = "keeper_dock_icon"
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 58.0
-offset_bottom = 58.0
-custom_minimum_size = Vector2(58.0, 58.0)
+offset_right = 52.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(52.0, 52.0)
 flat = true
 text = ""
 metadata/atom = "IconButton"
@@ -1318,9 +1289,9 @@ metadata/button_role = "keeper_dock_icon"
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 58.0
-offset_bottom = 58.0
-custom_minimum_size = Vector2(58.0, 58.0)
+offset_right = 52.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(52.0, 52.0)
 flat = true
 text = ""
 metadata/atom = "IconButton"
@@ -1331,9 +1302,9 @@ metadata/button_role = "keeper_dock_icon"
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 58.0
-offset_bottom = 58.0
-custom_minimum_size = Vector2(58.0, 58.0)
+offset_right = 52.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(52.0, 52.0)
 flat = true
 text = ""
 metadata/atom = "IconButton"
@@ -1342,11 +1313,11 @@ metadata/button_role = "keeper_dock_icon"
 
 [node name="Panel_PortalWindowFrame" type="NinePatchRect" parent="Section_WindowStack"]
 layout_mode = 0
-offset_left = 1089.0
-offset_top = 103.0
-offset_right = 1521.0
-offset_bottom = 713.0
-custom_minimum_size = Vector2(432.0, 610.0)
+offset_left = 1010.0
+offset_top = 72.0
+offset_right = 1448.0
+offset_bottom = 632.0
+custom_minimum_size = Vector2(438.0, 560.0)
 texture = ExtResource("2_tex")
 patch_margin_left = 30.0
 patch_margin_right = 30.0
@@ -1358,11 +1329,11 @@ metadata/asset_key = "taskstonebar.ui.window_frame_9slice"
 
 [node name="Panel_PortalTitleBar" type="NinePatchRect" parent="Section_WindowStack/Panel_PortalWindowFrame"]
 layout_mode = 0
-offset_left = 20.0
-offset_top = 12.0
-offset_right = 412.0
-offset_bottom = 66.0
-custom_minimum_size = Vector2(392.0, 54.0)
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 428.0
+offset_bottom = 52.0
+custom_minimum_size = Vector2(418.0, 42.0)
 texture = ExtResource("3_tex")
 patch_margin_left = 26.0
 patch_margin_right = 26.0
@@ -1372,28 +1343,14 @@ metadata/atom = "NinePatchPanel"
 metadata/component = "WindowTitleBar"
 metadata/asset_key = "taskstonebar.ui.window_title_bar_9slice"
 
-[node name="Tex_PortalWindowOrnament" type="TextureRect" parent="Section_WindowStack/Panel_PortalWindowFrame"]
-layout_mode = 0
-offset_left = 113.0
-offset_top = -30.0
-offset_right = 319.0
-offset_bottom = 46.0
-custom_minimum_size = Vector2(206.0, 76.0)
-expand_mode = 1
-stretch_mode = 5
-texture = ExtResource("4_tex")
-metadata/atom = "TextureAtom"
-metadata/component = "WindowFrame"
-metadata/asset_key = "taskstonebar.ui.window_ornament_set"
-
 [node name="Panel_PortalBodyWell" type="NinePatchRect" parent="Section_WindowStack/Panel_PortalWindowFrame"]
 layout_mode = 0
-offset_left = 18.0
-offset_top = 72.0
-offset_right = 414.0
-offset_bottom = 592.0
-custom_minimum_size = Vector2(396.0, 520.0)
-texture = ExtResource("5_tex")
+offset_left = 14.0
+offset_top = 58.0
+offset_right = 424.0
+offset_bottom = 544.0
+custom_minimum_size = Vector2(410.0, 486.0)
+texture = ExtResource("4_tex")
 patch_margin_left = 22.0
 patch_margin_right = 22.0
 patch_margin_top = 22.0
@@ -1404,11 +1361,11 @@ metadata/asset_key = "taskstonebar.ui.dark_inner_well_9slice"
 
 [node name="Text_PortalTitle" type="Label" parent="Section_WindowStack/Panel_PortalWindowFrame"]
 layout_mode = 0
-offset_left = 154.0
-offset_top = 18.0
-offset_right = 284.0
-offset_bottom = 52.0
-custom_minimum_size = Vector2(130.0, 34.0)
+offset_left = 56.0
+offset_top = 12.0
+offset_right = 382.0
+offset_bottom = 42.0
+custom_minimum_size = Vector2(326.0, 30.0)
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "포탈"
@@ -1421,10 +1378,10 @@ metadata/font_size = 25.0
 
 [node name="Btn_PortalClose" type="Button" parent="Section_WindowStack/Panel_PortalWindowFrame"]
 layout_mode = 0
-offset_left = 378.0
-offset_top = 20.0
-offset_right = 420.0
-offset_bottom = 62.0
+offset_left = 392.0
+offset_top = 14.0
+offset_right = 434.0
+offset_bottom = 56.0
 custom_minimum_size = Vector2(42.0, 42.0)
 flat = true
 text = ""
@@ -1434,11 +1391,11 @@ metadata/button_role = "window_close"
 
 [node name="Panel_DifficultySelect" type="PanelContainer" parent="Section_WindowStack/Panel_PortalWindowFrame"]
 layout_mode = 0
-offset_left = 104.0
-offset_top = 88.0
-offset_right = 344.0
-offset_bottom = 128.0
-custom_minimum_size = Vector2(240.0, 40.0)
+offset_left = 98.0
+offset_top = 76.0
+offset_right = 340.0
+offset_bottom = 110.0
+custom_minimum_size = Vector2(242.0, 34.0)
 metadata/atom = "NativePanel"
 metadata/component = "PortalDifficultySelect"
 metadata/color_token = "panel_mid"
@@ -1463,11 +1420,11 @@ metadata/font_size = 16.0
 [node name="Tabs_Act" type="HBoxContainer" parent="Section_WindowStack/Panel_PortalWindowFrame"]
 layout_mode = 0
 offset_left = 54.0
-offset_top = 142.0
-offset_right = 378.0
-offset_bottom = 184.0
-custom_minimum_size = Vector2(324.0, 42.0)
-theme_override_constants/h_separation = 8.0
+offset_top = 124.0
+offset_right = 384.0
+offset_bottom = 160.0
+custom_minimum_size = Vector2(330.0, 36.0)
+theme_override_constants/h_separation = 6.0
 metadata/atom = "HBox"
 metadata/component = "ActTabBar"
 
@@ -1475,9 +1432,9 @@ metadata/component = "ActTabBar"
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 96.0
-offset_bottom = 42.0
-custom_minimum_size = Vector2(96.0, 42.0)
+offset_right = 104.0
+offset_bottom = 36.0
+custom_minimum_size = Vector2(104.0, 36.0)
 flat = true
 text = ""
 metadata/atom = "IconButton"
@@ -1488,9 +1445,9 @@ metadata/button_role = "act_tab"
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 96.0
-offset_bottom = 42.0
-custom_minimum_size = Vector2(96.0, 42.0)
+offset_right = 104.0
+offset_bottom = 36.0
+custom_minimum_size = Vector2(104.0, 36.0)
 flat = true
 text = ""
 metadata/atom = "IconButton"
@@ -1501,9 +1458,9 @@ metadata/button_role = "act_tab"
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 96.0
-offset_bottom = 42.0
-custom_minimum_size = Vector2(96.0, 42.0)
+offset_right = 104.0
+offset_bottom = 36.0
+custom_minimum_size = Vector2(104.0, 36.0)
 flat = true
 text = ""
 metadata/atom = "IconButton"
@@ -1512,24 +1469,24 @@ metadata/button_role = "act_tab"
 
 [node name="Tex_ParchmentRouteMap" type="TextureRect" parent="Section_WindowStack/Panel_PortalWindowFrame"]
 layout_mode = 0
-offset_left = 30.0
-offset_top = 190.0
-offset_right = 402.0
-offset_bottom = 594.0
-custom_minimum_size = Vector2(372.0, 404.0)
+offset_left = 34.0
+offset_top = 174.0
+offset_right = 404.0
+offset_bottom = 532.0
+custom_minimum_size = Vector2(370.0, 358.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("11_tex")
+texture = ExtResource("10_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "ParchmentRouteMap"
 metadata/asset_key = "taskstonebar.ui.portal_parchment_map"
 
 [node name="Btn_CurrentStageNode" type="Button" parent="Section_WindowStack/Panel_PortalWindowFrame"]
 layout_mode = 0
-offset_left = 246.0
-offset_top = 404.0
-offset_right = 290.0
-offset_bottom = 448.0
+offset_left = 244.0
+offset_top = 356.0
+offset_right = 288.0
+offset_bottom = 400.0
 custom_minimum_size = Vector2(44.0, 44.0)
 flat = true
 text = ""
@@ -1556,7 +1513,7 @@ offset_bottom = 236.0
 custom_minimum_size = Vector2(1586.0, 236.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("12_tex")
+texture = ExtResource("11_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "TaskbarCombatStrip"
 metadata/asset_key = "taskstonebar.ui.combat_ground_strip"
@@ -1570,7 +1527,7 @@ offset_bottom = 134.0
 custom_minimum_size = Vector2(96.0, 96.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("10_tex")
+texture = ExtResource("9_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "HeroCombatSprite"
 metadata/asset_key = "taskstonebar.ui.stone_keeper_sheet"
@@ -1594,7 +1551,7 @@ offset_bottom = 68.0
 custom_minimum_size = Vector2(32.0, 32.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("8_tex")
+texture = ExtResource("7_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "ProjectileLayer"
 metadata/asset_key = "taskstonebar.ui.stone_icon_set"
@@ -1625,7 +1582,7 @@ offset_bottom = 132.0
 custom_minimum_size = Vector2(72.0, 72.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("8_tex")
+texture = ExtResource("7_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "EnemyStack"
 metadata/asset_key = "taskstonebar.ui.stone_icon_set"
@@ -1832,7 +1789,7 @@ offset_top = 60.0
 offset_right = 1496.0
 offset_bottom = 130.0
 custom_minimum_size = Vector2(220.0, 70.0)
-texture = ExtResource("13_tex")
+texture = ExtResource("12_tex")
 patch_margin_left = 22.0
 patch_margin_right = 22.0
 patch_margin_top = 18.0
@@ -1850,7 +1807,7 @@ offset_bottom = 54.0
 custom_minimum_size = Vector2(42.0, 42.0)
 expand_mode = 1
 stretch_mode = 5
-texture = ExtResource("9_tex")
+texture = ExtResource("8_tex")
 metadata/atom = "TextureAtom"
 metadata/component = "RareDropToast"
 metadata/asset_key = "taskstonebar.ui.resource_icon_set"

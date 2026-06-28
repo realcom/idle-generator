@@ -5,6 +5,9 @@ const BasicCombatSim := preload("res://scripts/combat/basic_combat_sim.gd")
 const ProgressionState := preload("res://scripts/game/progression_state.gd")
 const SpriteCatalog := preload("res://scripts/visual/sprite_catalog.gd")
 const PortalMapWindow := preload("res://scripts/ui/portal_map_window.gd")
+const PopupSystem := preload("res://scripts/ui/popup_system.gd")
+const DesktopWindowManager := preload("res://scripts/ui/desktop_window_manager.gd")
+const WindowTitleBarChrome := preload("res://scripts/ui/window_title_bar_chrome.gd")
 const GENERATED_UI_OVERLAY_PATH := "res://scenes/generated/full_ui_overlay.tscn"
 const GENERATED_UI_REFERENCE_SIZE := Vector2(1586.0, 992.0)
 const GENERATED_STYLE_TEXTURES := {
@@ -45,6 +48,10 @@ const GENERATED_BATTLE_MAP_TEXTURES := {
 }
 const KEEPER_DOCK_ICON_SIZE := Vector2(64.0, 64.0)
 const KEEPER_DOCK_ICON_DISPLAY_SIZE := Vector2(38.0, 38.0)
+const WORKSHOP_WINDOW_VISUAL_SCALE := 0.8
+const COMPACT_STATUS_WINDOW_RECT := Rect2(Vector2(225.0, 72.0), Vector2(438.0, 560.0))
+const COMPACT_HERO_WINDOW_RECT := Rect2(Vector2(591.0, 48.0), Vector2(504.0, 624.0))
+const COMPACT_PORTAL_WINDOW_RECT := Rect2(Vector2(1010.0, 72.0), Vector2(438.0, 560.0))
 const AUTO_TRANSITION_DELAY := 0.9
 const OVERLAY_HERO_WINDOW_PATH := "Section_WindowStack/Panel_HeroInventoryWindowFrame"
 const OVERLAY_INVENTORY_GRID_PATH := "Section_WindowStack/Panel_HeroInventoryWindowFrame/Grid_StoneInventory"
@@ -68,6 +75,11 @@ const KEEPER_DOCK_ICON_SPECS := [
 ]
 const OVERLAY_COMBAT_LAYER_NAME := "RuntimeCombatLayer"
 const OVERLAY_ENEMY_LAYER_NAME := "RuntimeEnemyLayer"
+const OVERLAY_COMBAT_PROP_LAYER_NAME := "RuntimeCombatPropLayer"
+const OVERLAY_COMBAT_SKILL_PANEL_NAME := "RuntimeCombatSkillPanel"
+const OVERLAY_COMBAT_DROP_BANNER_NAME := "RuntimeCombatDropBanner"
+const OVERLAY_COMBAT_MAP_PROGRESS_NAME := "RuntimeCombatMapProgress"
+const OVERLAY_COMBAT_BOSS_PANEL_NAME := "RuntimeCombatBossPanel"
 const OVERLAY_WORKSHOP_TOGGLE_NAME := "Btn_RuntimeWorkshopToggle"
 const KEEPER_EXP_BAR_NAME := "Progress_KeeperExp"
 const KEEPER_EXP_LABEL_NAME := "Text_KeeperExp"
@@ -109,13 +121,13 @@ const OVERLAY_MODAL_HOST_NAME := "ModalHost"
 const EQUIPMENT_UPGRADE_MODAL_NAME := "Modal_EquipmentUpgrade"
 const INVENTORY_ITEM_DETAIL_MODAL_NAME := "Modal_InventoryItemDetail"
 const MODAL_SCRIM_RECT := Rect2(Vector2.ZERO, Vector2(1586.0, 704.0))
-const EQUIPMENT_UPGRADE_MODAL_RECT := Rect2(Vector2(556.0, 150.0), Vector2(474.0, 408.0))
-const INVENTORY_ITEM_DETAIL_MODAL_RECT := Rect2(Vector2(519.0, 108.0), Vector2(548.0, 500.0))
-const MODAL_TITLE_INSET := Vector2(20.0, 18.0)
-const MODAL_BODY_INSET := Vector2(34.0, 86.0)
-const MODAL_FRAME_CONTENT_BOTTOM := 30.0
-const MODAL_TITLE_HEIGHT := 48.0
-const MODAL_FOOTER_HEIGHT := 52.0
+const EQUIPMENT_UPGRADE_MODAL_RECT := Rect2(Vector2(574.0, 168.0), Vector2(438.0, 344.0))
+const INVENTORY_ITEM_DETAIL_MODAL_RECT := Rect2(Vector2(548.0, 126.0), Vector2(490.0, 430.0))
+const MODAL_TITLE_INSET := Vector2(14.0, 12.0)
+const MODAL_BODY_INSET := Vector2(28.0, 68.0)
+const MODAL_FRAME_CONTENT_BOTTOM := 22.0
+const MODAL_TITLE_HEIGHT := 42.0
+const MODAL_FOOTER_HEIGHT := 46.0
 const INVENTORY_SLOT_DRAG_THRESHOLD := 8.0
 const NATIVE_WINDOW_IDS := ["status", "keeper", "portal", "combat"]
 const RUNTIME_NATIVE_WINDOW_IDS := ["status", "keeper", "portal", "combat", "skill_tree"]
@@ -137,7 +149,7 @@ const NATIVE_WINDOW_ORDER := {
 	"portal": 2,
 	"combat": 3,
 }
-const COMBAT_NATIVE_WINDOW_SCALE := 0.5
+const COMBAT_NATIVE_WINDOW_SCALE := 0.61
 const COMBAT_NATIVE_WINDOW_MIN_SCALE := 0.35
 const COMBAT_NATIVE_WINDOW_MAX_SCALE := 1.0
 const COMBAT_RESIZE_HANDLE_NAME := "RuntimeCombatResizeHandle"
@@ -145,6 +157,10 @@ const COMBAT_RESIZE_HANDLE_SIZE := Vector2(30.0, 30.0)
 const COMBAT_RESIZE_HANDLE_MARGIN := Vector2(10.0, 10.0)
 const COMBAT_ATTACK_IMPACT_START := 0.78
 const COMBAT_PROJECTILE_HIDE_PROGRESS := 0.96
+const COMBAT_MONSTER_VISUAL_SCALE := 0.75
+const COMBAT_ENEMY_VISUAL_SHIFT := Vector2(-190.0, 8.0)
+const COMBAT_ENEMY_LANE_STEP := Vector2(28.0, 12.0)
+const GOLD_ITEM_ID := 5
 const OPAQUE_NATIVE_WINDOW_PLATFORMS := ["Windows"]
 
 var store
@@ -161,6 +177,8 @@ var farm_toggle: CheckButton
 var continue_button: Button
 var portal_button: Button
 var portal_map_window: Control
+var popup_system
+var desktop_window_manager
 var generated_ui_overlay: Control
 var generated_native_windows: Dictionary = {}
 var generated_native_window_roots: Dictionary = {}
@@ -406,7 +424,9 @@ func _build_generated_ui_overlay() -> void:
 	_layout_generated_ui_overlay()
 	_hydrate_generated_ui_overlay(generated_ui_overlay)
 	_style_generated_ui_overlay(generated_ui_overlay)
+	_apply_generated_program_window_chrome(generated_ui_overlay)
 	_polish_generated_window_contents(generated_ui_overlay)
+	_register_generated_desktop_windows()
 	_promote_generated_overlay_to_native_windows()
 
 
@@ -581,6 +601,7 @@ func _promote_runtime_native_window(window_id: String, title: String, panel: Con
 	generated_native_windows[window_id] = native
 	generated_native_window_roots[window_id] = panel
 	generated_native_window_ids_by_node[panel.get_instance_id()] = window_id
+	_register_desktop_window(window_id, panel, native)
 
 
 func _configure_native_window_flags(native: Window) -> void:
@@ -608,14 +629,12 @@ func _layout_generated_native_windows() -> void:
 
 func _native_reference_rect(window_id: String, root: Control) -> Rect2:
 	var order := int(NATIVE_WINDOW_ORDER.get(window_id, 0))
-	var spacing := 34.0
-	var y := 76.0
 	if window_id == "status":
-		return Rect2(Vector2(64.0, 116.0), root.size)
+		return Rect2(COMPACT_STATUS_WINDOW_RECT.position, root.size)
 	if window_id == "keeper":
-		return Rect2(Vector2(64.0 + 458.0 + spacing, y), root.size)
+		return Rect2(COMPACT_HERO_WINDOW_RECT.position, root.size)
 	if window_id == "portal":
-		return Rect2(Vector2(64.0 + 458.0 + spacing + 552.0 + spacing, 116.0), root.size)
+		return Rect2(COMPACT_PORTAL_WINDOW_RECT.position, root.size)
 	if window_id == "combat":
 		var scale := _native_window_scale(window_id)
 		var visual_size := root.size * scale
@@ -624,7 +643,7 @@ func _native_reference_rect(window_id: String, root: Control) -> Rect2:
 		return Rect2(Vector2(combat_x, combat_y), root.size)
 	if window_id == "skill_tree":
 		return Rect2(Vector2(914.0, 72.0), root.size)
-	return Rect2(Vector2(64.0 + float(order) * 120.0, y), root.size)
+	return Rect2(Vector2(48.0 + float(order) * 120.0, 64.0), root.size)
 
 
 func _native_window_position(logical_position: Vector2) -> Vector2i:
@@ -653,7 +672,11 @@ func _set_native_window_size(native: Window, window_size: Vector2i) -> void:
 
 
 func _native_window_scale(window_id: String) -> float:
-	return generated_combat_window_scale if window_id == "combat" else 1.0
+	if window_id == "combat":
+		return generated_combat_window_scale
+	if window_id == "status" or window_id == "keeper" or window_id == "portal":
+		return WORKSHOP_WINDOW_VISUAL_SCALE
+	return 1.0
 
 
 func _desktop_screen_scale(screen_id: int) -> float:
@@ -696,6 +719,141 @@ func _generated_native_root_by_name(root_name: String) -> Control:
 	return null
 
 
+func _ensure_desktop_window_manager() -> void:
+	if desktop_window_manager == null:
+		desktop_window_manager = DesktopWindowManager.new()
+
+
+func _register_generated_desktop_windows() -> void:
+	_ensure_desktop_window_manager()
+	for window_id in RUNTIME_NATIVE_WINDOW_IDS:
+		var canonical := _normalize_desktop_window_id(str(window_id))
+		var control := _desktop_window_control_for_id(canonical)
+		if control == null:
+			continue
+		var native: Window = generated_native_windows.get(canonical, null)
+		_register_desktop_window(canonical, control, native)
+
+
+func _register_desktop_window(window_id: String, control: Control, native: Window = null) -> void:
+	if control == null:
+		return
+	_ensure_desktop_window_manager()
+	var canonical := _normalize_desktop_window_id(window_id)
+	desktop_window_manager.register_window(canonical, control, native, {
+		"title": _generated_window_label(canonical),
+		"group": _desktop_window_group_for(canonical),
+		"default_visible": _desktop_window_default_visible(canonical),
+		"restore_visible": control.visible,
+		"base_z": _desktop_window_base_z(canonical),
+	})
+
+
+func _desktop_window_control_for_id(window_id: String) -> Control:
+	var canonical := _normalize_desktop_window_id(window_id)
+	var native_root: Control = generated_native_window_roots.get(canonical, null)
+	if native_root != null and is_instance_valid(native_root):
+		return native_root
+	if canonical == "skill_tree":
+		var skill_window: Control = generated_runtime_nodes.get("skill_tree_window", null)
+		if skill_window != null and is_instance_valid(skill_window):
+			return skill_window
+	if generated_ui_overlay == null:
+		return null
+	var path := str(NATIVE_WINDOW_ROOTS.get(canonical, ""))
+	if path != "":
+		var node := generated_ui_overlay.get_node_or_null(path)
+		if node != null and node is Control:
+			return node as Control
+	if canonical == "combat":
+		var combat := generated_ui_overlay.get_node_or_null(OVERLAY_COMBAT_STRIP_PATH)
+		if combat != null and combat is Control:
+			return combat as Control
+	return null
+
+
+func _normalize_desktop_window_id(window_id: String) -> String:
+	match window_id:
+		"map", "portal_map":
+			return "portal"
+		"skill", "skills":
+			return "skill_tree"
+		"hero", "inventory":
+			return "keeper"
+	return window_id
+
+
+func _desktop_window_group_for(window_id: String) -> String:
+	if window_id == "combat":
+		return "combat"
+	return "workshop"
+
+
+func _desktop_window_default_visible(window_id: String) -> bool:
+	return window_id != "skill_tree"
+
+
+func _desktop_window_base_z(window_id: String) -> int:
+	if window_id == "combat":
+		return 70
+	if window_id == "skill_tree":
+		return 86
+	return 80 + int(NATIVE_WINDOW_ORDER.get(window_id, 0))
+
+
+func _ensure_desktop_window_registered(window_id: String) -> bool:
+	var canonical := _normalize_desktop_window_id(window_id)
+	_ensure_desktop_window_manager()
+	if canonical == "skill_tree" and not desktop_window_manager.has_window(canonical) and generated_ui_overlay != null:
+		_ensure_runtime_skill_tree_window(generated_ui_overlay)
+	_register_generated_desktop_windows()
+	return desktop_window_manager.has_window(canonical)
+
+
+func show_desktop_window(window_id: String) -> void:
+	var canonical := _normalize_desktop_window_id(window_id)
+	if not _ensure_desktop_window_registered(canonical):
+		return
+	if canonical != "combat" and generated_taskbar_mode:
+		generated_taskbar_mode = false
+		_restore_generated_workshop_windows()
+	desktop_window_manager.show_window(canonical, true)
+	generated_action_message = "%s 창 열림" % _generated_window_label(canonical)
+	_refresh_generated_overlay_now()
+
+
+func hide_desktop_window(window_id: String) -> void:
+	var canonical := _normalize_desktop_window_id(window_id)
+	if not _ensure_desktop_window_registered(canonical):
+		return
+	desktop_window_manager.hide_window(canonical)
+	generated_action_message = "%s 창 숨김 - combat strip은 계속 실행" % _generated_window_label(canonical)
+	_refresh_generated_overlay_now()
+
+
+func toggle_desktop_window(window_id: String) -> void:
+	var canonical := _normalize_desktop_window_id(window_id)
+	if not _ensure_desktop_window_registered(canonical):
+		return
+	if desktop_window_manager.is_window_visible(canonical):
+		hide_desktop_window(canonical)
+	else:
+		show_desktop_window(canonical)
+
+
+func focus_desktop_window(window_id: String) -> void:
+	var canonical := _normalize_desktop_window_id(window_id)
+	if not _ensure_desktop_window_registered(canonical):
+		return
+	desktop_window_manager.focus_window(canonical)
+
+
+func desktop_window_snapshot() -> Dictionary:
+	_ensure_desktop_window_manager()
+	_register_generated_desktop_windows()
+	return desktop_window_manager.snapshot()
+
+
 func _sync_generated_ui_overlay(snapshot: Dictionary) -> void:
 	var model := _generated_runtime_model(snapshot)
 	var values := _generated_overlay_values(snapshot, model)
@@ -703,6 +861,7 @@ func _sync_generated_ui_overlay(snapshot: Dictionary) -> void:
 	for native_root in generated_native_window_roots.values():
 		if native_root is Node:
 			_apply_generated_overlay_values(native_root, values)
+	_sync_desktop_status_bar(snapshot, model)
 	_sync_generated_mvp_overlay(model)
 	_sync_generated_combat_overlay(snapshot, model)
 
@@ -824,12 +983,12 @@ func _style_generated_ui_overlay(node: Node) -> void:
 
 
 func _hydrate_generated_ui_overlay(root: Control) -> void:
-	_apply_generated_program_window_chrome(root)
 	_polish_generated_window_contents(root)
-	_populate_generated_slot_grid(root, "Section_WindowStack/Panel_StatusWindowFrame/Grid_RuneMarkTree", 8, 4, 44.0, 8.0)
-	_populate_generated_slot_grid(root, "Section_WindowStack/Panel_HeroInventoryWindowFrame/Grid_EquipmentSlotsLeft", 4, 2, 54.0, 8.0)
-	_populate_generated_slot_grid(root, "Section_WindowStack/Panel_HeroInventoryWindowFrame/Grid_EquipmentSlotsRight", 4, 2, 54.0, 8.0)
-	_populate_generated_slot_grid(root, "Section_WindowStack/Panel_HeroInventoryWindowFrame/Grid_StoneInventory", INVENTORY_VISIBLE_SLOTS, INVENTORY_GRID_COLUMNS, 48.0, 8.0)
+	_apply_generated_program_window_chrome(root)
+	_populate_generated_slot_grid(root, "Section_WindowStack/Panel_StatusWindowFrame/Grid_RuneMarkTree", 8, 4, 40.0, 6.0)
+	_populate_generated_slot_grid(root, "Section_WindowStack/Panel_HeroInventoryWindowFrame/Grid_EquipmentSlotsLeft", 4, 2, 48.0, 6.0)
+	_populate_generated_slot_grid(root, "Section_WindowStack/Panel_HeroInventoryWindowFrame/Grid_EquipmentSlotsRight", 4, 2, 48.0, 6.0)
+	_populate_generated_slot_grid(root, "Section_WindowStack/Panel_HeroInventoryWindowFrame/Grid_StoneInventory", INVENTORY_VISIBLE_SLOTS, INVENTORY_GRID_COLUMNS, 44.0, 6.0)
 	_set_generated_button_text(root, OVERLAY_STONE_TAB_PATH, "돌 활성 0/12")
 	_set_generated_button_text(root, OVERLAY_EQUIPMENT_TAB_PATH, "장비 0/40")
 	for act in range(1, 4):
@@ -900,31 +1059,119 @@ func _apply_generated_program_window_chrome(root: Control) -> void:
 
 func _polish_generated_window_contents(root: Control) -> void:
 	_polish_generated_window_chrome_buttons(root)
+	_polish_desktop_status_bar(root)
 	_polish_status_window(root)
 	_polish_hero_inventory_window(root)
 	_polish_portal_window(root)
+
+
+func _polish_desktop_status_bar(root: Control) -> void:
+	var scaffold := root.get_node_or_null("Section_DesktopScaffold")
+	if scaffold == null or not scaffold is Control:
+		return
+	var band := root.get_node_or_null("Section_DesktopScaffold/Panel_OsTaskbarBand")
+	if band == null or not band is PanelContainer:
+		return
+	var status_bar := band as PanelContainer
+	status_bar.position = Vector2(0.0, 948.0)
+	status_bar.size = Vector2(GENERATED_UI_REFERENCE_SIZE.x, 44.0)
+	status_bar.custom_minimum_size = status_bar.size
+	status_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	status_bar.add_theme_stylebox_override("panel", _overlay_style(Color("#080604"), Color("#5a3a20"), 1, 0))
+	for child in status_bar.get_children():
+		if str(child.name) != "Text_SteamSyncStatus":
+			child.queue_free()
+		elif child is CanvasItem:
+			(child as CanvasItem).visible = false
+
+	var layer := (scaffold as Control).get_node_or_null("RuntimeDesktopStatusBarLayer")
+	if layer == null or not layer is Control:
+		layer = Control.new()
+		layer.name = "RuntimeDesktopStatusBarLayer"
+		layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		(scaffold as Control).add_child(layer)
+	var status_layer := layer as Control
+	status_layer.position = Vector2(0.0, 948.0)
+	status_layer.size = Vector2(GENERATED_UI_REFERENCE_SIZE.x, 44.0)
+	status_layer.z_index = 20
+
+	var top_line := status_layer.get_node_or_null("Panel_StatusBarTopLine")
+	if top_line == null or not top_line is ColorRect:
+		top_line = ColorRect.new()
+		top_line.name = "Panel_StatusBarTopLine"
+		top_line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		status_layer.add_child(top_line)
+	(top_line as ColorRect).position = Vector2.ZERO
+	(top_line as ColorRect).size = Vector2(status_layer.size.x, 2.0)
+	(top_line as ColorRect).color = Color("#8a5b24")
+	(top_line as ColorRect).z_index = 4
+
+	_ensure_status_bar_chip(status_layer, "Panel_StatusBarBrandChip", Vector2(18.0, 8.0), Vector2(188.0, 28.0), Color("#1a1008"), Color("#d18a24"))
+	_ensure_status_bar_chip(status_layer, "Panel_StatusBarModeChip", Vector2(222.0, 8.0), Vector2(160.0, 28.0), Color("#251711"), Color("#6b4a2a"))
+	_ensure_status_bar_chip(status_layer, "Panel_StatusBarCombatChip", Vector2(398.0, 8.0), Vector2(378.0, 28.0), Color("#10100f"), Color("#6b4a2a"))
+	_ensure_status_bar_chip(status_layer, "Panel_StatusBarWindowsChip", Vector2(792.0, 8.0), Vector2(318.0, 28.0), Color("#10100f"), Color("#6b4a2a"))
+	_ensure_status_bar_chip(status_layer, "Panel_StatusBarSyncChip", Vector2(1220.0, 8.0), Vector2(340.0, 28.0), Color("#120c08"), Color("#8a5b24"))
+
+	var brand := _ensure_status_bar_label(status_layer, "Text_StatusBarBrand", "TASKSTONEBAR", Vector2(34.0, 11.0), Vector2(156.0, 20.0), 13, Color("#ffcf7a"))
+	brand.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_ensure_status_bar_label(status_layer, "Text_StatusBarMode", "WORKSHOP", Vector2(238.0, 11.0), Vector2(128.0, 20.0), 12, Color("#f3e6c8"))
+	var combat := _ensure_status_bar_label(status_layer, "Text_StatusBarCombat", "", Vector2(414.0, 11.0), Vector2(346.0, 20.0), 12, Color("#f3e6c8"))
+	combat.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	var windows := _ensure_status_bar_label(status_layer, "Text_StatusBarWindows", "", Vector2(808.0, 11.0), Vector2(286.0, 20.0), 12, Color("#b79a72"))
+	windows.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_ensure_status_bar_label(status_layer, "Text_StatusBarSync", "", Vector2(1236.0, 11.0), Vector2(308.0, 20.0), 12, Color("#f3e6c8"))
+
+
+func _ensure_status_bar_chip(parent: Control, node_name: String, pos: Vector2, chip_size: Vector2, fill: Color, border: Color) -> PanelContainer:
+	var chip := _ensure_panel(parent, node_name, pos, chip_size, fill, border, 1, 2)
+	chip.z_index = 1
+	return chip
+
+
+func _ensure_status_bar_label(parent: Control, node_name: String, text: String, pos: Vector2, label_size: Vector2, font_size: int, color: Color) -> Label:
+	var label := _ensure_runtime_label(node_name, pos, label_size, font_size, color, parent)
+	label.text = text
+	label.z_index = 3
+	return label
 
 
 func _polish_status_window(root: Control) -> void:
 	var window := root.get_node_or_null("Section_WindowStack/Panel_StatusWindowFrame")
 	if window == null or not window is Control:
 		return
+	var status := window as Control
+	status.position = COMPACT_STATUS_WINDOW_RECT.position
+	status.size = COMPACT_STATUS_WINDOW_RECT.size
+	status.scale = Vector2.ONE * WORKSHOP_WINDOW_VISUAL_SCALE
+	var body_well := status.get_node_or_null("Panel_StatusBodyWell")
+	if body_well != null and body_well is Control:
+		(body_well as Control).position = Vector2(14.0, 58.0)
+		(body_well as Control).size = Vector2(410.0, 486.0)
 	var stat_scroll := window.get_node_or_null("Panel_StatusStatScroll")
 	if stat_scroll != null and stat_scroll is NinePatchRect:
+		(stat_scroll as Control).position = Vector2(20.0, 64.0)
+		(stat_scroll as Control).size = Vector2(398.0, 148.0)
 		(stat_scroll as NinePatchRect).modulate = Color(1.05, 0.98, 0.84, 1.0)
 	_style_labels_under(stat_scroll, Color("#24170d"), Color("#dfcca2"), 1, ["Text_ClassName"])
 
+	var skill_header_root := window.get_node_or_null("Panel_SkillPointHeader")
+	if skill_header_root != null and skill_header_root is Control:
+		(skill_header_root as Control).position = Vector2(72.0, 224.0)
+		(skill_header_root as Control).size = Vector2(294.0, 36.0)
 	var skill_header := window.get_node_or_null("Panel_SkillPointHeader/Panel_SkillPointHeaderBg")
 	if skill_header != null and skill_header is PanelContainer:
+		(skill_header as Control).size = Vector2(294.0, 36.0)
 		(skill_header as PanelContainer).add_theme_stylebox_override("panel", _overlay_style(Color("#10100f"), Color("#8a5b24"), 2, 2))
 
 	var skill_tree := window.get_node_or_null("Section_SkillTree")
 	if skill_tree == null or not skill_tree is Control:
 		return
+	(skill_tree as Control).position = Vector2(22.0, 274.0)
+	(skill_tree as Control).size = Vector2(396.0, 250.0)
 	var row_specs := [
-		{"name": "Panel_SkillTierBack0", "pos": Vector2(62.0, 0.0), "size": Vector2(330.0, 66.0), "arrow_y": 20.0},
-		{"name": "Panel_SkillTierBack10", "pos": Vector2(62.0, 82.0), "size": Vector2(330.0, 66.0), "arrow_y": 102.0},
-		{"name": "Panel_SkillTierBack30", "pos": Vector2(62.0, 186.0), "size": Vector2(330.0, 66.0), "arrow_y": 206.0},
+		{"name": "Panel_SkillTierBack0", "pos": Vector2(58.0, 0.0), "size": Vector2(318.0, 62.0), "arrow_y": 18.0},
+		{"name": "Panel_SkillTierBack10", "pos": Vector2(58.0, 78.0), "size": Vector2(318.0, 62.0), "arrow_y": 96.0},
+		{"name": "Panel_SkillTierBack30", "pos": Vector2(58.0, 176.0), "size": Vector2(318.0, 62.0), "arrow_y": 194.0},
 	]
 	for spec in row_specs:
 		var back := _ensure_panel((skill_tree as Control), str(spec["name"]), spec["pos"], spec["size"], Color("#242322"), Color("#46413a"), 2, 3)
@@ -941,43 +1188,73 @@ func _polish_hero_inventory_window(root: Control) -> void:
 	if window == null or not window is Control:
 		return
 	var hero := window as Control
-	hero.position = Vector2(518.0, 50.0)
-	hero.size = Vector2(552.0, 700.0)
+	hero.position = COMPACT_HERO_WINDOW_RECT.position
+	hero.size = COMPACT_HERO_WINDOW_RECT.size
+	hero.scale = Vector2.ONE * WORKSHOP_WINDOW_VISUAL_SCALE
 	var body_well := hero.get_node_or_null("Panel_HeroInventoryBodyWell")
 	if body_well != null and body_well is Control:
-		(body_well as Control).size = Vector2(516.0, 606.0)
-	var portrait_well := _ensure_panel(hero, "Panel_KeeperPortraitWell", Vector2(172.0, 82.0), Vector2(208.0, 184.0), Color("#10100f"), Color("#30241a"), 2, 3)
+		(body_well as Control).position = Vector2(14.0, 58.0)
+		(body_well as Control).size = Vector2(476.0, 548.0)
+	var portrait_well := _ensure_panel(hero, "Panel_KeeperPortraitWell", Vector2(162.0, 72.0), Vector2(180.0, 158.0), Color("#10100f"), Color("#30241a"), 2, 3)
 	_move_before(hero, portrait_well, "Tex_StoneKeeperPortrait")
+	var portrait := hero.get_node_or_null("Tex_StoneKeeperPortrait")
+	if portrait != null and portrait is Control:
+		(portrait as Control).position = Vector2(181.0, 76.0)
+		(portrait as Control).size = Vector2(142.0, 142.0)
+	var level_label := hero.get_node_or_null("Text_KeeperLevel")
+	if level_label != null and level_label is Control:
+		(level_label as Control).position = Vector2(206.0, 204.0)
+		(level_label as Control).size = Vector2(92.0, 28.0)
 	_ensure_keeper_exp_bar(hero)
-	var left_well := _ensure_panel(hero, "Panel_EquipmentSlotsLeftWell", Vector2(20.0, 82.0), Vector2(132.0, 140.0), Color("#0b0d0c"), Color("#3f2f20"), 1, 2)
+	var left_well := _ensure_panel(hero, "Panel_EquipmentSlotsLeftWell", Vector2(24.0, 72.0), Vector2(116.0, 116.0), Color("#0b0d0c"), Color("#3f2f20"), 1, 2)
 	_move_before(hero, left_well, "Grid_EquipmentSlotsLeft")
-	var right_well := _ensure_panel(hero, "Panel_EquipmentSlotsRightWell", Vector2(396.0, 82.0), Vector2(132.0, 140.0), Color("#0b0d0c"), Color("#3f2f20"), 1, 2)
+	var right_well := _ensure_panel(hero, "Panel_EquipmentSlotsRightWell", Vector2(364.0, 72.0), Vector2(116.0, 116.0), Color("#0b0d0c"), Color("#3f2f20"), 1, 2)
 	_move_before(hero, right_well, "Grid_EquipmentSlotsRight")
-	var tab_back := _ensure_panel(hero, "Panel_StoneEquipmentTabBackplate", Vector2(44.0, 296.0), Vector2(464.0, 44.0), Color("#0c0d0b"), Color("#3d2b1b"), 1, 3)
+	var left_grid := hero.get_node_or_null("Grid_EquipmentSlotsLeft")
+	if left_grid != null and left_grid is Control:
+		(left_grid as Control).position = Vector2(30.0, 78.0)
+		(left_grid as Control).size = Vector2(102.0, 102.0)
+		if left_grid is GridContainer:
+			(left_grid as GridContainer).add_theme_constant_override("h_separation", 6)
+			(left_grid as GridContainer).add_theme_constant_override("v_separation", 6)
+	var right_grid := hero.get_node_or_null("Grid_EquipmentSlotsRight")
+	if right_grid != null and right_grid is Control:
+		(right_grid as Control).position = Vector2(370.0, 78.0)
+		(right_grid as Control).size = Vector2(102.0, 102.0)
+		if right_grid is GridContainer:
+			(right_grid as GridContainer).add_theme_constant_override("h_separation", 6)
+			(right_grid as GridContainer).add_theme_constant_override("v_separation", 6)
+	var tab_back := _ensure_panel(hero, "Panel_StoneEquipmentTabBackplate", Vector2(38.0, 262.0), Vector2(428.0, 40.0), Color("#0c0d0b"), Color("#3d2b1b"), 1, 3)
 	_move_before(hero, tab_back, "Tabs_StoneEquipment")
 	_polish_inventory_mode_tabs(hero)
-	var grid_well := _ensure_panel(hero, "Panel_InventoryGridWell", Vector2(44.0, 342.0), Vector2(464.0, 232.0), Color("#070909"), Color("#2c2c25"), 1, 2)
+	var grid_well := _ensure_panel(hero, "Panel_InventoryGridWell", Vector2(44.0, 304.0), Vector2(416.0, 218.0), Color("#070909"), Color("#2c2c25"), 1, 2)
 	_move_before(hero, grid_well, "Grid_StoneInventory")
 	var action_back := hero.get_node_or_null("Panel_RuntimeActionBarWell")
 	if action_back != null:
 		action_back.queue_free()
-	var capacity := _ensure_runtime_label("Text_InventoryCapacity", Vector2(330.0, 318.0), Vector2(166.0, 20.0), 12, Color("#b79a72"), hero)
+	var capacity := _ensure_runtime_label("Text_InventoryCapacity", Vector2(292.0, 280.0), Vector2(154.0, 20.0), 11, Color("#b79a72"), hero)
 	capacity.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	capacity.visible = false
-	var hint := _ensure_runtime_label("Text_InventoryModeHint", Vector2(46.0, 318.0), Vector2(250.0, 20.0), 12, Color("#f3e6c8"), hero)
+	var hint := _ensure_runtime_label("Text_InventoryModeHint", Vector2(48.0, 280.0), Vector2(230.0, 20.0), 11, Color("#f3e6c8"), hero)
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	hint.visible = false
 	var grid := hero.get_node_or_null("Grid_StoneInventory")
 	if grid != null and grid is Control:
-		(grid as Control).position = Vector2(52.0, 352.0)
-		(grid as Control).size = Vector2(448.0, 216.0)
+		(grid as Control).position = Vector2(54.0, 314.0)
+		(grid as Control).size = Vector2(394.0, 194.0)
 		if grid is GridContainer:
-			(grid as GridContainer).add_theme_constant_override("h_separation", 8)
-			(grid as GridContainer).add_theme_constant_override("v_separation", 8)
+			(grid as GridContainer).add_theme_constant_override("h_separation", 6)
+			(grid as GridContainer).add_theme_constant_override("v_separation", 6)
 	var dock := hero.get_node_or_null("Dock_KeeperIconDock")
 	if dock != null and dock is Control:
-		(dock as Control).position = Vector2(58.0, 608.0)
-		(dock as Control).size = Vector2(410.0, 64.0)
+		(dock as Control).position = Vector2(76.0, 542.0)
+		(dock as Control).size = Vector2(352.0, 56.0)
+		if dock is HBoxContainer:
+			(dock as HBoxContainer).add_theme_constant_override("separation", 12)
+		for child in dock.get_children():
+			if child is Control:
+				(child as Control).custom_minimum_size = Vector2(52.0, 52.0)
+				(child as Control).size = Vector2(52.0, 52.0)
 	for node_name in ["Tex_StoneKeeperPortrait", "Text_KeeperLevel", KEEPER_EXP_BAR_NAME, KEEPER_EXP_LABEL_NAME, "Grid_EquipmentSlotsLeft", "Grid_EquipmentSlotsRight", "Tabs_StoneEquipment", "Text_InventoryCapacity", "Text_InventoryModeHint", "Grid_StoneInventory", "Dock_KeeperIconDock", OVERLAY_ACTION_STATUS_NAME]:
 		_set_canvas_z(hero.get_node_or_null(node_name), 3)
 
@@ -986,12 +1263,12 @@ func _polish_inventory_mode_tabs(hero: Control) -> void:
 	var tabs := hero.get_node_or_null("Tabs_StoneEquipment")
 	if tabs != null and tabs is Control:
 		var tabs_control := tabs as Control
-		tabs_control.position = Vector2(52.0, 302.0)
-		tabs_control.size = Vector2(448.0, 36.0)
-		tabs_control.custom_minimum_size = Vector2(448.0, 36.0)
+		tabs_control.position = Vector2(42.0, 266.0)
+		tabs_control.size = Vector2(420.0, 34.0)
+		tabs_control.custom_minimum_size = Vector2(420.0, 34.0)
 		tabs_control.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		if tabs_control is HBoxContainer:
-			(tabs_control as HBoxContainer).add_theme_constant_override("separation", 8)
+			(tabs_control as HBoxContainer).add_theme_constant_override("separation", 6)
 	_prepare_inventory_mode_button(hero.get_node_or_null("Tabs_StoneEquipment/Btn_StoneTab"), "돌 인벤토리 보기")
 	_prepare_inventory_mode_button(hero.get_node_or_null("Tabs_StoneEquipment/Btn_EquipmentTab"), "장비 인벤토리 보기")
 
@@ -1000,8 +1277,8 @@ func _prepare_inventory_mode_button(node: Node, tooltip: String) -> void:
 	if node == null or not node is Button:
 		return
 	var button := node as Button
-	button.custom_minimum_size = Vector2(220.0, 36.0)
-	button.size = Vector2(220.0, 36.0)
+	button.custom_minimum_size = Vector2(207.0, 34.0)
+	button.size = Vector2(207.0, 34.0)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	button.toggle_mode = true
@@ -1016,13 +1293,39 @@ func _polish_portal_window(root: Control) -> void:
 	if window == null or not window is Control:
 		return
 	var portal := window as Control
+	portal.position = COMPACT_PORTAL_WINDOW_RECT.position
+	portal.size = COMPACT_PORTAL_WINDOW_RECT.size
+	portal.scale = Vector2.ONE * WORKSHOP_WINDOW_VISUAL_SCALE
+	var body_well := portal.get_node_or_null("Panel_PortalBodyWell")
+	if body_well != null and body_well is Control:
+		(body_well as Control).position = Vector2(14.0, 58.0)
+		(body_well as Control).size = Vector2(410.0, 486.0)
 	var difficulty := portal.get_node_or_null("Panel_DifficultySelect")
 	if difficulty != null and difficulty is PanelContainer:
+		(difficulty as Control).position = Vector2(98.0, 76.0)
+		(difficulty as Control).size = Vector2(242.0, 34.0)
 		(difficulty as PanelContainer).add_theme_stylebox_override("panel", _overlay_style(Color("#21140c"), Color("#8a5b24"), 2, 3))
-	var tab_back := _ensure_panel(portal, "Panel_ActTabsBackplate", Vector2(48.0, 136.0), Vector2(336.0, 54.0), Color("#100c09"), Color("#2e251d"), 1, 2)
+	var tab_back := _ensure_panel(portal, "Panel_ActTabsBackplate", Vector2(48.0, 118.0), Vector2(342.0, 44.0), Color("#100c09"), Color("#2e251d"), 1, 2)
 	_move_before(portal, tab_back, "Tabs_Act")
-	var map_frame := _ensure_panel(portal, "Panel_ParchmentMapFrame", Vector2(24.0, 184.0), Vector2(384.0, 414.0), Color("#14110c"), Color("#6b4a2a"), 2, 2)
+	var act_tabs := portal.get_node_or_null("Tabs_Act")
+	if act_tabs != null and act_tabs is Control:
+		(act_tabs as Control).position = Vector2(54.0, 124.0)
+		(act_tabs as Control).size = Vector2(330.0, 36.0)
+		if act_tabs is HBoxContainer:
+			(act_tabs as HBoxContainer).add_theme_constant_override("separation", 6)
+		for child in act_tabs.get_children():
+			if child is Control:
+				(child as Control).custom_minimum_size = Vector2(104.0, 36.0)
+				(child as Control).size = Vector2(104.0, 36.0)
+	var map_frame := _ensure_panel(portal, "Panel_ParchmentMapFrame", Vector2(24.0, 166.0), Vector2(390.0, 376.0), Color("#14110c"), Color("#6b4a2a"), 2, 2)
 	_move_before(portal, map_frame, "Tex_ParchmentRouteMap")
+	var map := portal.get_node_or_null("Tex_ParchmentRouteMap")
+	if map != null and map is Control:
+		(map as Control).position = Vector2(34.0, 174.0)
+		(map as Control).size = Vector2(370.0, 358.0)
+	var stage_node := portal.get_node_or_null("Btn_CurrentStageNode")
+	if stage_node != null and stage_node is Control:
+		(stage_node as Control).position = Vector2(244.0, 356.0)
 	for node_name in ["Panel_DifficultySelect", "Tabs_Act", "Tex_ParchmentRouteMap", "Btn_CurrentStageNode"]:
 		_set_canvas_z(portal.get_node_or_null(node_name), 3)
 
@@ -1083,13 +1386,13 @@ func _ensure_keeper_exp_bar(hero: Control) -> void:
 		progress.show_percentage = false
 		hero.add_child(progress)
 	var bar := progress as ProgressBar
-	bar.position = Vector2(202.0, 262.0)
-	bar.size = Vector2(148.0, 10.0)
+	bar.position = Vector2(178.0, 236.0)
+	bar.size = Vector2(148.0, 8.0)
 	bar.min_value = 0.0
 	bar.max_value = 1.0
 	bar.add_theme_stylebox_override("background", _overlay_style(Color("#120c08"), Color("#6b4a2a"), 1, 2))
 	bar.add_theme_stylebox_override("fill", _overlay_style(Color("#49b7d8"), Color("#49b7d8"), 0, 2))
-	var label := _ensure_runtime_label(KEEPER_EXP_LABEL_NAME, Vector2(190.0, 274.0), Vector2(172.0, 16.0), 10, Color("#bde7ff"), hero)
+	var label := _ensure_runtime_label(KEEPER_EXP_LABEL_NAME, Vector2(166.0, 246.0), Vector2(172.0, 14.0), 9, Color("#bde7ff"), hero)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 
@@ -1119,87 +1422,159 @@ func _prepare_program_window(root: Control, frame_path: String, title_name: Stri
 	window.set_meta("program_window_id", window_id)
 	_ensure_program_window_shadow(window)
 	_ensure_program_window_client_area(window)
-	_ensure_program_window_title_bar(window, icon_path)
-	_position_program_window_title(window.get_node_or_null(title_name))
-	_position_program_window_close(window.get_node_or_null(close_name))
+	var title_label: Label = window.get_node_or_null(title_name) as Label
+	var close_button: Button = window.get_node_or_null(close_name) as Button
+	var title_bar := WindowTitleBarChrome.apply(window, {
+		"title_label": title_label,
+		"close_button": close_button,
+		"close_icon": _generated_texture(GENERATED_CLOSE_ICON_PATH),
+	})
+	if title_bar != null:
+		_connect_program_window_drag(title_bar, window)
 	_hide_program_window_minimize(window)
 
 
 func _ensure_program_window_shadow(window: Control) -> void:
-	if window.has_node("ProgramWindowShadow"):
-		return
-	var shadow := ColorRect.new()
-	shadow.name = "ProgramWindowShadow"
-	shadow.color = Color(0.0, 0.0, 0.0, 0.42)
+	var shadow: ColorRect
+	if window.has_node("ProgramWindowShadow") and window.get_node("ProgramWindowShadow") is ColorRect:
+		shadow = window.get_node("ProgramWindowShadow") as ColorRect
+	else:
+		shadow = ColorRect.new()
+		shadow.name = "ProgramWindowShadow"
+		shadow.color = Color(0.0, 0.0, 0.0, 0.42)
+		shadow.show_behind_parent = true
+		shadow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		window.add_child(shadow)
 	shadow.position = Vector2(10.0, 12.0)
 	shadow.size = window.size
-	shadow.show_behind_parent = true
-	shadow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	window.add_child(shadow)
 
 
 func _add_modal_window_ornament(window: Control) -> void:
-	if window == null or window.has_node("ModalWindowOrnament"):
+	if window == null:
 		return
-	var texture := _generated_texture("res://assets/generated/ui/window_ornament_set.png")
-	if texture == null:
-		return
-	var ornament := TextureRect.new()
-	ornament.name = "ModalWindowOrnament"
-	ornament.texture = texture
-	ornament.position = Vector2((window.size.x - 160.0) * 0.5, -18.0)
-	ornament.size = Vector2(160.0, 64.0)
-	ornament.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	ornament.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	ornament.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	ornament.z_index = 7
-	window.add_child(ornament)
+	var ornament := window.get_node_or_null("ModalWindowOrnament")
+	if ornament != null and ornament is CanvasItem:
+		(ornament as CanvasItem).visible = false
+		if ornament is Control:
+			(ornament as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func _ensure_program_window_client_area(window: Control) -> void:
-	if window.has_node("ProgramClientArea"):
-		return
-	var client := PanelContainer.new()
-	client.name = "ProgramClientArea"
-	client.position = Vector2(18.0, 66.0)
-	client.size = window.size - Vector2(36.0, 86.0)
-	client.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	client.add_theme_stylebox_override("panel", _overlay_style(Color("#21140c"), Color("#0d0805"), 2, 2))
-	window.add_child(client)
-	window.move_child(client, 0)
-
-
-func _ensure_program_window_title_bar(window: Control, icon_path: String) -> void:
-	var existing_title_bar := _find_program_window_title_bar(window)
-	if existing_title_bar != null:
-		existing_title_bar.mouse_filter = Control.MOUSE_FILTER_PASS
-		_connect_program_window_drag(existing_title_bar, window)
-		_add_program_window_icon(window, icon_path)
-		return
-	if window.has_node("ProgramTitleBar"):
-		_connect_program_window_drag(window.get_node("ProgramTitleBar") as Control, window)
-		return
-	var title_bar := PanelContainer.new()
-	title_bar.name = "ProgramTitleBar"
-	title_bar.position = Vector2(14.0, 12.0)
-	title_bar.size = Vector2(maxf(80.0, window.size.x - 28.0), 48.0)
-	title_bar.mouse_filter = Control.MOUSE_FILTER_PASS
-	var title_style := _overlay_texture_style("taskstonebar.ui.window_title_bar_9slice")
-	if title_style != null:
-		title_bar.add_theme_stylebox_override("panel", title_style)
+	var client: PanelContainer
+	if window.has_node("ProgramClientArea") and window.get_node("ProgramClientArea") is PanelContainer:
+		client = window.get_node("ProgramClientArea") as PanelContainer
 	else:
-		title_bar.add_theme_stylebox_override("panel", _overlay_style(Color("#762020"), Color("#d18a24"), 2, 2))
-	window.add_child(title_bar)
-	window.move_child(title_bar, 1)
-	_connect_program_window_drag(title_bar, window)
-	_add_program_window_icon(window, icon_path)
+		client = PanelContainer.new()
+		client.name = "ProgramClientArea"
+		client.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		client.add_theme_stylebox_override("panel", _overlay_style(Color("#21140c"), Color("#0d0805"), 2, 2))
+		window.add_child(client)
+		window.move_child(client, 0)
+	client.position = Vector2(14.0, 56.0)
+	client.size = window.size - Vector2(28.0, 72.0)
 
 
-func _find_program_window_title_bar(window: Control) -> Control:
-	for child in window.get_children():
-		if child is Control and str(child.name).ends_with("TitleBar"):
-			return child as Control
-	return null
+func _ensure_reference_modal_header_details(title_bar: Control) -> void:
+	_ensure_header_burgundy_fill(title_bar)
+	_ensure_header_left_pattern(title_bar, Vector2(6.0, 5.0), Vector2(88.0, 31.0))
+	_ensure_header_side_slash(title_bar, "Panel_HeaderLeftGoldSlash", Vector2(96.0, 2.0), 1.0)
+	_ensure_header_side_slash(title_bar, "Panel_HeaderRightGoldSlash", Vector2(title_bar.size.x - 56.0, 2.0), -1.0)
+	_ensure_header_center_rivets(title_bar)
+
+
+func _ensure_header_burgundy_fill(parent: Control) -> void:
+	var existing := parent.get_node_or_null("Rect_HeaderBurgundyFill")
+	var fill: ColorRect
+	if existing != null and existing is ColorRect:
+		fill = existing as ColorRect
+	else:
+		fill = ColorRect.new()
+		fill.name = "Rect_HeaderBurgundyFill"
+		fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(fill)
+	fill.color = Color("#5a191a")
+	fill.position = Vector2(2.0, 2.0)
+	fill.size = Vector2(maxf(1.0, parent.size.x - 4.0), maxf(1.0, parent.size.y - 4.0))
+	fill.z_index = 0
+	parent.move_child(fill, 0)
+
+
+func _ensure_header_left_pattern(parent: Control, pos: Vector2, panel_size: Vector2) -> void:
+	var existing := parent.get_node_or_null("Panel_HeaderLeftPattern")
+	var panel: Panel
+	if existing != null and existing is Panel:
+		panel = existing as Panel
+	else:
+		panel = Panel.new()
+		panel.name = "Panel_HeaderLeftPattern"
+		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(panel)
+	panel.position = pos
+	panel.size = panel_size
+	panel.z_index = 1
+	panel.add_theme_stylebox_override("panel", _overlay_style(Color("#160d0d"), Color("#2d1715"), 1, 0))
+	for index in range(4):
+		var line_name := "Line_HeaderHatch%d" % index
+		var line := panel.get_node_or_null(line_name)
+		var hatch: ColorRect
+		if line != null and line is ColorRect:
+			hatch = line as ColorRect
+		else:
+			hatch = ColorRect.new()
+			hatch.name = line_name
+			hatch.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			panel.add_child(hatch)
+		hatch.color = Color("#491815")
+		hatch.position = Vector2(12.0 + float(index) * 22.0, -8.0)
+		hatch.size = Vector2(4.0, 50.0)
+		hatch.rotation = -0.72
+		hatch.z_index = 2
+
+
+func _ensure_header_side_slash(parent: Control, node_name: String, pos: Vector2, direction: float) -> void:
+	var existing := parent.get_node_or_null(node_name)
+	var slash: ColorRect
+	if existing != null and existing is ColorRect:
+		slash = existing as ColorRect
+	else:
+		slash = ColorRect.new()
+		slash.name = node_name
+		slash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(slash)
+	slash.color = Color("#c88a2f")
+	slash.position = pos
+	slash.size = Vector2(4.0, 36.0)
+	slash.rotation = 0.54 * direction
+	slash.z_index = 3
+
+
+func _ensure_header_center_rivets(parent: Control) -> void:
+	var group := parent.get_node_or_null("Panel_HeaderCenterRivets")
+	var panel: Control
+	if group != null and group is Control:
+		panel = group as Control
+	else:
+		panel = Control.new()
+		panel.name = "Panel_HeaderCenterRivets"
+		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(panel)
+	panel.position = Vector2((parent.size.x - 78.0) * 0.5, -8.0)
+	panel.size = Vector2(78.0, 18.0)
+	panel.z_index = 4
+	for index in range(5):
+		var dot_name := "Panel_HeaderRivet%d" % index
+		var dot := panel.get_node_or_null(dot_name)
+		var rivet: PanelContainer
+		if dot != null and dot is PanelContainer:
+			rivet = dot as PanelContainer
+		else:
+			rivet = PanelContainer.new()
+			rivet.name = dot_name
+			rivet.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			panel.add_child(rivet)
+		rivet.position = Vector2(float(index) * 16.0, 2.0 if index % 2 == 0 else 0.0)
+		rivet.size = Vector2(14.0, 14.0)
+		rivet.add_theme_stylebox_override("panel", _overlay_style(Color("#181310"), Color("#332822"), 2, 7))
 
 
 func _connect_program_window_drag(title_bar: Control, window: Control) -> void:
@@ -1463,6 +1838,10 @@ func _generated_combat_strip_resize_handle_at_position(root: Control, mouse_posi
 func _focus_generated_window(window: Control) -> void:
 	if window == null or window.get_parent() == null:
 		return
+	var window_id := _desktop_window_id_for_control(window)
+	if window_id != "" and _ensure_desktop_window_registered(window_id):
+		desktop_window_manager.focus_window(window_id)
+		return
 	var native := _native_window_for_generated_control(window)
 	if native != null:
 		native.grab_focus()
@@ -1482,28 +1861,11 @@ func _native_window_for_generated_control(control: Control) -> Window:
 
 
 func _add_program_window_icon(window: Control, icon_path: String) -> void:
-	if window.has_node("ProgramWindowIcon"):
-		return
-	var icon_back := PanelContainer.new()
-	icon_back.name = "ProgramWindowIcon"
-	icon_back.position = Vector2(24.0, 20.0)
-	icon_back.size = Vector2(30.0, 30.0)
-	icon_back.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	icon_back.add_theme_stylebox_override("panel", _overlay_style(Color("#160d08"), Color("#ffcf7a"), 1, 2))
-	window.add_child(icon_back)
-
-	var texture := _generated_texture(icon_path)
-	if texture == null:
-		return
-	var icon := TextureRect.new()
-	icon.name = "Icon_App"
-	icon.texture = _program_window_icon_texture(texture, icon_path)
-	icon.position = Vector2(3.0, 3.0)
-	icon.size = Vector2(24.0, 24.0)
-	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon_back.add_child(icon)
+	var icon_back := window.get_node_or_null("ProgramWindowIcon")
+	if icon_back != null and icon_back is CanvasItem:
+		(icon_back as CanvasItem).visible = false
+		if icon_back is Control:
+			(icon_back as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func _program_window_icon_texture(texture: Texture2D, icon_path: String) -> Texture2D:
@@ -1513,28 +1875,6 @@ func _program_window_icon_texture(texture: Texture2D, icon_path: String) -> Text
 		atlas.region = Rect2(Vector2.ZERO, Vector2(48.0, 48.0))
 		return atlas
 	return texture
-
-
-func _position_program_window_title(node: Node) -> void:
-	if node == null or not node is Label:
-		return
-	var title := node as Label
-	var frame := title.get_parent() as Control
-	title.position = Vector2(62.0, 18.0)
-	title.size = Vector2(maxf(80.0, frame.size.x - 124.0), 34.0)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 21)
-
-
-func _position_program_window_close(node: Node) -> void:
-	if node == null or not node is Button:
-		return
-	var close_button := node as Button
-	var frame := close_button.get_parent() as Control
-	close_button.position = Vector2(maxf(0.0, frame.size.x - 54.0), 17.0)
-	close_button.size = Vector2(36.0, 34.0)
-	close_button.z_index = 6
 
 
 func _hide_program_window_minimize(window: Control) -> void:
@@ -1557,12 +1897,43 @@ func _find_program_window_minimize_button(window: Control) -> Button:
 func _close_generated_window(window_id: String, window: Control) -> void:
 	if window == null:
 		return
-	window.visible = false
-	var native := _native_window_for_generated_control(window)
-	if native != null:
-		native.visible = false
-	generated_action_message = "%s 창 닫힘 - combat strip은 계속 실행" % _generated_window_label(window_id)
+	var canonical := _normalize_desktop_window_id(window_id)
+	if canonical == "":
+		canonical = _desktop_window_id_for_control(window)
+	if canonical != "" and _ensure_desktop_window_registered(canonical):
+		desktop_window_manager.hide_window(canonical)
+	else:
+		window.visible = false
+		var native := _native_window_for_generated_control(window)
+		if native != null:
+			native.visible = false
+	generated_action_message = "%s 창 닫힘 - combat strip은 계속 실행" % _generated_window_label(canonical)
 	_refresh_generated_overlay_now()
+
+
+func _desktop_window_id_for_control(control: Control) -> String:
+	if control == null:
+		return ""
+	if control.has_meta("desktop_window_id"):
+		return str(control.get_meta("desktop_window_id", ""))
+	if control.has_meta("program_window_id"):
+		return _normalize_desktop_window_id(str(control.get_meta("program_window_id", "")))
+	for window_id in generated_native_window_roots.keys():
+		var root: Control = generated_native_window_roots.get(window_id, null)
+		if root != null and root == control:
+			return str(window_id)
+	var name := str(control.name)
+	if name == RUNTIME_SKILL_TREE_WINDOW_NAME:
+		return "skill_tree"
+	if name == "Panel_StatusWindowFrame":
+		return "status"
+	if name == "Panel_HeroInventoryWindowFrame":
+		return "keeper"
+	if name == "Panel_PortalWindowFrame":
+		return "portal"
+	if name == "Section_BottomCombatStrip":
+		return "combat"
+	return ""
 
 
 func _generated_window_label(window_id: String) -> String:
@@ -1573,6 +1944,8 @@ func _generated_window_label(window_id: String) -> String:
 			return "돌지기"
 		"portal":
 			return "포탈"
+		"combat":
+			return "전투 스트립"
 		"skill_tree":
 			return "스킬 트리"
 	return "작업창"
@@ -1817,6 +2190,17 @@ func _ensure_generated_combat_layer(root: Control) -> void:
 	var combat_strip := root.get_node_or_null(OVERLAY_COMBAT_STRIP_PATH)
 	if combat_strip == null or not combat_strip is Control:
 		return
+	var prop_layer := (combat_strip as Control).get_node_or_null(OVERLAY_COMBAT_PROP_LAYER_NAME)
+	if prop_layer == null:
+		prop_layer = Control.new()
+		prop_layer.name = OVERLAY_COMBAT_PROP_LAYER_NAME
+		prop_layer.position = Vector2.ZERO
+		prop_layer.size = Vector2(1586.0, 236.0)
+		prop_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		(combat_strip as Control).add_child(prop_layer)
+	prop_layer.z_index = 6
+	(prop_layer as CanvasItem).z_as_relative = false
+	generated_runtime_nodes["combat_prop_layer"] = prop_layer
 	var enemy_layer := (combat_strip as Control).get_node_or_null(OVERLAY_ENEMY_LAYER_NAME)
 	if enemy_layer == null:
 		enemy_layer = Control.new()
@@ -1825,7 +2209,7 @@ func _ensure_generated_combat_layer(root: Control) -> void:
 		enemy_layer.size = Vector2(1586.0, 236.0)
 		enemy_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		(combat_strip as Control).add_child(enemy_layer)
-	enemy_layer.z_index = 64
+	enemy_layer.z_index = 132
 	(enemy_layer as CanvasItem).z_as_relative = false
 	generated_runtime_nodes["combat_enemy_layer"] = enemy_layer
 	var baked_projectile := (combat_strip as Control).get_node_or_null("Layer_Projectile")
@@ -1841,6 +2225,7 @@ func _ensure_generated_combat_layer(root: Control) -> void:
 		layer.z_index = 20
 		(combat_strip as Control).add_child(layer)
 	generated_runtime_nodes["combat_layer"] = layer
+	(combat_strip as Control).move_child(enemy_layer, (combat_strip as Control).get_child_count() - 1)
 
 
 func _ensure_generated_combat_readouts(root: Control) -> void:
@@ -1850,6 +2235,8 @@ func _ensure_generated_combat_readouts(root: Control) -> void:
 	var strip := combat_strip as Control
 	generated_runtime_nodes["combat_strip"] = strip
 	_remove_generated_combat_data_panels(strip)
+	_ensure_combat_boss_panel(strip)
+	_ensure_combat_map_progress_panel(strip)
 	generated_runtime_nodes["combat_player_hp_plate"] = _ensure_combat_hp_plate(strip, "Panel_RuntimePlayerHpPlate")
 	generated_runtime_nodes["combat_player_hp_bar"] = _ensure_combat_progress(
 		strip,
@@ -1881,14 +2268,353 @@ func _ensure_generated_combat_readouts(root: Control) -> void:
 		_style_combat_hp_label(enemy_hp_text as Label, 10, HORIZONTAL_ALIGNMENT_RIGHT)
 
 
+func _ensure_combat_drop_banner(parent: Control) -> void:
+	var banner := _ensure_panel(parent, OVERLAY_COMBAT_DROP_BANNER_NAME, Vector2(430.0, 6.0), Vector2(600.0, 42.0), Color("#180b06"), Color("#3a1d12"), 3, 5)
+	banner.z_index = 95
+	generated_runtime_nodes["combat_drop_banner"] = banner
+	for old_child_name in ["Text_DropBannerTitle", "Text_DropBannerBody", "Text_DropBannerIcon"]:
+		var old_child := banner.get_node_or_null(old_child_name)
+		if old_child != null and old_child is CanvasItem:
+			(old_child as CanvasItem).visible = false
+	var title := _ensure_runtime_label("Text_RuntimeDropBannerTitle", Vector2(448.0, 13.0), Vector2(124.0, 24.0), 18, Color("#f3e6c8"), parent)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	title.add_theme_color_override("font_outline_color", Color("#050302"))
+	title.add_theme_constant_override("outline_size", 4)
+	title.z_index = 96
+	generated_runtime_nodes["combat_drop_banner_title"] = title
+	var body := _ensure_runtime_label("Text_RuntimeDropBannerBody", Vector2(580.0, 13.0), Vector2(340.0, 24.0), 18, Color("#4691ff"), parent)
+	body.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	body.add_theme_color_override("font_outline_color", Color("#050302"))
+	body.add_theme_constant_override("outline_size", 4)
+	body.z_index = 96
+	generated_runtime_nodes["combat_drop_banner_body"] = body
+	var icon := _ensure_runtime_label("Text_RuntimeDropBannerIcon", Vector2(952.0, -1.0), Vector2(52.0, 52.0), 30, Color("#d8d9dc"), parent)
+	icon.text = "◆"
+	icon.add_theme_color_override("font_outline_color", Color("#050302"))
+	icon.add_theme_constant_override("outline_size", 5)
+	icon.z_index = 97
+	generated_runtime_nodes["combat_drop_banner_icon"] = icon
+
+
+func _ensure_combat_skill_panel(parent: Control) -> void:
+	var panel := _ensure_panel(parent, OVERLAY_COMBAT_SKILL_PANEL_NAME, Vector2(1178.0, 58.0), Vector2(84.0, 112.0), Color("#17110e"), Color("#453121"), 3, 4)
+	panel.z_index = 85
+	generated_runtime_nodes["combat_skill_panel"] = panel
+	var orb := _ensure_runtime_label("Text_SkillOrb", Vector2(10.0, 8.0), Vector2(50.0, 50.0), 32, Color("#65d7ff"), panel)
+	orb.text = "●"
+	orb.add_theme_color_override("font_outline_color", Color("#050302"))
+	orb.add_theme_constant_override("outline_size", 5)
+	var label := _ensure_runtime_label("Text_SkillPanelLabel", Vector2(12.0, 56.0), Vector2(58.0, 20.0), 10, Color("#ffcf7a"), panel)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	generated_runtime_nodes["combat_skill_label"] = label
+	var bar := _ensure_combat_progress(panel, "Progress_SkillCooldown", Vector2(12.0, 86.0), Vector2(58.0, 8.0), Color("#a45cff"))
+	bar.z_index = 3
+	generated_runtime_nodes["combat_skill_cooldown"] = bar
+
+
+func _ensure_combat_boss_panel(parent: Control) -> void:
+	var panel := _ensure_panel(parent, OVERLAY_COMBAT_BOSS_PANEL_NAME, Vector2(1182.0, 28.0), Vector2(112.0, 150.0), Color("#18100c"), Color("#4a3020"), 3, 4)
+	panel.z_index = 82
+	generated_runtime_nodes["combat_boss_panel"] = panel
+	var label := _ensure_runtime_label("Text_BossPanelLabel", Vector2(10.0, 14.0), Vector2(92.0, 24.0), 13, Color("#ffcf7a"), panel)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	generated_runtime_nodes["combat_boss_label"] = label
+	var skull := _ensure_runtime_label("Text_BossPanelIcon", Vector2(22.0, 36.0), Vector2(68.0, 68.0), 42, Color("#d6d2c8"), panel)
+	skull.text = "◆"
+	skull.add_theme_color_override("font_outline_color", Color("#050302"))
+	skull.add_theme_constant_override("outline_size", 5)
+	var bar := _ensure_combat_progress(panel, "Progress_BossHp", Vector2(18.0, 118.0), Vector2(76.0, 10.0), Color("#d85745"))
+	bar.z_index = 3
+	generated_runtime_nodes["combat_boss_bar"] = bar
+
+
+func _ensure_combat_map_progress_panel(parent: Control) -> void:
+	var panel := parent.get_node_or_null(OVERLAY_COMBAT_MAP_PROGRESS_NAME)
+	var root: Control
+	if panel != null and panel is Control:
+		root = panel as Control
+	else:
+		root = Control.new()
+		root.name = OVERLAY_COMBAT_MAP_PROGRESS_NAME
+		root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(root)
+	root.position = Vector2(1008.0, 116.0)
+	root.size = Vector2(264.0, 114.0)
+	root.z_index = 94
+	generated_runtime_nodes["combat_map_progress"] = root
+	for child in root.get_children():
+		root.remove_child(child)
+		child.queue_free()
+
+	var frame := _ensure_panel(root, "Panel_MapProgressFrame", Vector2(0.0, 10.0), Vector2(264.0, 96.0), Color("#080908"), Color("#272625"), 2, 3)
+	frame.z_index = 1
+	_ensure_combat_map_progress_top(root)
+
+	var mini_tile := _ensure_panel(root, "Panel_MapProgressMiniTile", Vector2(16.0, 82.0), Vector2(31.0, 22.0), Color("#17110c"), Color("#6b4a2a"), 2, 3)
+	mini_tile.z_index = 8
+	var mini_lid := ColorRect.new()
+	mini_lid.name = "Rect_MapProgressMiniLid"
+	mini_lid.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mini_lid.position = Vector2(22.0, 87.0)
+	mini_lid.size = Vector2(19.0, 4.0)
+	mini_lid.color = Color("#c3914c")
+	mini_lid.z_index = 9
+	root.add_child(mini_lid)
+	var mini_body := _ensure_panel(root, "Panel_MapProgressMiniChestBody", Vector2(21.0, 90.0), Vector2(21.0, 10.0), Color("#3c3024"), Color("#967040"), 1, 1)
+	mini_body.z_index = 9
+	var mini_lock := ColorRect.new()
+	mini_lock.name = "Rect_MapProgressMiniLock"
+	mini_lock.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mini_lock.position = Vector2(30.0, 92.0)
+	mini_lock.size = Vector2(4.0, 5.0)
+	mini_lock.color = Color("#e2ba67")
+	mini_lock.z_index = 10
+	root.add_child(mini_lock)
+
+	var progress_back := _ensure_panel(root, "Panel_MapProgressTrackBack", Vector2(48.0, 80.0), Vector2(206.0, 16.0), Color("#211b24"), Color("#9b6122"), 2, 3)
+	progress_back.z_index = 6
+	var left_cap := _ensure_panel(root, "Panel_MapProgressTrackCapLeft", Vector2(47.0, 79.0), Vector2(12.0, 18.0), Color("#b97422"), Color("#2d1909"), 1, 2)
+	left_cap.z_index = 7
+	var right_cap := _ensure_panel(root, "Panel_MapProgressTrackCapRight", Vector2(242.0, 79.0), Vector2(12.0, 18.0), Color("#c78324"), Color("#2d1909"), 1, 2)
+	right_cap.z_index = 7
+	var progress := _ensure_combat_progress(root, "Progress_MapProgress", Vector2(61.0, 84.0), Vector2(178.0, 8.0), Color("#a14dff"))
+	progress.z_index = 8
+	generated_runtime_nodes["combat_map_progress_bar"] = progress
+	var track_highlight := ColorRect.new()
+	track_highlight.name = "Rect_MapProgressTrackHighlight"
+	track_highlight.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	track_highlight.position = Vector2(63.0, 85.0)
+	track_highlight.size = Vector2(174.0, 2.0)
+	track_highlight.color = Color(1.0, 1.0, 1.0, 0.12)
+	track_highlight.z_index = 9
+	root.add_child(track_highlight)
+	var pointer := _ensure_runtime_label("Text_MapProgressPointer", Vector2(51.0, 66.0), Vector2(20.0, 18.0), 15, Color("#f3e6c8"), root)
+	pointer.text = "▲"
+	pointer.add_theme_color_override("font_outline_color", Color("#050302"))
+	pointer.add_theme_constant_override("outline_size", 2)
+	pointer.z_index = 10
+	generated_runtime_nodes["combat_map_progress_pointer"] = pointer
+
+	var tick_back := _ensure_panel(root, "Panel_MapProgressTickBack", Vector2(60.0, 97.0), Vector2(184.0, 9.0), Color("#050403"), Color("#15100c"), 1, 1)
+	tick_back.z_index = 5
+	for index in range(10):
+		var tick_name := "Rect_MapProgressTick%d" % index
+		var existing := root.get_node_or_null(tick_name)
+		var tick: ColorRect
+		if existing != null and existing is ColorRect:
+			tick = existing as ColorRect
+		else:
+			tick = ColorRect.new()
+			tick.name = tick_name
+			tick.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			root.add_child(tick)
+		tick.position = Vector2(72.0 + float(index) * 15.0, 99.0)
+		tick.size = Vector2(5.0, 5.0)
+		tick.color = Color("#1b1b1c")
+		tick.z_index = 7
+
+
+func _ensure_combat_map_progress_top(root: Control) -> void:
+	root.set_meta("map_progress_route_overlay_subtle", false)
+	root.set_meta("map_progress_portal_atom_crop", false)
+	var top_shell := _ensure_panel(root, "Panel_MapProgressTopShell", Vector2(6.0, 6.0), Vector2(252.0, 74.0), Color("#11110f"), Color("#383532"), 2, 4)
+	top_shell.z_index = 2
+	var top_rail := _ensure_panel(root, "Panel_MapProgressTopRail", Vector2(64.0, 12.0), Vector2(128.0, 8.0), Color("#20201f"), Color("#090807"), 1, 1)
+	top_rail.z_index = 3
+	var top_shine := _ensure_map_progress_rect(root, "Rect_MapProgressTopRailShine", Vector2(67.0, 13.0), Vector2(122.0, 2.0), Color(1.0, 1.0, 1.0, 0.08), 4)
+	top_shine.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var portal_atom_texture := _generated_texture("res://assets/generated/ui/combat_map_progress_portal_atom.png")
+	var route_atom_texture := _generated_texture("res://assets/generated/ui/combat_map_progress_route_silhouette.png")
+	var next_atom_texture := _generated_texture("res://assets/generated/ui/combat_map_progress_next_marker.png")
+	if portal_atom_texture != null and route_atom_texture != null and next_atom_texture != null:
+		root.set_meta("map_progress_route_overlay_subtle", true)
+		root.set_meta("map_progress_portal_atom_crop", true)
+		var portal_atom := _ensure_texture_rect(root, "Tex_MapProgressPortal", Vector2(8.0, 2.0), Vector2(82.0, 78.0), portal_atom_texture, 8)
+		portal_atom.modulate = Color(1.04, 1.04, 1.04, 1.0)
+		var route_atom := _ensure_texture_rect(root, "Tex_MapProgressRouteSilhouette", Vector2(84.0, 18.0), Vector2(116.0, 54.0), route_atom_texture, 7)
+		route_atom.modulate = Color(1.02, 1.0, 0.96, 1.0)
+		var next_atom := _ensure_texture_rect(root, "Tex_MapProgressNextNodeMarker", Vector2(199.0, 2.0), Vector2(59.0, 78.0), next_atom_texture, 8)
+		next_atom.modulate = Color(1.04, 1.02, 0.98, 1.0)
+		_ensure_combat_map_progress_route_state_overlay(root, true)
+		return
+
+	var portal_socket := _ensure_panel(root, "Panel_MapProgressPortalSocket", Vector2(15.0, 12.0), Vector2(67.0, 62.0), Color("#0b1010"), Color("#2e342f"), 2, 5)
+	portal_socket.z_index = 4
+	var portal_glow := _ensure_texture_rect(root, "Tex_MapProgressPortalGlow", Vector2(19.0, 14.0), Vector2(59.0, 59.0), _combat_map_progress_orb_texture(), 5)
+	portal_glow.modulate = Color(0.32, 0.85, 1.0, 0.28)
+	var portal := _ensure_texture_rect(root, "Tex_MapProgressPortal", Vector2(22.0, 17.0), Vector2(53.0, 53.0), _combat_map_progress_orb_texture(), 8)
+	portal.modulate = Color(1.1, 1.1, 1.08, 1.0)
+	portal.pivot_offset = portal.size * 0.5
+	_ensure_map_progress_rect(root, "Rect_MapProgressPortalTopGem", Vector2(46.0, 4.0), Vector2(7.0, 9.0), Color("#56d8ff"), 10)
+	_ensure_map_progress_rect(root, "Rect_MapProgressPortalLeftMoss", Vector2(8.0, 55.0), Vector2(13.0, 15.0), Color("#405328"), 6)
+	_ensure_map_progress_rect(root, "Rect_MapProgressPortalRightMoss", Vector2(74.0, 55.0), Vector2(12.0, 14.0), Color("#475b2d"), 6)
+	_ensure_map_progress_rect(root, "Rect_MapProgressPortalLeftFoot", Vector2(20.0, 68.0), Vector2(14.0, 4.0), Color("#c79237"), 10)
+	_ensure_map_progress_rect(root, "Rect_MapProgressPortalRightFoot", Vector2(61.0, 68.0), Vector2(14.0, 4.0), Color("#c79237"), 10)
+
+	var route_slab := _ensure_panel(root, "Panel_MapProgressRouteSlab", Vector2(86.0, 21.0), Vector2(110.0, 48.0), Color("#4b4035"), Color("#191514"), 2, 5)
+	route_slab.z_index = 4
+	_ensure_map_progress_rect(root, "Rect_MapProgressRockShard0", Vector2(93.0, 26.0), Vector2(25.0, 36.0), Color("#5d513f"), 5)
+	_ensure_map_progress_rect(root, "Rect_MapProgressRockShard1", Vector2(119.0, 23.0), Vector2(28.0, 41.0), Color("#3f382f"), 5)
+	_ensure_map_progress_rect(root, "Rect_MapProgressRockShard2", Vector2(148.0, 27.0), Vector2(21.0, 36.0), Color("#665641"), 5)
+	_ensure_map_progress_rect(root, "Rect_MapProgressRockShard3", Vector2(170.0, 25.0), Vector2(18.0, 36.0), Color("#3b352e"), 5)
+
+	_ensure_combat_map_progress_route_state_overlay(root, false)
+
+	var next_tile := _ensure_panel(root, "Panel_MapProgressNextTile", Vector2(204.0, 12.0), Vector2(50.0, 60.0), Color("#20140d"), Color("#c78324"), 3, 3)
+	next_tile.z_index = 5
+	var next_inner := _ensure_panel(root, "Panel_MapProgressNextTileInner", Vector2(211.0, 20.0), Vector2(36.0, 44.0), Color("#2f2114"), Color("#6b3f13"), 1, 1)
+	next_inner.z_index = 6
+	var next_marker := _ensure_map_progress_rect(root, "Rect_MapProgressNextMarker", Vector2(228.0, 35.0), Vector2(18.0, 18.0), Color("#d9a747"), 10)
+	next_marker.rotation = deg_to_rad(45.0)
+	next_marker.pivot_offset = next_marker.size * 0.5
+	_ensure_map_progress_rect(root, "Rect_MapProgressNextMarkerShine", Vector2(234.0, 33.0), Vector2(3.0, 22.0), Color("#f8d889"), 11)
+	_ensure_map_progress_rect(root, "Rect_MapProgressNextTopSpire", Vector2(230.0, 3.0), Vector2(5.0, 14.0), Color("#d99a27"), 10)
+	_ensure_map_progress_rect(root, "Rect_MapProgressNextTopCross", Vector2(224.0, 10.0), Vector2(17.0, 3.0), Color("#d99a27"), 10)
+
+
+func _ensure_combat_map_progress_route_state_overlay(root: Control, subtle: bool) -> void:
+	var route_points := [
+		Vector2(101.0, 35.0),
+		Vector2(127.0, 42.0),
+		Vector2(151.0, 57.0),
+		Vector2(177.0, 39.0),
+		Vector2(193.0, 36.0),
+	]
+	for index in range(route_points.size() - 1):
+		var segment_color := Color(0.0, 0.0, 0.0, 0.0) if subtle else Color("#816f55")
+		_ensure_map_progress_segment(root, "Rect_MapProgressRouteSegment%d" % index, route_points[index], route_points[index + 1], segment_color, 12 if subtle else 7)
+	for index in range(route_points.size()):
+		var node_size := Vector2(7.0, 7.0) if subtle else Vector2(11.0, 11.0)
+		if index == route_points.size() - 1:
+			node_size = Vector2(9.0, 9.0) if subtle else Vector2(13.0, 13.0)
+		var node_fill := Color(0.0, 0.0, 0.0, 0.0) if subtle else (Color("#695e50") if index < route_points.size() - 1 else Color("#d79520"))
+		var node_border := Color(0.0, 0.0, 0.0, 0.0) if subtle else Color("#19120a")
+		var route_node := _ensure_panel(root, "Panel_MapProgressRouteNode%d" % index, route_points[index] - node_size * 0.5, node_size, node_fill, node_border, 1, 6)
+		route_node.z_index = 13 if subtle else 9
+
+
+func _ensure_map_progress_rect(parent: Control, node_name: String, pos: Vector2, rect_size: Vector2, color: Color, z: int) -> ColorRect:
+	var existing := parent.get_node_or_null(node_name)
+	var rect: ColorRect
+	if existing != null and existing is ColorRect:
+		rect = existing as ColorRect
+	else:
+		if existing != null:
+			parent.remove_child(existing)
+			existing.queue_free()
+		rect = ColorRect.new()
+		rect.name = node_name
+		rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(rect)
+	rect.position = pos
+	rect.size = rect_size
+	rect.color = color
+	rect.rotation = 0.0
+	rect.scale = Vector2.ONE
+	rect.z_index = z
+	return rect
+
+
+func _ensure_map_progress_segment(parent: Control, node_name: String, start: Vector2, end: Vector2, color: Color, z: int) -> ColorRect:
+	var delta := end - start
+	var length := maxf(1.0, delta.length())
+	var segment := _ensure_map_progress_rect(parent, node_name, start, Vector2(length, 3.0), color, z)
+	segment.rotation = atan2(delta.y, delta.x)
+	segment.pivot_offset = Vector2(0.0, 1.5)
+	return segment
+
+
+func _ensure_texture_rect(parent: Control, node_name: String, pos: Vector2, rect_size: Vector2, texture: Texture2D, z: int) -> TextureRect:
+	var existing := parent.get_node_or_null(node_name)
+	var texture_rect: TextureRect
+	if existing != null and existing is TextureRect:
+		texture_rect = existing as TextureRect
+	else:
+		if existing != null:
+			parent.remove_child(existing)
+			existing.queue_free()
+		texture_rect = TextureRect.new()
+		texture_rect.name = node_name
+		texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(texture_rect)
+	texture_rect.position = pos
+	texture_rect.size = rect_size
+	texture_rect.texture = texture
+	texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	texture_rect.stretch_mode = TextureRect.STRETCH_SCALE
+	texture_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	texture_rect.z_index = z
+	return texture_rect
+
+
+func _combat_map_progress_orb_texture() -> Texture2D:
+	var cache_key := "runtime.map_progress_portal"
+	var cached: Variant = generated_texture_cache.get(cache_key, null)
+	if cached != null and cached is Texture2D:
+		return cached as Texture2D
+	var texture_size := 64
+	var image := Image.create(texture_size, texture_size, false, Image.FORMAT_RGBA8)
+	var center := Vector2(float(texture_size - 1) * 0.5, float(texture_size - 1) * 0.5)
+	var radius := float(texture_size) * 0.44
+	for y in range(texture_size):
+		for x in range(texture_size):
+			var point := Vector2(float(x), float(y))
+			var delta := point - center
+			var dx := absf(delta.x)
+			var dy := absf(delta.y)
+			var octagon_distance := (maxf(dx, dy) + minf(dx, dy) * 0.42) / radius
+			if octagon_distance > 1.0:
+				image.set_pixel(x, y, Color(0.0, 0.0, 0.0, 0.0))
+				continue
+			var radial_distance := delta.length() / radius
+			var angle := atan2(delta.y, delta.x)
+			var ring := clampf((octagon_distance - 0.72) / 0.2, 0.0, 1.0)
+			var core := clampf(1.0 - radial_distance * 0.9, 0.0, 1.0)
+			var swirl := 0.5 + 0.5 * sin(angle * 2.0 + radial_distance * 12.0)
+			var glint := clampf(1.0 - point.distance_to(Vector2(24.0, 18.0)) / 10.0, 0.0, 1.0)
+			var edge_alpha := clampf((1.0 - octagon_distance) * 10.0, 0.0, 1.0)
+			var color := Color("#082138").lerp(Color("#2e8fd0"), core)
+			color = color.lerp(Color("#7ce8ff"), swirl * 0.34)
+			color = color.lerp(Color("#dffcff"), glint * 0.65)
+			color = color.lerp(Color("#06111b"), ring * 0.42)
+			color.a = edge_alpha
+			image.set_pixel(x, y, color)
+	var texture := ImageTexture.create_from_image(image)
+	generated_texture_cache[cache_key] = texture
+	return texture
+
+
+func _ensure_pixel_prop(parent: Control, node_name: String, pos: Vector2, prop_size: Vector2, color: Color) -> ColorRect:
+	var existing := parent.get_node_or_null(node_name)
+	var prop: ColorRect
+	if existing != null and existing is ColorRect:
+		prop = existing as ColorRect
+	else:
+		prop = ColorRect.new()
+		prop.name = node_name
+		prop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(prop)
+	prop.position = pos
+	prop.size = prop_size
+	prop.color = color
+	prop.z_index = 1
+	return prop
+
+
 func _remove_generated_combat_data_panels(strip: Control) -> void:
-	for key in ["combat_state", "combat_skill", "combat_enemy", "combat_loot"]:
+	for key in ["combat_state", "combat_skill", "combat_skill_panel", "combat_skill_label", "combat_skill_cooldown", "combat_drop_banner", "combat_drop_banner_title", "combat_drop_banner_body", "combat_drop_banner_icon", "combat_enemy", "combat_loot"]:
 		generated_runtime_nodes.erase(key)
 	for node_name in [
 		"Panel_RuntimeCombatState",
 		"Panel_RuntimeCombatSkill",
 		"Panel_RuntimeCombatEnemy",
 		"Panel_RuntimeCombatLootTicker",
+		OVERLAY_COMBAT_SKILL_PANEL_NAME,
+		OVERLAY_COMBAT_DROP_BANNER_NAME,
+		"Text_RuntimeDropBannerTitle",
+		"Text_RuntimeDropBannerBody",
+		"Text_RuntimeDropBannerIcon",
 	]:
 		var panel := strip.get_node_or_null(node_name)
 		if panel != null:
@@ -2053,6 +2779,7 @@ func _ensure_runtime_skill_tree_window(root: Control) -> void:
 		return
 	if (window_stack as Control).has_node(RUNTIME_SKILL_TREE_WINDOW_NAME):
 		generated_runtime_nodes["skill_tree_window"] = (window_stack as Control).get_node(RUNTIME_SKILL_TREE_WINDOW_NAME)
+		_register_desktop_window("skill_tree", generated_runtime_nodes["skill_tree_window"] as Control, generated_native_windows.get("skill_tree", null))
 		return
 	var window := Control.new()
 	window.name = RUNTIME_SKILL_TREE_WINDOW_NAME
@@ -2077,33 +2804,24 @@ func _ensure_runtime_skill_tree_window(root: Control) -> void:
 		frame.add_theme_stylebox_override("panel", _overlay_style(Color("#0a0908"), Color("#d18a24"), 2, 4))
 	window.add_child(frame)
 
-	var title_bar := PanelContainer.new()
-	title_bar.name = "ProgramTitleBar"
-	title_bar.position = Vector2(14.0, 12.0)
-	title_bar.size = Vector2(window.size.x - 28.0, 42.0)
-	var title_style := _overlay_texture_style("taskstonebar.ui.window_title_bar_9slice")
-	if title_style != null:
-		title_bar.add_theme_stylebox_override("panel", title_style)
-	else:
-		title_bar.add_theme_stylebox_override("panel", _overlay_style(Color("#762020"), Color("#d18a24"), 2, 2))
-	window.add_child(title_bar)
-
-	var title := _make_runtime_label("Text_RuntimeSkillTreeTitle", Vector2(28.0, 16.0), Vector2(404.0, 34.0), 20, Color("#ffcf7a"))
-	title.text = "Taskstonebar 스킬 트리"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	window.add_child(title)
-
-	var close_button := _make_runtime_window_button("Btn_RuntimeSkillTreeClose", "", "닫기", Vector2(window.size.x - 54.0, 17.0))
+	var title := WindowTitleBarChrome.ensure_title_label(window, "Text_RuntimeSkillTreeTitle", "Taskstonebar 스킬 트리")
+	var close_button := WindowTitleBarChrome.ensure_button(window, "Btn_RuntimeSkillTreeClose", "", "닫기")
+	var minimize_button := WindowTitleBarChrome.ensure_button(window, "Btn_RuntimeSkillTreeMinimize", "-", "최소화")
+	var title_bar := WindowTitleBarChrome.apply(window, {
+		"title_label": title,
+		"close_button": close_button,
+		"minimize_button": minimize_button,
+		"close_icon": _generated_texture(GENERATED_CLOSE_ICON_PATH),
+		"minimize_text": "-",
+	})
+	if title_bar != null:
+		_connect_program_window_drag(title_bar, window)
 	close_button.pressed.connect(func():
 		_close_generated_window("skill_tree", window)
 	)
-	window.add_child(close_button)
-	_ensure_generated_close_icon(close_button)
-	var minimize_button := _make_runtime_window_button("Btn_RuntimeSkillTreeMinimize", "-", "최소화", Vector2(window.size.x - 94.0, 17.0))
 	minimize_button.pressed.connect(func():
 		_close_generated_window("skill_tree", window)
 	)
-	window.add_child(minimize_button)
 
 	var body := PanelContainer.new()
 	body.name = "Panel_RuntimeSkillTreeBody"
@@ -2164,19 +2882,7 @@ func _ensure_runtime_skill_tree_window(root: Control) -> void:
 	generated_runtime_nodes["skill_tree_footer"] = footer_label
 	generated_runtime_nodes["skill_tree_learn"] = learn_button
 	generated_runtime_nodes["skill_tree_level"] = level_button
-
-
-func _make_runtime_window_button(node_name: String, text: String, tooltip: String, pos: Vector2) -> Button:
-	var button := Button.new()
-	button.name = node_name
-	button.text = text
-	button.tooltip_text = tooltip
-	button.position = pos
-	button.size = Vector2(36.0, 34.0)
-	button.z_index = 6
-	button.set_meta("button_role", "window_close")
-	_apply_generated_button_style(button, "window_close")
-	return button
+	_register_desktop_window("skill_tree", window, generated_native_windows.get("skill_tree", null))
 
 
 func _make_runtime_action_button(node_name: String, text: String, pos: Vector2, button_size: Vector2) -> Button:
@@ -2233,13 +2939,16 @@ func _open_runtime_skill_tree_window() -> void:
 		return
 	generated_taskbar_mode = false
 	_restore_generated_workshop_windows()
-	window.visible = true
-	var native := _native_window_for_generated_control(window)
-	if native != null:
-		native.visible = true
-		native.grab_focus()
+	if _ensure_desktop_window_registered("skill_tree"):
+		desktop_window_manager.show_window("skill_tree", true)
 	else:
-		window.move_to_front()
+		window.visible = true
+		var native := _native_window_for_generated_control(window)
+		if native != null:
+			native.visible = true
+			native.grab_focus()
+		else:
+			window.move_to_front()
 
 
 func _runtime_skill_tree_preview_message() -> String:
@@ -2332,6 +3041,9 @@ func _set_generated_taskbar_mode(enabled: bool) -> void:
 func _hide_generated_workshop_windows() -> void:
 	if generated_ui_overlay == null:
 		return
+	if _ensure_desktop_window_registered("status"):
+		desktop_window_manager.hide_group("workshop")
+		return
 	if not generated_native_windows.is_empty():
 		for window_id in ["status", "keeper", "portal", "skill_tree"]:
 			var native: Window = generated_native_windows.get(window_id, null)
@@ -2348,6 +3060,11 @@ func _hide_generated_workshop_windows() -> void:
 
 func _restore_generated_workshop_windows() -> void:
 	if generated_ui_overlay == null:
+		return
+	if _ensure_desktop_window_registered("status"):
+		desktop_window_manager.restore_group("workshop", {
+			"skill_tree": generated_selected_action == "skill",
+		})
 		return
 	if not generated_native_windows.is_empty():
 		for window_id in ["status", "keeper", "portal"]:
@@ -2388,6 +3105,68 @@ func _sync_generated_taskbar_controls() -> void:
 	button.button_pressed = generated_taskbar_mode
 	button.text = "창 복원" if generated_taskbar_mode else "창 숨김"
 	button.tooltip_text = "Workshop mode 복원" if generated_taskbar_mode else "Taskbar mode로 최소화"
+
+
+func _sync_desktop_status_bar(snapshot: Dictionary, model: Dictionary) -> void:
+	if generated_ui_overlay == null:
+		return
+	var layer := generated_ui_overlay.get_node_or_null("Section_DesktopScaffold/RuntimeDesktopStatusBarLayer")
+	if layer == null:
+		layer = generated_ui_overlay.get_node_or_null("Section_DesktopScaffold/Panel_OsTaskbarBand")
+	if layer == null or not layer is Control:
+		return
+	var status_bar := layer as Control
+	var mode_label := status_bar.get_node_or_null("Text_StatusBarMode")
+	if mode_label != null and mode_label is Label:
+		var label := mode_label as Label
+		label.text = "TASKBAR" if generated_taskbar_mode else "WORKSHOP"
+		label.add_theme_color_override("font_color", Color("#ffcf7a") if generated_taskbar_mode else Color("#f3e6c8"))
+
+	var player: Dictionary = snapshot.get("player", {}) if typeof(snapshot.get("player", {})) == TYPE_DICTIONARY else {}
+	var hp := int(player.get("hp", 0))
+	var max_hp := int(player.get("max_hp", 0))
+	_set_status_bar_text(status_bar, "Text_StatusBarCombat", "%s · HP %d/%d · 적 %d" % [
+		_current_stage_label(snapshot).replace("\n", " "),
+		hp,
+		max_hp,
+		int(snapshot.get("enemy_count", 0)),
+	])
+
+	var window_text := "창 준비 중"
+	if desktop_window_manager != null:
+		var desktop_snapshot: Dictionary = desktop_window_manager.snapshot()
+		var visible: Array = desktop_snapshot.get("visible", []) if typeof(desktop_snapshot.get("visible", [])) == TYPE_ARRAY else []
+		var registered: Array = desktop_snapshot.get("registered", []) if typeof(desktop_snapshot.get("registered", [])) == TYPE_ARRAY else []
+		var focused := _desktop_status_bar_window_label(str(desktop_snapshot.get("focused", "")))
+		window_text = "창 %d/%d · 포커스 %s" % [visible.size(), registered.size(), focused]
+	_set_status_bar_text(status_bar, "Text_StatusBarWindows", window_text)
+
+	var sync := status_bar.get_node_or_null("Text_StatusBarSync")
+	if sync != null and sync is Label:
+		var sync_label := sync as Label
+		var raw_status := str(model.get("steam_status", "서버 LIVE   Steam SYNC"))
+		sync_label.text = raw_status.replace("서버 ", "").replace("   ", " · ")
+
+
+func _set_status_bar_text(parent: Control, node_name: String, text: String) -> void:
+	var node := parent.get_node_or_null(node_name)
+	if node != null and node is Label:
+		(node as Label).text = text
+
+
+func _desktop_status_bar_window_label(window_id: String) -> String:
+	match _normalize_desktop_window_id(window_id):
+		"status":
+			return "상태"
+		"keeper":
+			return "돌지기"
+		"portal":
+			return "지도"
+		"combat":
+			return "전투"
+		"skill_tree":
+			return "스킬"
+	return "-"
 
 
 func _sync_status_window_real_data(model: Dictionary) -> void:
@@ -2663,6 +3442,45 @@ func _ensure_generated_modal_host(root: Control) -> void:
 	host.top_level = false
 	root.move_child(host, root.get_child_count() - 1)
 	generated_runtime_nodes["modal_host"] = host
+	_ensure_popup_system(host)
+
+
+func _ensure_popup_system(host: Control) -> void:
+	if host == null:
+		return
+	if popup_system == null:
+		popup_system = PopupSystem.new()
+	popup_system.setup(host)
+
+
+func show_popup_alert(config: Dictionary = {}) -> Control:
+	var host := _active_generated_modal_host()
+	if host == null:
+		return null
+	_ensure_popup_system(host)
+	return popup_system.show_alert(config)
+
+
+func show_popup_confirm(config: Dictionary = {}) -> Control:
+	var host := _active_generated_modal_host()
+	if host == null:
+		return null
+	_ensure_popup_system(host)
+	return popup_system.show_confirm(config)
+
+
+func show_popup_toast(config: Dictionary = {}) -> Control:
+	var host := _active_generated_modal_host()
+	if host == null:
+		return null
+	_ensure_popup_system(host)
+	return popup_system.show_toast(config)
+
+
+func close_popup() -> void:
+	if popup_system == null:
+		return
+	popup_system.close_popup()
 
 
 func _active_generated_modal_host() -> Control:
@@ -2728,92 +3546,88 @@ func _open_inventory_item_detail_modal(instance_id: int, kind: String) -> void:
 	title.name = "Panel_ItemDetailTitleBar"
 	title.position = MODAL_TITLE_INSET
 	title.size = Vector2(frame.size.x - MODAL_TITLE_INSET.x * 2.0, MODAL_TITLE_HEIGHT)
-	title.add_theme_stylebox_override("panel", _overlay_texture_style("taskstonebar.ui.window_title_bar_9slice") if _overlay_texture_style("taskstonebar.ui.window_title_bar_9slice") != null else _overlay_style(Color("#6b2a18"), Color("#d18a24"), 2, 2))
+	title.add_theme_stylebox_override("panel", _overlay_style(Color("#541e17"), Color("#271713"), 2, 2))
 	frame.add_child(title)
+	_ensure_reference_modal_header_details(title)
 
-	var title_icon := PanelContainer.new()
-	title_icon.name = "Panel_ItemDetailTitleIcon"
-	title_icon.position = Vector2(10.0, 8.0)
-	title_icon.size = Vector2(30.0, 30.0)
-	title_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	title_icon.add_theme_stylebox_override("panel", _overlay_style(Color("#160d08"), Color("#ffcf7a"), 1, 2))
-	title.add_child(title_icon)
-	_make_modal_label(title, "Text_ItemDetailTitle", title_text, Vector2(54.0, 8.0), Vector2(350.0, 30.0), 20, Color("#ffcf7a"))
+	var detail_title := _make_modal_label(title, "Text_ItemDetailTitle", title_text, Vector2(78.0, 7.0), Vector2(title.size.x - 136.0, 28.0), 18, Color("#ffcf7a"))
+	detail_title.z_index = 5
 
 	var close_button := Button.new()
 	close_button.name = "Btn_ItemDetailClose"
-	close_button.position = Vector2(title.size.x - 44.0, 6.0)
-	close_button.size = Vector2(36.0, 36.0)
+	close_button.position = Vector2(title.size.x - 34.0, 9.0)
+	close_button.size = Vector2(24.0, 24.0)
 	close_button.tooltip_text = "닫기"
 	close_button.pressed.connect(_close_inventory_item_detail_modal)
 	_apply_generated_button_style(close_button, "window_close")
 	_ensure_generated_close_icon(close_button)
+	close_button.z_index = 6
 	title.add_child(close_button)
 
 	var body := Panel.new()
 	body.name = "Panel_ItemDetailBody"
 	body.position = MODAL_BODY_INSET
-	body.size = Vector2(frame.size.x - MODAL_BODY_INSET.x * 2.0, 326.0)
+	body.size = Vector2(frame.size.x - MODAL_BODY_INSET.x * 2.0, frame.size.y - MODAL_BODY_INSET.y - MODAL_FRAME_CONTENT_BOTTOM - MODAL_FOOTER_HEIGHT - 8.0)
 	var body_style: StyleBox = _overlay_texture_style("taskstonebar.ui.dark_inner_well_9slice")
 	body.add_theme_stylebox_override("panel", body_style if body_style != null else _overlay_style(Color("#080a0a"), Color("#6b4a2a"), 2, 3))
 	frame.add_child(body)
 
 	var preview_back := PanelContainer.new()
 	preview_back.name = "Panel_ItemDetailPreviewBack"
-	preview_back.position = Vector2(20.0, 20.0)
-	preview_back.size = Vector2(112.0, 112.0)
+	preview_back.position = Vector2(16.0, 16.0)
+	preview_back.size = Vector2(96.0, 96.0)
 	preview_back.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	preview_back.add_theme_stylebox_override("panel", _overlay_style(Color("#10100f"), Color("#3f2f20"), 1, 2))
 	body.add_child(preview_back)
 	var slot_data := _progression_inventory_detail_slot_data(instance, is_stone)
-	_make_inventory_detail_slot(body, "Slot_ItemDetailPreview", Vector2(44.0, 44.0), slot_data)
+	_make_inventory_detail_slot(body, "Slot_ItemDetailPreview", Vector2(32.0, 32.0), slot_data)
 
 	var item_name := str(instance.get("name", "아이템"))
-	var item_title := _make_modal_label(body, "Text_ItemDetailName", item_name, Vector2(154.0, 22.0), Vector2(286.0, 30.0), 20, Color("#ffcf7a"))
+	var item_title := _make_modal_label(body, "Text_ItemDetailName", item_name, Vector2(128.0, 18.0), Vector2(286.0, 28.0), 18, Color("#ffcf7a"))
 	item_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	var sub_text := _progression_inventory_detail_subtitle(instance, is_stone)
-	var sub_label := _make_modal_label(body, "Text_ItemDetailSubtitle", sub_text, Vector2(154.0, 58.0), Vector2(286.0, 24.0), 13, Color("#b79a72"))
+	var sub_label := _make_modal_label(body, "Text_ItemDetailSubtitle", sub_text, Vector2(128.0, 50.0), Vector2(286.0, 22.0), 12, Color("#b79a72"))
 	sub_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	var hint := "클릭은 상세만, 소모/장착은 버튼으로 실행합니다."
-	var hint_label := _make_modal_label(body, "Text_ItemDetailHint", hint, Vector2(154.0, 88.0), Vector2(286.0, 36.0), 12, Color("#f3e6c8"))
+	var hint_label := _make_modal_label(body, "Text_ItemDetailHint", hint, Vector2(128.0, 78.0), Vector2(286.0, 34.0), 11, Color("#f3e6c8"))
 	hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 	var list_back := PanelContainer.new()
 	list_back.name = "Panel_ItemDetailStatsBack"
-	list_back.position = Vector2(20.0, 152.0)
-	list_back.size = Vector2(440.0, 112.0)
+	list_back.position = Vector2(16.0, 130.0)
+	list_back.size = Vector2(body.size.x - 32.0, 92.0)
 	list_back.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	list_back.add_theme_stylebox_override("panel", _overlay_style(Color("#10100f"), Color("#30241a"), 1, 2))
 	body.add_child(list_back)
 	for line_index in range(mini(detail_lines.size(), 5)):
-		var line_label := _make_modal_label(body, "Text_ItemDetailLine%d" % line_index, str(detail_lines[line_index]), Vector2(36.0, 160.0 + float(line_index) * 20.0), Vector2(408.0, 19.0), 12, Color("#f3e6c8"))
+		var line_label := _make_modal_label(body, "Text_ItemDetailLine%d" % line_index, str(detail_lines[line_index]), Vector2(30.0, 136.0 + float(line_index) * 17.0), Vector2(body.size.x - 60.0, 16.0), 11, Color("#f3e6c8"))
 		line_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 	var owned_chip := PanelContainer.new()
 	owned_chip.name = "Panel_ItemDetailOwnedChip"
-	owned_chip.position = Vector2(20.0, 278.0)
-	owned_chip.size = Vector2(198.0, 30.0)
+	owned_chip.position = Vector2(16.0, 240.0)
+	owned_chip.size = Vector2(190.0, 28.0)
 	owned_chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	owned_chip.add_theme_stylebox_override("panel", _overlay_style(Color("#251711"), Color("#6a3f26"), 1, 2))
 	body.add_child(owned_chip)
-	var owned_label := _make_modal_label(body, "Text_ItemDetailOwnedChip", "보유 수량 확인", Vector2(34.0, 283.0), Vector2(170.0, 20.0), 12, Color("#f3e6c8"))
+	var owned_label := _make_modal_label(body, "Text_ItemDetailOwnedChip", "보유 수량 확인", Vector2(28.0, 244.0), Vector2(166.0, 18.0), 11, Color("#f3e6c8"))
 	owned_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 	var warning_chip := PanelContainer.new()
 	warning_chip.name = "Panel_ItemDetailWarningChip"
-	warning_chip.position = Vector2(238.0, 278.0)
-	warning_chip.size = Vector2(222.0, 30.0)
+	warning_chip.position = Vector2(222.0, 240.0)
+	warning_chip.size = Vector2(196.0, 28.0)
 	warning_chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	warning_chip.add_theme_stylebox_override("panel", _overlay_style(Color("#391615"), Color("#8f4637"), 1, 2))
 	body.add_child(warning_chip)
 	var warning_text := "소모 시 복구 불가" if is_stone else "승급 재료는 복구 불가"
-	var warning_label := _make_modal_label(body, "Text_ItemDetailWarningChip", warning_text, Vector2(252.0, 283.0), Vector2(190.0, 20.0), 12, Color("#ffcf7a"))
+	var warning_label := _make_modal_label(body, "Text_ItemDetailWarningChip", warning_text, Vector2(234.0, 244.0), Vector2(172.0, 18.0), 11, Color("#ffcf7a"))
 	warning_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 	var footer_back := PanelContainer.new()
 	footer_back.name = "Panel_ItemDetailFooterBack"
-	footer_back.position = Vector2(54.0, frame.size.y - MODAL_FRAME_CONTENT_BOTTOM - MODAL_FOOTER_HEIGHT)
-	footer_back.size = Vector2(frame.size.x - 108.0, MODAL_FOOTER_HEIGHT)
+	footer_back.position = Vector2(42.0, frame.size.y - MODAL_FRAME_CONTENT_BOTTOM - MODAL_FOOTER_HEIGHT)
+	footer_back.size = Vector2(frame.size.x - 84.0, MODAL_FOOTER_HEIGHT)
 	footer_back.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	footer_back.add_theme_stylebox_override("panel", _overlay_style(Color("#120c08"), Color("#3f2f20"), 1, 2))
 	frame.add_child(footer_back)
@@ -2822,21 +3636,21 @@ func _open_inventory_item_detail_modal(instance_id: int, kind: String) -> void:
 	footer.name = "Footer_ItemDetail"
 	footer.position = footer_back.position + Vector2(10.0, 6.0)
 	footer.size = footer_back.size - Vector2(20.0, 12.0)
-	footer.add_theme_constant_override("separation", 10)
+	footer.add_theme_constant_override("separation", 8)
 	frame.add_child(footer)
-	var close := _make_modal_button("Btn_ItemDetailCancel", "닫기", Vector2(92.0, 38.0), "utility_icon")
+	var close := _make_modal_button("Btn_ItemDetailCancel", "닫기", Vector2(88.0, 34.0), "utility_icon")
 	close.pressed.connect(_close_inventory_item_detail_modal)
 	footer.add_child(close)
 	if is_stone:
-		var equip := _make_modal_button("Btn_ItemDetailEquip", "장착", Vector2(102.0, 38.0), "inventory_tab")
+		var equip := _make_modal_button("Btn_ItemDetailEquip", "장착", Vector2(96.0, 34.0), "inventory_tab")
 		equip.pressed.connect(_confirm_inventory_detail_equip_stone)
 		footer.add_child(equip)
-		var merge := _make_modal_button("Btn_ItemDetailMerge", "드래그 합성", Vector2(116.0, 38.0), "inventory_tab")
+		var merge := _make_modal_button("Btn_ItemDetailMerge", "드래그 합성", Vector2(112.0, 34.0), "inventory_tab")
 		merge.disabled = _progression_stone_merge_ids_for_instance(instance_id).size() < ProgressionState.STONE_SYNTHESIS_COUNT
 		merge.pressed.connect(_confirm_inventory_detail_merge_stones)
 		footer.add_child(merge)
 	else:
-		var upgrade := _make_modal_button("Btn_ItemDetailUpgrade", "승급 보기", Vector2(134.0, 38.0), "inventory_tab")
+		var upgrade := _make_modal_button("Btn_ItemDetailUpgrade", "승급 보기", Vector2(124.0, 34.0), "inventory_tab")
 		upgrade.disabled = _progression_equipment_upgrade_ids_for_instance(instance_id).size() < ProgressionState.EQUIPMENT_SYNTHESIS_COUNT
 		upgrade.pressed.connect(_open_inventory_detail_equipment_upgrade)
 		footer.add_child(upgrade)
@@ -2909,51 +3723,47 @@ func _open_equipment_upgrade_modal() -> void:
 	title.name = "Panel_EquipmentUpgradeTitleBar"
 	title.position = MODAL_TITLE_INSET
 	title.size = Vector2(frame.size.x - MODAL_TITLE_INSET.x * 2.0, MODAL_TITLE_HEIGHT)
-	title.add_theme_stylebox_override("panel", _overlay_texture_style("taskstonebar.ui.window_title_bar_9slice") if _overlay_texture_style("taskstonebar.ui.window_title_bar_9slice") != null else _overlay_style(Color("#6b2a18"), Color("#d18a24"), 2, 2))
+	title.add_theme_stylebox_override("panel", _overlay_style(Color("#541e17"), Color("#271713"), 2, 2))
 	frame.add_child(title)
-	var title_icon := PanelContainer.new()
-	title_icon.name = "Panel_EquipmentUpgradeTitleIcon"
-	title_icon.position = Vector2(10.0, 8.0)
-	title_icon.size = Vector2(30.0, 30.0)
-	title_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	title_icon.add_theme_stylebox_override("panel", _overlay_style(Color("#160d08"), Color("#ffcf7a"), 1, 2))
-	title.add_child(title_icon)
-	_make_modal_label(title, "Text_EquipmentUpgradeTitle", "장비 승급", Vector2(54.0, 8.0), Vector2(270.0, 30.0), 20, Color("#ffcf7a"))
+	_ensure_reference_modal_header_details(title)
+	var upgrade_title := _make_modal_label(title, "Text_EquipmentUpgradeTitle", "장비 승급", Vector2(78.0, 7.0), Vector2(title.size.x - 136.0, 28.0), 18, Color("#ffcf7a"))
+	upgrade_title.z_index = 5
 
 	var close_button := Button.new()
 	close_button.name = "Btn_EquipmentUpgradeClose"
-	close_button.position = Vector2(title.size.x - 44.0, 6.0)
-	close_button.size = Vector2(36.0, 36.0)
+	close_button.position = Vector2(title.size.x - 34.0, 9.0)
+	close_button.size = Vector2(24.0, 24.0)
 	close_button.tooltip_text = "닫기"
 	close_button.pressed.connect(_close_equipment_upgrade_modal)
 	_apply_generated_button_style(close_button, "window_close")
 	_ensure_generated_close_icon(close_button)
+	close_button.z_index = 6
 	title.add_child(close_button)
 
 	var body := Panel.new()
 	body.name = "Panel_EquipmentUpgradeBody"
 	body.position = MODAL_BODY_INSET
-	body.size = Vector2(frame.size.x - MODAL_BODY_INSET.x * 2.0, 230.0)
+	body.size = Vector2(frame.size.x - MODAL_BODY_INSET.x * 2.0, frame.size.y - MODAL_BODY_INSET.y - MODAL_FRAME_CONTENT_BOTTOM - MODAL_FOOTER_HEIGHT - 8.0)
 	var body_style: StyleBox = _overlay_texture_style("taskstonebar.ui.dark_inner_well_9slice")
 	body.add_theme_stylebox_override("panel", body_style if body_style != null else _overlay_style(Color("#080a0a"), Color("#6b4a2a"), 2, 3))
 	frame.add_child(body)
 
-	_make_modal_label(body, "Text_EquipmentUpgradeSummary", str(preview.get("message", "")), Vector2(18.0, 16.0), Vector2(370.0, 38.0), 14, Color("#f3e6c8"))
-	_make_modal_label(body, "Text_EquipmentUpgradeCost", "소모 장비 3개", Vector2(38.0, 66.0), Vector2(150.0, 20.0), 13, Color("#b79a72"))
-	_make_modal_label(body, "Text_EquipmentUpgradeResult", "획득 예정", Vector2(288.0, 66.0), Vector2(92.0, 20.0), 13, Color("#b79a72"))
+	_make_modal_label(body, "Text_EquipmentUpgradeSummary", str(preview.get("message", "")), Vector2(18.0, 14.0), Vector2(body.size.x - 36.0, 34.0), 13, Color("#f3e6c8"))
+	_make_modal_label(body, "Text_EquipmentUpgradeCost", "소모 장비 3개", Vector2(34.0, 58.0), Vector2(148.0, 20.0), 12, Color("#b79a72"))
+	_make_modal_label(body, "Text_EquipmentUpgradeResult", "획득 예정", Vector2(284.0, 58.0), Vector2(82.0, 20.0), 12, Color("#b79a72"))
 
 	var source_back := PanelContainer.new()
 	source_back.name = "Panel_EquipmentUpgradeSourceTray"
-	source_back.position = Vector2(20.0, 90.0)
-	source_back.size = Vector2(190.0, 72.0)
+	source_back.position = Vector2(18.0, 84.0)
+	source_back.size = Vector2(178.0, 68.0)
 	source_back.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	source_back.add_theme_stylebox_override("panel", _overlay_style(Color("#10100f"), Color("#3f2f20"), 1, 2))
 	body.add_child(source_back)
 
 	var result_back := PanelContainer.new()
 	result_back.name = "Panel_EquipmentUpgradeResultPreview"
-	result_back.position = Vector2(288.0, 90.0)
-	result_back.size = Vector2(84.0, 72.0)
+	result_back.position = Vector2(296.0, 84.0)
+	result_back.size = Vector2(68.0, 68.0)
 	result_back.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	result_back.add_theme_stylebox_override("panel", _overlay_style(Color("#10100f"), Color("#8a5b24"), 1, 2))
 	body.add_child(result_back)
@@ -2961,21 +3771,21 @@ func _open_equipment_upgrade_modal() -> void:
 	var source_slots: Array = preview.get("source_slots", []) if typeof(preview.get("source_slots", [])) == TYPE_ARRAY else []
 	for index in range(ProgressionState.EQUIPMENT_SYNTHESIS_COUNT):
 		var data: Dictionary = source_slots[index] if index < source_slots.size() and typeof(source_slots[index]) == TYPE_DICTIONARY else {"name": "비어", "count": 0, "badge": "", "rarity": "locked"}
-		_make_equipment_upgrade_slot(body, "Slot_UpgradeSource%d" % (index + 1), Vector2(28.0 + 62.0 * float(index), 96.0), data)
+		_make_equipment_upgrade_slot(body, "Slot_UpgradeSource%d" % (index + 1), Vector2(26.0 + 56.0 * float(index), 92.0), data)
 
-	_make_modal_label(body, "Text_EquipmentUpgradeArrow", "→", Vector2(218.0, 110.0), Vector2(42.0, 34.0), 28, Color("#ffcf7a"))
+	_make_modal_label(body, "Text_EquipmentUpgradeArrow", "→", Vector2(214.0, 104.0), Vector2(48.0, 34.0), 24, Color("#ffcf7a"))
 	var result_slot: Dictionary = preview.get("result_slot", {}) if typeof(preview.get("result_slot", {})) == TYPE_DICTIONARY else {"name": "상위", "count": 1, "badge": "?", "rarity": "locked"}
-	_make_equipment_upgrade_slot(body, "Slot_UpgradeResult", Vector2(304.0, 96.0), result_slot)
+	_make_equipment_upgrade_slot(body, "Slot_UpgradeResult", Vector2(304.0, 92.0), result_slot)
 
 	var note_text := "확인 시 선택된 장비는 되돌릴 수 없습니다."
 	if not bool(preview.get("ok", false)):
 		note_text = "같은 부위와 등급의 장비 3개가 필요합니다."
-	_make_modal_label(body, "Text_EquipmentUpgradeWarning", note_text, Vector2(18.0, 184.0), Vector2(370.0, 26.0), 13, Color("#ffcf7a"))
+	_make_modal_label(body, "Text_EquipmentUpgradeWarning", note_text, Vector2(18.0, 164.0), Vector2(body.size.x - 36.0, 24.0), 12, Color("#ffcf7a"))
 
 	var footer_back := PanelContainer.new()
 	footer_back.name = "Panel_EquipmentUpgradeFooterBack"
-	footer_back.position = Vector2(76.0, frame.size.y - MODAL_FRAME_CONTENT_BOTTOM - MODAL_FOOTER_HEIGHT)
-	footer_back.size = Vector2(322.0, 52.0)
+	footer_back.position = Vector2(73.0, frame.size.y - MODAL_FRAME_CONTENT_BOTTOM - MODAL_FOOTER_HEIGHT)
+	footer_back.size = Vector2(292.0, MODAL_FOOTER_HEIGHT)
 	footer_back.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	footer_back.add_theme_stylebox_override("panel", _overlay_style(Color("#120c08"), Color("#3f2f20"), 1, 2))
 	frame.add_child(footer_back)
@@ -2984,12 +3794,12 @@ func _open_equipment_upgrade_modal() -> void:
 	footer.name = "Footer_EquipmentUpgrade"
 	footer.position = footer_back.position + Vector2(10.0, 6.0)
 	footer.size = footer_back.size - Vector2(20.0, 12.0)
-	footer.add_theme_constant_override("separation", 12)
+	footer.add_theme_constant_override("separation", 10)
 	frame.add_child(footer)
-	var cancel := _make_modal_button("Btn_EquipmentUpgradeCancel", "취소", Vector2(112.0, 38.0), "utility_icon")
+	var cancel := _make_modal_button("Btn_EquipmentUpgradeCancel", "취소", Vector2(104.0, 34.0), "utility_icon")
 	cancel.pressed.connect(_close_equipment_upgrade_modal)
 	footer.add_child(cancel)
-	var confirm := _make_modal_button("Btn_EquipmentUpgradeConfirm", "승급", Vector2(148.0, 38.0), "inventory_tab")
+	var confirm := _make_modal_button("Btn_EquipmentUpgradeConfirm", "승급", Vector2(124.0, 34.0), "inventory_tab")
 	confirm.disabled = not bool(preview.get("ok", false))
 	confirm.pressed.connect(_confirm_equipment_upgrade_modal)
 	footer.add_child(confirm)
@@ -3021,7 +3831,7 @@ func _make_equipment_upgrade_slot(parent: Control, node_name: String, pos: Vecto
 	var slot := NinePatchRect.new()
 	slot.name = node_name
 	slot.position = pos
-	slot.size = Vector2(56.0, 56.0)
+	slot.size = Vector2(52.0, 52.0)
 	slot.texture = _generated_texture("res://assets/generated/ui/slot_frame_9slice.png")
 	slot.patch_margin_left = 18
 	slot.patch_margin_right = 18
@@ -4495,9 +5305,10 @@ func _sync_generated_combat_overlay(snapshot: Dictionary, model: Dictionary) -> 
 	if generated_ui_overlay == null:
 		return
 	_sync_generated_combat_map_texture(snapshot)
-	_sync_generated_combat_units(snapshot)
+	_sync_generated_combat_scene_chrome(snapshot, model)
 	_sync_generated_drop_toast(snapshot, model)
 	_sync_generated_combat_fx(snapshot)
+	_sync_generated_combat_units(snapshot)
 
 
 func _sync_generated_combat_map_texture(snapshot: Dictionary) -> void:
@@ -4514,8 +5325,155 @@ func _sync_generated_combat_map_texture(snapshot: Dictionary) -> void:
 	if texture_rect.texture != texture:
 		texture_rect.texture = texture
 	texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	texture_rect.stretch_mode = TextureRect.STRETCH_SCALE
-	texture_rect.modulate = Color.WHITE
+	texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	texture_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	texture_rect.modulate = Color(1.08, 1.02, 0.92, 1.0)
+	texture_rect.z_index = 0
+
+
+func _sync_generated_combat_scene_chrome(snapshot: Dictionary, model: Dictionary) -> void:
+	_sync_generated_combat_props(snapshot)
+	_sync_generated_boss_panel(snapshot)
+	_sync_generated_map_progress(snapshot)
+
+
+func _sync_generated_combat_props(snapshot: Dictionary) -> void:
+	var layer_node = generated_runtime_nodes.get("combat_prop_layer", null)
+	if layer_node == null or not layer_node is Control:
+		return
+	var layer := layer_node as Control
+	var elapsed := float(snapshot.get("elapsed", 0.0))
+	var props := [
+		{"name": "Prop_ReedLeft", "pos": Vector2(182.0, 140.0), "size": Vector2(34.0, 54.0), "color": Color("#8fb44a"), "phase": 0.0},
+		{"name": "Prop_PalmMid", "pos": Vector2(836.0, 90.0), "size": Vector2(52.0, 76.0), "color": Color("#7ca53d"), "phase": 0.7},
+		{"name": "Prop_GrassRight", "pos": Vector2(1258.0, 125.0), "size": Vector2(64.0, 46.0), "color": Color("#9bb64c"), "phase": 1.4},
+		{"name": "Prop_RubbleA", "pos": Vector2(618.0, 164.0), "size": Vector2(42.0, 24.0), "color": Color("#594435"), "phase": 0.2},
+		{"name": "Prop_RubbleB", "pos": Vector2(1160.0, 168.0), "size": Vector2(50.0, 22.0), "color": Color("#4a3d35"), "phase": 1.2},
+	]
+	for spec in props:
+		var node := _ensure_pixel_prop(layer, str(spec["name"]), spec["pos"], spec["size"], spec["color"])
+		node.position.y = float((spec["pos"] as Vector2).y) + sin(elapsed * 1.8 + float(spec["phase"])) * 1.5
+
+
+func _sync_generated_drop_banner(snapshot: Dictionary, model: Dictionary) -> void:
+	var banner_node = generated_runtime_nodes.get("combat_drop_banner", null)
+	if banner_node == null or not banner_node is PanelContainer:
+		return
+	var title_node = generated_runtime_nodes.get("combat_drop_banner_title", null)
+	var body_node = generated_runtime_nodes.get("combat_drop_banner_body", null)
+	if title_node == null or not title_node is Label or body_node == null or not body_node is Label:
+		return
+	var latest_drop: Dictionary = model.get("latest_drop", {}) if typeof(model.get("latest_drop", {})) == TYPE_DICTIONARY else {}
+	var banner := banner_node as PanelContainer
+	var title := title_node as Label
+	var body := body_node as Label
+	var icon_node = generated_runtime_nodes.get("combat_drop_banner_icon", null)
+	var icon_label: Label = icon_node as Label if icon_node != null and icon_node is Label else null
+	var elapsed := float(snapshot.get("elapsed", 0.0))
+	var age := elapsed - float(latest_drop.get("time", elapsed - 99.0))
+	var active := not latest_drop.is_empty() and int(latest_drop.get("item_id", 0)) != GOLD_ITEM_ID and age < 3.8
+	banner.visible = active
+	title.visible = active
+	body.visible = active
+	if icon_label != null:
+		icon_label.visible = active
+	if not active:
+		return
+	var pulse := 1.0 + maxf(0.0, 1.0 - age / 0.6) * 0.16
+	banner.modulate = Color(pulse, pulse, pulse, clampf(1.0 - maxf(0.0, age - 2.9) / 0.9, 0.0, 1.0))
+	title.text = "Obtained"
+	body.text = str(latest_drop.get("title", latest_drop.get("item_name", "전리품")))
+
+
+func _sync_generated_skill_panel(snapshot: Dictionary) -> void:
+	var panel_node = generated_runtime_nodes.get("combat_skill_panel", null)
+	if panel_node == null or not panel_node is PanelContainer:
+		return
+	var bar_node = generated_runtime_nodes.get("combat_skill_cooldown", null)
+	var label_node = generated_runtime_nodes.get("combat_skill_label", null)
+	if bar_node == null or not bar_node is ProgressBar or label_node == null or not label_node is Label:
+		return
+	var elapsed := float(snapshot.get("elapsed", 0.0))
+	var ratio := 0.5 + 0.5 * sin(elapsed * 1.2)
+	(bar_node as ProgressBar).value = clampf(ratio, 0.0, 1.0)
+	(label_node as Label).text = "AUTO"
+
+
+func _sync_generated_boss_panel(snapshot: Dictionary) -> void:
+	var panel_node = generated_runtime_nodes.get("combat_boss_panel", null)
+	if panel_node == null or not panel_node is PanelContainer:
+		return
+	var bar_node = generated_runtime_nodes.get("combat_boss_bar", null)
+	var label_node = generated_runtime_nodes.get("combat_boss_label", null)
+	if bar_node == null or not bar_node is ProgressBar or label_node == null or not label_node is Label:
+		return
+	var boss := _boss_or_focus_enemy(snapshot)
+	var panel := panel_node as PanelContainer
+	panel.visible = not boss.is_empty()
+	if boss.is_empty():
+		return
+	var hp := maxf(0.0, float(boss.get("hp", 0.0)))
+	var max_hp := maxf(1.0, float(boss.get("max_hp", 1.0)))
+	(bar_node as ProgressBar).value = clampf(hp / max_hp, 0.0, 1.0)
+	(label_node as Label).text = str(boss.get("name", "BOSS"))
+
+
+func _sync_generated_map_progress(snapshot: Dictionary) -> void:
+	var panel_node = generated_runtime_nodes.get("combat_map_progress", null)
+	var bar_node = generated_runtime_nodes.get("combat_map_progress_bar", null)
+	var pointer_node = generated_runtime_nodes.get("combat_map_progress_pointer", null)
+	if panel_node == null or not panel_node is Control or bar_node == null or not bar_node is ProgressBar:
+		return
+	var wave := clampi(int(snapshot.get("wave", 1)), 1, maxi(1, int(snapshot.get("wave_count", 1))))
+	var wave_count := maxi(1, int(snapshot.get("wave_count", 1)))
+	var wave_time_limit := maxf(1.0, float(snapshot.get("wave_time_limit", 1.0)))
+	var wave_elapsed := maxf(0.0, float(snapshot.get("wave_elapsed", 0.0)))
+	var wave_ratio := clampf(wave_elapsed / wave_time_limit, 0.0, 1.0)
+	var progress := clampf((float(wave - 1) + wave_ratio) / float(wave_count), 0.0, 1.0)
+	var bar := bar_node as ProgressBar
+	bar.value = progress
+	bar.add_theme_stylebox_override("background", _overlay_style(Color("#151118"), Color("#080506"), 1, 1))
+	bar.add_theme_stylebox_override("fill", _overlay_style(Color("#a855ff"), Color("#c586ff"), 0, 1))
+	if pointer_node != null and pointer_node is Label:
+		var pointer := pointer_node as Label
+		pointer.position.x = 51.0 + progress * 178.0
+		pointer.modulate = Color(1.0, 1.0, 1.0, 0.86 + 0.14 * sin(float(snapshot.get("elapsed", 0.0)) * 5.0))
+	var root := panel_node as Control
+	for index in range(10):
+		var tick := root.get_node_or_null("Rect_MapProgressTick%d" % index)
+		if tick != null and tick is ColorRect:
+			var threshold := float(index + 1) / 10.0
+			(tick as ColorRect).color = Color("#8d56ff") if progress >= threshold else Color("#141315")
+	var subtle_route_overlay := bool(root.get_meta("map_progress_route_overlay_subtle", false))
+	for index in range(5):
+		var route_node := root.get_node_or_null("Panel_MapProgressRouteNode%d" % index)
+		if route_node != null and route_node is PanelContainer:
+			var threshold := float(index) / 4.0
+			var active := progress >= threshold
+			var fill := Color(0.95, 0.64, 0.12, 0.56) if active else Color(0.0, 0.0, 0.0, 0.0)
+			var border := Color(0.05, 0.03, 0.01, 0.5) if active else Color(0.0, 0.0, 0.0, 0.0)
+			if not subtle_route_overlay:
+				fill = Color("#d69b2f") if active else Color("#5e5a50")
+				border = Color("#16120f")
+			(route_node as PanelContainer).add_theme_stylebox_override("panel", _overlay_style(fill, border, 1, 6))
+	for index in range(4):
+		var route_segment := root.get_node_or_null("Rect_MapProgressRouteSegment%d" % index)
+		if route_segment != null and route_segment is ColorRect:
+			var threshold := (float(index) + 0.55) / 4.0
+			if subtle_route_overlay:
+				(route_segment as ColorRect).color = Color(1.0, 0.72, 0.22, 0.5) if progress >= threshold else Color(0.0, 0.0, 0.0, 0.0)
+			else:
+				(route_segment as ColorRect).color = Color("#c58c2f") if progress >= threshold else Color("#816f55")
+	var portal_node := root.get_node_or_null("Tex_MapProgressPortal")
+	if portal_node != null and portal_node is TextureRect:
+		var portal := portal_node as TextureRect
+		var pulse := 0.5 + 0.5 * sin(float(snapshot.get("elapsed", 0.0)) * 2.8)
+		if bool(root.get_meta("map_progress_portal_atom_crop", false)):
+			portal.modulate = Color(1.0 + pulse * 0.05, 1.0 + pulse * 0.05, 1.0 + pulse * 0.07, 1.0)
+			portal.scale = Vector2.ONE
+		else:
+			portal.modulate = Color(1.04 + pulse * 0.12, 1.04 + pulse * 0.12, 1.08 + pulse * 0.1, 1.0)
+			portal.scale = Vector2.ONE * (1.0 + pulse * 0.025)
 
 
 func _taskstonebar_map_visual_index(map_def: Dictionary) -> int:
@@ -4542,7 +5500,7 @@ func _sync_generated_combat_units(snapshot: Dictionary) -> void:
 	var hero := _generated_node_or_null("Section_BottomCombatStrip/Tex_HeroCombatSprite")
 	if hero != null and hero is TextureRect and not player.is_empty():
 		var hero_rect := hero as TextureRect
-		var hero_size := Vector2(104.0, 104.0)
+		var hero_size := Vector2(112.0, 112.0)
 		var hero_pos := _overlay_world_to_combat(player.get("position", Vector2.ZERO), world_size)
 		var attack_flash := float(player.get("attack_flash", 0.0))
 		var hit_flash := float(player.get("hit_flash", 0.0))
@@ -4591,18 +5549,15 @@ func _sync_generated_player_hp(player: Dictionary, world_size: Vector2) -> void:
 	var max_hp := maxf(1.0, float(player.get("max_hp", 1.0)))
 	var hero_pos := _overlay_world_to_combat(player.get("position", Vector2.ZERO), world_size)
 	var hit_flash := float(player.get("hit_flash", 0.0))
-	var plate_size := Vector2(180.0, 38.0)
-	hp_plate.position = _clamp_combat_plate_position(hero_pos + Vector2(-90.0, -96.0), plate_size)
+	var plate_size := Vector2(88.0, 10.0)
+	hp_plate.position = _clamp_combat_plate_position(hero_pos + Vector2(-44.0, -66.0), plate_size)
 	hp_plate.size = plate_size
 	hp_plate.add_theme_stylebox_override("panel", _combat_hp_plate_style(Color("#d85745"), hit_flash))
-	hp_bar.position = hp_plate.position + Vector2(13.0, 24.0)
-	hp_bar.size = Vector2(154.0, 8.0)
+	hp_bar.position = hp_plate.position + Vector2(4.0, 3.0)
+	hp_bar.size = Vector2(80.0, 4.0)
 	hp_bar.value = clampf(hp / max_hp, 0.0, 1.0)
 	_style_combat_hp_bar(hp_bar, Color("#d85745"), hit_flash)
-	hp_label.position = hp_plate.position + Vector2(12.0, 4.0)
-	hp_label.size = Vector2(156.0, 17.0)
-	_style_combat_hp_label(hp_label, 10, HORIZONTAL_ALIGNMENT_CENTER)
-	hp_label.text = "돌지기 HP %s/%s" % [_format_count(int(round(hp))), _format_count(int(round(max_hp)))]
+	hp_label.visible = false
 
 
 func _sync_generated_enemy_hp(enemy: Dictionary, world_size: Vector2, snapshot: Dictionary) -> void:
@@ -4630,9 +5585,10 @@ func _sync_generated_enemy_hp(enemy: Dictionary, world_size: Vector2, snapshot: 
 	var hp := maxf(0.0, float(enemy.get("hp", 0.0)) + pending_damage)
 	var max_hp := maxf(1.0, float(enemy.get("max_hp", 1.0)))
 	var hit_flash := float(enemy.get("hit_flash", 0.0))
-	var enemy_pos := _overlay_world_to_combat(enemy.get("position", Vector2.ZERO), world_size)
+	var enemy_size := _overlay_enemy_size(enemy)
+	var enemy_pos := _overlay_enemy_center(enemy, world_size, enemy_size)
 	var plate_size := Vector2(48.0, 9.0)
-	hp_plate.position = _clamp_combat_plate_position(enemy_pos + Vector2(-24.0, -54.0), plate_size)
+	hp_plate.position = _clamp_combat_plate_position(enemy_pos + Vector2(-plate_size.x * 0.5, -enemy_size.y * 0.5 - 9.0), plate_size)
 	hp_plate.size = plate_size
 	hp_plate.add_theme_stylebox_override("panel", _combat_hp_plate_style(Color("#d85745"), hit_flash))
 	hp_bar.position = hp_plate.position + Vector2(3.0, 3.0)
@@ -4725,35 +5681,41 @@ func _sync_generated_enemy_stack(snapshot: Dictionary, world_size: Vector2) -> v
 		if runtime_id <= 0:
 			continue
 		var node_name := "RuntimeEnemy_%d" % runtime_id
+		var shadow_name := "RuntimeEnemyShadow_%d" % runtime_id
 		active_names[node_name] = true
+		active_names[shadow_name] = true
 		var enemy_rect := _runtime_enemy_texture_rect(layer, node_name)
+		var enemy_shadow := _runtime_enemy_shadow(layer, shadow_name)
 		var enemy_size := _overlay_enemy_size(enemy)
-		var enemy_pos := _overlay_world_to_combat(enemy.get("position", Vector2.ZERO), world_size)
-		var tags: Array = enemy.get("tags", []) if typeof(enemy.get("tags", [])) == TYPE_ARRAY else []
-		var attack_flash := float(enemy.get("attack_flash", 0.0))
-		if attack_flash > 0.0 and not tags.has("Ranged"):
-			var attack_phase := clampf(1.0 - attack_flash / 0.24, 0.0, 1.0)
-			enemy_pos.x -= sin(attack_phase * PI) * 14.0
+		var enemy_pos := _overlay_enemy_center(enemy, world_size, enemy_size)
 		var enemy_texture := _unit_display_texture(enemy, false)
 		if enemy_texture != null:
 			enemy_rect.texture = enemy_texture
 		elif sprites != null:
 			enemy_rect.texture = sprites.get_texture("monster_basic")
+		enemy_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		enemy_rect.stretch_mode = TextureRect.STRETCH_SCALE
 		enemy_rect.visible = true
 		enemy_rect.flip_h = true
 		enemy_rect.size = enemy_size
 		enemy_rect.pivot_offset = enemy_size * 0.5
-		enemy_pos = _clamp_combat_sprite_center(enemy_pos, enemy_size)
 		enemy_rect.position = enemy_pos - enemy_size * 0.5
-		enemy_rect.z_index = 64 + int(round(enemy_pos.y))
+		enemy_rect.z_index = 118 + int(round(enemy_pos.y))
 		enemy_rect.z_as_relative = false
+		enemy_shadow.visible = true
+		enemy_shadow.size = Vector2(enemy_size.x * 0.76, 14.0)
+		enemy_shadow.position = enemy_pos + Vector2(-enemy_shadow.size.x * 0.5, enemy_size.y * 0.34)
+		enemy_shadow.z_index = enemy_rect.z_index - 2
+		enemy_shadow.z_as_relative = false
 		var hit_flash := float(enemy.get("hit_flash", 0.0))
+		var attack_flash := float(enemy.get("attack_flash", 0.0))
 		var hit_pulse := sin(clampf(hit_flash / 0.18, 0.0, 1.0) * PI)
 		var attack_pulse := sin(clampf(attack_flash / 0.24, 0.0, 1.0) * PI)
 		enemy_rect.scale = Vector2.ONE * (1.0 + maxf(hit_pulse * 0.18, attack_pulse * 0.1))
-		enemy_rect.modulate = Color(1.75, 0.54, 0.42, 1.0) if hit_flash > 0.0 else Color(1, 1, 1, 1)
+		enemy_shadow.scale = Vector2.ONE * (1.0 + maxf(hit_pulse * 0.12, attack_pulse * 0.06))
+		enemy_rect.modulate = Color(1.75, 0.54, 0.42, 1.0) if hit_flash > 0.0 else Color(1.16, 1.12, 1.04, 1.0)
 	for child in layer.get_children():
-		if str(child.name).begins_with("RuntimeEnemy_") and not active_names.has(str(child.name)):
+		if (str(child.name).begins_with("RuntimeEnemy_") or str(child.name).begins_with("RuntimeEnemyShadow_")) and not active_names.has(str(child.name)):
 			child.queue_free()
 
 
@@ -4765,20 +5727,35 @@ func _runtime_enemy_texture_rect(parent: Control, node_name: String) -> TextureR
 	rect.name = node_name
 	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	rect.stretch_mode = TextureRect.STRETCH_SCALE
 	parent.add_child(rect)
 	return rect
+
+
+func _runtime_enemy_shadow(parent: Control, node_name: String) -> Panel:
+	var node := parent.get_node_or_null(node_name)
+	if node != null and node is Panel:
+		return node as Panel
+	var shadow := Panel.new()
+	shadow.name = node_name
+	shadow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	shadow.add_theme_stylebox_override("panel", _overlay_style(Color(0.03, 0.018, 0.01, 0.62), Color(0.0, 0.0, 0.0, 0.0), 0, 8))
+	parent.add_child(shadow)
+	return shadow
 
 
 func _sync_generated_drop_toast(snapshot: Dictionary, model: Dictionary) -> void:
 	var toast := _generated_node_or_null(OVERLAY_DROP_TOAST_PATH)
 	if toast == null or not toast is CanvasItem:
 		return
+	if toast is Control:
+		var toast_control := toast as Control
+		toast_control.position = Vector2(1016.0, 60.0)
+		toast_control.size = Vector2(206.0, 70.0)
 	var latest_drop: Dictionary = model.get("latest_drop", {}) if typeof(model.get("latest_drop", {})) == TYPE_DICTIONARY else {}
 	var canvas := toast as CanvasItem
-	if latest_drop.is_empty():
-		canvas.visible = true
-		canvas.modulate = Color(1, 1, 1, 0.62)
+	if latest_drop.is_empty() or int(latest_drop.get("item_id", 0)) == GOLD_ITEM_ID:
+		canvas.visible = false
 		return
 	canvas.visible = true
 	var age := float(snapshot.get("elapsed", 0.0)) - float(latest_drop.get("time", 0.0))
@@ -4823,15 +5800,28 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 		var progress := clampf(1.0 - float(event.get("ttl", 0.0)) / duration, 0.0, 1.0)
 		var fade := clampf(float(event.get("ttl", 0.0)) / duration, 0.0, 1.0)
 		match str(event.get("kind", "")):
+			"gold_drop":
+				var gold_position: Vector2 = event.get("position", Vector2(805.0, 80.0))
+				var gold_pos := _overlay_world_to_combat(gold_position, world_size) + COMBAT_ENEMY_VISUAL_SHIFT
+				var coin_texture: Texture2D = sprites.texture_for_item(GOLD_ITEM_ID) if sprites != null else null
+				var count := int(event.get("count", 0))
+				for coin_index in range(4):
+					var side := float(coin_index) - 1.5
+					var coin_progress := clampf(progress + float(coin_index) * 0.06, 0.0, 1.0)
+					var coin_center := gold_pos + Vector2(side * 18.0, -18.0 - 42.0 * coin_progress + sin(coin_progress * PI) * -10.0)
+					var coin_size := Vector2.ONE * (24.0 + 4.0 * sin(coin_progress * PI))
+					_add_runtime_texture(layer as Control, coin_texture, coin_center - coin_size * 0.5, coin_size, Color(1.0, 0.92, 0.45, fade))
+				_add_runtime_label(layer as Control, "+%d" % count, gold_pos + Vector2(-48.0, -74.0 - 20.0 * progress), Vector2(112.0, 28.0), 20, Color("#ffcf7a"), fade)
 			"spawn":
 				var spawn_position: Vector2 = event.get("position", Vector2(980.0, 80.0))
-				var spawn_pos := _overlay_world_to_combat(spawn_position, world_size)
+				var spawn_enemy := _find_entity(enemies, int(event.get("target_id", 0)))
+				var spawn_pos := _overlay_enemy_center(spawn_enemy, world_size) if not spawn_enemy.is_empty() else _overlay_world_to_combat(spawn_position, world_size) + COMBAT_ENEMY_VISUAL_SHIFT
 				var spawn_key := str(event.get("fx_key", "fx_mob_spawn"))
 				var spawn_size := Vector2.ONE * float(event.get("size", 58.0))
 				_add_runtime_effect(layer as Control, spawn_key, spawn_pos, spawn_size, progress, Color(1, 1, 1, fade))
 			"attack":
 				var target := _find_entity(enemies, int(event.get("target_id", 0)))
-				var target_pos := _overlay_world_to_combat(target.get("position", Vector2(805.0, 80.0)), world_size)
+				var target_pos := _overlay_enemy_center(target, world_size) if not target.is_empty() else _overlay_world_to_combat(Vector2(805.0, 80.0), world_size) + COMBAT_ENEMY_VISUAL_SHIFT
 				var skill_id := int(event.get("skill_id", 0))
 				var style := _enemy_skill_fx_style(skill_id)
 				var color: Color = style.get("color", Color("#ffcf7a"))
@@ -4850,8 +5840,8 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 				if impact_key != "" and progress >= impact_start:
 					var impact_progress := clampf((progress - impact_start) / maxf(0.05, 1.0 - impact_start), 0.0, 1.0)
 					var impact_size := float(style.get("impact_size", 36.0))
-					_add_runtime_effect(layer as Control, impact_key, target_pos, Vector2.ONE * impact_size * 1.45, impact_progress, Color(1, 1, 1, fade))
-					_add_runtime_effect(layer as Control, "fx_hit_white", target_pos + Vector2(0.0, -3.0), Vector2.ONE * maxf(56.0, impact_size * 1.25), impact_progress, Color(1.0, 0.88, 0.68, fade * 0.9))
+					_add_runtime_effect(layer as Control, impact_key, target_pos, Vector2.ONE * impact_size * 0.92, impact_progress, Color(1, 1, 1, fade * 0.52))
+					_add_runtime_effect(layer as Control, "fx_hit_white", target_pos + Vector2(0.0, -3.0), Vector2.ONE * maxf(38.0, impact_size * 0.72), impact_progress, Color(1.0, 0.88, 0.68, fade * 0.38))
 				var action_text := str(event.get("skill_name", "돌팔매")) if skill_id >= 300101 and skill_id <= 300111 else str(event.get("skill_name", "스킬"))
 				_add_runtime_label(layer as Control, action_text, player_pos + Vector2(-48.0, -72.0 - 14.0 * progress), Vector2(120.0, 24.0), 14, color, fade)
 				if progress >= impact_start:
@@ -4861,7 +5851,7 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 					_add_runtime_label(layer as Control, "-%d" % int(round(float(event.get("amount", 0.0)))), hit_pos, Vector2(82.0, 30.0), 22, color.lightened(0.38), fade)
 			"enemy_skill":
 				var source := _find_entity(enemies, int(event.get("source_id", 0)))
-				var source_pos := _overlay_world_to_combat(source.get("position", Vector2(805.0, 80.0)), world_size)
+				var source_pos := _overlay_enemy_center(source, world_size) if not source.is_empty() else _overlay_world_to_combat(Vector2(805.0, 80.0), world_size) + COMBAT_ENEMY_VISUAL_SHIFT
 				var skill_name := str(event.get("skill_name", "스킬"))
 				var skill_id := int(event.get("skill_id", 0))
 				var style := _enemy_skill_fx_style(skill_id)
@@ -4879,8 +5869,8 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 				if impact_key != "" and progress > 0.34:
 					var impact_progress := clampf((progress - 0.34) / 0.66, 0.0, 1.0)
 					var impact_size := float(style.get("impact_size", 42.0))
-					_add_runtime_effect(layer as Control, impact_key, player_pos, Vector2.ONE * impact_size * 1.35, impact_progress, Color(1, 1, 1, fade))
-					_add_runtime_effect(layer as Control, "fx_hit_white", player_pos + Vector2(0.0, -4.0), Vector2.ONE * maxf(64.0, impact_size * 1.18), impact_progress, Color(1.0, 0.58, 0.42, fade * 0.92))
+					_add_runtime_effect(layer as Control, impact_key, player_pos, Vector2.ONE * impact_size * 0.94, impact_progress, Color(1, 1, 1, fade * 0.54))
+					_add_runtime_effect(layer as Control, "fx_hit_white", player_pos + Vector2(0.0, -4.0), Vector2.ONE * maxf(42.0, impact_size * 0.74), impact_progress, Color(1.0, 0.58, 0.42, fade * 0.42))
 				_add_runtime_label(layer as Control, "HIT -%d" % int(round(float(event.get("amount", 0.0)))), player_pos + Vector2(-48.0, -76.0 - 22.0 * progress), Vector2(112.0, 32.0), 22, color.lightened(0.2), fade)
 			"hit_player":
 				_add_runtime_effect(layer as Control, "fx_hit_dust", player_pos + Vector2(0.0, 2.0), Vector2.ONE * 70.0, progress, Color(1.0, 0.72, 0.48, fade))
@@ -4888,13 +5878,57 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 				_add_runtime_label(layer as Control, "HIT -%d" % int(round(float(event.get("amount", 0.0)))), player_pos + Vector2(-46.0, -76.0 - 28.0 * progress), Vector2(112.0, 34.0), 24, Color("#ff6b35"), fade)
 			"kill":
 				var target := _find_entity(enemies, int(event.get("target_id", 0)))
-				var target_pos := _overlay_world_to_combat(target.get("position", Vector2(805.0, 80.0)), world_size)
+				var target_pos := _overlay_enemy_center(target, world_size) if not target.is_empty() else _overlay_world_to_combat(Vector2(805.0, 80.0), world_size) + COMBAT_ENEMY_VISUAL_SHIFT
 				_add_runtime_label(layer as Control, "처치!", target_pos + Vector2(-30.0, -72.0 - 18.0 * progress), Vector2(86.0, 30.0), 20, Color("#ffcf7a"), fade)
 			"drop":
 				var label_text := "+%s x%d" % [str(event.get("item_name", "전리품")), int(event.get("count", 1))]
 				var drop_label_size := Vector2(minf(240.0, maxf(150.0, layer_size.x - 44.0)), 26.0)
 				var drop_x := clampf(layer_size.x - drop_label_size.x - 22.0, 22.0, maxf(22.0, layer_size.x - drop_label_size.x - 22.0))
 				_add_runtime_label(layer as Control, label_text, Vector2(drop_x, 34.0 - 18.0 * progress), drop_label_size, 15, Color("#f3e6c8"), fade)
+	_add_runtime_enemy_foreground(layer as Control, snapshot, world_size)
+
+
+func _add_runtime_enemy_foreground(parent: Control, snapshot: Dictionary, world_size: Vector2) -> void:
+	var enemies: Array = snapshot.get("enemies", []) if typeof(snapshot.get("enemies", [])) == TYPE_ARRAY else []
+	for enemy in enemies:
+		if typeof(enemy) != TYPE_DICTIONARY or not bool((enemy as Dictionary).get("alive", true)):
+			continue
+		var data := enemy as Dictionary
+		var enemy_size := _overlay_enemy_size(data)
+		var enemy_pos := _overlay_enemy_center(data, world_size, enemy_size)
+		var hit_flash := float(data.get("hit_flash", 0.0))
+		var attack_flash := float(data.get("attack_flash", 0.0))
+		var pulse := 1.0 + maxf(
+			sin(clampf(hit_flash / 0.18, 0.0, 1.0) * PI) * 0.18,
+			sin(clampf(attack_flash / 0.24, 0.0, 1.0) * PI) * 0.1
+		)
+		var shadow := Panel.new()
+		shadow.name = "RuntimeForegroundEnemyShadow_%d" % int(data.get("id", 0))
+		shadow.position = enemy_pos + Vector2(-enemy_size.x * 0.42, enemy_size.y * 0.34)
+		shadow.size = Vector2(enemy_size.x * 0.84, 14.0)
+		shadow.add_theme_stylebox_override("panel", _overlay_style(Color(0.03, 0.018, 0.01, 0.66), Color(0.0, 0.0, 0.0, 0.0), 0, 8))
+		shadow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		shadow.z_index = 118
+		parent.add_child(shadow)
+
+		var rect := TextureRect.new()
+		rect.name = "RuntimeForegroundEnemy_%d" % int(data.get("id", 0))
+		rect.texture = _unit_display_texture(data, false)
+		if rect.texture == null and sprites != null:
+			rect.texture = sprites.get_texture("monster_basic")
+		if rect.texture == null:
+			continue
+		rect.position = enemy_pos - enemy_size * 0.5
+		rect.size = enemy_size
+		rect.pivot_offset = enemy_size * 0.5
+		rect.scale = Vector2.ONE * pulse
+		rect.flip_h = true
+		rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		rect.stretch_mode = TextureRect.STRETCH_SCALE
+		rect.modulate = Color(1.8, 0.62, 0.48, 1.0) if hit_flash > 0.0 else Color(1.22, 1.17, 1.08, 1.0)
+		rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		rect.z_index = 122
+		parent.add_child(rect)
 
 
 func _add_runtime_texture(parent: Control, texture: Texture2D, pos: Vector2, texture_size: Vector2, modulate: Color) -> void:
@@ -4967,6 +6001,18 @@ func _focus_enemy(snapshot: Dictionary) -> Dictionary:
 	return fallback
 
 
+func _boss_or_focus_enemy(snapshot: Dictionary) -> Dictionary:
+	var enemies: Array = snapshot.get("enemies", []) if typeof(snapshot.get("enemies", [])) == TYPE_ARRAY else []
+	for enemy in enemies:
+		if typeof(enemy) != TYPE_DICTIONARY or not bool((enemy as Dictionary).get("alive", true)):
+			continue
+		var tags: Array = (enemy as Dictionary).get("tags", []) if typeof((enemy as Dictionary).get("tags", [])) == TYPE_ARRAY else []
+		var unit_type := str((enemy as Dictionary).get("unit_type", "Normal"))
+		if unit_type == "Boss" or unit_type == "MidBoss" or tags.has("GiantBoss") or tags.has("MiniBoss"):
+			return enemy
+	return {}
+
+
 func _overlay_world_to_combat(pos: Vector2, world_size: Vector2) -> Vector2:
 	return Vector2(
 		OVERLAY_COMBAT_REFERENCE_RECT.position.x + (pos.x / maxf(1.0, world_size.x)) * OVERLAY_COMBAT_REFERENCE_RECT.size.x,
@@ -4974,16 +6020,34 @@ func _overlay_world_to_combat(pos: Vector2, world_size: Vector2) -> Vector2:
 	)
 
 
+func _overlay_enemy_center(enemy: Dictionary, world_size: Vector2, enemy_size := Vector2.ZERO) -> Vector2:
+	if enemy.is_empty():
+		return _overlay_world_to_combat(Vector2(805.0, 80.0), world_size) + COMBAT_ENEMY_VISUAL_SHIFT
+	var display_size := enemy_size if enemy_size != Vector2.ZERO else _overlay_enemy_size(enemy)
+	var enemy_pos := _overlay_world_to_combat(enemy.get("position", Vector2.ZERO), world_size) + COMBAT_ENEMY_VISUAL_SHIFT
+	var tags: Array = enemy.get("tags", []) if typeof(enemy.get("tags", [])) == TYPE_ARRAY else []
+	var attack_flash := float(enemy.get("attack_flash", 0.0))
+	if attack_flash > 0.0 and not tags.has("Ranged"):
+		var attack_phase := clampf(1.0 - attack_flash / 0.24, 0.0, 1.0)
+		enemy_pos.x -= sin(attack_phase * PI) * 14.0
+	var runtime_id := int(enemy.get("id", 0))
+	var lane_offset := Vector2(float((runtime_id % 5) - 2) * COMBAT_ENEMY_LANE_STEP.x, float((runtime_id % 3) - 1) * COMBAT_ENEMY_LANE_STEP.y)
+	return _clamp_combat_sprite_center(enemy_pos + lane_offset, display_size)
+
+
 func _overlay_enemy_size(enemy: Dictionary) -> Vector2:
 	var tags: Array = enemy.get("tags", []) if typeof(enemy.get("tags", [])) == TYPE_ARRAY else []
 	var unit_type := str(enemy.get("unit_type", "Normal"))
+	var base_size := Vector2(96.0, 108.0)
 	if unit_type == "Boss" or tags.has("GiantBoss"):
-		return Vector2(104.0, 116.0)
-	if unit_type == "MidBoss" or tags.has("MiniBoss"):
-		return Vector2(86.0, 96.0)
-	if tags.has("Ranged"):
-		return Vector2(70.0, 78.0)
-	return Vector2(74.0, 84.0)
+		base_size = Vector2(126.0, 140.0)
+	elif unit_type == "MidBoss" or tags.has("MiniBoss"):
+		base_size = Vector2(112.0, 124.0)
+	elif unit_type == "Elite" or tags.has("Armored"):
+		base_size = Vector2(104.0, 116.0)
+	elif tags.has("Ranged"):
+		base_size = Vector2(96.0, 106.0)
+	return base_size * COMBAT_MONSTER_VISUAL_SCALE
 
 
 func _clamp_combat_sprite_center(center: Vector2, sprite_size: Vector2) -> Vector2:
@@ -5121,12 +6185,8 @@ func _close_generated_window_for_button(button: Button) -> void:
 	var cursor: Node = button
 	while cursor != null:
 		if cursor is CanvasItem and (str(cursor.name).ends_with("WindowFrame") or str(cursor.name) == RUNTIME_SKILL_TREE_WINDOW_NAME):
-			(cursor as CanvasItem).visible = false
-			var native := _native_window_for_generated_control(cursor as Control)
-			if native != null:
-				native.visible = false
-			generated_action_message = "%s 창 숨김 - combat strip은 계속 실행" % _generated_window_label(str(cursor.get_meta("program_window_id", "")))
-			_refresh_generated_overlay_now()
+			var window_id := _desktop_window_id_for_control(cursor as Control)
+			_close_generated_window(window_id, cursor as Control)
 			return
 		cursor = cursor.get_parent()
 
@@ -5334,17 +6394,18 @@ func _unit_visual_size(unit: Dictionary, is_player: bool) -> Vector2:
 		return Vector2(58.0, 58.0)
 	var tags: Array = unit.get("tags", []) if typeof(unit.get("tags", [])) == TYPE_ARRAY else []
 	var unit_type := str(unit.get("unit_type", "Normal"))
+	var base_size := Vector2(46.0, 54.0)
 	if unit_type == "Boss" or tags.has("GiantBoss"):
-		return Vector2(82.0, 92.0)
-	if unit_type == "MidBoss" or tags.has("MiniBoss"):
-		return Vector2(66.0, 74.0)
-	if tags.has("Armored"):
-		return Vector2(56.0, 62.0)
-	if tags.has("Ranged"):
-		return Vector2(50.0, 58.0)
-	if tags.has("Fast"):
-		return Vector2(42.0, 50.0)
-	return Vector2(46.0, 54.0)
+		base_size = Vector2(82.0, 92.0)
+	elif unit_type == "MidBoss" or tags.has("MiniBoss"):
+		base_size = Vector2(66.0, 74.0)
+	elif tags.has("Armored"):
+		base_size = Vector2(56.0, 62.0)
+	elif tags.has("Ranged"):
+		base_size = Vector2(50.0, 58.0)
+	elif tags.has("Fast"):
+		base_size = Vector2(42.0, 50.0)
+	return base_size * COMBAT_MONSTER_VISUAL_SCALE
 
 
 func _draw_texture_flipped(texture: Texture2D, rect: Rect2) -> void:

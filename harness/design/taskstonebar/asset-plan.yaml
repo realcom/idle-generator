@@ -3,6 +3,7 @@ game: taskstonebar
 status: draft
 source_concepts:
   - main_ui_concept_e_refined_current_mockup_b
+  - window_title_bar_concept_c_forged_rail
 
 foundation_systems:
   buttons: button-system.yaml
@@ -24,6 +25,10 @@ assetization_summary:
     - taskstonebar.ui.slot_frame_9slice
     - taskstonebar.ui.icon_dock_button_9slice
     - taskstonebar.ui.rare_drop_toast_9slice
+    - taskstonebar.ui.combat_map_progress_badge_concept_b
+    - taskstonebar.ui.combat_map_progress_portal_atom
+    - taskstonebar.ui.combat_map_progress_route_silhouette
+    - taskstonebar.ui.combat_map_progress_next_marker
   reuse:
     - taskstonebar.ui.close_icon
     - taskstonebar.ui.status_stone_portrait
@@ -32,7 +37,6 @@ assetization_summary:
     - taskstonebar.ui.stone_keeper_sheet
     - taskstonebar.ui.portal_parchment_map
     - taskstonebar.ui.combat_ground_strip
-    - taskstonebar.ui.window_ornament_set
 
 assets:
   - key: taskstonebar.ui.window_frame_9slice
@@ -43,12 +47,12 @@ assets:
       - component-blueprints.yaml:WindowFrame.skin
       - component-skins.yaml:window_frame_black_iron
     background: transparent
-    target_size: { width: 552, height: 640 }
+    target_size: { width: 504, height: 624 }
     slice_hints: { left: 30, right: 30, top: 34, bottom: 30 }
     component_contract:
       slice_hints: "Bitmap stretch borders only."
       content_insets:
-        WindowFrame: { left: 18, right: 18, top: 72, bottom: 16 }
+        WindowFrame: { left: 14, right: 14, top: 56, bottom: 14 }
       semantic_color_tokens: [panel_outer, panel_mid, panel_inner]
     godot:
       usage: nine_patch_rect
@@ -73,8 +77,8 @@ assets:
     component_contract:
       slice_hints: "Bitmap stretch borders only."
       content_insets:
-        WindowTitleBar: { left: 40, right: 52, top: 10, bottom: 8 }
-      semantic_color_tokens: [panel_mid, title_gold]
+        WindowTitleBar: { left: 82, right: 82, top: 8, bottom: 6 }
+      semantic_color_tokens: [panel_mid, panel_inner, title_gold, moss_green, ruby_red]
     godot:
       usage: stylebox_texture
       target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/window_title_bar_9slice.png
@@ -83,7 +87,7 @@ assets:
     priority: must
     status: planned
     source_path: harness/design/taskstonebar/assets/ui/window_title_bar_refined_9slice.png
-    generation_notes: "Refined Godot pass: burgundy title strip with dark side caps; title text remains native."
+    generation_notes: "Forged rail Godot pass: burgundy title plate with black iron cap/endcaps, plate highlight/shadow, gold lower rail with highlight/shadow, left stone badge/chip, center crest/inner notch, ruby bead/glow, sparse moss accents, centered native title, and close/minimize controls with inner lines. Do not restore the old hatch/rivet/help-button clutter."
 
   - key: taskstonebar.ui.dark_inner_well_9slice
     type: panel_skin
@@ -279,6 +283,104 @@ assets:
     source_path: harness/design/taskstonebar/assets/ui/rare_drop_toast_refined_9slice.png
     generation_notes: "Refined Godot pass: black toast frame with gold trim."
 
+  - key: taskstonebar.ui.combat_map_progress_badge_concept_b
+    type: combat_hud_concept_reference
+    mode: hybrid
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:CombatMapProgressBadge.portal_anchor_atom
+      - component-blueprints.yaml:CombatMapProgressBadge.route_silhouette
+      - component-blueprints.yaml:CombatMapProgressBadge.next_node_marker
+    background: transparent
+    target_size: { width: 264, height: 106 }
+    slice_hints: null
+    component_contract:
+      slice_hints: "Not a 9-slice skin; rebuild as fixed TextureAtoms plus native progress controls."
+      content_insets:
+        CombatMapProgressBadge: { left: 8, right: 8, top: 6, bottom: 8 }
+      semantic_color_tokens: [panel_inner, panel_outer, title_gold, exp_blue, moss_green]
+      must_not_bake: [map_name, stage_number, wave_number, item_name, count, localized_labels]
+    godot:
+      usage: texture_atom_source_reference
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/combat_map_progress_badge_concept_b.png
+      import_preset: pixel_sprite
+    priority: should
+    status: candidate
+    source_path: harness/design/taskstonebar/concepts/combat_map_progress_badge_concept_b_candidate.png
+    generation_notes: "Concept-B crop for QA/source reference only. Do not place this full crop as a single runtime surface."
+
+  - key: taskstonebar.ui.combat_map_progress_portal_atom
+    type: texture_atom
+    mode: hybrid
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:CombatMapProgressBadge.portal_anchor_atom
+    background: transparent
+    target_size: { width: 82, height: 78 }
+    slice_hints: null
+    component_contract:
+      slice_hints: "Not a 9-slice skin; fixed portal anchor atom."
+      content_insets:
+        CombatMapProgressBadge.portal_anchor_atom: { left: 0, right: 0, top: 0, bottom: 0 }
+      semantic_color_tokens: [exp_blue, moss_green, title_gold]
+      must_not_bake: [map_name, stage_number, wave_number, item_name, count, localized_labels]
+    godot:
+      usage: texture_atom
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/combat_map_progress_portal_atom.png
+      import_preset: pixel_sprite
+    priority: must
+    status: ready
+    actual_path: harness/runtime/godot-taskstonebar/assets/generated/ui/combat_map_progress_portal_atom.png
+    generation_notes: "Separated fixed atom cropped from concept-B source; runtime owns progress state separately."
+
+  - key: taskstonebar.ui.combat_map_progress_route_silhouette
+    type: texture_atom
+    mode: hybrid
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:CombatMapProgressBadge.route_silhouette
+    background: transparent
+    target_size: { width: 116, height: 54 }
+    slice_hints: null
+    component_contract:
+      slice_hints: "Not a 9-slice skin; fixed route silhouette atom with runtime highlight overlay."
+      content_insets:
+        CombatMapProgressBadge.route_silhouette: { left: 0, right: 0, top: 0, bottom: 0 }
+      semantic_color_tokens: [panel_inner, panel_outer, title_gold]
+      must_not_bake: [map_name, stage_number, wave_number, item_name, count, localized_labels]
+    godot:
+      usage: texture_atom
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/combat_map_progress_route_silhouette.png
+      import_preset: pixel_sprite
+    priority: must
+    status: ready
+    actual_path: harness/runtime/godot-taskstonebar/assets/generated/ui/combat_map_progress_route_silhouette.png
+    generation_notes: "Separated fixed atom cropped from concept-B source; runtime route segments and nodes provide state overlay."
+
+  - key: taskstonebar.ui.combat_map_progress_next_marker
+    type: texture_atom
+    mode: hybrid
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:CombatMapProgressBadge.next_node_marker
+    background: transparent
+    target_size: { width: 59, height: 78 }
+    slice_hints: null
+    component_contract:
+      slice_hints: "Not a 9-slice skin; fixed next-node marker atom."
+      content_insets:
+        CombatMapProgressBadge.next_node_marker: { left: 0, right: 0, top: 0, bottom: 0 }
+      semantic_color_tokens: [panel_inner, panel_outer, title_gold]
+      must_not_bake: [map_name, stage_number, wave_number, item_name, count, localized_labels]
+    godot:
+      usage: texture_atom
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/combat_map_progress_next_marker.png
+      import_preset: pixel_sprite
+    priority: must
+    status: ready
+    actual_path: harness/runtime/godot-taskstonebar/assets/generated/ui/combat_map_progress_next_marker.png
+    generation_notes: "Separated fixed atom cropped from concept-B source; runtime remains responsible for map/wave values."
+
   - key: taskstonebar.ui.close_icon
     type: icon
     mode: reuse
@@ -295,7 +397,7 @@ assets:
       import_preset: pixel_sprite
     priority: must
     status: planned
-    source_path: harness/assets/growstone2/source/taskstone/close.png
+    source_path: assets/growstone2/source/taskstone/close.png
 
   - key: taskstonebar.ui.status_stone_portrait
     type: portrait
@@ -356,7 +458,7 @@ assets:
       import_preset: pixel_sprite
     priority: must
     status: planned
-    source_path: harness/assets/growstone2/source/taskstone/stone0.png
+    source_path: assets/growstone2/source/taskstone/stone0.png
     generation_notes: "Pack stone0, stone1, and stone2 into a Godot-local atlas or copy as individual textures during build."
 
   - key: taskstonebar.ui.resource_icon_set
@@ -375,7 +477,7 @@ assets:
       import_preset: pixel_sprite
     priority: must
     status: planned
-    source_path: harness/assets/growstone2/source/taskstone/coin.png
+    source_path: assets/growstone2/source/taskstone/coin.png
     generation_notes: "Pack coin, ruby, moss ore, cube catalyst, and fragment icons into a Godot-local atlas."
 
   - key: taskstonebar.ui.stone_keeper_sheet
@@ -438,7 +540,7 @@ assets:
     mode: reuse
     platforms: [godot]
     usage:
-      - component-blueprints.yaml:WindowFrame.ornament_layer
+      - deprecated: "Not used in the compact Godot workshop header pass; headers are native text + close only."
     background: transparent
     target_size: { width: 160, height: 64 }
     slice_hints: null
@@ -446,8 +548,8 @@ assets:
       usage: texture_rect_set
       target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/window_ornament_set.png
       import_preset: pixel_sprite
-    priority: should
-    status: planned
+    priority: could
+    status: deprecated
     source_path: harness/design/taskstonebar/assets/ui/window_ornament_set_refined.png
     generation_notes: "Refined Godot pass: fixed black/gold ornament atlas for title crests; not stretch-safe."
 

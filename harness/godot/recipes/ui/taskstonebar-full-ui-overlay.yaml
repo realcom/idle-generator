@@ -27,6 +27,8 @@ sources:
     - ../../../design/taskstonebar/concepts/main_ui_concept_e_refined_current_mockup_b.md
     - ../../../design/taskstonebar/concepts/stone_raising_2_full_ui_concept_a.md
     - ../../../design/taskstonebar/concepts/status_window_concept_c_tbh_stat_skill_layout.md
+    - ../../../design/taskstonebar/concepts/combat_map_progress_badge_concept_a_b.md
+    - ../../../design/taskstonebar/concepts/window_title_bar_concept_c_forged_rail.md
 
 blueprint_refs:
   surface: TaskstonebarFullUiOverlay
@@ -67,6 +69,7 @@ blueprint_refs:
     - StageBadge
     - LootTicker
     - RareDropToast
+    - CombatMapProgressBadge
     - CombatSceneShortcutDock
     - ModalHost
     - ModalShell
@@ -119,14 +122,17 @@ layout:
       position_px: { x: 0, y: 0 }
       size_px: { width: 1586, height: 992 }
     status_window:
-      position_px: { x: 37, y: 103 }
-      size_px: { width: 458, height: 574 }
+      position_px: { x: 225, y: 72 }
+      size_px: { width: 438, height: 560 }
+      visual_scale: 0.8
     hero_inventory_window:
-      position_px: { x: 518, y: 50 }
-      size_px: { width: 552, height: 700 }
+      position_px: { x: 591, y: 48 }
+      size_px: { width: 504, height: 624 }
+      visual_scale: 0.8
     portal_window:
-      position_px: { x: 1089, y: 103 }
-      size_px: { width: 432, height: 610 }
+      position_px: { x: 1010, y: 72 }
+      size_px: { width: 438, height: 560 }
+      visual_scale: 0.8
     taskbar_combat_strip:
       position_px: { x: 0, y: 704 }
       size_px: { width: 1586, height: 236 }
@@ -134,7 +140,7 @@ layout:
       position_px: { x: 0, y: 0 }
       size_px: { width: 1586, height: 992 }
       scrim_bounds_px: { x: 0, y: 0, width: 1586, height: 704 }
-      equipment_upgrade_modal_px: { x: 556, y: 168, width: 474, height: 372 }
+      equipment_upgrade_modal_px: { x: 574, y: 168, width: 438, height: 344 }
       preserve_combat_strip: true
     os_taskbar_safe_band:
       position_px: { x: 0, y: 940 }
@@ -152,26 +158,29 @@ assets:
     - taskstonebar.ui.icon_dock_button_9slice
     - taskstonebar.ui.keeper_dock_icon_set
     - taskstonebar.ui.rare_drop_toast_9slice
+    - taskstonebar.ui.combat_map_progress_badge_concept_b
+    - taskstonebar.ui.combat_map_progress_portal_atom
+    - taskstonebar.ui.combat_map_progress_route_silhouette
+    - taskstonebar.ui.combat_map_progress_next_marker
     - taskstonebar.ui.close_icon
     - taskstonebar.ui.stone_icon_set
     - taskstonebar.ui.resource_icon_set
     - taskstonebar.ui.stone_keeper_sheet
     - taskstonebar.ui.portal_parchment_map
     - taskstonebar.ui.combat_ground_strip
-    - taskstonebar.ui.window_ornament_set
     - taskstonebar.ui.native_overlay_controls
   nineslice:
     - key: taskstonebar.ui.window_frame_9slice
       atom: NinePatchPanel
       usage: nine_patch_rect
       slice_hints: { left: 30, right: 30, top: 34, bottom: 30 }
-      content_insets: { left: 18, right: 18, top: 72, bottom: 16 }
-      target_size_px: { width: 552, height: 640 }
+      content_insets: { left: 14, right: 14, top: 56, bottom: 14 }
+      target_size_px: { width: 504, height: 624 }
     - key: taskstonebar.ui.window_title_bar_9slice
       atom: NativePanel
       usage: stylebox_texture
       slice_hints: { left: 26, right: 26, top: 18, bottom: 18 }
-      content_insets: { left: 40, right: 52, top: 10, bottom: 8 }
+      content_insets: { left: 82, right: 82, top: 8, bottom: 6 }
       target_size_px: { width: 480, height: 54 }
     - key: taskstonebar.ui.dark_inner_well_9slice
       atom: NinePatchPanel
@@ -234,9 +243,6 @@ assets:
     - key: taskstonebar.ui.combat_ground_strip
       usage: bottom_combat_ground_backdrop
       display_size_px: { width: 1586, height: 236 }
-    - key: taskstonebar.ui.window_ornament_set
-      usage: fixed_window_crests_and_corners
-      display_size_px: { width: 160, height: 64 }
     - key: taskstonebar.ui.keeper_dock_icon_set
       usage: center_keeper_dock_shortcut_icons
       display_size_px: { width: 38, height: 38 }
@@ -286,33 +292,26 @@ control_tree:
             component: StatusWindow
             asset_key: taskstonebar.ui.window_frame_9slice
             slice_hints: { left: 30, right: 30, top: 34, bottom: 30 }
-            content_insets: { left: 18, right: 18, top: 72, bottom: 16 }
-            position_px: { x: 37, y: 103 }
-            size_px: { width: 458, height: 574 }
+            content_insets: { left: 14, right: 14, top: 56, bottom: 14 }
+            position_px: { x: 225, y: 72 }
+            size_px: { width: 438, height: 560 }
             children:
               - atom: NinePatchPanel
                 node_name: Panel_StatusTitleBar
                 component: WindowTitleBar
                 asset_key: taskstonebar.ui.window_title_bar_9slice
                 slice_hints: { left: 26, right: 26, top: 18, bottom: 18 }
-                content_insets: { left: 40, right: 52, top: 10, bottom: 8 }
-                position_px: { x: 20, y: 12 }
-                size_px: { width: 418, height: 54 }
-              - atom: TextureAtom
-                node_name: Tex_StatusWindowOrnament
-                component: WindowFrame
-                asset_key: taskstonebar.ui.window_ornament_set
-                stretch_mode: keep_aspect_centered
-                position_px: { x: 126, y: -30 }
-                size_px: { width: 206, height: 76 }
+                content_insets: { left: 82, right: 82, top: 8, bottom: 6 }
+                position_px: { x: 10, y: 10 }
+                size_px: { width: 418, height: 42 }
               - atom: NinePatchPanel
                 node_name: Panel_StatusBodyWell
                 component: StatusWindow
                 asset_key: taskstonebar.ui.dark_inner_well_9slice
                 slice_hints: { left: 22, right: 22, top: 22, bottom: 22 }
                 content_insets: { left: 14, right: 14, top: 14, bottom: 14 }
-                position_px: { x: 18, y: 72 }
-                size_px: { width: 422, height: 484 }
+                position_px: { x: 14, y: 58 }
+                size_px: { width: 410, height: 486 }
               - atom: NativeLabel
                 node_name: Text_StatusTitle
                 component: WindowTitleBar
@@ -320,22 +319,22 @@ control_tree:
                 preview_text: "스테이터스"
                 font_size: 25
                 color_token: title_gold
-                position_px: { x: 120, y: 18 }
-                size_px: { width: 220, height: 34 }
+                position_px: { x: 56, y: 12 }
+                size_px: { width: 326, height: 30 }
               - atom: IconButton
                 node_name: Btn_StatusClose
                 component: WindowFrame
                 button_role: window_close
                 touch_size: { width: 42, height: 42 }
-                position_px: { x: 404, y: 20 }
+                position_px: { x: 392, y: 14 }
               - atom: NinePatchPanel
                 node_name: Panel_StatusStatScroll
                 component: StatusStatScrollPanel
                 asset_key: taskstonebar.ui.status_stat_card_9slice
                 slice_hints: { left: 14, right: 14, top: 14, bottom: 14 }
                 content_insets: { left: 16, right: 28, top: 34, bottom: 12 }
-                position_px: { x: 24, y: 76 }
-                size_px: { width: 410, height: 154 }
+                position_px: { x: 20, y: 64 }
+                size_px: { width: 398, height: 148 }
                 children:
                   - atom: NativePanel
                     node_name: Panel_ClassRibbon
@@ -504,15 +503,15 @@ control_tree:
               - atom: SectionGroup
                 node_name: Panel_SkillPointHeader
                 component: SkillPointHeader
-                position_px: { x: 82, y: 244 }
-                size_px: { width: 294, height: 40 }
+                position_px: { x: 72, y: 224 }
+                size_px: { width: 294, height: 36 }
                 children:
                   - atom: NativePanel
                     node_name: Panel_SkillPointHeaderBg
                     component: SkillPointHeader
                     color_token: panel_inner
                     position_px: { x: 0, y: 0 }
-                    size_px: { width: 294, height: 40 }
+                    size_px: { width: 294, height: 36 }
                   - atom: NativeLabel
                     node_name: Text_SkillPointPlus
                     component: SkillPointHeader
@@ -534,8 +533,8 @@ control_tree:
               - atom: SectionGroup
                 node_name: Section_SkillTree
                 component: StatusWindow
-                position_px: { x: 24, y: 296 }
-                size_px: { width: 410, height: 248 }
+                position_px: { x: 22, y: 274 }
+                size_px: { width: 396, height: 250 }
                 children:
                   - atom: NativePanel
                     node_name: Panel_LevelTrackRail
@@ -818,33 +817,26 @@ control_tree:
             component: HeroInventoryWindow
             asset_key: taskstonebar.ui.window_frame_9slice
             slice_hints: { left: 30, right: 30, top: 34, bottom: 30 }
-            content_insets: { left: 18, right: 18, top: 72, bottom: 16 }
-            position_px: { x: 518, y: 50 }
-            size_px: { width: 552, height: 700 }
+            content_insets: { left: 14, right: 14, top: 56, bottom: 14 }
+            position_px: { x: 591, y: 48 }
+            size_px: { width: 504, height: 624 }
             children:
               - atom: NinePatchPanel
                 node_name: Panel_HeroInventoryTitleBar
                 component: WindowTitleBar
                 asset_key: taskstonebar.ui.window_title_bar_9slice
                 slice_hints: { left: 26, right: 26, top: 18, bottom: 18 }
-                content_insets: { left: 40, right: 52, top: 10, bottom: 8 }
-                position_px: { x: 20, y: 12 }
-                size_px: { width: 512, height: 54 }
-              - atom: TextureAtom
-                node_name: Tex_HeroInventoryWindowOrnament
-                component: WindowFrame
-                asset_key: taskstonebar.ui.window_ornament_set
-                stretch_mode: keep_aspect_centered
-                position_px: { x: 173, y: -30 }
-                size_px: { width: 206, height: 76 }
+                content_insets: { left: 82, right: 82, top: 8, bottom: 6 }
+                position_px: { x: 10, y: 10 }
+                size_px: { width: 484, height: 42 }
               - atom: NinePatchPanel
                 node_name: Panel_HeroInventoryBodyWell
                 component: HeroInventoryWindow
                 asset_key: taskstonebar.ui.dark_inner_well_9slice
                 slice_hints: { left: 22, right: 22, top: 22, bottom: 22 }
                 content_insets: { left: 14, right: 14, top: 14, bottom: 14 }
-                position_px: { x: 18, y: 72 }
-                size_px: { width: 516, height: 606 }
+                position_px: { x: 14, y: 58 }
+                size_px: { width: 476, height: 548 }
               - atom: NativeLabel
                 node_name: Text_HeroInventoryTitle
                 component: WindowTitleBar
@@ -852,21 +844,21 @@ control_tree:
                 preview_text: "돌지기"
                 font_size: 25
                 color_token: title_gold
-                position_px: { x: 210, y: 18 }
-                size_px: { width: 150, height: 34 }
+                position_px: { x: 56, y: 12 }
+                size_px: { width: 392, height: 30 }
               - atom: IconButton
                 node_name: Btn_HeroInventoryClose
                 component: WindowFrame
                 button_role: window_close
                 touch_size: { width: 42, height: 42 }
-                position_px: { x: 498, y: 20 }
+                position_px: { x: 458, y: 14 }
               - atom: TextureAtom
                 node_name: Tex_StoneKeeperPortrait
                 component: CharacterPortrait
                 asset_key: taskstonebar.ui.stone_keeper_sheet
                 stretch_mode: keep_aspect_centered
-                position_px: { x: 198, y: 86 }
-                size_px: { width: 158, height: 170 }
+                position_px: { x: 181, y: 76 }
+                size_px: { width: 142, height: 142 }
               - atom: NativeLabel
                 node_name: Text_KeeperLevel
                 component: CharacterPortrait
@@ -874,45 +866,45 @@ control_tree:
                 preview_text: "Lv.27"
                 font_size: 22
                 color_token: title_gold
-                position_px: { x: 238, y: 234 }
-                size_px: { width: 92, height: 30 }
+                position_px: { x: 206, y: 204 }
+                size_px: { width: 92, height: 28 }
               - atom: Grid
                 node_name: Grid_EquipmentSlotsLeft
                 component: EquipmentSlotGrid
                 columns: 2
-                position_px: { x: 26, y: 88 }
-                size_px: { width: 120, height: 128 }
+                position_px: { x: 30, y: 78 }
+                size_px: { width: 102, height: 102 }
               - atom: Grid
                 node_name: Grid_EquipmentSlotsRight
                 component: EquipmentSlotGrid
                 columns: 2
-                position_px: { x: 402, y: 88 }
-                size_px: { width: 120, height: 128 }
+                position_px: { x: 370, y: 78 }
+                size_px: { width: 102, height: 102 }
               - atom: HBox
                 node_name: Tabs_StoneEquipment
                 component: StoneEquipmentTabBar
                 separation: 8
-                position_px: { x: 52, y: 302 }
-                size_px: { width: 448, height: 36 }
+                position_px: { x: 42, y: 266 }
+                size_px: { width: 420, height: 34 }
                 children:
                   - atom: IconButton
                     node_name: Btn_StoneTab
                     component: StoneEquipmentTabBar
                     button_role: inventory_tab
-                    touch_size: { width: 220, height: 36 }
+                    touch_size: { width: 207, height: 34 }
                     text: "돌 활성 0/12"
                   - atom: IconButton
                     node_name: Btn_EquipmentTab
                     component: StoneEquipmentTabBar
                     button_role: inventory_tab
-                    touch_size: { width: 220, height: 36 }
+                    touch_size: { width: 207, height: 34 }
                     text: "장비 0/40"
               - atom: Grid
                 node_name: Grid_StoneInventory
                 component: StoneInventoryPanel
                 columns: 8
-                position_px: { x: 52, y: 352 }
-                size_px: { width: 448, height: 216 }
+                position_px: { x: 54, y: 314 }
+                size_px: { width: 394, height: 194 }
                 children:
                   - atom: NinePatchPanel
                     node_name: Panel_StoneSlotPrototype
@@ -920,71 +912,64 @@ control_tree:
                     asset_key: taskstonebar.ui.slot_frame_9slice
                     slice_hints: { left: 18, right: 18, top: 18, bottom: 18 }
                     content_insets: { left: 6, right: 6, top: 6, bottom: 6 }
-                    size_px: { width: 48, height: 48 }
+                    size_px: { width: 44, height: 44 }
               - atom: HBox
                 node_name: Dock_KeeperIconDock
                 component: KeeperIconDock
-                separation: 14
-                position_px: { x: 58, y: 608 }
-                size_px: { width: 410, height: 64 }
+                separation: 12
+                position_px: { x: 76, y: 542 }
+                size_px: { width: 352, height: 56 }
                 children:
                   - atom: IconButton
                     node_name: Btn_DockInventory
                     component: KeeperIconDock
                     button_role: keeper_dock_icon
-                    touch_size: { width: 58, height: 58 }
+                    touch_size: { width: 52, height: 52 }
                   - atom: IconButton
                     node_name: Btn_DockGrowth
                     component: KeeperIconDock
                     button_role: keeper_dock_icon
-                    touch_size: { width: 58, height: 58 }
+                    touch_size: { width: 52, height: 52 }
                   - atom: IconButton
                     node_name: Btn_DockFormation
                     component: KeeperIconDock
                     button_role: keeper_dock_icon
-                    touch_size: { width: 58, height: 58 }
+                    touch_size: { width: 52, height: 52 }
                   - atom: IconButton
                     node_name: Btn_DockStorage
                     component: KeeperIconDock
                     button_role: keeper_dock_icon
-                    touch_size: { width: 58, height: 58 }
+                    touch_size: { width: 52, height: 52 }
                   - atom: IconButton
                     node_name: Btn_DockSteamAssets
                     component: KeeperIconDock
                     button_role: keeper_dock_icon
-                    touch_size: { width: 58, height: 58 }
+                    touch_size: { width: 52, height: 52 }
           - atom: NinePatchPanel
             node_name: Panel_PortalWindowFrame
             component: PortalWindow
             asset_key: taskstonebar.ui.window_frame_9slice
             slice_hints: { left: 30, right: 30, top: 34, bottom: 30 }
-            content_insets: { left: 18, right: 18, top: 72, bottom: 16 }
-            position_px: { x: 1089, y: 103 }
-            size_px: { width: 432, height: 610 }
+            content_insets: { left: 14, right: 14, top: 56, bottom: 14 }
+            position_px: { x: 1010, y: 72 }
+            size_px: { width: 438, height: 560 }
             children:
               - atom: NinePatchPanel
                 node_name: Panel_PortalTitleBar
                 component: WindowTitleBar
                 asset_key: taskstonebar.ui.window_title_bar_9slice
                 slice_hints: { left: 26, right: 26, top: 18, bottom: 18 }
-                content_insets: { left: 40, right: 52, top: 10, bottom: 8 }
-                position_px: { x: 20, y: 12 }
-                size_px: { width: 392, height: 54 }
-              - atom: TextureAtom
-                node_name: Tex_PortalWindowOrnament
-                component: WindowFrame
-                asset_key: taskstonebar.ui.window_ornament_set
-                stretch_mode: keep_aspect_centered
-                position_px: { x: 113, y: -30 }
-                size_px: { width: 206, height: 76 }
+                content_insets: { left: 82, right: 82, top: 8, bottom: 6 }
+                position_px: { x: 10, y: 10 }
+                size_px: { width: 418, height: 42 }
               - atom: NinePatchPanel
                 node_name: Panel_PortalBodyWell
                 component: PortalWindow
                 asset_key: taskstonebar.ui.dark_inner_well_9slice
                 slice_hints: { left: 22, right: 22, top: 22, bottom: 22 }
                 content_insets: { left: 14, right: 14, top: 14, bottom: 14 }
-                position_px: { x: 18, y: 72 }
-                size_px: { width: 396, height: 520 }
+                position_px: { x: 14, y: 58 }
+                size_px: { width: 410, height: 486 }
               - atom: NativeLabel
                 node_name: Text_PortalTitle
                 component: WindowTitleBar
@@ -992,20 +977,20 @@ control_tree:
                 preview_text: "포탈"
                 font_size: 25
                 color_token: title_gold
-                position_px: { x: 154, y: 18 }
-                size_px: { width: 130, height: 34 }
+                position_px: { x: 56, y: 12 }
+                size_px: { width: 326, height: 30 }
               - atom: IconButton
                 node_name: Btn_PortalClose
                 component: WindowFrame
                 button_role: window_close
                 touch_size: { width: 42, height: 42 }
-                position_px: { x: 378, y: 20 }
+                position_px: { x: 392, y: 14 }
               - atom: NativePanel
                 node_name: Panel_DifficultySelect
                 component: PortalDifficultySelect
                 color_token: panel_mid
-                position_px: { x: 104, y: 88 }
-                size_px: { width: 240, height: 40 }
+                position_px: { x: 98, y: 76 }
+                size_px: { width: 242, height: 34 }
                 children:
                   - atom: NativeLabel
                     node_name: Text_Difficulty
@@ -1019,38 +1004,38 @@ control_tree:
               - atom: HBox
                 node_name: Tabs_Act
                 component: ActTabBar
-                separation: 8
-                position_px: { x: 54, y: 142 }
-                size_px: { width: 324, height: 42 }
+                separation: 6
+                position_px: { x: 54, y: 124 }
+                size_px: { width: 330, height: 36 }
                 children:
                   - atom: IconButton
                     node_name: Btn_Act1
                     component: ActTabBar
                     button_role: act_tab
-                    touch_size: { width: 96, height: 42 }
+                    touch_size: { width: 104, height: 36 }
                   - atom: IconButton
                     node_name: Btn_Act2
                     component: ActTabBar
                     button_role: act_tab
-                    touch_size: { width: 96, height: 42 }
+                    touch_size: { width: 104, height: 36 }
                   - atom: IconButton
                     node_name: Btn_Act3
                     component: ActTabBar
                     button_role: act_tab
-                    touch_size: { width: 96, height: 42 }
+                    touch_size: { width: 104, height: 36 }
               - atom: TextureAtom
                 node_name: Tex_ParchmentRouteMap
                 component: ParchmentRouteMap
                 asset_key: taskstonebar.ui.portal_parchment_map
                 stretch_mode: keep_aspect_centered
-                position_px: { x: 30, y: 190 }
-                size_px: { width: 372, height: 404 }
+                position_px: { x: 34, y: 174 }
+                size_px: { width: 370, height: 358 }
               - atom: IconButton
                 node_name: Btn_CurrentStageNode
                 component: StageNode
                 button_role: portal_stage_node
                 touch_size: { width: 44, height: 44 }
-                position_px: { x: 246, y: 404 }
+                position_px: { x: 244, y: 356 }
       - atom: SectionGroup
         node_name: Section_BottomCombatStrip
         component: TaskbarCombatStrip
@@ -1269,12 +1254,12 @@ modal_contract:
       frame_asset_key: taskstonebar.ui.window_frame_9slice
       title_asset_key: taskstonebar.ui.window_title_bar_9slice
       body_asset_key: taskstonebar.ui.dark_inner_well_9slice
-      position_px: { x: 556, y: 168 }
-      size_px: { width: 474, height: 372 }
-      title_bar_px: { x: 24, y: 20, width: 426, height: 48 }
-      body_px: { x: 34, y: 84, width: 406, height: 210 }
-      footer_px: { x: 86, y: 310, width: 302, height: 40 }
-      close_button_px: { x: 382, y: 6, width: 36, height: 36 }
+      position_px: { x: 574, y: 168 }
+      size_px: { width: 438, height: 344 }
+      title_bar_px: { x: 14, y: 12, width: 410, height: 42 }
+      body_px: { x: 28, y: 68, width: 382, height: 200 }
+      footer_px: { x: 73, y: 276, width: 292, height: 46 }
+      close_button_px: { x: 372, y: 5, width: 32, height: 32 }
       optional_minimize_button: false
     body_sections:
       summary_label:
@@ -1324,12 +1309,12 @@ modal_contract:
       frame_asset_key: taskstonebar.ui.window_frame_9slice
       title_asset_key: taskstonebar.ui.window_title_bar_9slice
       body_asset_key: taskstonebar.ui.dark_inner_well_9slice
-      position_px: { x: 519, y: 108 }
-      size_px: { width: 548, height: 500 }
-      title_bar_px: { x: 20, y: 18, width: 508, height: 48 }
-      body_px: { x: 34, y: 86, width: 480, height: 326 }
-      footer_px: { x: 54, y: 418, width: 440, height: 40 }
-      close_button_px: { x: 464, y: 6, width: 36, height: 36 }
+      position_px: { x: 548, y: 126 }
+      size_px: { width: 490, height: 430 }
+      title_bar_px: { x: 14, y: 12, width: 462, height: 42 }
+      body_px: { x: 28, y: 68, width: 434, height: 286 }
+      footer_px: { x: 42, y: 362, width: 406, height: 46 }
+      close_button_px: { x: 424, y: 5, width: 32, height: 32 }
       optional_minimize_button: false
     body_sections:
       identity:

@@ -1,6 +1,7 @@
 extends SceneTree
 
 const ContentStore := preload("res://scripts/content_store.gd")
+const ProgressionState := preload("res://scripts/game/progression_state.gd")
 const BasicCombatSim := preload("res://scripts/combat/basic_combat_sim.gd")
 const SpriteCatalog := preload("res://scripts/visual/sprite_catalog.gd")
 
@@ -21,7 +22,17 @@ func _init() -> void:
 		_fail("no main map found")
 		return
 
+	var progression = ProgressionState.new(store)
+	progression.add_item_instance(200202)
+	progression.add_item_instance(200203)
+	progression.add_item_instance(200204)
+	progression.auto_equip_best_stones()
+	var inventory: Dictionary = progression.inventory_snapshot()
+
 	var sim = BasicCombatSim.new(store)
+	sim.set_progression_state(progression)
+	sim.set_player_stat_bonuses(inventory.get("equipped_stats", {}))
+	sim.set_player_stone_loadout(inventory.get("equipped_stones", []))
 	sim.start(int(map_def.get("id", 500101)))
 	var boot: Dictionary = sim.snapshot()
 	if int(boot.get("wave_count", 0)) < 3:
@@ -41,19 +52,22 @@ func _init() -> void:
 	if int(snapshot.get("skill_cast_count", 0)) <= 0:
 		_fail("monster skills did not cast during basic smoke")
 		return
-	if str(snapshot.get("result", "")) == "defeat" and float(snapshot.get("elapsed", 0.0)) < 10.0:
-		_fail("player was defeated too early during basic smoke")
+	if int(snapshot.get("player_stone_count", 0)) < 3:
+		_fail("starter stone loadout did not reach combat")
 		return
+	if str(snapshot.get("result", "")) == "defeat":
+		_fail("starter loadout was defeated during basic smoke")
 		return
 
 	var player: Dictionary = snapshot.get("player", {})
-	print("godot-taskstonebar smoke ok: waves=%d elapsed=%.1f hp=%d/%d kills=%d skills=%d enemies=%d pending=%d result=%s" % [
+	print("godot-taskstonebar smoke ok: waves=%d elapsed=%.1f hp=%d/%d kills=%d skills=%d stones=%d enemies=%d pending=%d result=%s" % [
 		int(snapshot.get("wave_count", 0)),
 		float(snapshot.get("elapsed", 0.0)),
 		int(player.get("hp", 0)),
 		int(player.get("max_hp", 0)),
 		int(snapshot.get("kill_count", 0)),
 		int(snapshot.get("skill_cast_count", 0)),
+		int(snapshot.get("player_stone_count", 0)),
 		int(snapshot.get("enemy_count", 0)),
 		int(snapshot.get("pending_count", 0)),
 		str(snapshot.get("result", "")),

@@ -11,6 +11,8 @@ source_concepts:
   supporting:
     - { id: stone_raising_2_full_ui_concept_a, note: concepts/stone_raising_2_full_ui_concept_a.md, image: concepts/stone_raising_2_full_ui_concept_a.png }
     - { id: status_window_concept_c_tbh_stat_skill_layout, note: concepts/status_window_concept_c_tbh_stat_skill_layout.md, image: concepts/status_window_concept_c_tbh_stat_skill_layout.png }
+    - { id: combat_map_progress_badge_concept_a_b, note: concepts/combat_map_progress_badge_concept_a_b.md, image: concepts/combat_map_progress_badge_concept_b_candidate.png }
+    - { id: window_title_bar_concept_c_forged_rail, note: concepts/window_title_bar_concept_c_forged_rail.md, image: concepts/window_title_bar_concept_c_forged_rail.png }
 
 runtime_targets:
   godot_control:
@@ -35,7 +37,7 @@ extraction_rules:
     - "The bottom combat strip is the persistent product surface: it must remain readable in taskbar_mode when the workshop window stack is minimized."
     - "Text, counters, stage labels, cooldowns, and Korean labels remain Godot native controls."
     - "Generated concept art is a guide; never use the full concept PNG as the implementation surface."
-    - "Non-stretch-safe crests, chains, and corner ornaments are fixed TextureAtom overlays, not 9-slice borders."
+    - "Non-stretch-safe crests, chains, and corner ornaments stay as fixed runtime atoms; the current Godot title chrome rebuilds them as native Control details instead of a baked image."
   sizing_language:
     slice_hints: "Bitmap cap borders for Godot NinePatchRect or StyleBoxTexture."
     content_insets: "Inner safe area for native labels, icons, counters, and hit targets."
@@ -95,10 +97,12 @@ surfaces:
           - ParchmentRouteMap
           - StageNode
         layout_contract:
-          status_window_px: { x: 37, y: 103, width: 458, height: 574 }
-          hero_inventory_window_px: { x: 518, y: 50, width: 552, height: 700 }
-          portal_window_px: { x: 1089, y: 103, width: 432, height: 610 }
-          z_order: "StatusWindow, HeroInventoryWindow, and PortalWindow sit above combat strip; hero inventory is focused by default."
+          status_window_px: { x: 225, y: 72, width: 438, height: 560, visual_scale: 0.8, visual_width: 350, visual_height: 448 }
+          hero_inventory_window_px: { x: 591, y: 48, width: 504, height: 624, visual_scale: 0.8, visual_width: 403, visual_height: 499 }
+          portal_window_px: { x: 1010, y: 72, width: 438, height: 560, visual_scale: 0.8, visual_width: 350, visual_height: 448 }
+          window_gap_px: 16
+          compact_chrome_px: { title_height: 42, title_inset: 10, client_top: 56 }
+          z_order: "StatusWindow, HeroInventoryWindow, and PortalWindow sit as a tight 0.8x visual-scale workshop cluster above combat strip; hero inventory is focused by default."
         asset_keys:
           - taskstonebar.ui.window_frame_9slice
           - taskstonebar.ui.window_title_bar_9slice
@@ -111,9 +115,9 @@ surfaces:
           - taskstonebar.ui.stone_icon_set
           - taskstonebar.ui.stone_keeper_sheet
           - taskstonebar.ui.portal_parchment_map
-          - taskstonebar.ui.window_ornament_set
         qa_focus:
           - "StoneInventoryPanel keeps 8 columns x 4 rows so the 32 visible cells fill the center inventory body."
+          - "The three workshop windows keep the compact reference feel: short title chrome, 16px inter-window gap, and no window extending into the combat strip."
           - "Portal reward cards stay out of the portal map body."
           - "Window title text remains native Korean Label."
           - "Each window has clear title chrome, close behavior, focus depth, and a body well; hiding a window never stops combat."
@@ -121,18 +125,23 @@ surfaces:
       bottom_combat_strip:
         role: "Always-on taskbar combat lane that remains visible when the workshop window stack is minimized, with stone keeper projectiles, enemies, HP feedback, damage numbers, stage badge, and rare drop toast."
         process_scope: section
-        components: [TaskbarCombatStrip, HeroCombatSprite, EnemyStack, EnemyHpBar, DamageNumberLayer, ProjectileLayer, AutoCombatToggle, AutoSkillToggle, StageBadge, LootTicker, RareDropToast, CombatSceneShortcutDock]
+        components: [TaskbarCombatStrip, HeroCombatSprite, EnemyStack, EnemyHpBar, DamageNumberLayer, ProjectileLayer, AutoCombatToggle, AutoSkillToggle, StageBadge, LootTicker, RareDropToast, CombatMapProgressBadge, CombatSceneShortcutDock]
         layout_contract:
           anchor: bottom_above_os_taskbar
           bounds_px: { x: 0, y: 704, width: 1586, height: 236 }
           stage_badge_px: { x: 710, y: 846, width: 166, height: 58 }
           rare_drop_toast_px: { x: 1276, y: 764, width: 220, height: 70 }
+          map_progress_badge_px: { x: 1008, y: 822, width: 264, height: 106 }
         asset_keys:
           - taskstonebar.ui.combat_ground_strip
           - taskstonebar.ui.stone_keeper_sheet
           - taskstonebar.ui.stone_icon_set
           - taskstonebar.ui.resource_icon_set
           - taskstonebar.ui.rare_drop_toast_9slice
+          - taskstonebar.ui.combat_map_progress_badge_concept_b
+          - taskstonebar.ui.combat_map_progress_portal_atom
+          - taskstonebar.ui.combat_map_progress_route_silhouette
+          - taskstonebar.ui.combat_map_progress_next_marker
           - taskstonebar.ui.native_overlay_controls
         qa_focus:
           - "Combat readability wins over decorative frame weight."
@@ -212,6 +221,7 @@ surfaces:
       - StageBadge
       - LootTicker
       - RareDropToast
+      - CombatMapProgressBadge
       - CombatSceneShortcutDock
       - ModalHost
       - ModalShell
@@ -336,9 +346,9 @@ components:
     anatomy: [scrim, frame_skin, title_bar, title_label, close_button, body_well, footer_actions]
     data_bindings: { title_text: modal.title_key, focused: ui.focus_modal, close_policy: modal.close_policy }
     box_model:
-      min_width_px: 440
+      min_width_px: 438
       min_height_px: 320
-      content_insets_px: { left: 22, right: 22, top: 74, bottom: 20 }
+      content_insets_px: { left: 28, right: 28, top: 68, bottom: 22 }
       padding_px: 0
       gap_px: 12
       text_clamp: single_line_ellipsis
@@ -347,7 +357,7 @@ components:
       asset_key: taskstonebar.ui.window_frame_9slice
       usage: godot_nine_patch_rect
       slice_hints_px: { left: 30, right: 30, top: 34, bottom: 30 }
-      content_insets_px: { left: 22, right: 22, top: 74, bottom: 20 }
+      content_insets_px: { left: 28, right: 28, top: 68, bottom: 22 }
     foundation_refs:
       modal_system: modal-system.yaml
       button_role: window_close
@@ -359,9 +369,9 @@ components:
     anatomy: [modal_shell, title_chrome, identity_panel, stat_list, warning_chip_row, action_footer]
     data_bindings: { item_instance: inventory.selected_item, item_kind: inventory.selected_kind, valid_actions: inventory.selected_item.actions }
     box_model:
-      min_width_px: 548
-      min_height_px: 500
-      content_insets_px: { left: 34, right: 34, top: 86, bottom: 30 }
+      min_width_px: 490
+      min_height_px: 430
+      content_insets_px: { left: 28, right: 28, top: 68, bottom: 22 }
       padding_px: 0
       gap_px: 12
       text_clamp: single_line_or_five_stat_rows
@@ -370,7 +380,7 @@ components:
       asset_key: taskstonebar.ui.dark_inner_well_9slice
       usage: godot_nine_patch_rect
       slice_hints_px: { left: 22, right: 22, top: 22, bottom: 22 }
-      content_insets_px: { left: 18, right: 18, top: 16, bottom: 14 }
+      content_insets_px: { left: 16, right: 16, top: 14, bottom: 12 }
     foundation_refs:
       source_concept: concepts/item_detail_modal_concept_a.md
       modal_section: DetailedItemModal
@@ -383,9 +393,9 @@ components:
     anatomy: [preview_slot, item_name_label, item_subtitle_label, safe_use_hint]
     data_bindings: { icon: item.icon, name: item.name, subtitle: item.category_grade_level, hint: item.safe_use_hint }
     box_model:
-      min_width_px: 480
-      min_height_px: 124
-      content_insets_px: { left: 20, right: 20, top: 20, bottom: 12 }
+      min_width_px: 402
+      min_height_px: 112
+      content_insets_px: { left: 16, right: 16, top: 16, bottom: 10 }
       padding_px: 0
       gap_px: 16
       text_clamp: single_line_ellipsis
@@ -402,9 +412,9 @@ components:
     anatomy: [list_back, stat_rows, source_rows]
     data_bindings: { detail_lines: item.detail_lines, max_rows: 5 }
     box_model:
-      min_width_px: 436
-      min_height_px: 112
-      content_insets_px: { left: 14, right: 14, top: 10, bottom: 10 }
+      min_width_px: 402
+      min_height_px: 92
+      content_insets_px: { left: 14, right: 14, top: 6, bottom: 6 }
       padding_px: 0
       gap_px: 5
       text_clamp: five_rows
@@ -418,9 +428,9 @@ components:
     anatomy: [ownership_chip, warning_chip]
     data_bindings: { ownership: item.ownership_summary, warning: item.action_warning }
     box_model:
-      min_width_px: 436
-      min_height_px: 30
-      content_insets_px: { left: 8, right: 8, top: 5, bottom: 5 }
+      min_width_px: 402
+      min_height_px: 28
+      content_insets_px: { left: 8, right: 8, top: 4, bottom: 4 }
       padding_px: 0
       gap_px: 10
       text_clamp: single_line_ellipsis
@@ -432,8 +442,8 @@ components:
     anatomy: [close_button, equip_button, merge_or_upgrade_button]
     data_bindings: { actions: item.valid_actions, disabled_reasons: item.disabled_reasons }
     box_model:
-      min_width_px: 460
-      min_height_px: 40
+      min_width_px: 406
+      min_height_px: 46
       content_insets_px: { left: 0, right: 0, top: 0, bottom: 0 }
       padding_px: 0
       gap_px: 10
@@ -449,9 +459,9 @@ components:
     anatomy: [modal_shell, title_chrome, consumed_source_tray, upgrade_arrow, result_preview, irreversible_warning, action_footer]
     data_bindings: { source_items: equipment.upgrade.sources, result_item: equipment.upgrade.result, can_confirm: equipment.upgrade.can_confirm, warning: equipment.upgrade.warning }
     box_model:
-      min_width_px: 474
-      min_height_px: 372
-      content_insets_px: { left: 34, right: 34, top: 84, bottom: 18 }
+      min_width_px: 438
+      min_height_px: 344
+      content_insets_px: { left: 28, right: 28, top: 68, bottom: 22 }
       padding_px: 0
       gap_px: 12
       text_clamp: two_line_clamp
@@ -460,7 +470,7 @@ components:
       asset_key: taskstonebar.ui.dark_inner_well_9slice
       usage: godot_nine_patch_rect
       slice_hints_px: { left: 22, right: 22, top: 22, bottom: 22 }
-      content_insets_px: { left: 18, right: 18, top: 16, bottom: 14 }
+      content_insets_px: { left: 16, right: 16, top: 14, bottom: 12 }
     foundation_refs:
       modal_section: ConsumeConfirmModal
       button_roles: [window_close, inventory_tab, utility_icon]
@@ -473,8 +483,8 @@ components:
     anatomy: [source_slot_1, source_slot_2, source_slot_3, consumed_count_label]
     data_bindings: { source_items: equipment.upgrade.sources, consumed_count: equipment.upgrade.consumed_count }
     box_model:
-      min_width_px: 186
-      min_height_px: 84
+      min_width_px: 178
+      min_height_px: 68
       content_insets_px: { left: 0, right: 0, top: 0, bottom: 0 }
       padding_px: 0
       gap_px: 6
@@ -492,8 +502,8 @@ components:
     anatomy: [result_slot, result_name_label, tier_badge]
     data_bindings: { result_item: equipment.upgrade.result, result_tier: equipment.upgrade.result_tier }
     box_model:
-      min_width_px: 92
-      min_height_px: 84
+      min_width_px: 68
+      min_height_px: 68
       content_insets_px: { left: 0, right: 0, top: 0, bottom: 0 }
       padding_px: 0
       gap_px: 6
@@ -511,8 +521,8 @@ components:
     anatomy: [secondary_cancel_button, primary_confirm_button, disabled_reason]
     data_bindings: { confirm_enabled: equipment.upgrade.can_confirm, disabled_reason: equipment.upgrade.disabled_reason }
     box_model:
-      min_width_px: 302
-      min_height_px: 40
+      min_width_px: 292
+      min_height_px: 46
       content_insets_px: { left: 0, right: 0, top: 0, bottom: 0 }
       padding_px: 0
       gap_px: 12
@@ -523,15 +533,15 @@ components:
       color_tokens: [panel_mid, title_gold, text_cream]
 
   WindowFrame:
-    role: "Reusable floating RPG desktop window shell with title bar, close control, body well, focus depth, and fixed ornaments."
+    role: "Reusable floating RPG desktop window shell with title bar, close control, body well, and focus depth."
     mode: hybrid
     repeatable: true
-    anatomy: [outer_frame_skin, title_bar, title_label, body_host, close_button, focus_shadow, ornament_layer]
+    anatomy: [outer_frame_skin, title_bar, title_label, body_host, close_button, focus_shadow]
     data_bindings: { title_text: window.title_key, focused: ui.focus_window, collapsed: window.collapsed }
     box_model:
       min_width_px: 420
       min_height_px: 520
-      content_insets_px: { left: 18, right: 18, top: 72, bottom: 16 }
+      content_insets_px: { left: 14, right: 14, top: 56, bottom: 14 }
       padding_px: 0
       gap_px: 0
       text_clamp: single_line_ellipsis
@@ -540,24 +550,20 @@ components:
       asset_key: taskstonebar.ui.window_frame_9slice
       usage: godot_nine_patch_rect
       slice_hints_px: { left: 30, right: 30, top: 34, bottom: 30 }
-      content_insets_px: { left: 18, right: 18, top: 72, bottom: 16 }
-    ornament_layer:
-      asset_key: taskstonebar.ui.window_ornament_set
-      usage: fixed_texture_atoms
-      not_nine_slice: true
+      content_insets_px: { left: 14, right: 14, top: 56, bottom: 14 }
     foundation_refs:
       button_role: window_close
       color_tokens: [panel_outer, panel_mid, panel_inner, title_gold]
 
   WindowTitleBar:
-    role: "Burgundy title strip with native Korean title label and window controls."
+    role: "Forged burgundy desktop title rail with native centered Korean title, black-iron cap, small crest/ruby focus bead, sparse moss accents, and compact close/minimize controls."
     mode: hybrid
-    anatomy: [title_bar_skin, title_label, close_button_slot]
+    anatomy: [title_bar_skin, black_iron_cap, iron_endcaps, iron_highlight_shadow, burgundy_plate, plate_highlight_shadow, left_stone_badge, left_stone_chip, gold_bottom_rail, gold_rail_highlight_shadow, gold_tick_marks, center_crest, center_crest_inner, ruby_focus_bead, ruby_bead_glow, moss_accent_pixels, title_label, minimize_button_slot, minimize_line_glyph, close_button_slot, button_inner_lines]
     data_bindings: { title_text: window.title_key, alert_state: window.alert }
     box_model:
       min_width_px: 360
       min_height_px: 54
-      content_insets_px: { left: 40, right: 52, top: 10, bottom: 8 }
+      content_insets_px: { left: 82, right: 82, top: 8, bottom: 6 }
       padding_px: 0
       gap_px: 8
       text_clamp: single_line_ellipsis
@@ -566,9 +572,9 @@ components:
       asset_key: taskstonebar.ui.window_title_bar_9slice
       usage: godot_stylebox_texture
       slice_hints_px: { left: 26, right: 26, top: 18, bottom: 18 }
-      content_insets_px: { left: 40, right: 52, top: 10, bottom: 8 }
+      content_insets_px: { left: 82, right: 82, top: 8, bottom: 6 }
     foundation_refs:
-      color_tokens: [panel_mid, title_gold]
+      color_tokens: [panel_outer, panel_mid, panel_inner, title_gold, moss_green, ruby_red]
 
   StatusWindow:
     role: "Left window for character status rows and level-gated skill growth; it intentionally has no character portrait or stone portrait."
@@ -576,9 +582,9 @@ components:
     anatomy: [window_frame, stat_scroll_panel, stat_list, status_search_button, skill_point_header, skill_level_track, skill_tier_rows]
     data_bindings: { unit_stats: selected_character.stat_rows, skill_points: selected_character.skill_points, skill_nodes: selected_character.skill_nodes }
     box_model:
-      min_width_px: 458
-      min_height_px: 574
-      content_insets_px: { left: 18, right: 18, top: 72, bottom: 16 }
+      min_width_px: 438
+      min_height_px: 560
+      content_insets_px: { left: 14, right: 14, top: 56, bottom: 14 }
       padding_px: 0
       gap_px: 12
       text_clamp: single_line_ellipsis
@@ -754,9 +760,9 @@ components:
     anatomy: [window_frame, character_portrait, equipment_slots, inventory_tab_bar, stone_inventory_panel, keeper_icon_dock]
     data_bindings: { selected_character: selected_character, selected_inventory_tab: ui.inventory_tab, equipment_slots: equipment.slots }
     box_model:
-      min_width_px: 552
-      min_height_px: 700
-      content_insets_px: { left: 18, right: 18, top: 72, bottom: 16 }
+      min_width_px: 504
+      min_height_px: 624
+      content_insets_px: { left: 14, right: 14, top: 56, bottom: 14 }
       padding_px: 0
       gap_px: 10
       text_clamp: single_line_ellipsis
@@ -832,15 +838,15 @@ components:
     anatomy: [slot_grid, active_slot_overlays, cooldown_labels, merge_preview, lock_badges]
     data_bindings: { stone_slots: inventory.stone_slots, active_slot_count: inventory.active_slot_count, cooldowns: inventory.cooldowns, drag_state: ui.drag_merge_state }
     box_model:
-      min_width_px: 464
-      min_height_px: 232
+      min_width_px: 416
+      min_height_px: 218
       content_insets_px: { left: 8, right: 8, top: 10, bottom: 6 }
       padding_px: 0
-      gap_px: 8
+      gap_px: 6
       visible_columns: 8
       visible_rows: 4
-      grid_content_px: { width: 448, height: 216 }
-      slot_size_px: 48
+      grid_content_px: { width: 394, height: 194 }
+      slot_size_px: 44
       text_clamp: none
       touch_target_px: 44
     skin_contract:
@@ -906,9 +912,9 @@ components:
     anatomy: [window_frame, difficulty_select, act_tab_bar, parchment_route_map]
     data_bindings: { difficulty: portal.selected_difficulty, selected_act: portal.selected_act, map_progress: portal.map_progress }
     box_model:
-      min_width_px: 432
-      min_height_px: 610
-      content_insets_px: { left: 18, right: 18, top: 72, bottom: 16 }
+      min_width_px: 438
+      min_height_px: 560
+      content_insets_px: { left: 14, right: 14, top: 56, bottom: 14 }
       padding_px: 0
       gap_px: 10
       text_clamp: single_line_ellipsis
@@ -1182,6 +1188,35 @@ components:
     foundation_refs:
       color_tokens: [panel_inner, ruby_red, text_cream]
 
+  CombatMapProgressBadge:
+    role: "Compact bottom-right combat map progress badge showing current area anchor, route silhouette, next-node marker, and wave/map progress without duplicating item acquisition feedback."
+    mode: hybrid
+    anatomy: [badge_frame, portal_anchor_atom, route_silhouette, next_node_marker, progress_track, progress_fill, progress_pointer, tick_marks]
+    data_bindings: { current_map: current_map, current_stage: current_stage, wave_state: combat.wave_state, map_progress: portal.map_progress }
+    source_concept:
+      note: concepts/combat_map_progress_badge_concept_a_b.md
+      candidate_crop: concepts/combat_map_progress_badge_concept_b_candidate.png
+    box_model:
+      min_width_px: 220
+      min_height_px: 86
+      target_size_px: { width: 264, height: 106 }
+      content_insets_px: { left: 8, right: 8, top: 6, bottom: 8 }
+      padding_px: 0
+      gap_px: 4
+      text_clamp: none
+      touch_target_px: 40
+    asset_contract:
+      concept_reference_key: taskstonebar.ui.combat_map_progress_badge_concept_b
+      asset_keys:
+        - taskstonebar.ui.combat_map_progress_portal_atom
+        - taskstonebar.ui.combat_map_progress_route_silhouette
+        - taskstonebar.ui.combat_map_progress_next_marker
+      usage: separated_texture_atoms_plus_native_progress_controls
+      not_nine_slice: true
+    foundation_refs:
+      color_tokens: [panel_inner, panel_outer, title_gold, exp_blue, moss_green]
+    must_not_bake: [map_name, stage_number, wave_number, item_name, count, localized_labels]
+
   CombatSceneShortcutDock:
     role: "Small restore/minimize affordance cluster anchored to the taskbar strip so the workshop windows can be reopened without hiding combat state."
     mode: native_ui
@@ -1204,16 +1239,16 @@ asset_dependency_matrix:
     component_slots: [WindowFrame.outer_frame_skin, ModalShell.frame_skin]
     slice_hints_px: { left: 30, right: 30, top: 34, bottom: 30 }
     content_insets_by_slot:
-      WindowFrame.outer_frame_skin: { left: 18, right: 18, top: 72, bottom: 16 }
-      ModalShell.frame_skin: { left: 22, right: 22, top: 74, bottom: 20 }
+      WindowFrame.outer_frame_skin: { left: 14, right: 14, top: 56, bottom: 14 }
+      ModalShell.frame_skin: { left: 14, right: 14, top: 54, bottom: 18 }
     must_not_bake: [title_text, labels, numbers, cooldowns]
   taskstonebar.ui.window_title_bar_9slice:
     component_slots: [WindowTitleBar.title_bar_skin, ModalShell.title_bar, EquipmentUpgradeModal.title_chrome]
     slice_hints_px: { left: 26, right: 26, top: 18, bottom: 18 }
     content_insets_by_slot:
-      WindowTitleBar.title_bar_skin: { left: 40, right: 52, top: 10, bottom: 8 }
-      ModalShell.title_bar: { left: 40, right: 52, top: 10, bottom: 8 }
-      EquipmentUpgradeModal.title_chrome: { left: 40, right: 52, top: 10, bottom: 8 }
+      WindowTitleBar.title_bar_skin: { left: 82, right: 82, top: 8, bottom: 6 }
+      ModalShell.title_bar: { left: 78, right: 58, top: 7, bottom: 7 }
+      EquipmentUpgradeModal.title_chrome: { left: 78, right: 58, top: 7, bottom: 7 }
     must_not_bake: [title_text]
   taskstonebar.ui.dark_inner_well_9slice:
     component_slots: [StatusWindow.inner_well, HeroInventoryWindow.inner_well, PortalWindow.inner_well, ItemDetailModal.body_well, EquipmentUpgradeModal.body_well]
@@ -1222,8 +1257,8 @@ asset_dependency_matrix:
       StatusWindow.inner_well: { left: 14, right: 14, top: 14, bottom: 14 }
       HeroInventoryWindow.inner_well: { left: 14, right: 14, top: 14, bottom: 14 }
       PortalWindow.inner_well: { left: 14, right: 14, top: 14, bottom: 14 }
-      ItemDetailModal.body_well: { left: 18, right: 18, top: 16, bottom: 14 }
-      EquipmentUpgradeModal.body_well: { left: 18, right: 18, top: 16, bottom: 14 }
+      ItemDetailModal.body_well: { left: 16, right: 16, top: 14, bottom: 12 }
+      EquipmentUpgradeModal.body_well: { left: 16, right: 16, top: 14, bottom: 12 }
     must_not_bake: [labels, numbers, stage_text]
   taskstonebar.ui.resource_chip_9slice:
     component_slots: [ResourceCounter.skin]
@@ -1269,6 +1304,22 @@ asset_dependency_matrix:
     content_insets_by_slot:
       RareDropToast.toast_skin: { left: 12, right: 12, top: 10, bottom: 10 }
     must_not_bake: [item_name, count, localized_labels]
+  taskstonebar.ui.combat_map_progress_badge_concept_b:
+    component_slots: [CombatMapProgressBadge.source_reference]
+    fixed_sprite_sizes_px: { concept_crop: { width: 845, height: 420 }, runtime_target: { width: 264, height: 106 } }
+    must_not_bake: [map_name, stage_number, wave_number, item_name, count, localized_labels]
+  taskstonebar.ui.combat_map_progress_portal_atom:
+    component_slots: [CombatMapProgressBadge.portal_anchor_atom]
+    fixed_sprite_sizes_px: { runtime_atom: { width: 82, height: 78 } }
+    must_not_bake: [map_name, stage_number, wave_number, item_name, count, localized_labels]
+  taskstonebar.ui.combat_map_progress_route_silhouette:
+    component_slots: [CombatMapProgressBadge.route_silhouette]
+    fixed_sprite_sizes_px: { runtime_atom: { width: 116, height: 54 } }
+    must_not_bake: [map_name, stage_number, wave_number, item_name, count, localized_labels]
+  taskstonebar.ui.combat_map_progress_next_marker:
+    component_slots: [CombatMapProgressBadge.next_node_marker]
+    fixed_sprite_sizes_px: { runtime_atom: { width: 59, height: 78 } }
+    must_not_bake: [map_name, stage_number, wave_number, item_name, count, localized_labels]
   taskstonebar.ui.close_icon:
     component_slots: [WindowFrame.close_button]
     fixed_sprite_sizes_px: { default: { width: 42, height: 42 } }
@@ -1287,11 +1338,8 @@ asset_dependency_matrix:
   taskstonebar.ui.combat_ground_strip:
     component_slots: [TaskbarCombatStrip.ground_strip]
     fixed_sprite_sizes_px: { default: { width: 1586, height: 236 } }
-  taskstonebar.ui.window_ornament_set:
-    component_slots: [WindowFrame.ornament_layer]
-    fixed_sprite_sizes_px: { crest: { width: 160, height: 64 }, corner: { width: 48, height: 48 } }
   taskstonebar.ui.native_overlay_controls:
-    component_slots: [DesktopOverlayRoot.native_controls, TopResourceBar.labels, StatusStatScrollPanel.labels, StatList.labels, StatusSearchButton.glyph, SkillPointHeader.labels, SkillLevelTrack.labels, SkillTierRow.native_shapes, EnemyHpBar.labels, DamageNumberLayer.labels, ProjectileLayer.native_shapes, AutoCombatToggle.labels, AutoSkillToggle.labels, StageBadge.labels, LootTicker.labels, StageNode.labels, CombatSceneShortcutDock.labels, ModalHost.native_controls, ItemDetailModal.labels, ItemDetailStatList.labels, ItemDetailWarningChipRow.labels, ItemDetailActionFooter.labels, EquipmentUpgradeModal.labels, EquipmentUpgradeActionFooter.labels]
+    component_slots: [DesktopOverlayRoot.native_controls, TopResourceBar.labels, StatusStatScrollPanel.labels, StatList.labels, StatusSearchButton.glyph, SkillPointHeader.labels, SkillLevelTrack.labels, SkillTierRow.native_shapes, EnemyHpBar.labels, DamageNumberLayer.labels, ProjectileLayer.native_shapes, AutoCombatToggle.labels, AutoSkillToggle.labels, StageBadge.labels, LootTicker.labels, StageNode.labels, CombatMapProgressBadge.progress_fill, CombatMapProgressBadge.progress_pointer, CombatMapProgressBadge.tick_marks, CombatSceneShortcutDock.labels, ModalHost.native_controls, ItemDetailModal.labels, ItemDetailStatList.labels, ItemDetailWarningChipRow.labels, ItemDetailActionFooter.labels, EquipmentUpgradeModal.labels, EquipmentUpgradeActionFooter.labels]
     runtime_native: true
 
 runtime_token_mapping:
@@ -1310,6 +1358,6 @@ review_gate:
     - "A screenshot with workshop windows visible reads as desktop windows, and a minimized screenshot still leaves the taskbar combat strip understandable."
     - "The full overlay has no opaque background fill; empty regions expose the user's desktop through per-pixel transparency."
   blockers:
-    - "Korean pixel font, exact title ornament extraction, and icon atlas variants are still pending."
+    - "Korean pixel font and icon atlas variants are still pending; title bar normal-state atoms are implemented procedurally in WindowTitleBarChrome."
     - "A modal or floating window visually behaves like a full-screen mobile menu instead of a desktop window."
     - "The taskbar combat strip cannot stand alone when the workshop window stack is minimized."

@@ -137,6 +137,25 @@ concepts:
     variation: "Desktop Item Detail Modal"
     reference: "gen-ui-concept pass for item detail page over Godot ModalHost"
     summary: "Focused item detail modal concept: shared desktop-window chrome, large selected item slot, native identity text, stat list, warning chips, and footer actions while the taskbar combat strip remains visible."
+  combat_map_progress_badge_concept_a_b:
+    status: candidate
+    kind: taskbar_combat_subcomponent_ui
+    image: concepts/combat_map_progress_badge_concept_a_b.png
+    candidate_crop: concepts/combat_map_progress_badge_concept_b_candidate.png
+    note: concepts/combat_map_progress_badge_concept_a_b.md
+    parent: main_ui_concept_e_refined_current_mockup_b
+    variation: "Compact Combat Map Progress Badge"
+    reference: "user-provided growstone2 map progress crop, used for hierarchy only"
+    summary: "Two compact pixel HUD variants for the bottom-right combat map progress badge; Variant B is the preferred candidate for rebuilding RuntimeCombatMapProgress with a proper portal/route/marker/progress hierarchy."
+  window_title_bar_concept_c_forged_rail:
+    status: selected
+    kind: window_title_bar_subcomponent_ui
+    image: concepts/window_title_bar_concept_c_forged_rail.png
+    note: concepts/window_title_bar_concept_c_forged_rail.md
+    parent: main_ui_concept_e_refined_current_mockup_b
+    variation: "Forged Rail Title Bar"
+    reference: "gen-ui-concept pass for shared desktop-manager title chrome"
+    summary: "Title-bar-only concept board; Variant C selected for the shared WindowTitleBarChrome component: black iron cap/endcaps, deep burgundy plate, gold lower rail, stone badge/chip, small center crest, ruby focus bead/glow, and sparse moss accents."
 
 documents:
   main_ui_design:
@@ -215,3 +234,4 @@ documents:
 
 current_target: main_ui_concept_e_refined_current_mockup_b
 current_status_window_target: status_window_concept_c_tbh_stat_skill_layout
+current_window_title_bar_target: window_title_bar_concept_c_forged_rail

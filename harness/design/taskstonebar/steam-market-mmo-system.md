@@ -37,7 +37,7 @@ _economy:
 
 ## Asset Rule
 
-기본 에셋 풀은 `harness/assets/growstone2/`에 들어온 돌키우기1 원작 리소스다. 돌키우기2의 기본 룩은 이 에셋을 Godot에 맞게 정리해서 만든다.
+기본 에셋 풀은 `assets/growstone2/`에 들어온 돌키우기1 원작 리소스다. 돌키우기2의 기본 룩은 이 에셋을 Godot에 맞게 정리해서 만든다. `harness/assets/growstone2/`는 구 경로 호환용 symlink로만 둔다.
 
 우선순위:
 
@@ -50,10 +50,10 @@ _economy:
 
 | Path | Role |
 | --- | --- |
-| `harness/assets/growstone2/UI/` | 팝업, 탭, 버튼, 슬롯, 상점 프레임 |
-| `harness/assets/growstone2/unit/` | 원작 유닛/캐릭터/정렬 자료 |
-| `harness/assets/growstone2/effect/` | 스킬, 크리티컬, 레벨업, 보호막, 태양석 이펙트 |
-| `harness/assets/growstone2/map/` | 마을, 광산, 던전, 필드 배경 |
+| `assets/growstone2/UI/` | 팝업, 탭, 버튼, 슬롯, 상점 프레임 |
+| `assets/growstone2/unit/` | 원작 유닛/캐릭터/정렬 자료 |
+| `assets/growstone2/effect/` | 스킬, 크리티컬, 레벨업, 보호막, 태양석 이펙트 |
+| `assets/growstone2/map/` | 마을, 광산, 던전, 필드 배경 |
 
 원작 에셋이 존재하는 영역은 새 스타일로 교체하지 않는다. 새 에셋은 원작 에셋으로 해결되지 않는 Steam/Godot/시즌 요구에 한정한다.
 

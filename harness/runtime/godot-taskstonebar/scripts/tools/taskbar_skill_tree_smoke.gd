@@ -45,6 +45,16 @@ func _run() -> void:
 	if skill_window.get_node_or_null("Btn_RuntimeSkillTreeClose") == null or skill_window.get_node_or_null("Btn_RuntimeSkillTreeMinimize") == null:
 		_fail("skill tree window has no close/minimize affordances")
 		return
+	var skill_title_bar := skill_window.get_node_or_null("ProgramTitleBar")
+	if skill_title_bar == null or str(skill_title_bar.get_meta("window_title_bar_component", "")) != "WindowTitleBarChrome":
+		_fail("skill tree window is not using the shared WindowTitleBarChrome component")
+		return
+	if not _is_visible_control(skill_window.get_node_or_null("Line_ProgramTitleBarBottom")):
+		_fail("skill tree window title chrome is missing the clean title bar/bottom line")
+		return
+	if skill_window.get_node_or_null("Btn_RuntimeSkillTreeMinimize/Icon_Close") != null:
+		_fail("skill tree minimize button should not render as a second close button")
+		return
 	if skill_window.get_node_or_null("Panel_RuntimeSkillTreeBody") == null or skill_window.get_node_or_null("Panel_RuntimeSkillTreeFooter") == null:
 		_fail("skill tree window has no framed body/footer")
 		return
@@ -81,8 +91,8 @@ func _run() -> void:
 		_fail("status window attack value is not including progression equipment bonuses")
 		return
 	var status_exp := overlay.get_node_or_null("Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows/Text_StatusExpValue")
-	if status_exp == null or not status_exp is Label or str((status_exp as Label).text) != "장비창 EXP 바":
-		_fail("status window exp row should point to the keeper window exp bar")
+	if status_exp == null or not status_exp is Label or not str((status_exp as Label).text).begins_with("EXP"):
+		_fail("status window exp row should show the keeper EXP summary")
 		return
 	var keeper_exp_bar := overlay.get_node_or_null("Section_WindowStack/Panel_HeroInventoryWindowFrame/Progress_KeeperExp")
 	var keeper_exp_label := overlay.get_node_or_null("Section_WindowStack/Panel_HeroInventoryWindowFrame/Text_KeeperExp")
@@ -217,3 +227,7 @@ func _visible_runtime_enemy_count(layer: Control) -> int:
 
 func _is_visible_canvas(node) -> bool:
 	return node != null and node is CanvasItem and (node as CanvasItem).visible
+
+
+func _is_visible_control(node) -> bool:
+	return node != null and node is Control and (node as Control).visible

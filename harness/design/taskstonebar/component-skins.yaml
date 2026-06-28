@@ -3,6 +3,7 @@ game: taskstonebar
 status: draft
 source_concepts:
   - main_ui_concept_e_refined_current_mockup_b
+  - window_title_bar_concept_c_forged_rail
 
 foundation_systems:
   buttons: button-system.yaml
@@ -18,9 +19,9 @@ skins:
         asset_key: taskstonebar.ui.window_frame_9slice
         visual_role: "Black iron and brown RPG desktop window frame."
         godot_usage: nine_patch_rect
-    content_insets_px: { left: 18, right: 18, top: 72, bottom: 16 }
+    content_insets_px: { left: 14, right: 14, top: 56, bottom: 14 }
     slice_hints_px: { left: 30, right: 30, top: 34, bottom: 30 }
-    ornament_layer: taskstonebar.ui.window_ornament_set
+    ornament_layer: null
     semantic_color_tokens: [panel_outer, panel_mid, panel_inner, title_gold]
     must_not_bake: [text, numbers, prices, timers, localized_labels]
 
@@ -30,11 +31,11 @@ skins:
     states:
       normal:
         asset_key: taskstonebar.ui.window_title_bar_9slice
-        visual_role: "Burgundy strip with gold title text drawn natively."
+        visual_role: "Forged rail title strip; Godot runtime draws the black iron cap/endcaps, burgundy plate with highlight/shadow, gold lower rail with highlight/shadow, stone badge/chip, center crest with inner notch, ruby focus bead/glow, sparse moss accents, native centered title, and compact close/minimize controls with inner lines."
         godot_usage: stylebox_texture
-    content_insets_px: { left: 40, right: 52, top: 10, bottom: 8 }
+    content_insets_px: { left: 82, right: 82, top: 8, bottom: 6 }
     slice_hints_px: { left: 26, right: 26, top: 18, bottom: 18 }
-    semantic_color_tokens: [panel_mid, title_gold]
+    semantic_color_tokens: [panel_outer, panel_mid, panel_inner, title_gold, moss_green, ruby_red]
     must_not_bake: [text, localized_labels]
 
   dark_inner_well:

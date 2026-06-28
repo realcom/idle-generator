@@ -2,6 +2,7 @@ extends RefCounted
 
 const ASSET_ROOTS := [
 	"export_data/assets/growstone2",
+	"../../../assets/growstone2",
 	"../../assets/growstone2",
 ]
 const HERO_FRAME_SIZE := Vector2(48.0, 48.0)
@@ -9,9 +10,9 @@ const HERO_FRAME_COUNT := 11
 
 const FILES := {
 	"hero": "source/taskstone/hero.png",
-	"monster_basic": "unit/02_몬스터/Monster_0034.png",
-	"monster_elite": "unit/02_몬스터/Monster_0035.png",
-	"monster_boss": "unit/02_몬스터/Monster_0036.png",
+	"monster_basic": "runtime/units/monsters/mine_worker_0034.png",
+	"monster_elite": "runtime/units/monsters/mine_guard_0035.png",
+	"monster_boss": "runtime/units/monsters/mine_boss_0036.png",
 	"rock": "source/taskstone/rock.png",
 	"stone0": "source/taskstone/stone0.png",
 	"stone1": "source/taskstone/stone1.png",
@@ -165,24 +166,24 @@ const PLAYER_SKILL_EFFECT_KEYS := {
 }
 
 const SPRITE_REGIONS := {
-	"unit/02_몬스터/Monster_0007.png": Rect2(0.0, 0.0, 80.0, 80.0),
-	"unit/02_몬스터/Monster_0010.png": Rect2(0.0, 0.0, 64.0, 64.0),
-	"unit/02_몬스터/Monster_0013.png": Rect2(0.0, 0.0, 80.0, 80.0),
-	"unit/02_몬스터/Monster_0015.png": Rect2(0.0, 0.0, 48.0, 48.0),
-	"unit/02_몬스터/Monster_0030.png": Rect2(0.0, 0.0, 48.0, 48.0),
-	"unit/02_몬스터/Monster_0031.png": Rect2(0.0, 0.0, 48.0, 48.0),
-	"unit/02_몬스터/Monster_0032.png": Rect2(0.0, 0.0, 64.0, 64.0),
-	"unit/02_몬스터/Monster_b10000.png": Rect2(0.0, 0.0, 32.0, 32.0),
-	"unit/02_몬스터/10 저주받은 심연/Monster_오수아리우스.png": Rect2(0.0, 0.0, 128.0, 126.0),
-	"unit/02_몬스터/10 저주받은 심연/Monster_오수아리우스_Pivot.png": Rect2(0.0, 0.0, 128.0, 126.0),
-	"unit/02_몬스터/08 잊힌 경계지 (2.5.0)/Monster_독거미_Pivot.png": Rect2(0.0, 0.0, 53.0, 52.0),
-	"unit/02_몬스터/08 잊힌 경계지 (2.5.0)/Monster_되살아난 시체.png": Rect2(0.0, 0.0, 36.0, 48.0),
-	"unit/02_몬스터/08 잊힌 경계지 (2.5.0)/Monster_망령.png": Rect2(0.0, 0.0, 34.0, 58.0),
-	"unit/02_몬스터/08 잊힌 경계지 (2.5.0)/Monster_망령견.png": Rect2(0.0, 0.0, 58.0, 59.0),
-	"unit/02_몬스터/08 잊힌 경계지 (2.5.0)/Monster_망령견_Pivot.png": Rect2(0.0, 0.0, 58.0, 59.0),
-	"unit/02_몬스터/08 잊힌 경계지 (2.5.0)/Monster_해골궁수.png": Rect2(0.0, 0.0, 39.0, 52.0),
-	"unit/02_몬스터/초석의 거인/Monster_00204.png": Rect2(0.0, 0.0, 210.0, 210.0),
-	"unit/02_몬스터/초석의 거인/Monster_00204b.png": Rect2(0.0, 0.0, 210.0, 210.0),
+	"runtime/units/monsters/legacy_monster_0007.png": Rect2(0.0, 0.0, 80.0, 80.0),
+	"runtime/units/monsters/legacy_monster_0010.png": Rect2(0.0, 0.0, 64.0, 64.0),
+	"runtime/units/monsters/legacy_monster_0013.png": Rect2(0.0, 0.0, 80.0, 80.0),
+	"runtime/units/monsters/legacy_monster_0015.png": Rect2(0.0, 0.0, 48.0, 48.0),
+	"runtime/units/monsters/legacy_monster_0030.png": Rect2(0.0, 0.0, 48.0, 48.0),
+	"runtime/units/monsters/legacy_monster_0031.png": Rect2(0.0, 0.0, 48.0, 48.0),
+	"runtime/units/monsters/legacy_monster_0032.png": Rect2(0.0, 0.0, 64.0, 64.0),
+	"runtime/units/monsters/stone_mini_b10000.png": Rect2(0.0, 0.0, 32.0, 32.0),
+	"runtime/units/monsters/abyss_osuarius.png": Rect2(0.0, 0.0, 128.0, 126.0),
+	"runtime/units/monsters/abyss_osuarius_pivot.png": Rect2(0.0, 0.0, 128.0, 126.0),
+	"runtime/units/monsters/border_spider_pivot.png": Rect2(0.0, 0.0, 53.0, 52.0),
+	"runtime/units/monsters/border_revived_corpse.png": Rect2(0.0, 0.0, 36.0, 48.0),
+	"runtime/units/monsters/border_wraith.png": Rect2(0.0, 0.0, 34.0, 58.0),
+	"runtime/units/monsters/border_wraith_hound.png": Rect2(0.0, 0.0, 58.0, 59.0),
+	"runtime/units/monsters/border_wraith_hound_pivot.png": Rect2(0.0, 0.0, 58.0, 59.0),
+	"runtime/units/monsters/border_skeleton_archer.png": Rect2(0.0, 0.0, 39.0, 52.0),
+	"runtime/units/monsters/foundation_giant_00204.png": Rect2(0.0, 0.0, 210.0, 210.0),
+	"runtime/units/monsters/foundation_giant_00204b.png": Rect2(0.0, 0.0, 210.0, 210.0),
 }
 
 var textures := {}
@@ -288,6 +289,8 @@ func _normalize_sprite_path(sprite_path: String) -> String:
 		return "source/taskstone/%s" % relative_path.get_file()
 	if relative_path.begins_with("Assets/Taskstonebar/equipment/imagegen/icons/"):
 		return "generated/equipment/imagegen/icons/%s" % relative_path.get_file()
+	if relative_path.begins_with("assets/growstone2/"):
+		return relative_path.trim_prefix("assets/growstone2/")
 	if relative_path.begins_with("harness/assets/growstone2/"):
 		return relative_path.trim_prefix("harness/assets/growstone2/")
 	return relative_path

@@ -2,6 +2,7 @@ extends RefCounted
 
 const WORLD_SIZE := Vector2(960.0, 160.0)
 const PLAYER_X := 150.0
+const PLAYER_SPAWN_Y_RATIO := 0.6
 const ENEMY_SPAWN_X := 995.0
 const CONTACT_RANGE := 82.0
 const ENEMY_SPACING := 30.0
@@ -254,7 +255,7 @@ func _spawn_player() -> void:
 		"sprite": str(unit.get("sprite", "")),
 		"team": 1,
 		"level": player_level,
-		"position": Vector2(PLAYER_X, WORLD_SIZE.y * 0.5),
+		"position": Vector2(PLAYER_X, WORLD_SIZE.y * PLAYER_SPAWN_Y_RATIO),
 		"hp": max_hp,
 		"max_hp": max_hp,
 		"attack": _player_attack(unit, player_level),
@@ -927,7 +928,7 @@ func _collect_dead_enemies() -> void:
 		var unit: Dictionary = {}
 		if store != null:
 			unit = store.get_unit(int(enemy.get("unit_id", 0)))
-		_apply_unit_rewards(unit)
+		_apply_unit_rewards(unit, enemy)
 		_push_event("%s 처치" % str(enemy.get("name", "몬스터")))
 		_fx("kill", {
 			"target_id": int(enemy.get("id", 0)),
@@ -936,7 +937,7 @@ func _collect_dead_enemies() -> void:
 		})
 
 
-func _apply_unit_rewards(unit: Dictionary) -> void:
+func _apply_unit_rewards(unit: Dictionary, reward_origin := {}) -> void:
 	for group in unit.get("dropAddItemGroups", []):
 		if typeof(group) != TYPE_DICTIONARY:
 			continue
@@ -948,9 +949,9 @@ func _apply_unit_rewards(unit: Dictionary) -> void:
 			continue
 		if bool(group.get("shouldAddAll", false)):
 			for add_item in add_items:
-				_add_reward_item(add_item)
+				_add_reward_item(add_item, reward_origin)
 		else:
-			_add_reward_item(_pick_weighted_item(add_items))
+			_add_reward_item(_pick_weighted_item(add_items), reward_origin)
 
 
 func _pick_weighted_item(add_items: Array) -> Dictionary:
@@ -969,7 +970,7 @@ func _pick_weighted_item(add_items: Array) -> Dictionary:
 	return add_items[0] if add_items.size() > 0 and typeof(add_items[0]) == TYPE_DICTIONARY else {}
 
 
-func _add_reward_item(add_item) -> void:
+func _add_reward_item(add_item, reward_origin := {}) -> void:
 	if typeof(add_item) != TYPE_DICTIONARY:
 		return
 	var exp_amount := _reward_exp_amount(add_item)
@@ -1002,7 +1003,7 @@ func _add_reward_item(add_item) -> void:
 			resources["catalyst"] = int(resources.get("catalyst", 0)) + count
 	if progression_state != null:
 		progression_state.add_material(item_id, count)
-	_push_drop_event(item_id, count)
+	_push_drop_event(item_id, count, reward_origin)
 
 
 func _reward_exp_amount(add_item: Dictionary) -> int:
@@ -1532,11 +1533,23 @@ func _push_event(text: String) -> void:
 		events.pop_back()
 
 
-func _push_drop_event(item_id: int, count: int) -> void:
+func _push_drop_event(item_id: int, count: int, reward_origin := {}) -> void:
 	if item_id <= 0 or count <= 0:
 		return
 	var item_name := _item_display_name(item_id)
 	if item_name == "":
+		return
+	if item_id == 5:
+		var origin_position: Vector2 = reward_origin.get("position", Vector2(805.0, 80.0)) if typeof(reward_origin) == TYPE_DICTIONARY else Vector2(805.0, 80.0)
+		_push_event("+%s x%d" % [item_name, count])
+		_fx("gold_drop", {
+			"item_id": item_id,
+			"item_name": item_name,
+			"count": count,
+			"position": origin_position,
+			"time": elapsed,
+			"ttl": 1.35,
+		})
 		return
 	var rarity := _drop_rarity(item_id)
 	var drop := {

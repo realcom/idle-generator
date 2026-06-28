@@ -27,7 +27,8 @@ combat/basic_combat_sim.gd
   kill rewards, run result, and snapshot events.
 
 visual/sprite_catalog.gd
-  Loads Taskstone sprites directly from `harness/assets/growstone2`.
+  Loads Taskstone sprites directly from `assets/growstone2`.
+  `harness/assets/growstone2` remains only as a legacy symlink.
   Player/projectile/resource sprites are fixed, while enemy sprites are loaded
   from each compiled unit's `sprite` field.
 

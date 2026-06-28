@@ -23,9 +23,81 @@ func _run() -> void:
 	if portal_frame == null or hero_frame == null or status_frame == null:
 		_fail("generated overlay windows are missing")
 		return
-	if not hero_frame is Control or (hero_frame as Control).size.y < 690.0:
-		_fail("hero inventory window is not tall enough to contain inventory and dock content")
+	if not hero_frame is Control or not status_frame is Control or not portal_frame is Control:
+		_fail("generated overlay windows are not Control nodes")
 		return
+	var status_rect := (status_frame as Control).get_rect()
+	var hero_rect := (hero_frame as Control).get_rect()
+	var portal_rect := (portal_frame as Control).get_rect()
+	var status_visual_rect := _control_visual_rect(status_frame as Control)
+	var hero_visual_rect := _control_visual_rect(hero_frame as Control)
+	var portal_visual_rect := _control_visual_rect(portal_frame as Control)
+	if absf((hero_frame as Control).scale.x - 0.8) > 0.01 or absf((status_frame as Control).scale.x - 0.8) > 0.01 or absf((portal_frame as Control).scale.x - 0.8) > 0.01:
+		_fail("workshop windows should render at 0.8 visual scale, got status=%s hero=%s portal=%s" % [
+			str((status_frame as Control).scale),
+			str((hero_frame as Control).scale),
+			str((portal_frame as Control).scale),
+		])
+		return
+	if hero_visual_rect.size.y > 510.0 or hero_visual_rect.size.y < 490.0:
+		_fail("hero inventory window should be visually reduced by 20%%, got logical=%s visual=%s" % [str(hero_rect.size), str(hero_visual_rect.size)])
+		return
+	if status_visual_rect.size.y > 460.0 or portal_visual_rect.size.y > 460.0:
+		_fail("side windows should be visually reduced by 20%%, got status=%s portal=%s" % [str(status_visual_rect.size), str(portal_visual_rect.size)])
+		return
+	var left_gap := hero_visual_rect.position.x - status_visual_rect.end.x
+	var right_gap := portal_visual_rect.position.x - hero_visual_rect.end.x
+	if left_gap < 10.0 or left_gap > 24.0 or right_gap < 10.0 or right_gap > 24.0:
+		_fail("workshop windows should form a compact cluster with ~16px gaps, got left=%.1f right=%.1f" % [left_gap, right_gap])
+		return
+	for header_art_path in [
+		"Section_WindowStack/Panel_StatusWindowFrame/Tex_StatusWindowOrnament",
+		"Section_WindowStack/Panel_HeroInventoryWindowFrame/Tex_HeroInventoryWindowOrnament",
+		"Section_WindowStack/Panel_PortalWindowFrame/Tex_PortalWindowOrnament",
+		"Section_WindowStack/Panel_StatusWindowFrame/ProgramWindowIcon",
+		"Section_WindowStack/Panel_HeroInventoryWindowFrame/ProgramWindowIcon",
+		"Section_WindowStack/Panel_PortalWindowFrame/ProgramWindowIcon",
+		"Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusTitleBar",
+		"Section_WindowStack/Panel_HeroInventoryWindowFrame/Panel_HeroInventoryTitleBar",
+		"Section_WindowStack/Panel_PortalWindowFrame/Panel_PortalTitleBar",
+	]:
+		if _is_visible_control(overlay.get_node_or_null(header_art_path)):
+			_fail("legacy header art should be hidden in the reference compact header: %s" % header_art_path)
+			return
+	for reference_window_path in [
+		"Section_WindowStack/Panel_StatusWindowFrame",
+		"Section_WindowStack/Panel_HeroInventoryWindowFrame",
+		"Section_WindowStack/Panel_PortalWindowFrame",
+	]:
+		var reference_title_path := "%s/ProgramTitleBar" % reference_window_path
+		if not _is_visible_control(overlay.get_node_or_null(reference_title_path)):
+			_fail("reference native program title bar is missing: %s" % reference_title_path)
+			return
+		if str(overlay.get_node(reference_title_path).get_meta("window_title_bar_component", "")) != "WindowTitleBarChrome":
+			_fail("reference title bar is not using the shared WindowTitleBarChrome component: %s" % reference_title_path)
+			return
+		if not _is_visible_control(overlay.get_node_or_null("%s/Rect_ProgramTitleBarBurgundyFill" % reference_window_path)):
+			_fail("reference title bar is missing the burgundy fill surface: %s" % reference_window_path)
+			return
+		if not _is_visible_control(overlay.get_node_or_null("%s/Line_ProgramTitleBarBottom" % reference_window_path)):
+			_fail("reference title bar is missing the clean bottom accent line: %s" % reference_window_path)
+			return
+		for noisy_detail in ["Panel_HeaderLeftPattern", "Panel_HeaderLeftGoldSlash", "Panel_HeaderRightGoldSlash", "Panel_HeaderCenterRivets"]:
+			if _is_visible_control(overlay.get_node_or_null("%s/%s" % [reference_title_path, noisy_detail])):
+				_fail("reference title bar still shows broken decorative chrome: %s/%s" % [reference_title_path, noisy_detail])
+				return
+	var hero_title := overlay.get_node_or_null("Section_WindowStack/Panel_HeroInventoryWindowFrame/Text_HeroInventoryTitle")
+	if hero_title == null or not hero_title is Label or (hero_title as Label).horizontal_alignment != HORIZONTAL_ALIGNMENT_CENTER:
+		_fail("hero title should be centered in the reference title bar")
+		return
+	for help_path in [
+		"Section_WindowStack/Panel_StatusWindowFrame/Btn_ProgramHelp",
+		"Section_WindowStack/Panel_HeroInventoryWindowFrame/Btn_ProgramHelp",
+		"Section_WindowStack/Panel_PortalWindowFrame/Btn_ProgramHelp",
+	]:
+		if _is_visible_control(overlay.get_node_or_null(help_path)):
+			_fail("reference title bar still shows the crowded help button: %s" % help_path)
+			return
 	var dock_icon := overlay.get_node_or_null("Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockInventory/Icon_DockInventory")
 	if dock_icon == null or not dock_icon is TextureRect or (dock_icon as TextureRect).texture == null:
 		_fail("keeper dock inventory button did not receive a generated icon")
@@ -37,6 +109,9 @@ func _run() -> void:
 		return
 	if close_button.get_node_or_null("Icon_Close") == null:
 		_fail("generated portal close button has no close icon")
+		return
+	if (close_button as Control).size.x < 40.0 or (close_button as Control).size.y < 40.0:
+		_fail("generated portal close button is too small for the window chrome contract")
 		return
 	for minimize_path in [
 		"Section_WindowStack/Panel_StatusWindowFrame/Btn_StatusMinimize",
@@ -124,7 +199,7 @@ func _run() -> void:
 		_fail("stone/equipment tab panel is too large for the compact inventory switcher: %s" % str((inventory_tabs as Control).size))
 		return
 	var compact_stone_tab := overlay.get_node_or_null("Section_WindowStack/Panel_HeroInventoryWindowFrame/Tabs_StoneEquipment/Btn_StoneTab")
-	if compact_stone_tab == null or not compact_stone_tab is Button or (compact_stone_tab as Button).size.x < 210.0 or (compact_stone_tab as Button).size.y > 38.0:
+	if compact_stone_tab == null or not compact_stone_tab is Button or (compact_stone_tab as Button).size.x < 190.0 or (compact_stone_tab as Button).size.y > 38.0:
 		_fail("stone tab did not keep compact segmented sizing: %s" % (str((compact_stone_tab as Button).size) if compact_stone_tab is Button else "missing"))
 		return
 	var inventory_grid := overlay.get_node_or_null("Section_WindowStack/Panel_HeroInventoryWindowFrame/Grid_StoneInventory")
@@ -153,7 +228,7 @@ func _run() -> void:
 	if last_inventory_slot == null or not last_inventory_slot is Control:
 		_fail("equipment inventory grid does not expose the 32nd slot")
 		return
-	if (last_inventory_slot as Control).position.x < 380.0 or (last_inventory_slot as Control).position.y < 160.0:
+	if (last_inventory_slot as Control).position.x < 340.0 or (last_inventory_slot as Control).position.y < 145.0:
 		_fail("equipment inventory grid did not lay out as 8x4")
 		return
 	var first_equipment_item_id := _first_equipment_item_id(root_node.store)
@@ -197,9 +272,20 @@ func _run() -> void:
 	if equipment_detail == null or not equipment_detail is Control:
 		_fail("clicking an equipment slot did not open the item detail modal")
 		return
+	if not _control_rect_is_close(equipment_detail as Control, Vector2(548.0, 126.0), Vector2(490.0, 430.0)):
+		_fail("equipment detail modal compact rect mismatch: pos=%s size=%s" % [str((equipment_detail as Control).position), str((equipment_detail as Control).size)])
+		return
 	var equipment_detail_title := equipment_detail.get_node_or_null("Panel_ItemDetailTitleBar/Text_ItemDetailTitle")
 	if equipment_detail_title == null or not equipment_detail_title is Label or (equipment_detail_title as Label).text != "아이템 상세 정보":
 		_fail("equipment detail modal title is missing")
+		return
+	var equipment_detail_body := equipment_detail.get_node_or_null("Panel_ItemDetailBody")
+	if equipment_detail_body == null or not equipment_detail_body is Control or not _control_rect_is_close(equipment_detail_body as Control, Vector2(28.0, 68.0), Vector2(434.0, 286.0)):
+		_fail("equipment detail modal body does not use compact padding")
+		return
+	var equipment_detail_combat_strip := overlay.get_node_or_null("Section_BottomCombatStrip")
+	if equipment_detail_combat_strip == null or not equipment_detail_combat_strip is CanvasItem or not (equipment_detail_combat_strip as CanvasItem).visible:
+		_fail("taskbar combat strip is not visible while item detail modal is open")
 		return
 	if _is_visible_control(equipment_detail.get_node_or_null("Panel_ItemDetailTitleBar/Btn_ItemDetailMinimize")):
 		_fail("equipment detail modal title bar still shows a minimize/ellipsis button")
@@ -253,18 +339,31 @@ func _run() -> void:
 	if upgrade_modal == null or not upgrade_modal is Control:
 		_fail("equipment upgrade modal was not created")
 		return
+	if not _control_rect_is_close(upgrade_modal as Control, Vector2(574.0, 168.0), Vector2(438.0, 344.0)):
+		_fail("equipment upgrade modal compact rect mismatch: pos=%s size=%s" % [str((upgrade_modal as Control).position), str((upgrade_modal as Control).size)])
+		return
+	var upgrade_body := upgrade_modal.get_node_or_null("Panel_EquipmentUpgradeBody")
+	if upgrade_body == null or not upgrade_body is Control or not _control_rect_is_close(upgrade_body as Control, Vector2(28.0, 68.0), Vector2(382.0, 200.0)):
+		_fail("equipment upgrade modal body does not use compact padding")
+		return
 	var combat_strip := overlay.get_node_or_null("Section_BottomCombatStrip")
 	if combat_strip == null or not combat_strip is CanvasItem or not (combat_strip as CanvasItem).visible:
 		_fail("taskbar combat strip is not visible while equipment upgrade modal is open")
 		return
 	var combat_strip_control := combat_strip as Control
 	var combat_native_size: Vector2i = root_node._native_window_size_for("combat", combat_strip_control.size)
-	if combat_native_size != Vector2i(793, 118):
-		_fail("combat native window should render at half width and half height, got %s from strip.size=%s strip.scale=%s native.scale=%s" % [
+	var combat_native_scale: float = root_node._native_window_scale("combat")
+	var expected_combat_native_size := Vector2i(
+		roundi(combat_strip_control.size.x * combat_native_scale),
+		roundi(combat_strip_control.size.y * combat_native_scale)
+	)
+	if combat_native_size != expected_combat_native_size:
+		_fail("combat native window should render at configured scale, got %s expected %s from strip.size=%s strip.scale=%s native.scale=%s" % [
 			str(combat_native_size),
+			str(expected_combat_native_size),
 			str(combat_strip_control.size),
 			str(combat_strip_control.scale),
-			str(root_node._native_window_scale("combat")),
+			str(combat_native_scale),
 		])
 		return
 	var combat_resize_handle := overlay.get_node_or_null("Section_BottomCombatStrip/RuntimeCombatResizeHandle")
@@ -275,8 +374,13 @@ func _run() -> void:
 		_fail("combat resize handle does not capture pointer input")
 		return
 	var combat_reference_rect: Rect2 = root_node._native_reference_rect("combat", combat_strip_control)
-	if absf(combat_reference_rect.position.x - 396.5) > 0.1 or absf(combat_reference_rect.position.y - 822.0) > 0.1:
-		_fail("combat native window should be centered above taskbar after uniform half-scale, got %s" % str(combat_reference_rect.position))
+	var expected_combat_visual_size := combat_strip_control.size * combat_native_scale
+	var expected_combat_position := Vector2(
+		maxf(0.0, (Vector2(1586.0, 992.0).x - expected_combat_visual_size.x) * 0.5),
+		704.0 + maxf(0.0, combat_strip_control.size.y - expected_combat_visual_size.y)
+	)
+	if combat_reference_rect.position.distance_to(expected_combat_position) > 0.1:
+		_fail("combat native window should be centered above taskbar after configured scale, got %s expected %s" % [str(combat_reference_rect.position), str(expected_combat_position)])
 		return
 	var combat_native: Window = root_node._native_window_for_generated_control(combat_strip_control)
 	var strip_start_position := Vector2(combat_native.position) if combat_native != null else combat_strip_control.position
@@ -336,7 +440,7 @@ func _run() -> void:
 		])
 		return
 	var shrink_start_position := (combat_resize_handle as Control).get_global_rect().get_center()
-	var shrink_end_position := shrink_start_position - Vector2(900.0, 900.0)
+	var shrink_end_position := shrink_start_position - Vector2(1800.0, 1800.0)
 	root_node._handle_generated_combat_strip_resize_input(_mouse_button(shrink_start_position, true), combat_strip_control)
 	root_node._handle_generated_combat_strip_resize_global_input(_mouse_motion(shrink_end_position))
 	root_node._handle_generated_combat_strip_resize_global_input(_mouse_button(shrink_end_position, false))
@@ -414,6 +518,13 @@ func _run() -> void:
 			for child in host.get_children():
 				host_children.append(str(child.name))
 		_fail("clicking a stone slot did not open the item detail modal: data=%s action_status=%s host_children=%s" % [str(stone_data), str((action_status as Label).text), str(host_children)])
+		return
+	if not _control_rect_is_close(stone_detail as Control, Vector2(548.0, 126.0), Vector2(490.0, 430.0)):
+		_fail("stone detail modal compact rect mismatch: pos=%s size=%s" % [str((stone_detail as Control).position), str((stone_detail as Control).size)])
+		return
+	var stone_detail_combat_strip := overlay.get_node_or_null("Section_BottomCombatStrip")
+	if stone_detail_combat_strip == null or not stone_detail_combat_strip is CanvasItem or not (stone_detail_combat_strip as CanvasItem).visible:
+		_fail("taskbar combat strip is not visible while stone detail modal is open")
 		return
 	var stone_detail_title := stone_detail.get_node_or_null("Panel_ItemDetailTitleBar/Text_ItemDetailTitle")
 	if stone_detail_title == null or not stone_detail_title is Label or (stone_detail_title as Label).text != "아이템 상세 정보":
@@ -597,6 +708,14 @@ func _click_control(control: Control) -> void:
 
 func _is_visible_control(node: Node) -> bool:
 	return node != null and node is CanvasItem and (node as CanvasItem).visible
+
+
+func _control_visual_rect(control: Control) -> Rect2:
+	return Rect2(control.position, control.size * control.scale)
+
+
+func _control_rect_is_close(control: Control, expected_position: Vector2, expected_size: Vector2, tolerance: float = 0.5) -> bool:
+	return control.position.distance_to(expected_position) <= tolerance and control.size.distance_to(expected_size) <= tolerance
 
 
 func _mouse_button(global_position: Vector2, pressed: bool) -> InputEventMouseButton:
