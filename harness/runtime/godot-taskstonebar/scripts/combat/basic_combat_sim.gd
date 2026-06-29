@@ -274,6 +274,7 @@ func snapshot() -> Dictionary:
 		"player_learned_skill_ids": _player_learned_skill_ids(),
 		"player_stone_count": player_stone_loadout.size(),
 		"player_stone_skill_ids": _player_stone_skill_ids(),
+		"player_stone_cooldowns": _player_stone_cooldown_entries(),
 		"player_stat_bonuses": player_stat_bonuses.duplicate(true),
 	}
 
@@ -887,6 +888,28 @@ func _player_stone_skill_ids() -> Array:
 	for stone in player_stone_loadout:
 		if typeof(stone) == TYPE_DICTIONARY:
 			result.append(int(stone.get("skill_id", 0)))
+	return result
+
+
+func _player_stone_cooldown_entries() -> Array:
+	var result := []
+	for stone in player_stone_loadout:
+		if typeof(stone) != TYPE_DICTIONARY:
+			continue
+		var skill: Dictionary = stone.get("skill", {}) if typeof(stone.get("skill", {})) == TYPE_DICTIONARY else {}
+		var cooldown_total := _player_skill_cooldown(skill)
+		var cooldown_remaining := clampf(float(stone.get("cooldown_timer", 0.0)), 0.0, cooldown_total)
+		var ready_ratio := 1.0
+		if cooldown_total > 0.0:
+			ready_ratio = clampf(1.0 - cooldown_remaining / cooldown_total, 0.0, 1.0)
+		result.append({
+			"instance_id": int(stone.get("instance_id", 0)),
+			"item_data_id": int(stone.get("item_data_id", 0)),
+			"skill_id": int(stone.get("skill_id", 0)),
+			"cooldown_ratio": ready_ratio,
+			"cooldown_remaining": cooldown_remaining,
+			"cooldown_total": cooldown_total,
+		})
 	return result
 
 

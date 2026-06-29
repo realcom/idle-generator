@@ -43,18 +43,23 @@ func _run() -> void:
 	var status_visual_rect := _control_visual_rect(status_frame as Control)
 	var hero_visual_rect := _control_visual_rect(hero_frame as Control)
 	var portal_visual_rect := _control_visual_rect(portal_frame as Control)
-	if absf((hero_frame as Control).scale.x - 0.8) > 0.01 or absf((status_frame as Control).scale.x - 0.8) > 0.01 or absf((portal_frame as Control).scale.x - 0.8) > 0.01:
-		_fail("workshop windows should render at 0.8 visual scale, got status=%s hero=%s portal=%s" % [
+	var expected_workshop_scale := float(root_node.WORKSHOP_WINDOW_VISUAL_SCALE)
+	if absf((hero_frame as Control).scale.x - expected_workshop_scale) > 0.01 or absf((status_frame as Control).scale.x - expected_workshop_scale) > 0.01 or absf((portal_frame as Control).scale.x - expected_workshop_scale) > 0.01:
+		_fail("workshop windows should render at %.2f visual scale, got status=%s hero=%s portal=%s" % [
+			expected_workshop_scale,
 			str((status_frame as Control).scale),
 			str((hero_frame as Control).scale),
 			str((portal_frame as Control).scale),
 		])
 		return
-	if hero_visual_rect.size.y > 510.0 or hero_visual_rect.size.y < 490.0:
-		_fail("hero inventory window should be visually reduced by 20%%, got logical=%s visual=%s" % [str(hero_rect.size), str(hero_visual_rect.size)])
+	var expected_hero_height := float(root_node.COMPACT_HERO_WINDOW_RECT.size.y) * expected_workshop_scale
+	var expected_status_height := float(root_node.COMPACT_STATUS_WINDOW_RECT.size.y) * expected_workshop_scale
+	var expected_portal_height := float(root_node.COMPACT_PORTAL_WINDOW_RECT.size.y) * expected_workshop_scale
+	if absf(hero_visual_rect.size.y - expected_hero_height) > 2.0:
+		_fail("hero inventory window should match the configured visual scale, got logical=%s visual=%s scale=%.2f" % [str(hero_rect.size), str(hero_visual_rect.size), expected_workshop_scale])
 		return
-	if status_visual_rect.size.y > 460.0 or portal_visual_rect.size.y > 460.0:
-		_fail("side windows should be visually reduced by 20%%, got status=%s portal=%s" % [str(status_visual_rect.size), str(portal_visual_rect.size)])
+	if absf(status_visual_rect.size.y - expected_status_height) > 2.0 or absf(portal_visual_rect.size.y - expected_portal_height) > 2.0:
+		_fail("side windows should match the configured visual scale, got status=%s portal=%s scale=%.2f" % [str(status_visual_rect.size), str(portal_visual_rect.size), expected_workshop_scale])
 		return
 	var left_gap := hero_visual_rect.position.x - status_visual_rect.end.x
 	var right_gap := portal_visual_rect.position.x - hero_visual_rect.end.x
@@ -134,6 +139,9 @@ func _run() -> void:
 	if auto_merge_badge == null or not auto_merge_badge is Label or (auto_merge_badge as Label).text != "OFF":
 		_fail("auto stone merge dock button should show OFF state")
 		return
+	if not _is_visible_control((auto_merge_toggle as Button).get_node_or_null(root_node.AUTO_MERGE_DIM_OVERLAY_NAME)):
+		_fail("auto stone merge dock button should render an OFF dim effect")
+		return
 	var auto_equipment_toggle := overlay.get_node_or_null("Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockGrowth")
 	if auto_equipment_toggle == null or not auto_equipment_toggle is Button:
 		_fail("auto equipment merge toggle should use keeper dock button 2")
@@ -154,6 +162,9 @@ func _run() -> void:
 	var auto_equipment_badge := (auto_equipment_toggle as Button).get_node_or_null("Text_AutoEquipmentMergeBadge")
 	if auto_equipment_badge == null or not auto_equipment_badge is Label or (auto_equipment_badge as Label).text != "OFF":
 		_fail("auto equipment merge dock button should show OFF state")
+		return
+	if not _is_visible_control((auto_equipment_toggle as Button).get_node_or_null(root_node.AUTO_MERGE_DIM_OVERLAY_NAME)):
+		_fail("auto equipment merge dock button should render an OFF dim effect")
 		return
 
 	var close_button := overlay.get_node_or_null("Section_WindowStack/Panel_PortalWindowFrame/Btn_PortalClose")
@@ -307,6 +318,21 @@ func _run() -> void:
 		return
 	if _count_inventory_slots_by_kind(overlay, "equipment") <= initial_equipment_slot_count:
 		_fail("combat equipment reward was not reflected in the visible inventory grid")
+		return
+	var equipment_toast_icon := overlay.get_node_or_null("Section_BottomCombatStrip/Panel_RareDropToast/Icon_RareDrop")
+	if equipment_toast_icon == null or not equipment_toast_icon is TextureRect:
+		_fail("equipment drop toast icon node is missing")
+		return
+	var expected_equipment_texture: Texture2D = root_node._runtime_item_icon_texture(first_equipment_item_id)
+	var actual_equipment_texture: Texture2D = (equipment_toast_icon as TextureRect).texture
+	if expected_equipment_texture == null or actual_equipment_texture == null:
+		_fail("equipment drop toast did not render an item texture")
+		return
+	if actual_equipment_texture != expected_equipment_texture:
+		_fail("equipment drop toast used a fallback texture instead of the Items.json spriteGroups.Icon art")
+		return
+	if actual_equipment_texture.get_width() < 64 or actual_equipment_texture.get_height() < 64:
+		_fail("equipment drop toast rendered a low-resolution fallback icon")
 		return
 
 	var first_inventory_slot := overlay.get_node_or_null("Section_WindowStack/Panel_HeroInventoryWindowFrame/Grid_StoneInventory/Panel_StoneSlotPrototype/Text_ItemName")
@@ -827,11 +853,30 @@ func _run() -> void:
 	if (auto_merge_badge as Label).text != "ON":
 		_fail("auto stone merge dock button did not show ON state")
 		return
-	if _count_progression_item_id(root_node.progression.inventory_snapshot(), source_item_id) > auto_count_before - 2:
-		_fail("auto stone merge did not consume a two-stone pair")
+	if not _is_visible_control((auto_merge_toggle as Button).get_node_or_null(root_node.AUTO_MERGE_SPIN_BORDER_NAME)):
+		_fail("auto stone merge dock button should render a spinning ON border")
 		return
-	if _snapshot_item_count(root_node.progression.inventory_snapshot()) >= auto_total_before:
-		_fail("auto stone merge did not replace a pair with a higher stone")
+	if _count_progression_item_id(root_node.progression.inventory_snapshot(), source_item_id) != auto_count_before:
+		_fail("auto stone merge should wait for the global cooldown before consuming stones")
+		return
+	if _snapshot_item_count(root_node.progression.inventory_snapshot()) != auto_total_before:
+		_fail("auto stone merge should not change inventory immediately after enabling")
+		return
+	if float(root_node.generated_auto_merge_global_cooldown_timer) < root_node.AUTO_MERGE_GLOBAL_COOLDOWN - 0.5:
+		_fail("auto stone merge did not prime the global cooldown on enable")
+		return
+	root_node.generated_auto_merge_global_cooldown_timer = 0.0
+	root_node.generated_auto_merge_idle_poll_timer = 0.0
+	for _i in range(4):
+		await process_frame
+	if _count_progression_item_id(root_node.progression.inventory_snapshot(), source_item_id) != auto_count_before - 2:
+		_fail("auto stone merge did not consume exactly one two-stone pair after cooldown")
+		return
+	if _snapshot_item_count(root_node.progression.inventory_snapshot()) != auto_total_before - 1:
+		_fail("auto stone merge did not replace exactly one pair with one higher stone")
+		return
+	if not _snapshot_has_fx_kind(root_node.sim.snapshot(), "merge_result"):
+		_fail("auto stone merge did not emit a merge result effect")
 		return
 	root_node._set_generated_auto_stone_merge_enabled(false)
 	for _i in range(2):
@@ -856,11 +901,27 @@ func _run() -> void:
 	if (auto_equipment_badge as Label).text != "ON":
 		_fail("auto equipment merge dock button did not show ON state")
 		return
-	if _count_progression_item_id(root_node.progression.inventory_snapshot(), first_equipment_item_id) > auto_equipment_count_before - 3:
-		_fail("auto equipment merge did not consume a three-equipment set")
+	if not _is_visible_control((auto_equipment_toggle as Button).get_node_or_null(root_node.AUTO_MERGE_SPIN_BORDER_NAME)):
+		_fail("auto equipment merge dock button should render a spinning ON border")
 		return
-	if _snapshot_item_count(root_node.progression.inventory_snapshot()) > auto_equipment_total_before - 2:
-		_fail("auto equipment merge did not replace three equipment pieces with one higher equipment")
+	if _count_progression_item_id(root_node.progression.inventory_snapshot(), first_equipment_item_id) != auto_equipment_count_before:
+		_fail("auto equipment merge should wait for the global cooldown before consuming equipment")
+		return
+	if _snapshot_item_count(root_node.progression.inventory_snapshot()) != auto_equipment_total_before:
+		_fail("auto equipment merge should not change inventory immediately after enabling")
+		return
+	root_node.generated_auto_merge_global_cooldown_timer = 0.0
+	root_node.generated_auto_merge_idle_poll_timer = 0.0
+	for _i in range(4):
+		await process_frame
+	if _count_progression_item_id(root_node.progression.inventory_snapshot(), first_equipment_item_id) != auto_equipment_count_before - 3:
+		_fail("auto equipment merge did not consume exactly one three-equipment set after cooldown")
+		return
+	if _snapshot_item_count(root_node.progression.inventory_snapshot()) != auto_equipment_total_before - 2:
+		_fail("auto equipment merge did not replace exactly one equipment set with one higher equipment")
+		return
+	if not _snapshot_has_fx_kind(root_node.sim.snapshot(), "merge_result"):
+		_fail("auto equipment merge did not emit a merge result effect")
 		return
 	root_node._set_generated_auto_equipment_merge_enabled(false)
 	for _i in range(2):
@@ -1089,6 +1150,16 @@ func _inventory_slot_has_visible_selection(overlay: Node, instance_id: int) -> b
 			continue
 		var outline := (child as Control).get_node_or_null("Panel_SelectedOutline")
 		return outline != null and outline is CanvasItem and (outline as CanvasItem).visible
+	return false
+
+
+func _snapshot_has_fx_kind(snapshot: Dictionary, kind: String) -> bool:
+	var fx_events = snapshot.get("fx_events", [])
+	if typeof(fx_events) != TYPE_ARRAY:
+		return false
+	for event in fx_events:
+		if typeof(event) == TYPE_DICTIONARY and str(event.get("kind", "")) == kind:
+			return true
 	return false
 
 

@@ -50,6 +50,15 @@ const GENERATED_BATTLE_MAP_TEXTURES := {
 const GENERATED_PORTAL_MAP_TEXTURE_FALLBACK := "res://assets/generated/ui/portal_parchment_map.png"
 const GENERATED_PORTAL_MAP_TEXTURES := {
 	500101: "res://assets/generated/ui/portal_map_500101_taskbar_cave_rounded.png",
+	500102: "res://assets/generated/ui/portal_map_02_moss_grotto_rounded.png",
+	500103: "res://assets/generated/ui/portal_map_03_blue_crystal_quarry_rounded.png",
+	500104: "res://assets/generated/ui/portal_map_04_rusty_forge_storehouse_rounded.png",
+	500105: "res://assets/generated/ui/portal_map_05_haunted_spirit_road_rounded.png",
+	500106: "res://assets/generated/ui/portal_map_06_volcanic_basalt_forge_rounded.png",
+	500107: "res://assets/generated/ui/portal_map_07_frozen_moon_quarry_rounded.png",
+	500108: "res://assets/generated/ui/portal_map_08_boundary_rift_stones_rounded.png",
+	500109: "res://assets/generated/ui/portal_map_09_ancient_garden_stone_rounded.png",
+	500110: "res://assets/generated/ui/portal_map_10_abyss_star_core_rounded.png",
 }
 const PORTAL_FIRST_MAP_ID := 500101
 const PORTAL_MAPS_PER_ACT := 10
@@ -69,10 +78,15 @@ const PORTAL_STAGE_ROUTE_POSITIONS := [
 ]
 const KEEPER_DOCK_ICON_SIZE := Vector2(64.0, 64.0)
 const KEEPER_DOCK_ICON_DISPLAY_SIZE := Vector2(38.0, 38.0)
-const WORKSHOP_WINDOW_VISUAL_SCALE := 0.8
-const COMPACT_STATUS_WINDOW_RECT := Rect2(Vector2(225.0, 72.0), Vector2(438.0, 560.0))
-const COMPACT_HERO_WINDOW_RECT := Rect2(Vector2(591.0, 48.0), Vector2(504.0, 624.0))
-const COMPACT_PORTAL_WINDOW_RECT := Rect2(Vector2(1010.0, 72.0), Vector2(438.0, 560.0))
+const WORKSHOP_WINDOW_VISUAL_SCALE := 0.864
+const WORKSHOP_WINDOW_VISUAL_GAP := 16.0
+const COMPACT_STATUS_WINDOW_SIZE := Vector2(438.0, 560.0)
+const COMPACT_HERO_WINDOW_SIZE := Vector2(504.0, 624.0)
+const COMPACT_PORTAL_WINDOW_SIZE := Vector2(438.0, 560.0)
+const WORKSHOP_CLUSTER_START_X := (GENERATED_UI_REFERENCE_SIZE.x - ((438.0 + 504.0 + 438.0) * WORKSHOP_WINDOW_VISUAL_SCALE + WORKSHOP_WINDOW_VISUAL_GAP * 2.0)) * 0.5
+const COMPACT_STATUS_WINDOW_RECT := Rect2(Vector2(WORKSHOP_CLUSTER_START_X, 72.0), COMPACT_STATUS_WINDOW_SIZE)
+const COMPACT_HERO_WINDOW_RECT := Rect2(Vector2(WORKSHOP_CLUSTER_START_X + 438.0 * WORKSHOP_WINDOW_VISUAL_SCALE + WORKSHOP_WINDOW_VISUAL_GAP, 48.0), COMPACT_HERO_WINDOW_SIZE)
+const COMPACT_PORTAL_WINDOW_RECT := Rect2(Vector2(WORKSHOP_CLUSTER_START_X + (438.0 + 504.0) * WORKSHOP_WINDOW_VISUAL_SCALE + WORKSHOP_WINDOW_VISUAL_GAP * 2.0, 72.0), COMPACT_PORTAL_WINDOW_SIZE)
 const AUTO_TRANSITION_DELAY := 0.9
 const OVERLAY_HERO_WINDOW_PATH := "Section_WindowStack/Panel_HeroInventoryWindowFrame"
 const OVERLAY_INVENTORY_GRID_PATH := "Section_WindowStack/Panel_HeroInventoryWindowFrame/Grid_StoneInventory"
@@ -119,10 +133,14 @@ const COMBAT_OPACITY_CONTROL_SIZE := Vector2(168.0, 28.0)
 const COMBAT_OPACITY_MIN := 0.35
 const COMBAT_OPACITY_MAX := 1.0
 const COMBAT_OPACITY_DEFAULT := 1.0
-const AUTO_STONE_MERGE_INTERVAL := 0.25
-const AUTO_STONE_MERGE_MAX_PASSES := 12
-const AUTO_EQUIPMENT_MERGE_INTERVAL := 0.25
-const AUTO_EQUIPMENT_MERGE_MAX_PASSES := 12
+const AUTO_MERGE_GLOBAL_COOLDOWN := 5.0
+const AUTO_MERGE_IDLE_POLL_INTERVAL := 0.25
+const AUTO_MERGE_SPIN_BORDER_NAME := "Panel_AutoMergeSpinBorder"
+const AUTO_MERGE_SPIN_SPARK_NAME := "Rect_AutoMergeSpinSpark"
+const AUTO_MERGE_SPIN_TRAIL_COUNT := 5
+const AUTO_MERGE_SPIN_SECONDS := 1.72
+const AUTO_MERGE_DIM_OVERLAY_NAME := "Rect_AutoMergeDimOverlay"
+const SLOT_COOLDOWN_PROGRESS_NAME := "Progress_Cooldown"
 const KEEPER_EXP_BAR_NAME := "Progress_KeeperExp"
 const KEEPER_EXP_LABEL_NAME := "Text_KeeperExp"
 const RUNTIME_SKILL_TREE_WINDOW_NAME := "RuntimeSkillTreeWindow"
@@ -193,7 +211,7 @@ const NATIVE_WINDOW_ORDER := {
 	"portal": 2,
 	"combat": 3,
 }
-const COMBAT_NATIVE_WINDOW_SCALE := 0.61
+const COMBAT_NATIVE_WINDOW_SCALE := 0.6588
 const COMBAT_NATIVE_WINDOW_WIDTH_RATIO := 1.0
 const COMBAT_NATIVE_WINDOW_MIN_SCALE := 0.35
 const COMBAT_NATIVE_WINDOW_MAX_SCALE := 1.0
@@ -240,9 +258,10 @@ var generated_selected_action := "inventory"
 var generated_action_message := "돌 인벤토리 준비"
 var generated_taskbar_mode := false
 var generated_auto_stone_merge_enabled := false
-var generated_auto_stone_merge_poll_timer := 0.0
 var generated_auto_equipment_merge_enabled := false
-var generated_auto_equipment_merge_poll_timer := 0.0
+var generated_auto_merge_global_cooldown_timer := 0.0
+var generated_auto_merge_idle_poll_timer := 0.0
+var generated_auto_merge_next_kind := "stone"
 var generated_selected_skill_item_id := 200509
 var generated_skill_detail_item_id := 0
 var generated_selected_inventory_instance_id := 0
@@ -343,9 +362,10 @@ func _process(delta: float) -> void:
 	_update_active_native_drags()
 	if sim != null:
 		sim.step(delta)
-		_update_auto_stone_merge(delta)
-		_update_auto_equipment_merge(delta)
+		_update_auto_merge(delta)
 		_update_auto_transition(delta)
+	_update_runtime_micro_animations(delta)
+	if sim != null:
 		runtime_ui_sync_timer += delta
 		if runtime_force_ui_sync or runtime_ui_sync_timer >= RUNTIME_UI_SYNC_INTERVAL:
 			runtime_ui_sync_timer = 0.0
@@ -2963,7 +2983,6 @@ func _ensure_generated_combat_readouts(root: Control) -> void:
 	_remove_generated_combat_data_panels(strip)
 	_ensure_combat_boss_panel(strip)
 	_ensure_combat_map_progress_panel(strip)
-	_ensure_combat_skill_panel(strip)
 	generated_runtime_nodes["combat_player_hp_plate"] = _ensure_combat_hp_plate(strip, "Panel_RuntimePlayerHpPlate")
 	generated_runtime_nodes["combat_player_hp_bar"] = _ensure_combat_progress(
 		strip,
@@ -3021,42 +3040,6 @@ func _ensure_combat_drop_banner(parent: Control) -> void:
 	icon.add_theme_constant_override("outline_size", 5)
 	icon.z_index = 97
 	generated_runtime_nodes["combat_drop_banner_icon"] = icon
-
-
-func _ensure_combat_skill_panel(parent: Control) -> void:
-	var panel := _ensure_panel(parent, OVERLAY_COMBAT_SKILL_PANEL_NAME, Vector2(236.0, 88.0), Vector2(184.0, 74.0), Color("#17110e"), Color("#453121"), 3, 4)
-	panel.z_index = 85
-	generated_runtime_nodes["combat_skill_panel"] = panel
-	for child in panel.get_children():
-		if str(child.name) != "Content_CombatSkillPanel":
-			panel.remove_child(child)
-			child.queue_free()
-	var content_node := panel.get_node_or_null("Content_CombatSkillPanel")
-	var content: Control
-	if content_node != null and content_node is Control:
-		content = content_node as Control
-	else:
-		content = Control.new()
-		content.name = "Content_CombatSkillPanel"
-		content.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		panel.add_child(content)
-	content.position = Vector2.ZERO
-	content.size = panel.size
-	content.custom_minimum_size = panel.size
-	var orb := _ensure_runtime_label("Text_SkillOrb", Vector2(8.0, 8.0), Vector2(34.0, 34.0), 24, Color("#65d7ff"), content)
-	orb.text = "●"
-	orb.add_theme_color_override("font_outline_color", Color("#050302"))
-	orb.add_theme_constant_override("outline_size", 4)
-	generated_runtime_nodes["combat_skill_orb"] = orb
-	var label := _ensure_runtime_label("Text_SkillPanelLabel", Vector2(48.0, 7.0), Vector2(122.0, 20.0), 12, Color("#ffcf7a"), content)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	generated_runtime_nodes["combat_skill_label"] = label
-	var count := _ensure_runtime_label("Text_SkillPanelCount", Vector2(48.0, 29.0), Vector2(122.0, 18.0), 11, Color("#a9e8ff"), content)
-	count.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	generated_runtime_nodes["combat_skill_count"] = count
-	var bar := _ensure_combat_progress(content, "Progress_SkillCooldown", Vector2(10.0, 56.0), Vector2(164.0, 8.0), Color("#a45cff"))
-	bar.z_index = 3
-	generated_runtime_nodes["combat_skill_cooldown"] = bar
 
 
 func _ensure_combat_boss_panel(parent: Control) -> void:
@@ -3515,13 +3498,16 @@ func _remove_generated_combat_auto_stone_merge_toggle(strip: Control) -> void:
 
 
 func _set_generated_auto_stone_merge_enabled(enabled: bool) -> void:
+	var was_any_enabled := _auto_merge_any_enabled()
 	generated_auto_stone_merge_enabled = enabled
-	generated_auto_stone_merge_poll_timer = 0.0
+	generated_auto_merge_idle_poll_timer = 0.0
 	if enabled:
 		generated_inventory_tab = "stone"
 		generated_selected_action = "merge"
-		var merge_message := _progression_auto_merge_stones()
-		generated_action_message = merge_message if merge_message != "" else "돌 자동 머지 ON: 같은 돌 2개를 기다리는 중"
+		generated_auto_merge_next_kind = "stone"
+		if not was_any_enabled:
+			generated_auto_merge_global_cooldown_timer = AUTO_MERGE_GLOBAL_COOLDOWN
+		generated_action_message = "돌 자동 머지 ON: %.0f초 쿨타임 후 1회씩 합성" % AUTO_MERGE_GLOBAL_COOLDOWN
 	else:
 		generated_action_message = "돌 자동 머지 OFF"
 	_sync_generated_auto_stone_merge_toggle()
@@ -3529,41 +3515,63 @@ func _set_generated_auto_stone_merge_enabled(enabled: bool) -> void:
 
 
 func _set_generated_auto_equipment_merge_enabled(enabled: bool) -> void:
+	var was_any_enabled := _auto_merge_any_enabled()
 	generated_auto_equipment_merge_enabled = enabled
-	generated_auto_equipment_merge_poll_timer = 0.0
+	generated_auto_merge_idle_poll_timer = 0.0
 	if enabled:
 		generated_inventory_tab = "equipment"
 		generated_selected_action = "upgrade"
-		var merge_message := _progression_auto_merge_equipment()
-		generated_action_message = merge_message if merge_message != "" else "장비 자동 머지 ON: 같은 부위/등급 장비 3개를 기다리는 중"
+		generated_auto_merge_next_kind = "equipment"
+		if not was_any_enabled:
+			generated_auto_merge_global_cooldown_timer = AUTO_MERGE_GLOBAL_COOLDOWN
+		generated_action_message = "장비 자동 머지 ON: %.0f초 쿨타임 후 1회씩 합성" % AUTO_MERGE_GLOBAL_COOLDOWN
 	else:
 		generated_action_message = "장비 자동 머지 OFF"
 	_sync_generated_auto_equipment_merge_toggle()
 	_refresh_generated_overlay_now()
 
 
-func _update_auto_stone_merge(delta: float) -> void:
-	if not generated_auto_stone_merge_enabled:
-		return
-	generated_auto_stone_merge_poll_timer -= delta
-	if generated_auto_stone_merge_poll_timer > 0.0:
-		return
-	generated_auto_stone_merge_poll_timer = AUTO_STONE_MERGE_INTERVAL
-	var merge_message := _progression_auto_merge_stones()
-	if merge_message != "":
-		generated_action_message = merge_message
+func _auto_merge_any_enabled() -> bool:
+	return generated_auto_stone_merge_enabled or generated_auto_equipment_merge_enabled
 
 
-func _update_auto_equipment_merge(delta: float) -> void:
-	if not generated_auto_equipment_merge_enabled:
+func _update_auto_merge(delta: float) -> void:
+	if not _auto_merge_any_enabled():
+		generated_auto_merge_global_cooldown_timer = 0.0
+		generated_auto_merge_idle_poll_timer = 0.0
 		return
-	generated_auto_equipment_merge_poll_timer -= delta
-	if generated_auto_equipment_merge_poll_timer > 0.0:
+
+	if generated_auto_merge_global_cooldown_timer > 0.0:
+		generated_auto_merge_global_cooldown_timer = maxf(0.0, generated_auto_merge_global_cooldown_timer - delta)
 		return
-	generated_auto_equipment_merge_poll_timer = AUTO_EQUIPMENT_MERGE_INTERVAL
-	var merge_message := _progression_auto_merge_equipment()
-	if merge_message != "":
+
+	generated_auto_merge_idle_poll_timer -= delta
+	if generated_auto_merge_idle_poll_timer > 0.0:
+		return
+	generated_auto_merge_idle_poll_timer = AUTO_MERGE_IDLE_POLL_INTERVAL
+
+	for kind in _auto_merge_kind_order():
+		var merge_message := ""
+		if kind == "stone" and generated_auto_stone_merge_enabled:
+			merge_message = _progression_auto_merge_stones()
+		elif kind == "equipment" and generated_auto_equipment_merge_enabled:
+			merge_message = _progression_auto_merge_equipment()
+		if merge_message == "":
+			continue
 		generated_action_message = merge_message
+		generated_auto_merge_next_kind = "equipment" if kind == "stone" else "stone"
+		generated_auto_merge_global_cooldown_timer = AUTO_MERGE_GLOBAL_COOLDOWN
+		generated_auto_merge_idle_poll_timer = 0.0
+		_sync_generated_auto_stone_merge_toggle()
+		_sync_generated_auto_equipment_merge_toggle()
+		_refresh_generated_overlay_now()
+		return
+
+
+func _auto_merge_kind_order() -> Array:
+	if generated_auto_merge_next_kind == "equipment":
+		return ["equipment", "stone"]
+	return ["stone", "equipment"]
 
 
 func _ensure_generated_combat_opacity_control(strip: Control) -> void:
@@ -4033,7 +4041,7 @@ func _sync_generated_auto_stone_merge_toggle() -> void:
 	var button := toggle_node as Button
 	button.set_pressed_no_signal(generated_auto_stone_merge_enabled)
 	button.text = ""
-	button.tooltip_text = "돌 자동머지 ON: 같은 돌 2개를 상급 돌로 자동 합성" if generated_auto_stone_merge_enabled else "돌 자동머지 OFF"
+	button.tooltip_text = "돌 자동머지 ON: 5초 글로벌 쿨타임으로 1회씩 합성" if generated_auto_stone_merge_enabled else "돌 자동머지 OFF"
 	button.visible = true
 	_style_auto_stone_merge_toggle(button)
 
@@ -4079,7 +4087,8 @@ func _style_auto_stone_merge_toggle(button: Button) -> void:
 		label.add_theme_color_override("font_shadow_color", Color("#050302"))
 		label.add_theme_constant_override("shadow_offset_x", 1)
 		label.add_theme_constant_override("shadow_offset_y", 1)
-		label.z_index = 5
+		label.z_index = 10
+	_sync_auto_merge_button_effect(button, enabled, Color("#d8ffb2"), "Icon_DockInventory")
 
 
 func _sync_generated_auto_equipment_merge_toggle() -> void:
@@ -4089,7 +4098,7 @@ func _sync_generated_auto_equipment_merge_toggle() -> void:
 	var button := toggle_node as Button
 	button.set_pressed_no_signal(generated_auto_equipment_merge_enabled)
 	button.text = ""
-	button.tooltip_text = "장비 자동머지 ON: 같은 부위/등급 장비 3개를 상위 장비로 자동 합성" if generated_auto_equipment_merge_enabled else "장비 자동머지 OFF"
+	button.tooltip_text = "장비 자동머지 ON: 5초 글로벌 쿨타임으로 1회씩 합성" if generated_auto_equipment_merge_enabled else "장비 자동머지 OFF"
 	button.visible = true
 	_style_auto_equipment_merge_toggle(button)
 
@@ -4135,7 +4144,171 @@ func _style_auto_equipment_merge_toggle(button: Button) -> void:
 		label.add_theme_color_override("font_shadow_color", Color("#050302"))
 		label.add_theme_constant_override("shadow_offset_x", 1)
 		label.add_theme_constant_override("shadow_offset_y", 1)
-		label.z_index = 5
+		label.z_index = 10
+	_sync_auto_merge_button_effect(button, enabled, Color("#ffe3a1"), "Icon_DockGrowth")
+
+
+func _sync_auto_merge_button_effect(button: Button, enabled: bool, accent: Color, icon_name: String) -> void:
+	var button_size := button.size
+	if button_size.x <= 0.0 or button_size.y <= 0.0:
+		button_size = button.custom_minimum_size
+	if button_size.x <= 0.0 or button_size.y <= 0.0:
+		button_size = Vector2(52.0, 52.0)
+
+	var spin_node := button.get_node_or_null(AUTO_MERGE_SPIN_BORDER_NAME)
+	var spin_panel: Panel
+	if spin_node == null or not spin_node is Panel:
+		spin_panel = Panel.new()
+		spin_panel.name = AUTO_MERGE_SPIN_BORDER_NAME
+		spin_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(spin_panel)
+	else:
+		spin_panel = spin_node as Panel
+	spin_panel.position = Vector2.ZERO
+	spin_panel.size = button_size
+	spin_panel.visible = enabled
+	spin_panel.z_index = 8
+	spin_panel.add_theme_stylebox_override("panel", _overlay_style(Color(0, 0, 0, 0), Color(accent.r, accent.g, accent.b, 0.36), 1, 5))
+
+	for trail_index in range(AUTO_MERGE_SPIN_TRAIL_COUNT):
+		var spark_name := _auto_merge_spin_spark_name(trail_index)
+		var trail_node := spin_panel.get_node_or_null(spark_name)
+		var trail: ColorRect
+		if trail_node == null or not trail_node is ColorRect:
+			trail = ColorRect.new()
+			trail.name = spark_name
+			trail.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			spin_panel.add_child(trail)
+		else:
+			trail = trail_node as ColorRect
+		trail.visible = enabled
+
+	var dim_node := button.get_node_or_null(AUTO_MERGE_DIM_OVERLAY_NAME)
+	var dim_overlay: ColorRect
+	if dim_node == null or not dim_node is ColorRect:
+		dim_overlay = ColorRect.new()
+		dim_overlay.name = AUTO_MERGE_DIM_OVERLAY_NAME
+		dim_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(dim_overlay)
+	else:
+		dim_overlay = dim_node as ColorRect
+	dim_overlay.position = Vector2.ZERO
+	dim_overlay.size = button_size
+	dim_overlay.color = Color(0.03, 0.025, 0.02, 0.40)
+	dim_overlay.visible = not enabled
+	dim_overlay.z_index = 4
+
+	var icon := button.get_node_or_null(icon_name)
+	if icon != null and icon is CanvasItem:
+		var canvas := icon as CanvasItem
+		canvas.z_index = 3
+		canvas.modulate = accent if enabled else Color(0.56, 0.56, 0.56, 0.72)
+	button.modulate = Color.WHITE if enabled else Color(0.76, 0.76, 0.76, 1.0)
+	_animate_auto_merge_button_effect(button, enabled, accent)
+
+
+func _auto_merge_spin_spark_name(index: int) -> String:
+	return AUTO_MERGE_SPIN_SPARK_NAME if int(index) <= 0 else "%s%d" % [AUTO_MERGE_SPIN_SPARK_NAME, int(index)]
+
+
+func _update_runtime_micro_animations(delta: float) -> void:
+	_update_auto_merge_button_micro_animations()
+	_update_stone_cooldown_micro_animations(delta)
+
+
+func _update_auto_merge_button_micro_animations() -> void:
+	var stone_node: Variant = generated_runtime_nodes.get("auto_stone_merge_toggle", null)
+	if stone_node != null and stone_node is Button:
+		_animate_auto_merge_button_effect(stone_node as Button, generated_auto_stone_merge_enabled, Color("#d8ffb2"))
+	var equipment_node: Variant = generated_runtime_nodes.get("auto_equipment_merge_toggle", null)
+	if equipment_node != null and equipment_node is Button:
+		_animate_auto_merge_button_effect(equipment_node as Button, generated_auto_equipment_merge_enabled, Color("#ffe3a1"))
+
+
+func _update_stone_cooldown_micro_animations(delta: float) -> void:
+	if sim == null or generated_ui_overlay == null:
+		return
+	var snapshot: Dictionary = sim.snapshot()
+	var cooldown_ratios := _player_stone_cooldown_ratios(snapshot)
+	var grid := _generated_node_or_null(OVERLAY_INVENTORY_GRID_PATH)
+	if grid == null or not grid is GridContainer:
+		return
+	for child in (grid as GridContainer).get_children():
+		if child == null or not child is Control:
+			continue
+		var slot := child as Control
+		var raw_data = slot.get_meta("runtime_slot_data", {})
+		if typeof(raw_data) != TYPE_DICTIONARY:
+			continue
+		var data: Dictionary = raw_data
+		if str(data.get("kind", "")) != "stone" or not data.has("cooldown"):
+			continue
+		var bar_node := slot.get_node_or_null(SLOT_COOLDOWN_PROGRESS_NAME)
+		if bar_node == null or not bar_node is ProgressBar:
+			continue
+		var bar := bar_node as ProgressBar
+		var instance_id := int(data.get("instance_id", 0))
+		var target := clampf(float(cooldown_ratios.get(instance_id, data.get("cooldown", 1.0))), 0.0, 1.0)
+		var current := clampf(float(bar.value), 0.0, 1.0)
+		var follow := clampf(delta * (18.0 if target < current else 9.5), 0.0, 1.0)
+		bar.value = lerpf(current, target, follow)
+		bar.modulate = Color(1.0, 1.0, 1.0, 0.82 + 0.14 * sin(float(Time.get_ticks_msec()) / 1000.0 * TAU + float(instance_id % 5)))
+		bar.set_meta("runtime_cooldown_target", target)
+
+
+func _animate_auto_merge_button_effect(button: Button, enabled: bool, accent: Color) -> void:
+	var spin_node := button.get_node_or_null(AUTO_MERGE_SPIN_BORDER_NAME)
+	if spin_node == null or not spin_node is Panel:
+		return
+	var spin_panel := spin_node as Panel
+	spin_panel.visible = enabled
+	if not enabled:
+		return
+	var button_size := button.size
+	if button_size.x <= 0.0 or button_size.y <= 0.0:
+		button_size = button.custom_minimum_size
+	if button_size.x <= 0.0 or button_size.y <= 0.0:
+		button_size = Vector2(52.0, 52.0)
+	spin_panel.position = Vector2.ZERO
+	spin_panel.size = button_size
+	var pulse := 0.72 + 0.18 * sin(float(Time.get_ticks_msec()) / 1000.0 * TAU * 0.62)
+	spin_panel.modulate = Color(1.0, 1.0, 1.0, pulse)
+	var phase := fmod(float(Time.get_ticks_msec()) / 1000.0 / AUTO_MERGE_SPIN_SECONDS, 1.0)
+	for trail_index in range(AUTO_MERGE_SPIN_TRAIL_COUNT):
+		var spark_node := spin_panel.get_node_or_null(_auto_merge_spin_spark_name(trail_index))
+		if spark_node == null or not spark_node is ColorRect:
+			continue
+		var trail_phase := fmod(phase - float(trail_index) * 0.038 + 1.0, 1.0)
+		var alpha := 0.88 * pow(0.68, float(trail_index))
+		var scale := 1.0 - float(trail_index) * 0.07
+		_layout_auto_merge_spin_spark(spark_node as ColorRect, button_size, accent, trail_phase, alpha, scale)
+
+
+func _layout_auto_merge_spin_spark(spark: ColorRect, button_size: Vector2, accent: Color, phase: float, alpha: float, scale: float) -> void:
+	var thickness := maxf(2.0, 3.0 * scale)
+	var spark_length := minf(22.0, maxf(12.0, minf(button_size.x, button_size.y) * 0.48)) * scale
+	var width := maxf(1.0, button_size.x)
+	var height := maxf(1.0, button_size.y)
+	var perimeter := maxf(1.0, (width + height) * 2.0)
+	var eased_phase := phase + sin(phase * TAU) * 0.018
+	var distance := fmod(eased_phase, 1.0) * perimeter
+	if distance < width:
+		spark.position = Vector2(clampf(distance - spark_length * 0.5, 0.0, maxf(0.0, width - spark_length)), 0.0)
+		spark.size = Vector2(spark_length, thickness)
+	elif distance < width + height:
+		var y := distance - width
+		spark.position = Vector2(width - thickness, clampf(y - spark_length * 0.5, 0.0, maxf(0.0, height - spark_length)))
+		spark.size = Vector2(thickness, spark_length)
+	elif distance < width * 2.0 + height:
+		var x := width - (distance - width - height)
+		spark.position = Vector2(clampf(x - spark_length * 0.5, 0.0, maxf(0.0, width - spark_length)), height - thickness)
+		spark.size = Vector2(spark_length, thickness)
+	else:
+		var y := height - (distance - width * 2.0 - height)
+		spark.position = Vector2(0.0, clampf(y - spark_length * 0.5, 0.0, maxf(0.0, height - spark_length)))
+		spark.size = Vector2(thickness, spark_length)
+	spark.color = Color(accent.r, accent.g, accent.b, alpha)
+	spark.z_index = 9
 
 
 func _set_generated_combat_opacity(value: float) -> void:
@@ -4599,18 +4772,7 @@ func _runtime_skill_level_preview(item_id: int) -> Dictionary:
 
 
 func _runtime_skill_icon_texture(item_id: int, item: Dictionary) -> Texture2D:
-	if sprites == null:
-		return null
-	var icon_path := _item_icon_path(item)
-	if icon_path == "" and item_id > 0:
-		icon_path = _progression_item_icon_path(item_id)
-	if icon_path != "":
-		var icon_texture: Texture2D = sprites.texture_for_item_icon(icon_path)
-		if icon_texture != null:
-			return icon_texture
-	if item_id > 0:
-		return sprites.texture_for_item(item_id)
-	return null
+	return _runtime_item_icon_texture(item_id, _item_icon_path(item))
 
 
 func _runtime_skill_node_text(item: Dictionary, level: int, max_level: int, unlock_preview: Dictionary) -> String:
@@ -5803,32 +5965,28 @@ func _progression_merge_stones_with_ids(ids: Array) -> String:
 	var result_instance: Dictionary = result.get("result", {}) if typeof(result.get("result", {})) == TYPE_DICTIONARY else {}
 	generated_selected_inventory_instance_id = int(result_instance.get("instance_id", 0))
 	generated_selected_inventory_kind = "stone"
+	_emit_progression_merge_result_fx("stone", result_instance, result_name)
 	return "합성 완료: %s 2개 -> %s Lv.1 | %s" % [source_name, result_name, _progression_stone_loadout_message()]
 
 
 func _progression_auto_merge_stones() -> String:
 	if progression == null:
 		return "돌 자동 머지 불가: 진행 상태가 준비되지 않음"
-	var merged_count := 0
-	var last_result_name := ""
-	for _pass_index in range(AUTO_STONE_MERGE_MAX_PASSES):
-		var ids := _progression_auto_stone_merge_ids()
-		if ids.size() < ProgressionState.STONE_SYNTHESIS_COUNT:
-			break
-		var result: Dictionary = progression.synthesize_stones(ids)
-		if not bool(result.get("ok", false)):
-			break
-		merged_count += 1
-		var result_instance: Dictionary = result.get("result", {}) if typeof(result.get("result", {})) == TYPE_DICTIONARY else {}
-		generated_selected_inventory_instance_id = int(result_instance.get("instance_id", 0))
-		generated_selected_inventory_kind = "stone"
-		last_result_name = str(result_instance.get("name", _progression_item_name(int(result.get("result_item_data_id", 0)))))
-	_apply_progression_loadout_to_sim()
-	if merged_count <= 0:
+	var ids := _progression_auto_stone_merge_ids()
+	if ids.size() < ProgressionState.STONE_SYNTHESIS_COUNT:
 		return ""
-	return "돌 자동 머지 ON: %d회 완료 -> %s | %s" % [
-		merged_count,
-		last_result_name,
+	var result: Dictionary = progression.synthesize_stones(ids)
+	if not bool(result.get("ok", false)):
+		return ""
+	var result_instance: Dictionary = result.get("result", {}) if typeof(result.get("result", {})) == TYPE_DICTIONARY else {}
+	generated_selected_inventory_instance_id = int(result_instance.get("instance_id", 0))
+	generated_selected_inventory_kind = "stone"
+	var result_name := str(result_instance.get("name", _progression_item_name(int(result.get("result_item_data_id", 0)))))
+	_emit_progression_merge_result_fx("stone", result_instance, result_name)
+	_apply_progression_loadout_to_sim()
+	return "돌 자동 머지 ON: 1회 완료 -> %s | 다음 %.0f초 후 | %s" % [
+		result_name,
+		AUTO_MERGE_GLOBAL_COOLDOWN,
 		_progression_stone_loadout_message(),
 	]
 
@@ -5846,41 +6004,51 @@ func _progression_upgrade_equipment() -> String:
 	generated_selected_inventory_instance_id = int(item.get("instance_id", generated_selected_inventory_instance_id))
 	generated_selected_inventory_kind = "equipment"
 	_apply_progression_loadout_to_sim()
+	_emit_progression_merge_result_fx("equipment", item, str(item.get("name", "상위 장비")))
 	return "장비 승급 완료: %s T%d 획득" % [str(item.get("name", "상위 장비")), int(result.get("result_grade", item.get("grade", 0)))]
 
 
 func _progression_auto_merge_equipment() -> String:
 	if progression == null:
 		return "장비 자동 머지 불가: 진행 상태가 준비되지 않음"
-	var merged_count := 0
-	var last_result_name := ""
-	var last_result_grade := 0
-	for _pass_index in range(AUTO_EQUIPMENT_MERGE_MAX_PASSES):
-		var ids := _progression_auto_equipment_merge_ids()
-		if ids.size() < ProgressionState.EQUIPMENT_SYNTHESIS_COUNT:
-			break
-		var result: Dictionary = progression.synthesize_equipment(ids)
-		if not bool(result.get("ok", false)):
-			break
-		merged_count += 1
-		var result_instance: Dictionary = result.get("result", {}) if typeof(result.get("result", {})) == TYPE_DICTIONARY else {}
-		generated_selected_inventory_instance_id = int(result_instance.get("instance_id", 0))
-		generated_selected_inventory_kind = "equipment"
-		last_result_name = str(result_instance.get("name", _progression_item_name(int(result_instance.get("item_data_id", 0)))))
-		last_result_grade = int(result.get("result_grade", result_instance.get("grade", 0)))
-	_apply_progression_loadout_to_sim()
-	if merged_count <= 0:
+	var ids := _progression_auto_equipment_merge_ids()
+	if ids.size() < ProgressionState.EQUIPMENT_SYNTHESIS_COUNT:
 		return ""
+	var result: Dictionary = progression.synthesize_equipment(ids)
+	if not bool(result.get("ok", false)):
+		return ""
+	var result_instance: Dictionary = result.get("result", {}) if typeof(result.get("result", {})) == TYPE_DICTIONARY else {}
+	generated_selected_inventory_instance_id = int(result_instance.get("instance_id", 0))
+	generated_selected_inventory_kind = "equipment"
+	var result_name := str(result_instance.get("name", _progression_item_name(int(result_instance.get("item_data_id", 0)))))
+	var result_grade := int(result.get("result_grade", result_instance.get("grade", 0)))
+	_apply_progression_loadout_to_sim()
+	_emit_progression_merge_result_fx("equipment", result_instance, result_name)
 	var snapshot := _progression_snapshot()
-	var result_text := last_result_name
-	if last_result_grade > 0:
-		result_text = "%s T%d" % [last_result_name, last_result_grade]
-	return "장비 자동 머지 ON: %d회 완료 -> %s | 장비 %d/%d" % [
-		merged_count,
+	var result_text := result_name
+	if result_grade > 0:
+		result_text = "%s T%d" % [result_name, result_grade]
+	return "장비 자동 머지 ON: 1회 완료 -> %s | 다음 %.0f초 후 | 장비 %d/%d" % [
 		result_text,
+		AUTO_MERGE_GLOBAL_COOLDOWN,
 		_progression_equipment_owned_count(snapshot),
 		EQUIPMENT_STORAGE_CAPACITY,
 	]
+
+
+func _emit_progression_merge_result_fx(kind: String, result_instance: Dictionary, result_name: String) -> void:
+	if sim == null or not sim.has_method("_fx"):
+		return
+	var item_id := int(result_instance.get("item_data_id", result_instance.get("id", 0)))
+	if item_id <= 0:
+		return
+	sim._fx("merge_result", {
+		"ttl": 1.75,
+		"item_id": item_id,
+		"item_name": result_name,
+		"merge_kind": kind,
+		"grade": int(result_instance.get("grade", result_instance.get("stage", 0))),
+	})
 
 
 func _progression_equipment_upgrade_preview() -> Dictionary:
@@ -6327,6 +6495,21 @@ func _progression_item_icon_path(item_data_id: int) -> String:
 	return _item_icon_path(store.get_item(item_data_id))
 
 
+func _runtime_item_icon_texture(item_data_id: int, icon_path := "") -> Texture2D:
+	if sprites == null:
+		return null
+	var resolved_icon_path := str(icon_path).strip_edges()
+	if resolved_icon_path == "" and item_data_id > 0:
+		resolved_icon_path = _progression_item_icon_path(item_data_id)
+	if resolved_icon_path != "":
+		var icon_texture: Texture2D = sprites.texture_for_item_icon(resolved_icon_path)
+		if icon_texture != null:
+			return icon_texture
+	if item_data_id > 0:
+		return sprites.texture_for_item(item_data_id)
+	return null
+
+
 func _item_icon_path(item: Dictionary) -> String:
 	var icon_keys := ["Icon", "icon", "spritePath", "Sprite", "sprite"]
 	var direct_icon := _first_item_icon_value(item, icon_keys)
@@ -6350,11 +6533,26 @@ func _first_item_icon_value(values: Dictionary, icon_keys: Array) -> String:
 	return ""
 
 
+func _player_stone_cooldown_ratios(snapshot: Dictionary) -> Dictionary:
+	var ratios := {}
+	var entries = snapshot.get("player_stone_cooldowns", [])
+	if typeof(entries) != TYPE_ARRAY:
+		return ratios
+	for entry in entries:
+		if typeof(entry) != TYPE_DICTIONARY:
+			continue
+		var instance_id := int(entry.get("instance_id", 0))
+		if instance_id <= 0:
+			continue
+		ratios[instance_id] = clampf(float(entry.get("cooldown_ratio", 1.0)), 0.0, 1.0)
+	return ratios
+
+
 func _progression_stone_slots(snapshot: Dictionary, resources: Dictionary, progression_snapshot: Dictionary) -> Array:
 	var slots := []
 	var elapsed_time := float(snapshot.get("elapsed", 0.0))
-	var active_index := 0
 	var equipped_ids: Array = progression_snapshot.get("equipped_stone_instance_ids", []) if typeof(progression_snapshot.get("equipped_stone_instance_ids", [])) == TYPE_ARRAY else []
+	var cooldown_ratios := _player_stone_cooldown_ratios(snapshot)
 	for instance in progression_snapshot.get("items", []):
 		if typeof(instance) != TYPE_DICTIONARY or not _progression_has_tag(instance, "StoneWeapon"):
 			continue
@@ -6376,8 +6574,7 @@ func _progression_stone_slots(snapshot: Dictionary, resources: Dictionary, progr
 		}
 		slots.append(slot)
 		if is_equipped:
-			slot["cooldown"] = fmod(elapsed_time * (1.25 - minf(0.45, float(active_index) * 0.16)), 1.0)
-			active_index += 1
+			slot["cooldown"] = float(cooldown_ratios.get(instance_id, fmod(elapsed_time * 0.28, 1.0)))
 	var materials: Dictionary = progression_snapshot.get("materials", {}) if typeof(progression_snapshot.get("materials", {})) == TYPE_DICTIONARY else {}
 	slots.append({"name": "파편", "count": int(materials.get(200101, 0)), "badge": "먹", "rarity": "common", "kind": "material", "item_data_id": 200101, "icon_path": _progression_item_icon_path(200101), "action": "inspect_material", "tooltip": "조약돌 파편: 돌 먹이기와 성장 재료"})
 	slots.append({"name": "광석", "count": int(materials.get(200102, 0)), "badge": "승", "rarity": "notable", "kind": "material", "item_data_id": 200102, "icon_path": _progression_item_icon_path(200102), "action": "inspect_material", "tooltip": "이끼 광석: 장비 승급 재료"})
@@ -6731,7 +6928,7 @@ func _sync_generated_slot_grid(node_path: String, slot_data) -> void:
 
 
 func _generated_slot_data_signature(data: Dictionary) -> String:
-	return "%s|%d|%d|%d|%s|%s|%s|%s|%s|%.3f|%s" % [
+	return "%s|%d|%d|%d|%s|%s|%s|%s|%s|%s" % [
 		str(data.get("kind", "")),
 		int(data.get("instance_id", 0)),
 		int(data.get("item_data_id", 0)),
@@ -6741,7 +6938,6 @@ func _generated_slot_data_signature(data: Dictionary) -> String:
 		str(data.get("rarity", "")),
 		str(data.get("action", "")),
 		str(data.get("name", "")),
-		float(data.get("cooldown", -1.0)),
 		str(data.get("selected", false)),
 	]
 
@@ -6972,7 +7168,7 @@ func _apply_generated_slot_data(slot: Control, data: Dictionary) -> void:
 	var name_label := _ensure_slot_label(slot, "Text_ItemName", Vector2(2.0, slot.size.y - (15.0 if compact else 17.0)), Vector2(maxf(26.0, slot.size.x - 4.0), 13.0 if compact else 15.0), 8 if compact else 9, Color("#f3e6c8"))
 	var count_label := _ensure_slot_label(slot, "Text_ItemCount", Vector2(2.0, slot.size.y - (27.0 if compact else 29.0)), Vector2(maxf(26.0, slot.size.x - 4.0), 12.0), 7 if compact else 8, Color("#ffcf7a"))
 	var badge_label := _ensure_slot_label(slot, "Text_ItemBadge", Vector2(slot.size.x - 23.0, 2.0), Vector2(21.0, 11.0), 7, Color("#1a0f06"))
-	var cooldown := _ensure_slot_progress(slot, "Progress_Cooldown", Vector2(4.0, slot.size.y - 6.0), Vector2(maxf(18.0, slot.size.x - 8.0), 4.0))
+	var cooldown := _ensure_slot_progress(slot, SLOT_COOLDOWN_PROGRESS_NAME, Vector2(5.0, slot.size.y - 8.0), Vector2(maxf(18.0, slot.size.x - 10.0), 5.0))
 	var selected_outline := _ensure_slot_selection_outline(slot)
 	var icon := _ensure_slot_icon_mark(slot)
 	var icon_size := 21.0 if compact else 32.0
@@ -6994,7 +7190,11 @@ func _apply_generated_slot_data(slot: Control, data: Dictionary) -> void:
 	badge_label.text = badge
 	badge_label.visible = badge != ""
 	cooldown.visible = data.has("cooldown")
-	cooldown.value = clampf(float(data.get("cooldown", 0.0)), 0.0, 1.0)
+	var cooldown_target := clampf(float(data.get("cooldown", 0.0)), 0.0, 1.0)
+	cooldown.set_meta("runtime_cooldown_target", cooldown_target)
+	if not cooldown.has_meta("runtime_cooldown_initialized"):
+		cooldown.value = cooldown_target
+		cooldown.set_meta("runtime_cooldown_initialized", true)
 	selected_outline.visible = bool(data.get("selected", false))
 	texture_icon.position = Vector2(-3.0, -3.0)
 	texture_icon.size = icon.size + Vector2(6.0, 6.0)
@@ -7118,8 +7318,8 @@ func _ensure_slot_progress(slot: Control, node_name: String, pos: Vector2, progr
 	created.max_value = 1.0
 	created.show_percentage = false
 	created.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	created.add_theme_stylebox_override("background", _overlay_style(Color("#120c08"), Color("#120c08"), 0, 1))
-	created.add_theme_stylebox_override("fill", _overlay_style(Color("#ffcf7a"), Color("#ffcf7a"), 0, 1))
+	created.add_theme_stylebox_override("background", _overlay_style(Color(0.05, 0.04, 0.03, 0.76), Color(0.0, 0.0, 0.0, 0.0), 0, 3))
+	created.add_theme_stylebox_override("fill", _overlay_style(Color("#9ff27f"), Color(1.0, 0.95, 0.62, 0.62), 1, 3))
 	slot.add_child(created)
 	return created
 
@@ -7141,16 +7341,7 @@ func _slot_modulate(rarity: String) -> Color:
 
 func _slot_item_texture(data: Dictionary) -> Texture2D:
 	var item_id := int(data.get("item_data_id", 0))
-	if item_id <= 0 or sprites == null:
-		return null
-	var icon_path := str(data.get("icon_path", ""))
-	if icon_path == "":
-		icon_path = _progression_item_icon_path(item_id)
-	if icon_path != "":
-		var icon_texture: Texture2D = sprites.texture_for_item_icon(icon_path)
-		if icon_texture != null:
-			return icon_texture
-	return sprites.texture_for_item(item_id)
+	return _runtime_item_icon_texture(item_id, str(data.get("icon_path", "")))
 
 
 func _slot_glyph_text(data: Dictionary) -> String:
@@ -7209,7 +7400,6 @@ func _sync_generated_combat_overlay(snapshot: Dictionary, model: Dictionary) -> 
 		return
 	_sync_generated_combat_map_texture(snapshot)
 	_sync_generated_combat_scene_chrome(snapshot, model)
-	_sync_generated_skill_panel(snapshot)
 	_sync_generated_drop_toast(snapshot, model)
 	_sync_generated_combat_fx(snapshot)
 	_sync_generated_combat_units(snapshot)
@@ -7292,42 +7482,6 @@ func _sync_generated_drop_banner(snapshot: Dictionary, model: Dictionary) -> voi
 	body.text = str(latest_drop.get("title", latest_drop.get("item_name", "전리품")))
 
 
-func _sync_generated_skill_panel(snapshot: Dictionary) -> void:
-	var panel_node = generated_runtime_nodes.get("combat_skill_panel", null)
-	if panel_node == null or not panel_node is PanelContainer:
-		return
-	var bar_node = generated_runtime_nodes.get("combat_skill_cooldown", null)
-	var label_node = generated_runtime_nodes.get("combat_skill_label", null)
-	var count_node = generated_runtime_nodes.get("combat_skill_count", null)
-	var orb_node = generated_runtime_nodes.get("combat_skill_orb", null)
-	if bar_node == null or not bar_node is ProgressBar or label_node == null or not label_node is Label:
-		return
-	var learned_ids: Array = snapshot.get("player_learned_skill_ids", []) if typeof(snapshot.get("player_learned_skill_ids", [])) == TYPE_ARRAY else []
-	var learned_casts := int(snapshot.get("player_learned_skill_cast_count", 0))
-	var panel := panel_node as PanelContainer
-	panel.visible = not learned_ids.is_empty()
-	if learned_ids.is_empty():
-		return
-	var latest := _latest_combat_attack_event(snapshot, true)
-	var latest_any := latest if not latest.is_empty() else _latest_combat_attack_event(snapshot, false)
-	var skill_name := str(latest_any.get("skill_name", "AUTO SKILL")) if not latest_any.is_empty() else "AUTO SKILL"
-	var skill_level := int(latest_any.get("skill_level", 1)) if not latest_any.is_empty() else 1
-	var duration := maxf(0.05, float(latest.get("duration", latest.get("ttl", 0.0)))) if not latest.is_empty() else 0.0
-	var remaining := maxf(0.0, float(latest.get("ttl", 0.0))) if not latest.is_empty() else 0.0
-	var active_ratio := clampf(remaining / duration, 0.0, 1.0) if duration > 0.0 else 0.0
-	var elapsed := float(snapshot.get("elapsed", 0.0))
-	var pulse := active_ratio * (0.18 + 0.12 * sin(elapsed * 18.0))
-	panel.modulate = Color(1.0 + pulse, 1.0 + pulse * 0.65, 1.0 + pulse * 1.2, 1.0)
-	(bar_node as ProgressBar).value = active_ratio if active_ratio > 0.0 else 1.0
-	(label_node as Label).text = "SKILL %s" % _combat_skill_panel_name(skill_name)
-	if count_node != null and count_node is Label:
-		(count_node as Label).text = "Lv.%d  x%d" % [maxi(1, skill_level), learned_casts]
-	if orb_node != null and orb_node is Label:
-		var orb := orb_node as Label
-		orb.text = "◆" if active_ratio > 0.0 else "●"
-		orb.add_theme_color_override("font_color", Color("#fff1a8") if active_ratio > 0.0 else Color("#65d7ff"))
-
-
 func _latest_combat_attack_event(snapshot: Dictionary, learned_only := false) -> Dictionary:
 	var fx_events: Array = snapshot.get("fx_events", []) if typeof(snapshot.get("fx_events", [])) == TYPE_ARRAY else []
 	for index in range(fx_events.size() - 1, -1, -1):
@@ -7341,15 +7495,6 @@ func _latest_combat_attack_event(snapshot: Dictionary, learned_only := false) ->
 			continue
 		return data
 	return {}
-
-
-func _combat_skill_panel_name(skill_name: String) -> String:
-	var text := skill_name.strip_edges()
-	if text == "":
-		return "AUTO SKILL"
-	if text.length() > 7:
-		return text.substr(0, 7)
-	return text
 
 
 func _sync_generated_boss_panel(snapshot: Dictionary) -> void:
@@ -7740,10 +7885,12 @@ func _sync_generated_drop_toast(snapshot: Dictionary, model: Dictionary) -> void
 	var pulse := 1.0 + maxf(0.0, 1.0 - age / 1.2) * 0.18
 	canvas.modulate = Color(pulse, 1.0, pulse, 1.0)
 	var icon := _generated_node_or_null("Section_BottomCombatStrip/Panel_RareDropToast/Icon_RareDrop")
-	if icon != null and icon is TextureRect and sprites != null:
-			var texture: Texture2D = sprites.texture_for_item(int(latest_drop.get("item_id", 0)))
-			if texture != null:
-				(icon as TextureRect).texture = texture
+	if icon != null and icon is TextureRect:
+		var texture: Texture2D = _runtime_item_icon_texture(
+			int(latest_drop.get("item_id", 0)),
+			str(latest_drop.get("icon_path", ""))
+		)
+		(icon as TextureRect).texture = texture
 
 
 func _runtime_enemy_hp_text(snapshot: Dictionary) -> String:
@@ -7871,6 +8018,20 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 				var kill_position: Vector2 = event.get("position", Vector2(805.0, 80.0))
 				var target_pos := _overlay_enemy_center(target, world_size) if not target.is_empty() else _overlay_world_to_combat(kill_position, world_size) + COMBAT_ENEMY_VISUAL_SHIFT
 				_add_runtime_label(layer as Control, "처치!", target_pos + Vector2(-30.0, -72.0 - 18.0 * progress), Vector2(86.0, 30.0), 20, Color("#ffcf7a"), fade)
+			"merge_result":
+				var item_id := int(event.get("item_id", 0))
+				var merge_kind := str(event.get("merge_kind", "stone"))
+				var center := Vector2(layer_size.x * 0.5, layer_size.y * 0.44)
+				var pulse := 1.0 + sin(progress * PI) * 0.18
+				var glow_color := Color("#a8ff79") if merge_kind == "stone" else Color("#ffcf7a")
+				_add_runtime_effect(layer as Control, "fx_stone_fusion", center, Vector2.ONE * 92.0 * pulse, progress, Color(glow_color.r, glow_color.g, glow_color.b, fade * 0.74))
+				_add_runtime_effect(layer as Control, "fx_hit_white", center + Vector2(0.0, -2.0), Vector2.ONE * 72.0 * pulse, progress, Color(1.0, 0.92, 0.72, fade * 0.42))
+				var item_texture: Texture2D = sprites.texture_for_item(item_id) if sprites != null else null
+				var icon_size := Vector2.ONE * (40.0 + sin(progress * PI) * 12.0)
+				_add_runtime_texture(layer as Control, item_texture, center - icon_size * 0.5 + Vector2(0.0, -6.0 - 10.0 * progress), icon_size, Color(1.0, 1.0, 1.0, fade))
+				var title := "STONE MERGE" if merge_kind == "stone" else "EQUIP MERGE"
+				_add_runtime_label(layer as Control, title, center + Vector2(-76.0, -76.0 - 12.0 * progress), Vector2(152.0, 26.0), 17, glow_color.lightened(0.18), fade)
+				_add_runtime_label(layer as Control, str(event.get("item_name", "상급 아이템")), center + Vector2(-106.0, 38.0 - 18.0 * progress), Vector2(212.0, 28.0), 15, Color("#f3e6c8"), fade)
 			"drop":
 				var label_text := "+%s x%d" % [str(event.get("item_name", "전리품")), int(event.get("count", 1))]
 				var drop_label_size := Vector2(minf(240.0, maxf(150.0, layer_size.x - 44.0)), 26.0)
