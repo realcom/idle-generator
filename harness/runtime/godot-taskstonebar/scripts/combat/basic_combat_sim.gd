@@ -64,15 +64,20 @@ var elapsed := 0.0
 var kill_count := 0
 var skill_cast_count := 0
 var player_skill_cast_count := 0
+var player_learned_skill_cast_count := 0
 var running := false
 var result := ""
 var attack_timer := 0.0
+var learned_skill_timer := 0.0
 var run_report := {}
 var player_skill_rotation := []
 var player_skill_index := 0
+var player_learned_skill_rotation := []
+var player_learned_skill_index := 0
 var configured_player_skill_ids := [
 	300101,
 ]
+var configured_player_learned_skills := []
 var configured_player_stones := []
 var player_stone_loadout := []
 var player_stat_bonuses := {}
@@ -118,14 +123,18 @@ func start(new_map_id := 500101) -> void:
 	kill_count = 0
 	skill_cast_count = 0
 	player_skill_cast_count = 0
+	player_learned_skill_cast_count = 0
 	result = ""
 	run_report.clear()
 	_build_player_skill_rotation()
+	_build_player_learned_skill_rotation()
 	_build_player_stone_loadout()
 	player_skill_index = 0
+	player_learned_skill_index = 0
 	_spawn_player()
 	running = true
 	attack_timer = 0.25
+	learned_skill_timer = 0.18
 	_push_event("%s 맵 진입" % str(map_def.get("name", "작업표시줄 동굴")))
 	_run_map_start_triggers()
 
@@ -152,6 +161,21 @@ func set_player_skill_ids(skill_ids: Array) -> void:
 	if store != null:
 		_build_player_skill_rotation()
 		player_skill_index = 0
+
+
+func set_player_learned_skills(skill_entries: Array) -> void:
+	configured_player_learned_skills.clear()
+	for entry in skill_entries:
+		if typeof(entry) != TYPE_DICTIONARY:
+			continue
+		var skill_id := int(entry.get("skill_data_id", entry.get("skillDataId", 0)))
+		if skill_id <= 0:
+			continue
+		configured_player_learned_skills.append((entry as Dictionary).duplicate(true))
+	if store != null:
+		_build_player_learned_skill_rotation()
+		player_learned_skill_index = 0
+		learned_skill_timer = 0.05
 
 
 func set_player_stone_loadout(stone_instances: Array) -> void:
@@ -224,6 +248,7 @@ func snapshot() -> Dictionary:
 		"kill_count": kill_count,
 		"skill_cast_count": skill_cast_count,
 		"player_skill_cast_count": player_skill_cast_count,
+		"player_learned_skill_cast_count": player_learned_skill_cast_count,
 		"player": player,
 		"enemies": enemies,
 		"enemy_count": _alive_enemies().size(),
@@ -235,6 +260,7 @@ func snapshot() -> Dictionary:
 		"world_size": WORLD_SIZE,
 		"report": run_report,
 		"player_skill_ids": configured_player_skill_ids.duplicate(true),
+		"player_learned_skill_ids": _player_learned_skill_ids(),
 		"player_stone_count": player_stone_loadout.size(),
 		"player_stone_skill_ids": _player_stone_skill_ids(),
 		"player_stat_bonuses": player_stat_bonuses.duplicate(true),
@@ -635,6 +661,10 @@ func _update_enemies(delta: float) -> void:
 func _update_player_attack(delta: float) -> void:
 	if not player_stone_loadout.is_empty():
 		_update_player_stone_attacks(delta)
+		_update_player_learned_skill_attacks(delta)
+		return
+	if not player_learned_skill_rotation.is_empty():
+		_update_player_learned_skill_attacks(delta)
 		return
 
 	attack_timer -= delta
@@ -673,7 +703,25 @@ func _update_player_stone_attacks(delta: float) -> void:
 			stone["cooldown_timer"] = 0.05
 
 
-func _cast_player_skill(skill: Dictionary, primary_target: Dictionary, source_stone: Dictionary = {}) -> bool:
+func _update_player_learned_skill_attacks(delta: float) -> void:
+	if player_learned_skill_rotation.is_empty():
+		return
+	learned_skill_timer -= delta
+	if learned_skill_timer > 0.0:
+		return
+	var skill: Dictionary = _next_player_learned_skill()
+	var target := _player_skill_primary_target(skill)
+	if target.is_empty():
+		learned_skill_timer = 0.12
+		return
+	if _cast_player_skill(skill, target, {}, true):
+		player_learned_skill_cast_count += 1
+		learned_skill_timer = _player_skill_cooldown(skill)
+	else:
+		learned_skill_timer = 0.05
+
+
+func _cast_player_skill(skill: Dictionary, primary_target: Dictionary, source_stone: Dictionary = {}, is_learned_skill := false) -> bool:
 	if skill.is_empty() or primary_target.is_empty():
 		return false
 	var skill_id := int(skill.get("id", 0))
@@ -681,7 +729,9 @@ func _cast_player_skill(skill: Dictionary, primary_target: Dictionary, source_st
 	var targets := _player_skill_targets(skill, primary_target)
 	if targets.is_empty():
 		return false
-	var damage_ratio: float = store.skill_damage_total_ratio(skill, 1) if store != null else 1.0
+	var damage_ratio: float = float(skill.get("runtime_damage_ratio", 0.0))
+	if damage_ratio <= 0.0:
+		damage_ratio = store.skill_damage_total_ratio(skill, int(skill.get("runtime_skill_level", 1))) if store != null else 1.0
 	var raw_damage: float = float(player.get("attack", 1.0)) * damage_ratio
 	var total_damage := 0.0
 	for target in targets:
@@ -701,6 +751,8 @@ func _cast_player_skill(skill: Dictionary, primary_target: Dictionary, source_st
 	var prefix := "%s: " % stone_name if stone_name != "" else ""
 	_push_event("%s%s! x%d -%d" % [prefix, skill_name, targets.size(), int(round(total_damage))])
 	var fx_ttl := 1.05 if skill_id == 300101 else 0.82
+	if is_learned_skill:
+		fx_ttl = maxf(fx_ttl, 1.18)
 	_fx("attack", {
 		"source_id": int(player.get("id", 0)),
 		"source_name": str(player.get("name", "작업돌지기")),
@@ -713,6 +765,10 @@ func _cast_player_skill(skill: Dictionary, primary_target: Dictionary, source_st
 		"target_position": primary_target.get("position", Vector2(805.0, 80.0)),
 		"skill_id": skill_id,
 		"skill_name": skill_name,
+		"skill_level": int(skill.get("runtime_skill_level", 1)),
+		"skill_item_data_id": int(skill.get("runtime_skill_item_data_id", 0)),
+		"is_learned_skill": is_learned_skill,
+		"is_stone_skill": not source_stone.is_empty(),
 		"amount": total_damage,
 		"ttl": fx_ttl,
 	})
@@ -731,6 +787,27 @@ func _build_player_skill_rotation() -> void:
 		if skill.is_empty():
 			continue
 		player_skill_rotation.append(skill)
+
+
+func _build_player_learned_skill_rotation() -> void:
+	player_learned_skill_rotation.clear()
+	if store == null:
+		return
+	for entry in configured_player_learned_skills:
+		if typeof(entry) != TYPE_DICTIONARY:
+			continue
+		var skill_id := int(entry.get("skill_data_id", entry.get("skillDataId", 0)))
+		var skill: Dictionary = store.get_skill(skill_id)
+		if skill.is_empty():
+			continue
+		var runtime_skill := skill.duplicate(true)
+		runtime_skill["runtime_skill_item_data_id"] = int(entry.get("skill_item_data_id", entry.get("id", 0)))
+		runtime_skill["runtime_skill_level"] = maxi(1, int(entry.get("level", 1)))
+		var effect: Dictionary = entry.get("effect", {}) if typeof(entry.get("effect", {})) == TYPE_DICTIONARY else {}
+		var damage_ratio := float(effect.get("damage_ratio", 0.0))
+		if damage_ratio > 0.0:
+			runtime_skill["runtime_damage_ratio"] = damage_ratio
+		player_learned_skill_rotation.append(runtime_skill)
 
 
 func _build_player_stone_loadout() -> void:
@@ -782,12 +859,31 @@ func _player_stone_skill_ids() -> Array:
 	return result
 
 
+func _player_learned_skill_ids() -> Array:
+	var result := []
+	for skill in player_learned_skill_rotation:
+		if typeof(skill) == TYPE_DICTIONARY:
+			var skill_id := int(skill.get("id", 0))
+			if skill_id > 0:
+				result.append(skill_id)
+	return result
+
+
 func _next_player_skill() -> Dictionary:
 	if player_skill_rotation.is_empty():
 		return store.first_skill() if store != null else {}
 	var index := player_skill_index % player_skill_rotation.size()
 	player_skill_index = (player_skill_index + 1) % player_skill_rotation.size()
 	var skill = player_skill_rotation[index]
+	return skill if typeof(skill) == TYPE_DICTIONARY else {}
+
+
+func _next_player_learned_skill() -> Dictionary:
+	if player_learned_skill_rotation.is_empty():
+		return {}
+	var index := player_learned_skill_index % player_learned_skill_rotation.size()
+	player_learned_skill_index = (player_learned_skill_index + 1) % player_learned_skill_rotation.size()
+	var skill = player_learned_skill_rotation[index]
 	return skill if typeof(skill) == TYPE_DICTIONARY else {}
 
 

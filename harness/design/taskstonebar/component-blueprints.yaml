@@ -11,6 +11,7 @@ source_concepts:
   supporting:
     - { id: stone_raising_2_full_ui_concept_a, note: concepts/stone_raising_2_full_ui_concept_a.md, image: concepts/stone_raising_2_full_ui_concept_a.png }
     - { id: status_window_concept_c_tbh_stat_skill_layout, note: concepts/status_window_concept_c_tbh_stat_skill_layout.md, image: concepts/status_window_concept_c_tbh_stat_skill_layout.png }
+    - { id: skill_detail_window_concept_a, note: concepts/skill_detail_window_concept_a.md, image: concepts/skill_detail_window_concept_a.png }
     - { id: combat_map_progress_badge_concept_a_b, note: concepts/combat_map_progress_badge_concept_a_b.md, image: concepts/combat_map_progress_badge_concept_b_candidate.png }
     - { id: window_title_bar_concept_c_forged_rail, note: concepts/window_title_bar_concept_c_forged_rail.md, image: concepts/window_title_bar_concept_c_forged_rail.png }
 
@@ -129,11 +130,12 @@ surfaces:
         components: [TaskbarCombatStrip, HeroCombatSprite, EnemyStack, EnemyHpBar, DamageNumberLayer, ProjectileLayer, AutoCombatToggle, AutoSkillToggle, StageBadge, LootTicker, RareDropToast, CombatMapProgressBadge, CombatOpacityControl, CombatSceneShortcutDock]
         layout_contract:
           anchor: bottom_above_os_taskbar
-          bounds_px: { x: 0, y: 704, width: 1586, height: 236 }
+          bounds_px: { x: 397, y: 704, width: 793, height: 236 }
+          source_crop_px: { x: 396, y: 0, width: 793, height: 236 }
           stage_badge_px: { x: 710, y: 846, width: 166, height: 58 }
           rare_drop_toast_px: { x: 683, y: 724, width: 220, height: 70 }
-          map_progress_badge_px: { x: 1074, y: 849, width: 198, height: 86 }
-          opacity_control_px: { x: 1088, y: 716, width: 168, height: 28 }
+          map_progress_badge_px: { x: 992, y: 854, width: 198, height: 86 }
+          opacity_control_px: { x: 1022, y: 704, width: 168, height: 28 }
         asset_keys:
           - taskstonebar.ui.combat_ground_strip
           - taskstonebar.ui.stone_keeper_sheet
@@ -147,7 +149,7 @@ surfaces:
           - taskstonebar.ui.native_overlay_controls
         qa_focus:
           - "Combat readability wins over decorative frame weight."
-          - "The combat ground image stays visible as the underlay so the strip never falls back to black; soft border and decorative scene props stay transparent above it."
+          - "The combat ground image is visible by default and cropped left/right without horizontal scaling; empty desktop regions outside the combat window remain transparent."
           - "Damage number, stage name, and drop text are native controls."
           - "The strip must work as a standalone glanceable taskbar companion: current stage, enemy HP, latest hit, and latest drop are understandable without any modal open."
 
@@ -166,11 +168,16 @@ surfaces:
           - EquipmentUpgradeSourceTray
           - EquipmentUpgradeResultPreview
           - EquipmentUpgradeActionFooter
+          - SkillDetailModal
+          - SkillDetailIdentityPanel
+          - SkillDetailEffectList
+          - SkillDetailActionFooter
           - Slot
         layout_contract:
           anchor: full_rect_overlay
           scrim_bounds_px: { x: 0, y: 0, width: 1586, height: 704 }
           shell_px: { x: 556, y: 168, width: 474, height: 372 }
+          skill_detail_modal_px: { x: 556, y: 152, width: 474, height: 360 }
           preserve_combat_strip: true
           z_order: "Above window_stack and below toast layer; scrim stops before bottom_combat_strip."
         asset_keys:
@@ -183,6 +190,7 @@ surfaces:
         qa_focus:
           - "EquipmentUpgradeModal reads as a small desktop program window with title chrome, close affordance, framed body, and footer buttons."
           - "ItemDetailModal reads as an inspect-first item page: large slot preview, item identity, stat/source list, warning chips, and footer actions."
+          - "SkillDetailModal opens from StatusWindow skill slots and separates inspection from Skill Point spending."
           - "Consumed equipment slots and result preview are separate native slot controls; labels/counts are not baked into skin art."
           - "The modal scrim leaves TaskbarCombatStrip visible and combat feedback readable."
     component_tree:
@@ -238,6 +246,10 @@ surfaces:
       - EquipmentUpgradeSourceTray
       - EquipmentUpgradeResultPreview
       - EquipmentUpgradeActionFooter
+      - SkillDetailModal
+      - SkillDetailIdentityPanel
+      - SkillDetailEffectList
+      - SkillDetailActionFooter
     layout_contract:
       shell_width: "min(1586px, 100vw)"
       responsive_policy: "At widths below 1366px, keep center window and combat strip first, then allow side windows to compact/collapse."
@@ -447,6 +459,96 @@ components:
     data_bindings: { actions: item.valid_actions, disabled_reasons: item.disabled_reasons }
     box_model:
       min_width_px: 406
+      min_height_px: 46
+      content_insets_px: { left: 0, right: 0, top: 0, bottom: 0 }
+      padding_px: 0
+      gap_px: 10
+      text_clamp: single_line_ellipsis
+      touch_target_px: 42
+    foundation_refs:
+      button_roles: [utility_icon, inventory_tab]
+      color_tokens: [panel_mid, title_gold, text_cream]
+
+  SkillDetailModal:
+    role: "StatusWindow skill inspection modal that gates all Skill Point spending behind an explicit learn/level-up CTA."
+    mode: hybrid
+    anatomy: [modal_shell, title_chrome, skill_identity_panel, requirement_rows, effect_list, action_footer]
+    data_bindings:
+      skill_item: skill.selected_item
+      level: skill.level
+      max_level: skill.max_level
+      requirements: skill.requirements
+      owned_skill_points: inventory.materials.200501
+      unlock_preview: skill.unlock_preview
+      level_preview: skill.level_preview
+      auto_equip_state: skill.learned_auto_equipped
+    box_model:
+      min_width_px: 474
+      min_height_px: 360
+      content_insets_px: { left: 28, right: 28, top: 68, bottom: 22 }
+      padding_px: 0
+      gap_px: 12
+      text_clamp: single_line_or_two_effect_rows
+      touch_target_px: 42
+    skin_contract:
+      asset_key: taskstonebar.ui.dark_inner_well_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 22, right: 22, top: 22, bottom: 22 }
+      content_insets_px: { left: 16, right: 16, top: 14, bottom: 12 }
+    foundation_refs:
+      source_concept: concepts/skill_detail_window_concept_a.md
+      modal_section: SkillDetailModal
+      button_roles: [window_close, inventory_tab, utility_icon]
+      color_tokens: [panel_inner, text_cream, text_muted, title_gold, moss_green]
+
+  SkillDetailIdentityPanel:
+    role: "Left skill identity region with framed icon, level chip, and auto-equip state chip."
+    mode: hybrid
+    anatomy: [skill_icon_slot, level_chip, auto_equip_chip]
+    data_bindings: { icon: skill.icon, level_text: skill.level_text, auto_equip_state: skill.learned_auto_equipped }
+    box_model:
+      min_width_px: 128
+      min_height_px: 146
+      content_insets_px: { left: 16, right: 8, top: 16, bottom: 8 }
+      padding_px: 0
+      gap_px: 8
+      text_clamp: single_line_ellipsis
+      touch_target_px: 44
+    skin_contract:
+      asset_key: taskstonebar.ui.slot_frame_9slice
+      usage: godot_nine_patch_rect
+      slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
+      content_insets_px: { left: 6, right: 6, top: 6, bottom: 6 }
+
+  SkillDetailEffectList:
+    role: "Native rows for requirement, owned Skill Points, cost, current effect, and next effect."
+    mode: native_ui
+    anatomy: [requirement_row, owned_points_row, cost_row, current_effect_row, next_effect_row, disabled_reason]
+    data_bindings:
+      requirement_text: skill.requirements.summary
+      owned_points: inventory.materials.200501
+      cost_text: skill.next_cost
+      current_effect: skill.current_effect_summary
+      next_effect: skill.next_effect_summary
+      disabled_reason: skill.disabled_reason
+    box_model:
+      min_width_px: 280
+      min_height_px: 184
+      content_insets_px: { left: 12, right: 12, top: 8, bottom: 8 }
+      padding_px: 0
+      gap_px: 6
+      text_clamp: two_line_effect_rows
+      touch_target_px: 40
+    foundation_refs:
+      color_tokens: [panel_inner, text_cream, text_muted, title_gold]
+
+  SkillDetailActionFooter:
+    role: "Footer action row with close plus one learn/level-up CTA; confirms are disabled until the live preview says the action is valid."
+    mode: native_ui
+    anatomy: [secondary_close_button, primary_confirm_button, disabled_reason_tooltip]
+    data_bindings: { confirm_text: skill.confirm_text, confirm_enabled: skill.can_confirm, disabled_reason: skill.disabled_reason }
+    box_model:
+      min_width_px: 322
       min_height_px: 46
       content_insets_px: { left: 0, right: 0, top: 0, bottom: 0 }
       padding_px: 0
@@ -890,7 +992,7 @@ components:
   KeeperIconDock:
     role: "Icon-only shortcut dock at the bottom of the center window."
     mode: hybrid
-    anatomy: [dock_button_inventory, dock_button_growth, dock_button_formation, dock_button_storage, dock_button_steam_assets, icon_atoms]
+    anatomy: [dock_button_auto_stone_merge, dock_button_auto_equipment_merge, dock_button_formation, dock_button_storage, dock_button_steam_assets, icon_atoms]
     data_bindings: { shortcuts: ui.keeper_shortcuts, selected_shortcut: ui.selected_shortcut }
     box_model:
       min_width_px: 410
@@ -1012,7 +1114,7 @@ components:
   TaskbarCombatStrip:
     role: "Bottom always-on combat strip over the OS taskbar motif; it is the minimized game surface and remains readable without the workshop windows."
     mode: hybrid
-    anatomy: [ground_underlay, transparent_decorative_chrome, hero_sprite, projectile_layer, enemy_stack, hp_bar, damage_number_layer, stage_badge, rare_drop_toast, opacity_control, restore_workshop_affordance]
+    anatomy: [cropped_ground_background, transparent_decorative_chrome, hero_sprite, projectile_layer, enemy_stack, hp_bar, damage_number_layer, stage_badge, rare_drop_toast, opacity_control, restore_workshop_affordance]
     data_bindings: { current_map: current_map, current_stage: current_stage, player_state: combat.player, enemy_state: combat.enemies, drop_events: combat.drop_events, window_stack_collapsed: ui.window_stack_collapsed }
     box_model:
       min_width_px: 960
@@ -1024,7 +1126,7 @@ components:
       touch_target_px: 40
     asset_contract:
       asset_key: taskstonebar.ui.combat_ground_strip
-      usage: fixed_underlay_texture_atom
+      usage: visible_texture_atom_cropped_left_right
       runtime_visibility: visible_by_default
       not_nine_slice: true
 
@@ -1246,10 +1348,10 @@ components:
       color_tokens: [panel_outer, title_gold, text_cream]
 
   CombatOpacityControl:
-    role: "Small always-readable combat strip control for adjusting the visual opacity of the full combat screen without fading the control itself."
+    role: "Small always-readable combat strip control for adjusting combat element visibility; 100% means transparency 0 while the cropped ground image remains visible."
     mode: native_ui
     anatomy: [opacity_icon, opacity_slider, percent_label]
-    data_bindings: { opacity_value: ui.combat_opacity }
+    data_bindings: { opacity_percent: ui.combat_opacity_percent, opacity_value: ui.combat_opacity }
     box_model:
       min_width_px: 168
       min_height_px: 28
@@ -1259,21 +1361,23 @@ components:
       text_clamp: single_line_ellipsis
       touch_target_px: 28
     behavior_contract:
-      opacity_range: { min: 0.35, max: 1.0, default: 1.0, step: 0.05 }
+      display_value: opacity_percent
+      opacity_range: { min_percent: 35, max_percent: 100, default_percent: 100, step_percent: 5 }
+      outside_window_transparent_by_default: true
       remains_opaque: true
     foundation_refs:
       color_tokens: [panel_inner, panel_outer, title_gold, text_cream]
 
 asset_dependency_matrix:
   taskstonebar.ui.window_frame_9slice:
-    component_slots: [WindowFrame.outer_frame_skin, ModalShell.frame_skin]
+    component_slots: [WindowFrame.outer_frame_skin, ModalShell.frame_skin, SkillDetailModal.modal_shell]
     slice_hints_px: { left: 30, right: 30, top: 34, bottom: 30 }
     content_insets_by_slot:
       WindowFrame.outer_frame_skin: { left: 14, right: 14, top: 56, bottom: 14 }
       ModalShell.frame_skin: { left: 14, right: 14, top: 54, bottom: 18 }
     must_not_bake: [title_text, labels, numbers, cooldowns]
   taskstonebar.ui.window_title_bar_9slice:
-    component_slots: [WindowTitleBar.title_bar_skin, ModalShell.title_bar, EquipmentUpgradeModal.title_chrome]
+    component_slots: [WindowTitleBar.title_bar_skin, ModalShell.title_bar, EquipmentUpgradeModal.title_chrome, SkillDetailModal.title_chrome]
     slice_hints_px: { left: 26, right: 26, top: 18, bottom: 18 }
     content_insets_by_slot:
       WindowTitleBar.title_bar_skin: { left: 82, right: 82, top: 8, bottom: 6 }
@@ -1281,7 +1385,7 @@ asset_dependency_matrix:
       EquipmentUpgradeModal.title_chrome: { left: 78, right: 58, top: 7, bottom: 7 }
     must_not_bake: [title_text]
   taskstonebar.ui.dark_inner_well_9slice:
-    component_slots: [StatusWindow.inner_well, HeroInventoryWindow.inner_well, PortalWindow.inner_well, ItemDetailModal.body_well, EquipmentUpgradeModal.body_well]
+    component_slots: [StatusWindow.inner_well, HeroInventoryWindow.inner_well, PortalWindow.inner_well, ItemDetailModal.body_well, EquipmentUpgradeModal.body_well, SkillDetailModal.body_well]
     slice_hints_px: { left: 22, right: 22, top: 22, bottom: 22 }
     content_insets_by_slot:
       StatusWindow.inner_well: { left: 14, right: 14, top: 14, bottom: 14 }
@@ -1289,6 +1393,7 @@ asset_dependency_matrix:
       PortalWindow.inner_well: { left: 14, right: 14, top: 14, bottom: 14 }
       ItemDetailModal.body_well: { left: 16, right: 16, top: 14, bottom: 12 }
       EquipmentUpgradeModal.body_well: { left: 16, right: 16, top: 14, bottom: 12 }
+      SkillDetailModal.body_well: { left: 16, right: 16, top: 14, bottom: 12 }
     must_not_bake: [labels, numbers, stage_text]
   taskstonebar.ui.resource_chip_9slice:
     component_slots: [ResourceCounter.skin]
@@ -1304,7 +1409,7 @@ asset_dependency_matrix:
       ActTabBar.skin: { left: 14, right: 14, top: 8, bottom: 8 }
     must_not_bake: [labels, counts]
   taskstonebar.ui.slot_frame_9slice:
-    component_slots: [Slot.slot_skin, StoneInventoryPanel.slot_grid, EquipmentSlotGrid.slot_buttons, RuneMarkTree.rune_slots, SkillIconSlot.slot_skin, ItemDetailIdentityPanel.preview_slot, EquipmentUpgradeSourceTray.source_slots, EquipmentUpgradeResultPreview.result_slot]
+    component_slots: [Slot.slot_skin, StoneInventoryPanel.slot_grid, EquipmentSlotGrid.slot_buttons, RuneMarkTree.rune_slots, SkillIconSlot.slot_skin, ItemDetailIdentityPanel.preview_slot, SkillDetailIdentityPanel.skill_icon_slot, EquipmentUpgradeSourceTray.source_slots, EquipmentUpgradeResultPreview.result_slot]
     slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
     content_insets_by_slot:
       Slot.slot_skin: { left: 6, right: 6, top: 6, bottom: 6 }
@@ -1313,6 +1418,7 @@ asset_dependency_matrix:
       RuneMarkTree.rune_slots: { left: 6, right: 6, top: 6, bottom: 6 }
       SkillIconSlot.slot_skin: { left: 6, right: 6, top: 6, bottom: 16 }
       ItemDetailIdentityPanel.preview_slot: { left: 6, right: 6, top: 6, bottom: 6 }
+      SkillDetailIdentityPanel.skill_icon_slot: { left: 6, right: 6, top: 6, bottom: 6 }
       EquipmentUpgradeSourceTray.source_slots: { left: 6, right: 6, top: 6, bottom: 6 }
       EquipmentUpgradeResultPreview.result_slot: { left: 6, right: 6, top: 6, bottom: 6 }
     must_not_bake: [counts, cooldowns, lock_labels]
@@ -1371,10 +1477,10 @@ asset_dependency_matrix:
     fixed_sprite_sizes_px: { default: { width: 372, height: 404 } }
   taskstonebar.ui.combat_ground_strip:
     component_slots: [TaskbarCombatStrip.ground_strip]
-    runtime_visibility: visible_by_default_as_ground_underlay
-    fixed_sprite_sizes_px: { default: { width: 1586, height: 236 } }
+    runtime_visibility: visible_by_default_as_cropped_ground
+    fixed_sprite_sizes_px: { source: { width: 1586, height: 236 }, runtime_crop: { width: 793, height: 236 } }
   taskstonebar.ui.native_overlay_controls:
-    component_slots: [DesktopOverlayRoot.native_controls, TopResourceBar.labels, StatusStatScrollPanel.labels, StatList.labels, StatusSearchButton.glyph, SkillPointHeader.labels, SkillLevelTrack.labels, SkillTierRow.native_shapes, TaskbarCombatStrip.soft_border_layer, EnemyHpBar.labels, DamageNumberLayer.labels, ProjectileLayer.native_shapes, AutoCombatToggle.labels, AutoSkillToggle.labels, StageBadge.labels, LootTicker.labels, StageNode.labels, CombatMapProgressBadge.progress_fill, CombatMapProgressBadge.progress_pointer, CombatMapProgressBadge.tick_marks, CombatOpacityControl.opacity_slider, CombatOpacityControl.percent_label, CombatSceneShortcutDock.labels, ModalHost.native_controls, ItemDetailModal.labels, ItemDetailStatList.labels, ItemDetailWarningChipRow.labels, ItemDetailActionFooter.labels, EquipmentUpgradeModal.labels, EquipmentUpgradeActionFooter.labels]
+    component_slots: [DesktopOverlayRoot.native_controls, TopResourceBar.labels, StatusStatScrollPanel.labels, StatList.labels, StatusSearchButton.glyph, SkillPointHeader.labels, SkillLevelTrack.labels, SkillTierRow.native_shapes, TaskbarCombatStrip.soft_border_layer, EnemyHpBar.labels, DamageNumberLayer.labels, ProjectileLayer.native_shapes, AutoCombatToggle.labels, AutoSkillToggle.labels, StageBadge.labels, LootTicker.labels, StageNode.labels, CombatMapProgressBadge.progress_fill, CombatMapProgressBadge.progress_pointer, CombatMapProgressBadge.tick_marks, CombatOpacityControl.opacity_slider, CombatOpacityControl.percent_label, CombatSceneShortcutDock.labels, ModalHost.native_controls, ItemDetailModal.labels, ItemDetailStatList.labels, ItemDetailWarningChipRow.labels, ItemDetailActionFooter.labels, EquipmentUpgradeModal.labels, EquipmentUpgradeActionFooter.labels, SkillDetailModal.labels, SkillDetailEffectList.labels, SkillDetailActionFooter.labels]
     runtime_native: true
 
 runtime_token_mapping:

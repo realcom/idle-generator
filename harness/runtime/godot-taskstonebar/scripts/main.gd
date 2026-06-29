@@ -8,6 +8,7 @@ const PortalMapWindow := preload("res://scripts/ui/portal_map_window.gd")
 const PopupSystem := preload("res://scripts/ui/popup_system.gd")
 const DesktopWindowManager := preload("res://scripts/ui/desktop_window_manager.gd")
 const WindowTitleBarChrome := preload("res://scripts/ui/window_title_bar_chrome.gd")
+const StatusBarRuntime := preload("res://scripts/ui/status_bar_runtime.gd")
 const GENERATED_UI_OVERLAY_PATH := "res://scenes/generated/full_ui_overlay.tscn"
 const GENERATED_UI_REFERENCE_SIZE := Vector2(1586.0, 992.0)
 const GENERATED_STYLE_TEXTURES := {
@@ -82,13 +83,14 @@ const OVERLAY_EQUIPMENT_LEFT_PATH := "Section_WindowStack/Panel_HeroInventoryWin
 const OVERLAY_EQUIPMENT_RIGHT_PATH := "Section_WindowStack/Panel_HeroInventoryWindowFrame/Grid_EquipmentSlotsRight"
 const OVERLAY_RUNE_GRID_PATH := "Section_WindowStack/Panel_StatusWindowFrame/Grid_RuneMarkTree"
 const OVERLAY_COMBAT_STRIP_PATH := "Section_BottomCombatStrip"
-const OVERLAY_COMBAT_REFERENCE_RECT := Rect2(Vector2(245.0, 40.0), Vector2(820.0, 128.0))
+const COMBAT_NATIVE_CROP_SIZE := Vector2(793.0, 236.0)
+const OVERLAY_COMBAT_REFERENCE_RECT := Rect2(Vector2(56.0, 40.0), Vector2(640.0, 128.0))
 const OVERLAY_DROP_TOAST_PATH := "Section_BottomCombatStrip/Panel_RareDropToast"
 const OVERLAY_ACTION_BAR_NAME := "RuntimeActionBar"
 const OVERLAY_ACTION_STATUS_NAME := "Text_RuntimeActionStatus"
 const KEEPER_DOCK_ICON_SPECS := [
-	{"path": "Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockInventory", "node": "Icon_DockInventory", "index": 0, "tooltip": "인벤토리"},
-	{"path": "Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockGrowth", "node": "Icon_DockGrowth", "index": 1, "tooltip": "먹이기"},
+	{"path": "Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockInventory", "node": "Icon_DockInventory", "index": 0, "tooltip": "돌 자동머지"},
+	{"path": "Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockGrowth", "node": "Icon_DockGrowth", "index": 1, "tooltip": "장비 자동머지"},
 	{"path": "Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockFormation", "node": "Icon_DockFormation", "index": 2, "tooltip": "스킬"},
 	{"path": "Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockStorage", "node": "Icon_DockStorage", "index": 3, "tooltip": "합성"},
 	{"path": "Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockSteamAssets", "node": "Icon_DockSteamAssets", "index": 4, "tooltip": "Steam 자산"},
@@ -101,12 +103,25 @@ const OVERLAY_COMBAT_DROP_BANNER_NAME := "RuntimeCombatDropBanner"
 const OVERLAY_COMBAT_MAP_PROGRESS_NAME := "RuntimeCombatMapProgress"
 const OVERLAY_COMBAT_BOSS_PANEL_NAME := "RuntimeCombatBossPanel"
 const OVERLAY_WORKSHOP_TOGGLE_NAME := "Btn_RuntimeWorkshopToggle"
+const OVERLAY_AUTO_STONE_MERGE_TOGGLE_NAME := "Btn_AutoStoneMergeToggle"
+const OVERLAY_AUTO_STONE_MERGE_DOCK_PATH := "Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockInventory"
+const OVERLAY_AUTO_STONE_MERGE_BADGE_NAME := "Text_AutoStoneMergeBadge"
+const OVERLAY_AUTO_EQUIPMENT_MERGE_DOCK_PATH := "Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockGrowth"
+const OVERLAY_AUTO_EQUIPMENT_MERGE_BADGE_NAME := "Text_AutoEquipmentMergeBadge"
 const COMBAT_OPACITY_CONTROL_NAME := "RuntimeCombatOpacityControl"
 const COMBAT_OPACITY_SLIDER_NAME := "Slider_CombatOpacity"
 const COMBAT_OPACITY_VALUE_NAME := "Text_CombatOpacityValue"
 const COMBAT_TRANSPARENT_BACKDROP_ALPHA := 0.0
+const COMBAT_MAP_PROGRESS_LOGICAL_SIZE := Vector2(264.0, 114.0)
+const COMBAT_MAP_PROGRESS_SCALE := 0.75
+const COMBAT_OPACITY_CONTROL_SIZE := Vector2(168.0, 28.0)
 const COMBAT_OPACITY_MIN := 0.35
 const COMBAT_OPACITY_MAX := 1.0
+const COMBAT_OPACITY_DEFAULT := 1.0
+const AUTO_STONE_MERGE_INTERVAL := 0.25
+const AUTO_STONE_MERGE_MAX_PASSES := 12
+const AUTO_EQUIPMENT_MERGE_INTERVAL := 0.25
+const AUTO_EQUIPMENT_MERGE_MAX_PASSES := 12
 const KEEPER_EXP_BAR_NAME := "Progress_KeeperExp"
 const KEEPER_EXP_LABEL_NAME := "Text_KeeperExp"
 const RUNTIME_SKILL_TREE_WINDOW_NAME := "RuntimeSkillTreeWindow"
@@ -133,11 +148,11 @@ const RUNTIME_SKILL_TREE_LANES := [
 	{"title": "제련/편성", "items": [200534, 200535, 200536, 200537, 200538]},
 ]
 const STATUS_SKILL_BINDINGS := [
-	{"binding": "skill.stone_throw.level", "item_id": 200509},
+	{"binding": "skill.stone_throw.level", "item_id": 200502},
 	{"binding": "skill.guard.level", "item_id": 200529},
-	{"binding": "skill.impact.level", "item_id": 200514},
-	{"binding": "skill.crit.level", "item_id": 200519},
-	{"binding": "skill.portal.level", "item_id": 200524},
+	{"binding": "skill.impact.level", "item_id": 200503},
+	{"binding": "skill.crit.level", "item_id": 200504},
+	{"binding": "skill.portal.level", "item_id": 200505},
 	{"binding": "skill.drop.level", "item_id": 200525},
 	{"binding": "skill.boss.level", "item_id": 200520},
 	{"binding": "skill.market.level", "item_id": 200534},
@@ -146,9 +161,11 @@ const STATUS_SKILL_BINDINGS := [
 const OVERLAY_MODAL_HOST_NAME := "ModalHost"
 const EQUIPMENT_UPGRADE_MODAL_NAME := "Modal_EquipmentUpgrade"
 const INVENTORY_ITEM_DETAIL_MODAL_NAME := "Modal_InventoryItemDetail"
+const SKILL_DETAIL_MODAL_NAME := "Modal_SkillDetail"
 const MODAL_SCRIM_RECT := Rect2(Vector2.ZERO, Vector2(1586.0, 704.0))
 const EQUIPMENT_UPGRADE_MODAL_RECT := Rect2(Vector2(574.0, 168.0), Vector2(438.0, 344.0))
 const INVENTORY_ITEM_DETAIL_MODAL_RECT := Rect2(Vector2(548.0, 126.0), Vector2(490.0, 430.0))
+const SKILL_DETAIL_MODAL_RECT := Rect2(Vector2(556.0, 152.0), Vector2(474.0, 360.0))
 const MODAL_TITLE_INSET := Vector2(14.0, 12.0)
 const MODAL_BODY_INSET := Vector2(28.0, 68.0)
 const MODAL_FRAME_CONTENT_BOTTOM := 22.0
@@ -176,7 +193,7 @@ const NATIVE_WINDOW_ORDER := {
 	"combat": 3,
 }
 const COMBAT_NATIVE_WINDOW_SCALE := 0.61
-const COMBAT_NATIVE_WINDOW_WIDTH_RATIO := 0.5
+const COMBAT_NATIVE_WINDOW_WIDTH_RATIO := 1.0
 const COMBAT_NATIVE_WINDOW_MIN_SCALE := 0.35
 const COMBAT_NATIVE_WINDOW_MAX_SCALE := 1.0
 const COMBAT_RESIZE_HANDLE_NAME := "RuntimeCombatResizeHandle"
@@ -185,11 +202,15 @@ const COMBAT_RESIZE_HANDLE_MARGIN := Vector2(10.0, 10.0)
 const COMBAT_ATTACK_IMPACT_START := 0.78
 const COMBAT_PROJECTILE_HIDE_PROGRESS := 0.96
 const COMBAT_MONSTER_VISUAL_SCALE := 0.75
-const COMBAT_ENEMY_VISUAL_SHIFT := Vector2(-190.0, 8.0)
-const COMBAT_ENEMY_LANE_STEP := Vector2(28.0, 12.0)
-const COMBAT_FX_POOL_MAX_PER_KIND := 96
+const COMBAT_ENEMY_VISUAL_SHIFT := Vector2(28.0, 8.0)
+const COMBAT_ENEMY_LANE_STEP := Vector2(34.0, 14.0)
+const COMBAT_ENEMY_EDGE_STACK_STEP := Vector2(36.0, 13.0)
+const COMBAT_FX_RENDER_LIMIT := 20
 const GOLD_ITEM_ID := 5
 const OPAQUE_NATIVE_WINDOW_PLATFORMS := ["Windows"]
+const RUNTIME_MAX_FPS := 30
+const RUNTIME_UI_SYNC_INTERVAL := 1.0 / 20.0
+const RUNTIME_MODEL_SYNC_INTERVAL := 0.5
 
 var store
 var sim
@@ -213,15 +234,16 @@ var generated_native_window_roots: Dictionary = {}
 var generated_native_window_ids_by_node: Dictionary = {}
 var generated_texture_cache: Dictionary = {}
 var generated_runtime_nodes: Dictionary = {}
-var generated_combat_fx_parent: Control
-var generated_combat_fx_active: Array = []
-var generated_combat_fx_pools: Dictionary = {}
-var generated_effect_atlas_cache: Dictionary = {}
 var generated_inventory_tab := "stone"
 var generated_selected_action := "inventory"
 var generated_action_message := "돌 인벤토리 준비"
 var generated_taskbar_mode := false
+var generated_auto_stone_merge_enabled := false
+var generated_auto_stone_merge_poll_timer := 0.0
+var generated_auto_equipment_merge_enabled := false
+var generated_auto_equipment_merge_poll_timer := 0.0
 var generated_selected_skill_item_id := 200509
+var generated_skill_detail_item_id := 0
 var generated_selected_inventory_instance_id := 0
 var generated_selected_inventory_kind := ""
 var generated_visual_capture_mode := false
@@ -234,7 +256,7 @@ var generated_combat_drag_strip: Control
 var generated_combat_drag_start_mouse := Vector2.ZERO
 var generated_combat_drag_start_position := Vector2.ZERO
 var generated_combat_window_scale := COMBAT_NATIVE_WINDOW_SCALE
-var generated_combat_opacity := 1.0
+var generated_combat_opacity := COMBAT_OPACITY_DEFAULT
 var generated_combat_hp_enemy_id := 0
 var generated_combat_resize_strip: Control
 var generated_combat_resize_start_mouse := Vector2.ZERO
@@ -249,9 +271,16 @@ var generated_slot_drag_preview: Control
 var auto_transition_timer := -1.0
 var auto_transition_result := ""
 var auto_transition_map_id := 0
+var runtime_ui_sync_timer := 0.0
+var runtime_force_ui_sync := true
+var runtime_cached_model: Dictionary = {}
+var runtime_cached_model_elapsed := -999999.0
+var runtime_force_model_sync := true
+var runtime_model_refreshed_this_frame := false
 
 
 func _ready() -> void:
+	_configure_runtime_frame_budget()
 	custom_minimum_size = GENERATED_UI_REFERENCE_SIZE
 	mouse_filter = Control.MOUSE_FILTER_PASS
 	_configure_transparent_desktop_window()
@@ -269,8 +298,12 @@ func _ready() -> void:
 		sim.start(int(store.get_main_map().get("id", 500101)))
 		if not sprites_ok:
 			status_label.text = "sprite load warning: %s" % "; ".join(sprites.errors)
-	else:
-		status_label.text = "content load failed: %s" % "; ".join(store.errors)
+		else:
+			status_label.text = "content load failed: %s" % "; ".join(store.errors)
+
+
+func _configure_runtime_frame_budget() -> void:
+	Engine.max_fps = RUNTIME_MAX_FPS
 
 
 func _configure_transparent_desktop_window() -> void:
@@ -309,9 +342,15 @@ func _process(delta: float) -> void:
 	_update_active_native_drags()
 	if sim != null:
 		sim.step(delta)
+		_update_auto_stone_merge(delta)
+		_update_auto_equipment_merge(delta)
 		_update_auto_transition(delta)
-		_sync_ui()
-	queue_redraw()
+		runtime_ui_sync_timer += delta
+		if runtime_force_ui_sync or runtime_ui_sync_timer >= RUNTIME_UI_SYNC_INTERVAL:
+			runtime_ui_sync_timer = 0.0
+			runtime_force_ui_sync = false
+			_sync_ui()
+			queue_redraw()
 
 
 func _input(event: InputEvent) -> void:
@@ -444,8 +483,6 @@ func _build_generated_ui_overlay() -> void:
 		return
 	legacy_ui_nodes.clear()
 	generated_runtime_nodes.clear()
-	_clear_runtime_fx_pool()
-	generated_effect_atlas_cache.clear()
 	for child in get_children():
 		if child is CanvasItem:
 			legacy_ui_nodes.append(child)
@@ -617,10 +654,11 @@ func _promote_runtime_native_window(window_id: String, title: String, panel: Con
 	native.borderless = true
 	native.always_on_top = true
 	native.unresizable = true
-	native.visible = visible
+	native.visible = false
 	_set_native_window_size(native, _native_window_size_for(window_id, original_rect.size))
 	native.position = _native_window_position(original_rect.position)
 	add_child(native)
+	_apply_native_window_system_flags(native)
 	call_deferred("_configure_native_window_flags", native)
 	call_deferred("_set_native_window_size", native, _native_window_size_for(window_id, original_rect.size))
 
@@ -633,7 +671,10 @@ func _promote_runtime_native_window(window_id: String, title: String, panel: Con
 	panel.focus_mode = Control.FOCUS_ALL
 	panel.gui_input.connect(_on_native_window_gui_input)
 	native.add_child(panel)
-	panel.call_deferred("grab_focus")
+	native.visible = visible
+	_apply_native_window_system_flags(native)
+	if visible:
+		panel.call_deferred("grab_focus")
 
 	generated_native_windows[window_id] = native
 	generated_native_window_roots[window_id] = panel
@@ -642,12 +683,27 @@ func _promote_runtime_native_window(window_id: String, title: String, panel: Con
 
 
 func _configure_native_window_flags(native: Window) -> void:
-	native.transparent_bg = _native_window_transparency_enabled()
+	_apply_native_window_system_flags(native)
+	if native.visible:
+		native.grab_focus()
+
+
+func _apply_native_window_system_flags(native: Window) -> void:
+	if native == null:
+		return
+	var transparent := _native_window_transparency_enabled()
+	native.transparent_bg = transparent
 	native.borderless = true
 	native.always_on_top = true
 	native.unresizable = true
-	if native.visible:
-		native.grab_focus()
+	if DisplayServer.get_name() == "headless":
+		return
+	var window_id := native.get_window_id()
+	if window_id < 0:
+		return
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_TRANSPARENT, transparent, window_id)
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true, window_id)
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_ALWAYS_ON_TOP, true, window_id)
 
 
 func _layout_generated_native_windows() -> void:
@@ -674,6 +730,7 @@ func _show_initial_native_windows() -> void:
 			root.visible = true
 		if native != null:
 			native.visible = true
+			_apply_native_window_system_flags(native)
 		if desktop_window_manager.has_window(id):
 			desktop_window_manager.show_window(id, false)
 	var skill_native: Window = generated_native_windows.get("skill_tree", null)
@@ -734,7 +791,7 @@ func _native_window_logical_size(window_id: String, root: Control) -> Vector2:
 	if window_id == "portal":
 		return COMPACT_PORTAL_WINDOW_RECT.size
 	if window_id == "combat":
-		return Vector2(1586.0, 236.0)
+		return COMBAT_NATIVE_CROP_SIZE
 	var minimum := root.custom_minimum_size
 	if minimum.x > 0.0 and minimum.y > 0.0:
 		return minimum
@@ -836,6 +893,15 @@ func _generated_native_root_by_name(root_name: String) -> Control:
 func _ensure_desktop_window_manager() -> void:
 	if desktop_window_manager == null:
 		desktop_window_manager = DesktopWindowManager.new()
+		desktop_window_manager.window_visibility_changed.connect(_on_desktop_window_visibility_changed)
+
+
+func _on_desktop_window_visibility_changed(window_id: String, visible: bool) -> void:
+	if not visible:
+		return
+	var native: Window = generated_native_windows.get(_normalize_desktop_window_id(window_id), null)
+	if native != null:
+		_configure_native_window_flags(native)
 
 
 func _register_generated_desktop_windows() -> void:
@@ -861,6 +927,8 @@ func _register_desktop_window(window_id: String, control: Control, native: Windo
 		"restore_visible": control.visible,
 		"base_z": _desktop_window_base_z(canonical),
 	})
+	if native != null:
+		call_deferred("_configure_native_window_flags", native)
 
 
 func _desktop_window_control_for_id(window_id: String) -> Control:
@@ -969,25 +1037,40 @@ func desktop_window_snapshot() -> Dictionary:
 
 
 func _sync_generated_ui_overlay(snapshot: Dictionary) -> void:
-	var model := _generated_runtime_model(snapshot)
+	var model := _runtime_model_for_frame(snapshot)
+	var refresh_static_ui := runtime_model_refreshed_this_frame
 	var values := _generated_overlay_values(snapshot, model)
-	_apply_generated_overlay_values(generated_ui_overlay, values)
+	if _runtime_node_should_sync(generated_ui_overlay):
+		_apply_generated_overlay_values(generated_ui_overlay, values)
 	for native_root in generated_native_window_roots.values():
-		if native_root is Node:
-			_apply_generated_overlay_values(native_root, values)
-	_sync_generated_portal_map_background(snapshot)
-	_sync_generated_portal_map_progress(snapshot)
-	_sync_desktop_status_bar(snapshot, model)
-	_sync_generated_mvp_overlay(model)
+		if native_root is Node and _runtime_node_should_sync(native_root):
+			var window_id := str(generated_native_window_ids_by_node.get((native_root as Node).get_instance_id(), ""))
+			if refresh_static_ui or window_id == "combat":
+				_apply_generated_overlay_values(native_root, values)
+	if refresh_static_ui:
+		_sync_generated_portal_map_background(snapshot)
+		_sync_generated_portal_map_progress(snapshot)
+		if _runtime_node_should_sync(generated_ui_overlay):
+			_sync_desktop_status_bar(snapshot, model)
+		_sync_generated_mvp_overlay(model)
+		_refresh_status_stat_scroll_layouts()
 	_sync_generated_combat_overlay(snapshot, model)
-	_refresh_status_stat_scroll_layouts()
-	_apply_generated_combat_opacity()
+	if refresh_static_ui:
+		_apply_generated_combat_opacity()
+
+
+func _runtime_node_should_sync(node: Node) -> bool:
+	if node == null:
+		return false
+	if node is CanvasItem and not (node as CanvasItem).is_visible_in_tree():
+		return false
+	return true
 
 
 func _generated_overlay_values(snapshot: Dictionary, model: Dictionary = {}) -> Dictionary:
 	var resources: Dictionary = model.get("resources", snapshot.get("resources", {})) if typeof(model.get("resources", snapshot.get("resources", {}))) == TYPE_DICTIONARY else {}
 	var player: Dictionary = snapshot.get("player", {})
-	var progression_snapshot := _progression_snapshot()
+	var progression_snapshot: Dictionary = model.get("progression_snapshot", {}) if typeof(model.get("progression_snapshot", {})) == TYPE_DICTIONARY else _progression_snapshot()
 	var skills: Dictionary = progression_snapshot.get("skills", {}) if typeof(progression_snapshot.get("skills", {})) == TYPE_DICTIONARY else {}
 	var materials: Dictionary = progression_snapshot.get("materials", {}) if typeof(progression_snapshot.get("materials", {})) == TYPE_DICTIONARY else {}
 	var equipped_stats: Dictionary = model.get("equipped_stats", {}) if typeof(model.get("equipped_stats", {})) == TYPE_DICTIONARY else {}
@@ -1019,8 +1102,8 @@ func _generated_overlay_values(snapshot: Dictionary, model: Dictionary = {}) -> 
 			"selected_stone.exp_ratio": float(model.get("stone_exp_ratio", clampf(float(player.get("hp", 1.0)) / maxf(1.0, float(player.get("max_hp", 1.0))), 0.0, 1.0))),
 			"stats.level.label": "Level",
 			"stats.level.value": "Lv.%d" % int(player.get("level", 1)),
-			"stats.exp.label": "Exp",
-			"stats.exp.value": _keeper_exp_text(player, resources).replace("EXP ", "").replace(" / ", "/"),
+			"stats.exp.label": "EXP",
+			"stats.exp.value": _keeper_exp_text(player, resources),
 		"stats.basic_attack_dps.label": "DPS",
 		"stats.basic_attack_dps.value": _format_stat_value(attack * attack_speed),
 		"stats.attack_damage.label": "Attack",
@@ -1048,11 +1131,15 @@ func _apply_generated_overlay_values(node: Node, values: Dictionary) -> void:
 	if node is Label:
 		var binding := str(node.get_meta("text_binding_or_text_key", ""))
 		if values.has(binding):
-			node.text = str(values[binding])
+			var next_text := str(values[binding])
+			if (node as Label).text != next_text:
+				(node as Label).text = next_text
 	elif node is ProgressBar:
 		var binding := str(node.get_meta("value_binding", ""))
 		if values.has(binding):
-			node.value = clampf(float(values[binding]), 0.0, 1.0)
+			var next_value := clampf(float(values[binding]), 0.0, 1.0)
+			if absf((node as ProgressBar).value - next_value) > 0.0001:
+				(node as ProgressBar).value = next_value
 	for child in node.get_children():
 		_apply_generated_overlay_values(child, values)
 
@@ -1115,6 +1202,7 @@ func _hydrate_generated_ui_overlay(root: Control) -> void:
 	var auto_skill := root.get_node_or_null("Section_BottomCombatStrip/Panel_AutoSkillToggle/Text_AutoSkill")
 	if auto_skill != null and auto_skill is Label:
 		(auto_skill as Label).text = "ATTACK 돌팔매"
+	_configure_generated_combat_strip(root)
 	_ensure_generated_action_bar(root)
 	_connect_generated_overlay_buttons(root)
 	_ensure_generated_combat_layer(root)
@@ -1191,82 +1279,7 @@ func _polish_desktop_status_bar(root: Control) -> void:
 	var band := root.get_node_or_null("Section_DesktopScaffold/Panel_OsTaskbarBand")
 	if band == null or not band is PanelContainer:
 		return
-	var status_bar := band as PanelContainer
-	status_bar.position = Vector2(0.0, 948.0)
-	status_bar.size = Vector2(GENERATED_UI_REFERENCE_SIZE.x, 44.0)
-	status_bar.custom_minimum_size = status_bar.size
-	status_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	status_bar.add_theme_stylebox_override("panel", _overlay_style(Color("#080604"), Color(0.0, 0.0, 0.0, 0.0), 0, 0))
-	for child in status_bar.get_children():
-		if str(child.name) != "Text_SteamSyncStatus":
-			child.queue_free()
-		elif child is CanvasItem:
-			(child as CanvasItem).visible = false
-
-	var layer := (scaffold as Control).get_node_or_null("RuntimeDesktopStatusBarLayer")
-	if layer == null or not layer is Control:
-		layer = Control.new()
-		layer.name = "RuntimeDesktopStatusBarLayer"
-		layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		(scaffold as Control).add_child(layer)
-	var status_layer := layer as Control
-	status_layer.position = Vector2(0.0, 948.0)
-	status_layer.size = Vector2(GENERATED_UI_REFERENCE_SIZE.x, 44.0)
-	status_layer.z_index = 20
-
-	var top_line := status_layer.get_node_or_null("Panel_StatusBarTopLine")
-	if top_line == null or not top_line is ColorRect:
-		top_line = ColorRect.new()
-		top_line.name = "Panel_StatusBarTopLine"
-		top_line.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		status_layer.add_child(top_line)
-	(top_line as ColorRect).position = Vector2.ZERO
-	(top_line as ColorRect).size = Vector2(status_layer.size.x, 1.0)
-	(top_line as ColorRect).color = Color(0.82, 0.54, 0.20, 0.42)
-	(top_line as ColorRect).z_index = 4
-
-	var top_shadow := status_layer.get_node_or_null("Panel_StatusBarTopInsetShadow")
-	if top_shadow == null or not top_shadow is ColorRect:
-		top_shadow = ColorRect.new()
-		top_shadow.name = "Panel_StatusBarTopInsetShadow"
-		top_shadow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		status_layer.add_child(top_shadow)
-	(top_shadow as ColorRect).position = Vector2(0.0, 1.0)
-	(top_shadow as ColorRect).size = Vector2(status_layer.size.x, 1.0)
-	(top_shadow as ColorRect).color = Color(0.0, 0.0, 0.0, 0.38)
-	(top_shadow as ColorRect).z_index = 4
-
-	_ensure_status_bar_chip(status_layer, "Panel_StatusBarBrandChip", Vector2(18.0, 8.0), Vector2(188.0, 28.0), Color("#1a1008"), Color("#d18a24"))
-	_ensure_status_bar_chip(status_layer, "Panel_StatusBarModeChip", Vector2(222.0, 8.0), Vector2(160.0, 28.0), Color("#251711"), Color("#6b4a2a"))
-	_ensure_status_bar_chip(status_layer, "Panel_StatusBarCombatChip", Vector2(398.0, 8.0), Vector2(378.0, 28.0), Color("#10100f"), Color("#6b4a2a"))
-	_ensure_status_bar_chip(status_layer, "Panel_StatusBarWindowsChip", Vector2(792.0, 8.0), Vector2(318.0, 28.0), Color("#10100f"), Color("#6b4a2a"))
-	_ensure_status_bar_chip(status_layer, "Panel_StatusBarSyncChip", Vector2(1220.0, 8.0), Vector2(340.0, 28.0), Color("#120c08"), Color("#8a5b24"))
-
-	var brand := _ensure_status_bar_label(status_layer, "Text_StatusBarBrand", "TASKSTONEBAR", Vector2(34.0, 11.0), Vector2(156.0, 20.0), 13, Color("#ffcf7a"))
-	brand.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_ensure_status_bar_label(status_layer, "Text_StatusBarMode", "WORKSHOP", Vector2(238.0, 11.0), Vector2(128.0, 20.0), 12, Color("#f3e6c8"))
-	var combat := _ensure_status_bar_label(status_layer, "Text_StatusBarCombat", "", Vector2(414.0, 11.0), Vector2(346.0, 20.0), 12, Color("#f3e6c8"))
-	combat.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	var windows := _ensure_status_bar_label(status_layer, "Text_StatusBarWindows", "", Vector2(808.0, 11.0), Vector2(286.0, 20.0), 12, Color("#b79a72"))
-	windows.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_ensure_status_bar_label(status_layer, "Text_StatusBarSync", "", Vector2(1236.0, 11.0), Vector2(308.0, 20.0), 12, Color("#f3e6c8"))
-
-
-func _ensure_status_bar_chip(parent: Control, node_name: String, pos: Vector2, chip_size: Vector2, fill: Color, border: Color) -> PanelContainer:
-	var soft_fill := fill
-	soft_fill.a = minf(fill.a, 0.94)
-	var soft_border := border
-	soft_border.a = minf(border.a, 0.58)
-	var chip := _ensure_panel(parent, node_name, pos, chip_size, soft_fill, soft_border, 1, 1)
-	chip.z_index = 1
-	return chip
-
-
-func _ensure_status_bar_label(parent: Control, node_name: String, text: String, pos: Vector2, label_size: Vector2, font_size: int, color: Color) -> Label:
-	var label := _ensure_runtime_label(node_name, pos, label_size, font_size, color, parent)
-	label.text = text
-	label.z_index = 3
-	return label
+	StatusBarRuntime.ensure_desktop_status_bar(scaffold as Control, band as PanelContainer, GENERATED_UI_REFERENCE_SIZE.x)
 
 
 func _polish_status_window(root: Control) -> void:
@@ -1509,32 +1522,75 @@ func _polish_status_stat_scroll(_status: Control, stat_scroll_node: Node) -> voi
 			(ribbon as PanelContainer).add_theme_stylebox_override("panel", _overlay_style(Color("#090705"), Color("#6b4a2a"), 2, 2))
 	var row_sheet := _ensure_panel(stat_scroll, "Panel_StatusRowsCleanSheet", Vector2(38.0, 42.0), Vector2(318.0, 128.0), Color("#d1b06d"), Color("#8a5b24"), 1, 1)
 	row_sheet.z_index = 1
-	_move_before(stat_scroll, row_sheet, "Group_StatusRows")
-	var group := stat_scroll.get_node_or_null("Group_StatusRows")
+	var scroll_container := _ensure_status_stat_scroll_container(stat_scroll)
+	_move_before(stat_scroll, row_sheet, "Scroll_StatusRows")
+	var group := _ensure_status_stat_rows_group(stat_scroll, scroll_container)
 	if group == null or not group is Control:
 		return
 	var rows := group as Control
-	rows.position = Vector2(60.0, 46.0)
-	rows.size = Vector2(286.0, 116.0)
+	rows.position = Vector2.ZERO
+	rows.size = Vector2(284.0, 238.0)
+	rows.custom_minimum_size = Vector2(284.0, 238.0)
 	rows.z_index = 4
 	var row_specs := [
 		{"label": "Text_StatusLevelLabel", "value": "Text_StatusLevelValue", "name": "Level", "display": "", "y": 0.0},
-		{"label": "Text_StatusExpLabel", "value": "Text_StatusExpValue", "name": "EXP", "display": "", "y": 15.0},
-		{"label": "Text_StatusDpsLabel", "value": "Text_StatusDpsValue", "name": "Basic Attack DPS", "display": "", "y": 30.0},
-		{"label": "Text_StatusAttackDamageLabel", "value": "Text_StatusAttackDamageValue", "name": "Attack Damage", "display": "", "y": 45.0},
-		{"label": "Text_StatusMaxHpLabel", "value": "Text_StatusMaxHpValue", "name": "Max HP", "display": "", "y": 60.0},
-		{"label": "Text_StatusMoveSpeedLabel", "value": "Text_StatusMoveSpeedValue", "name": "Move Speed", "display": "", "y": 75.0},
-		{"label": "Text_StatusAttackSpeedExtraLabel", "value": "Text_StatusAttackSpeedExtraValue", "name": "Attack Speed", "display": "2.35", "y": 90.0},
-		{"label": "Text_StatusCritExtraLabel", "value": "Text_StatusCritExtraValue", "name": "Critical Rate", "display": "12.4%", "y": 105.0},
+		{"label": "Text_StatusExpLabel", "value": "Text_StatusExpValue", "name": "EXP", "display": "", "y": 17.0},
+		{"label": "Text_StatusDpsLabel", "value": "Text_StatusDpsValue", "name": "Basic Attack DPS", "display": "", "y": 34.0},
+		{"label": "Text_StatusAttackDamageLabel", "value": "Text_StatusAttackDamageValue", "name": "Attack Damage", "display": "", "y": 51.0},
+		{"label": "Text_StatusMaxHpLabel", "value": "Text_StatusMaxHpValue", "name": "Max HP", "display": "", "y": 68.0},
+		{"label": "Text_StatusMoveSpeedLabel", "value": "Text_StatusMoveSpeedValue", "name": "Move Speed", "display": "", "y": 85.0},
+		{"label": "Text_StatusAttackSpeedExtraLabel", "value": "Text_StatusAttackSpeedExtraValue", "name": "Attack Speed", "display": "2.35", "y": 102.0},
+		{"label": "Text_StatusCritExtraLabel", "value": "Text_StatusCritExtraValue", "name": "Critical Rate", "display": "12.4%", "y": 119.0},
+		{"label": "Text_StatusCritDamageExtraLabel", "value": "Text_StatusCritDamageExtraValue", "name": "Critical Damage", "display": "185%", "y": 136.0},
+		{"label": "Text_StatusBossDamageExtraLabel", "value": "Text_StatusBossDamageExtraValue", "name": "Boss Damage", "display": "+14%", "y": 153.0},
+		{"label": "Text_StatusDropBonusExtraLabel", "value": "Text_StatusDropBonusExtraValue", "name": "Drop Bonus", "display": "+8.0%", "y": 170.0},
+		{"label": "Text_StatusGoldGainExtraLabel", "value": "Text_StatusGoldGainExtraValue", "name": "Gold Gain", "display": "+21%", "y": 187.0},
+		{"label": "Text_StatusCooldownExtraLabel", "value": "Text_StatusCooldownExtraValue", "name": "Cooldown", "display": "-3.5%", "y": 204.0},
+		{"label": "Text_StatusLuckExtraLabel", "value": "Text_StatusLuckExtraValue", "name": "Luck", "display": "37", "y": 221.0},
 	]
 	for spec in row_specs:
 		_position_status_stat_row(rows, str(spec["label"]), str(spec["value"]), str(spec["name"]), str(spec["display"]), float(spec["y"]))
-	var scroll_thumb := stat_scroll.get_node_or_null("Panel_StatusScrollbar")
-	if scroll_thumb != null and scroll_thumb is Control:
-		(scroll_thumb as Control).position = Vector2(374.0, 48.0)
-		(scroll_thumb as Control).size = Vector2(8.0, 82.0)
-	_ensure_panel(stat_scroll, "Panel_StatusScrollbarTopCap", Vector2(373.0, 36.0), Vector2(10.0, 10.0), Color("#9f7d49"), Color("#2d1a0f"), 1, 1).z_index = 5
-	_ensure_panel(stat_scroll, "Panel_StatusScrollbarBottomCap", Vector2(373.0, 132.0), Vector2(10.0, 10.0), Color("#9f7d49"), Color("#2d1a0f"), 1, 1).z_index = 5
+	for decoration_name in ["Panel_StatusScrollbar", "Panel_StatusScrollbarTopCap", "Panel_StatusScrollbarBottomCap"]:
+		var decoration := stat_scroll.get_node_or_null(decoration_name)
+		if decoration != null and decoration is CanvasItem:
+			(decoration as CanvasItem).visible = false
+		if decoration != null and decoration is Control:
+			(decoration as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _ensure_status_stat_scroll_container(stat_scroll: Control) -> ScrollContainer:
+	var existing := stat_scroll.get_node_or_null("Scroll_StatusRows")
+	var scroll_container: ScrollContainer
+	if existing != null and existing is ScrollContainer:
+		scroll_container = existing as ScrollContainer
+	else:
+		scroll_container = ScrollContainer.new()
+		scroll_container.name = "Scroll_StatusRows"
+		stat_scroll.add_child(scroll_container)
+	scroll_container.position = Vector2(52.0, 48.0)
+	scroll_container.size = Vector2(296.0, 112.0)
+	scroll_container.custom_minimum_size = Vector2(296.0, 112.0)
+	scroll_container.z_index = 4
+	scroll_container.mouse_filter = Control.MOUSE_FILTER_STOP
+	scroll_container.clip_contents = true
+	scroll_container.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll_container.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	return scroll_container
+
+
+func _ensure_status_stat_rows_group(stat_scroll: Control, scroll_container: ScrollContainer) -> Control:
+	var group := scroll_container.get_node_or_null("Group_StatusRows")
+	if group == null:
+		group = stat_scroll.find_child("Group_StatusRows", true, false)
+	if group == null:
+		group = Control.new()
+		group.name = "Group_StatusRows"
+	if group.get_parent() != scroll_container:
+		var previous_parent := group.get_parent()
+		if previous_parent != null:
+			previous_parent.remove_child(group)
+		scroll_container.add_child(group)
+	return group as Control
 
 
 func _refresh_status_stat_scroll_layouts() -> void:
@@ -2179,7 +2235,7 @@ func _set_generated_combat_strip_child_mouse_filters(node: Node) -> void:
 	for child in node.get_children():
 		if child is Control:
 			var control := child as Control
-			if control is Button:
+			if control is Button or control is Range or bool(control.get_meta("combat_interactive_control", false)):
 				control.mouse_filter = Control.MOUSE_FILTER_STOP
 			elif bool(control.get_meta("combat_resize_handle", false)):
 				control.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -2427,10 +2483,7 @@ func _add_program_window_icon(window: Control, icon_path: String) -> void:
 
 func _program_window_icon_texture(texture: Texture2D, icon_path: String) -> Texture2D:
 	if icon_path.ends_with("stone_keeper_sheet.png"):
-		var atlas := AtlasTexture.new()
-		atlas.atlas = texture
-		atlas.region = Rect2(Vector2.ZERO, Vector2(48.0, 48.0))
-		return atlas
+		return _cached_atlas_texture(texture, Rect2(Vector2.ZERO, Vector2(48.0, 48.0)), "runtime.program_icon")
 	return texture
 
 
@@ -2571,12 +2624,6 @@ func _connect_generated_overlay_buttons(root: Control) -> void:
 	_connect_generated_button(root, OVERLAY_EQUIPMENT_TAB_PATH, func():
 		_set_generated_inventory_tab("equipment")
 	)
-	_connect_generated_button(root, "Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockInventory", func():
-		_set_generated_action("inventory")
-	)
-	_connect_generated_button(root, "Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockGrowth", func():
-		_set_generated_action("feed")
-	)
 	_connect_generated_button(root, "Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockFormation", func():
 		_set_generated_action("skill")
 	)
@@ -2593,12 +2640,50 @@ func _connect_generated_overlay_buttons(root: Control) -> void:
 		_set_generated_action("skill")
 	)
 	_ensure_keeper_dock_icons(root)
+	_connect_generated_auto_stone_merge_button(root)
+	_connect_generated_auto_equipment_merge_button(root)
 
 
 func _set_generated_button_tooltip(root: Control, node_path: String, tooltip: String) -> void:
 	var button := root.get_node_or_null(node_path)
 	if button != null and button is Button:
 		(button as Button).tooltip_text = tooltip
+
+
+func _connect_generated_auto_stone_merge_button(root: Control) -> void:
+	var button_node := root.get_node_or_null(OVERLAY_AUTO_STONE_MERGE_DOCK_PATH)
+	if button_node == null or not button_node is Button:
+		return
+	var button := button_node as Button
+	button.toggle_mode = true
+	button.focus_mode = Control.FOCUS_NONE
+	button.mouse_filter = Control.MOUSE_FILTER_STOP
+	button.set_meta("button_role", "keeper_dock_icon")
+	generated_runtime_nodes["auto_stone_merge_toggle"] = button
+	if not button.has_meta("runtime_auto_stone_merge_connected"):
+		button.toggled.connect(func(pressed: bool):
+			_set_generated_auto_stone_merge_enabled(pressed)
+		)
+		button.set_meta("runtime_auto_stone_merge_connected", true)
+	_sync_generated_auto_stone_merge_toggle()
+
+
+func _connect_generated_auto_equipment_merge_button(root: Control) -> void:
+	var button_node := root.get_node_or_null(OVERLAY_AUTO_EQUIPMENT_MERGE_DOCK_PATH)
+	if button_node == null or not button_node is Button:
+		return
+	var button := button_node as Button
+	button.toggle_mode = true
+	button.focus_mode = Control.FOCUS_NONE
+	button.mouse_filter = Control.MOUSE_FILTER_STOP
+	button.set_meta("button_role", "keeper_dock_icon")
+	generated_runtime_nodes["auto_equipment_merge_toggle"] = button
+	if not button.has_meta("runtime_auto_equipment_merge_connected"):
+		button.toggled.connect(func(pressed: bool):
+			_set_generated_auto_equipment_merge_enabled(pressed)
+		)
+		button.set_meta("runtime_auto_equipment_merge_connected", true)
+	_sync_generated_auto_equipment_merge_toggle()
 
 
 func _ensure_keeper_dock_icons(root: Control) -> void:
@@ -2635,10 +2720,11 @@ func _keeper_dock_icon_texture(index: int) -> Texture2D:
 	var atlas_texture := _generated_texture(GENERATED_KEEPER_DOCK_ICON_SET_PATH)
 	if atlas_texture == null:
 		return null
-	var icon := AtlasTexture.new()
-	icon.atlas = atlas_texture
-	icon.region = Rect2(Vector2(KEEPER_DOCK_ICON_SIZE.x * float(index), 0.0), KEEPER_DOCK_ICON_SIZE)
-	return icon
+	return _cached_atlas_texture(
+		atlas_texture,
+		Rect2(Vector2(KEEPER_DOCK_ICON_SIZE.x * float(index), 0.0), KEEPER_DOCK_ICON_SIZE),
+		"runtime.keeper_dock"
+	)
 
 
 func _connect_generated_button(root: Control, node_path: String, callback: Callable) -> void:
@@ -2668,7 +2754,7 @@ func _set_generated_action(action: String) -> void:
 		generated_action_message = _progression_equip_best_stones()
 	elif action == "merge":
 		generated_inventory_tab = "stone"
-		generated_action_message = "돌 합성 모드: 같은 돌을 다른 같은 돌 위에 드래그하면 3개가 머지됩니다"
+		generated_action_message = "돌 합성 모드: 같은 돌 2개를 머지하면 상급 돌이 됩니다"
 	elif action == "skill":
 		generated_action_message = _runtime_skill_tree_preview_message()
 		_open_runtime_skill_tree_window()
@@ -2693,7 +2779,11 @@ func _set_generated_action(action: String) -> void:
 func _refresh_generated_overlay_now() -> void:
 	if generated_ui_overlay == null or sim == null:
 		return
+	runtime_ui_sync_timer = 0.0
+	runtime_force_ui_sync = false
+	runtime_force_model_sync = true
 	_sync_generated_ui_overlay(sim.snapshot())
+	queue_redraw()
 
 
 func _ensure_generated_action_bar(root: Control) -> void:
@@ -2743,48 +2833,70 @@ func _ensure_generated_action_button(parent: HBoxContainer, node_name: String, t
 	parent.add_child(button)
 
 
+func _configure_generated_combat_strip(root: Control) -> void:
+	var combat_strip := root.get_node_or_null(OVERLAY_COMBAT_STRIP_PATH)
+	if combat_strip == null or not combat_strip is Control:
+		return
+	var strip := combat_strip as Control
+	strip.size = COMBAT_NATIVE_CROP_SIZE
+	strip.custom_minimum_size = COMBAT_NATIVE_CROP_SIZE
+	strip.clip_contents = true
+	strip.position = Vector2(
+		maxf(0.0, (GENERATED_UI_REFERENCE_SIZE.x - COMBAT_NATIVE_CROP_SIZE.x) * 0.5),
+		704.0
+	)
+
+
+func _combat_strip_render_size(strip: Control) -> Vector2:
+	if strip != null and strip.size.x > 0.0 and strip.size.y > 0.0:
+		return strip.size
+	return COMBAT_NATIVE_CROP_SIZE
+
+
 func _ensure_generated_combat_layer(root: Control) -> void:
 	var combat_strip := root.get_node_or_null(OVERLAY_COMBAT_STRIP_PATH)
 	if combat_strip == null or not combat_strip is Control:
 		return
-	var prop_layer := (combat_strip as Control).get_node_or_null(OVERLAY_COMBAT_PROP_LAYER_NAME)
+	var strip := combat_strip as Control
+	var layer_size := _combat_strip_render_size(strip)
+	var prop_layer := strip.get_node_or_null(OVERLAY_COMBAT_PROP_LAYER_NAME)
 	if prop_layer == null:
 		prop_layer = Control.new()
 		prop_layer.name = OVERLAY_COMBAT_PROP_LAYER_NAME
-		prop_layer.position = Vector2.ZERO
-		prop_layer.size = Vector2(1586.0, 236.0)
 		prop_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		(combat_strip as Control).add_child(prop_layer)
+		strip.add_child(prop_layer)
+	prop_layer.position = Vector2.ZERO
+	prop_layer.size = layer_size
 	prop_layer.z_index = 6
 	(prop_layer as CanvasItem).z_as_relative = false
 	(prop_layer as CanvasItem).visible = false
 	_mark_generated_combat_backdrop_item(prop_layer as CanvasItem)
 	generated_runtime_nodes["combat_prop_layer"] = prop_layer
-	var enemy_layer := (combat_strip as Control).get_node_or_null(OVERLAY_ENEMY_LAYER_NAME)
+	var enemy_layer := strip.get_node_or_null(OVERLAY_ENEMY_LAYER_NAME)
 	if enemy_layer == null:
 		enemy_layer = Control.new()
 		enemy_layer.name = OVERLAY_ENEMY_LAYER_NAME
-		enemy_layer.position = Vector2.ZERO
-		enemy_layer.size = Vector2(1586.0, 236.0)
 		enemy_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		(combat_strip as Control).add_child(enemy_layer)
+		strip.add_child(enemy_layer)
+	enemy_layer.position = Vector2.ZERO
+	enemy_layer.size = layer_size
 	enemy_layer.z_index = 132
 	(enemy_layer as CanvasItem).z_as_relative = false
 	generated_runtime_nodes["combat_enemy_layer"] = enemy_layer
-	var baked_projectile := (combat_strip as Control).get_node_or_null("Layer_Projectile")
+	var baked_projectile := strip.get_node_or_null("Layer_Projectile")
 	if baked_projectile != null and baked_projectile is CanvasItem:
 		(baked_projectile as CanvasItem).visible = false
-	var layer := (combat_strip as Control).get_node_or_null(OVERLAY_COMBAT_LAYER_NAME)
+	var layer := strip.get_node_or_null(OVERLAY_COMBAT_LAYER_NAME)
 	if layer == null:
 		layer = Control.new()
 		layer.name = OVERLAY_COMBAT_LAYER_NAME
-		layer.position = Vector2.ZERO
-		layer.size = Vector2(1586.0, 236.0)
 		layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		layer.z_index = 20
-		(combat_strip as Control).add_child(layer)
+		strip.add_child(layer)
+	layer.position = Vector2.ZERO
+	layer.size = layer_size
 	generated_runtime_nodes["combat_layer"] = layer
-	(combat_strip as Control).move_child(enemy_layer, (combat_strip as Control).get_child_count() - 1)
+	strip.move_child(enemy_layer, strip.get_child_count() - 1)
 
 
 func _ensure_generated_combat_soft_border(root: Control) -> void:
@@ -2792,16 +2904,17 @@ func _ensure_generated_combat_soft_border(root: Control) -> void:
 	if combat_strip == null or not combat_strip is Control:
 		return
 	var strip := combat_strip as Control
+	var strip_size := _combat_strip_render_size(strip)
 	var border_nodes := [
-		_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeShadow", Vector2(0.0, 0.0), Vector2(1586.0, 3.0), Color(0.0, 0.0, 0.0, 0.30), 5),
-		_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeWarmLine", Vector2(0.0, 3.0), Vector2(1586.0, 1.0), Color(1.0, 0.80, 0.42, 0.18), 5),
-		_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeSoftLight", Vector2(0.0, 4.0), Vector2(1586.0, 2.0), Color(1.0, 1.0, 1.0, 0.06), 5),
-		_ensure_combat_border_rect(strip, "Rect_CombatBottomEdgeShadow", Vector2(0.0, 230.0), Vector2(1586.0, 6.0), Color(0.0, 0.0, 0.0, 0.28), 5),
-		_ensure_combat_border_rect(strip, "Rect_CombatBottomEdgeWarmLine", Vector2(0.0, 229.0), Vector2(1586.0, 1.0), Color(0.95, 0.62, 0.27, 0.12), 5),
-		_ensure_combat_border_rect(strip, "Rect_CombatLeftEdgeSoftShadow", Vector2(0.0, 0.0), Vector2(4.0, 236.0), Color(0.0, 0.0, 0.0, 0.22), 5),
-		_ensure_combat_border_rect(strip, "Rect_CombatLeftEdgeWarmLine", Vector2(4.0, 0.0), Vector2(1.0, 236.0), Color(1.0, 0.78, 0.42, 0.10), 5),
-		_ensure_combat_border_rect(strip, "Rect_CombatRightEdgeSoftShadow", Vector2(1582.0, 0.0), Vector2(4.0, 236.0), Color(0.0, 0.0, 0.0, 0.22), 5),
-		_ensure_combat_border_rect(strip, "Rect_CombatRightEdgeWarmLine", Vector2(1581.0, 0.0), Vector2(1.0, 236.0), Color(1.0, 0.78, 0.42, 0.10), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeShadow", Vector2(0.0, 0.0), Vector2(strip_size.x, 3.0), Color(0.0, 0.0, 0.0, 0.30), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeWarmLine", Vector2(0.0, 3.0), Vector2(strip_size.x, 1.0), Color(1.0, 0.80, 0.42, 0.18), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeSoftLight", Vector2(0.0, 4.0), Vector2(strip_size.x, 2.0), Color(1.0, 1.0, 1.0, 0.06), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatBottomEdgeShadow", Vector2(0.0, strip_size.y - 6.0), Vector2(strip_size.x, 6.0), Color(0.0, 0.0, 0.0, 0.28), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatBottomEdgeWarmLine", Vector2(0.0, strip_size.y - 7.0), Vector2(strip_size.x, 1.0), Color(0.95, 0.62, 0.27, 0.12), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatLeftEdgeSoftShadow", Vector2(0.0, 0.0), Vector2(4.0, strip_size.y), Color(0.0, 0.0, 0.0, 0.22), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatLeftEdgeWarmLine", Vector2(4.0, 0.0), Vector2(1.0, strip_size.y), Color(1.0, 0.78, 0.42, 0.10), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatRightEdgeSoftShadow", Vector2(strip_size.x - 4.0, 0.0), Vector2(4.0, strip_size.y), Color(0.0, 0.0, 0.0, 0.22), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatRightEdgeWarmLine", Vector2(strip_size.x - 5.0, 0.0), Vector2(1.0, strip_size.y), Color(1.0, 0.78, 0.42, 0.10), 5),
 	]
 	for border in border_nodes:
 		_mark_generated_combat_backdrop_item(border)
@@ -2845,6 +2958,7 @@ func _ensure_generated_combat_readouts(root: Control) -> void:
 	_remove_generated_combat_data_panels(strip)
 	_ensure_combat_boss_panel(strip)
 	_ensure_combat_map_progress_panel(strip)
+	_ensure_combat_skill_panel(strip)
 	generated_runtime_nodes["combat_player_hp_plate"] = _ensure_combat_hp_plate(strip, "Panel_RuntimePlayerHpPlate")
 	generated_runtime_nodes["combat_player_hp_bar"] = _ensure_combat_progress(
 		strip,
@@ -2905,17 +3019,37 @@ func _ensure_combat_drop_banner(parent: Control) -> void:
 
 
 func _ensure_combat_skill_panel(parent: Control) -> void:
-	var panel := _ensure_panel(parent, OVERLAY_COMBAT_SKILL_PANEL_NAME, Vector2(1178.0, 58.0), Vector2(84.0, 112.0), Color("#17110e"), Color("#453121"), 3, 4)
+	var panel := _ensure_panel(parent, OVERLAY_COMBAT_SKILL_PANEL_NAME, Vector2(236.0, 88.0), Vector2(184.0, 74.0), Color("#17110e"), Color("#453121"), 3, 4)
 	panel.z_index = 85
 	generated_runtime_nodes["combat_skill_panel"] = panel
-	var orb := _ensure_runtime_label("Text_SkillOrb", Vector2(10.0, 8.0), Vector2(50.0, 50.0), 32, Color("#65d7ff"), panel)
+	for child in panel.get_children():
+		if str(child.name) != "Content_CombatSkillPanel":
+			panel.remove_child(child)
+			child.queue_free()
+	var content_node := panel.get_node_or_null("Content_CombatSkillPanel")
+	var content: Control
+	if content_node != null and content_node is Control:
+		content = content_node as Control
+	else:
+		content = Control.new()
+		content.name = "Content_CombatSkillPanel"
+		content.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		panel.add_child(content)
+	content.position = Vector2.ZERO
+	content.size = panel.size
+	content.custom_minimum_size = panel.size
+	var orb := _ensure_runtime_label("Text_SkillOrb", Vector2(8.0, 8.0), Vector2(34.0, 34.0), 24, Color("#65d7ff"), content)
 	orb.text = "●"
 	orb.add_theme_color_override("font_outline_color", Color("#050302"))
-	orb.add_theme_constant_override("outline_size", 5)
-	var label := _ensure_runtime_label("Text_SkillPanelLabel", Vector2(12.0, 56.0), Vector2(58.0, 20.0), 10, Color("#ffcf7a"), panel)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	orb.add_theme_constant_override("outline_size", 4)
+	generated_runtime_nodes["combat_skill_orb"] = orb
+	var label := _ensure_runtime_label("Text_SkillPanelLabel", Vector2(48.0, 7.0), Vector2(122.0, 20.0), 12, Color("#ffcf7a"), content)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	generated_runtime_nodes["combat_skill_label"] = label
-	var bar := _ensure_combat_progress(panel, "Progress_SkillCooldown", Vector2(12.0, 86.0), Vector2(58.0, 8.0), Color("#a45cff"))
+	var count := _ensure_runtime_label("Text_SkillPanelCount", Vector2(48.0, 29.0), Vector2(122.0, 18.0), 11, Color("#a9e8ff"), content)
+	count.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	generated_runtime_nodes["combat_skill_count"] = count
+	var bar := _ensure_combat_progress(content, "Progress_SkillCooldown", Vector2(10.0, 56.0), Vector2(164.0, 8.0), Color("#a45cff"))
 	bar.z_index = 3
 	generated_runtime_nodes["combat_skill_cooldown"] = bar
 
@@ -2946,9 +3080,12 @@ func _ensure_combat_map_progress_panel(parent: Control) -> void:
 		root.name = OVERLAY_COMBAT_MAP_PROGRESS_NAME
 		root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		parent.add_child(root)
-	root.position = Vector2(1074.0, 144.5)
-	root.size = Vector2(264.0, 114.0)
-	root.scale = Vector2.ONE * 0.75
+	root.size = COMBAT_MAP_PROGRESS_LOGICAL_SIZE
+	root.scale = Vector2.ONE * COMBAT_MAP_PROGRESS_SCALE
+	root.position = Vector2(
+		maxf(0.0, parent.size.x - root.size.x * root.scale.x),
+		maxf(0.0, parent.size.y - root.size.y * root.scale.y)
+	)
 	root.z_index = 94
 	generated_runtime_nodes["combat_map_progress"] = root
 	for child in root.get_children():
@@ -3293,12 +3430,16 @@ func _ensure_combat_label(parent: Control, node_name: String, pos: Vector2, labe
 
 
 func _style_combat_hp_bar(progress: ProgressBar, fill: Color, hit_flash: float) -> void:
-	var flash := clampf(hit_flash / 0.18, 0.0, 1.0)
-	var fill_color := fill.lerp(Color("#fff0a6"), flash * 0.55)
 	progress.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	progress.show_percentage = false
 	progress.min_value = 0.0
 	progress.max_value = 1.0
+	var flash_bucket := clampi(roundi(clampf(hit_flash / 0.18, 0.0, 1.0) * 4.0), 0, 4)
+	if int(progress.get_meta("combat_hp_bar_style_bucket", -1)) == flash_bucket:
+		return
+	progress.set_meta("combat_hp_bar_style_bucket", flash_bucket)
+	var flash := float(flash_bucket) / 4.0
+	var fill_color := fill.lerp(Color("#fff0a6"), flash * 0.55)
 	progress.add_theme_stylebox_override("background", _overlay_style(Color(0.04, 0.026, 0.014, 0.9), Color("#120c08"), 1, 3))
 	progress.add_theme_stylebox_override("fill", _overlay_style(fill_color, fill_color, 0, 3))
 
@@ -3349,30 +3490,92 @@ func _ensure_generated_taskbar_controls(root: Control) -> void:
 		)
 		_apply_generated_button_style(toggle as Button, "utility_icon")
 		strip.add_child(toggle)
+	if toggle is Control:
+		var toggle_control := toggle as Control
+		toggle_control.size = Vector2(104.0, 32.0)
+		toggle_control.position = Vector2(maxf(0.0, strip.size.x - toggle_control.size.x - 4.0), COMBAT_OPACITY_CONTROL_SIZE.y + 4.0)
 	generated_runtime_nodes["workshop_toggle"] = toggle
+	_remove_generated_combat_auto_stone_merge_toggle(strip)
 	_ensure_generated_combat_opacity_control(strip)
 	_ensure_generated_combat_resize_handle(strip)
+
+
+func _remove_generated_combat_auto_stone_merge_toggle(strip: Control) -> void:
+	var toggle_node := strip.get_node_or_null(OVERLAY_AUTO_STONE_MERGE_TOGGLE_NAME)
+	if toggle_node == null:
+		return
+	strip.remove_child(toggle_node)
+	toggle_node.queue_free()
+
+
+func _set_generated_auto_stone_merge_enabled(enabled: bool) -> void:
+	generated_auto_stone_merge_enabled = enabled
+	generated_auto_stone_merge_poll_timer = 0.0
+	if enabled:
+		generated_inventory_tab = "stone"
+		generated_selected_action = "merge"
+		var merge_message := _progression_auto_merge_stones()
+		generated_action_message = merge_message if merge_message != "" else "돌 자동 머지 ON: 같은 돌 2개를 기다리는 중"
+	else:
+		generated_action_message = "돌 자동 머지 OFF"
+	_sync_generated_auto_stone_merge_toggle()
+	_refresh_generated_overlay_now()
+
+
+func _set_generated_auto_equipment_merge_enabled(enabled: bool) -> void:
+	generated_auto_equipment_merge_enabled = enabled
+	generated_auto_equipment_merge_poll_timer = 0.0
+	if enabled:
+		generated_inventory_tab = "equipment"
+		generated_selected_action = "upgrade"
+		var merge_message := _progression_auto_merge_equipment()
+		generated_action_message = merge_message if merge_message != "" else "장비 자동 머지 ON: 같은 부위/등급 장비 3개를 기다리는 중"
+	else:
+		generated_action_message = "장비 자동 머지 OFF"
+	_sync_generated_auto_equipment_merge_toggle()
+	_refresh_generated_overlay_now()
+
+
+func _update_auto_stone_merge(delta: float) -> void:
+	if not generated_auto_stone_merge_enabled:
+		return
+	generated_auto_stone_merge_poll_timer -= delta
+	if generated_auto_stone_merge_poll_timer > 0.0:
+		return
+	generated_auto_stone_merge_poll_timer = AUTO_STONE_MERGE_INTERVAL
+	var merge_message := _progression_auto_merge_stones()
+	if merge_message != "":
+		generated_action_message = merge_message
+
+
+func _update_auto_equipment_merge(delta: float) -> void:
+	if not generated_auto_equipment_merge_enabled:
+		return
+	generated_auto_equipment_merge_poll_timer -= delta
+	if generated_auto_equipment_merge_poll_timer > 0.0:
+		return
+	generated_auto_equipment_merge_poll_timer = AUTO_EQUIPMENT_MERGE_INTERVAL
+	var merge_message := _progression_auto_merge_equipment()
+	if merge_message != "":
+		generated_action_message = merge_message
 
 
 func _ensure_generated_combat_opacity_control(strip: Control) -> void:
 	var panel_node := strip.get_node_or_null(COMBAT_OPACITY_CONTROL_NAME)
 	var panel: Control
-	if panel_node != null and panel_node is Control:
+	if panel_node != null and panel_node is Panel:
 		panel = panel_node as Control
 	else:
 		if panel_node != null:
 			strip.remove_child(panel_node)
 			panel_node.queue_free()
-		var button_panel := Button.new()
-		button_panel.text = ""
-		button_panel.focus_mode = Control.FOCUS_NONE
-		button_panel.add_theme_stylebox_override("normal", _overlay_style(Color(0.04, 0.025, 0.015, 0.92), Color("#6b4a2a"), 1, 4))
-		button_panel.add_theme_stylebox_override("hover", _overlay_style(Color(0.07, 0.045, 0.025, 0.94), Color("#9f6b2f"), 1, 4))
-		button_panel.add_theme_stylebox_override("pressed", _overlay_style(Color(0.035, 0.022, 0.014, 0.94), Color("#8a5b24"), 1, 4))
-		panel = button_panel
+		var opacity_panel := Panel.new()
+		opacity_panel.add_theme_stylebox_override("panel", _overlay_style(Color(0.04, 0.025, 0.015, 0.92), Color("#6b4a2a"), 1, 4))
+		panel = opacity_panel
 		panel.name = COMBAT_OPACITY_CONTROL_NAME
-		panel.mouse_filter = Control.MOUSE_FILTER_PASS
-		panel.tooltip_text = "전투 화면 투명도"
+		panel.mouse_filter = Control.MOUSE_FILTER_STOP
+		panel.set_meta("combat_interactive_control", true)
+		panel.tooltip_text = "전투 요소 표시율"
 		strip.add_child(panel)
 		var icon := _make_runtime_label("Text_CombatOpacityIcon", Vector2(8.0, 4.0), Vector2(18.0, 18.0), 12, Color("#ffcf7a"))
 		icon.text = "◐"
@@ -3384,21 +3587,24 @@ func _ensure_generated_combat_opacity_control(strip: Control) -> void:
 		slider.min_value = COMBAT_OPACITY_MIN * 100.0
 		slider.max_value = COMBAT_OPACITY_MAX * 100.0
 		slider.step = 5.0
-		slider.tooltip_text = "전투 화면 투명도"
+		slider.tooltip_text = "전투 요소 표시율: 100% = 투명도 0"
 		slider.mouse_filter = Control.MOUSE_FILTER_STOP
+		slider.set_meta("combat_interactive_control", true)
 		slider.add_theme_stylebox_override("slider", _overlay_style(Color("#17110c"), Color("#3b2a1a"), 1, 2))
 		slider.add_theme_stylebox_override("grabber_area", _overlay_style(Color("#9f6cf5"), Color("#caa6ff"), 0, 2))
 		slider.add_theme_stylebox_override("grabber_area_highlight", _overlay_style(Color("#b985ff"), Color("#efd5ff"), 0, 2))
 		slider.value_changed.connect(func(value: float):
-			_set_generated_combat_opacity(value / 100.0)
+			self._set_generated_combat_opacity(value / 100.0)
 		)
 		panel.add_child(slider)
 		var value_label := _make_runtime_label(COMBAT_OPACITY_VALUE_NAME, Vector2(124.0, 4.0), Vector2(36.0, 18.0), 10, Color("#f3e6c8"))
 		value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		panel.add_child(value_label)
-	panel.position = Vector2(1088.0, 12.0)
-	panel.size = Vector2(168.0, 28.0)
+	panel.size = COMBAT_OPACITY_CONTROL_SIZE
+	panel.position = Vector2(maxf(0.0, strip.size.x - panel.size.x), 0.0)
 	panel.custom_minimum_size = panel.size
+	panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	panel.set_meta("combat_interactive_control", true)
 	_layout_generated_combat_opacity_control(panel)
 	panel.visible = true
 	panel.z_index = 4095
@@ -3695,6 +3901,7 @@ func _runtime_learn_selected_skill() -> void:
 		int(skill.get("level", 1)),
 		_runtime_skill_cost_label(result.get("cost", [])),
 	]
+	_apply_progression_loadout_to_sim()
 	_refresh_generated_overlay_now()
 
 
@@ -3722,6 +3929,7 @@ func _runtime_level_selected_skill() -> void:
 		int(skill.get("level", 1)),
 		float(delta.get("damage_ratio", 0.0)),
 	]
+	_apply_progression_loadout_to_sim()
 	_refresh_generated_overlay_now()
 
 
@@ -3730,6 +3938,7 @@ func _set_generated_taskbar_mode(enabled: bool) -> void:
 	if generated_ui_overlay == null:
 		return
 	if enabled:
+		_close_skill_detail_modal()
 		_close_equipment_upgrade_modal()
 		_close_inventory_item_detail_modal()
 		_hide_generated_workshop_windows()
@@ -3806,7 +4015,121 @@ func _sync_generated_taskbar_controls() -> void:
 		button.button_pressed = generated_taskbar_mode
 		button.text = "창 복원" if generated_taskbar_mode else "창 숨김"
 		button.tooltip_text = "Workshop mode 복원" if generated_taskbar_mode else "Taskbar mode로 최소화"
+	_sync_generated_auto_stone_merge_toggle()
+	_sync_generated_auto_equipment_merge_toggle()
 	_sync_generated_combat_opacity_control()
+
+
+func _sync_generated_auto_stone_merge_toggle() -> void:
+	var toggle_node = generated_runtime_nodes.get("auto_stone_merge_toggle", null)
+	if toggle_node == null or not toggle_node is Button:
+		return
+	var button := toggle_node as Button
+	button.set_pressed_no_signal(generated_auto_stone_merge_enabled)
+	button.text = ""
+	button.tooltip_text = "돌 자동머지 ON: 같은 돌 2개를 상급 돌로 자동 합성" if generated_auto_stone_merge_enabled else "돌 자동머지 OFF"
+	button.visible = true
+	_style_auto_stone_merge_toggle(button)
+
+
+func _style_auto_stone_merge_toggle(button: Button) -> void:
+	var enabled := generated_auto_stone_merge_enabled
+	var texture_key := "taskstonebar.ui.icon_dock_button_9slice"
+	var normal_tint := Color(1.08, 1.20, 0.84, 1.0) if enabled else Color(1, 1, 1, 1)
+	var hover_tint := Color(1.18, 1.34, 0.92, 1.0) if enabled else Color(1.14, 1.14, 1.14, 1.0)
+	var pressed_tint := Color(0.82, 1.16, 0.62, 1.0) if enabled else Color(0.82, 0.82, 0.82, 1.0)
+	button.flat = false
+	var normal_style := _overlay_texture_style(texture_key, normal_tint)
+	if normal_style != null:
+		button.add_theme_stylebox_override("normal", normal_style)
+		button.add_theme_stylebox_override("hover", _overlay_texture_style(texture_key, hover_tint))
+		button.add_theme_stylebox_override("pressed", _overlay_texture_style(texture_key, pressed_tint))
+	else:
+		var fill := Color("#233315") if enabled else Color("#201915")
+		var border := Color("#9ed86b") if enabled else Color("#8a5b24")
+		button.add_theme_stylebox_override("normal", _overlay_style(fill, border, 2 if enabled else 1, 4))
+		button.add_theme_stylebox_override("hover", _overlay_style(fill.lightened(0.12), Color("#ffcf7a"), 2, 4))
+		button.add_theme_stylebox_override("pressed", _overlay_style(fill.darkened(0.12), border, 2, 4))
+	button.add_theme_stylebox_override("disabled", _overlay_style(Color("#15110e"), Color("#3a2a1d"), 1, 4))
+	button.modulate = Color.WHITE
+	var icon := button.get_node_or_null("Icon_DockInventory")
+	if icon != null and icon is CanvasItem:
+		(icon as CanvasItem).modulate = Color("#d8ffb2") if enabled else Color.WHITE
+	var badge := button.get_node_or_null(OVERLAY_AUTO_STONE_MERGE_BADGE_NAME)
+	if badge == null:
+		badge = Label.new()
+		badge.name = OVERLAY_AUTO_STONE_MERGE_BADGE_NAME
+		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		badge.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		button.add_child(badge)
+	if badge is Label:
+		var label := badge as Label
+		label.text = "ON" if enabled else "OFF"
+		label.position = Vector2(13.0, 38.0)
+		label.size = Vector2(26.0, 12.0)
+		label.add_theme_font_size_override("font_size", 8)
+		label.add_theme_color_override("font_color", Color("#d8ffb2") if enabled else Color("#b79a72"))
+		label.add_theme_color_override("font_shadow_color", Color("#050302"))
+		label.add_theme_constant_override("shadow_offset_x", 1)
+		label.add_theme_constant_override("shadow_offset_y", 1)
+		label.z_index = 5
+
+
+func _sync_generated_auto_equipment_merge_toggle() -> void:
+	var toggle_node = generated_runtime_nodes.get("auto_equipment_merge_toggle", null)
+	if toggle_node == null or not toggle_node is Button:
+		return
+	var button := toggle_node as Button
+	button.set_pressed_no_signal(generated_auto_equipment_merge_enabled)
+	button.text = ""
+	button.tooltip_text = "장비 자동머지 ON: 같은 부위/등급 장비 3개를 상위 장비로 자동 합성" if generated_auto_equipment_merge_enabled else "장비 자동머지 OFF"
+	button.visible = true
+	_style_auto_equipment_merge_toggle(button)
+
+
+func _style_auto_equipment_merge_toggle(button: Button) -> void:
+	var enabled := generated_auto_equipment_merge_enabled
+	var texture_key := "taskstonebar.ui.icon_dock_button_9slice"
+	var normal_tint := Color(1.24, 1.10, 0.72, 1.0) if enabled else Color(1, 1, 1, 1)
+	var hover_tint := Color(1.36, 1.22, 0.82, 1.0) if enabled else Color(1.14, 1.14, 1.14, 1.0)
+	var pressed_tint := Color(1.06, 0.84, 0.48, 1.0) if enabled else Color(0.82, 0.82, 0.82, 1.0)
+	button.flat = false
+	var normal_style := _overlay_texture_style(texture_key, normal_tint)
+	if normal_style != null:
+		button.add_theme_stylebox_override("normal", normal_style)
+		button.add_theme_stylebox_override("hover", _overlay_texture_style(texture_key, hover_tint))
+		button.add_theme_stylebox_override("pressed", _overlay_texture_style(texture_key, pressed_tint))
+	else:
+		var fill := Color("#37230f") if enabled else Color("#201915")
+		var border := Color("#ffcf7a") if enabled else Color("#8a5b24")
+		button.add_theme_stylebox_override("normal", _overlay_style(fill, border, 2 if enabled else 1, 4))
+		button.add_theme_stylebox_override("hover", _overlay_style(fill.lightened(0.12), Color("#ffd877"), 2, 4))
+		button.add_theme_stylebox_override("pressed", _overlay_style(fill.darkened(0.12), border, 2, 4))
+	button.add_theme_stylebox_override("disabled", _overlay_style(Color("#15110e"), Color("#3a2a1d"), 1, 4))
+	button.modulate = Color.WHITE
+	var icon := button.get_node_or_null("Icon_DockGrowth")
+	if icon != null and icon is CanvasItem:
+		(icon as CanvasItem).modulate = Color("#ffe3a1") if enabled else Color.WHITE
+	var badge := button.get_node_or_null(OVERLAY_AUTO_EQUIPMENT_MERGE_BADGE_NAME)
+	if badge == null:
+		badge = Label.new()
+		badge.name = OVERLAY_AUTO_EQUIPMENT_MERGE_BADGE_NAME
+		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		badge.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		button.add_child(badge)
+	if badge is Label:
+		var label := badge as Label
+		label.text = "ON" if enabled else "OFF"
+		label.position = Vector2(13.0, 38.0)
+		label.size = Vector2(26.0, 12.0)
+		label.add_theme_font_size_override("font_size", 8)
+		label.add_theme_color_override("font_color", Color("#ffe3a1") if enabled else Color("#b79a72"))
+		label.add_theme_color_override("font_shadow_color", Color("#050302"))
+		label.add_theme_constant_override("shadow_offset_x", 1)
+		label.add_theme_constant_override("shadow_offset_y", 1)
+		label.z_index = 5
 
 
 func _set_generated_combat_opacity(value: float) -> void:
@@ -3824,7 +4147,7 @@ func _sync_generated_combat_opacity_control() -> void:
 	panel.z_index = 4095
 	panel.z_as_relative = false
 	panel.move_to_front()
-	var percent := roundi(generated_combat_opacity * 100.0)
+	var percent := clampi(roundi(roundf(generated_combat_opacity * 100.0 / 5.0) * 5.0), int(COMBAT_OPACITY_MIN * 100.0), 100)
 	var slider := panel.get_node_or_null(COMBAT_OPACITY_SLIDER_NAME)
 	if slider != null and slider is HSlider:
 		var h_slider := slider as HSlider
@@ -3845,7 +4168,7 @@ func _apply_generated_combat_opacity() -> void:
 			continue
 		var child_name := str(child.name)
 		var canvas := child as CanvasItem
-		if child_name == COMBAT_OPACITY_CONTROL_NAME or child_name == COMBAT_RESIZE_HANDLE_NAME:
+		if child_name == COMBAT_OPACITY_CONTROL_NAME or child_name == COMBAT_RESIZE_HANDLE_NAME or child_name == OVERLAY_AUTO_STONE_MERGE_TOGGLE_NAME:
 			canvas.modulate = Color.WHITE
 			continue
 		if not canvas.has_meta("combat_opacity_base_alpha"):
@@ -3863,11 +4186,7 @@ func _sync_desktop_status_bar(snapshot: Dictionary, model: Dictionary) -> void:
 	if layer == null or not layer is Control:
 		return
 	var status_bar := layer as Control
-	var mode_label := status_bar.get_node_or_null("Text_StatusBarMode")
-	if mode_label != null and mode_label is Label:
-		var label := mode_label as Label
-		label.text = "TASKBAR" if generated_taskbar_mode else "WORKSHOP"
-		label.add_theme_color_override("font_color", Color("#ffcf7a") if generated_taskbar_mode else Color("#f3e6c8"))
+	StatusBarRuntime.set_mode(status_bar, generated_taskbar_mode)
 
 	var player: Dictionary = snapshot.get("player", {}) if typeof(snapshot.get("player", {})) == TYPE_DICTIONARY else {}
 	var hp := int(player.get("hp", 0))
@@ -3896,9 +4215,7 @@ func _sync_desktop_status_bar(snapshot: Dictionary, model: Dictionary) -> void:
 
 
 func _set_status_bar_text(parent: Control, node_name: String, text: String) -> void:
-	var node := parent.get_node_or_null(node_name)
-	if node != null and node is Label:
-		(node as Label).text = text
+	StatusBarRuntime.set_text(parent, node_name, text)
 
 
 func _desktop_status_bar_window_label(window_id: String) -> String:
@@ -3917,18 +4234,22 @@ func _desktop_status_bar_window_label(window_id: String) -> String:
 
 
 func _sync_status_window_real_data(model: Dictionary) -> void:
-	var progression_snapshot := _progression_snapshot()
+	var progression_snapshot: Dictionary = model.get("progression_snapshot", {}) if typeof(model.get("progression_snapshot", {})) == TYPE_DICTIONARY else _progression_snapshot()
 	var skills: Dictionary = progression_snapshot.get("skills", {}) if typeof(progression_snapshot.get("skills", {})) == TYPE_DICTIONARY else {}
 	var materials: Dictionary = progression_snapshot.get("materials", {}) if typeof(progression_snapshot.get("materials", {})) == TYPE_DICTIONARY else {}
-	_set_status_label_text("Panel_SkillPointHeader/Text_SkillPoints", "Skill Points: %d" % int(materials.get(200501, 0)))
+	var points := int(materials.get(200501, 0))
+	var player_level := _runtime_player_level()
+	_set_status_label_text("Panel_SkillPointHeader/Text_SkillPoints", "Skill Points: %d" % points)
 	var learned_count := skills.size()
-	_set_status_label_text("Panel_SkillPointHeader/Text_SkillPointPlus", "+" if int(materials.get(200501, 0)) > 0 else "")
+	_set_status_label_text("Panel_SkillPointHeader/Text_SkillPointPlus", "+" if points > 0 else "")
 	for spec in STATUS_SKILL_BINDINGS:
 		var item_id := int(spec.get("item_id", 0))
 		var item: Dictionary = store.get_item(item_id) if store != null else {}
 		var level := _runtime_skill_level(item_id, skills)
 		var max_level := _runtime_skill_max_level(item)
 		var ready := _runtime_skill_requirements_ready(item, skills)
+		var unlock_preview := _runtime_skill_unlock_preview(item_id, player_level)
+		var level_preview := _runtime_skill_level_preview(item_id) if level > 0 else {}
 		var label_text := "잠김"
 		if level > 0:
 			label_text = "%d/%d" % [level, max_level]
@@ -3936,6 +4257,7 @@ func _sync_status_window_real_data(model: Dictionary) -> void:
 			label_text = "0/%d" % max_level
 		_set_status_skill_binding_text(str(spec.get("binding", "")), label_text)
 		_set_status_skill_binding_visual(str(spec.get("binding", "")), item_id, item, level, ready)
+		_prepare_status_skill_binding_input(str(spec.get("binding", "")), item_id, item, level, unlock_preview, level_preview, points, player_level)
 	var class_label := _generated_node_or_null("Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Panel_ClassRibbon/Text_ClassName")
 	if class_label != null and class_label is Label:
 		(class_label as Label).text = "돌팔매꾼 | 스킬 %d/%d" % [learned_count, RUNTIME_SKILL_TREE_ITEM_IDS.size()]
@@ -3983,6 +4305,58 @@ func _set_status_skill_binding_visual(binding: String, item_id: int, item: Dicti
 					icon.modulate = Color(1.0, 0.94, 0.72, 0.94)
 				else:
 					icon.modulate = Color(0.7, 0.7, 0.7, 0.72)
+
+
+func _prepare_status_skill_binding_input(binding: String, item_id: int, item: Dictionary, level: int, unlock_preview: Dictionary, level_preview: Dictionary, points: int, player_level: int) -> void:
+	for root in _status_window_roots():
+		var label := _find_binding_label(root, binding)
+		if label == null:
+			continue
+		var slot := label.get_parent()
+		if slot == null or not slot is Control:
+			continue
+		var control := slot as Control
+		_prepare_status_skill_slot_hit_area(control)
+		control.set_meta("runtime_status_skill_item_id", item_id)
+		control.set_meta("runtime_status_skill_level", level)
+		control.tooltip_text = _runtime_skill_tooltip(item, level, unlock_preview, level_preview, points, player_level)
+		if control.has_meta("runtime_status_skill_connected"):
+			continue
+		control.gui_input.connect(func(event: InputEvent):
+			_handle_status_skill_slot_input(control, event)
+		)
+		control.set_meta("runtime_status_skill_connected", true)
+
+
+func _prepare_status_skill_slot_hit_area(slot: Control) -> void:
+	slot.mouse_filter = Control.MOUSE_FILTER_STOP
+	slot.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	for child in slot.get_children():
+		_prepare_status_skill_slot_child_hit_area(child)
+
+
+func _prepare_status_skill_slot_child_hit_area(node: Node) -> void:
+	if node is Control:
+		var control := node as Control
+		control.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		control.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	for child in node.get_children():
+		_prepare_status_skill_slot_child_hit_area(child)
+
+
+func _handle_status_skill_slot_input(slot: Control, event: InputEvent) -> void:
+	if not (event is InputEventMouseButton):
+		return
+	var mouse := event as InputEventMouseButton
+	if mouse.button_index != MOUSE_BUTTON_LEFT or not mouse.pressed:
+		return
+	var item_id := int(slot.get_meta("runtime_status_skill_item_id", 0))
+	if item_id <= 0:
+		slot.accept_event()
+		return
+	generated_selected_skill_item_id = item_id
+	_open_skill_detail_modal(item_id)
+	slot.accept_event()
 
 
 func _find_binding_label(node: Node, binding: String) -> Label:
@@ -4480,6 +4854,265 @@ func _modal_frame_position(host: Control, frame_size: Vector2, preferred_positio
 	return Vector2(x, y)
 
 
+func _open_skill_detail_modal(item_id: int) -> void:
+	if generated_ui_overlay == null:
+		return
+	var item: Dictionary = store.get_item(int(item_id)) if store != null else {}
+	if item.is_empty() or str(item.get("category", "")) != "Skill":
+		generated_action_message = "스킬 상세 열기 실패: 스킬 정보를 찾을 수 없습니다"
+		_refresh_generated_overlay_now()
+		return
+	var host := _active_generated_modal_host()
+	if host == null:
+		return
+	generated_selected_skill_item_id = int(item_id)
+	generated_skill_detail_item_id = int(item_id)
+	_clear_generated_modal_host(host)
+	host.mouse_filter = Control.MOUSE_FILTER_PASS
+
+	var progression_snapshot := _progression_snapshot()
+	var skills: Dictionary = progression_snapshot.get("skills", {}) if typeof(progression_snapshot.get("skills", {})) == TYPE_DICTIONARY else {}
+	var materials: Dictionary = progression_snapshot.get("materials", {}) if typeof(progression_snapshot.get("materials", {})) == TYPE_DICTIONARY else {}
+	var player_level := _runtime_player_level()
+	var level := _runtime_skill_level(int(item_id), skills)
+	var max_level := _runtime_skill_max_level(item)
+	var points := int(materials.get(_runtime_skill_unlock_point_item_id(item), 0))
+	var unlock_preview: Dictionary = _runtime_skill_unlock_preview(int(item_id), player_level)
+	var level_preview: Dictionary = _runtime_skill_level_preview(int(item_id))
+	var learned := level > 0
+	var at_max := learned and level >= max_level
+	var confirm_text := "학습"
+	var confirm_disabled := false
+	var status_text := _runtime_skill_preview_reason(unlock_preview)
+	var cost_text := "학습 비용: %s" % _runtime_skill_unlock_cost_label(item)
+	if learned:
+		confirm_text = "최대" if at_max else "레벨업"
+		status_text = _runtime_skill_level_status_text(level_preview, level, max_level)
+		cost_text = "레벨업 비용: 최대 레벨" if at_max else "레벨업 비용: %s" % _runtime_skill_cost_label(level_preview.get("cost", []))
+		confirm_disabled = at_max or not bool(level_preview.get("ok", false)) or not bool(level_preview.get("can_afford", false))
+	else:
+		confirm_disabled = not bool(unlock_preview.get("ok", false))
+
+	var scrim := Button.new()
+	scrim.name = "Scrim_SkillDetail"
+	scrim.position = Vector2.ZERO
+	scrim.size = host.size
+	scrim.flat = true
+	scrim.mouse_filter = Control.MOUSE_FILTER_STOP
+	scrim.add_theme_stylebox_override("normal", _overlay_style(Color(0.02, 0.015, 0.01, 0.44), Color(0, 0, 0, 0), 0, 0))
+	scrim.add_theme_stylebox_override("hover", _overlay_style(Color(0.02, 0.015, 0.01, 0.40), Color(0, 0, 0, 0), 0, 0))
+	scrim.pressed.connect(_close_skill_detail_modal)
+	host.add_child(scrim)
+
+	var frame := Panel.new()
+	frame.name = SKILL_DETAIL_MODAL_NAME
+	frame.size = SKILL_DETAIL_MODAL_RECT.size
+	frame.position = _modal_frame_position(host, frame.size, SKILL_DETAIL_MODAL_RECT.position)
+	frame.mouse_filter = Control.MOUSE_FILTER_STOP
+	frame.set_meta("runtime_skill_detail_item_id", int(item_id))
+	frame.add_theme_stylebox_override("panel", _overlay_texture_style("taskstonebar.ui.window_frame_9slice") if _overlay_texture_style("taskstonebar.ui.window_frame_9slice") != null else _overlay_style(Color("#0a0908"), Color("#d18a24"), 3, 4))
+	host.add_child(frame)
+	_ensure_program_window_shadow(frame)
+	_add_modal_window_ornament(frame)
+
+	var title := Panel.new()
+	title.name = "Panel_SkillDetailTitleBar"
+	title.position = MODAL_TITLE_INSET
+	title.size = Vector2(frame.size.x - MODAL_TITLE_INSET.x * 2.0, MODAL_TITLE_HEIGHT)
+	title.add_theme_stylebox_override("panel", _overlay_style(Color("#541e17"), Color("#271713"), 2, 2))
+	frame.add_child(title)
+	_ensure_reference_modal_header_details(title)
+	var detail_title := _make_modal_label(title, "Text_SkillDetailTitle", str(item.get("name", "스킬 상세")), Vector2(62.0, 7.0), Vector2(title.size.x - 120.0, 28.0), 18, Color("#ffcf7a"))
+	detail_title.z_index = 5
+
+	var close_button := Button.new()
+	close_button.name = "Btn_SkillDetailClose"
+	close_button.position = Vector2(title.size.x - 34.0, 9.0)
+	close_button.size = Vector2(24.0, 24.0)
+	close_button.tooltip_text = "닫기"
+	close_button.pressed.connect(_close_skill_detail_modal)
+	_apply_generated_button_style(close_button, "window_close")
+	_ensure_generated_close_icon(close_button)
+	close_button.z_index = 6
+	title.add_child(close_button)
+
+	var body := Panel.new()
+	body.name = "Panel_SkillDetailBody"
+	body.position = MODAL_BODY_INSET
+	body.size = Vector2(frame.size.x - MODAL_BODY_INSET.x * 2.0, frame.size.y - MODAL_BODY_INSET.y - MODAL_FRAME_CONTENT_BOTTOM - MODAL_FOOTER_HEIGHT - 8.0)
+	var body_style: StyleBox = _overlay_texture_style("taskstonebar.ui.dark_inner_well_9slice")
+	body.add_theme_stylebox_override("panel", body_style if body_style != null else _overlay_style(Color("#080a0a"), Color("#6b4a2a"), 2, 3))
+	frame.add_child(body)
+
+	_make_skill_detail_icon_slot(body, int(item_id), item, Vector2(18.0, 14.0))
+	_make_skill_detail_chip(body, "Text_SkillDetailLevelChip", "Lv. %d / %d" % [level, max_level], Vector2(16.0, 84.0), Vector2(98.0, 22.0), Color("#251711"), Color("#6a3f26"), Color("#f3e6c8"))
+	_make_skill_detail_chip(body, "Text_SkillDetailAutoEquipChip", "자동 장착됨" if learned else "학습 시 자동 장착", Vector2(16.0, 112.0), Vector2(128.0, 22.0), Color("#1a2a1b"), Color("#5d8f41"), Color("#d8ffb2"))
+
+	var skill_def: Dictionary = store.get_skill(int(item.get("skillDataId", 0))) if store != null else {}
+	var subtitle := "SkillDataId %d | CD %.1fs" % [int(item.get("skillDataId", 0)), float(skill_def.get("cooldown", 0.0))]
+	var subtitle_label := _make_modal_label(body, "Text_SkillDetailSubtitle", subtitle, Vector2(134.0, 16.0), Vector2(body.size.x - 154.0, 20.0), 11, Color("#b79a72"))
+	subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	var status_label := _make_modal_label(body, "Text_SkillDetailStatus", status_text, Vector2(134.0, 38.0), Vector2(body.size.x - 154.0, 28.0), 12, Color("#ffcf7a"))
+	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+
+	var rows_back := PanelContainer.new()
+	rows_back.name = "Panel_SkillDetailRowsBack"
+	rows_back.position = Vector2(134.0, 70.0)
+	rows_back.size = Vector2(body.size.x - 154.0, 78.0)
+	rows_back.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rows_back.add_theme_stylebox_override("panel", _overlay_style(Color("#10100f"), Color("#30241a"), 1, 2))
+	body.add_child(rows_back)
+	_make_skill_detail_row(body, "Requirement", "요구", _runtime_skill_requirement_names(item), 146.0, 76.0)
+	_make_skill_detail_row(body, "Points", "보유 SP", "%d" % points, 146.0, 100.0)
+	_make_skill_detail_row(body, "Cost", "비용", cost_text, 146.0, 124.0)
+
+	var effect_back := PanelContainer.new()
+	effect_back.name = "Panel_SkillDetailEffectBack"
+	effect_back.position = Vector2(16.0, 154.0)
+	effect_back.size = Vector2(body.size.x - 32.0, 56.0)
+	effect_back.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	effect_back.add_theme_stylebox_override("panel", _overlay_style(Color("#10100f"), Color("#30241a"), 1, 2))
+	body.add_child(effect_back)
+	_make_skill_detail_row(body, "CurrentEffect", "현재", _runtime_skill_detail_current_effect_text(item, level, level_preview), 28.0, 160.0, 64.0, body.size.x - 112.0)
+	_make_skill_detail_row(body, "NextEffect", "다음", _runtime_skill_detail_next_effect_text(item, level, max_level, unlock_preview, level_preview), 28.0, 184.0, 64.0, body.size.x - 112.0)
+
+	var footer_back := PanelContainer.new()
+	footer_back.name = "Panel_SkillDetailFooterBack"
+	footer_back.position = Vector2(76.0, frame.size.y - MODAL_FRAME_CONTENT_BOTTOM - MODAL_FOOTER_HEIGHT)
+	footer_back.size = Vector2(frame.size.x - 152.0, MODAL_FOOTER_HEIGHT)
+	footer_back.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	footer_back.add_theme_stylebox_override("panel", _overlay_style(Color("#120c08"), Color("#3f2f20"), 1, 2))
+	frame.add_child(footer_back)
+
+	var footer := HBoxContainer.new()
+	footer.name = "Footer_SkillDetail"
+	footer.position = footer_back.position + Vector2(10.0, 6.0)
+	footer.size = footer_back.size - Vector2(20.0, 12.0)
+	footer.add_theme_constant_override("separation", 10)
+	frame.add_child(footer)
+	var cancel := _make_modal_button("Btn_SkillDetailCancel", "닫기", Vector2(96.0, 34.0), "utility_icon")
+	cancel.pressed.connect(_close_skill_detail_modal)
+	footer.add_child(cancel)
+	var confirm := _make_modal_button("Btn_SkillDetailConfirm", confirm_text, Vector2(126.0, 34.0), "inventory_tab")
+	confirm.disabled = confirm_disabled
+	confirm.tooltip_text = status_text
+	confirm.pressed.connect(_confirm_skill_detail_modal)
+	footer.add_child(confirm)
+
+	generated_runtime_nodes["skill_detail_modal"] = frame
+	generated_runtime_nodes["skill_detail_confirm"] = confirm
+
+
+func _close_skill_detail_modal() -> void:
+	var host: Control = generated_runtime_nodes.get("modal_host", null)
+	if host == null:
+		return
+	_clear_generated_modal_host(host)
+	host.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	generated_skill_detail_item_id = 0
+	generated_runtime_nodes.erase("skill_detail_modal")
+	generated_runtime_nodes.erase("skill_detail_confirm")
+
+
+func _confirm_skill_detail_modal() -> void:
+	var item_id := generated_skill_detail_item_id
+	if item_id <= 0:
+		return
+	generated_selected_skill_item_id = item_id
+	var progression_snapshot := _progression_snapshot()
+	var skills: Dictionary = progression_snapshot.get("skills", {}) if typeof(progression_snapshot.get("skills", {})) == TYPE_DICTIONARY else {}
+	var before_level := _runtime_skill_level(item_id, skills)
+	if before_level > 0:
+		_runtime_level_selected_skill()
+	else:
+		_runtime_learn_selected_skill()
+	_open_skill_detail_modal(item_id)
+
+
+func _make_skill_detail_icon_slot(parent: Control, item_id: int, item: Dictionary, pos: Vector2) -> void:
+	var slot := NinePatchRect.new()
+	slot.name = "Slot_SkillDetailIcon"
+	slot.position = pos
+	slot.size = Vector2(64.0, 64.0)
+	slot.texture = _generated_texture("res://assets/generated/ui/slot_frame_9slice.png")
+	slot.patch_margin_left = 18
+	slot.patch_margin_right = 18
+	slot.patch_margin_top = 18
+	slot.patch_margin_bottom = 18
+	slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(slot)
+	var icon := TextureRect.new()
+	icon.name = "Tex_SkillDetailIcon"
+	icon.position = Vector2(7.0, 7.0)
+	icon.size = Vector2(50.0, 50.0)
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.texture = _runtime_skill_icon_texture(item_id, item)
+	slot.add_child(icon)
+	if icon.texture == null:
+		var glyph := _make_modal_label(slot, "Text_SkillDetailIconGlyph", _runtime_skill_short_name(item), Vector2(5.0, 16.0), Vector2(54.0, 28.0), 13, Color("#f3e6c8"))
+		glyph.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+
+func _make_skill_detail_chip(parent: Control, node_name: String, text: String, pos: Vector2, chip_size: Vector2, fill: Color, border: Color, text_color: Color) -> Label:
+	var chip := Panel.new()
+	chip.name = "Panel_%s" % node_name
+	chip.position = pos
+	chip.size = chip_size
+	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	chip.add_theme_stylebox_override("panel", _overlay_style(fill, border, 1, 2))
+	parent.add_child(chip)
+	var label := _make_modal_label(chip, node_name, text, Vector2.ZERO, chip_size, 10, text_color)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	return label
+
+
+func _make_skill_detail_row(parent: Control, row_key: String, title_text: String, value_text: String, x: float, y: float, title_width := 60.0, value_width := 184.0) -> void:
+	var title := _make_modal_label(parent, "Text_SkillDetail%sTitle" % row_key, title_text, Vector2(x, y), Vector2(title_width, 20.0), 11, Color("#b79a72"))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	var value := _make_modal_label(parent, "Text_SkillDetail%s" % row_key, value_text, Vector2(x + title_width, y), Vector2(value_width, 22.0), 11, Color("#f3e6c8"))
+	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+
+
+func _runtime_skill_detail_current_effect_text(item: Dictionary, level: int, level_preview: Dictionary) -> String:
+	if level <= 0:
+		return "미학습: 전투 로테이션 미장착"
+	var effect: Dictionary = level_preview.get("effect_before", {}) if bool(level_preview.get("ok", false)) and typeof(level_preview.get("effect_before", {})) == TYPE_DICTIONARY else {}
+	return _runtime_skill_effect_summary(effect, item, level)
+
+
+func _runtime_skill_detail_next_effect_text(item: Dictionary, level: int, max_level: int, unlock_preview: Dictionary, level_preview: Dictionary) -> String:
+	if level <= 0:
+		if not bool(unlock_preview.get("ok", false)):
+			return "학습 후: %s" % _runtime_skill_preview_reason(unlock_preview)
+		return "학습 후: %s" % _runtime_skill_effect_summary({}, item, 1)
+	if level >= max_level:
+		return "최대 레벨: 추가 성장 없음"
+	if not bool(level_preview.get("ok", false)):
+		return _runtime_skill_level_status_text(level_preview, level, max_level)
+	var effect: Dictionary = level_preview.get("effect_after", {}) if typeof(level_preview.get("effect_after", {})) == TYPE_DICTIONARY else {}
+	return _runtime_skill_effect_summary(effect, item, level + 1)
+
+
+func _runtime_skill_effect_summary(effect: Dictionary, item: Dictionary, level: int) -> String:
+	var safe_level := maxi(1, int(level))
+	var resolved_effect := effect
+	if resolved_effect.is_empty() and progression != null and progression.has_method("_skill_effect"):
+		var calculated = progression.call("_skill_effect", item, safe_level)
+		if typeof(calculated) == TYPE_DICTIONARY:
+			resolved_effect = calculated
+	var skill: Dictionary = store.get_skill(int(item.get("skillDataId", 0))) if store != null else {}
+	var damage_ratio := float(resolved_effect.get("damage_ratio", 0.0))
+	var dps_ratio := float(resolved_effect.get("dps_ratio", 0.0))
+	var cooldown := float(resolved_effect.get("cooldown", skill.get("cooldown", 0.0)))
+	if damage_ratio <= 0.0 and store != null and not skill.is_empty():
+		damage_ratio = float(store.skill_damage_total_ratio(skill, safe_level)) * float(item.get("constantDamageRatio", 1.0))
+	if dps_ratio <= 0.0:
+		dps_ratio = damage_ratio / maxf(0.1, cooldown)
+	return "Lv.%d 피해 x%.2f / DPS x%.2f / CD %.1fs" % [safe_level, damage_ratio, dps_ratio, cooldown]
+
+
 func _open_inventory_item_detail_modal(instance_id: int, kind: String) -> void:
 	if generated_ui_overlay == null:
 		return
@@ -4567,7 +5200,7 @@ func _open_inventory_item_detail_modal(instance_id: int, kind: String) -> void:
 	var sub_text := _progression_inventory_detail_subtitle(instance, is_stone)
 	var sub_label := _make_modal_label(body, "Text_ItemDetailSubtitle", sub_text, Vector2(128.0, 50.0), Vector2(286.0, 22.0), 12, Color("#b79a72"))
 	sub_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	var hint := "클릭은 상세만, 소모/장착은 버튼으로 실행합니다."
+	var hint := "클릭은 상세만, 소모/합성은 버튼으로 실행합니다." if is_stone else "클릭은 상세만, 장착/승급은 버튼으로 실행합니다."
 	var hint_label := _make_modal_label(body, "Text_ItemDetailHint", hint, Vector2(128.0, 78.0), Vector2(286.0, 34.0), 11, Color("#f3e6c8"))
 	hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 
@@ -4621,14 +5254,17 @@ func _open_inventory_item_detail_modal(instance_id: int, kind: String) -> void:
 	close.pressed.connect(_close_inventory_item_detail_modal)
 	footer.add_child(close)
 	if is_stone:
-		var equip := _make_modal_button("Btn_ItemDetailEquip", "장착", Vector2(96.0, 34.0), "inventory_tab")
-		equip.pressed.connect(_confirm_inventory_detail_equip_stone)
-		footer.add_child(equip)
 		var merge := _make_modal_button("Btn_ItemDetailMerge", "드래그 합성", Vector2(112.0, 34.0), "inventory_tab")
 		merge.disabled = _progression_stone_merge_ids_for_instance(instance_id).size() < ProgressionState.STONE_SYNTHESIS_COUNT
 		merge.pressed.connect(_confirm_inventory_detail_merge_stones)
 		footer.add_child(merge)
 	else:
+		var equipped := _progression_is_equipment_equipped(instance_id)
+		var equip_text := "장착해제" if equipped else "장착"
+		var equip := _make_modal_button("Btn_ItemDetailEquip", equip_text, Vector2(108.0, 34.0), "inventory_tab")
+		equip.tooltip_text = "현재 슬롯에서 장착 해제" if equipped else "이 장비를 해당 부위에 장착"
+		equip.pressed.connect(_confirm_inventory_detail_toggle_equipment)
+		footer.add_child(equip)
 		var upgrade := _make_modal_button("Btn_ItemDetailUpgrade", "승급 보기", Vector2(124.0, 34.0), "inventory_tab")
 		upgrade.disabled = _progression_equipment_upgrade_ids_for_instance(instance_id).size() < ProgressionState.EQUIPMENT_SYNTHESIS_COUNT
 		upgrade.pressed.connect(_open_inventory_detail_equipment_upgrade)
@@ -4647,6 +5283,14 @@ func _confirm_inventory_detail_equip_stone() -> void:
 	generated_inventory_tab = "stone"
 	generated_selected_action = "inventory"
 	generated_action_message = _progression_equip_stone_instance(generated_selected_inventory_instance_id)
+	_close_inventory_item_detail_modal()
+	_refresh_generated_overlay_now()
+
+
+func _confirm_inventory_detail_toggle_equipment() -> void:
+	generated_inventory_tab = "equipment"
+	generated_selected_action = "equipment"
+	generated_action_message = _progression_toggle_equipment_instance(generated_selected_inventory_instance_id)
 	_close_inventory_item_detail_modal()
 	_refresh_generated_overlay_now()
 
@@ -4873,8 +5517,8 @@ func _generated_runtime_model(snapshot: Dictionary) -> Dictionary:
 	var latest_drop: Dictionary = snapshot.get("latest_drop", {}) if typeof(snapshot.get("latest_drop", {})) == TYPE_DICTIONARY else {}
 	var resources: Dictionary = snapshot.get("resources", {}) if typeof(snapshot.get("resources", {})) == TYPE_DICTIONARY else {}
 	var progression_snapshot := _progression_snapshot()
-	var inventory_stones := _progression_inventory_stones(progression_snapshot)
-	var inventory_stone_stats := _progression_stone_stat_summary(inventory_stones)
+	var equipped_stones := _progression_equipped_stones(progression_snapshot)
+	var equipped_stats: Dictionary = progression_snapshot.get("equipped_stats", {}) if typeof(progression_snapshot.get("equipped_stats", {})) == TYPE_DICTIONARY else _progression_stone_stat_summary(equipped_stones)
 	var display_resources := resources.duplicate(true)
 	var materials: Dictionary = progression_snapshot.get("materials", {}) if typeof(progression_snapshot.get("materials", {})) == TYPE_DICTIONARY else {}
 	for binding in [
@@ -4902,15 +5546,27 @@ func _generated_runtime_model(snapshot: Dictionary) -> Dictionary:
 		"stone_slots": _progression_stone_slots(snapshot, display_resources, progression_snapshot),
 		"equipment_slots": _progression_equipment_slots(display_resources, progression_snapshot),
 		"equipment_loadout_slots": _progression_equipment_loadout_slots(progression_snapshot),
-		"active_stone_count": _progression_equipped_stone_count(progression_snapshot),
-		"stone_capacity": 12,
+		"active_stone_count": equipped_stones.size(),
+		"stone_capacity": ProgressionState.STONE_EQUIP_SLOT_COUNT,
 		"equipment_owned_count": _progression_equipment_owned_count(progression_snapshot),
 		"equipment_capacity": EQUIPMENT_STORAGE_CAPACITY,
 		"rune_slots": _mock_rune_slots(),
-		"equipped_stones": inventory_stones,
-		"equipped_stats": inventory_stone_stats,
+		"equipped_stones": equipped_stones,
+		"equipped_stats": equipped_stats,
 		"equipped_skill_ids": progression_snapshot.get("equipped_skill_ids", []),
+		"progression_snapshot": progression_snapshot,
 	}
+
+
+func _runtime_model_for_frame(snapshot: Dictionary) -> Dictionary:
+	runtime_model_refreshed_this_frame = false
+	var elapsed := float(snapshot.get("elapsed", 0.0))
+	if runtime_force_model_sync or runtime_cached_model.is_empty() or absf(elapsed - runtime_cached_model_elapsed) >= RUNTIME_MODEL_SYNC_INTERVAL:
+		runtime_cached_model = _generated_runtime_model(snapshot)
+		runtime_cached_model_elapsed = elapsed
+		runtime_force_model_sync = false
+		runtime_model_refreshed_this_frame = true
+	return runtime_cached_model
 
 
 func _keeper_exp_ratio(player: Dictionary, _resources: Dictionary) -> float:
@@ -4951,12 +5607,13 @@ func _bootstrap_progression_state() -> void:
 	progression.add_item_instance(200203)
 	progression.add_item_instance(200204)
 	progression.auto_equip_best_stones()
-	_apply_progression_loadout_to_sim()
 	for equipment_slot in ["Head", "Chest", "Gloves", "Boots", "Necklace", "Ring"]:
 		progression.grant_monster_kill_equipment(111011, 1, {"slot": equipment_slot, "grade": 1})
 	for _i in range(ProgressionState.EQUIPMENT_SYNTHESIS_COUNT - 1):
 		progression.grant_monster_kill_equipment(111011, 1, {"slot": "Head", "grade": 1})
+	progression.auto_equip_best_equipment()
 	progression.learn_skill(200502)
+	_apply_progression_loadout_to_sim()
 
 
 func _progression_snapshot() -> Dictionary:
@@ -4968,6 +5625,15 @@ func _progression_snapshot() -> Dictionary:
 func _progression_inventory_stones(progression_snapshot: Dictionary) -> Array:
 	var stones := []
 	for instance in progression_snapshot.get("items", []):
+		if typeof(instance) == TYPE_DICTIONARY and _progression_has_tag(instance, "StoneWeapon"):
+			stones.append(instance)
+	return stones
+
+
+func _progression_equipped_stones(progression_snapshot: Dictionary) -> Array:
+	var stones := []
+	var equipped: Array = progression_snapshot.get("equipped_stones", []) if typeof(progression_snapshot.get("equipped_stones", [])) == TYPE_ARRAY else []
+	for instance in equipped:
 		if typeof(instance) == TYPE_DICTIONARY and _progression_has_tag(instance, "StoneWeapon"):
 			stones.append(instance)
 	return stones
@@ -4988,10 +5654,24 @@ func _apply_progression_loadout_to_sim() -> void:
 	if progression == null or sim == null:
 		return
 	var snapshot := _progression_snapshot()
-	var stones := _progression_inventory_stones(snapshot)
-	var stats := _progression_stone_stat_summary(stones)
+	var stones := _progression_equipped_stones(snapshot)
+	var stats: Dictionary = snapshot.get("equipped_stats", {}) if typeof(snapshot.get("equipped_stats", {})) == TYPE_DICTIONARY else _progression_stone_stat_summary(stones)
 	sim.set_player_stat_bonuses(stats)
+	sim.set_player_learned_skills(_progression_learned_skills(snapshot))
 	sim.set_player_stone_loadout(stones)
+
+
+func _progression_learned_skills(progression_snapshot: Dictionary) -> Array:
+	var learned: Array = progression_snapshot.get("learned_skills", []) if typeof(progression_snapshot.get("learned_skills", [])) == TYPE_ARRAY else []
+	if not learned.is_empty():
+		return learned
+	var result := []
+	var skills: Dictionary = progression_snapshot.get("skills", {}) if typeof(progression_snapshot.get("skills", {})) == TYPE_DICTIONARY else {}
+	for skill_item_id in skills.keys():
+		var entry: Dictionary = skills[skill_item_id] if typeof(skills[skill_item_id]) == TYPE_DICTIONARY else {}
+		if int(entry.get("skill_data_id", 0)) > 0:
+			result.append(entry.duplicate(true))
+	return result
 
 
 func _progression_feed_preview() -> String:
@@ -5012,9 +5692,10 @@ func _progression_equip_best_stones() -> String:
 
 func _progression_stone_loadout_message() -> String:
 	var snapshot := _progression_snapshot()
-	var equipped := _progression_inventory_stones(snapshot)
+	var equipped := _progression_equipped_stones(snapshot)
 	if equipped.is_empty():
-		return "돌 자동장착: 인벤토리 돌 없음"
+		var owned_count := _progression_inventory_stones(snapshot).size()
+		return "돌 자동장착: 장착된 돌 없음 | 보유 %d개" % owned_count
 	var names := []
 	for instance in equipped:
 		if typeof(instance) == TYPE_DICTIONARY:
@@ -5026,11 +5707,12 @@ func _progression_stone_loadout_message() -> String:
 	if names.size() > display_names.size():
 		display_names.append("+%d" % (names.size() - display_names.size()))
 	var stats := _progression_stone_stat_summary(equipped)
-	return "돌 자동장착: %s | 공격 +%d | 공속 +%.1f%% | 독립 쿨 %d개" % [
+	return "돌 자동장착: %s | 공격 +%d | 공속 +%.1f%% | 독립 쿨 %d/%d개" % [
 		", ".join(display_names),
 		int(round(float(stats.get("Attack", 0.0)))),
 		float(stats.get("AttackSpeedPercent", 0.0)) + float(stats.get("CooldownPercent", 0.0)),
 		equipped.size(),
+		ProgressionState.STONE_EQUIP_SLOT_COUNT,
 	]
 
 
@@ -5051,6 +5733,49 @@ func _progression_equip_stone_instance(instance_id: int) -> String:
 	]
 
 
+func _progression_toggle_equipment_instance(instance_id: int) -> String:
+	if progression == null:
+		return "장비 장착 불가: 진행 상태가 준비되지 않음"
+	var instance := _progression_instance_for_id(instance_id)
+	if instance.is_empty() or str(instance.get("category", "")) != "Equipment":
+		return "장비 장착 불가: 선택한 슬롯에 장비가 없음"
+	var slot_label := _equipment_slot_label(str(instance.get("slot", "")))
+	if _progression_is_equipment_equipped(instance_id):
+		var unequip_result: Dictionary = progression.unequip_equipment(instance_id)
+		if not bool(unequip_result.get("ok", false)):
+			return "장비 해제 실패: %s" % str(unequip_result.get("message", unequip_result.get("error", "")))
+		_apply_progression_loadout_to_sim()
+		return "장비 해제 완료: %s | %s" % [
+			slot_label,
+			_progression_equipment_loadout_message(),
+		]
+	var equip_result: Dictionary = progression.equip_equipment(instance_id)
+	if not bool(equip_result.get("ok", false)):
+		return "장비 장착 실패: %s" % str(equip_result.get("message", equip_result.get("error", "")))
+	_apply_progression_loadout_to_sim()
+	return "장비 장착 완료: %s T%d | %s" % [
+		slot_label,
+		int(instance.get("grade", 1)),
+		_progression_equipment_loadout_message(),
+	]
+
+
+func _progression_equipment_loadout_message() -> String:
+	var snapshot := _progression_snapshot()
+	var equipped: Array = snapshot.get("equipped_equipment", []) if typeof(snapshot.get("equipped_equipment", [])) == TYPE_ARRAY else []
+	if equipped.is_empty():
+		return "장착 장비 없음"
+	var stats: Dictionary = snapshot.get("equipped_equipment_stats", {}) if typeof(snapshot.get("equipped_equipment_stats", {})) == TYPE_DICTIONARY else {}
+	var attack := float(stats.get("Attack", 0.0))
+	var defense := float(stats.get("Defense", 0.0))
+	return "장비 %d/%d개 · 공격 +%s · 방어 +%s" % [
+		equipped.size(),
+		ProgressionState.EQUIPMENT_SLOTS.size(),
+		_format_stat_value(attack),
+		_format_stat_value(defense),
+	]
+
+
 func _progression_merge_stones() -> String:
 	if progression == null:
 		return "합성 불가: 진행 상태가 준비되지 않음"
@@ -5062,7 +5787,7 @@ func _progression_merge_stones_with_ids(ids: Array) -> String:
 	if progression == null:
 		return "합성 불가: 진행 상태가 준비되지 않음"
 	if ids.size() < ProgressionState.STONE_SYNTHESIS_COUNT:
-		return "합성 불가: 같은 티어 돌 3개 필요"
+		return "합성 불가: 같은 티어 돌 2개 필요"
 	var result: Dictionary = progression.synthesize_stones(ids)
 	if not bool(result.get("ok", false)):
 		return "합성 실패: %s" % str(result.get("message", result.get("error", "")))
@@ -5072,7 +5797,34 @@ func _progression_merge_stones_with_ids(ids: Array) -> String:
 	var result_instance: Dictionary = result.get("result", {}) if typeof(result.get("result", {})) == TYPE_DICTIONARY else {}
 	generated_selected_inventory_instance_id = int(result_instance.get("instance_id", 0))
 	generated_selected_inventory_kind = "stone"
-	return "합성 완료: %s 3개 -> %s Lv.1 | %s" % [source_name, result_name, _progression_stone_loadout_message()]
+	return "합성 완료: %s 2개 -> %s Lv.1 | %s" % [source_name, result_name, _progression_stone_loadout_message()]
+
+
+func _progression_auto_merge_stones() -> String:
+	if progression == null:
+		return "돌 자동 머지 불가: 진행 상태가 준비되지 않음"
+	var merged_count := 0
+	var last_result_name := ""
+	for _pass_index in range(AUTO_STONE_MERGE_MAX_PASSES):
+		var ids := _progression_auto_stone_merge_ids()
+		if ids.size() < ProgressionState.STONE_SYNTHESIS_COUNT:
+			break
+		var result: Dictionary = progression.synthesize_stones(ids)
+		if not bool(result.get("ok", false)):
+			break
+		merged_count += 1
+		var result_instance: Dictionary = result.get("result", {}) if typeof(result.get("result", {})) == TYPE_DICTIONARY else {}
+		generated_selected_inventory_instance_id = int(result_instance.get("instance_id", 0))
+		generated_selected_inventory_kind = "stone"
+		last_result_name = str(result_instance.get("name", _progression_item_name(int(result.get("result_item_data_id", 0)))))
+	_apply_progression_loadout_to_sim()
+	if merged_count <= 0:
+		return ""
+	return "돌 자동 머지 ON: %d회 완료 -> %s | %s" % [
+		merged_count,
+		last_result_name,
+		_progression_stone_loadout_message(),
+	]
 
 
 func _progression_upgrade_equipment() -> String:
@@ -5085,7 +5837,44 @@ func _progression_upgrade_equipment() -> String:
 	if not bool(result.get("ok", false)):
 		return "장비 승급 실패: %s" % str(result.get("message", result.get("error", "")))
 	var item: Dictionary = result.get("result", {}) if typeof(result.get("result", {})) == TYPE_DICTIONARY else {}
+	generated_selected_inventory_instance_id = int(item.get("instance_id", generated_selected_inventory_instance_id))
+	generated_selected_inventory_kind = "equipment"
+	_apply_progression_loadout_to_sim()
 	return "장비 승급 완료: %s T%d 획득" % [str(item.get("name", "상위 장비")), int(result.get("result_grade", item.get("grade", 0)))]
+
+
+func _progression_auto_merge_equipment() -> String:
+	if progression == null:
+		return "장비 자동 머지 불가: 진행 상태가 준비되지 않음"
+	var merged_count := 0
+	var last_result_name := ""
+	var last_result_grade := 0
+	for _pass_index in range(AUTO_EQUIPMENT_MERGE_MAX_PASSES):
+		var ids := _progression_auto_equipment_merge_ids()
+		if ids.size() < ProgressionState.EQUIPMENT_SYNTHESIS_COUNT:
+			break
+		var result: Dictionary = progression.synthesize_equipment(ids)
+		if not bool(result.get("ok", false)):
+			break
+		merged_count += 1
+		var result_instance: Dictionary = result.get("result", {}) if typeof(result.get("result", {})) == TYPE_DICTIONARY else {}
+		generated_selected_inventory_instance_id = int(result_instance.get("instance_id", 0))
+		generated_selected_inventory_kind = "equipment"
+		last_result_name = str(result_instance.get("name", _progression_item_name(int(result_instance.get("item_data_id", 0)))))
+		last_result_grade = int(result.get("result_grade", result_instance.get("grade", 0)))
+	_apply_progression_loadout_to_sim()
+	if merged_count <= 0:
+		return ""
+	var snapshot := _progression_snapshot()
+	var result_text := last_result_name
+	if last_result_grade > 0:
+		result_text = "%s T%d" % [last_result_name, last_result_grade]
+	return "장비 자동 머지 ON: %d회 완료 -> %s | 장비 %d/%d" % [
+		merged_count,
+		result_text,
+		_progression_equipment_owned_count(snapshot),
+		EQUIPMENT_STORAGE_CAPACITY,
+	]
 
 
 func _progression_equipment_upgrade_preview() -> Dictionary:
@@ -5096,7 +5885,10 @@ func _progression_equipment_upgrade_preview() -> Dictionary:
 		var instance := _progression_instance_for_id(int(raw_id))
 		if not instance.is_empty():
 			consumed.append(instance)
-			source_slots.append(_progression_equipment_slot_data(instance))
+			var source_slot := _progression_equipment_slot_data(instance)
+			source_slot["badge"] = "T%d" % int(instance.get("grade", 1))
+			source_slot["rarity"] = "rare" if int(instance.get("grade", 1)) >= 3 else "notable"
+			source_slots.append(source_slot)
 
 	while source_slots.size() < ProgressionState.EQUIPMENT_SYNTHESIS_COUNT:
 		source_slots.append({"name": "비어", "count": 0, "badge": "", "rarity": "locked"})
@@ -5163,9 +5955,10 @@ func _progression_equipment_selection_message(instance_id: int) -> String:
 	var slot_label := _equipment_slot_label(str(instance.get("slot", "")))
 	var grade := int(instance.get("grade", 1))
 	var stat_text := _progression_equipment_stat_text(instance)
+	var equip_state := "장착됨" if _progression_is_equipment_equipped(instance_id) else "미장착"
 	if ids.size() >= ProgressionState.EQUIPMENT_SYNTHESIS_COUNT:
-		return "장비 선택: %s T%d | 승급 가능 %d/%d | %s" % [slot_label, grade, ids.size(), ProgressionState.EQUIPMENT_SYNTHESIS_COUNT, stat_text]
-	return "장비 선택: %s T%d | 승급 재료 %d/%d | %s" % [slot_label, grade, ids.size(), ProgressionState.EQUIPMENT_SYNTHESIS_COUNT, stat_text]
+		return "장비 선택: %s T%d | %s | 승급 가능 %d/%d | %s" % [slot_label, grade, equip_state, ids.size(), ProgressionState.EQUIPMENT_SYNTHESIS_COUNT, stat_text]
+	return "장비 선택: %s T%d | %s | 승급 재료 %d/%d | %s" % [slot_label, grade, equip_state, ids.size(), ProgressionState.EQUIPMENT_SYNTHESIS_COUNT, stat_text]
 
 
 func _progression_stone_merge_ids() -> Array:
@@ -5193,6 +5986,51 @@ func _progression_stone_merge_ids() -> Array:
 			best_ids = ids
 			best_item_id = int(item_id)
 	return best_ids.slice(0, ProgressionState.STONE_SYNTHESIS_COUNT)
+
+
+func _progression_auto_stone_merge_ids() -> Array:
+	var snapshot := _progression_snapshot()
+	var groups := {}
+	for instance in snapshot.get("items", []):
+		if typeof(instance) != TYPE_DICTIONARY:
+			continue
+		if not _progression_has_tag(instance, "StoneWeapon"):
+			continue
+		var item_id := int(instance.get("item_data_id", 0))
+		if not _progression_stone_item_can_merge(item_id):
+			continue
+		if not groups.has(item_id):
+			groups[item_id] = []
+		var ids: Array = groups[item_id]
+		ids.append(int(instance.get("instance_id", 0)))
+		groups[item_id] = ids
+	var best_ids := []
+	var best_item_id := 0
+	for item_id in groups.keys():
+		var ids: Array = groups[item_id]
+		if ids.size() >= ProgressionState.STONE_SYNTHESIS_COUNT and (best_ids.is_empty() or int(item_id) < best_item_id):
+			best_ids = ids
+			best_item_id = int(item_id)
+	return best_ids.slice(0, ProgressionState.STONE_SYNTHESIS_COUNT)
+
+
+func _progression_stone_item_can_merge(item_id: int) -> bool:
+	if store == null or item_id <= 0:
+		return false
+	var source_item: Dictionary = store.get_item(item_id)
+	if source_item.is_empty() or not _progression_has_tag(source_item, "StoneWeapon"):
+		return false
+	var source_stage := _stone_stage_from_item(source_item)
+	for item in store.get_records("Items"):
+		if typeof(item) != TYPE_DICTIONARY:
+			continue
+		if not _progression_has_tag(item, "StoneWeapon"):
+			continue
+		if int(item.get("parentId", 0)) == item_id:
+			return true
+		if source_stage > 0 and _progression_has_tag(item, "StoneStage%02d" % (source_stage + 1)):
+			return true
+	return false
 
 
 func _progression_stone_merge_ids_for_instance(instance_id: int) -> Array:
@@ -5266,6 +6104,48 @@ func _progression_equipment_upgrade_ids() -> Array:
 	return []
 
 
+func _progression_auto_equipment_merge_ids() -> Array:
+	var snapshot := _progression_snapshot()
+	var groups := {}
+	var group_slots := {}
+	var group_grades := {}
+	for instance in snapshot.get("items", []):
+		if typeof(instance) != TYPE_DICTIONARY:
+			continue
+		if str(instance.get("category", "")) != "Equipment":
+			continue
+		var slot := str(instance.get("slot", instance.get("type", "")))
+		var grade := int(instance.get("grade", 0))
+		if slot == "" or grade <= 0:
+			continue
+		if _progression_equipment_definition(slot, grade + 1).is_empty():
+			continue
+		var key := "%s:%d" % [slot, grade]
+		if not groups.has(key):
+			groups[key] = []
+			group_slots[key] = slot
+			group_grades[key] = grade
+		var ids: Array = groups[key]
+		ids.append(int(instance.get("instance_id", 0)))
+		groups[key] = ids
+	var candidates := []
+	for key in groups.keys():
+		var ids: Array = groups[key]
+		if ids.size() < ProgressionState.EQUIPMENT_SYNTHESIS_COUNT:
+			continue
+		ids.sort()
+		candidates.append({
+			"sort_key": "%03d:%s" % [int(group_grades.get(key, 0)), str(group_slots.get(key, ""))],
+			"ids": ids.slice(0, ProgressionState.EQUIPMENT_SYNTHESIS_COUNT),
+		})
+	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return str(a.get("sort_key", "")) < str(b.get("sort_key", ""))
+	)
+	if candidates.is_empty():
+		return []
+	return candidates[0].get("ids", [])
+
+
 func _progression_equipment_upgrade_ids_for_instance(instance_id: int) -> Array:
 	var selected := _progression_instance_for_id(instance_id)
 	if selected.is_empty() or str(selected.get("category", "")) != "Equipment":
@@ -5296,13 +6176,15 @@ func _progression_instance_for_id(instance_id: int) -> Dictionary:
 
 
 func _progression_equipment_slot_data(instance: Dictionary) -> Dictionary:
+	var instance_id := int(instance.get("instance_id", 0))
+	var equipped := _progression_is_equipment_equipped(instance_id)
 	return {
 		"name": _equipment_slot_label(str(instance.get("slot", ""))),
 		"count": int(instance.get("level", 1)),
 		"count_text": "Lv.%d" % int(instance.get("level", 1)),
-		"badge": "T%d" % int(instance.get("grade", 1)),
-		"rarity": "rare" if int(instance.get("grade", 1)) >= 3 else "notable",
-		"instance_id": int(instance.get("instance_id", 0)),
+		"badge": "착" if equipped else "T%d" % int(instance.get("grade", 1)),
+		"rarity": "equipped" if equipped else ("rare" if int(instance.get("grade", 1)) >= 3 else "notable"),
+		"instance_id": instance_id,
 		"item_data_id": int(instance.get("item_data_id", 0)),
 		"icon_path": _progression_item_icon_path(int(instance.get("item_data_id", 0))),
 		"kind": "equipment",
@@ -5341,12 +6223,13 @@ func _progression_inventory_detail_lines(instance: Dictionary, is_stone: bool) -
 	var instance_id := int(instance.get("instance_id", 0))
 	if is_stone:
 		var merge_ids := _progression_stone_merge_ids_for_instance(instance_id)
-		lines.append("장착 상태: 자동 활성")
+		lines.append("분류: 돌무기")
 		lines.append("합성 재료: 같은 돌 %d/%d" % [merge_ids.size(), ProgressionState.STONE_SYNTHESIS_COUNT])
 		var skill_ids: Array = instance.get("equip_skill_ids", []) if typeof(instance.get("equip_skill_ids", [])) == TYPE_ARRAY else []
 		lines.append("공격 스킬: %s" % _progression_skill_names(skill_ids))
 	else:
 		var upgrade_ids := _progression_equipment_upgrade_ids_for_instance(instance_id)
+		lines.append("장착 상태: %s" % ("장착됨" if _progression_is_equipment_equipped(instance_id) else "미장착"))
 		lines.append("부위: %s" % _equipment_slot_label(str(instance.get("slot", ""))))
 		lines.append("승급 재료: 같은 부위/등급 %d/%d" % [upgrade_ids.size(), ProgressionState.EQUIPMENT_SYNTHESIS_COUNT])
 		lines.append("옵션: %s" % _progression_equipment_option_text(instance))
@@ -5359,8 +6242,18 @@ func _progression_inventory_detail_lines(instance: Dictionary, is_stone: bool) -
 
 
 func _progression_is_stone_equipped(instance_id: int) -> bool:
-	var instance := _progression_instance_for_id(instance_id)
-	return not instance.is_empty() and _progression_has_tag(instance, "StoneWeapon")
+	var snapshot := _progression_snapshot()
+	var equipped_ids: Array = snapshot.get("equipped_stone_instance_ids", []) if typeof(snapshot.get("equipped_stone_instance_ids", [])) == TYPE_ARRAY else []
+	return equipped_ids.has(int(instance_id))
+
+
+func _progression_is_equipment_equipped(instance_id: int) -> bool:
+	var snapshot := _progression_snapshot()
+	var equipped_ids: Dictionary = snapshot.get("equipped_equipment_instance_ids", {}) if typeof(snapshot.get("equipped_equipment_instance_ids", {})) == TYPE_DICTIONARY else {}
+	for slot in equipped_ids.keys():
+		if int(equipped_ids[slot]) == int(instance_id):
+			return true
+	return false
 
 
 func _progression_skill_names(skill_ids: Array) -> String:
@@ -5455,13 +6348,13 @@ func _progression_stone_slots(snapshot: Dictionary, resources: Dictionary, progr
 	var slots := []
 	var elapsed_time := float(snapshot.get("elapsed", 0.0))
 	var active_index := 0
+	var equipped_ids: Array = progression_snapshot.get("equipped_stone_instance_ids", []) if typeof(progression_snapshot.get("equipped_stone_instance_ids", [])) == TYPE_ARRAY else []
 	for instance in progression_snapshot.get("items", []):
 		if typeof(instance) != TYPE_DICTIONARY or not _progression_has_tag(instance, "StoneWeapon"):
 			continue
 		var instance_id := int(instance.get("instance_id", 0))
 		var merge_ids := _progression_stone_merge_ids_for_instance(instance_id)
-		var is_equipped := true
-		var cooldown = fmod(elapsed_time * (1.25 - minf(0.45, float(active_index) * 0.16)), 1.0)
+		var is_equipped := equipped_ids.has(instance_id)
 		var slot := {
 			"name": _short_item_name(str(instance.get("name", "돌"))),
 			"count": int(instance.get("level", 1)),
@@ -5475,10 +6368,9 @@ func _progression_stone_slots(snapshot: Dictionary, resources: Dictionary, progr
 			"selected": generated_selected_inventory_kind == "stone" and generated_selected_inventory_instance_id == instance_id,
 			"tooltip": "클릭 상세 | 드래그 머지 | 같은 돌 %d/%d" % [merge_ids.size(), ProgressionState.STONE_SYNTHESIS_COUNT],
 		}
-		if cooldown != null:
-			slot["cooldown"] = cooldown
 		slots.append(slot)
 		if is_equipped:
+			slot["cooldown"] = fmod(elapsed_time * (1.25 - minf(0.45, float(active_index) * 0.16)), 1.0)
 			active_index += 1
 	var materials: Dictionary = progression_snapshot.get("materials", {}) if typeof(progression_snapshot.get("materials", {})) == TYPE_DICTIONARY else {}
 	slots.append({"name": "파편", "count": int(materials.get(200101, 0)), "badge": "먹", "rarity": "common", "kind": "material", "item_data_id": 200101, "icon_path": _progression_item_icon_path(200101), "action": "inspect_material", "tooltip": "조약돌 파편: 돌 먹이기와 성장 재료"})
@@ -5497,12 +6389,13 @@ func _progression_equipment_slots(resources: Dictionary, progression_snapshot: D
 			continue
 		var instance_id := int(instance.get("instance_id", 0))
 		var upgrade_ids := _progression_equipment_upgrade_ids_for_instance(instance_id)
+		var equipped := _progression_is_equipment_equipped(instance_id)
 		slots.append({
 			"name": _equipment_slot_label(str(instance.get("slot", ""))),
 			"count": int(instance.get("level", 1)),
 			"count_text": "Lv.%d" % int(instance.get("level", 1)),
-			"badge": "T%d" % int(instance.get("grade", 1)),
-			"rarity": "rare" if int(instance.get("grade", 1)) >= 3 else "notable",
+			"badge": "착" if equipped else "T%d" % int(instance.get("grade", 1)),
+			"rarity": "equipped" if equipped else ("rare" if int(instance.get("grade", 1)) >= 3 else "notable"),
 			"instance_id": instance_id,
 			"item_data_id": int(instance.get("item_data_id", 0)),
 			"icon_path": _progression_item_icon_path(int(instance.get("item_data_id", 0))),
@@ -5511,7 +6404,7 @@ func _progression_equipment_slots(resources: Dictionary, progression_snapshot: D
 			"glyph": _equipment_slot_glyph(str(instance.get("slot", ""))),
 			"action": "select_equipment",
 			"selected": generated_selected_inventory_kind == "equipment" and generated_selected_inventory_instance_id == instance_id,
-			"tooltip": "클릭 선택 | 같은 부위/등급 %d/%d" % [upgrade_ids.size(), ProgressionState.EQUIPMENT_SYNTHESIS_COUNT],
+			"tooltip": "클릭 상세 | %s | 같은 부위/등급 %d/%d" % ["장착됨" if equipped else "미장착", upgrade_ids.size(), ProgressionState.EQUIPMENT_SYNTHESIS_COUNT],
 		})
 	var materials: Dictionary = progression_snapshot.get("materials", {}) if typeof(progression_snapshot.get("materials", {})) == TYPE_DICTIONARY else {}
 	slots.append({"name": "광석", "count": int(materials.get(200102, 0)), "count_text": "x%d" % int(materials.get(200102, 0)), "badge": "보유", "rarity": "notable", "kind": "material", "item_data_id": 200102, "icon_path": _progression_item_icon_path(200102), "action": "inspect_material", "tooltip": "이끼 광석: 장비 승급 재료"})
@@ -5526,20 +6419,14 @@ func _progression_equipment_slots(resources: Dictionary, progression_snapshot: D
 
 
 func _progression_equipment_loadout_slots(progression_snapshot: Dictionary) -> Array:
-	var best_by_slot := {}
-	for instance in progression_snapshot.get("items", []):
+	var equipped_by_slot := {}
+	var equipped_equipment: Array = progression_snapshot.get("equipped_equipment", []) if typeof(progression_snapshot.get("equipped_equipment", [])) == TYPE_ARRAY else []
+	for instance in equipped_equipment:
 		if typeof(instance) != TYPE_DICTIONARY or str(instance.get("category", "")) != "Equipment":
 			continue
-		var slot_key := str(instance.get("slot", ""))
-		if slot_key == "":
-			continue
-		var current: Dictionary = best_by_slot.get(slot_key, {}) if typeof(best_by_slot.get(slot_key, {})) == TYPE_DICTIONARY else {}
-		var candidate_grade := int(instance.get("grade", 0))
-		var current_grade := int(current.get("grade", 0))
-		var candidate_level := int(instance.get("level", 0))
-		var current_level := int(current.get("level", 0))
-		if current.is_empty() or candidate_grade > current_grade or (candidate_grade == current_grade and candidate_level > current_level):
-			best_by_slot[slot_key] = instance
+		var equipped_slot := str(instance.get("slot", ""))
+		if equipped_slot != "":
+			equipped_by_slot[equipped_slot] = instance
 	var specs := [
 		{"slot": "Head", "name": "투구", "glyph": "투"},
 		{"slot": "Chest", "name": "갑옷", "glyph": "갑"},
@@ -5553,7 +6440,7 @@ func _progression_equipment_loadout_slots(progression_snapshot: Dictionary) -> A
 	var slots := []
 	for spec in specs:
 		var slot_key := str(spec.get("slot", ""))
-		var instance: Dictionary = best_by_slot.get(slot_key, {}) if typeof(best_by_slot.get(slot_key, {})) == TYPE_DICTIONARY else {}
+		var instance: Dictionary = equipped_by_slot.get(slot_key, {}) if typeof(equipped_by_slot.get(slot_key, {})) == TYPE_DICTIONARY else {}
 		if not instance.is_empty():
 			var data := _progression_equipment_slot_data(instance)
 			data["name"] = str(spec.get("name", data.get("name", "")))
@@ -5578,7 +6465,7 @@ func _progression_equipment_loadout_slots(progression_snapshot: Dictionary) -> A
 
 
 func _progression_equipped_stone_count(progression_snapshot: Dictionary) -> int:
-	return _progression_inventory_stones(progression_snapshot).size()
+	return _progression_equipped_stones(progression_snapshot).size()
 
 
 func _progression_equipment_owned_count(progression_snapshot: Dictionary) -> int:
@@ -5610,6 +6497,15 @@ func _normalize_generated_inventory_selection(progression_snapshot: Dictionary) 
 func _progression_has_tag(instance: Dictionary, tag: String) -> bool:
 	var tags = instance.get("tags", [])
 	return typeof(tags) == TYPE_ARRAY and tags.has(tag)
+
+
+func _stone_stage_from_item(item: Dictionary) -> int:
+	var tags: Array = item.get("tags", []) if typeof(item.get("tags", [])) == TYPE_ARRAY else []
+	for raw_tag in tags:
+		var tag := str(raw_tag)
+		if tag.begins_with("StoneStage"):
+			return int(tag.replace("StoneStage", ""))
+	return int(item.get("stage", 0))
 
 
 func _progression_item_name(item_id: int) -> String:
@@ -5818,9 +6714,30 @@ func _sync_generated_slot_grid(node_path: String, slot_data) -> void:
 	for child in (grid as GridContainer).get_children():
 		if child is Control:
 			var data: Dictionary = slots[index] if index < slots.size() and typeof(slots[index]) == TYPE_DICTIONARY else {}
+			var signature := _generated_slot_data_signature(data)
+			if str((child as Control).get_meta("runtime_slot_signature", "")) == signature:
+				index += 1
+				continue
+			(child as Control).set_meta("runtime_slot_signature", signature)
 			_prepare_generated_inventory_slot(child as Control, node_path, index, data)
 			_apply_generated_slot_data(child as Control, data)
 			index += 1
+
+
+func _generated_slot_data_signature(data: Dictionary) -> String:
+	return "%s|%d|%d|%d|%s|%s|%s|%s|%s|%.3f|%s" % [
+		str(data.get("kind", "")),
+		int(data.get("instance_id", 0)),
+		int(data.get("item_data_id", 0)),
+		int(data.get("count", 0)),
+		str(data.get("count_text", "")),
+		str(data.get("badge", "")),
+		str(data.get("rarity", "")),
+		str(data.get("action", "")),
+		str(data.get("name", "")),
+		float(data.get("cooldown", -1.0)),
+		str(data.get("selected", false)),
+	]
 
 
 func _prepare_generated_inventory_slot(slot: Control, node_path: String, index: int, data: Dictionary) -> void:
@@ -5901,7 +6818,7 @@ func _update_generated_inventory_slot_drag(mouse_position: Vector2) -> void:
 		generated_slot_drag_active = true
 		generated_inventory_tab = "stone"
 		generated_selected_action = "merge"
-		generated_action_message = "돌 합성: 같은 돌 슬롯에 드롭하면 3개를 다음 단계로 합성"
+		generated_action_message = "돌 합성: 같은 돌 슬롯에 드롭하면 2개를 상급 돌로 합성"
 		_refresh_generated_overlay_now()
 	_ensure_generated_inventory_drag_preview()
 	if generated_slot_drag_preview != null and is_instance_valid(generated_slot_drag_preview):
@@ -5997,7 +6914,7 @@ func _progression_merge_stones_from_drag(source_data: Dictionary, target_slot: C
 		return "합성 불가: 같은 돌끼리만 머지됩니다"
 	var ids := _progression_stone_merge_ids_for_drag(source_instance_id, target_instance_id)
 	if ids.size() < ProgressionState.STONE_SYNTHESIS_COUNT:
-		return "합성 불가: 같은 돌 3개가 필요합니다"
+		return "합성 불가: 같은 돌 2개가 필요합니다"
 	return _progression_merge_stones_with_ids(ids)
 
 
@@ -6097,7 +7014,7 @@ func _generated_inventory_slot_tooltip(data: Dictionary) -> String:
 	var action := str(data.get("action", "inspect"))
 	match action:
 		"equip_stone":
-			return "클릭: 상세 | 드래그: 같은 돌 3개 머지"
+			return "클릭: 상세 | 드래그: 같은 돌 2개 머지"
 		"select_equipment":
 			return "클릭: 장비 선택, 승급 재료 확인"
 		"open_equipment_upgrade":
@@ -6286,6 +7203,7 @@ func _sync_generated_combat_overlay(snapshot: Dictionary, model: Dictionary) -> 
 		return
 	_sync_generated_combat_map_texture(snapshot)
 	_sync_generated_combat_scene_chrome(snapshot, model)
+	_sync_generated_skill_panel(snapshot)
 	_sync_generated_drop_toast(snapshot, model)
 	_sync_generated_combat_fx(snapshot)
 	_sync_generated_combat_units(snapshot)
@@ -6304,11 +7222,18 @@ func _sync_generated_combat_map_texture(snapshot: Dictionary) -> void:
 	var texture_rect := ground as TextureRect
 	if texture != null and texture_rect.texture != texture:
 		texture_rect.texture = texture
+	var parent_node := texture_rect.get_parent()
+	var strip_size := COMBAT_NATIVE_CROP_SIZE
+	if parent_node != null and parent_node is Control:
+		strip_size = _combat_strip_render_size(parent_node as Control)
+	texture_rect.position = Vector2.ZERO
+	texture_rect.size = strip_size
+	texture_rect.custom_minimum_size = strip_size
 	texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	texture_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	texture_rect.visible = true
-	texture_rect.modulate = Color(1.08, 1.02, 0.92, 1.0)
+	texture_rect.modulate = Color(1.08, 1.02, 0.92, clampf(generated_combat_opacity, COMBAT_OPACITY_MIN, COMBAT_OPACITY_MAX))
 	texture_rect.z_index = 0
 	texture_rect.z_as_relative = false
 	texture_rect.set_meta("combat_opacity_base_alpha", 1.0)
@@ -6367,12 +7292,58 @@ func _sync_generated_skill_panel(snapshot: Dictionary) -> void:
 		return
 	var bar_node = generated_runtime_nodes.get("combat_skill_cooldown", null)
 	var label_node = generated_runtime_nodes.get("combat_skill_label", null)
+	var count_node = generated_runtime_nodes.get("combat_skill_count", null)
+	var orb_node = generated_runtime_nodes.get("combat_skill_orb", null)
 	if bar_node == null or not bar_node is ProgressBar or label_node == null or not label_node is Label:
 		return
+	var learned_ids: Array = snapshot.get("player_learned_skill_ids", []) if typeof(snapshot.get("player_learned_skill_ids", [])) == TYPE_ARRAY else []
+	var learned_casts := int(snapshot.get("player_learned_skill_cast_count", 0))
+	var panel := panel_node as PanelContainer
+	panel.visible = not learned_ids.is_empty()
+	if learned_ids.is_empty():
+		return
+	var latest := _latest_combat_attack_event(snapshot, true)
+	var latest_any := latest if not latest.is_empty() else _latest_combat_attack_event(snapshot, false)
+	var skill_name := str(latest_any.get("skill_name", "AUTO SKILL")) if not latest_any.is_empty() else "AUTO SKILL"
+	var skill_level := int(latest_any.get("skill_level", 1)) if not latest_any.is_empty() else 1
+	var duration := maxf(0.05, float(latest.get("duration", latest.get("ttl", 0.0)))) if not latest.is_empty() else 0.0
+	var remaining := maxf(0.0, float(latest.get("ttl", 0.0))) if not latest.is_empty() else 0.0
+	var active_ratio := clampf(remaining / duration, 0.0, 1.0) if duration > 0.0 else 0.0
 	var elapsed := float(snapshot.get("elapsed", 0.0))
-	var ratio := 0.5 + 0.5 * sin(elapsed * 1.2)
-	(bar_node as ProgressBar).value = clampf(ratio, 0.0, 1.0)
-	(label_node as Label).text = "AUTO"
+	var pulse := active_ratio * (0.18 + 0.12 * sin(elapsed * 18.0))
+	panel.modulate = Color(1.0 + pulse, 1.0 + pulse * 0.65, 1.0 + pulse * 1.2, 1.0)
+	(bar_node as ProgressBar).value = active_ratio if active_ratio > 0.0 else 1.0
+	(label_node as Label).text = "SKILL %s" % _combat_skill_panel_name(skill_name)
+	if count_node != null and count_node is Label:
+		(count_node as Label).text = "Lv.%d  x%d" % [maxi(1, skill_level), learned_casts]
+	if orb_node != null and orb_node is Label:
+		var orb := orb_node as Label
+		orb.text = "◆" if active_ratio > 0.0 else "●"
+		orb.add_theme_color_override("font_color", Color("#fff1a8") if active_ratio > 0.0 else Color("#65d7ff"))
+
+
+func _latest_combat_attack_event(snapshot: Dictionary, learned_only := false) -> Dictionary:
+	var fx_events: Array = snapshot.get("fx_events", []) if typeof(snapshot.get("fx_events", [])) == TYPE_ARRAY else []
+	for index in range(fx_events.size() - 1, -1, -1):
+		var event = fx_events[index]
+		if typeof(event) != TYPE_DICTIONARY:
+			continue
+		var data := event as Dictionary
+		if str(data.get("kind", "")) != "attack":
+			continue
+		if learned_only and not bool(data.get("is_learned_skill", false)):
+			continue
+		return data
+	return {}
+
+
+func _combat_skill_panel_name(skill_name: String) -> String:
+	var text := skill_name.strip_edges()
+	if text == "":
+		return "AUTO SKILL"
+	if text.length() > 7:
+		return text.substr(0, 7)
+	return text
 
 
 func _sync_generated_boss_panel(snapshot: Dictionary) -> void:
@@ -6408,8 +7379,10 @@ func _sync_generated_map_progress(snapshot: Dictionary) -> void:
 	var progress := clampf((float(wave - 1) + wave_ratio) / float(wave_count), 0.0, 1.0)
 	var bar := bar_node as ProgressBar
 	bar.value = progress
-	bar.add_theme_stylebox_override("background", _overlay_style(Color("#151118"), Color("#080506"), 1, 1))
-	bar.add_theme_stylebox_override("fill", _overlay_style(Color("#a855ff"), Color("#c586ff"), 0, 1))
+	if not bool(bar.get_meta("combat_map_progress_style_ready", false)):
+		bar.set_meta("combat_map_progress_style_ready", true)
+		bar.add_theme_stylebox_override("background", _overlay_style(Color("#151118"), Color("#080506"), 1, 1))
+		bar.add_theme_stylebox_override("fill", _overlay_style(Color("#a855ff"), Color("#c586ff"), 0, 1))
 	if pointer_node != null and pointer_node is Label:
 		var pointer := pointer_node as Label
 		pointer.position.x = 51.0 + progress * 178.0
@@ -6431,7 +7404,10 @@ func _sync_generated_map_progress(snapshot: Dictionary) -> void:
 			if not subtle_route_overlay:
 				fill = Color("#d69b2f") if active else Color("#5e5a50")
 				border = Color("#16120f")
-			(route_node as PanelContainer).add_theme_stylebox_override("panel", _overlay_style(fill, border, 1, 6))
+			var style_key := "%s:%s" % [str(active), str(subtle_route_overlay)]
+			if str((route_node as PanelContainer).get_meta("combat_route_style_key", "")) != style_key:
+				(route_node as PanelContainer).set_meta("combat_route_style_key", style_key)
+				(route_node as PanelContainer).add_theme_stylebox_override("panel", _overlay_style(fill, border, 1, 6))
 	for index in range(4):
 		var route_segment := root.get_node_or_null("Rect_MapProgressRouteSegment%d" % index)
 		if route_segment != null and route_segment is ColorRect:
@@ -6453,6 +7429,11 @@ func _sync_generated_map_progress(snapshot: Dictionary) -> void:
 
 
 func _taskstonebar_map_visual_index(map_def: Dictionary) -> int:
+	var popup_args: Dictionary = map_def.get("popupArgs", {}) if typeof(map_def.get("popupArgs", {})) == TYPE_DICTIONARY else {}
+	if popup_args.has("ClientBattleMapTextureIndex"):
+		var explicit_index := int(popup_args.get("ClientBattleMapTextureIndex", 1))
+		if explicit_index > 0:
+			return clampi(explicit_index, 1, 10)
 	var key := "%s %s" % [str(map_def.get("scene", "")), str(map_def.get("prefab", ""))]
 	var marker := "Taskstonebar_"
 	var marker_index := key.find(marker)
@@ -6472,6 +7453,7 @@ func _taskstonebar_map_visual_index(map_def: Dictionary) -> int:
 
 func _sync_generated_combat_units(snapshot: Dictionary) -> void:
 	var world_size: Vector2 = snapshot.get("world_size", Vector2(960.0, 160.0))
+	var elapsed_seconds := float(snapshot.get("elapsed", 0.0))
 	var player: Dictionary = snapshot.get("player", {})
 	var hero := _generated_node_or_null("Section_BottomCombatStrip/Tex_HeroCombatSprite")
 	if hero != null and hero is TextureRect and not player.is_empty():
@@ -6483,7 +7465,7 @@ func _sync_generated_combat_units(snapshot: Dictionary) -> void:
 		if attack_flash > 0.0:
 			var attack_phase := clampf(1.0 - attack_flash / 0.22, 0.0, 1.0)
 			hero_pos.x += sin(attack_phase * PI) * 12.0
-		var hero_texture := _unit_display_texture(player, true, _overlay_hero_frame(float(snapshot.get("elapsed", 0.0)), attack_flash))
+		var hero_texture := _unit_display_texture(player, true, _overlay_hero_frame(elapsed_seconds, attack_flash), elapsed_seconds)
 		if hero_texture != null:
 			hero_rect.texture = hero_texture
 			hero_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -6502,7 +7484,7 @@ func _sync_generated_combat_units(snapshot: Dictionary) -> void:
 	var enemy_node := _generated_node_or_null("Section_BottomCombatStrip/Tex_EnemyStackPrototype")
 	if enemy_node != null and enemy_node is TextureRect:
 		(enemy_node as TextureRect).visible = false
-	_sync_generated_enemy_stack(snapshot, world_size)
+	_sync_generated_enemy_stack(snapshot, world_size, elapsed_seconds)
 	_sync_generated_enemy_hp(enemy, world_size, snapshot)
 
 
@@ -6528,7 +7510,10 @@ func _sync_generated_player_hp(player: Dictionary, world_size: Vector2) -> void:
 	var plate_size := Vector2(88.0, 10.0)
 	hp_plate.position = _clamp_combat_plate_position(hero_pos + Vector2(-44.0, -66.0), plate_size)
 	hp_plate.size = plate_size
-	hp_plate.add_theme_stylebox_override("panel", _combat_hp_plate_style(Color("#d85745"), hit_flash))
+	var plate_style_bucket := clampi(roundi(clampf(hit_flash / 0.18, 0.0, 1.0) * 4.0), 0, 4)
+	if int(hp_plate.get_meta("combat_hp_plate_style_bucket", -1)) != plate_style_bucket:
+		hp_plate.set_meta("combat_hp_plate_style_bucket", plate_style_bucket)
+		hp_plate.add_theme_stylebox_override("panel", _combat_hp_plate_style(Color("#d85745"), float(plate_style_bucket) / 4.0 * 0.18))
 	hp_bar.position = hp_plate.position + Vector2(4.0, 3.0)
 	hp_bar.size = Vector2(80.0, 4.0)
 	hp_bar.value = clampf(hp / max_hp, 0.0, 1.0)
@@ -6566,7 +7551,10 @@ func _sync_generated_enemy_hp(enemy: Dictionary, world_size: Vector2, snapshot: 
 	var plate_size := Vector2(48.0, 9.0)
 	hp_plate.position = _clamp_combat_plate_position(enemy_pos + Vector2(-plate_size.x * 0.5, -enemy_size.y * 0.5 - 9.0), plate_size)
 	hp_plate.size = plate_size
-	hp_plate.add_theme_stylebox_override("panel", _combat_hp_plate_style(Color("#d85745"), hit_flash))
+	var plate_style_bucket := clampi(roundi(clampf(hit_flash / 0.18, 0.0, 1.0) * 4.0), 0, 4)
+	if int(hp_plate.get_meta("combat_hp_plate_style_bucket", -1)) != plate_style_bucket:
+		hp_plate.set_meta("combat_hp_plate_style_bucket", plate_style_bucket)
+		hp_plate.add_theme_stylebox_override("panel", _combat_hp_plate_style(Color("#d85745"), float(plate_style_bucket) / 4.0 * 0.18))
 	hp_bar.position = hp_plate.position + Vector2(3.0, 3.0)
 	hp_bar.size = Vector2(42.0, 3.0)
 	hp_bar.value = clampf(hp / max_hp, 0.0, 1.0)
@@ -6575,8 +7563,8 @@ func _sync_generated_enemy_hp(enemy: Dictionary, world_size: Vector2, snapshot: 
 
 func _clamp_combat_plate_position(pos: Vector2, plate_size: Vector2) -> Vector2:
 	return Vector2(
-		clampf(pos.x, 8.0, 1586.0 - plate_size.x - 8.0),
-		clampf(pos.y, 6.0, 236.0 - plate_size.y - 6.0)
+		clampf(pos.x, 8.0, COMBAT_NATIVE_CROP_SIZE.x - plate_size.x - 8.0),
+		clampf(pos.y, 6.0, COMBAT_NATIVE_CROP_SIZE.y - plate_size.y - 6.0)
 	)
 
 
@@ -6641,7 +7629,7 @@ func _pending_visual_damage_for_enemy(snapshot: Dictionary, enemy_id: int) -> fl
 	return pending
 
 
-func _sync_generated_enemy_stack(snapshot: Dictionary, world_size: Vector2) -> void:
+func _sync_generated_enemy_stack(snapshot: Dictionary, world_size: Vector2, elapsed_seconds: float) -> void:
 	var layer_node = generated_runtime_nodes.get("combat_enemy_layer", null)
 	if layer_node == null or not layer_node is Control:
 		layer_node = _generated_node_or_null("%s/%s" % [OVERLAY_COMBAT_STRIP_PATH, OVERLAY_ENEMY_LAYER_NAME])
@@ -6662,25 +7650,28 @@ func _sync_generated_enemy_stack(snapshot: Dictionary, world_size: Vector2) -> v
 		active_names[shadow_name] = true
 		var enemy_rect := _runtime_enemy_texture_rect(layer, node_name)
 		var enemy_shadow := _runtime_enemy_shadow(layer, shadow_name)
-		var enemy_size := _overlay_enemy_size(enemy)
-		var enemy_pos := _overlay_enemy_center(enemy, world_size, enemy_size)
-		var enemy_texture := _unit_display_texture(enemy, false)
-		if enemy_texture != null:
-			enemy_rect.texture = enemy_texture
-		elif sprites != null:
-			enemy_rect.texture = sprites.get_texture("monster_basic")
+			var enemy_size := _overlay_enemy_size(enemy)
+			var enemy_pos := _overlay_enemy_center(enemy, world_size, enemy_size)
+			var enemy_texture := _unit_display_texture(enemy, false, 0, elapsed_seconds)
+			if enemy_texture != null:
+				enemy_rect.texture = enemy_texture
+			else:
+				if sprites != null:
+					enemy_rect.texture = sprites.get_texture("monster_basic")
 		enemy_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		enemy_rect.stretch_mode = TextureRect.STRETCH_SCALE
 		enemy_rect.visible = true
 		enemy_rect.flip_h = _unit_display_flip_h(enemy, false)
 		enemy_rect.size = enemy_size
 		enemy_rect.pivot_offset = enemy_size * 0.5
-		enemy_rect.position = enemy_pos - enemy_size * 0.5
+			var enemy_top_left := enemy_pos - enemy_size * 0.5
+			enemy_rect.position = enemy_top_left
 		enemy_rect.z_index = 118 + int(round(enemy_pos.y))
 		enemy_rect.z_as_relative = false
 		enemy_shadow.visible = true
-		enemy_shadow.size = Vector2(enemy_size.x * 0.76, 14.0)
-		enemy_shadow.position = enemy_pos + Vector2(-enemy_shadow.size.x * 0.5, enemy_size.y * 0.34)
+		var shadow_size := Vector2(enemy_size.x * 0.76, 14.0)
+		enemy_shadow.size = shadow_size
+		enemy_shadow.position = enemy_pos + Vector2(-shadow_size.x * 0.5, enemy_size.y * 0.34)
 		enemy_shadow.z_index = enemy_rect.z_index - 2
 		enemy_shadow.z_as_relative = false
 		var hit_flash := float(enemy.get("hit_flash", 0.0))
@@ -6726,8 +7717,12 @@ func _sync_generated_drop_toast(snapshot: Dictionary, model: Dictionary) -> void
 		return
 	if toast is Control:
 		var toast_control := toast as Control
-		toast_control.position = Vector2(683.0, 20.0)
 		toast_control.size = Vector2(220.0, 70.0)
+		var parent_node := toast_control.get_parent()
+		var strip_size := COMBAT_NATIVE_CROP_SIZE
+		if parent_node != null and parent_node is Control:
+			strip_size = _combat_strip_render_size(parent_node as Control)
+		toast_control.position = Vector2(maxf(0.0, (strip_size.x - toast_control.size.x) * 0.5), 20.0)
 		toast_control.z_index = 98
 	var latest_drop: Dictionary = model.get("latest_drop", {}) if typeof(model.get("latest_drop", {})) == TYPE_DICTIONARY else {}
 	var canvas := toast as CanvasItem
@@ -6762,19 +7757,24 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 	var layer: Variant = generated_runtime_nodes.get("combat_layer", null)
 	if layer == null or not layer is Control:
 		return
-	_begin_runtime_fx_frame(layer as Control)
+	for child in (layer as Control).get_children():
+		child.free()
 	var layer_size := (layer as Control).size
 	var world_size: Vector2 = snapshot.get("world_size", Vector2(960.0, 160.0))
 	var player: Dictionary = snapshot.get("player", {})
 	var player_pos := _overlay_world_to_combat(player.get("position", Vector2.ZERO), world_size)
 	var enemies: Array = snapshot.get("enemies", []) if typeof(snapshot.get("enemies", [])) == TYPE_ARRAY else []
 	var fx_events: Array = snapshot.get("fx_events", []) if typeof(snapshot.get("fx_events", [])) == TYPE_ARRAY else []
+	if fx_events.size() > COMBAT_FX_RENDER_LIMIT:
+		fx_events = fx_events.slice(fx_events.size() - COMBAT_FX_RENDER_LIMIT)
 	for event in fx_events:
 		if typeof(event) != TYPE_DICTIONARY:
 			continue
 		var duration := maxf(0.05, float(event.get("duration", event.get("ttl", 0.7))))
 		var progress := clampf(1.0 - float(event.get("ttl", 0.0)) / duration, 0.0, 1.0)
 		var fade := clampf(float(event.get("ttl", 0.0)) / duration, 0.0, 1.0)
+		if fade <= 0.03:
+			continue
 		match str(event.get("kind", "")):
 			"gold_drop":
 				var gold_position: Vector2 = event.get("position", Vector2(805.0, 80.0))
@@ -6800,32 +7800,38 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 				var target_position: Vector2 = event.get("target_position", Vector2(805.0, 80.0))
 				var target_pos := _overlay_enemy_center(target, world_size) if not target.is_empty() else _overlay_world_to_combat(target_position, world_size) + COMBAT_ENEMY_VISUAL_SHIFT
 				var skill_id := int(event.get("skill_id", 0))
+				var is_learned_skill := bool(event.get("is_learned_skill", false))
 				var style := _enemy_skill_fx_style(skill_id)
 				var color: Color = style.get("color", Color("#ffcf7a"))
 				var impact_start := float(style.get("impact_start", COMBAT_ATTACK_IMPACT_START))
 				var travel_progress := clampf(progress / maxf(0.05, impact_start), 0.0, 1.0)
 				var projectile_pos := player_pos.lerp(target_pos, travel_progress)
 				projectile_pos.y -= sin(travel_progress * PI) * float(style.get("arc", 18.0))
+				var fx_scale := 1.32 if is_learned_skill else 1.0
+				if is_learned_skill and progress < 0.54:
+					_add_runtime_effect(layer as Control, "fx_stone_fusion", player_pos + Vector2(0.0, -4.0), Vector2.ONE * 64.0, clampf(progress / 0.54, 0.0, 1.0), Color(1.0, 1.0, 1.0, fade * 0.74))
 				var cast_key := str(style.get("cast", ""))
 				if cast_key != "" and progress < 0.46:
-					_add_runtime_effect(layer as Control, cast_key, player_pos, Vector2.ONE * float(style.get("cast_size", 42.0)), clampf(progress / 0.46, 0.0, 1.0), Color(1, 1, 1, fade))
+					_add_runtime_effect(layer as Control, cast_key, player_pos, Vector2.ONE * float(style.get("cast_size", 42.0)) * fx_scale, clampf(progress / 0.46, 0.0, 1.0), Color(1, 1, 1, fade))
 				var projectile_key := str(style.get("projectile", ""))
 				if projectile_key != "" and progress < COMBAT_PROJECTILE_HIDE_PROGRESS:
-					var texture_size := Vector2.ONE * float(style.get("projectile_size", 30.0))
+					var texture_size := Vector2.ONE * float(style.get("projectile_size", 30.0)) * fx_scale
 					_add_runtime_effect(layer as Control, projectile_key, projectile_pos, texture_size, travel_progress, Color(1, 1, 1, fade))
 				var impact_key := str(style.get("impact_texture", ""))
 				if impact_key != "" and progress >= impact_start:
 					var impact_progress := clampf((progress - impact_start) / maxf(0.05, 1.0 - impact_start), 0.0, 1.0)
-					var impact_size := float(style.get("impact_size", 36.0))
+					var impact_size := float(style.get("impact_size", 36.0)) * fx_scale
 					_add_runtime_effect(layer as Control, impact_key, target_pos, Vector2.ONE * impact_size * 0.92, impact_progress, Color(1, 1, 1, fade * 0.52))
 					_add_runtime_effect(layer as Control, "fx_hit_white", target_pos + Vector2(0.0, -3.0), Vector2.ONE * maxf(38.0, impact_size * 0.72), impact_progress, Color(1.0, 0.88, 0.68, fade * 0.38))
 				var action_text := str(event.get("skill_name", "돌팔매")) if skill_id >= 300101 and skill_id <= 300111 else str(event.get("skill_name", "스킬"))
-				_add_runtime_label(layer as Control, action_text, player_pos + Vector2(-48.0, -72.0 - 14.0 * progress), Vector2(120.0, 24.0), 14, color, fade)
+				if is_learned_skill:
+					action_text = "SKILL %s Lv.%d" % [action_text, maxi(1, int(event.get("skill_level", 1)))]
+				_add_runtime_label(layer as Control, action_text, player_pos + Vector2(-70.0, -82.0 - 18.0 * progress), Vector2(162.0, 28.0), 17 if is_learned_skill else 14, color.lightened(0.2) if is_learned_skill else color, fade)
 				if progress >= impact_start:
 					var label_progress := clampf((progress - impact_start) / maxf(0.05, 1.0 - impact_start), 0.0, 1.0)
 					var hit_lane := int(event.get("source_stone_instance_id", 0)) % 3
 					var hit_pos := target_pos + Vector2(12.0 + float(hit_lane) * 28.0, -70.0 - float(hit_lane) * 10.0 - 24.0 * label_progress)
-					_add_runtime_label(layer as Control, "-%d" % int(round(float(event.get("amount", 0.0)))), hit_pos, Vector2(82.0, 30.0), 22, color.lightened(0.38), fade)
+					_add_runtime_label(layer as Control, "-%d" % int(round(float(event.get("amount", 0.0)))), hit_pos, Vector2(104.0, 34.0), 27 if is_learned_skill else 22, color.lightened(0.46 if is_learned_skill else 0.38), fade)
 			"enemy_skill":
 				var source := _find_entity(enemies, int(event.get("source_id", 0)))
 				var source_position: Vector2 = event.get("source_position", Vector2(805.0, 80.0))
@@ -6864,62 +7870,18 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 				var drop_label_size := Vector2(minf(240.0, maxf(150.0, layer_size.x - 44.0)), 26.0)
 				var drop_x := clampf(layer_size.x - drop_label_size.x - 22.0, 22.0, maxf(22.0, layer_size.x - drop_label_size.x - 22.0))
 				_add_runtime_label(layer as Control, label_text, Vector2(drop_x, 34.0 - 18.0 * progress), drop_label_size, 15, Color("#f3e6c8"), fade)
-	_end_runtime_fx_frame()
-	_add_runtime_enemy_foreground(layer as Control, snapshot, world_size)
-
-
-func _add_runtime_enemy_foreground(parent: Control, snapshot: Dictionary, world_size: Vector2) -> void:
-	var enemies: Array = snapshot.get("enemies", []) if typeof(snapshot.get("enemies", [])) == TYPE_ARRAY else []
-	for enemy in enemies:
-		if typeof(enemy) != TYPE_DICTIONARY or not bool((enemy as Dictionary).get("alive", true)):
-			continue
-		var data := enemy as Dictionary
-		var enemy_size := _overlay_enemy_size(data)
-		var enemy_pos := _overlay_enemy_center(data, world_size, enemy_size)
-		var hit_flash := float(data.get("hit_flash", 0.0))
-		var attack_flash := float(data.get("attack_flash", 0.0))
-		var pulse := 1.0 + maxf(
-			sin(clampf(hit_flash / 0.18, 0.0, 1.0) * PI) * 0.18,
-			sin(clampf(attack_flash / 0.24, 0.0, 1.0) * PI) * 0.1
-		)
-		var shadow := Panel.new()
-		shadow.name = "RuntimeForegroundEnemyShadow_%d" % int(data.get("id", 0))
-		shadow.position = enemy_pos + Vector2(-enemy_size.x * 0.42, enemy_size.y * 0.34)
-		shadow.size = Vector2(enemy_size.x * 0.84, 14.0)
-		shadow.add_theme_stylebox_override("panel", _overlay_style(Color(0.03, 0.018, 0.01, 0.66), Color(0.0, 0.0, 0.0, 0.0), 0, 8))
-		shadow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		shadow.z_index = 118
-		parent.add_child(shadow)
-
-		var rect := TextureRect.new()
-		rect.name = "RuntimeForegroundEnemy_%d" % int(data.get("id", 0))
-		rect.texture = _unit_display_texture(data, false)
-		if rect.texture == null and sprites != null:
-			rect.texture = sprites.get_texture("monster_basic")
-		if rect.texture == null:
-			continue
-		rect.position = enemy_pos - enemy_size * 0.5
-		rect.size = enemy_size
-		rect.pivot_offset = enemy_size * 0.5
-		rect.scale = Vector2.ONE * pulse
-		rect.flip_h = _unit_display_flip_h(data, false)
-		rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		rect.stretch_mode = TextureRect.STRETCH_SCALE
-		rect.modulate = Color(1.8, 0.62, 0.48, 1.0) if hit_flash > 0.0 else Color(1.22, 1.17, 1.08, 1.0)
-		rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		rect.z_index = 122
-		parent.add_child(rect)
 
 
 func _add_runtime_texture(parent: Control, texture: Texture2D, pos: Vector2, texture_size: Vector2, modulate: Color) -> void:
 	if texture == null:
-		var fallback := _acquire_runtime_fx_color_rect(parent)
+		var fallback := ColorRect.new()
 		fallback.position = pos
 		fallback.size = texture_size
 		fallback.color = Color(modulate.r, modulate.g, modulate.b, 0.72 * modulate.a)
 		fallback.z_index = 45
+		parent.add_child(fallback)
 		return
-	var texture_rect := _acquire_runtime_fx_texture_rect(parent)
+	var texture_rect := TextureRect.new()
 	texture_rect.texture = texture
 	texture_rect.position = pos
 	texture_rect.size = texture_size
@@ -6928,17 +7890,24 @@ func _add_runtime_texture(parent: Control, texture: Texture2D, pos: Vector2, tex
 	texture_rect.modulate = modulate
 	texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	texture_rect.z_index = 45
+	parent.add_child(texture_rect)
 
 
 func _add_runtime_effect(parent: Control, key: String, center: Vector2, effect_size: Vector2, progress: float, modulate: Color) -> void:
-	var texture: Texture2D = _runtime_effect_texture(key, progress)
+	if sprites == null or key == "":
+		return
+	var texture: Texture2D = sprites.get_texture(key)
 	if texture == null:
 		return
-	_add_runtime_texture(parent, texture, center - effect_size * 0.5, effect_size, modulate)
+	var render_texture: Texture2D = texture
+	var region: Rect2 = sprites.effect_frame_region(key, progress)
+	if region.has_area():
+		render_texture = _cached_atlas_texture(texture, region, "runtime.effect")
+	_add_runtime_texture(parent, render_texture, center - effect_size * 0.5, effect_size, modulate)
 
 
 func _add_runtime_label(parent: Control, text: String, pos: Vector2, label_size: Vector2, font_size: int, color: Color, alpha: float) -> void:
-	var label := _acquire_runtime_fx_label(parent)
+	var label := Label.new()
 	label.text = text
 	label.position = pos
 	label.size = label_size
@@ -6954,152 +7923,7 @@ func _add_runtime_label(parent: Control, text: String, pos: Vector2, label_size:
 	label.modulate = Color(1, 1, 1, alpha)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.z_index = 80
-
-
-func _begin_runtime_fx_frame(parent: Control) -> void:
-	if generated_combat_fx_parent != null and not is_instance_valid(generated_combat_fx_parent):
-		generated_combat_fx_parent = null
-	if generated_combat_fx_parent != parent:
-		_clear_runtime_fx_pool()
-		generated_combat_fx_parent = parent
-		for child in parent.get_children():
-			child.queue_free()
-		return
-	var active_nodes := generated_combat_fx_active
-	generated_combat_fx_active = []
-	for node in active_nodes:
-		if node == null or not is_instance_valid(node) or not node is Control:
-			continue
-		var control := node as Control
-		if control.get_parent() != parent:
-			control.queue_free()
-			continue
-		_reset_runtime_fx_control(control)
-		_runtime_fx_pool(str(control.get_meta("runtime_fx_kind", ""))).append(control)
-
-
-func _end_runtime_fx_frame() -> void:
-	for kind in generated_combat_fx_pools.keys():
-		var pool: Array = generated_combat_fx_pools.get(kind, [])
-		var valid_pool: Array = []
-		for node in pool:
-			if node == null or not is_instance_valid(node) or not node is Control:
-				continue
-			valid_pool.append(node)
-		while valid_pool.size() > COMBAT_FX_POOL_MAX_PER_KIND:
-			var extra = valid_pool.pop_back()
-			if extra != null and is_instance_valid(extra):
-				(extra as Node).queue_free()
-		generated_combat_fx_pools[kind] = valid_pool
-
-
-func _clear_runtime_fx_pool() -> void:
-	for node in generated_combat_fx_active:
-		if node != null and is_instance_valid(node):
-			(node as Node).queue_free()
-	generated_combat_fx_active.clear()
-	for pool in generated_combat_fx_pools.values():
-		if typeof(pool) != TYPE_ARRAY:
-			continue
-		for node in pool:
-			if node != null and is_instance_valid(node):
-				(node as Node).queue_free()
-	generated_combat_fx_pools.clear()
-	generated_combat_fx_parent = null
-
-
-func _runtime_fx_pool(kind: String) -> Array:
-	if kind == "":
-		kind = "unknown"
-	if not generated_combat_fx_pools.has(kind):
-		generated_combat_fx_pools[kind] = []
-	return generated_combat_fx_pools[kind]
-
-
-func _pop_runtime_fx_node(kind: String) -> Control:
-	var pool := _runtime_fx_pool(kind)
-	while not pool.is_empty():
-		var node = pool.pop_back()
-		if node == null or not is_instance_valid(node) or not node is Control:
-			continue
-		return node as Control
-	return null
-
-
-func _activate_runtime_fx_control(parent: Control, control: Control, kind: String) -> void:
-	control.set_meta("runtime_fx_kind", kind)
-	if control.get_parent() != parent:
-		if control.get_parent() != null:
-			control.get_parent().remove_child(control)
-		parent.add_child(control)
-	control.visible = true
-	control.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	generated_combat_fx_active.append(control)
-
-
-func _reset_runtime_fx_control(control: Control) -> void:
-	control.visible = false
-	control.modulate = Color.WHITE
-	if control is TextureRect:
-		(control as TextureRect).texture = null
-	elif control is Label:
-		(control as Label).text = ""
-
-
-func _acquire_runtime_fx_texture_rect(parent: Control) -> TextureRect:
-	var node := _pop_runtime_fx_node("texture")
-	var texture_rect := node as TextureRect
-	if texture_rect == null:
-		texture_rect = TextureRect.new()
-		texture_rect.name = "RuntimeCombatFxTexture"
-	_activate_runtime_fx_control(parent, texture_rect, "texture")
-	return texture_rect
-
-
-func _acquire_runtime_fx_color_rect(parent: Control) -> ColorRect:
-	var node := _pop_runtime_fx_node("color")
-	var color_rect := node as ColorRect
-	if color_rect == null:
-		color_rect = ColorRect.new()
-		color_rect.name = "RuntimeCombatFxColor"
-	_activate_runtime_fx_control(parent, color_rect, "color")
-	return color_rect
-
-
-func _acquire_runtime_fx_label(parent: Control) -> Label:
-	var node := _pop_runtime_fx_node("label")
-	var label := node as Label
-	if label == null:
-		label = Label.new()
-		label.name = "RuntimeCombatFxLabel"
-	_activate_runtime_fx_control(parent, label, "label")
-	return label
-
-
-func _runtime_effect_texture(key: String, progress: float) -> Texture2D:
-	if sprites == null or key == "":
-		return null
-	var texture: Texture2D = sprites.get_texture(key)
-	if texture == null:
-		return null
-	var region: Rect2 = sprites.effect_frame_region(key, progress)
-	if not region.has_area():
-		return texture
-	var cache_key := "%s:%d:%d:%d:%d" % [
-		key,
-		int(region.position.x),
-		int(region.position.y),
-		int(region.size.x),
-		int(region.size.y),
-	]
-	var cached: Texture2D = generated_effect_atlas_cache.get(cache_key, null)
-	if cached != null:
-		return cached
-	var atlas := AtlasTexture.new()
-	atlas.atlas = texture
-	atlas.region = region
-	generated_effect_atlas_cache[cache_key] = atlas
-	return atlas
+	parent.add_child(label)
 
 
 func _focus_enemy(snapshot: Dictionary) -> Dictionary:
@@ -7145,8 +7969,9 @@ func _overlay_enemy_center(enemy: Dictionary, world_size: Vector2, enemy_size :=
 		var attack_phase := clampf(1.0 - attack_flash / 0.24, 0.0, 1.0)
 		enemy_pos.x -= sin(attack_phase * PI) * 14.0
 	var runtime_id := int(enemy.get("id", 0))
-	var lane_offset := Vector2(float((runtime_id % 5) - 2) * COMBAT_ENEMY_LANE_STEP.x, float((runtime_id % 3) - 1) * COMBAT_ENEMY_LANE_STEP.y)
-	return _clamp_combat_sprite_center(enemy_pos + lane_offset, display_size)
+	var clamped_base := _clamp_combat_sprite_center(enemy_pos, display_size)
+	var lane_offset := _combat_enemy_visual_lane_offset(runtime_id, enemy_pos.x > clamped_base.x + 0.5)
+	return _clamp_combat_sprite_center(clamped_base + lane_offset, display_size)
 
 
 func _overlay_enemy_size(enemy: Dictionary) -> Vector2:
@@ -7166,10 +7991,20 @@ func _overlay_enemy_size(enemy: Dictionary) -> Vector2:
 
 func _clamp_combat_sprite_center(center: Vector2, sprite_size: Vector2) -> Vector2:
 	var half_size := sprite_size * 0.5
+	var min_x := OVERLAY_COMBAT_REFERENCE_RECT.position.x + half_size.x
+	var max_x := maxf(min_x, COMBAT_NATIVE_CROP_SIZE.x - half_size.x - 8.0)
 	return Vector2(
-		clampf(center.x, OVERLAY_COMBAT_REFERENCE_RECT.position.x + half_size.x, OVERLAY_COMBAT_REFERENCE_RECT.end.x - half_size.x),
+		clampf(center.x, min_x, max_x),
 		clampf(center.y, 24.0 + half_size.y, 212.0 - half_size.y)
 	)
+
+
+func _combat_enemy_visual_lane_offset(runtime_id: int, edge_stacked: bool) -> Vector2:
+	if edge_stacked:
+		var edge_slot := runtime_id % 5
+		var edge_row := runtime_id % 3
+		return Vector2(-float(edge_slot) * COMBAT_ENEMY_EDGE_STACK_STEP.x, float(edge_row - 1) * COMBAT_ENEMY_EDGE_STACK_STEP.y)
+	return Vector2(float((runtime_id % 5) - 2) * COMBAT_ENEMY_LANE_STEP.x, float((runtime_id % 3) - 1) * COMBAT_ENEMY_LANE_STEP.y)
 
 
 func _overlay_hero_frame(elapsed_seconds: float, attack_flash: float) -> int:
@@ -7183,7 +8018,7 @@ func _overlay_hero_frame(elapsed_seconds: float, attack_flash: float) -> int:
 	return int(floor(fmod(elapsed_seconds * 3.0, 2.0)))
 
 
-func _unit_display_texture(unit: Dictionary, is_player: bool, frame := 0) -> Texture2D:
+func _unit_display_texture(unit: Dictionary, is_player: bool, frame := 0, elapsed_seconds := -1.0) -> Texture2D:
 	if sprites == null or unit.is_empty():
 		return null
 	var unit_id := int(unit.get("unit_id", 0))
@@ -7191,14 +8026,34 @@ func _unit_display_texture(unit: Dictionary, is_player: bool, frame := 0) -> Tex
 	var texture: Texture2D = sprites.texture_for_unit(unit_id, sprite_path)
 	if texture == null:
 		return null
-	var elapsed_seconds := float(sim.snapshot().get("elapsed", 0.0)) if sim != null else 0.0
-	var region: Rect2 = sprites.hero_frame_region(frame) if is_player else sprites.region_for_unit(unit_id, sprite_path, _unit_display_action(unit, is_player), elapsed_seconds)
+	var frame_elapsed := elapsed_seconds
+	if frame_elapsed < 0.0:
+		frame_elapsed = float(sim.snapshot().get("elapsed", 0.0)) if sim != null else 0.0
+	var region: Rect2 = sprites.hero_frame_region(frame) if is_player else sprites.region_for_unit(unit_id, sprite_path, _unit_display_action(unit, is_player), frame_elapsed)
 	if region.has_area():
-		var atlas := AtlasTexture.new()
-		atlas.atlas = texture
-		atlas.region = region
-		return atlas
+		return _cached_atlas_texture(texture, region, "runtime.unit_display")
 	return texture
+
+
+func _cached_atlas_texture(texture: Texture2D, region: Rect2, cache_prefix := "runtime.atlas") -> Texture2D:
+	if texture == null or not region.has_area():
+		return texture
+	var cache_key := "%s:%d:%d:%d:%d:%d" % [
+		cache_prefix,
+		texture.get_instance_id(),
+		int(round(region.position.x)),
+		int(round(region.position.y)),
+		int(round(region.size.x)),
+		int(round(region.size.y)),
+	]
+	var cached: Variant = generated_texture_cache.get(cache_key, null)
+	if cached != null and cached is Texture2D:
+		return cached as Texture2D
+	var atlas := AtlasTexture.new()
+	atlas.atlas = texture
+	atlas.region = region
+	generated_texture_cache[cache_key] = atlas
+	return atlas
 
 
 func _unit_display_action(unit: Dictionary, is_player: bool) -> String:
@@ -7330,6 +8185,10 @@ func _close_generated_window_for_button(button: Button) -> void:
 func _overlay_texture_style(asset_key: String, modulate: Color = Color.WHITE) -> StyleBox:
 	if asset_key == "" or not GENERATED_STYLE_TEXTURES.has(asset_key):
 		return null
+	var cache_key := "texture_style:%s:%s" % [asset_key, _color_cache_key(modulate)]
+	var cached: Variant = generated_texture_cache.get(cache_key, null)
+	if cached != null and cached is StyleBox:
+		return cached as StyleBox
 	var texture: Texture2D = _generated_texture(str(GENERATED_STYLE_TEXTURES[asset_key]))
 	if texture == null:
 		return null
@@ -7341,7 +8200,17 @@ func _overlay_texture_style(asset_key: String, modulate: Color = Color.WHITE) ->
 	style.texture_margin_right = float(hints.get("right", 0.0))
 	style.texture_margin_top = float(hints.get("top", 0.0))
 	style.texture_margin_bottom = float(hints.get("bottom", 0.0))
+	generated_texture_cache[cache_key] = style
 	return style
+
+
+func _color_cache_key(color: Color) -> String:
+	return "%d:%d:%d:%d" % [
+		roundi(color.r * 1000.0),
+		roundi(color.g * 1000.0),
+		roundi(color.b * 1000.0),
+		roundi(color.a * 1000.0),
+	]
 
 
 func _generated_texture(res_path: String) -> Texture2D:

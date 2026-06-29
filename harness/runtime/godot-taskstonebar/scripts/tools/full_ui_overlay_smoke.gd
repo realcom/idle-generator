@@ -12,6 +12,17 @@ func _run() -> void:
 	for _i in range(18):
 		await process_frame
 
+	var native_flag_probe := Window.new()
+	root_node.add_child(native_flag_probe)
+	root_node._apply_native_window_system_flags(native_flag_probe)
+	if native_flag_probe.transparent_bg != bool(root_node._native_window_transparency_enabled()):
+		_fail("native window transparency flag helper did not set transparent_bg")
+		return
+	if DisplayServer.get_name() != "headless" and (not native_flag_probe.borderless or not native_flag_probe.always_on_top or not native_flag_probe.unresizable):
+		_fail("native window system flag helper did not set chrome flags")
+		return
+	native_flag_probe.queue_free()
+
 	var overlay := root_node.get_node_or_null("GeneratedFullUiOverlay")
 	if overlay == null:
 		_fail("GeneratedFullUiOverlay was not added to the main scene")
@@ -98,9 +109,51 @@ func _run() -> void:
 		if _is_visible_control(overlay.get_node_or_null(help_path)):
 			_fail("reference title bar still shows the crowded help button: %s" % help_path)
 			return
-	var dock_icon := overlay.get_node_or_null("Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockInventory/Icon_DockInventory")
+	var keeper_dock := overlay.get_node_or_null("Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock")
+	if keeper_dock == null or not keeper_dock is HBoxContainer:
+		_fail("keeper dock was not created")
+		return
+	var auto_merge_toggle := overlay.get_node_or_null("Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockInventory")
+	if auto_merge_toggle == null or not auto_merge_toggle is Button:
+		_fail("auto stone merge toggle should use keeper dock button 1")
+		return
+	if (keeper_dock as HBoxContainer).get_child_count() <= 0 or (keeper_dock as HBoxContainer).get_child(0) != auto_merge_toggle:
+		_fail("auto stone merge toggle should be keeper dock button 1")
+		return
+	if not (auto_merge_toggle as Button).toggle_mode:
+		_fail("auto stone merge dock button should be a toggle")
+		return
+	if (auto_merge_toggle as Button).button_pressed:
+		_fail("auto stone merge dock button should default to OFF")
+		return
+	var dock_icon := (auto_merge_toggle as Button).get_node_or_null("Icon_DockInventory")
 	if dock_icon == null or not dock_icon is TextureRect or (dock_icon as TextureRect).texture == null:
-		_fail("keeper dock inventory button did not receive a generated icon")
+		_fail("keeper dock auto merge button did not receive a generated icon")
+		return
+	var auto_merge_badge := (auto_merge_toggle as Button).get_node_or_null("Text_AutoStoneMergeBadge")
+	if auto_merge_badge == null or not auto_merge_badge is Label or (auto_merge_badge as Label).text != "OFF":
+		_fail("auto stone merge dock button should show OFF state")
+		return
+	var auto_equipment_toggle := overlay.get_node_or_null("Section_WindowStack/Panel_HeroInventoryWindowFrame/Dock_KeeperIconDock/Btn_DockGrowth")
+	if auto_equipment_toggle == null or not auto_equipment_toggle is Button:
+		_fail("auto equipment merge toggle should use keeper dock button 2")
+		return
+	if (keeper_dock as HBoxContainer).get_child_count() <= 1 or (keeper_dock as HBoxContainer).get_child(1) != auto_equipment_toggle:
+		_fail("auto equipment merge toggle should be keeper dock button 2")
+		return
+	if not (auto_equipment_toggle as Button).toggle_mode:
+		_fail("auto equipment merge dock button should be a toggle")
+		return
+	if (auto_equipment_toggle as Button).button_pressed:
+		_fail("auto equipment merge dock button should default to OFF")
+		return
+	var equipment_dock_icon := (auto_equipment_toggle as Button).get_node_or_null("Icon_DockGrowth")
+	if equipment_dock_icon == null or not equipment_dock_icon is TextureRect or (equipment_dock_icon as TextureRect).texture == null:
+		_fail("keeper dock auto equipment merge button did not receive a generated icon")
+		return
+	var auto_equipment_badge := (auto_equipment_toggle as Button).get_node_or_null("Text_AutoEquipmentMergeBadge")
+	if auto_equipment_badge == null or not auto_equipment_badge is Label or (auto_equipment_badge as Label).text != "OFF":
+		_fail("auto equipment merge dock button should show OFF state")
 		return
 
 	var close_button := overlay.get_node_or_null("Section_WindowStack/Panel_PortalWindowFrame/Btn_PortalClose")
@@ -156,6 +209,9 @@ func _run() -> void:
 	if action_status == null or not action_status is Label:
 		_fail("runtime action status label was not created")
 		return
+	if overlay.get_node_or_null("Section_BottomCombatStrip/Btn_AutoStoneMergeToggle") != null:
+		_fail("auto stone merge toggle should not be created on the combat strip")
+		return
 	if _is_visible_control(action_bar):
 		_fail("runtime MVP action button row should not be visible")
 		return
@@ -173,9 +229,14 @@ func _run() -> void:
 	if first_stone_item_id <= 0:
 		_fail("could not find a stone item for combat inventory reflection")
 		return
+	if not _probe_equipped_stone_loadout_after_merge(root_node):
+		return
+	for _i in range(4):
+		await process_frame
 	var initial_item_count := _snapshot_item_count(root_node.progression.inventory_snapshot())
 	var initial_stone_slot_count := _count_inventory_slots_by_kind(overlay, "stone")
 	root_node.sim._add_reward_item({"itemDataId": first_stone_item_id, "count": 1})
+	root_node._refresh_generated_overlay_now()
 	for _i in range(4):
 		await process_frame
 	if _snapshot_item_count(root_node.progression.inventory_snapshot()) <= initial_item_count:
@@ -238,6 +299,7 @@ func _run() -> void:
 	initial_item_count = _snapshot_item_count(root_node.progression.inventory_snapshot())
 	var initial_equipment_slot_count := _count_inventory_slots_by_kind(overlay, "equipment")
 	root_node.sim._add_reward_item({"itemDataId": first_equipment_item_id, "count": 1})
+	root_node._refresh_generated_overlay_now()
 	for _i in range(4):
 		await process_frame
 	if _snapshot_item_count(root_node.progression.inventory_snapshot()) <= initial_item_count:
@@ -289,6 +351,13 @@ func _run() -> void:
 		return
 	if _is_visible_control(equipment_detail.get_node_or_null("Panel_ItemDetailTitleBar/Btn_ItemDetailMinimize")):
 		_fail("equipment detail modal title bar still shows a minimize/ellipsis button")
+		return
+	var equipment_detail_equip_button := equipment_detail.get_node_or_null("Footer_ItemDetail/Btn_ItemDetailEquip")
+	if equipment_detail_equip_button == null or not equipment_detail_equip_button is Button:
+		_fail("equipment detail modal did not expose equip/unequip in the footer")
+		return
+	if not ["장착", "장착해제"].has((equipment_detail_equip_button as Button).text):
+		_fail("equipment detail footer equip button has unexpected text: %s" % (equipment_detail_equip_button as Button).text)
 		return
 	var detail_upgrade_button := equipment_detail.get_node_or_null("Footer_ItemDetail/Btn_ItemDetailUpgrade")
 	if detail_upgrade_button == null or not detail_upgrade_button is Button or (detail_upgrade_button as Button).disabled:
@@ -354,6 +423,12 @@ func _run() -> void:
 	var combat_native_size: Vector2i = root_node._native_window_size_for("combat", combat_strip_control.size)
 	var combat_native_scale: float = root_node._native_window_scale("combat")
 	var combat_native_scale_vector: Vector2 = root_node._native_window_scale_vector("combat")
+	if combat_strip_control.size.distance_to(root_node.COMBAT_NATIVE_CROP_SIZE) > 0.5:
+		_fail("combat strip should crop unused sides without shrinking art, got size=%s expected=%s" % [str(combat_strip_control.size), str(root_node.COMBAT_NATIVE_CROP_SIZE)])
+		return
+	if absf(combat_native_scale_vector.x - combat_native_scale_vector.y) > 0.001:
+		_fail("combat native window should not be horizontally squeezed, got scale vector %s" % str(combat_native_scale_vector))
+		return
 	var expected_combat_native_size := Vector2i(
 		roundi(combat_strip_control.size.x * combat_native_scale_vector.x),
 		roundi(combat_strip_control.size.y * combat_native_scale_vector.y)
@@ -383,16 +458,53 @@ func _run() -> void:
 	if opacity_slider == null or not opacity_slider is HSlider:
 		_fail("combat opacity slider is missing")
 		return
+	if (opacity_slider as HSlider).mouse_filter != Control.MOUSE_FILTER_STOP:
+		_fail("combat opacity slider should capture pointer input")
+		return
+	var expected_opacity_position := Vector2((combat_strip_control as Control).size.x - (opacity_control as Control).size.x, 0.0)
+	if (opacity_control as Control).position.distance_to(expected_opacity_position) > 0.5:
+		_fail("combat opacity control should be pinned to top-right, got %s expected %s" % [str((opacity_control as Control).position), str(expected_opacity_position)])
+		return
+	var map_progress := overlay.get_node_or_null("Section_BottomCombatStrip/RuntimeCombatMapProgress")
+	if map_progress == null or not map_progress is Control:
+		_fail("combat map progress panel is missing")
+		return
+	var map_progress_control := map_progress as Control
+	var expected_map_progress_position := Vector2(
+		combat_strip_control.size.x - map_progress_control.size.x * map_progress_control.scale.x,
+		combat_strip_control.size.y - map_progress_control.size.y * map_progress_control.scale.y
+	)
+	if map_progress_control.position.distance_to(expected_map_progress_position) > 0.5:
+		_fail("combat map progress should be pinned to bottom-right, got %s expected %s" % [str(map_progress_control.position), str(expected_map_progress_position)])
+		return
 	var combat_ground := overlay.get_node_or_null("Section_BottomCombatStrip/Tex_CombatGroundStrip")
 	if combat_ground == null or not combat_ground is CanvasItem:
 		_fail("combat ground underlay texture node is missing")
 		return
-	if not (combat_ground as CanvasItem).visible or (combat_ground as CanvasItem).modulate.a < 0.95:
-		_fail("combat ground underlay should be visible behind elements")
+	if not (combat_ground as CanvasItem).visible:
+		_fail("combat background image should be visible inside the cropped strip")
+		return
+	if combat_ground is Control and ((combat_ground as Control).size.distance_to(combat_strip_control.size) > 0.5):
+		_fail("combat background should cover the cropped strip, got %s expected %s" % [str((combat_ground as Control).size), str(combat_strip_control.size)])
+		return
+	if absf((combat_ground as CanvasItem).modulate.a - 1.0) > 0.04:
+		_fail("combat background should default to fully visible, got alpha %s" % str((combat_ground as CanvasItem).modulate.a))
 		return
 	var combat_stage_badge := overlay.get_node_or_null("Section_BottomCombatStrip/Text_StageBadge")
 	if combat_stage_badge == null or not combat_stage_badge is CanvasItem:
 		_fail("combat opacity target stage badge is missing")
+		return
+	if absf(float(root_node.generated_combat_opacity) - 1.0) > 0.01:
+		_fail("combat opacity should default to 100%% visible")
+		return
+	if absf((combat_stage_badge as CanvasItem).modulate.a - 1.0) > 0.04:
+		_fail("combat elements should default to fully visible: %s" % str((combat_stage_badge as CanvasItem).modulate.a))
+		return
+	(opacity_slider as HSlider).value = 100.0
+	for _i in range(2):
+		await process_frame
+	if absf(float(root_node.generated_combat_opacity) - 1.0) > 0.01:
+		_fail("combat opacity slider signal did not map 100%% to full visibility")
 		return
 	root_node._set_generated_combat_opacity(0.55)
 	for _i in range(2):
@@ -401,13 +513,13 @@ func _run() -> void:
 		_fail("combat opacity value did not update")
 		return
 	if absf(float((opacity_slider as HSlider).value) - 55.0) > 0.1:
-		_fail("combat opacity slider did not sync to 55%%")
+		_fail("combat opacity slider did not sync to 55%%, got %.1f%%" % float((opacity_slider as HSlider).value))
 		return
 	if absf((combat_stage_badge as CanvasItem).modulate.a - 0.55) > 0.04:
 		_fail("combat element alpha did not follow opacity: %s" % str((combat_stage_badge as CanvasItem).modulate.a))
 		return
-	if absf((combat_ground as CanvasItem).modulate.a - 0.55) > 0.04:
-		_fail("combat ground underlay alpha did not follow opacity: %s" % str((combat_ground as CanvasItem).modulate.a))
+	if not (combat_ground as CanvasItem).visible or absf((combat_ground as CanvasItem).modulate.a - 0.55) > 0.04:
+		_fail("combat background image should follow element opacity while staying visible, got visible=%s alpha=%s" % [str((combat_ground as CanvasItem).visible), str((combat_ground as CanvasItem).modulate.a)])
 		return
 	if absf((opacity_control as CanvasItem).modulate.a - 1.0) > 0.01:
 		_fail("combat opacity control should remain opaque")
@@ -599,19 +711,36 @@ func _run() -> void:
 	if _is_visible_control(stone_detail.get_node_or_null("Panel_ItemDetailTitleBar/Btn_ItemDetailMinimize")):
 		_fail("stone detail modal title bar still shows a minimize/ellipsis button")
 		return
-	var detail_equip_button := stone_detail.get_node_or_null("Footer_ItemDetail/Btn_ItemDetailEquip")
-	if detail_equip_button == null or not detail_equip_button is Button:
-		_fail("stone detail modal did not expose an equip action")
+	var stone_detail_hint := stone_detail.get_node_or_null("Panel_ItemDetailBody/Text_ItemDetailHint")
+	if stone_detail_hint == null or not stone_detail_hint is Label:
+		_fail("stone detail modal hint is missing")
 		return
-	(detail_equip_button as Button).pressed.emit()
-	for _i in range(4):
-		await process_frame
-	if (action_status as Label).text.find("돌 장착") == -1:
-		_fail("stone detail equip action did not equip/select the stone")
+	if (stone_detail_hint as Label).text.find("장착") != -1:
+		_fail("stone detail modal hint should not mention equip")
+		return
+	for line_index in range(5):
+		var stone_detail_line := stone_detail.get_node_or_null("Panel_ItemDetailBody/Text_ItemDetailLine%d" % line_index)
+		if stone_detail_line != null and stone_detail_line is Label and (stone_detail_line as Label).text.find("장착") != -1:
+			_fail("stone detail modal stat lines should not mention equip")
+			return
+	var stone_detail_equip_button := stone_detail.get_node_or_null("Footer_ItemDetail/Btn_ItemDetailEquip")
+	if stone_detail_equip_button != null:
+		_fail("stone detail modal should not expose an equip action")
+		return
+	var stone_detail_merge_button := stone_detail.get_node_or_null("Footer_ItemDetail/Btn_ItemDetailMerge")
+	if stone_detail_merge_button == null or not stone_detail_merge_button is Button:
+		_fail("stone detail modal did not expose a merge action")
 		return
 	if not _inventory_slot_has_visible_selection(overlay, second_instance_id):
 		_fail("selected stone slot did not show a selection outline")
 		return
+	var stone_detail_close_button := stone_detail.get_node_or_null("Footer_ItemDetail/Btn_ItemDetailCancel")
+	if stone_detail_close_button == null or not stone_detail_close_button is Button:
+		_fail("stone detail modal did not expose a close action")
+		return
+	(stone_detail_close_button as Button).pressed.emit()
+	for _i in range(4):
+		await process_frame
 
 	var drag_source_data = (first_stone_slot as Control).get_meta("runtime_slot_data", {})
 	if typeof(drag_source_data) != TYPE_DICTIONARY:
@@ -650,14 +779,78 @@ func _run() -> void:
 	if (action_status as Label).text.find("합성 완료") == -1:
 		_fail("dragging a stone onto the same stone did not complete merge synthesis")
 		return
-	if _count_progression_item_id(root_node.progression.inventory_snapshot(), source_item_id) != source_count_before - 3:
-		_fail("drag stone merge did not consume three source stones")
+	if _count_progression_item_id(root_node.progression.inventory_snapshot(), source_item_id) != source_count_before - 2:
+		_fail("drag stone merge did not consume two source stones")
 		return
-	if _snapshot_item_count(root_node.progression.inventory_snapshot()) != total_items_before - 2:
-		_fail("drag stone merge did not replace three stones with one higher stone")
+	if _snapshot_item_count(root_node.progression.inventory_snapshot()) != total_items_before - 1:
+		_fail("drag stone merge did not replace two stones with one higher stone")
 		return
 	if root_node.sim != null:
 		root_node.sim.running = combat_was_running
+
+	root_node.progression.add_item_instance(source_item_id)
+	root_node.progression.add_item_instance(source_item_id)
+	root_node._refresh_generated_overlay_now()
+	for _i in range(4):
+		await process_frame
+	var auto_merge_combat_was_running := false
+	if root_node.sim != null:
+		auto_merge_combat_was_running = bool(root_node.sim.running)
+		root_node.sim.running = false
+	var auto_count_before := _count_progression_item_id(root_node.progression.inventory_snapshot(), source_item_id)
+	var auto_total_before := _snapshot_item_count(root_node.progression.inventory_snapshot())
+	(auto_merge_toggle as Button).toggled.emit(true)
+	for _i in range(8):
+		await process_frame
+	if not bool(root_node.generated_auto_stone_merge_enabled):
+		_fail("auto stone merge toggle did not enable runtime auto merge")
+		return
+	if not (auto_merge_toggle as Button).button_pressed:
+		_fail("auto stone merge dock button did not stay pressed")
+		return
+	if (auto_merge_badge as Label).text != "ON":
+		_fail("auto stone merge dock button did not show ON state")
+		return
+	if _count_progression_item_id(root_node.progression.inventory_snapshot(), source_item_id) > auto_count_before - 2:
+		_fail("auto stone merge did not consume a two-stone pair")
+		return
+	if _snapshot_item_count(root_node.progression.inventory_snapshot()) >= auto_total_before:
+		_fail("auto stone merge did not replace a pair with a higher stone")
+		return
+	root_node._set_generated_auto_stone_merge_enabled(false)
+	for _i in range(2):
+		await process_frame
+
+	for _i in range(3):
+		root_node.progression.add_item_instance(first_equipment_item_id)
+	root_node._refresh_generated_overlay_now()
+	for _i in range(4):
+		await process_frame
+	var auto_equipment_count_before := _count_progression_item_id(root_node.progression.inventory_snapshot(), first_equipment_item_id)
+	var auto_equipment_total_before := _snapshot_item_count(root_node.progression.inventory_snapshot())
+	(auto_equipment_toggle as Button).toggled.emit(true)
+	for _i in range(8):
+		await process_frame
+	if not bool(root_node.generated_auto_equipment_merge_enabled):
+		_fail("auto equipment merge toggle did not enable runtime auto merge")
+		return
+	if not (auto_equipment_toggle as Button).button_pressed:
+		_fail("auto equipment merge dock button did not stay pressed")
+		return
+	if (auto_equipment_badge as Label).text != "ON":
+		_fail("auto equipment merge dock button did not show ON state")
+		return
+	if _count_progression_item_id(root_node.progression.inventory_snapshot(), first_equipment_item_id) > auto_equipment_count_before - 3:
+		_fail("auto equipment merge did not consume a three-equipment set")
+		return
+	if _snapshot_item_count(root_node.progression.inventory_snapshot()) > auto_equipment_total_before - 2:
+		_fail("auto equipment merge did not replace three equipment pieces with one higher equipment")
+		return
+	root_node._set_generated_auto_equipment_merge_enabled(false)
+	for _i in range(2):
+		await process_frame
+	if root_node.sim != null:
+		root_node.sim.running = auto_merge_combat_was_running
 
 	var combat_layer := overlay.get_node_or_null("Section_BottomCombatStrip/RuntimeCombatLayer")
 	if combat_layer == null:
@@ -892,6 +1085,49 @@ func _count_progression_item_id(snapshot: Dictionary, item_id: int) -> int:
 		if typeof(instance) == TYPE_DICTIONARY and int(instance.get("item_data_id", 0)) == item_id:
 			total += 1
 	return total
+
+
+func _probe_equipped_stone_loadout_after_merge(root_node: Node) -> bool:
+	if root_node.progression == null or root_node.sim == null:
+		_fail("progression or combat sim is missing for stone loadout probe")
+		return false
+	root_node.progression.reset()
+	root_node.progression.set_seed(20260629)
+	var low_ids := []
+	for _i in range(3):
+		var added: Dictionary = root_node.progression.add_item_instance(200202)
+		if not bool(added.get("ok", false)):
+			_fail("stone loadout probe could not add source stone")
+			return false
+		low_ids.append(int(added.get("instance", {}).get("instance_id", 0)))
+	for item_id in [200203, 200204, 200205]:
+		var added_high: Dictionary = root_node.progression.add_item_instance(int(item_id))
+		if not bool(added_high.get("ok", false)):
+			_fail("stone loadout probe could not add higher stone")
+			return false
+	root_node.progression.auto_equip_best_stones()
+	var result: Dictionary = root_node.progression.synthesize_stones(low_ids.slice(0, 2))
+	if not bool(result.get("ok", false)):
+		_fail("stone loadout probe merge failed: %s" % str(result))
+		return false
+	root_node._apply_progression_loadout_to_sim()
+	var sim_snapshot: Dictionary = root_node.sim.snapshot()
+	var stone_skill_ids: Array = sim_snapshot.get("player_stone_skill_ids", [])
+	if stone_skill_ids.has(300102):
+		_fail("combat loadout included an unequipped source stone skill after merge")
+		return false
+	if int(sim_snapshot.get("player_stone_count", 0)) != 3:
+		_fail("combat loadout should use exactly the equipped stone slots after merge")
+		return false
+	var progression_snapshot: Dictionary = root_node.progression.inventory_snapshot()
+	var equipped_ids: Array = progression_snapshot.get("equipped_stone_instance_ids", [])
+	for consumed_id in low_ids.slice(0, 2):
+		if equipped_ids.has(consumed_id):
+			_fail("consumed stone instance remained in equipped slot after merge")
+			return false
+	root_node._bootstrap_progression_state()
+	root_node._refresh_generated_overlay_now()
+	return true
 
 
 func _first_stone_item_id(store) -> int:

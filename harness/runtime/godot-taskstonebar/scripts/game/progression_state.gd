@@ -1,6 +1,6 @@
 extends RefCounted
 
-const STONE_SYNTHESIS_COUNT := 3
+const STONE_SYNTHESIS_COUNT := 2
 const STONE_EQUIP_SLOT_COUNT := 3
 const EQUIPMENT_SYNTHESIS_COUNT := 3
 const SKILL_LEVEL_DAMAGE_BONUS := 0.12
@@ -14,6 +14,7 @@ var next_instance_id := 1
 var materials := {}
 var item_instances := {}
 var equipped_stone_instance_ids := []
+var equipped_equipment_instance_ids := {}
 var skills := {}
 
 
@@ -27,6 +28,7 @@ func reset() -> void:
 	materials.clear()
 	item_instances.clear()
 	equipped_stone_instance_ids.clear()
+	equipped_equipment_instance_ids.clear()
 	skills.clear()
 
 
@@ -66,10 +68,71 @@ func inventory_snapshot() -> Dictionary:
 		"materials": materials.duplicate(true),
 		"items": items,
 		"equipped_stone_instance_ids": equipped_stone_instance_ids.duplicate(true),
+		"equipped_equipment_instance_ids": _equipped_equipment_instance_ids(),
 		"equipped_stones": _equipped_stone_instances(),
+		"equipped_equipment": _equipped_equipment_instances(),
 		"equipped_stats": _equipped_stat_summary(),
+		"equipped_equipment_stats": _equipped_equipment_stat_summary(),
 		"equipped_skill_ids": _equipped_skill_ids(),
+		"learned_skill_ids": _learned_skill_ids(),
+		"learned_skills": _learned_skill_summaries(),
 		"skills": skills.duplicate(true),
+	}
+
+
+func equip_equipment(instance_id: int) -> Dictionary:
+	var safe_id := int(instance_id)
+	if not item_instances.has(safe_id):
+		return _fail("missing_instance", "Equipment instance %d is missing" % safe_id)
+	var instance: Dictionary = item_instances[safe_id]
+	if not _is_equipment_instance(instance):
+		return _fail("not_equipment", "Instance %d is not Equipment" % safe_id)
+	var slot := str(instance.get("slot", instance.get("type", "")))
+	if slot == "":
+		return _fail("missing_slot", "Equipment instance %d has no slot" % safe_id)
+	equipped_equipment_instance_ids[slot] = safe_id
+	_compact_equipped_equipment()
+	return {
+		"ok": true,
+		"slot": slot,
+		"equipped": _equipped_equipment_instances(),
+		"stats": _equipped_equipment_stat_summary(),
+	}
+
+
+func unequip_equipment(instance_id: int) -> Dictionary:
+	var safe_id := int(instance_id)
+	var removed_slot := ""
+	for slot in equipped_equipment_instance_ids.keys():
+		if int(equipped_equipment_instance_ids[slot]) == safe_id:
+			removed_slot = str(slot)
+			break
+	if removed_slot != "":
+		equipped_equipment_instance_ids.erase(removed_slot)
+	_compact_equipped_equipment()
+	return {
+		"ok": true,
+		"slot": removed_slot,
+		"unequipped": removed_slot != "",
+		"equipped": _equipped_equipment_instances(),
+		"stats": _equipped_equipment_stat_summary(),
+	}
+
+
+func auto_equip_best_equipment() -> Dictionary:
+	equipped_equipment_instance_ids.clear()
+	for instance in _equipment_instances_sorted_for_equip():
+		if typeof(instance) != TYPE_DICTIONARY:
+			continue
+		var slot := str(instance.get("slot", instance.get("type", "")))
+		if slot == "" or equipped_equipment_instance_ids.has(slot):
+			continue
+		equipped_equipment_instance_ids[slot] = int(instance.get("instance_id", 0))
+	_compact_equipped_equipment()
+	return {
+		"ok": true,
+		"equipped": _equipped_equipment_instances(),
+		"stats": _equipped_equipment_stat_summary(),
 	}
 
 
@@ -142,7 +205,7 @@ func synthesize_stones(instance_ids: Array) -> Dictionary:
 
 	for instance in consumed:
 		if int(instance.get("item_data_id", 0)) != source_item_id:
-			return _fail("mixed_stones", "Stone synthesis requires three copies of the same stone")
+			return _fail("mixed_stones", "Stone synthesis requires two copies of the same stone")
 
 	var next_item := _next_stone_item(source_item)
 	if next_item.is_empty():
@@ -269,9 +332,13 @@ func synthesize_equipment(instance_ids: Array, result_slot := "") -> Dictionary:
 	var consumed_summaries := _summaries_for_instances(consumed)
 	for instance in consumed:
 		item_instances.erase(int(instance.get("instance_id", 0)))
+	var removed_equipment_slot := _remove_equipped_equipment_instances(consumed_summaries)
 
 	var result_instance := _create_item_instance(target_item, 1, true)
 	item_instances[int(result_instance["instance_id"])] = result_instance
+	if removed_equipment_slot != "":
+		equipped_equipment_instance_ids[removed_equipment_slot] = int(result_instance["instance_id"])
+		_compact_equipped_equipment()
 	return {
 		"ok": true,
 		"recipe_id": _equipment_recipe_id_for(slot, source_grade),
@@ -969,6 +1036,10 @@ func _is_stone_instance(instance: Dictionary) -> bool:
 	return str(instance.get("category", "")) == "Weapon" and _progression_instance_has_tag(instance, "StoneWeapon")
 
 
+func _is_equipment_instance(instance: Dictionary) -> bool:
+	return str(instance.get("category", "")) == "Equipment"
+
+
 func _progression_instance_has_tag(instance: Dictionary, tag: String) -> bool:
 	var tags = instance.get("tags", [])
 	return typeof(tags) == TYPE_ARRAY and tags.has(tag)
@@ -995,6 +1066,27 @@ func _stone_equip_score(instance: Dictionary) -> int:
 	return int(instance.get("stage", 0)) * 100000 + int(instance.get("item_data_id", 0)) * 100 + int(instance.get("level", 1))
 
 
+func _equipment_instances_sorted_for_equip() -> Array:
+	var sorted := []
+	for instance_id in item_instances.keys():
+		var instance: Dictionary = item_instances[instance_id]
+		if not _is_equipment_instance(instance):
+			continue
+		var inserted := false
+		for i in range(sorted.size()):
+			if _equipment_equip_score(instance) > _equipment_equip_score(sorted[i]):
+				sorted.insert(i, instance)
+				inserted = true
+				break
+		if not inserted:
+			sorted.append(instance)
+	return sorted
+
+
+func _equipment_equip_score(instance: Dictionary) -> int:
+	return int(instance.get("grade", 0)) * 100000 + int(instance.get("level", 1)) * 1000 + int(instance.get("item_data_id", 0))
+
+
 func _equipped_stone_instances() -> Array:
 	_compact_equipped_stones()
 	var result := []
@@ -1005,9 +1097,43 @@ func _equipped_stone_instances() -> Array:
 	return result
 
 
+func _equipped_equipment_instance_ids() -> Dictionary:
+	_compact_equipped_equipment()
+	return equipped_equipment_instance_ids.duplicate(true)
+
+
+func _equipped_equipment_instances() -> Array:
+	_compact_equipped_equipment()
+	var result := []
+	for slot in equipped_equipment_instance_ids.keys():
+		var instance_id := int(equipped_equipment_instance_ids[slot])
+		if item_instances.has(instance_id):
+			result.append(item_instances[instance_id].duplicate(true))
+	return result
+
+
 func _equipped_stat_summary() -> Dictionary:
+	var result := _equipped_stone_stat_summary()
+	var equipment_stats := _equipped_equipment_stat_summary()
+	for stat_type in equipment_stats.keys():
+		result[str(stat_type)] = float(result.get(str(stat_type), 0.0)) + float(equipment_stats[stat_type])
+	return result
+
+
+func _equipped_stone_stat_summary() -> Dictionary:
 	var result := {}
 	for instance in _equipped_stone_instances():
+		var stats = instance.get("stats", {})
+		if typeof(stats) != TYPE_DICTIONARY:
+			continue
+		for stat_type in stats.keys():
+			result[str(stat_type)] = float(result.get(str(stat_type), 0.0)) + float(stats[stat_type])
+	return result
+
+
+func _equipped_equipment_stat_summary() -> Dictionary:
+	var result := {}
+	for instance in _equipped_equipment_instances():
 		var stats = instance.get("stats", {})
 		if typeof(stats) != TYPE_DICTIONARY:
 			continue
@@ -1027,6 +1153,42 @@ func _equipped_skill_ids() -> Array:
 			if skill_id > 0 and not result.has(skill_id):
 				result.append(skill_id)
 	return result
+
+
+func _learned_skill_ids() -> Array:
+	var result := []
+	for skill_item_id in skills.keys():
+		var entry: Dictionary = skills[skill_item_id] if typeof(skills[skill_item_id]) == TYPE_DICTIONARY else {}
+		var skill_id := int(entry.get("skill_data_id", 0))
+		if skill_id > 0 and not result.has(skill_id):
+			result.append(skill_id)
+	return result
+
+
+func _learned_skill_summaries() -> Array:
+	var result := []
+	for skill_item_id in skills.keys():
+		var entry: Dictionary = skills[skill_item_id] if typeof(skills[skill_item_id]) == TYPE_DICTIONARY else {}
+		var skill_id := int(entry.get("skill_data_id", 0))
+		if skill_id <= 0:
+			continue
+		result.append(entry.duplicate(true))
+	return result
+
+
+func _remove_equipped_equipment_instances(instances: Array) -> String:
+	var removed_slot := ""
+	for instance in instances:
+		if typeof(instance) != TYPE_DICTIONARY:
+			continue
+		var instance_id := int(instance.get("instance_id", 0))
+		for slot in equipped_equipment_instance_ids.keys():
+			if int(equipped_equipment_instance_ids[slot]) == instance_id:
+				removed_slot = str(slot)
+				equipped_equipment_instance_ids.erase(slot)
+				break
+	_compact_equipped_equipment()
+	return removed_slot
 
 
 func _remove_equipped_instances(instances: Array) -> bool:
@@ -1055,6 +1217,23 @@ func _compact_equipped_stones() -> void:
 		if compacted.size() >= STONE_EQUIP_SLOT_COUNT:
 			break
 	equipped_stone_instance_ids = compacted
+
+
+func _compact_equipped_equipment() -> void:
+	var compacted := {}
+	for raw_slot in equipped_equipment_instance_ids.keys():
+		var slot := str(raw_slot)
+		var instance_id := int(equipped_equipment_instance_ids[raw_slot])
+		if slot == "" or instance_id <= 0 or not item_instances.has(instance_id):
+			continue
+		var instance: Dictionary = item_instances[instance_id]
+		if not _is_equipment_instance(instance):
+			continue
+		var instance_slot := str(instance.get("slot", instance.get("type", "")))
+		if instance_slot == "":
+			continue
+		compacted[instance_slot] = instance_id
+	equipped_equipment_instance_ids = compacted
 
 
 func _stone_stage(item: Dictionary) -> int:

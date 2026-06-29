@@ -1496,11 +1496,11 @@ metadata/button_role = "portal_stage_node"
 
 [node name="Section_BottomCombatStrip" type="Control" parent="."]
 layout_mode = 0
-offset_left = 0.0
+offset_left = 397.0
 offset_top = 704.0
-offset_right = 1586.0
+offset_right = 1190.0
 offset_bottom = 940.0
-custom_minimum_size = Vector2(1586.0, 236.0)
+custom_minimum_size = Vector2(793.0, 236.0)
 metadata/atom = "SectionGroup"
 metadata/component = "TaskbarCombatStrip"
 
@@ -1508,9 +1508,9 @@ metadata/component = "TaskbarCombatStrip"
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 1586.0
+offset_right = 793.0
 offset_bottom = 236.0
-custom_minimum_size = Vector2(1586.0, 236.0)
+custom_minimum_size = Vector2(793.0, 236.0)
 expand_mode = 1
 stretch_mode = 5
 texture = ExtResource("11_tex")
@@ -1520,9 +1520,9 @@ metadata/asset_key = "taskstonebar.ui.combat_ground_strip"
 
 [node name="Tex_HeroCombatSprite" type="TextureRect" parent="Section_BottomCombatStrip"]
 layout_mode = 0
-offset_left = 360.0
+offset_left = 100.0
 offset_top = 38.0
-offset_right = 456.0
+offset_right = 196.0
 offset_bottom = 134.0
 custom_minimum_size = Vector2(96.0, 96.0)
 expand_mode = 1
@@ -1534,11 +1534,11 @@ metadata/asset_key = "taskstonebar.ui.stone_keeper_sheet"
 
 [node name="Layer_Projectile" type="Control" parent="Section_BottomCombatStrip"]
 layout_mode = 0
-offset_left = 456.0
+offset_left = 160.0
 offset_top = 34.0
-offset_right = 900.0
+offset_right = 680.0
 offset_bottom = 138.0
-custom_minimum_size = Vector2(444.0, 104.0)
+custom_minimum_size = Vector2(520.0, 104.0)
 metadata/atom = "SectionGroup"
 metadata/component = "ProjectileLayer"
 
@@ -1575,9 +1575,9 @@ metadata/font_size = 15.0
 
 [node name="Tex_EnemyStackPrototype" type="TextureRect" parent="Section_BottomCombatStrip"]
 layout_mode = 0
-offset_left = 900.0
+offset_left = 650.0
 offset_top = 60.0
-offset_right = 972.0
+offset_right = 722.0
 offset_bottom = 132.0
 custom_minimum_size = Vector2(72.0, 72.0)
 expand_mode = 1
@@ -1589,9 +1589,9 @@ metadata/asset_key = "taskstonebar.ui.stone_icon_set"
 
 [node name="Text_DamageNumber" type="Label" parent="Section_BottomCombatStrip"]
 layout_mode = 0
-offset_left = 782.0
+offset_left = 580.0
 offset_top = 44.0
-offset_right = 914.0
+offset_right = 712.0
 offset_bottom = 74.0
 custom_minimum_size = Vector2(132.0, 30.0)
 horizontal_alignment = 1
@@ -1606,9 +1606,9 @@ metadata/font_size = 22.0
 
 [node name="Text_EnemyName" type="Label" parent="Section_BottomCombatStrip"]
 layout_mode = 0
-offset_left = 850.0
+offset_left = 590.0
 offset_top = 24.0
-offset_right = 1040.0
+offset_right = 780.0
 offset_bottom = 46.0
 custom_minimum_size = Vector2(190.0, 22.0)
 horizontal_alignment = 0
@@ -1623,9 +1623,9 @@ metadata/font_size = 14.0
 
 [node name="Progress_EnemyHp" type="ProgressBar" parent="Section_BottomCombatStrip"]
 layout_mode = 0
-offset_left = 850.0
+offset_left = 590.0
 offset_top = 52.0
-offset_right = 978.0
+offset_right = 718.0
 offset_bottom = 64.0
 custom_minimum_size = Vector2(128.0, 12.0)
 show_percentage = false
@@ -1637,9 +1637,9 @@ metadata/value_binding = "combat.focus_enemy.hp_ratio"
 
 [node name="Text_EnemyHpValue" type="Label" parent="Section_BottomCombatStrip"]
 layout_mode = 0
-offset_left = 982.0
+offset_left = 722.0
 offset_top = 47.0
-offset_right = 1100.0
+offset_right = 840.0
 offset_bottom = 69.0
 custom_minimum_size = Vector2(118.0, 22.0)
 horizontal_alignment = 0

@@ -2,8 +2,8 @@ extends SceneTree
 
 const OUTPUT_PATH := "res://screenshots/taskstonebar-combat-smoke.png"
 const REFERENCE_SIZE := Vector2i(1586, 992)
-const COMPACT_COMBAT_SIZE := Vector2i(960, 236)
-const COMPACT_COMBAT_ORIGIN := Vector2i(313, 704)
+const COMPACT_COMBAT_SIZE := Vector2i(793, 236)
+const COMPACT_COMBAT_ORIGIN := Vector2i(397, 704)
 
 
 func _init() -> void:
@@ -13,6 +13,8 @@ func _init() -> void:
 func _capture() -> void:
 	Engine.time_scale = 4.0
 	get_root().size = REFERENCE_SIZE
+	if DisplayServer.get_name() != "headless":
+		DisplayServer.window_set_size(REFERENCE_SIZE)
 	var scene: PackedScene = load("res://scenes/main.tscn")
 	var root_node: Node = scene.instantiate()
 	root_node.set("generated_visual_capture_mode", true)

@@ -148,6 +148,15 @@ concepts:
     variation: "Desktop Item Detail Modal"
     reference: "gen-ui-concept pass for item detail page over Godot ModalHost"
     summary: "Focused item detail modal concept: shared desktop-window chrome, large selected item slot, native identity text, stat list, warning chips, and footer actions while the taskbar combat strip remains visible."
+  skill_detail_window_concept_a:
+    status: candidate
+    kind: skill_detail_modal_ui
+    image: concepts/skill_detail_window_concept_a.png
+    note: concepts/skill_detail_window_concept_a.md
+    parent: status_window_concept_c_tbh_stat_skill_layout
+    variation: "Status Skill Detail Modal"
+    reference: "gen-ui-concept pass for StatusWindow skill slot confirmation flow"
+    summary: "Focused skill detail modal: clicking a StatusWindow skill slot opens requirements, current/next effect, Skill Point cost, auto-equip state, and a single learn/level-up CTA instead of spending immediately."
   combat_map_progress_badge_concept_a_b:
     status: candidate
     kind: taskbar_combat_subcomponent_ui

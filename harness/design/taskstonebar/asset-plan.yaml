@@ -4,6 +4,7 @@ status: draft
 source_concepts:
   - main_ui_concept_e_refined_current_mockup_b
   - window_title_bar_concept_c_forged_rail
+  - skill_detail_window_concept_a
 
 foundation_systems:
   buttons: button-system.yaml
@@ -238,8 +239,8 @@ assets:
     background: transparent
     target_size: { width: 320, height: 64 }
     variants:
-      - inventory
-      - growth
+      - auto_stone_merge
+      - auto_equipment_merge
       - skill_tree
       - synthesis_storage
       - steam_assets
@@ -257,7 +258,14 @@ assets:
     generated_with: image_gen
     source_path: harness/design/taskstonebar/assets/ui/keeper_dock_icon_set_imagegen_alpha.png
     imagegen_source_path: /Users/yangjinhwan/.codex/generated_images/019ef875-8b80-7e73-b57e-20283646ddb0/ig_08305d076a438749016a3bcd79ec3c81948fd48420439626e4.png
-    generation_notes: "Generated as a five-icon transparent dock atlas, then alpha-cleaned and packed from the imagegen source. Icons map to inventory, growth/feed, skill tree, synthesis/storage, and Steam asset wallet shortcuts."
+    imagegen_source_paths:
+      initial_atlas: /Users/yangjinhwan/.codex/generated_images/019ef875-8b80-7e73-b57e-20283646ddb0/ig_08305d076a438749016a3bcd79ec3c81948fd48420439626e4.png
+      auto_stone_merge_cell: /Users/yangjinhwan/.codex/generated_images/019f1192-fe4a-7603-8e58-5f93658a59d7/ig_083cdf55d7d2bd7b016a41faf50158819a9bf03f2277531563.png
+      auto_equipment_merge_cell: /Users/yangjinhwan/.codex/generated_images/019f1192-fe4a-7603-8e58-5f93658a59d7/ig_0f78a7ebbe95b4a5016a41fed966d4819aaaafc787b701c3c0.png
+    alpha_source_paths:
+      auto_stone_merge_cell: harness/design/taskstonebar/assets/ui/auto_stone_merge_icon_alpha.png
+      auto_equipment_merge_cell: harness/design/taskstonebar/assets/ui/auto_equipment_merge_icon_alpha.png
+    generation_notes: "Generated as a five-icon transparent dock atlas, then alpha-cleaned and packed from the imagegen source. First cell was updated with imagegen on 2026-06-29 for the auto stone merge toggle; second cell was updated with imagegen on 2026-06-29 for the auto equipment merge toggle. Icons map to auto stone merge, auto equipment merge, skill tree, synthesis/storage, and Steam asset wallet shortcuts."
 
   - key: taskstonebar.ui.skill_tree_icon_set
     type: ui_icon_set
@@ -571,7 +579,7 @@ assets:
     priority: must
     status: planned
     source_path: harness/design/taskstonebar/assets/ui/combat_ground_strip_refined.png
-    generation_notes: "Refined Godot pass: green sky, grass ledge, and rocky platform closer to the selected mockup; current runtime keeps this visible as the ground underlay while units, labels, HUD atoms, toast, and controls render above it."
+    generation_notes: "Refined Godot pass: green sky, grass ledge, and rocky platform closer to the selected mockup; current runtime shows this image by default and crops the unused left/right sides to 793x236 without horizontal scaling while units, labels, HUD atoms, toast, and controls render at 100% visibility."
 
   - key: taskstonebar.ui.window_ornament_set
     type: frame_ornament_set

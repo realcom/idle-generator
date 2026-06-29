@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Theme" path="res://themes/generated/taskstonebar_status_window.tres" id="1_theme"]
 [ext_resource type="Texture2D" path="res://assets/generated/ui/window_frame_9slice.png" id="2_tex"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" path="res://assets/generated/ui/slot_frame_9slice.png" id="7_tex"]
 [ext_resource type="Texture2D" path="res://assets/generated/ui/stone_icon_set.png" id="8_tex"]
 [ext_resource type="Texture2D" path="res://assets/generated/ui/resource_icon_set.png" id="9_tex"]
+[ext_resource type="Script" path="res://scripts/ui/status_window_runtime.gd" id="10_script"]
 
 [node name="Root_StatusWindow" type="Control"]
 layout_mode = 3
@@ -18,6 +19,7 @@ offset_top = 0.0
 offset_right = 458.0
 offset_bottom = 574.0
 custom_minimum_size = Vector2(458.0, 574.0)
+script = ExtResource("10_script")
 metadata/atom = "ScreenRoot"
 metadata/component = "StatusWindow"
 

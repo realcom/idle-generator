@@ -5,6 +5,7 @@ purpose: "Shared modal/dialog contract for Taskstonebar irreversible actions and
 source_standard: "ui-decision-standard-kit/UI_DECISION_STANDARD.md"
 source_concepts:
   - main_ui_concept_e_refined_current_mockup_b
+  - skill_detail_window_concept_a
 
 principles:
   - "The main overlay recipe does not open a modal, but modal ownership is reserved for feed, merge, boss gate, reward, and sync errors."
@@ -70,6 +71,11 @@ actions:
       preserve_taskbar_combat_strip: true
       source_count: 3
       confirm_rule: "Enable only when all three source slots share equipment slot and grade."
+    SkillDetailModal:
+      role: "Inspect a StatusWindow skill slot before spending Skill Points."
+      sections: [header, skill_identity, requirement_summary, current_next_effects, cost_status, footer]
+      preserve_taskbar_combat_strip: true
+      confirm_rule: "Enable 학습 when unlock preview passes; enable 레벨업 when owned, below max, and cost is affordable."
     BossGateModal:
       role: "Confirm portal boss entry and recommended level."
       sections: [header, boss_preview, requirement_summary, footer]

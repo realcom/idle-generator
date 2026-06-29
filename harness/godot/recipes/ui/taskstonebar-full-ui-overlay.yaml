@@ -27,6 +27,7 @@ sources:
     - ../../../design/taskstonebar/concepts/main_ui_concept_e_refined_current_mockup_b.md
     - ../../../design/taskstonebar/concepts/stone_raising_2_full_ui_concept_a.md
     - ../../../design/taskstonebar/concepts/status_window_concept_c_tbh_stat_skill_layout.md
+    - ../../../design/taskstonebar/concepts/skill_detail_window_concept_a.md
     - ../../../design/taskstonebar/concepts/combat_map_progress_badge_concept_a_b.md
     - ../../../design/taskstonebar/concepts/window_title_bar_concept_c_forged_rail.md
 
@@ -83,6 +84,10 @@ blueprint_refs:
     - EquipmentUpgradeSourceTray
     - EquipmentUpgradeResultPreview
     - EquipmentUpgradeActionFooter
+    - SkillDetailModal
+    - SkillDetailIdentityPanel
+    - SkillDetailEffectList
+    - SkillDetailActionFooter
   shared_button_roles:
     - window_close
     - utility_icon
@@ -95,6 +100,7 @@ blueprint_refs:
   shared_modal_sections:
     - ConsumeConfirmModal
     - EquipmentUpgradeModal
+    - SkillDetailModal
     - BossGateModal
     - RewardClaimModal
     - DetailedStatsModal
@@ -110,7 +116,7 @@ screen:
   reference_size_px: { width: 1586, height: 992 }
   safe_area_policy: "Last 52px are reserved for the OS taskbar motif; generated Control scene must leave empty desktop regions transparent."
   product_metaphor: "Desktop companion app: floating RPG windows above an always-on taskbar combat strip."
-  transparency_policy: "No full-screen background fill. Empty pixels between floating windows remain transparent; the combat strip keeps its ground image as the underlay so element-free areas do not render as black, while decorative props and soft borders stay transparent above it."
+  transparency_policy: "No full-screen background fill. Empty pixels between floating windows remain transparent; the combat strip shows the cropped battle ground image while combat sprites, HP, damage, toast, progress, and controls default to 100% visible."
   runtime_modes:
     taskbar_mode: "Workshop windows are collapsed/minimized; bottom combat strip and OS taskbar-safe status remain readable."
     workshop_mode: "Status, inventory, and portal windows expand as desktop-style floating windows above the combat strip."
@@ -135,13 +141,15 @@ layout:
       size_px: { width: 438, height: 560 }
       visual_scale: 0.8
     taskbar_combat_strip:
-      position_px: { x: 0, y: 704 }
-      size_px: { width: 1586, height: 236 }
+      position_px: { x: 397, y: 704 }
+      size_px: { width: 793, height: 236 }
+      source_crop_px: { x: 396, y: 0, width: 793, height: 236 }
     modal_host:
       position_px: { x: 0, y: 0 }
       size_px: { width: 1586, height: 992 }
       scrim_bounds_px: { x: 0, y: 0, width: 1586, height: 704 }
       equipment_upgrade_modal_px: { x: 574, y: 168, width: 438, height: 344 }
+      skill_detail_modal_px: { x: 556, y: 152, width: 474, height: 360 }
       preserve_combat_strip: true
     os_taskbar_safe_band:
       position_px: { x: 0, y: 940 }
@@ -246,8 +254,8 @@ assets:
       usage: fixed_portal_route_map_background
       display_size_px: { width: 372, height: 404 }
     - key: taskstonebar.ui.combat_ground_strip
-      usage: bottom_combat_ground_underlay
-      display_size_px: { width: 1586, height: 236 }
+      usage: bottom_combat_visible_cropped_background
+      display_size_px: { width: 793, height: 236 }
     - key: taskstonebar.ui.keeper_dock_icon_set
       usage: center_keeper_dock_shortcut_icons
       display_size_px: { width: 38, height: 38 }
@@ -1045,28 +1053,28 @@ control_tree:
         node_name: Section_BottomCombatStrip
         component: TaskbarCombatStrip
         layout: bottom_above_os_taskbar
-        position_px: { x: 0, y: 704 }
-        size_px: { width: 1586, height: 236 }
+        position_px: { x: 397, y: 704 }
+        size_px: { width: 793, height: 236 }
         children:
           - atom: TextureAtom
             node_name: Tex_CombatGroundStrip
             component: TaskbarCombatStrip
             asset_key: taskstonebar.ui.combat_ground_strip
-            stretch_mode: scale
+            stretch_mode: keep_aspect_covered
             position_px: { x: 0, y: 0 }
-            size_px: { width: 1586, height: 236 }
+            size_px: { width: 793, height: 236 }
           - atom: TextureAtom
             node_name: Tex_HeroCombatSprite
             component: HeroCombatSprite
             asset_key: taskstonebar.ui.stone_keeper_sheet
             stretch_mode: keep_aspect_centered
-            position_px: { x: 360, y: 38 }
+            position_px: { x: 100, y: 38 }
             size_px: { width: 96, height: 96 }
           - atom: SectionGroup
             node_name: Layer_Projectile
             component: ProjectileLayer
-            position_px: { x: 456, y: 34 }
-            size_px: { width: 444, height: 104 }
+            position_px: { x: 160, y: 34 }
+            size_px: { width: 520, height: 104 }
             children:
               - atom: TextureAtom
                 node_name: Tex_StoneProjectile
@@ -1089,7 +1097,7 @@ control_tree:
             component: EnemyStack
             asset_key: taskstonebar.ui.stone_icon_set
             stretch_mode: keep_aspect_centered
-            position_px: { x: 900, y: 60 }
+            position_px: { x: 650, y: 60 }
             size_px: { width: 72, height: 72 }
           - atom: NativeLabel
             node_name: Text_DamageNumber
@@ -1098,7 +1106,7 @@ control_tree:
             preview_text: "-128 CRIT"
             font_size: 22
             color_token: title_gold
-            position_px: { x: 782, y: 44 }
+            position_px: { x: 580, y: 44 }
             size_px: { width: 132, height: 30 }
           - atom: NativeLabel
             node_name: Text_EnemyName
@@ -1108,13 +1116,13 @@ control_tree:
             font_size: 14
             color_token: text_cream
             horizontal_alignment: left
-            position_px: { x: 850, y: 24 }
+            position_px: { x: 590, y: 24 }
             size_px: { width: 190, height: 22 }
           - atom: NativeProgress
             node_name: Progress_EnemyHp
             component: EnemyHpBar
             value_binding: combat.focus_enemy.hp_ratio
-            position_px: { x: 850, y: 52 }
+            position_px: { x: 590, y: 52 }
             size_px: { width: 128, height: 12 }
           - atom: NativeLabel
             node_name: Text_EnemyHpValue
@@ -1124,7 +1132,7 @@ control_tree:
             font_size: 12
             color_token: text_cream
             horizontal_alignment: left
-            position_px: { x: 982, y: 47 }
+            position_px: { x: 722, y: 47 }
             size_px: { width: 118, height: 22 }
           - atom: NativePanel
             node_name: Panel_AutoCombatToggle
@@ -1357,6 +1365,55 @@ modal_contract:
         - "Large selected item slot, identity labels, stat/source rows, warning chips, and footer actions are separate native regions."
         - "Item text, counts, warnings, and action labels are not baked into bitmap assets."
         - "TaskbarCombatStrip remains visible behind the modal."
+  skill_detail_modal:
+    component: SkillDetailModal
+    modal_section: SkillDetailModal
+    owner_action: runtime:status_window_skill_slot/click
+    source_concept: ../../../design/taskstonebar/concepts/skill_detail_window_concept_a.md
+    shell:
+      atom: ModalShell
+      frame_asset_key: taskstonebar.ui.window_frame_9slice
+      title_asset_key: taskstonebar.ui.window_title_bar_9slice
+      body_asset_key: taskstonebar.ui.dark_inner_well_9slice
+      position_px: { x: 556, y: 152 }
+      size_px: { width: 474, height: 360 }
+      title_bar_px: { x: 14, y: 12, width: 446, height: 42 }
+      body_px: { x: 28, y: 68, width: 418, height: 216 }
+      footer_px: { x: 76, y: 292, width: 322, height: 46 }
+      close_button_px: { x: 408, y: 5, width: 32, height: 32 }
+      optional_minimize_button: false
+    body_sections:
+      identity:
+        component: SkillDetailIdentityPanel
+        atom: SectionGroup
+        icon_slot_asset_key: taskstonebar.ui.slot_frame_9slice
+        text_bindings: [skill.name, skill.level_text, skill.auto_equip_state]
+      requirements:
+        component: SkillDetailEffectList
+        atom: SectionGroup
+        text_bindings: [skill.requirements.summary, skill.owned_points, skill.next_cost]
+      effects:
+        component: SkillDetailEffectList
+        atom: SectionGroup
+        text_bindings: [skill.current_effect_summary, skill.next_effect_summary, skill.disabled_reason]
+    footer_actions:
+      close:
+        component: SkillDetailActionFooter
+        button_role: utility_icon
+        text_binding_or_text_key: ui.close
+      confirm:
+        component: SkillDetailActionFooter
+        button_role: inventory_tab
+        text_binding_or_text_key: skill.confirm_text
+        enabled_binding: skill.can_confirm
+    qa:
+      screenshot: ../../../runtime/godot-taskstonebar/screenshots/taskstonebar-skill-detail-modal.png
+      compare_board: ../../../design/taskstonebar/qa/skill-detail-modal-compare-iteration-1.png
+      pass_conditions:
+        - "Clicking a StatusWindow skill slot opens this modal without spending Skill Points."
+        - "Skill icon, level chip, auto-equip chip, requirements, current effect, next effect, and footer CTA are separate native regions."
+        - "Confirming 학습 or 레벨업 is the only path that consumes Skill Points."
+        - "TaskbarCombatStrip remains visible behind the modal."
 
 data_contract:
   content:
@@ -1367,6 +1424,9 @@ data_contract:
     - resources.cube_catalyst
     - selected_character
     - inventory.stone_slots
+    - skill.selected_item
+    - skill.unlock_preview
+    - skill.level_preview
     - portal.map_progress
     - combat.snapshot
   runtime_state:
@@ -1374,6 +1434,7 @@ data_contract:
     - ui.window_stack_collapsed
     - ui.active_modal
     - ui.inventory_tab
+    - ui.selected_skill_item_id
     - ui.drag_merge_state
     - equipment.upgrade.can_confirm
     - steam_inventory_sync_state

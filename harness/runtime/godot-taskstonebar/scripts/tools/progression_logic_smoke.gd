@@ -13,17 +13,20 @@ func _init() -> void:
 
 	_smoke_stone_synthesis(store)
 	_smoke_stone_equip_loadout(store)
+	_smoke_stone_merge_refreshes_equipped_loadout(store)
 	_smoke_unit_drop_items(store)
 	_smoke_early_monster_hit_budget(store)
 	_smoke_stone_direct_drop(store)
 	_smoke_deterministic_equipment_drop(store)
 	_smoke_combat_progression_loot(store)
+	_smoke_equipment_equip_toggle(store)
 	_smoke_equipment_synthesis(store)
 	_smoke_dynamic_player_level_up(store)
 	_smoke_skill_level_up(store)
+	_smoke_learned_skill_auto_equip(store)
 	_smoke_skill_unlock_requirements(store)
 
-	print("progression logic smoke ok: stone synthesis, stone equip loadout, direct loot drops, equipment synthesis, dynamic player level-up, skill unlock/level-up")
+	print("progression logic smoke ok: stone synthesis, stone equip loadout, stone merge loadout refresh, direct loot drops, equipment equip toggle, equipment synthesis, dynamic player level-up, skill unlock/level-up, learned skill auto-equip")
 	quit(0)
 
 
@@ -41,7 +44,7 @@ func _smoke_stone_synthesis(store) -> void:
 	_assert(int(result.get("result_item_data_id", 0)) == 200203, "unexpected result stone")
 	_assert(int(result.get("source_stage", 0)) == 1, "unexpected source stage")
 	_assert(int(result.get("result_stage", 0)) == 2, "unexpected result stage")
-	_assert(int(result.get("required_count", 0)) == 3, "stone synthesis did not require 3 copies")
+	_assert(int(result.get("required_count", 0)) == 2, "stone synthesis did not require 2 copies")
 
 
 func _smoke_stone_equip_loadout(store) -> void:
@@ -62,17 +65,14 @@ func _smoke_stone_equip_loadout(store) -> void:
 
 	var sim = BasicCombatSim.new(store)
 	sim.set_player_stat_bonuses(stats)
-	sim.set_player_skill_ids(skill_ids)
+	sim.set_player_stone_loadout(equipped)
 	sim.start(500101)
 	var sim_snapshot: Dictionary = sim.snapshot()
 	var player: Dictionary = sim_snapshot.get("player", {})
 	_assert(float(player.get("attack", 0.0)) > 42.0, "equipped stone stats did not increase player attack")
-	_assert(sim.player_skill_rotation.size() == 3, "equipped stone skills did not reach combat rotation")
-	var combat_skill_ids := []
-	for skill in sim.player_skill_rotation:
-		if typeof(skill) == TYPE_DICTIONARY:
-			combat_skill_ids.append(int(skill.get("id", 0)))
-	_assert(combat_skill_ids.has(300102) and combat_skill_ids.has(300103) and combat_skill_ids.has(300104), "combat rotation missing equipped stone skills")
+	_assert(sim.player_stone_loadout.size() == 3, "equipped stones did not reach combat stone loadout")
+	var combat_skill_ids: Array = sim_snapshot.get("player_stone_skill_ids", [])
+	_assert(combat_skill_ids.has(300102) and combat_skill_ids.has(300103) and combat_skill_ids.has(300104), "combat stone loadout missing equipped stone skills")
 
 	var all_stone_instances := _stone_instances(snapshot)
 	var all_stone_stats := _stone_stat_summary(all_stone_instances)
@@ -89,6 +89,34 @@ func _smoke_stone_equip_loadout(store) -> void:
 		all_stone_sim.step(1.0 / 30.0)
 	var cast_snapshot: Dictionary = all_stone_sim.snapshot()
 	_assert(int(cast_snapshot.get("player_skill_cast_count", 0)) >= all_stone_instances.size(), "inventory stones did not cast on independent cooldowns")
+
+
+func _smoke_stone_merge_refreshes_equipped_loadout(store) -> void:
+	var state = ProgressionState.new(store)
+	var source_ids := []
+	for _i in range(3):
+		var added: Dictionary = state.add_item_instance(200202)
+		_assert(bool(added.get("ok", false)), "failed to add source stone for merge refresh smoke")
+		source_ids.append(int(added.get("instance", {}).get("instance_id", 0)))
+	for item_id in [200203, 200204, 200205]:
+		var added_high: Dictionary = state.add_item_instance(int(item_id))
+		_assert(bool(added_high.get("ok", false)), "failed to add high stone for merge refresh smoke")
+	state.auto_equip_best_stones()
+
+	var result: Dictionary = state.synthesize_stones(source_ids.slice(0, ProgressionState.STONE_SYNTHESIS_COUNT))
+	_assert(bool(result.get("ok", false)), "stone merge refresh synthesis failed: %s" % str(result))
+	var snapshot: Dictionary = state.inventory_snapshot()
+	var equipped_ids: Array = snapshot.get("equipped_stone_instance_ids", [])
+	for consumed_id in source_ids.slice(0, ProgressionState.STONE_SYNTHESIS_COUNT):
+		_assert(not equipped_ids.has(consumed_id), "consumed stone instance remained equipped after merge")
+
+	var sim = BasicCombatSim.new(store)
+	sim.set_player_stat_bonuses(snapshot.get("equipped_stats", {}))
+	sim.set_player_stone_loadout(snapshot.get("equipped_stones", []))
+	sim.start(500101)
+	var combat_skill_ids: Array = sim.snapshot().get("player_stone_skill_ids", [])
+	_assert(not combat_skill_ids.has(300102), "unequipped source stone skill remained in combat loadout after merge")
+	_assert(combat_skill_ids.has(300103) and combat_skill_ids.has(300104) and combat_skill_ids.has(300105), "equipped higher stone skills did not reach combat after merge")
 
 
 func _smoke_unit_drop_items(store) -> void:
@@ -237,6 +265,29 @@ func _smoke_equipment_synthesis(store) -> void:
 	_assert(not item.get("stats", {}).is_empty(), "synthesized equipment has no stats")
 
 
+func _smoke_equipment_equip_toggle(store) -> void:
+	var state = ProgressionState.new(store)
+	state.set_seed(8080)
+	var drop: Dictionary = state.grant_monster_kill_equipment(111011, 1, {"slot": "Head", "grade": 1})
+	_assert(bool(drop.get("ok", false)) and bool(drop.get("dropped", false)), "fixed equipment drop failed for equip toggle")
+	var instance_id := int(drop.get("result", {}).get("instance_id", 0))
+	var equip_result: Dictionary = state.equip_equipment(instance_id)
+	_assert(bool(equip_result.get("ok", false)), "equipment equip failed: %s" % str(equip_result))
+	var snapshot: Dictionary = state.inventory_snapshot()
+	var equipped_ids: Dictionary = snapshot.get("equipped_equipment_instance_ids", {})
+	_assert(int(equipped_ids.get("Head", 0)) == instance_id, "equipped equipment id was not recorded in the Head slot")
+	var equipment_stats: Dictionary = snapshot.get("equipped_equipment_stats", {})
+	_assert(not equipment_stats.is_empty(), "equipped equipment stats were not collected")
+	var combined_stats: Dictionary = snapshot.get("equipped_stats", {})
+	for stat_key in equipment_stats.keys():
+		_assert(absf(float(combined_stats.get(stat_key, 0.0)) - float(equipment_stats[stat_key])) < 0.01, "equipment stat %s did not flow into equipped_stats" % str(stat_key))
+	var unequip_result: Dictionary = state.unequip_equipment(instance_id)
+	_assert(bool(unequip_result.get("ok", false)), "equipment unequip failed: %s" % str(unequip_result))
+	snapshot = state.inventory_snapshot()
+	equipped_ids = snapshot.get("equipped_equipment_instance_ids", {})
+	_assert(not equipped_ids.has("Head"), "equipment remained in Head slot after unequip")
+
+
 func _smoke_dynamic_player_level_up(store) -> void:
 	var state = ProgressionState.new(store)
 	var sim = BasicCombatSim.new(store)
@@ -299,6 +350,39 @@ func _smoke_skill_level_up(store) -> void:
 	_assert(int(upgraded.get("skill", {}).get("level", 0)) == 2, "skill did not reach level 2")
 	_assert(state.material_count(200501) == 2, "skill point was not consumed")
 	_assert(float(upgraded.get("effect_after", {}).get("damage_ratio", 0.0)) > float(upgraded.get("effect_before", {}).get("damage_ratio", 0.0)), "skill effect did not increase")
+
+
+func _smoke_learned_skill_auto_equip(store) -> void:
+	var state = ProgressionState.new(store)
+	state.add_item_instance(200202)
+	state.add_item_instance(200203)
+	state.add_item_instance(200204)
+	state.auto_equip_best_stones()
+	state.learn_skill(200502, 2)
+	var snapshot: Dictionary = state.inventory_snapshot()
+	var learned_skill_ids: Array = snapshot.get("learned_skill_ids", [])
+	_assert(learned_skill_ids.has(300101), "learned skill item 200502 did not expose skillDataId 300101")
+	var learned_skills: Array = snapshot.get("learned_skills", [])
+	_assert(not learned_skills.is_empty(), "learned skill summaries are missing")
+
+	var sim = BasicCombatSim.new(store)
+	sim.set_progression_state(state)
+	sim.set_player_stat_bonuses(snapshot.get("equipped_stats", {}))
+	sim.set_player_learned_skills(learned_skills)
+	sim.set_player_stone_loadout(snapshot.get("equipped_stones", []))
+	sim.start(500101)
+	var start_snapshot: Dictionary = sim.snapshot()
+	_assert((start_snapshot.get("player_learned_skill_ids", []) as Array).has(300101), "learned skill did not reach combat learned rotation")
+	for _i in range(360):
+		sim.step(1.0 / 30.0)
+	var cast_snapshot: Dictionary = sim.snapshot()
+	_assert(int(cast_snapshot.get("player_learned_skill_cast_count", 0)) > 0, "learned skill did not auto-cast while stones were equipped")
+	var saw_learned_fx := false
+	for event in cast_snapshot.get("fx_events", []):
+		if typeof(event) == TYPE_DICTIONARY and bool((event as Dictionary).get("is_learned_skill", false)):
+			saw_learned_fx = true
+			break
+	_assert(saw_learned_fx, "learned skill cast did not mark a visible learned-skill FX event")
 
 
 func _smoke_skill_unlock_requirements(store) -> void:

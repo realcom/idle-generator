@@ -91,15 +91,25 @@ func _run() -> void:
 	if skill_points == null or not skill_points is Label or str((skill_points as Label).text).find("3") == -1:
 		_fail("status window skill points are not bound to progression materials")
 		return
-	var status_level := overlay.get_node_or_null("Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows/Text_StatusLevelValue")
+	var status_stat_scroll := overlay.get_node_or_null("Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Scroll_StatusRows")
+	if status_stat_scroll == null or not status_stat_scroll is ScrollContainer:
+		_fail("status window stats are not using a real ScrollContainer")
+		return
+	(status_stat_scroll as ScrollContainer).scroll_vertical = 999
+	for _i in range(4):
+		await process_frame
+	if (status_stat_scroll as ScrollContainer).scroll_vertical <= 0:
+		_fail("status window stat ScrollContainer did not scroll")
+		return
+	var status_level := overlay.find_child("Text_StatusLevelValue", true, false)
 	if status_level == null or not status_level is Label or str((status_level as Label).text).find("Lv.") == -1:
 		_fail("status window level value is not bound to the combat player snapshot")
 		return
-	var status_attack := overlay.get_node_or_null("Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows/Text_StatusAttackDamageValue")
+	var status_attack := overlay.find_child("Text_StatusAttackDamageValue", true, false)
 	if status_attack == null or not status_attack is Label or str((status_attack as Label).text).find("+") == -1:
 		_fail("status window attack value is not including progression equipment bonuses")
 		return
-	var status_exp := overlay.get_node_or_null("Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Group_StatusRows/Text_StatusExpValue")
+	var status_exp := overlay.find_child("Text_StatusExpValue", true, false)
 	if status_exp == null or not status_exp is Label or not str((status_exp as Label).text).begins_with("EXP"):
 		_fail("status window exp row should show the keeper EXP summary")
 		return
@@ -122,7 +132,48 @@ func _run() -> void:
 	if stone_throw_icon == null or not stone_throw_icon is TextureRect or (stone_throw_icon as TextureRect).texture == null:
 		_fail("status window stone throw skill icon is missing")
 		return
-	var initial_stone_throw_text := str((stone_throw_level as Label).text)
+	var status_stone_throw_slot := overlay.get_node_or_null("Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillStoneThrow")
+	if status_stone_throw_slot == null or not status_stone_throw_slot is Control:
+		_fail("status window stone throw skill slot is missing")
+		return
+	if not _slot_children_ignore_mouse(status_stone_throw_slot as Control):
+		_fail("status skill slot children still intercept mouse input")
+		return
+	var before_status_slot_points := _parse_skill_points(str((skill_points as Label).text))
+	_emit_left_click(status_stone_throw_slot as Control)
+	for _i in range(8):
+		await process_frame
+	if str((stone_throw_level as Label).text).find("1/") == -1:
+		_fail("status window first skill slot spent points before opening the detail modal")
+		return
+	var skill_detail := overlay.get_node_or_null("ModalHost/Modal_SkillDetail")
+	if skill_detail == null or not skill_detail is Control:
+		_fail("status window first skill slot did not open the skill detail modal")
+		return
+	var skill_detail_confirm := skill_detail.get_node_or_null("Footer_SkillDetail/Btn_SkillDetailConfirm")
+	if skill_detail_confirm == null or not skill_detail_confirm is Button:
+		_fail("skill detail modal has no learn/level-up confirm button")
+		return
+	if (skill_detail_confirm as Button).disabled:
+		_fail("skill detail modal confirm button is disabled for the starter skill")
+		return
+	(skill_detail_confirm as Button).pressed.emit()
+	for _i in range(8):
+		await process_frame
+	if str((stone_throw_level as Label).text).find("2/") == -1:
+		_fail("skill detail modal confirm did not level the starter skill")
+		return
+	var after_status_slot_points := _parse_skill_points(str((skill_points as Label).text))
+	if after_status_slot_points >= before_status_slot_points:
+		_fail("skill detail modal confirm did not consume a real skill point")
+		return
+	var branch_node := skill_window.get_node_or_null("Panel_RuntimeSkillTreeBody/Content_RuntimeSkillTreeBody/Btn_RuntimeSkillNode_200509")
+	if branch_node == null or not branch_node is Button:
+		_fail("runtime branch skill node 200509 is missing")
+		return
+	(branch_node as Button).pressed.emit()
+	for _i in range(8):
+		await process_frame
 	var learn_button := skill_window.get_node_or_null("Panel_RuntimeSkillTreeFooter/Content_RuntimeSkillTreeFooter/Btn_RuntimeSkillLearn")
 	if learn_button == null or not learn_button is Button:
 		_fail("skill tree learn button is missing")
@@ -152,8 +203,12 @@ func _run() -> void:
 	(learn_button as Button).pressed.emit()
 	for _i in range(8):
 		await process_frame
-	if str((stone_throw_level as Label).text) == initial_stone_throw_text or str((stone_throw_level as Label).text).find("1/") == -1:
-		_fail("status window skill slot did not update after learning a real progression skill")
+	if not root_node.progression.skills.has(200509):
+		_fail("runtime skill tree learn button did not learn branch skill 200509")
+		return
+	var learned_skill_ids: Array = root_node.sim.snapshot().get("player_learned_skill_ids", [])
+	if not learned_skill_ids.has(300301):
+		_fail("learned branch skill 200509 did not auto-equip into combat rotation")
 		return
 	root_node.sim.start(int(root_node.sim.snapshot().get("map_id", 500101)))
 	for _i in range(8):
@@ -277,3 +332,29 @@ func _is_visible_canvas(node) -> bool:
 
 func _is_visible_control(node) -> bool:
 	return node != null and node is Control and (node as Control).visible
+
+
+func _emit_left_click(control: Control) -> void:
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_LEFT
+	event.pressed = true
+	event.position = control.size * 0.5
+	control.emit_signal("gui_input", event)
+
+
+func _parse_skill_points(text: String) -> int:
+	var pieces := text.split(":")
+	if pieces.size() >= 2:
+		return int(str(pieces[1]).strip_edges())
+	return int(text)
+
+
+func _slot_children_ignore_mouse(slot: Control) -> bool:
+	for child in slot.get_children():
+		if child is Control:
+			var control := child as Control
+			if control.mouse_filter != Control.MOUSE_FILTER_IGNORE:
+				return false
+			if not _slot_children_ignore_mouse(control):
+				return false
+	return true
