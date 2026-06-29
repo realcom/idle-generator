@@ -16,24 +16,34 @@ func _run() -> void:
 	for _i in range(24):
 		await process_frame
 
-	await _check_map(root_node, 500105, "보통 / Act 1-5", "1-5")
-	await _check_map(root_node, 500111, "보통 / Act 2-1", "2-1")
+	await _check_map(root_node, 500105, "보통 / Act 1-5", "1-5", "res://assets/generated/ui/portal_map_500101_taskbar_cave_rounded.png")
+	await _check_map(root_node, 500111, "보통 / Act 2-1", "2-1", "res://assets/generated/ui/portal_map_02_moss_grotto_rounded.png")
 
 	print("portal map progress smoke ok")
 	quit(0)
 
 
-func _check_map(root_node: Node, map_id: int, expected_difficulty: String, expected_stage: String) -> void:
+func _check_map(root_node: Node, map_id: int, expected_difficulty: String, expected_stage: String, expected_texture: String) -> void:
 	var sim: Variant = root_node.get("sim")
 	if sim == null or not sim.has_method("start"):
 		_fail("main scene has no combat sim")
 		return
 	sim.start(map_id)
+	if root_node.has_method("_refresh_generated_overlay_now"):
+		root_node.call("_refresh_generated_overlay_now")
 	for _i in range(18):
 		await process_frame
 	var portal := _find_generated_portal_window(root_node)
 	if portal == null:
 		_fail("generated portal window was not found")
+		return
+	var map_texture := portal.get_node_or_null("Tex_ParchmentRouteMap")
+	if map_texture == null or not map_texture is TextureRect or (map_texture as TextureRect).texture == null:
+		_fail("portal map texture was not found")
+		return
+	var texture_path := str((map_texture as TextureRect).texture.resource_path)
+	if texture_path != expected_texture:
+		_fail("map %d expected portal texture '%s', got '%s'" % [map_id, expected_texture, texture_path])
 		return
 	var difficulty := portal.get_node_or_null("Panel_DifficultySelect/Text_Difficulty")
 	if difficulty == null or not difficulty is Label:

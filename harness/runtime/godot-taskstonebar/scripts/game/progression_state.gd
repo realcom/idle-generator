@@ -16,11 +16,19 @@ var item_instances := {}
 var equipped_stone_instance_ids := []
 var equipped_equipment_instance_ids := {}
 var skills := {}
+var snapshot_revision := 0
+var snapshot_cache_revision := -1
+var snapshot_cache := {}
 
 
 func _init(resource_store = null) -> void:
 	store = resource_store
 	rng.randomize()
+
+
+func _mark_snapshot_dirty() -> void:
+	snapshot_revision += 1
+	snapshot_cache_revision = -1
 
 
 func reset() -> void:
@@ -30,6 +38,7 @@ func reset() -> void:
 	equipped_stone_instance_ids.clear()
 	equipped_equipment_instance_ids.clear()
 	skills.clear()
+	_mark_snapshot_dirty()
 
 
 func set_seed(seed_value: int) -> void:
@@ -40,6 +49,7 @@ func add_material(item_data_id: int, count: int) -> Dictionary:
 	var item_id := int(item_data_id)
 	var safe_count := maxi(0, int(count))
 	materials[item_id] = int(materials.get(item_id, 0)) + safe_count
+	_mark_snapshot_dirty()
 	return {
 		"ok": true,
 		"item_data_id": item_id,
@@ -57,17 +67,22 @@ func add_item_instance(item_data_id: int, level := 1) -> Dictionary:
 		return _fail("unknown_item", "Unknown itemDataId %d" % int(item_data_id))
 	var instance := _create_item_instance(item, level, false)
 	item_instances[int(instance["instance_id"])] = instance
-	return {"ok": true, "instance": instance.duplicate(true)}
+	_mark_snapshot_dirty()
+	return {"ok": true, "instance": instance.duplicate(false)}
 
 
 func inventory_snapshot() -> Dictionary:
+	if snapshot_cache_revision == snapshot_revision:
+		return snapshot_cache
 	var items := []
 	for instance_id in item_instances.keys():
-		items.append(item_instances[instance_id].duplicate(true))
-	return {
-		"materials": materials.duplicate(true),
+		var instance: Dictionary = item_instances[instance_id] if typeof(item_instances[instance_id]) == TYPE_DICTIONARY else {}
+		if not instance.is_empty():
+			items.append(instance.duplicate(false))
+	snapshot_cache = {
+		"materials": materials.duplicate(false),
 		"items": items,
-		"equipped_stone_instance_ids": equipped_stone_instance_ids.duplicate(true),
+		"equipped_stone_instance_ids": equipped_stone_instance_ids.duplicate(false),
 		"equipped_equipment_instance_ids": _equipped_equipment_instance_ids(),
 		"equipped_stones": _equipped_stone_instances(),
 		"equipped_equipment": _equipped_equipment_instances(),
@@ -76,8 +91,10 @@ func inventory_snapshot() -> Dictionary:
 		"equipped_skill_ids": _equipped_skill_ids(),
 		"learned_skill_ids": _learned_skill_ids(),
 		"learned_skills": _learned_skill_summaries(),
-		"skills": skills.duplicate(true),
+		"skills": skills.duplicate(false),
 	}
+	snapshot_cache_revision = snapshot_revision
+	return snapshot_cache
 
 
 func equip_equipment(instance_id: int) -> Dictionary:
@@ -92,6 +109,7 @@ func equip_equipment(instance_id: int) -> Dictionary:
 		return _fail("missing_slot", "Equipment instance %d has no slot" % safe_id)
 	equipped_equipment_instance_ids[slot] = safe_id
 	_compact_equipped_equipment()
+	_mark_snapshot_dirty()
 	return {
 		"ok": true,
 		"slot": slot,
@@ -110,6 +128,8 @@ func unequip_equipment(instance_id: int) -> Dictionary:
 	if removed_slot != "":
 		equipped_equipment_instance_ids.erase(removed_slot)
 	_compact_equipped_equipment()
+	if removed_slot != "":
+		_mark_snapshot_dirty()
 	return {
 		"ok": true,
 		"slot": removed_slot,
@@ -129,6 +149,7 @@ func auto_equip_best_equipment() -> Dictionary:
 			continue
 		equipped_equipment_instance_ids[slot] = int(instance.get("instance_id", 0))
 	_compact_equipped_equipment()
+	_mark_snapshot_dirty()
 	return {
 		"ok": true,
 		"equipped": _equipped_equipment_instances(),
@@ -162,6 +183,7 @@ func equip_stone(instance_id: int, slot_index := -1) -> Dictionary:
 		equipped_stone_instance_ids[0] = safe_id
 
 	_compact_equipped_stones()
+	_mark_snapshot_dirty()
 	return {
 		"ok": true,
 		"equipped": _equipped_stone_instances(),
@@ -179,6 +201,7 @@ func auto_equip_best_stones() -> Dictionary:
 		if typeof(instance) == TYPE_DICTIONARY:
 			equipped_stone_instance_ids.append(int(instance.get("instance_id", 0)))
 	_compact_equipped_stones()
+	_mark_snapshot_dirty()
 	return {
 		"ok": true,
 		"equipped": _equipped_stone_instances(),
@@ -220,6 +243,7 @@ func synthesize_stones(instance_ids: Array) -> Dictionary:
 	item_instances[int(result_instance["instance_id"])] = result_instance
 	if removed_equipped or equipped_stone_instance_ids.size() < mini(STONE_EQUIP_SLOT_COUNT, _stone_instances_sorted_for_equip().size()):
 		auto_equip_best_stones()
+	_mark_snapshot_dirty()
 
 	return {
 		"ok": true,
@@ -230,7 +254,7 @@ func synthesize_stones(instance_ids: Array) -> Dictionary:
 		"result_stage": _stone_stage(next_item),
 		"required_count": STONE_SYNTHESIS_COUNT,
 		"consumed": consumed_summaries,
-		"result": result_instance.duplicate(true),
+		"result": result_instance.duplicate(false),
 	}
 
 
@@ -255,6 +279,7 @@ func grant_monster_kill_equipment(unit_data_id: int, monster_level := 1, context
 
 	var instance := _create_item_instance(item, 1, true)
 	item_instances[int(instance["instance_id"])] = instance
+	_mark_snapshot_dirty()
 	return {
 		"ok": true,
 		"dropped": true,
@@ -264,7 +289,7 @@ func grant_monster_kill_equipment(unit_data_id: int, monster_level := 1, context
 		"chance_roll": chance_roll,
 		"grade": int(item.get("grade", grade)),
 		"slot": slot,
-		"result": instance.duplicate(true),
+		"result": instance.duplicate(false),
 	}
 
 
@@ -288,6 +313,7 @@ func grant_monster_kill_stone(unit_data_id: int, monster_level := 1, context := 
 
 	var instance := _create_item_instance(item, 1, false)
 	item_instances[int(instance["instance_id"])] = instance
+	_mark_snapshot_dirty()
 	return {
 		"ok": true,
 		"dropped": true,
@@ -296,7 +322,7 @@ func grant_monster_kill_stone(unit_data_id: int, monster_level := 1, context := 
 		"drop_chance_percent": drop_chance,
 		"chance_roll": chance_roll,
 		"stage": _stone_stage(item),
-		"result": instance.duplicate(true),
+		"result": instance.duplicate(false),
 	}
 
 
@@ -339,6 +365,7 @@ func synthesize_equipment(instance_ids: Array, result_slot := "") -> Dictionary:
 	if removed_equipment_slot != "":
 		equipped_equipment_instance_ids[removed_equipment_slot] = int(result_instance["instance_id"])
 		_compact_equipped_equipment()
+	_mark_snapshot_dirty()
 	return {
 		"ok": true,
 		"recipe_id": _equipment_recipe_id_for(slot, source_grade),
@@ -347,7 +374,7 @@ func synthesize_equipment(instance_ids: Array, result_slot := "") -> Dictionary:
 		"required_count": EQUIPMENT_SYNTHESIS_COUNT,
 		"slot": slot,
 		"consumed": consumed_summaries,
-		"result": result_instance.duplicate(true),
+		"result": result_instance.duplicate(false),
 	}
 
 
@@ -369,9 +396,10 @@ func learn_skill(skill_item_data_id: int, level := 1) -> Dictionary:
 		"max_level": _max_skill_level(item),
 		"effect": effect,
 	}
+	_mark_snapshot_dirty()
 	return {
 		"ok": true,
-		"skill": skills[skill_item_id].duplicate(true),
+		"skill": skills[skill_item_id].duplicate(false),
 	}
 
 
@@ -497,7 +525,7 @@ func unlock_skill(skill_item_data_id: int, player_level := 1) -> Dictionary:
 		"skill": learned.get("skill", {}),
 		"preview": preview,
 		"cost": cost,
-		"materials": materials.duplicate(true),
+		"materials": materials.duplicate(false),
 	}
 
 
@@ -562,14 +590,15 @@ func level_up_skill(skill_item_data_id: int) -> Dictionary:
 	var next_level := int(preview.get("to_level", 1))
 	skills[skill_item_id]["level"] = next_level
 	skills[skill_item_id]["effect"] = _skill_effect(item, next_level)
+	_mark_snapshot_dirty()
 	return {
 		"ok": true,
-		"skill": skills[skill_item_id].duplicate(true),
+		"skill": skills[skill_item_id].duplicate(false),
 		"cost": cost,
 		"effect_before": preview.get("effect_before", {}),
 		"effect_after": preview.get("effect_after", {}),
 		"effect_delta": preview.get("effect_delta", {}),
-		"materials": materials.duplicate(true),
+		"materials": materials.duplicate(false),
 	}
 
 
@@ -858,11 +887,18 @@ func _missing_cost(cost: Array) -> Array:
 
 
 func _consume_cost(cost: Array) -> void:
+	var changed := false
 	for entry in cost:
 		if typeof(entry) != TYPE_DICTIONARY:
 			continue
 		var item_id := int(entry.get("item_data_id", 0))
-		materials[item_id] = material_count(item_id) - int(entry.get("count", 0))
+		var next_count := material_count(item_id) - int(entry.get("count", 0))
+		if int(materials.get(item_id, 0)) == next_count:
+			continue
+		materials[item_id] = next_count
+		changed = true
+	if changed:
+		_mark_snapshot_dirty()
 
 
 func _parse_int_list(value) -> Array:
@@ -1093,13 +1129,13 @@ func _equipped_stone_instances() -> Array:
 	for instance_id in equipped_stone_instance_ids:
 		var safe_id := int(instance_id)
 		if item_instances.has(safe_id):
-			result.append(item_instances[safe_id].duplicate(true))
+			result.append(item_instances[safe_id].duplicate(false))
 	return result
 
 
 func _equipped_equipment_instance_ids() -> Dictionary:
 	_compact_equipped_equipment()
-	return equipped_equipment_instance_ids.duplicate(true)
+	return equipped_equipment_instance_ids.duplicate(false)
 
 
 func _equipped_equipment_instances() -> Array:
@@ -1108,7 +1144,7 @@ func _equipped_equipment_instances() -> Array:
 	for slot in equipped_equipment_instance_ids.keys():
 		var instance_id := int(equipped_equipment_instance_ids[slot])
 		if item_instances.has(instance_id):
-			result.append(item_instances[instance_id].duplicate(true))
+			result.append(item_instances[instance_id].duplicate(false))
 	return result
 
 
@@ -1172,7 +1208,7 @@ func _learned_skill_summaries() -> Array:
 		var skill_id := int(entry.get("skill_data_id", 0))
 		if skill_id <= 0:
 			continue
-		result.append(entry.duplicate(true))
+		result.append(entry.duplicate(false))
 	return result
 
 

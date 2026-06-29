@@ -380,6 +380,10 @@ popupArgs:
   ClientNextMapDataId: {next_id}
   ClientRetryMapDataId: self
   ClientFarmMapDataId: self
+  ClientEnemySpawnLaneMinYRatio: 0.75
+  ClientEnemySpawnLaneCenterYRatio: 0.875
+  ClientEnemySpawnLaneMaxYRatio: 1.0
+  ClientEnemySpawnLaneOffsetsY: "0,-10,10,-18,18,-5,5"
 
 initVariables:
   - {{ callerKey: 605, value: {difficulty_level} }}

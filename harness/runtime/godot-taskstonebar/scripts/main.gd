@@ -141,6 +141,17 @@ const AUTO_MERGE_SPIN_TRAIL_COUNT := 5
 const AUTO_MERGE_SPIN_SECONDS := 1.72
 const AUTO_MERGE_DIM_OVERLAY_NAME := "Rect_AutoMergeDimOverlay"
 const SLOT_COOLDOWN_PROGRESS_NAME := "Progress_Cooldown"
+const MERGE_DRAG_FX_LAYER_NAME := "RuntimeMergeDragFxLayer"
+const MERGE_DRAG_FX_DURATION := 0.96
+const MERGE_DRAG_FX_FLIGHT_RATIO := 0.68
+const MERGE_DRAG_FX_RESULT_START := 0.56
+const RUNTIME_FX_TEXTURE_PREFIX := "RuntimeFx_Texture_"
+const RUNTIME_FX_FALLBACK_PREFIX := "RuntimeFx_Fallback_"
+const RUNTIME_FX_LABEL_PREFIX := "RuntimeFx_Label_"
+const SLOT_COOLDOWN_BAR_HEIGHT := 2.0
+const SLOT_COOLDOWN_BAR_BOTTOM_INSET := 4.0
+const SLOT_COOLDOWN_FILL_NAME := "Rect_CooldownFill"
+const SLOT_COOLDOWN_BACKGROUND_NAME := "Rect_CooldownBackground"
 const KEEPER_EXP_BAR_NAME := "Progress_KeeperExp"
 const KEEPER_EXP_LABEL_NAME := "Text_KeeperExp"
 const RUNTIME_SKILL_TREE_WINDOW_NAME := "RuntimeSkillTreeWindow"
@@ -288,6 +299,7 @@ var generated_slot_drag_data: Dictionary = {}
 var generated_slot_drag_start_mouse := Vector2.ZERO
 var generated_slot_drag_active := false
 var generated_slot_drag_preview: Control
+var generated_merge_drag_fx_events: Array = []
 var auto_transition_timer := -1.0
 var auto_transition_result := ""
 var auto_transition_map_id := 0
@@ -4242,6 +4254,7 @@ func _auto_merge_spin_spark_name(index: int) -> String:
 func _update_runtime_micro_animations(delta: float) -> void:
 	_update_auto_merge_button_micro_animations()
 	_update_stone_cooldown_micro_animations(delta)
+	_update_generated_merge_drag_fx(delta)
 
 
 func _update_auto_merge_button_micro_animations() -> void:
@@ -4272,16 +4285,222 @@ func _update_stone_cooldown_micro_animations(delta: float) -> void:
 		if str(data.get("kind", "")) != "stone" or not data.has("cooldown"):
 			continue
 		var bar_node := slot.get_node_or_null(SLOT_COOLDOWN_PROGRESS_NAME)
-		if bar_node == null or not bar_node is ProgressBar:
+		if bar_node == null or not bar_node is Control:
 			continue
-		var bar := bar_node as ProgressBar
+		var bar := bar_node as Control
 		var instance_id := int(data.get("instance_id", 0))
 		var target := clampf(float(cooldown_ratios.get(instance_id, data.get("cooldown", 1.0))), 0.0, 1.0)
-		var current := clampf(float(bar.value), 0.0, 1.0)
+		var current := clampf(float(bar.get_meta("runtime_cooldown_value", target)), 0.0, 1.0)
 		var follow := clampf(delta * (18.0 if target < current else 9.5), 0.0, 1.0)
-		bar.value = lerpf(current, target, follow)
+		_set_slot_cooldown_value(bar, lerpf(current, target, follow))
 		bar.modulate = Color(1.0, 1.0, 1.0, 0.82 + 0.14 * sin(float(Time.get_ticks_msec()) / 1000.0 * TAU + float(instance_id % 5)))
 		bar.set_meta("runtime_cooldown_target", target)
+
+
+func _update_generated_merge_drag_fx(delta: float) -> void:
+	var layer := _generated_merge_drag_fx_layer_or_null()
+	if generated_merge_drag_fx_events.is_empty():
+		if layer != null:
+			_begin_runtime_fx_frame(layer)
+		return
+	if layer == null:
+		layer = _ensure_generated_merge_drag_fx_layer()
+	if layer == null:
+		generated_merge_drag_fx_events.clear()
+		return
+	_begin_runtime_fx_frame(layer)
+	var remaining_events := []
+	for raw_event in generated_merge_drag_fx_events:
+		if typeof(raw_event) != TYPE_DICTIONARY:
+			continue
+		var event: Dictionary = raw_event
+		var duration := maxf(0.05, float(event.get("duration", MERGE_DRAG_FX_DURATION)))
+		var age := float(event.get("age", 0.0)) + delta
+		if age >= duration:
+			continue
+		event["age"] = age
+		remaining_events.append(event)
+		_draw_generated_merge_drag_fx(layer, event, clampf(age / duration, 0.0, 1.0))
+	generated_merge_drag_fx_events = remaining_events
+
+
+func _generated_merge_drag_fx_layer_or_null() -> Control:
+	var root := _generated_merge_drag_fx_root()
+	if root == null:
+		return null
+	var layer := root.get_node_or_null(MERGE_DRAG_FX_LAYER_NAME)
+	return layer as Control if layer != null and layer is Control else null
+
+
+func _ensure_generated_merge_drag_fx_layer() -> Control:
+	var root := _generated_merge_drag_fx_root()
+	if root == null:
+		return null
+	var layer := root.get_node_or_null(MERGE_DRAG_FX_LAYER_NAME)
+	var control: Control
+	if layer == null or not layer is Control:
+		control = Control.new()
+		control.name = MERGE_DRAG_FX_LAYER_NAME
+		control.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		root.add_child(control)
+	else:
+		control = layer as Control
+	control.position = Vector2.ZERO
+	control.size = root.size
+	control.z_index = 960
+	control.z_as_relative = false
+	control.visible = true
+	return control
+
+
+func _generated_merge_drag_fx_root() -> Control:
+	var root: Control = generated_native_window_roots.get("keeper", null)
+	if root != null:
+		return root
+	var node := _generated_node_or_null(OVERLAY_HERO_WINDOW_PATH)
+	return node as Control if node != null and node is Control else null
+
+
+func _draw_generated_merge_drag_fx(layer: Control, event: Dictionary, progress: float) -> void:
+	var sources: Array = event.get("sources", []) if typeof(event.get("sources", [])) == TYPE_ARRAY else []
+	if sources.is_empty():
+		return
+	var target: Vector2 = event.get("target", _merge_drag_average_source_position(sources)) if event.get("target", null) is Vector2 else _merge_drag_average_source_position(sources)
+	var kind := str(event.get("kind", "stone"))
+	var flight_t := clampf(progress / MERGE_DRAG_FX_FLIGHT_RATIO, 0.0, 1.0)
+	var eased := _ease_out_cubic(flight_t)
+	var fade_in := clampf(progress / 0.08, 0.0, 1.0)
+	var source_fade := fade_in * clampf(1.0 - maxf(0.0, progress - 0.70) / 0.18, 0.0, 1.0)
+	var source_count := maxi(1, sources.size())
+	for index in range(sources.size()):
+		var source = sources[index]
+		if typeof(source) != TYPE_DICTIONARY:
+			continue
+		var source_data: Dictionary = source.get("data", {}) if typeof(source.get("data", {})) == TYPE_DICTIONARY else {}
+		var start: Vector2 = source.get("start", target) if source.get("start", null) is Vector2 else target
+		var fan_angle := (float(index) - float(source_count - 1) * 0.5) * 0.42
+		var fan_offset := Vector2(cos(fan_angle), sin(fan_angle)) * (10.0 * (1.0 - eased))
+		var arc := sin(flight_t * PI) * (18.0 + float(index % 2) * 5.0)
+		var center := start.lerp(target, eased) + fan_offset + Vector2(0.0, -arc)
+		var scale := lerpf(1.0, 0.54, eased) * (1.0 + sin(flight_t * PI) * 0.07)
+		_add_generated_merge_drag_trail(layer, start, center, kind, source_fade * clampf(flight_t / 0.22, 0.0, 1.0))
+		_add_generated_merge_drag_ghost(layer, source_data, center, scale, source_fade, kind)
+
+	var fuse_alpha := clampf((progress - 0.30) / 0.38, 0.0, 1.0) * clampf(1.0 - maxf(0.0, progress - 0.86) / 0.14, 0.0, 1.0)
+	if fuse_alpha > 0.01:
+		var glow_color := Color("#a8ff79") if kind == "stone" else Color("#ffcf7a")
+		var fuse_progress := clampf((progress - 0.30) / 0.58, 0.0, 1.0)
+		var pulse := 1.0 + sin(fuse_progress * PI) * 0.22
+		_add_runtime_effect(layer, "fx_stone_fusion", target, Vector2.ONE * 76.0 * pulse, fuse_progress, Color(glow_color.r, glow_color.g, glow_color.b, fuse_alpha * 0.74))
+		_add_runtime_effect(layer, "fx_hit_white", target + Vector2(0.0, -2.0), Vector2.ONE * 58.0 * pulse, fuse_progress, Color(1.0, 0.92, 0.72, fuse_alpha * 0.42))
+
+	if progress >= MERGE_DRAG_FX_RESULT_START:
+		var result_t := clampf((progress - MERGE_DRAG_FX_RESULT_START) / (1.0 - MERGE_DRAG_FX_RESULT_START), 0.0, 1.0)
+		var result_alpha := clampf(result_t / 0.12, 0.0, 1.0) * clampf(1.0 - maxf(0.0, result_t - 0.82) / 0.18, 0.0, 1.0)
+		var result_scale := 0.62 + _ease_out_back(result_t) * 0.46
+		var result_data: Dictionary = event.get("result_data", {}) if typeof(event.get("result_data", {})) == TYPE_DICTIONARY else {}
+		_add_generated_merge_drag_ghost(layer, result_data, target + Vector2(0.0, -8.0 - 10.0 * result_t), result_scale, result_alpha, kind, true)
+		var label_alpha := result_alpha * clampf(1.0 - maxf(0.0, result_t - 0.72) / 0.28, 0.0, 1.0)
+		if label_alpha > 0.02:
+			var label_text := str(event.get("result_name", "상급 아이템"))
+			_add_runtime_label(layer, label_text, target + Vector2(-86.0, 30.0 - 18.0 * result_t), Vector2(172.0, 24.0), 13, Color("#f3e6c8"), label_alpha)
+
+
+func _add_generated_merge_drag_ghost(layer: Control, data: Dictionary, center: Vector2, scale: float, alpha: float, kind: String, result := false) -> void:
+	if alpha <= 0.01:
+		return
+	var size := Vector2.ONE * (48.0 * clampf(scale, 0.36, 1.28))
+	var ghost := PanelContainer.new()
+	ghost.name = "Panel_MergeDragGhost"
+	ghost.position = center - size * 0.5
+	ghost.size = size
+	ghost.custom_minimum_size = size
+	ghost.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ghost.z_index = 82 if result else 74
+	var accent := Color("#a8ff79") if kind == "stone" else Color("#ffcf7a")
+	var fill := Color(0.08, 0.055, 0.035, 0.88)
+	var border_alpha := 0.96 if result else 0.72
+	ghost.add_theme_stylebox_override("panel", _overlay_style(fill, Color(accent.r, accent.g, accent.b, border_alpha), 2 if result else 1, 4))
+	ghost.modulate = Color(1.0, 1.0, 1.0, alpha)
+	layer.add_child(ghost)
+
+	var texture := _slot_item_texture(data)
+	if texture != null:
+		var icon := TextureRect.new()
+		icon.texture = texture
+		icon.position = size * 0.16
+		icon.size = size * 0.68
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		icon.z_index = 2
+		ghost.add_child(icon)
+	else:
+		var glyph := Label.new()
+		glyph.text = _slot_glyph_text(data)
+		glyph.position = Vector2.ZERO
+		glyph.size = size
+		glyph.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		glyph.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		glyph.add_theme_font_size_override("font_size", maxi(12, int(round(size.x * 0.34))))
+		glyph.add_theme_color_override("font_color", accent)
+		glyph.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		ghost.add_child(glyph)
+
+	var badge := str(data.get("badge", ""))
+	if badge != "":
+		var badge_label := Label.new()
+		badge_label.text = badge
+		badge_label.position = Vector2(size.x - 21.0, 2.0)
+		badge_label.size = Vector2(19.0, 11.0)
+		badge_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		badge_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		badge_label.add_theme_font_size_override("font_size", 7)
+		badge_label.add_theme_color_override("font_color", Color("#1a0f06"))
+		badge_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0))
+		badge_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		badge_label.z_index = 3
+		ghost.add_child(badge_label)
+
+
+func _add_generated_merge_drag_trail(layer: Control, start: Vector2, end: Vector2, kind: String, alpha: float) -> void:
+	if alpha <= 0.02 or start.distance_to(end) < 4.0:
+		return
+	var line := Line2D.new()
+	line.name = "Line_MergeDragTrail"
+	line.points = PackedVector2Array([start, end])
+	line.width = 2.0
+	var accent := Color("#a8ff79") if kind == "stone" else Color("#ffcf7a")
+	line.default_color = Color(accent.r, accent.g, accent.b, minf(0.58, alpha * 0.42))
+	line.z_index = 68
+	layer.add_child(line)
+
+
+func _ease_out_cubic(t: float) -> float:
+	var clamped := clampf(t, 0.0, 1.0)
+	return 1.0 - pow(1.0 - clamped, 3.0)
+
+
+func _ease_out_back(t: float) -> float:
+	var clamped := clampf(t, 0.0, 1.0)
+	var c1 := 1.70158
+	var c3 := c1 + 1.0
+	return 1.0 + c3 * pow(clamped - 1.0, 3.0) + c1 * pow(clamped - 1.0, 2.0)
+
+
+func _merge_drag_average_source_position(sources: Array) -> Vector2:
+	if sources.is_empty():
+		return Vector2(240.0, 418.0)
+	var total := Vector2.ZERO
+	var count := 0
+	for source in sources:
+		if typeof(source) != TYPE_DICTIONARY:
+			continue
+		if source.get("start", null) is Vector2:
+			total += source.get("start", Vector2.ZERO)
+			count += 1
+	if count <= 0:
+		return Vector2(240.0, 418.0)
+	return total / float(count)
 
 
 func _animate_auto_merge_button_effect(button: Button, enabled: bool, accent: Color) -> void:
@@ -5715,7 +5934,7 @@ func _generated_runtime_model(snapshot: Dictionary) -> Dictionary:
 	var progression_snapshot := _progression_snapshot()
 	var equipped_stones := _progression_equipped_stones(progression_snapshot)
 	var equipped_stats: Dictionary = progression_snapshot.get("equipped_stats", {}) if typeof(progression_snapshot.get("equipped_stats", {})) == TYPE_DICTIONARY else _progression_stone_stat_summary(equipped_stones)
-	var display_resources := resources.duplicate(true)
+	var display_resources := resources.duplicate(false)
 	var materials: Dictionary = progression_snapshot.get("materials", {}) if typeof(progression_snapshot.get("materials", {})) == TYPE_DICTIONARY else {}
 	for binding in [
 		{"item_id": 5, "key": "gold"},
@@ -5866,7 +6085,7 @@ func _progression_learned_skills(progression_snapshot: Dictionary) -> Array:
 	for skill_item_id in skills.keys():
 		var entry: Dictionary = skills[skill_item_id] if typeof(skills[skill_item_id]) == TYPE_DICTIONARY else {}
 		if int(entry.get("skill_data_id", 0)) > 0:
-			result.append(entry.duplicate(true))
+			result.append(entry.duplicate(false))
 	return result
 
 
@@ -5979,11 +6198,13 @@ func _progression_merge_stones() -> String:
 	return _progression_merge_stones_with_ids(ids)
 
 
-func _progression_merge_stones_with_ids(ids: Array) -> String:
+func _progression_merge_stones_with_ids(ids: Array, merge_fx_context: Dictionary = {}) -> String:
 	if progression == null:
 		return "합성 불가: 진행 상태가 준비되지 않음"
 	if ids.size() < ProgressionState.STONE_SYNTHESIS_COUNT:
 		return "합성 불가: 같은 티어 돌 2개 필요"
+	if merge_fx_context.is_empty():
+		merge_fx_context = _capture_progression_merge_drag_fx_context("stone", ids, _merge_drag_target_instance_id(ids))
 	var result: Dictionary = progression.synthesize_stones(ids)
 	if not bool(result.get("ok", false)):
 		return "합성 실패: %s" % str(result.get("message", result.get("error", "")))
@@ -5993,7 +6214,8 @@ func _progression_merge_stones_with_ids(ids: Array) -> String:
 	var result_instance: Dictionary = result.get("result", {}) if typeof(result.get("result", {})) == TYPE_DICTIONARY else {}
 	generated_selected_inventory_instance_id = int(result_instance.get("instance_id", 0))
 	generated_selected_inventory_kind = "stone"
-	_emit_progression_merge_result_fx("stone", result_instance, result_name)
+	_start_progression_merge_drag_fx(merge_fx_context, "stone", result_instance, result_name)
+	_emit_progression_merge_result_fx("stone", result_instance, result_name, not merge_fx_context.is_empty())
 	return "합성 완료: %s 2개 -> %s Lv.1 | %s" % [source_name, result_name, _progression_stone_loadout_message()]
 
 
@@ -6003,6 +6225,9 @@ func _progression_auto_merge_stones() -> String:
 	var ids := _progression_auto_stone_merge_ids()
 	if ids.size() < ProgressionState.STONE_SYNTHESIS_COUNT:
 		return ""
+	generated_inventory_tab = "stone"
+	_refresh_generated_overlay_now()
+	var merge_fx_context := _capture_progression_merge_drag_fx_context("stone", ids, _merge_drag_target_instance_id(ids))
 	var result: Dictionary = progression.synthesize_stones(ids)
 	if not bool(result.get("ok", false)):
 		return ""
@@ -6010,7 +6235,8 @@ func _progression_auto_merge_stones() -> String:
 	generated_selected_inventory_instance_id = int(result_instance.get("instance_id", 0))
 	generated_selected_inventory_kind = "stone"
 	var result_name := str(result_instance.get("name", _progression_item_name(int(result.get("result_item_data_id", 0)))))
-	_emit_progression_merge_result_fx("stone", result_instance, result_name)
+	_start_progression_merge_drag_fx(merge_fx_context, "stone", result_instance, result_name)
+	_emit_progression_merge_result_fx("stone", result_instance, result_name, not merge_fx_context.is_empty())
 	_apply_progression_loadout_to_sim()
 	return "돌 자동 머지 ON: 1회 완료 -> %s | 다음 %.0f초 후 | %s" % [
 		result_name,
@@ -6025,6 +6251,7 @@ func _progression_upgrade_equipment() -> String:
 	var ids := _progression_equipment_upgrade_ids()
 	if ids.size() < ProgressionState.EQUIPMENT_SYNTHESIS_COUNT:
 		return "장비 승급 불가: 같은 등급 장비 3개 필요"
+	var merge_fx_context := _capture_progression_merge_drag_fx_context("equipment", ids, _merge_drag_target_instance_id(ids))
 	var result: Dictionary = progression.synthesize_equipment(ids)
 	if not bool(result.get("ok", false)):
 		return "장비 승급 실패: %s" % str(result.get("message", result.get("error", "")))
@@ -6032,7 +6259,8 @@ func _progression_upgrade_equipment() -> String:
 	generated_selected_inventory_instance_id = int(item.get("instance_id", generated_selected_inventory_instance_id))
 	generated_selected_inventory_kind = "equipment"
 	_apply_progression_loadout_to_sim()
-	_emit_progression_merge_result_fx("equipment", item, str(item.get("name", "상위 장비")))
+	_start_progression_merge_drag_fx(merge_fx_context, "equipment", item, str(item.get("name", "상위 장비")))
+	_emit_progression_merge_result_fx("equipment", item, str(item.get("name", "상위 장비")), not merge_fx_context.is_empty())
 	return "장비 승급 완료: %s T%d 획득" % [str(item.get("name", "상위 장비")), int(result.get("result_grade", item.get("grade", 0)))]
 
 
@@ -6042,6 +6270,9 @@ func _progression_auto_merge_equipment() -> String:
 	var ids := _progression_auto_equipment_merge_ids()
 	if ids.size() < ProgressionState.EQUIPMENT_SYNTHESIS_COUNT:
 		return ""
+	generated_inventory_tab = "equipment"
+	_refresh_generated_overlay_now()
+	var merge_fx_context := _capture_progression_merge_drag_fx_context("equipment", ids, _merge_drag_target_instance_id(ids))
 	var result: Dictionary = progression.synthesize_equipment(ids)
 	if not bool(result.get("ok", false)):
 		return ""
@@ -6051,7 +6282,8 @@ func _progression_auto_merge_equipment() -> String:
 	var result_name := str(result_instance.get("name", _progression_item_name(int(result_instance.get("item_data_id", 0)))))
 	var result_grade := int(result.get("result_grade", result_instance.get("grade", 0)))
 	_apply_progression_loadout_to_sim()
-	_emit_progression_merge_result_fx("equipment", result_instance, result_name)
+	_start_progression_merge_drag_fx(merge_fx_context, "equipment", result_instance, result_name)
+	_emit_progression_merge_result_fx("equipment", result_instance, result_name, not merge_fx_context.is_empty())
 	var snapshot := _progression_snapshot()
 	var result_text := result_name
 	if result_grade > 0:
@@ -6064,7 +6296,123 @@ func _progression_auto_merge_equipment() -> String:
 	]
 
 
-func _emit_progression_merge_result_fx(kind: String, result_instance: Dictionary, result_name: String) -> void:
+func _merge_drag_target_instance_id(ids: Array) -> int:
+	if ids.is_empty():
+		return 0
+	if ids.size() >= 3:
+		return int(ids[ids.size() / 2])
+	if ids.size() >= 2:
+		return int(ids[1])
+	return int(ids[0])
+
+
+func _capture_progression_merge_drag_fx_context(kind: String, ids: Array, target_instance_id := 0) -> Dictionary:
+	var root := _generated_merge_drag_fx_root()
+	var grid := _generated_node_or_null(OVERLAY_INVENTORY_GRID_PATH)
+	if root == null or grid == null or not grid is GridContainer:
+		return {}
+	var wanted_ids := {}
+	for raw_id in ids:
+		var instance_id := int(raw_id)
+		if instance_id > 0:
+			wanted_ids[instance_id] = true
+	if wanted_ids.is_empty():
+		return {}
+
+	var sources := []
+	var target := Vector2.ZERO
+	var has_target := false
+	for child in (grid as GridContainer).get_children():
+		if child == null or not child is Control:
+			continue
+		var slot := child as Control
+		var raw_data = slot.get_meta("runtime_slot_data", {})
+		if typeof(raw_data) != TYPE_DICTIONARY:
+			continue
+		var data: Dictionary = raw_data
+		var instance_id := int(data.get("instance_id", 0))
+		if not wanted_ids.has(instance_id):
+			continue
+		var source_kind := str(data.get("kind", ""))
+		if kind == "stone" and source_kind != "stone":
+			continue
+		if kind == "equipment" and source_kind != "equipment":
+			continue
+		var start := _control_center_in_merge_fx_space(slot, root)
+		var ghost_data := data.duplicate(false)
+		ghost_data["selected"] = false
+		sources.append({
+			"instance_id": instance_id,
+			"start": start,
+			"data": ghost_data,
+		})
+		if instance_id == int(target_instance_id):
+			target = start
+			has_target = true
+	if sources.is_empty():
+		return {}
+	if not has_target:
+		target = _merge_drag_average_source_position(sources)
+	return {
+		"kind": kind,
+		"sources": sources,
+		"target": target,
+		"target_instance_id": int(target_instance_id),
+	}
+
+
+func _control_center_in_merge_fx_space(control: Control, root: Control) -> Vector2:
+	if control == null or root == null:
+		return Vector2.ZERO
+	var global_center := control.get_global_rect().get_center()
+	return root.get_global_transform().affine_inverse() * global_center
+
+
+func _start_progression_merge_drag_fx(context: Dictionary, kind: String, result_instance: Dictionary, result_name: String) -> void:
+	if context.is_empty():
+		return
+	var sources: Array = context.get("sources", []) if typeof(context.get("sources", [])) == TYPE_ARRAY else []
+	if sources.is_empty():
+		return
+	var result_data := _progression_merge_result_slot_data(kind, result_instance, result_name)
+	if result_data.is_empty():
+		return
+	generated_merge_drag_fx_events.append({
+		"age": 0.0,
+		"duration": MERGE_DRAG_FX_DURATION,
+		"kind": kind,
+		"sources": sources,
+		"target": context.get("target", _merge_drag_average_source_position(sources)),
+		"result_data": result_data,
+		"result_name": result_name,
+	})
+
+
+func _progression_merge_result_slot_data(kind: String, result_instance: Dictionary, result_name: String) -> Dictionary:
+	if result_instance.is_empty():
+		return {}
+	var item_id := int(result_instance.get("item_data_id", result_instance.get("id", 0)))
+	if item_id <= 0:
+		return {}
+	if kind == "equipment":
+		var equipment_data := _progression_equipment_slot_data(result_instance)
+		equipment_data["selected"] = false
+		return equipment_data
+	var stage := int(result_instance.get("stage", 1))
+	return {
+		"name": _short_item_name(result_name),
+		"count": int(result_instance.get("level", 1)),
+		"badge": "T%d" % stage,
+		"rarity": "rare" if stage >= 3 else "notable",
+		"instance_id": int(result_instance.get("instance_id", 0)),
+		"item_data_id": item_id,
+		"icon_path": _progression_item_icon_path(item_id),
+		"kind": "stone",
+		"selected": false,
+	}
+
+
+func _emit_progression_merge_result_fx(kind: String, result_instance: Dictionary, result_name: String, inventory_merge_fx := false) -> void:
 	if sim == null or not sim.has_method("_fx"):
 		return
 	var item_id := int(result_instance.get("item_data_id", result_instance.get("id", 0)))
@@ -6073,10 +6421,11 @@ func _emit_progression_merge_result_fx(kind: String, result_instance: Dictionary
 	sim._fx("merge_result", {
 		"ttl": 1.75,
 		"item_id": item_id,
-		"item_name": result_name,
-		"merge_kind": kind,
-		"grade": int(result_instance.get("grade", result_instance.get("stage", 0))),
-	})
+			"item_name": result_name,
+			"merge_kind": kind,
+			"grade": int(result_instance.get("grade", result_instance.get("stage", 0))),
+			"inventory_merge_fx": inventory_merge_fx,
+		})
 
 
 func _progression_equipment_upgrade_preview() -> Dictionary:
@@ -6974,7 +7323,7 @@ func _prepare_generated_inventory_slot(slot: Control, node_path: String, index: 
 	slot.mouse_filter = Control.MOUSE_FILTER_STOP
 	slot.set_meta("runtime_slot_grid", node_path)
 	slot.set_meta("runtime_slot_index", index)
-	slot.set_meta("runtime_slot_data", data.duplicate(true))
+	slot.set_meta("runtime_slot_data", data)
 	slot.tooltip_text = str(data.get("tooltip", _generated_inventory_slot_tooltip(data)))
 	if slot.has_meta("runtime_slot_connected"):
 		return
@@ -7032,7 +7381,7 @@ func _begin_generated_inventory_slot_drag(slot: Control, data: Dictionary, grid_
 	generated_slot_drag_origin = slot
 	generated_slot_drag_grid_path = grid_path
 	generated_slot_drag_index = index
-	generated_slot_drag_data = data.duplicate(true)
+	generated_slot_drag_data = data.duplicate(false)
 	generated_slot_drag_start_mouse = mouse_position
 	generated_slot_drag_active = false
 	generated_selected_inventory_instance_id = int(data.get("instance_id", 0))
@@ -7063,7 +7412,7 @@ func _finish_generated_inventory_slot_drag(mouse_position: Vector2) -> void:
 	if not generated_slot_drag_active and generated_slot_drag_origin != null and mouse_position.distance_to(generated_slot_drag_start_mouse) >= INVENTORY_SLOT_DRAG_THRESHOLD:
 		generated_slot_drag_active = true
 	var was_dragging := generated_slot_drag_active
-	var data := generated_slot_drag_data.duplicate(true)
+	var data := generated_slot_drag_data.duplicate(false)
 	var grid_path := generated_slot_drag_grid_path
 	var index := generated_slot_drag_index
 	_clear_generated_inventory_drag_preview()
@@ -7100,7 +7449,7 @@ func _ensure_generated_inventory_drag_preview() -> void:
 	preview.z_index = 900
 	preview.add_theme_stylebox_override("panel", _overlay_style(Color(0.08, 0.05, 0.03, 0.86), Color("#ffcf7a"), 2, 4))
 	preview_parent.add_child(preview)
-	var preview_data := generated_slot_drag_data.duplicate(true)
+	var preview_data := generated_slot_drag_data.duplicate(false)
 	preview_data["selected"] = false
 	_apply_generated_slot_data(preview, preview_data)
 	preview.modulate = Color(1.18, 1.1, 0.82, 0.88)
@@ -7145,7 +7494,8 @@ func _progression_merge_stones_from_drag(source_data: Dictionary, target_slot: C
 	var ids := _progression_stone_merge_ids_for_drag(source_instance_id, target_instance_id)
 	if ids.size() < ProgressionState.STONE_SYNTHESIS_COUNT:
 		return "합성 불가: 같은 돌 2개가 필요합니다"
-	return _progression_merge_stones_with_ids(ids)
+	var merge_fx_context := _capture_progression_merge_drag_fx_context("stone", ids, target_instance_id)
+	return _progression_merge_stones_with_ids(ids, merge_fx_context)
 
 
 func _activate_generated_inventory_slot(data: Dictionary, grid_path: String, index: int) -> void:
@@ -7196,7 +7546,7 @@ func _apply_generated_slot_data(slot: Control, data: Dictionary) -> void:
 	var name_label := _ensure_slot_label(slot, "Text_ItemName", Vector2(2.0, slot.size.y - (15.0 if compact else 17.0)), Vector2(maxf(26.0, slot.size.x - 4.0), 13.0 if compact else 15.0), 8 if compact else 9, Color("#f3e6c8"))
 	var count_label := _ensure_slot_label(slot, "Text_ItemCount", Vector2(2.0, slot.size.y - (27.0 if compact else 29.0)), Vector2(maxf(26.0, slot.size.x - 4.0), 12.0), 7 if compact else 8, Color("#ffcf7a"))
 	var badge_label := _ensure_slot_label(slot, "Text_ItemBadge", Vector2(slot.size.x - 23.0, 2.0), Vector2(21.0, 11.0), 7, Color("#1a0f06"))
-	var cooldown := _ensure_slot_progress(slot, SLOT_COOLDOWN_PROGRESS_NAME, Vector2(5.0, slot.size.y - 8.0), Vector2(maxf(18.0, slot.size.x - 10.0), 5.0))
+	var cooldown := _ensure_slot_progress(slot, SLOT_COOLDOWN_PROGRESS_NAME, Vector2(6.0, slot.size.y - SLOT_COOLDOWN_BAR_BOTTOM_INSET - SLOT_COOLDOWN_BAR_HEIGHT), Vector2(maxf(16.0, slot.size.x - 12.0), SLOT_COOLDOWN_BAR_HEIGHT))
 	var selected_outline := _ensure_slot_selection_outline(slot)
 	var icon := _ensure_slot_icon_mark(slot)
 	var icon_size := 21.0 if compact else 32.0
@@ -7221,8 +7571,10 @@ func _apply_generated_slot_data(slot: Control, data: Dictionary) -> void:
 	var cooldown_target := clampf(float(data.get("cooldown", 0.0)), 0.0, 1.0)
 	cooldown.set_meta("runtime_cooldown_target", cooldown_target)
 	if not cooldown.has_meta("runtime_cooldown_initialized"):
-		cooldown.value = cooldown_target
+		_set_slot_cooldown_value(cooldown, cooldown_target)
 		cooldown.set_meta("runtime_cooldown_initialized", true)
+	else:
+		_set_slot_cooldown_value(cooldown, float(cooldown.get_meta("runtime_cooldown_value", cooldown_target)))
 	selected_outline.visible = bool(data.get("selected", false))
 	texture_icon.position = Vector2(-3.0, -3.0)
 	texture_icon.size = icon.size + Vector2(6.0, 6.0)
@@ -7332,24 +7684,90 @@ func _ensure_slot_texture_icon(icon: Control) -> TextureRect:
 	return texture_rect
 
 
-func _ensure_slot_progress(slot: Control, node_name: String, pos: Vector2, progress_size: Vector2) -> ProgressBar:
-	var progress := slot.get_node_or_null(node_name)
-	if progress != null and progress is ProgressBar:
-		(progress as ProgressBar).position = pos
-		(progress as ProgressBar).size = progress_size
-		return progress
-	var created := ProgressBar.new()
-	created.name = node_name
-	created.position = pos
-	created.size = progress_size
-	created.min_value = 0.0
-	created.max_value = 1.0
-	created.show_percentage = false
-	created.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	created.add_theme_stylebox_override("background", _overlay_style(Color(0.05, 0.04, 0.03, 0.76), Color(0.0, 0.0, 0.0, 0.0), 0, 3))
-	created.add_theme_stylebox_override("fill", _overlay_style(Color("#9ff27f"), Color(1.0, 0.95, 0.62, 0.62), 1, 3))
-	slot.add_child(created)
-	return created
+func _ensure_slot_progress(slot: Control, node_name: String, pos: Vector2, progress_size: Vector2) -> Control:
+	var progress_node := slot.get_node_or_null(node_name)
+	var progress: Control
+	var preserved_target := 0.0
+	var preserved_value := 0.0
+	var preserved_initialized := false
+	if progress_node != null:
+		preserved_target = float(progress_node.get_meta("runtime_cooldown_target", 0.0))
+		if progress_node.has_meta("runtime_cooldown_value"):
+			preserved_value = float(progress_node.get_meta("runtime_cooldown_value", preserved_target))
+		elif progress_node is ProgressBar:
+			preserved_value = clampf(float((progress_node as ProgressBar).value), 0.0, 1.0)
+		else:
+			preserved_value = preserved_target
+		preserved_initialized = progress_node.has_meta("runtime_cooldown_initialized")
+	if progress_node != null and progress_node is Control and not progress_node is ProgressBar:
+		progress = progress_node as Control
+	else:
+		if progress_node != null:
+			slot.remove_child(progress_node)
+			progress_node.queue_free()
+		progress = Control.new()
+		progress.name = node_name
+		progress.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		progress.clip_contents = true
+		progress.set_meta("runtime_cooldown_target", preserved_target)
+		progress.set_meta("runtime_cooldown_value", preserved_value)
+		if preserved_initialized:
+			progress.set_meta("runtime_cooldown_initialized", true)
+		slot.add_child(progress)
+	progress.position = pos
+	progress.size = progress_size
+	progress.custom_minimum_size = progress_size
+	progress.z_index = 7
+	progress.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	progress.clip_contents = true
+	var background_node := progress.get_node_or_null(SLOT_COOLDOWN_BACKGROUND_NAME)
+	var background: ColorRect
+	if background_node != null and background_node is ColorRect:
+		background = background_node as ColorRect
+	else:
+		if background_node != null:
+			progress.remove_child(background_node)
+			background_node.queue_free()
+		background = ColorRect.new()
+		background.name = SLOT_COOLDOWN_BACKGROUND_NAME
+		background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		progress.add_child(background)
+	background.position = Vector2.ZERO
+	background.size = progress_size
+	background.color = Color(0.04, 0.03, 0.02, 0.74)
+	background.z_index = 0
+	var fill_node := progress.get_node_or_null(SLOT_COOLDOWN_FILL_NAME)
+	var fill: ColorRect
+	if fill_node != null and fill_node is ColorRect:
+		fill = fill_node as ColorRect
+	else:
+		if fill_node != null:
+			progress.remove_child(fill_node)
+			fill_node.queue_free()
+		fill = ColorRect.new()
+		fill.name = SLOT_COOLDOWN_FILL_NAME
+		fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		progress.add_child(fill)
+	fill.position = Vector2.ZERO
+	fill.color = Color("#9ff27f")
+	fill.z_index = 1
+	_set_slot_cooldown_value(progress, float(progress.get_meta("runtime_cooldown_value", progress.get_meta("runtime_cooldown_target", 0.0))))
+	return progress
+
+
+func _set_slot_cooldown_value(progress: Control, value: float) -> void:
+	var clamped_value := clampf(value, 0.0, 1.0)
+	progress.set_meta("runtime_cooldown_value", clamped_value)
+	var background_node := progress.get_node_or_null(SLOT_COOLDOWN_BACKGROUND_NAME)
+	if background_node != null and background_node is ColorRect:
+		var background := background_node as ColorRect
+		background.position = Vector2.ZERO
+		background.size = progress.size
+	var fill_node := progress.get_node_or_null(SLOT_COOLDOWN_FILL_NAME)
+	if fill_node != null and fill_node is ColorRect:
+		var fill := fill_node as ColorRect
+		fill.position = Vector2.ZERO
+		fill.size = Vector2(progress.size.x * clamped_value, progress.size.y)
 
 
 func _slot_modulate(rarity: String) -> Color:
@@ -7948,9 +8366,9 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 	var layer: Variant = generated_runtime_nodes.get("combat_layer", null)
 	if layer == null or not layer is Control:
 		return
-	for child in (layer as Control).get_children():
-		child.free()
-	var layer_size := (layer as Control).size
+	var fx_layer := layer as Control
+	_begin_runtime_fx_frame(fx_layer)
+	var layer_size := fx_layer.size
 	var world_size: Vector2 = snapshot.get("world_size", Vector2(960.0, 160.0))
 	var player: Dictionary = snapshot.get("player", {})
 	var player_pos := _overlay_world_to_combat(player.get("position", Vector2.ZERO), world_size)
@@ -7977,15 +8395,15 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 					var coin_progress := clampf(progress + float(coin_index) * 0.06, 0.0, 1.0)
 					var coin_center := gold_pos + Vector2(side * 18.0, -18.0 - 42.0 * coin_progress + sin(coin_progress * PI) * -10.0)
 					var coin_size := Vector2.ONE * (24.0 + 4.0 * sin(coin_progress * PI))
-					_add_runtime_texture(layer as Control, coin_texture, coin_center - coin_size * 0.5, coin_size, Color(1.0, 0.92, 0.45, fade))
-				_add_runtime_label(layer as Control, "+%d" % count, gold_pos + Vector2(-48.0, -74.0 - 20.0 * progress), Vector2(112.0, 28.0), 20, Color("#ffcf7a"), fade)
+					_add_runtime_texture(fx_layer, coin_texture, coin_center - coin_size * 0.5, coin_size, Color(1.0, 0.92, 0.45, fade))
+				_add_runtime_label(fx_layer, "+%d" % count, gold_pos + Vector2(-48.0, -74.0 - 20.0 * progress), Vector2(112.0, 28.0), 20, Color("#ffcf7a"), fade)
 			"spawn":
 				var spawn_position: Vector2 = event.get("position", Vector2(980.0, 80.0))
 				var spawn_enemy := _find_entity(enemies, int(event.get("target_id", 0)))
 				var spawn_pos := _overlay_enemy_center(spawn_enemy, world_size) if not spawn_enemy.is_empty() else _overlay_world_to_combat(spawn_position, world_size) + COMBAT_ENEMY_VISUAL_SHIFT
 				var spawn_key := str(event.get("fx_key", "fx_mob_spawn"))
 				var spawn_size := Vector2.ONE * float(event.get("size", 58.0))
-				_add_runtime_effect(layer as Control, spawn_key, spawn_pos, spawn_size, progress, Color(1, 1, 1, fade))
+				_add_runtime_effect(fx_layer, spawn_key, spawn_pos, spawn_size, progress, Color(1, 1, 1, fade))
 			"attack":
 				var target := _find_entity(enemies, int(event.get("target_id", 0)))
 				var target_position: Vector2 = event.get("target_position", Vector2(805.0, 80.0))
@@ -8000,29 +8418,29 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 				projectile_pos.y -= sin(travel_progress * PI) * float(style.get("arc", 18.0))
 				var fx_scale := 1.32 if is_learned_skill else 1.0
 				if is_learned_skill and progress < 0.54:
-					_add_runtime_effect(layer as Control, "fx_stone_fusion", player_pos + Vector2(0.0, -4.0), Vector2.ONE * 64.0, clampf(progress / 0.54, 0.0, 1.0), Color(1.0, 1.0, 1.0, fade * 0.74))
+					_add_runtime_effect(fx_layer, "fx_stone_fusion", player_pos + Vector2(0.0, -4.0), Vector2.ONE * 64.0, clampf(progress / 0.54, 0.0, 1.0), Color(1.0, 1.0, 1.0, fade * 0.74))
 				var cast_key := str(style.get("cast", ""))
 				if cast_key != "" and progress < 0.46:
-					_add_runtime_effect(layer as Control, cast_key, player_pos, Vector2.ONE * float(style.get("cast_size", 42.0)) * fx_scale, clampf(progress / 0.46, 0.0, 1.0), Color(1, 1, 1, fade))
+					_add_runtime_effect(fx_layer, cast_key, player_pos, Vector2.ONE * float(style.get("cast_size", 42.0)) * fx_scale, clampf(progress / 0.46, 0.0, 1.0), Color(1, 1, 1, fade))
 				var projectile_key := str(style.get("projectile", ""))
 				if projectile_key != "" and progress < COMBAT_PROJECTILE_HIDE_PROGRESS:
 					var texture_size := Vector2.ONE * float(style.get("projectile_size", 30.0)) * fx_scale
-					_add_runtime_effect(layer as Control, projectile_key, projectile_pos, texture_size, travel_progress, Color(1, 1, 1, fade))
+					_add_runtime_effect(fx_layer, projectile_key, projectile_pos, texture_size, travel_progress, Color(1, 1, 1, fade))
 				var impact_key := str(style.get("impact_texture", ""))
 				if impact_key != "" and progress >= impact_start:
 					var impact_progress := clampf((progress - impact_start) / maxf(0.05, 1.0 - impact_start), 0.0, 1.0)
 					var impact_size := float(style.get("impact_size", 36.0)) * fx_scale
-					_add_runtime_effect(layer as Control, impact_key, target_pos, Vector2.ONE * impact_size * 0.92, impact_progress, Color(1, 1, 1, fade * 0.52))
-					_add_runtime_effect(layer as Control, "fx_hit_white", target_pos + Vector2(0.0, -3.0), Vector2.ONE * maxf(38.0, impact_size * 0.72), impact_progress, Color(1.0, 0.88, 0.68, fade * 0.38))
+					_add_runtime_effect(fx_layer, impact_key, target_pos, Vector2.ONE * impact_size * 0.92, impact_progress, Color(1, 1, 1, fade * 0.52))
+					_add_runtime_effect(fx_layer, "fx_hit_white", target_pos + Vector2(0.0, -3.0), Vector2.ONE * maxf(38.0, impact_size * 0.72), impact_progress, Color(1.0, 0.88, 0.68, fade * 0.38))
 				var action_text := str(event.get("skill_name", "돌팔매")) if skill_id >= 300101 and skill_id <= 300111 else str(event.get("skill_name", "스킬"))
 				if is_learned_skill:
 					action_text = "SKILL %s Lv.%d" % [action_text, maxi(1, int(event.get("skill_level", 1)))]
-				_add_runtime_label(layer as Control, action_text, player_pos + Vector2(-70.0, -82.0 - 18.0 * progress), Vector2(162.0, 28.0), 17 if is_learned_skill else 14, color.lightened(0.2) if is_learned_skill else color, fade)
+				_add_runtime_label(fx_layer, action_text, player_pos + Vector2(-70.0, -82.0 - 18.0 * progress), Vector2(162.0, 28.0), 17 if is_learned_skill else 14, color.lightened(0.2) if is_learned_skill else color, fade)
 				if progress >= impact_start:
 					var label_progress := clampf((progress - impact_start) / maxf(0.05, 1.0 - impact_start), 0.0, 1.0)
 					var hit_lane := int(event.get("source_stone_instance_id", 0)) % 3
 					var hit_pos := target_pos + Vector2(12.0 + float(hit_lane) * 28.0, -70.0 - float(hit_lane) * 10.0 - 24.0 * label_progress)
-					_add_runtime_label(layer as Control, "-%d" % int(round(float(event.get("amount", 0.0)))), hit_pos, Vector2(104.0, 34.0), 27 if is_learned_skill else 22, color.lightened(0.46 if is_learned_skill else 0.38), fade)
+					_add_runtime_label(fx_layer, "-%d" % int(round(float(event.get("amount", 0.0)))), hit_pos, Vector2(104.0, 34.0), 27 if is_learned_skill else 22, color.lightened(0.46 if is_learned_skill else 0.38), fade)
 			"enemy_skill":
 				var source := _find_entity(enemies, int(event.get("source_id", 0)))
 				var source_position: Vector2 = event.get("source_position", Vector2(805.0, 80.0))
@@ -8033,60 +8451,137 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 				var color: Color = style.get("color", Color("#ff8a3c"))
 				var skill_pos := source_pos.lerp(player_pos, progress)
 				skill_pos.y -= sin(progress * PI) * float(style.get("arc", 10.0))
-				_add_runtime_label(layer as Control, skill_name, source_pos + Vector2(-54.0, -78.0), Vector2(126.0, 24.0), 13, color, fade)
+				_add_runtime_label(fx_layer, skill_name, source_pos + Vector2(-54.0, -78.0), Vector2(126.0, 24.0), 13, color, fade)
 				var cast_key := str(style.get("cast", ""))
 				if cast_key != "" and progress < 0.5:
-					_add_runtime_effect(layer as Control, cast_key, source_pos, Vector2.ONE * float(style.get("cast_size", 46.0)), clampf(progress / 0.5, 0.0, 1.0), Color(1, 1, 1, fade))
+					_add_runtime_effect(fx_layer, cast_key, source_pos, Vector2.ONE * float(style.get("cast_size", 46.0)), clampf(progress / 0.5, 0.0, 1.0), Color(1, 1, 1, fade))
 				var projectile_key := str(style.get("projectile", ""))
 				if projectile_key != "" and progress < 0.84:
-					_add_runtime_effect(layer as Control, projectile_key, skill_pos, Vector2.ONE * float(style.get("projectile_size", 34.0)), progress, Color(1, 1, 1, fade))
+					_add_runtime_effect(fx_layer, projectile_key, skill_pos, Vector2.ONE * float(style.get("projectile_size", 34.0)), progress, Color(1, 1, 1, fade))
 				var impact_key := str(style.get("impact_texture", ""))
 				if impact_key != "" and progress > 0.34:
 					var impact_progress := clampf((progress - 0.34) / 0.66, 0.0, 1.0)
 					var impact_size := float(style.get("impact_size", 42.0))
-					_add_runtime_effect(layer as Control, impact_key, player_pos, Vector2.ONE * impact_size * 0.94, impact_progress, Color(1, 1, 1, fade * 0.54))
-					_add_runtime_effect(layer as Control, "fx_hit_white", player_pos + Vector2(0.0, -4.0), Vector2.ONE * maxf(42.0, impact_size * 0.74), impact_progress, Color(1.0, 0.58, 0.42, fade * 0.42))
-				_add_runtime_label(layer as Control, "HIT -%d" % int(round(float(event.get("amount", 0.0)))), player_pos + Vector2(-48.0, -76.0 - 22.0 * progress), Vector2(112.0, 32.0), 22, color.lightened(0.2), fade)
+					_add_runtime_effect(fx_layer, impact_key, player_pos, Vector2.ONE * impact_size * 0.94, impact_progress, Color(1, 1, 1, fade * 0.54))
+					_add_runtime_effect(fx_layer, "fx_hit_white", player_pos + Vector2(0.0, -4.0), Vector2.ONE * maxf(42.0, impact_size * 0.74), impact_progress, Color(1.0, 0.58, 0.42, fade * 0.42))
+				_add_runtime_label(fx_layer, "HIT -%d" % int(round(float(event.get("amount", 0.0)))), player_pos + Vector2(-48.0, -76.0 - 22.0 * progress), Vector2(112.0, 32.0), 22, color.lightened(0.2), fade)
 			"hit_player":
-				_add_runtime_effect(layer as Control, "fx_hit_dust", player_pos + Vector2(0.0, 2.0), Vector2.ONE * 70.0, progress, Color(1.0, 0.72, 0.48, fade))
-				_add_runtime_effect(layer as Control, "fx_hit_white", player_pos + Vector2(0.0, -6.0), Vector2.ONE * 78.0, progress, Color(1.0, 0.46, 0.36, fade * 0.92))
-				_add_runtime_label(layer as Control, "HIT -%d" % int(round(float(event.get("amount", 0.0)))), player_pos + Vector2(-46.0, -76.0 - 28.0 * progress), Vector2(112.0, 34.0), 24, Color("#ff6b35"), fade)
+				_add_runtime_effect(fx_layer, "fx_hit_dust", player_pos + Vector2(0.0, 2.0), Vector2.ONE * 70.0, progress, Color(1.0, 0.72, 0.48, fade))
+				_add_runtime_effect(fx_layer, "fx_hit_white", player_pos + Vector2(0.0, -6.0), Vector2.ONE * 78.0, progress, Color(1.0, 0.46, 0.36, fade * 0.92))
+				_add_runtime_label(fx_layer, "HIT -%d" % int(round(float(event.get("amount", 0.0)))), player_pos + Vector2(-46.0, -76.0 - 28.0 * progress), Vector2(112.0, 34.0), 24, Color("#ff6b35"), fade)
 			"kill":
 				var target := _find_entity(enemies, int(event.get("target_id", 0)))
 				var kill_position: Vector2 = event.get("position", Vector2(805.0, 80.0))
 				var target_pos := _overlay_enemy_center(target, world_size) if not target.is_empty() else _overlay_world_to_combat(kill_position, world_size) + COMBAT_ENEMY_VISUAL_SHIFT
-				_add_runtime_label(layer as Control, "처치!", target_pos + Vector2(-30.0, -72.0 - 18.0 * progress), Vector2(86.0, 30.0), 20, Color("#ffcf7a"), fade)
+				_add_runtime_label(fx_layer, "처치!", target_pos + Vector2(-30.0, -72.0 - 18.0 * progress), Vector2(86.0, 30.0), 20, Color("#ffcf7a"), fade)
 			"merge_result":
+				if bool(event.get("inventory_merge_fx", false)):
+					continue
 				var item_id := int(event.get("item_id", 0))
 				var merge_kind := str(event.get("merge_kind", "stone"))
 				var center := Vector2(layer_size.x * 0.5, layer_size.y * 0.44)
 				var pulse := 1.0 + sin(progress * PI) * 0.18
 				var glow_color := Color("#a8ff79") if merge_kind == "stone" else Color("#ffcf7a")
-				_add_runtime_effect(layer as Control, "fx_stone_fusion", center, Vector2.ONE * 92.0 * pulse, progress, Color(glow_color.r, glow_color.g, glow_color.b, fade * 0.74))
-				_add_runtime_effect(layer as Control, "fx_hit_white", center + Vector2(0.0, -2.0), Vector2.ONE * 72.0 * pulse, progress, Color(1.0, 0.92, 0.72, fade * 0.42))
+				_add_runtime_effect(fx_layer, "fx_stone_fusion", center, Vector2.ONE * 92.0 * pulse, progress, Color(glow_color.r, glow_color.g, glow_color.b, fade * 0.74))
+				_add_runtime_effect(fx_layer, "fx_hit_white", center + Vector2(0.0, -2.0), Vector2.ONE * 72.0 * pulse, progress, Color(1.0, 0.92, 0.72, fade * 0.42))
 				var item_texture: Texture2D = sprites.texture_for_item(item_id) if sprites != null else null
 				var icon_size := Vector2.ONE * (40.0 + sin(progress * PI) * 12.0)
-				_add_runtime_texture(layer as Control, item_texture, center - icon_size * 0.5 + Vector2(0.0, -6.0 - 10.0 * progress), icon_size, Color(1.0, 1.0, 1.0, fade))
+				_add_runtime_texture(fx_layer, item_texture, center - icon_size * 0.5 + Vector2(0.0, -6.0 - 10.0 * progress), icon_size, Color(1.0, 1.0, 1.0, fade))
 				var title := "STONE MERGE" if merge_kind == "stone" else "EQUIP MERGE"
-				_add_runtime_label(layer as Control, title, center + Vector2(-76.0, -76.0 - 12.0 * progress), Vector2(152.0, 26.0), 17, glow_color.lightened(0.18), fade)
-				_add_runtime_label(layer as Control, str(event.get("item_name", "상급 아이템")), center + Vector2(-106.0, 38.0 - 18.0 * progress), Vector2(212.0, 28.0), 15, Color("#f3e6c8"), fade)
+				_add_runtime_label(fx_layer, title, center + Vector2(-76.0, -76.0 - 12.0 * progress), Vector2(152.0, 26.0), 17, glow_color.lightened(0.18), fade)
+				_add_runtime_label(fx_layer, str(event.get("item_name", "상급 아이템")), center + Vector2(-106.0, 38.0 - 18.0 * progress), Vector2(212.0, 28.0), 15, Color("#f3e6c8"), fade)
 			"drop":
 				var label_text := "+%s x%d" % [str(event.get("item_name", "전리품")), int(event.get("count", 1))]
 				var drop_label_size := Vector2(minf(240.0, maxf(150.0, layer_size.x - 44.0)), 26.0)
 				var drop_x := clampf(layer_size.x - drop_label_size.x - 22.0, 22.0, maxf(22.0, layer_size.x - drop_label_size.x - 22.0))
-				_add_runtime_label(layer as Control, label_text, Vector2(drop_x, 34.0 - 18.0 * progress), drop_label_size, 15, Color("#f3e6c8"), fade)
+				_add_runtime_label(fx_layer, label_text, Vector2(drop_x, 34.0 - 18.0 * progress), drop_label_size, 15, Color("#f3e6c8"), fade)
+
+
+func _begin_runtime_fx_frame(parent: Control) -> void:
+	if parent == null:
+		return
+	parent.set_meta("runtime_fx_texture_count", 0)
+	parent.set_meta("runtime_fx_fallback_count", 0)
+	parent.set_meta("runtime_fx_label_count", 0)
+	for child in parent.get_children():
+		if _is_runtime_fx_pool_node(child):
+			if child is CanvasItem:
+				(child as CanvasItem).visible = false
+			continue
+		child.free()
+
+
+func _is_runtime_fx_pool_node(node: Node) -> bool:
+	var node_name := str(node.name)
+	return node_name.begins_with(RUNTIME_FX_TEXTURE_PREFIX) or node_name.begins_with(RUNTIME_FX_FALLBACK_PREFIX) or node_name.begins_with(RUNTIME_FX_LABEL_PREFIX)
+
+
+func _next_runtime_fx_pool_index(parent: Control, meta_key: String) -> int:
+	var index := int(parent.get_meta(meta_key, 0))
+	parent.set_meta(meta_key, index + 1)
+	return index
+
+
+func _runtime_fx_texture_rect(parent: Control) -> TextureRect:
+	var index := _next_runtime_fx_pool_index(parent, "runtime_fx_texture_count")
+	var node_name := "%s%d" % [RUNTIME_FX_TEXTURE_PREFIX, index]
+	var node := parent.get_node_or_null(node_name)
+	if node != null and node is TextureRect:
+		var rect := node as TextureRect
+		rect.visible = true
+		return rect
+	if node != null:
+		node.free()
+	var created := TextureRect.new()
+	created.name = node_name
+	created.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(created)
+	return created
+
+
+func _runtime_fx_fallback_rect(parent: Control) -> ColorRect:
+	var index := _next_runtime_fx_pool_index(parent, "runtime_fx_fallback_count")
+	var node_name := "%s%d" % [RUNTIME_FX_FALLBACK_PREFIX, index]
+	var node := parent.get_node_or_null(node_name)
+	if node != null and node is ColorRect:
+		var rect := node as ColorRect
+		rect.visible = true
+		return rect
+	if node != null:
+		node.free()
+	var created := ColorRect.new()
+	created.name = node_name
+	created.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(created)
+	return created
+
+
+func _runtime_fx_label(parent: Control) -> Label:
+	var index := _next_runtime_fx_pool_index(parent, "runtime_fx_label_count")
+	var node_name := "%s%d" % [RUNTIME_FX_LABEL_PREFIX, index]
+	var node := parent.get_node_or_null(node_name)
+	if node != null and node is Label:
+		var label := node as Label
+		label.visible = true
+		return label
+	if node != null:
+		node.free()
+	var created := Label.new()
+	created.name = node_name
+	created.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(created)
+	return created
 
 
 func _add_runtime_texture(parent: Control, texture: Texture2D, pos: Vector2, texture_size: Vector2, modulate: Color) -> void:
 	if texture == null:
-		var fallback := ColorRect.new()
+		var fallback := _runtime_fx_fallback_rect(parent)
 		fallback.position = pos
 		fallback.size = texture_size
 		fallback.color = Color(modulate.r, modulate.g, modulate.b, 0.72 * modulate.a)
 		fallback.z_index = 45
-		parent.add_child(fallback)
 		return
-	var texture_rect := TextureRect.new()
+	var texture_rect := _runtime_fx_texture_rect(parent)
 	texture_rect.texture = texture
 	texture_rect.position = pos
 	texture_rect.size = texture_size
@@ -8095,7 +8590,6 @@ func _add_runtime_texture(parent: Control, texture: Texture2D, pos: Vector2, tex
 	texture_rect.modulate = modulate
 	texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	texture_rect.z_index = 45
-	parent.add_child(texture_rect)
 
 
 func _add_runtime_effect(parent: Control, key: String, center: Vector2, effect_size: Vector2, progress: float, modulate: Color) -> void:
@@ -8112,7 +8606,7 @@ func _add_runtime_effect(parent: Control, key: String, center: Vector2, effect_s
 
 
 func _add_runtime_label(parent: Control, text: String, pos: Vector2, label_size: Vector2, font_size: int, color: Color, alpha: float) -> void:
-	var label := Label.new()
+	var label := _runtime_fx_label(parent)
 	label.text = text
 	label.position = pos
 	label.size = label_size
@@ -8128,7 +8622,6 @@ func _add_runtime_label(parent: Control, text: String, pos: Vector2, label_size:
 	label.modulate = Color(1, 1, 1, alpha)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.z_index = 80
-	parent.add_child(label)
 
 
 func _focus_enemy(snapshot: Dictionary) -> Dictionary:

@@ -703,6 +703,8 @@ func _run() -> void:
 	if not _slot_has_texture_icon(first_stone_slot as Control):
 		_fail("first stone inventory slot did not render an item texture icon")
 		return
+	if not _assert_stone_cooldown_bars_compact(root_node, overlay):
+		return
 	_click_control(first_stone_slot as Control)
 	for _i in range(4):
 		await process_frame
@@ -834,6 +836,10 @@ func _run() -> void:
 	if _snapshot_item_count(root_node.progression.inventory_snapshot()) != total_items_before - 1:
 		_fail("drag stone merge did not replace two stones with one higher stone")
 		return
+	var drag_merge_fx_layer: Control = root_node._generated_merge_drag_fx_layer_or_null()
+	if root_node.generated_merge_drag_fx_events.is_empty() or drag_merge_fx_layer == null or drag_merge_fx_layer.get_child_count() <= 0:
+		_fail("drag stone merge did not render the drag-drop merge effect")
+		return
 	if root_node.sim != null:
 		root_node.sim.running = combat_was_running
 
@@ -929,6 +935,9 @@ func _run() -> void:
 		return
 	if not _snapshot_has_fx_kind(root_node.sim.snapshot(), "merge_result"):
 		_fail("auto equipment merge did not emit a merge result effect")
+		return
+	if not _runtime_merge_drag_fx_has_kind(root_node, "equipment"):
+		_fail("auto equipment merge did not start the drag-drop merge effect")
 		return
 	root_node._set_generated_auto_equipment_merge_enabled(false)
 	for _i in range(2):
@@ -1074,6 +1083,46 @@ func _slot_has_texture_icon(slot: Control) -> bool:
 	return texture_node != null and texture_node is TextureRect and (texture_node as TextureRect).visible and (texture_node as TextureRect).texture != null
 
 
+func _assert_stone_cooldown_bars_compact(root_node: Node, overlay: Node) -> bool:
+	var grid := overlay.get_node_or_null("Section_WindowStack/Panel_HeroInventoryWindowFrame/Grid_StoneInventory")
+	if grid == null:
+		_fail("stone inventory grid is missing for cooldown bar check")
+		return false
+	var saw_cooldown := false
+	for child in grid.get_children():
+		if not child is Control:
+			continue
+		var slot := child as Control
+		var raw_data = slot.get_meta("runtime_slot_data", {})
+		if typeof(raw_data) != TYPE_DICTIONARY or str((raw_data as Dictionary).get("kind", "")) != "stone":
+			continue
+		var cooldown := slot.get_node_or_null(root_node.SLOT_COOLDOWN_PROGRESS_NAME)
+		if cooldown == null or not cooldown is Control or not (cooldown as CanvasItem).visible:
+			continue
+		saw_cooldown = true
+		var bar := cooldown as Control
+		if cooldown is ProgressBar:
+			_fail("stone cooldown bar should use compact ColorRect rendering, not ProgressBar")
+			return false
+		var fill := bar.get_node_or_null(root_node.SLOT_COOLDOWN_FILL_NAME)
+		if fill == null or not fill is ColorRect:
+			_fail("stone cooldown bar fill is missing")
+			return false
+		if bar.size.y > float(root_node.SLOT_COOLDOWN_BAR_HEIGHT) + 0.2:
+			_fail("stone cooldown bar is too thick: %.1f" % bar.size.y)
+			return false
+		if (fill as Control).size.y > float(root_node.SLOT_COOLDOWN_BAR_HEIGHT) + 0.2:
+			_fail("stone cooldown bar fill is too thick: %.1f" % (fill as Control).size.y)
+			return false
+		if bar.position.y + bar.size.y > slot.size.y - float(root_node.SLOT_COOLDOWN_BAR_BOTTOM_INSET) + 0.2:
+			_fail("stone cooldown bar invades the slot bottom: pos=%s size=%s slot=%s" % [str(bar.position), str(bar.size), str(slot.size)])
+			return false
+	if not saw_cooldown:
+		_fail("stone cooldown bar was not visible on equipped stone slots")
+		return false
+	return true
+
+
 func _assert_equipment_loadout_icons(overlay: Node) -> int:
 	var total := 0
 	for path in [
@@ -1165,6 +1214,14 @@ func _snapshot_has_fx_kind(snapshot: Dictionary, kind: String) -> bool:
 	if typeof(fx_events) != TYPE_ARRAY:
 		return false
 	for event in fx_events:
+		if typeof(event) == TYPE_DICTIONARY and str(event.get("kind", "")) == kind:
+			return true
+	return false
+
+
+func _runtime_merge_drag_fx_has_kind(root_node: Node, kind: String) -> bool:
+	var events: Array = root_node.generated_merge_drag_fx_events
+	for event in events:
 		if typeof(event) == TYPE_DICTIONARY and str(event.get("kind", "")) == kind:
 			return true
 	return false

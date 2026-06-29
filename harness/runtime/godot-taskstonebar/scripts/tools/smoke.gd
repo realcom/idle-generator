@@ -5,6 +5,8 @@ const ProgressionState := preload("res://scripts/game/progression_state.gd")
 const BasicCombatSim := preload("res://scripts/combat/basic_combat_sim.gd")
 const SpriteCatalog := preload("res://scripts/visual/sprite_catalog.gd")
 
+const ENEMY_SPAWN_LANE_SAMPLE_COUNT := 7
+
 
 func _init() -> void:
 	var store = ContentStore.new()
@@ -20,6 +22,8 @@ func _init() -> void:
 	var map_def: Dictionary = store.get_main_map()
 	if map_def.is_empty():
 		_fail("no main map found")
+		return
+	if not _check_enemy_spawn_lane(store, int(map_def.get("id", 500101))):
 		return
 
 	var progression = ProgressionState.new(store)
@@ -73,6 +77,42 @@ func _init() -> void:
 		str(snapshot.get("result", "")),
 	])
 	quit(0)
+
+
+func _check_enemy_spawn_lane(store, map_id: int) -> bool:
+	var map_def: Dictionary = store.get_map(map_id)
+	var popup_args: Dictionary = map_def.get("popupArgs", {}) if typeof(map_def.get("popupArgs", {})) == TYPE_DICTIONARY else {}
+	for key in [
+		"ClientEnemySpawnLaneMinYRatio",
+		"ClientEnemySpawnLaneCenterYRatio",
+		"ClientEnemySpawnLaneMaxYRatio",
+		"ClientEnemySpawnLaneOffsetsY",
+	]:
+		if not popup_args.has(key):
+			_fail("map %d popupArgs.%s missing for enemy spawn lane" % [map_id, key])
+			return false
+
+	var sim = BasicCombatSim.new(store)
+	sim.start(map_id)
+	var spawn_count := 0
+	while not sim.pending_spawns.is_empty() and spawn_count < ENEMY_SPAWN_LANE_SAMPLE_COUNT:
+		sim._spawn_enemy(sim.pending_spawns.pop_front())
+		spawn_count += 1
+	if spawn_count <= 0:
+		_fail("enemy spawn lane check did not spawn any enemy")
+		return false
+	var snapshot: Dictionary = sim.snapshot()
+	var world_size: Vector2 = snapshot.get("world_size", Vector2(960.0, 160.0))
+	var min_y := world_size.y * float(popup_args.get("ClientEnemySpawnLaneMinYRatio", 0.0))
+	var max_y := world_size.y * float(popup_args.get("ClientEnemySpawnLaneMaxYRatio", 1.0))
+	for enemy in snapshot.get("enemies", []):
+		if typeof(enemy) != TYPE_DICTIONARY:
+			continue
+		var position: Vector2 = enemy.get("position", Vector2.ZERO)
+		if position.y < min_y or position.y > max_y:
+			_fail("enemy spawn y %.1f escaped ground lane %.1f..%.1f" % [position.y, min_y, max_y])
+			return false
+	return true
 
 
 func _fail(message: String) -> void:

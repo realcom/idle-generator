@@ -4,7 +4,10 @@ const WORLD_SIZE := Vector2(960.0, 160.0)
 const PLAYER_X := 150.0
 const PLAYER_SPAWN_Y_RATIO := 0.8
 const ENEMY_SPAWN_X := 995.0
-const ENEMY_SPAWN_Y_RATIO := PLAYER_SPAWN_Y_RATIO
+const DEFAULT_ENEMY_SPAWN_Y_RATIO := PLAYER_SPAWN_Y_RATIO
+const DEFAULT_ENEMY_SPAWN_LANE_MIN_Y_RATIO := 0.0
+const DEFAULT_ENEMY_SPAWN_LANE_MAX_Y_RATIO := 1.0
+const DEFAULT_ENEMY_SPAWN_LANE_OFFSETS := [0.0, -34.0, 34.0, -58.0, 58.0, -17.0, 17.0]
 const CONTACT_RANGE := 82.0
 const ENEMY_SPACING := 30.0
 const ENEMY_SPAWN_DELAY := 0.18
@@ -174,7 +177,7 @@ func set_player_learned_skills(skill_entries: Array) -> void:
 		var skill_id := int(entry.get("skill_data_id", entry.get("skillDataId", 0)))
 		if skill_id <= 0:
 			continue
-		configured_player_learned_skills.append((entry as Dictionary).duplicate(true))
+		configured_player_learned_skills.append((entry as Dictionary).duplicate(false))
 	if store != null:
 		_build_player_learned_skill_rotation()
 		var new_skill_ids := _player_learned_skill_ids()
@@ -198,7 +201,7 @@ func set_player_stone_loadout(stone_instances: Array) -> void:
 		var tags: Array = instance.get("tags", []) if typeof(instance.get("tags", [])) == TYPE_ARRAY else []
 		if not tags.has("StoneWeapon"):
 			continue
-		var copy: Dictionary = instance.duplicate(true)
+		var copy: Dictionary = instance.duplicate(false)
 		configured_player_stones.append(copy)
 		for skill_id in _skill_ids_for_stone(copy):
 			if int(skill_id) > 0 and not configured_player_skill_ids.has(int(skill_id)):
@@ -270,12 +273,12 @@ func snapshot() -> Dictionary:
 		"latest_drop": latest_drop,
 		"world_size": WORLD_SIZE,
 		"report": run_report,
-		"player_skill_ids": configured_player_skill_ids.duplicate(true),
+		"player_skill_ids": configured_player_skill_ids.duplicate(false),
 		"player_learned_skill_ids": _player_learned_skill_ids(),
 		"player_stone_count": player_stone_loadout.size(),
 		"player_stone_skill_ids": _player_stone_skill_ids(),
 		"player_stone_cooldowns": _player_stone_cooldown_entries(),
-		"player_stat_bonuses": player_stat_bonuses.duplicate(true),
+		"player_stat_bonuses": player_stat_bonuses.duplicate(false),
 	}
 
 
@@ -300,7 +303,7 @@ func _spawn_player() -> void:
 		"attack": _player_attack(unit, player_level),
 		"defense": _player_defense(unit, player_level),
 		"attack_speed": _player_attack_speed(unit, player_level),
-		"loadout_stats": player_stat_bonuses.duplicate(true),
+		"loadout_stats": player_stat_bonuses.duplicate(false),
 		"exp": carried_exp,
 		"total_exp": carried_total_exp,
 		"required_exp": required_exp,
@@ -323,7 +326,7 @@ func _refresh_player_stats_from_loadout() -> void:
 	player["attack"] = _player_attack(unit, player_level)
 	player["defense"] = _player_defense(unit, player_level)
 	player["attack_speed"] = _player_attack_speed(unit, player_level)
-	player["loadout_stats"] = player_stat_bonuses.duplicate(true)
+	player["loadout_stats"] = player_stat_bonuses.duplicate(false)
 	player["required_exp"] = _player_required_exp(player_level)
 	player["exp_ratio"] = _player_exp_ratio()
 
@@ -536,7 +539,7 @@ func _queue_trigger_add_unit(params: Dictionary) -> void:
 		"trigger_name": active_wave_trigger,
 	}
 	for _i in range(count):
-		pending_spawns.append(entry.duplicate(true))
+		pending_spawns.append(entry.duplicate(false))
 
 
 func _on_trigger_wave_started() -> void:
@@ -812,7 +815,7 @@ func _build_player_learned_skill_rotation() -> void:
 		var skill: Dictionary = store.get_skill(skill_id)
 		if skill.is_empty():
 			continue
-		var runtime_skill := skill.duplicate(true)
+		var runtime_skill := skill.duplicate(false)
 		runtime_skill["runtime_skill_item_data_id"] = int(entry.get("skill_item_data_id", entry.get("id", 0)))
 		runtime_skill["runtime_skill_level"] = maxi(1, int(entry.get("level", 1)))
 		var effect: Dictionary = entry.get("effect", {}) if typeof(entry.get("effect", {})) == TYPE_DICTIONARY else {}
@@ -1235,7 +1238,7 @@ func _finish(new_result: String) -> void:
 		"kills": kill_count,
 		"skill_casts": skill_cast_count,
 		"player_skill_casts": player_skill_cast_count,
-		"resources": resources.duplicate(true),
+		"resources": resources.duplicate(false),
 	}
 	_push_event("전투 종료: %s" % result)
 
@@ -1513,13 +1516,14 @@ func _unit_type(unit: Dictionary) -> String:
 
 
 func _spawn_position_for_entry(entry: Dictionary, spawn_slot: int) -> Vector2:
-	var base := Vector2(ENEMY_SPAWN_X, WORLD_SIZE.y * ENEMY_SPAWN_Y_RATIO)
+	var base := Vector2(ENEMY_SPAWN_X, WORLD_SIZE.y * _enemy_spawn_y_ratio())
 	if int(entry.get("location_id", 0)) != 0:
 		base = _world_position_for_map_location(int(entry.get("location_id", 0)), base)
 	elif is_finite(float(entry.get("position_x", INF))) and is_finite(float(entry.get("position_y", INF))):
 		base = _world_position_from_map_coords(float(entry.get("position_x", 0.0)), float(entry.get("position_y", 0.0)))
 	base.x += _spawn_depth_offset(spawn_slot)
 	base.y += _spawn_lane_offset(spawn_slot)
+	base.y = _clamp_enemy_spawn_y(base.y)
 	return base
 
 
@@ -1540,8 +1544,69 @@ func _world_position_from_map_coords(x: float, y: float) -> Vector2:
 	var map_span := maxf(0.1, enemy_location.x - player_location.x)
 	var world_scale := (ENEMY_SPAWN_X - PLAYER_X) / map_span
 	var world_x := PLAYER_X + (x - player_location.x) * world_scale
-	var world_y := WORLD_SIZE.y * ENEMY_SPAWN_Y_RATIO + (y - player_location.y) * world_scale * 0.45
+	var world_y := WORLD_SIZE.y * _enemy_spawn_y_ratio() + (y - player_location.y) * world_scale * 0.45
 	return Vector2(world_x, world_y)
+
+
+func _clamp_enemy_spawn_y(value: float) -> float:
+	var min_ratio := _enemy_spawn_lane_min_y_ratio()
+	var max_ratio := _enemy_spawn_lane_max_y_ratio()
+	return clampf(
+		value,
+		WORLD_SIZE.y * minf(min_ratio, max_ratio),
+		WORLD_SIZE.y * maxf(min_ratio, max_ratio)
+	)
+
+
+func _enemy_spawn_y_ratio() -> float:
+	return clampf(
+		_map_popup_float("ClientEnemySpawnLaneCenterYRatio", DEFAULT_ENEMY_SPAWN_Y_RATIO),
+		0.0,
+		1.0
+	)
+
+
+func _enemy_spawn_lane_min_y_ratio() -> float:
+	return clampf(
+		_map_popup_float("ClientEnemySpawnLaneMinYRatio", DEFAULT_ENEMY_SPAWN_LANE_MIN_Y_RATIO),
+		0.0,
+		1.0
+	)
+
+
+func _enemy_spawn_lane_max_y_ratio() -> float:
+	return clampf(
+		_map_popup_float("ClientEnemySpawnLaneMaxYRatio", DEFAULT_ENEMY_SPAWN_LANE_MAX_Y_RATIO),
+		0.0,
+		1.0
+	)
+
+
+func _enemy_spawn_lane_offsets() -> Array:
+	var popup_args := _map_popup_args()
+	var raw = popup_args.get("ClientEnemySpawnLaneOffsetsY", "")
+	var values := []
+	if typeof(raw) == TYPE_ARRAY:
+		for value in raw:
+			values.append(float(value))
+	else:
+		for part in str(raw).split(","):
+			var text := str(part).strip_edges()
+			if text != "":
+				values.append(float(text))
+	return values if not values.is_empty() else DEFAULT_ENEMY_SPAWN_LANE_OFFSETS
+
+
+func _map_popup_float(key: String, fallback: float) -> float:
+	var popup_args := _map_popup_args()
+	if not popup_args.has(key):
+		return fallback
+	return float(popup_args.get(key, fallback))
+
+
+func _map_popup_args() -> Dictionary:
+	var popup_args = map_def.get("popupArgs", {})
+	return popup_args if typeof(popup_args) == TYPE_DICTIONARY else {}
 
 
 func _map_location_position(location_id: int, fallback: Vector2) -> Vector2:
@@ -1555,7 +1620,7 @@ func _map_location_position(location_id: int, fallback: Vector2) -> Vector2:
 
 
 func _spawn_lane_offset(spawn_slot: int) -> float:
-	var lane_pattern := [0.0, -34.0, 34.0, -58.0, 58.0, -17.0, 17.0]
+	var lane_pattern := _enemy_spawn_lane_offsets()
 	return float(lane_pattern[int(spawn_slot) % lane_pattern.size()])
 
 
@@ -1842,7 +1907,7 @@ func _instance_drop_body(instance: Dictionary, source_type: String) -> String:
 
 
 func _fx(kind: String, payload: Dictionary) -> void:
-	var event := payload.duplicate(true)
+	var event := payload.duplicate(false)
 	event["kind"] = kind
 	event["ttl"] = float(payload.get("ttl", 0.7))
 	event["duration"] = float(event["ttl"])
