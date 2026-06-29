@@ -187,6 +187,7 @@ const COMBAT_PROJECTILE_HIDE_PROGRESS := 0.96
 const COMBAT_MONSTER_VISUAL_SCALE := 0.75
 const COMBAT_ENEMY_VISUAL_SHIFT := Vector2(-190.0, 8.0)
 const COMBAT_ENEMY_LANE_STEP := Vector2(28.0, 12.0)
+const COMBAT_FX_POOL_MAX_PER_KIND := 96
 const GOLD_ITEM_ID := 5
 const OPAQUE_NATIVE_WINDOW_PLATFORMS := ["Windows"]
 
@@ -212,6 +213,10 @@ var generated_native_window_roots: Dictionary = {}
 var generated_native_window_ids_by_node: Dictionary = {}
 var generated_texture_cache: Dictionary = {}
 var generated_runtime_nodes: Dictionary = {}
+var generated_combat_fx_parent: Control
+var generated_combat_fx_active: Array = []
+var generated_combat_fx_pools: Dictionary = {}
+var generated_effect_atlas_cache: Dictionary = {}
 var generated_inventory_tab := "stone"
 var generated_selected_action := "inventory"
 var generated_action_message := "돌 인벤토리 준비"
@@ -439,6 +444,8 @@ func _build_generated_ui_overlay() -> void:
 		return
 	legacy_ui_nodes.clear()
 	generated_runtime_nodes.clear()
+	_clear_runtime_fx_pool()
+	generated_effect_atlas_cache.clear()
 	for child in get_children():
 		if child is CanvasItem:
 			legacy_ui_nodes.append(child)
@@ -6755,8 +6762,7 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 	var layer: Variant = generated_runtime_nodes.get("combat_layer", null)
 	if layer == null or not layer is Control:
 		return
-	for child in (layer as Control).get_children():
-		child.free()
+	_begin_runtime_fx_frame(layer as Control)
 	var layer_size := (layer as Control).size
 	var world_size: Vector2 = snapshot.get("world_size", Vector2(960.0, 160.0))
 	var player: Dictionary = snapshot.get("player", {})
@@ -6858,6 +6864,7 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 				var drop_label_size := Vector2(minf(240.0, maxf(150.0, layer_size.x - 44.0)), 26.0)
 				var drop_x := clampf(layer_size.x - drop_label_size.x - 22.0, 22.0, maxf(22.0, layer_size.x - drop_label_size.x - 22.0))
 				_add_runtime_label(layer as Control, label_text, Vector2(drop_x, 34.0 - 18.0 * progress), drop_label_size, 15, Color("#f3e6c8"), fade)
+	_end_runtime_fx_frame()
 	_add_runtime_enemy_foreground(layer as Control, snapshot, world_size)
 
 
@@ -6906,14 +6913,13 @@ func _add_runtime_enemy_foreground(parent: Control, snapshot: Dictionary, world_
 
 func _add_runtime_texture(parent: Control, texture: Texture2D, pos: Vector2, texture_size: Vector2, modulate: Color) -> void:
 	if texture == null:
-		var fallback := ColorRect.new()
+		var fallback := _acquire_runtime_fx_color_rect(parent)
 		fallback.position = pos
 		fallback.size = texture_size
 		fallback.color = Color(modulate.r, modulate.g, modulate.b, 0.72 * modulate.a)
 		fallback.z_index = 45
-		parent.add_child(fallback)
 		return
-	var texture_rect := TextureRect.new()
+	var texture_rect := _acquire_runtime_fx_texture_rect(parent)
 	texture_rect.texture = texture
 	texture_rect.position = pos
 	texture_rect.size = texture_size
@@ -6922,27 +6928,17 @@ func _add_runtime_texture(parent: Control, texture: Texture2D, pos: Vector2, tex
 	texture_rect.modulate = modulate
 	texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	texture_rect.z_index = 45
-	parent.add_child(texture_rect)
 
 
 func _add_runtime_effect(parent: Control, key: String, center: Vector2, effect_size: Vector2, progress: float, modulate: Color) -> void:
-	if sprites == null or key == "":
-		return
-	var texture: Texture2D = sprites.get_texture(key)
+	var texture: Texture2D = _runtime_effect_texture(key, progress)
 	if texture == null:
 		return
-	var render_texture: Texture2D = texture
-	var region: Rect2 = sprites.effect_frame_region(key, progress)
-	if region.has_area():
-		var atlas := AtlasTexture.new()
-		atlas.atlas = texture
-		atlas.region = region
-		render_texture = atlas
-	_add_runtime_texture(parent, render_texture, center - effect_size * 0.5, effect_size, modulate)
+	_add_runtime_texture(parent, texture, center - effect_size * 0.5, effect_size, modulate)
 
 
 func _add_runtime_label(parent: Control, text: String, pos: Vector2, label_size: Vector2, font_size: int, color: Color, alpha: float) -> void:
-	var label := Label.new()
+	var label := _acquire_runtime_fx_label(parent)
 	label.text = text
 	label.position = pos
 	label.size = label_size
@@ -6958,7 +6954,152 @@ func _add_runtime_label(parent: Control, text: String, pos: Vector2, label_size:
 	label.modulate = Color(1, 1, 1, alpha)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.z_index = 80
-	parent.add_child(label)
+
+
+func _begin_runtime_fx_frame(parent: Control) -> void:
+	if generated_combat_fx_parent != null and not is_instance_valid(generated_combat_fx_parent):
+		generated_combat_fx_parent = null
+	if generated_combat_fx_parent != parent:
+		_clear_runtime_fx_pool()
+		generated_combat_fx_parent = parent
+		for child in parent.get_children():
+			child.queue_free()
+		return
+	var active_nodes := generated_combat_fx_active
+	generated_combat_fx_active = []
+	for node in active_nodes:
+		if node == null or not is_instance_valid(node) or not node is Control:
+			continue
+		var control := node as Control
+		if control.get_parent() != parent:
+			control.queue_free()
+			continue
+		_reset_runtime_fx_control(control)
+		_runtime_fx_pool(str(control.get_meta("runtime_fx_kind", ""))).append(control)
+
+
+func _end_runtime_fx_frame() -> void:
+	for kind in generated_combat_fx_pools.keys():
+		var pool: Array = generated_combat_fx_pools.get(kind, [])
+		var valid_pool: Array = []
+		for node in pool:
+			if node == null or not is_instance_valid(node) or not node is Control:
+				continue
+			valid_pool.append(node)
+		while valid_pool.size() > COMBAT_FX_POOL_MAX_PER_KIND:
+			var extra = valid_pool.pop_back()
+			if extra != null and is_instance_valid(extra):
+				(extra as Node).queue_free()
+		generated_combat_fx_pools[kind] = valid_pool
+
+
+func _clear_runtime_fx_pool() -> void:
+	for node in generated_combat_fx_active:
+		if node != null and is_instance_valid(node):
+			(node as Node).queue_free()
+	generated_combat_fx_active.clear()
+	for pool in generated_combat_fx_pools.values():
+		if typeof(pool) != TYPE_ARRAY:
+			continue
+		for node in pool:
+			if node != null and is_instance_valid(node):
+				(node as Node).queue_free()
+	generated_combat_fx_pools.clear()
+	generated_combat_fx_parent = null
+
+
+func _runtime_fx_pool(kind: String) -> Array:
+	if kind == "":
+		kind = "unknown"
+	if not generated_combat_fx_pools.has(kind):
+		generated_combat_fx_pools[kind] = []
+	return generated_combat_fx_pools[kind]
+
+
+func _pop_runtime_fx_node(kind: String) -> Control:
+	var pool := _runtime_fx_pool(kind)
+	while not pool.is_empty():
+		var node = pool.pop_back()
+		if node == null or not is_instance_valid(node) or not node is Control:
+			continue
+		return node as Control
+	return null
+
+
+func _activate_runtime_fx_control(parent: Control, control: Control, kind: String) -> void:
+	control.set_meta("runtime_fx_kind", kind)
+	if control.get_parent() != parent:
+		if control.get_parent() != null:
+			control.get_parent().remove_child(control)
+		parent.add_child(control)
+	control.visible = true
+	control.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	generated_combat_fx_active.append(control)
+
+
+func _reset_runtime_fx_control(control: Control) -> void:
+	control.visible = false
+	control.modulate = Color.WHITE
+	if control is TextureRect:
+		(control as TextureRect).texture = null
+	elif control is Label:
+		(control as Label).text = ""
+
+
+func _acquire_runtime_fx_texture_rect(parent: Control) -> TextureRect:
+	var node := _pop_runtime_fx_node("texture")
+	var texture_rect := node as TextureRect
+	if texture_rect == null:
+		texture_rect = TextureRect.new()
+		texture_rect.name = "RuntimeCombatFxTexture"
+	_activate_runtime_fx_control(parent, texture_rect, "texture")
+	return texture_rect
+
+
+func _acquire_runtime_fx_color_rect(parent: Control) -> ColorRect:
+	var node := _pop_runtime_fx_node("color")
+	var color_rect := node as ColorRect
+	if color_rect == null:
+		color_rect = ColorRect.new()
+		color_rect.name = "RuntimeCombatFxColor"
+	_activate_runtime_fx_control(parent, color_rect, "color")
+	return color_rect
+
+
+func _acquire_runtime_fx_label(parent: Control) -> Label:
+	var node := _pop_runtime_fx_node("label")
+	var label := node as Label
+	if label == null:
+		label = Label.new()
+		label.name = "RuntimeCombatFxLabel"
+	_activate_runtime_fx_control(parent, label, "label")
+	return label
+
+
+func _runtime_effect_texture(key: String, progress: float) -> Texture2D:
+	if sprites == null or key == "":
+		return null
+	var texture: Texture2D = sprites.get_texture(key)
+	if texture == null:
+		return null
+	var region: Rect2 = sprites.effect_frame_region(key, progress)
+	if not region.has_area():
+		return texture
+	var cache_key := "%s:%d:%d:%d:%d" % [
+		key,
+		int(region.position.x),
+		int(region.position.y),
+		int(region.size.x),
+		int(region.size.y),
+	]
+	var cached: Texture2D = generated_effect_atlas_cache.get(cache_key, null)
+	if cached != null:
+		return cached
+	var atlas := AtlasTexture.new()
+	atlas.atlas = texture
+	atlas.region = region
+	generated_effect_atlas_cache[cache_key] = atlas
+	return atlas
 
 
 func _focus_enemy(snapshot: Dictionary) -> Dictionary:

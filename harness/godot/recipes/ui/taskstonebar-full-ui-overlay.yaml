@@ -110,7 +110,7 @@ screen:
   reference_size_px: { width: 1586, height: 992 }
   safe_area_policy: "Last 52px are reserved for the OS taskbar motif; generated Control scene must leave empty desktop regions transparent."
   product_metaphor: "Desktop companion app: floating RPG windows above an always-on taskbar combat strip."
-  transparency_policy: "No full-screen background fill. Empty pixels between floating windows and the combat strip backdrop must show the user's real desktop through the transparent Godot window; only combat elements, HUD atoms, toast, and controls render in the strip."
+  transparency_policy: "No full-screen background fill. Empty pixels between floating windows remain transparent; the combat strip keeps its ground image as the underlay so element-free areas do not render as black, while decorative props and soft borders stay transparent above it."
   runtime_modes:
     taskbar_mode: "Workshop windows are collapsed/minimized; bottom combat strip and OS taskbar-safe status remain readable."
     workshop_mode: "Status, inventory, and portal windows expand as desktop-style floating windows above the combat strip."
@@ -246,7 +246,7 @@ assets:
       usage: fixed_portal_route_map_background
       display_size_px: { width: 372, height: 404 }
     - key: taskstonebar.ui.combat_ground_strip
-      usage: hidden_bottom_combat_backdrop_reference_for_transparent_overlay
+      usage: bottom_combat_ground_underlay
       display_size_px: { width: 1586, height: 236 }
     - key: taskstonebar.ui.keeper_dock_icon_set
       usage: center_keeper_dock_shortcut_icons

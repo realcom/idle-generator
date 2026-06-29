@@ -128,6 +128,17 @@ concepts:
     variation: "TBH Stat Skill Layout"
     reference: "user-provided STATUS reference image"
     summary: "Correct StatusWindow target: no character portrait, no stone portrait, only a scrollable stat list, Skill Points header, vertical level track, and tiered skill slot rows."
+  status_window_current_layout_regen_a:
+    status: draft
+    kind: status_window_ui
+    image: concepts/status_window_current_layout_regen_a.png
+    source_image: concepts/status_window_current_layout_regen_a_source.png
+    note: concepts/status_window_current_layout_regen_a.md
+    compare_board: qa/status-window-current-vs-regen-a.png
+    parent: status_window_concept_c_tbh_stat_skill_layout
+    variation: "Current Godot Layout Regen A"
+    reference: "fresh Godot status window screenshot captured from harness/runtime/godot-taskstonebar/screenshots/taskstonebar-status-window.png"
+    summary: "Layout-locked regeneration of the current Godot StatusWindow: same upper-left canvas composition, stat scroll, Skill Points header, level track, and 3x3 tiered skill rows, with more polished pixel frame and slot treatment."
   item_detail_modal_concept_a:
     status: candidate
     kind: item_detail_modal_ui
