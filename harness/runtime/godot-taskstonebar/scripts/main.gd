@@ -46,6 +46,27 @@ const GENERATED_BATTLE_MAP_TEXTURES := {
 	9: "res://assets/generated/battle/taskstonebar_battle_map_09.png",
 	10: "res://assets/generated/battle/taskstonebar_battle_map_10.png",
 }
+const GENERATED_PORTAL_MAP_TEXTURE_FALLBACK := "res://assets/generated/ui/portal_parchment_map.png"
+const GENERATED_PORTAL_MAP_TEXTURES := {
+	500101: "res://assets/generated/ui/portal_map_500101_taskbar_cave_rounded.png",
+}
+const PORTAL_FIRST_MAP_ID := 500101
+const PORTAL_MAPS_PER_ACT := 10
+const PORTAL_TOTAL_ACTS := 10
+const PORTAL_STAGE_NODE_SIZE := Vector2(44.0, 30.0)
+const PORTAL_STAGE_ROUTE_POSITIONS := [
+	Vector2(124.0, 462.0),
+	Vector2(230.0, 436.0),
+	Vector2(174.0, 398.0),
+	Vector2(300.0, 370.0),
+	Vector2(224.0, 334.0),
+	Vector2(326.0, 304.0),
+	Vector2(186.0, 276.0),
+	Vector2(284.0, 246.0),
+	Vector2(142.0, 236.0),
+	Vector2(316.0, 214.0),
+]
+const PORTAL_ROUTE_CURVE_SWAYS := [24.0, -18.0, 28.0, -20.0, 18.0, -30.0, 22.0, -24.0, 18.0]
 const KEEPER_DOCK_ICON_SIZE := Vector2(64.0, 64.0)
 const KEEPER_DOCK_ICON_DISPLAY_SIZE := Vector2(38.0, 38.0)
 const WORKSHOP_WINDOW_VISUAL_SCALE := 0.8
@@ -81,6 +102,11 @@ const OVERLAY_COMBAT_DROP_BANNER_NAME := "RuntimeCombatDropBanner"
 const OVERLAY_COMBAT_MAP_PROGRESS_NAME := "RuntimeCombatMapProgress"
 const OVERLAY_COMBAT_BOSS_PANEL_NAME := "RuntimeCombatBossPanel"
 const OVERLAY_WORKSHOP_TOGGLE_NAME := "Btn_RuntimeWorkshopToggle"
+const COMBAT_OPACITY_CONTROL_NAME := "RuntimeCombatOpacityControl"
+const COMBAT_OPACITY_SLIDER_NAME := "Slider_CombatOpacity"
+const COMBAT_OPACITY_VALUE_NAME := "Text_CombatOpacityValue"
+const COMBAT_OPACITY_MIN := 0.35
+const COMBAT_OPACITY_MAX := 1.0
 const KEEPER_EXP_BAR_NAME := "Progress_KeeperExp"
 const KEEPER_EXP_LABEL_NAME := "Text_KeeperExp"
 const RUNTIME_SKILL_TREE_WINDOW_NAME := "RuntimeSkillTreeWindow"
@@ -203,6 +229,7 @@ var generated_combat_drag_strip: Control
 var generated_combat_drag_start_mouse := Vector2.ZERO
 var generated_combat_drag_start_position := Vector2.ZERO
 var generated_combat_window_scale := COMBAT_NATIVE_WINDOW_SCALE
+var generated_combat_opacity := 1.0
 var generated_combat_hp_enemy_id := 0
 var generated_combat_resize_strip: Control
 var generated_combat_resize_start_mouse := Vector2.ZERO
@@ -873,9 +900,13 @@ func _sync_generated_ui_overlay(snapshot: Dictionary) -> void:
 	for native_root in generated_native_window_roots.values():
 		if native_root is Node:
 			_apply_generated_overlay_values(native_root, values)
+	_sync_generated_portal_map_background(snapshot)
+	_sync_generated_portal_map_progress(snapshot)
 	_sync_desktop_status_bar(snapshot, model)
 	_sync_generated_mvp_overlay(model)
 	_sync_generated_combat_overlay(snapshot, model)
+	_refresh_status_stat_scroll_layouts()
+	_apply_generated_combat_opacity()
 
 
 func _generated_overlay_values(snapshot: Dictionary, model: Dictionary = {}) -> Dictionary:
@@ -1012,6 +1043,7 @@ func _hydrate_generated_ui_overlay(root: Control) -> void:
 	_ensure_generated_action_bar(root)
 	_connect_generated_overlay_buttons(root)
 	_ensure_generated_combat_layer(root)
+	_ensure_generated_combat_soft_border(root)
 	_ensure_generated_combat_readouts(root)
 	_ensure_generated_taskbar_controls(root)
 	_prepare_generated_combat_strip_drag(root)
@@ -1162,14 +1194,14 @@ func _polish_status_window(root: Control) -> void:
 	var stat_scroll := window.get_node_or_null("Panel_StatusStatScroll")
 	if stat_scroll != null and stat_scroll is NinePatchRect:
 		(stat_scroll as Control).position = Vector2(20.0, 64.0)
-		(stat_scroll as Control).size = Vector2(398.0, 166.0)
+		(stat_scroll as Control).size = Vector2(398.0, 178.0)
 		(stat_scroll as NinePatchRect).modulate = Color(1.05, 0.98, 0.84, 1.0)
-	_style_labels_under(stat_scroll, Color("#24170d"), Color("#dfcca2"), 1, ["Text_ClassName"])
+		_style_labels_under(stat_scroll, Color("#24170d"), Color("#dfcca2"), 1, ["Text_ClassName"])
 	_polish_status_stat_scroll(status, stat_scroll)
 
 	var skill_header_root := window.get_node_or_null("Panel_SkillPointHeader")
 	if skill_header_root != null and skill_header_root is Control:
-		(skill_header_root as Control).position = Vector2(72.0, 242.0)
+		(skill_header_root as Control).position = Vector2(72.0, 254.0)
 		(skill_header_root as Control).size = Vector2(294.0, 36.0)
 	var skill_header := window.get_node_or_null("Panel_SkillPointHeader/Panel_SkillPointHeaderBg")
 	if skill_header != null and skill_header is PanelContainer:
@@ -1179,8 +1211,8 @@ func _polish_status_window(root: Control) -> void:
 	var skill_tree := window.get_node_or_null("Section_SkillTree")
 	if skill_tree == null or not skill_tree is Control:
 		return
-	(skill_tree as Control).position = Vector2(22.0, 286.0)
-	(skill_tree as Control).size = Vector2(396.0, 238.0)
+	(skill_tree as Control).position = Vector2(22.0, 298.0)
+	(skill_tree as Control).size = Vector2(396.0, 230.0)
 	_polish_status_skill_track(skill_tree as Control)
 	var row_specs := [
 		{"name": "Panel_SkillTierBack0", "pos": Vector2(64.0, 0.0), "size": Vector2(306.0, 62.0), "arrow_y": 18.0},
@@ -1333,11 +1365,11 @@ func _polish_portal_window(root: Control) -> void:
 		(difficulty as Control).size = Vector2(242.0, 38.0)
 		(difficulty as PanelContainer).add_theme_stylebox_override("panel", _overlay_style(Color("#21140c"), Color("#8a5b24"), 2, 3))
 	_ensure_portal_chain(portal)
-	var tab_back := _ensure_panel(portal, "Panel_ActTabsBackplate", Vector2(48.0, 122.0), Vector2(342.0, 42.0), Color("#100c09"), Color("#2e251d"), 1, 2)
+	var tab_back := _ensure_panel(portal, "Panel_ActTabsBackplate", Vector2(48.0, 116.0), Vector2(342.0, 42.0), Color("#100c09"), Color("#2e251d"), 1, 2)
 	_move_before(portal, tab_back, "Tabs_Act")
 	var act_tabs := portal.get_node_or_null("Tabs_Act")
 	if act_tabs != null and act_tabs is Control:
-		(act_tabs as Control).position = Vector2(54.0, 128.0)
+		(act_tabs as Control).position = Vector2(54.0, 122.0)
 		(act_tabs as Control).size = Vector2(330.0, 36.0)
 		if act_tabs is HBoxContainer:
 			(act_tabs as HBoxContainer).add_theme_constant_override("separation", 6)
@@ -1345,21 +1377,27 @@ func _polish_portal_window(root: Control) -> void:
 			if child is Control:
 				(child as Control).custom_minimum_size = Vector2(104.0, 36.0)
 				(child as Control).size = Vector2(104.0, 36.0)
-	var map_frame := _ensure_panel(portal, "Panel_ParchmentMapFrame", Vector2(24.0, 166.0), Vector2(390.0, 376.0), Color("#14110c"), Color("#6b4a2a"), 2, 2)
+	var map_shadow := _ensure_panel(portal, "Panel_ParchmentMapShadow", Vector2(34.0, 176.0), Vector2(376.0, 364.0), Color(0.0, 0.0, 0.0, 0.36), Color(0.0, 0.0, 0.0, 0.0), 0, 12)
+	map_shadow.z_index = 1
+	_move_before(portal, map_shadow, "Tex_ParchmentRouteMap")
+	var map_frame := _ensure_panel(portal, "Panel_ParchmentMapFrame", Vector2(29.0, 169.0), Vector2(380.0, 368.0), Color("#080705"), Color("#221a12"), 1, 8)
 	_move_before(portal, map_frame, "Tex_ParchmentRouteMap")
 	var map := portal.get_node_or_null("Tex_ParchmentRouteMap")
 	if map != null and map is Control:
-		(map as Control).position = Vector2(34.0, 174.0)
-		(map as Control).size = Vector2(370.0, 358.0)
-		(map as CanvasItem).modulate = Color(1.06, 1.0, 0.88, 1.0)
+		(map as Control).position = Vector2(31.0, 171.0)
+		(map as Control).size = Vector2(376.0, 364.0)
+		(map as CanvasItem).modulate = Color(1.04, 1.0, 0.92, 1.0)
+		if map is TextureRect:
+			(map as TextureRect).stretch_mode = TextureRect.STRETCH_SCALE
+			(map as TextureRect).texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_ensure_portal_map_overlays(portal)
 	var stage_node := portal.get_node_or_null("Btn_CurrentStageNode")
 	if stage_node != null and stage_node is Control:
-		(stage_node as Control).position = Vector2(260.0, 364.0)
+		(stage_node as Control).position = Vector2(150.0, 466.0)
 		(stage_node as Control).size = Vector2(36.0, 36.0)
 		(stage_node as CanvasItem).z_index = 8
 		if stage_node is Button:
-			(stage_node as Button).text = "2-3"
+			(stage_node as Button).text = "1-1"
 	for node_name in ["Panel_DifficultySelect", "Tabs_Act", "Tex_ParchmentRouteMap", "Panel_PortalMapBanner", "Panel_PortalCurrentFlag"]:
 		_set_canvas_z(portal.get_node_or_null(node_name), 3)
 	_set_canvas_z(stage_node, 8)
@@ -1369,22 +1407,26 @@ func _polish_status_stat_scroll(_status: Control, stat_scroll_node: Node) -> voi
 	if stat_scroll_node == null or not stat_scroll_node is Control:
 		return
 	var stat_scroll := stat_scroll_node as Control
-	_ensure_rect(stat_scroll, "Line_StatusScrollTopBevel", Vector2(10.0, 8.0), Vector2(378.0, 2.0), Color("#6b4a2a"), 4)
-	_ensure_rect(stat_scroll, "Line_StatusScrollBottomBevel", Vector2(12.0, 158.0), Vector2(374.0, 2.0), Color("#5c4525"), 4)
-	_ensure_rect(stat_scroll, "Line_StatusScrollLeftBinding", Vector2(16.0, 24.0), Vector2(3.0, 124.0), Color("#6a3b20"), 4)
-	_ensure_rect(stat_scroll, "Line_StatusScrollRightBinding", Vector2(362.0, 24.0), Vector2(2.0, 124.0), Color("#6a3b20"), 4)
+	_ensure_rect(stat_scroll, "Line_StatusScrollTopBevel", Vector2(10.0, 8.0), Vector2(378.0, 2.0), Color("#6b4a2a"), 2)
+	_ensure_rect(stat_scroll, "Line_StatusScrollBottomBevel", Vector2(12.0, 168.0), Vector2(374.0, 2.0), Color("#5c4525"), 2)
+	_ensure_rect(stat_scroll, "Line_StatusScrollLeftBinding", Vector2(16.0, 24.0), Vector2(3.0, 132.0), Color("#6a3b20"), 2)
+	_ensure_rect(stat_scroll, "Line_StatusScrollRightBinding", Vector2(362.0, 24.0), Vector2(2.0, 132.0), Color("#6a3b20"), 2)
 	var ribbon := stat_scroll.get_node_or_null("Panel_ClassRibbon")
 	if ribbon != null and ribbon is Control:
 		(ribbon as Control).position = Vector2(86.0, 10.0)
 		(ribbon as Control).size = Vector2(226.0, 28.0)
 		if ribbon is PanelContainer:
 			(ribbon as PanelContainer).add_theme_stylebox_override("panel", _overlay_style(Color("#090705"), Color("#6b4a2a"), 2, 2))
+	var row_sheet := _ensure_panel(stat_scroll, "Panel_StatusRowsCleanSheet", Vector2(38.0, 42.0), Vector2(318.0, 128.0), Color("#d1b06d"), Color("#8a5b24"), 1, 1)
+	row_sheet.z_index = 1
+	_move_before(stat_scroll, row_sheet, "Group_StatusRows")
 	var group := stat_scroll.get_node_or_null("Group_StatusRows")
 	if group == null or not group is Control:
 		return
 	var rows := group as Control
-	rows.position = Vector2(54.0, 42.0)
+	rows.position = Vector2(60.0, 46.0)
 	rows.size = Vector2(286.0, 116.0)
+	rows.z_index = 4
 	var row_specs := [
 		{"label": "Text_StatusLevelLabel", "value": "Text_StatusLevelValue", "name": "Level", "display": "", "y": 0.0},
 		{"label": "Text_StatusExpLabel", "value": "Text_StatusExpValue", "name": "EXP", "display": "", "y": 15.0},
@@ -1399,23 +1441,33 @@ func _polish_status_stat_scroll(_status: Control, stat_scroll_node: Node) -> voi
 		_position_status_stat_row(rows, str(spec["label"]), str(spec["value"]), str(spec["name"]), str(spec["display"]), float(spec["y"]))
 	var scroll_thumb := stat_scroll.get_node_or_null("Panel_StatusScrollbar")
 	if scroll_thumb != null and scroll_thumb is Control:
-		(scroll_thumb as Control).position = Vector2(374.0, 44.0)
-		(scroll_thumb as Control).size = Vector2(8.0, 78.0)
-	_ensure_panel(stat_scroll, "Panel_StatusScrollbarTopCap", Vector2(373.0, 33.0), Vector2(10.0, 10.0), Color("#9f7d49"), Color("#2d1a0f"), 1, 1).z_index = 5
-	_ensure_panel(stat_scroll, "Panel_StatusScrollbarBottomCap", Vector2(373.0, 123.0), Vector2(10.0, 10.0), Color("#9f7d49"), Color("#2d1a0f"), 1, 1).z_index = 5
+		(scroll_thumb as Control).position = Vector2(374.0, 48.0)
+		(scroll_thumb as Control).size = Vector2(8.0, 82.0)
+	_ensure_panel(stat_scroll, "Panel_StatusScrollbarTopCap", Vector2(373.0, 36.0), Vector2(10.0, 10.0), Color("#9f7d49"), Color("#2d1a0f"), 1, 1).z_index = 5
+	_ensure_panel(stat_scroll, "Panel_StatusScrollbarBottomCap", Vector2(373.0, 132.0), Vector2(10.0, 10.0), Color("#9f7d49"), Color("#2d1a0f"), 1, 1).z_index = 5
+
+
+func _refresh_status_stat_scroll_layouts() -> void:
+	for root in _status_window_roots():
+		if root is Control:
+			var stat_scroll := (root as Control).get_node_or_null("Panel_StatusStatScroll")
+			if stat_scroll != null:
+				_polish_status_stat_scroll(root as Control, stat_scroll)
 
 
 func _position_status_stat_row(parent: Control, label_name: String, value_name: String, label_text: String, value_text: String, y: float) -> void:
-	var label := _ensure_runtime_label(label_name, Vector2(0.0, y), Vector2(158.0, 15.0), 12, Color("#24170d"), parent)
+	var label := _ensure_runtime_label(label_name, Vector2(0.0, y), Vector2(158.0, 15.0), 13, Color("#24170d"), parent)
 	label.text = label_text
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	label.z_index = 5
 	label.add_theme_color_override("font_shadow_color", Color("#dfcca2"))
 	label.add_theme_constant_override("shadow_offset_x", 1)
 	label.add_theme_constant_override("shadow_offset_y", 1)
-	var value := _ensure_runtime_label(value_name, Vector2(158.0, y), Vector2(126.0, 15.0), 12, Color("#24170d"), parent)
+	var value := _ensure_runtime_label(value_name, Vector2(158.0, y), Vector2(126.0, 15.0), 13, Color("#24170d"), parent)
 	if value_text != "":
 		value.text = value_text
 	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	value.z_index = 5
 	value.add_theme_color_override("font_shadow_color", Color("#dfcca2"))
 	value.add_theme_constant_override("shadow_offset_x", 1)
 	value.add_theme_constant_override("shadow_offset_y", 1)
@@ -1463,35 +1515,259 @@ func _ensure_portal_map_overlays(portal: Control) -> void:
 	var banner := _ensure_panel(portal, "Panel_PortalMapBanner", Vector2(126.0, 188.0), Vector2(188.0, 34.0), Color("#d8c18a"), Color("#6e5a34"), 2, 5)
 	banner.z_index = 5
 	var banner_label := _ensure_runtime_label("Text_PortalMapBanner", Vector2(10.0, 5.0), Vector2(168.0, 24.0), 15, Color("#2d1f12"), banner)
-	banner_label.text = "황량한 사막"
+	banner_label.text = "작업표시줄 동굴"
 	banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	banner_label.add_theme_color_override("font_shadow_color", Color("#ecdcae"))
-	var stage_specs := [
-		{"name": "Panel_PortalStage21", "pos": Vector2(150.0, 466.0), "text": "2-1", "active": false},
-		{"name": "Panel_PortalStage22", "pos": Vector2(206.0, 418.0), "text": "2-2", "active": false},
-		{"name": "Panel_PortalStage23", "pos": Vector2(260.0, 364.0), "text": "2-3", "active": true},
-		{"name": "Panel_PortalStage24", "pos": Vector2(286.0, 310.0), "text": "2-4", "active": false},
-		{"name": "Panel_PortalStage25", "pos": Vector2(272.0, 258.0), "text": "2-5", "active": false},
-		{"name": "Panel_PortalStage26", "pos": Vector2(300.0, 212.0), "text": "2-6", "active": false},
-	]
-	for spec in stage_specs:
-		var active := bool(spec["active"])
-		var fill := Color("#191411") if active else Color("#4b3219")
-		var border := Color("#35d466") if active else Color("#b19155")
-		var node := _ensure_panel(portal, str(spec["name"]), spec["pos"], Vector2(36.0, 28.0), fill, border, 2, 10)
-		node.z_index = 5 if not active else 4
-		var label := _ensure_runtime_label("Text_%s" % str(spec["name"]), Vector2(2.0, 5.0), Vector2(32.0, 18.0), 10, Color("#f3e6c8"), node)
-		label.text = str(spec["text"])
+	_sync_portal_route_lines(portal, 1)
+	for index in range(PORTAL_MAPS_PER_ACT):
+		var node_name := _portal_stage_node_name(index)
+		var node := _ensure_panel(portal, node_name, _portal_stage_position(index), PORTAL_STAGE_NODE_SIZE, Color("#4b3219"), Color("#b19155"), 2, 10)
+		node.z_index = 5
+		var label := _ensure_runtime_label("Text_%s" % node_name, Vector2(2.0, 5.0), PORTAL_STAGE_NODE_SIZE - Vector2(4.0, 10.0), 10, Color("#f3e6c8"), node)
+		label.text = "1-%d" % (index + 1)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.add_theme_color_override("font_shadow_color", Color("#050302"))
-	var boss := _ensure_panel(portal, "Panel_PortalBossNode", Vector2(326.0, 190.0), Vector2(40.0, 34.0), Color("#2b1a12"), Color("#ffcf7a"), 2, 12)
+	var boss := _ensure_panel(portal, "Panel_PortalBossNode", Vector2(366.0, 202.0), Vector2(30.0, 28.0), Color("#2b1a12"), Color("#ffcf7a"), 2, 10)
 	boss.z_index = 5
-	var boss_label := _ensure_runtime_label("Text_PortalBossNode", Vector2(7.0, 7.0), Vector2(26.0, 20.0), 11, Color("#ffcf7a"), boss)
+	var boss_label := _ensure_runtime_label("Text_PortalBossNode", Vector2(3.0, 5.0), Vector2(24.0, 18.0), 11, Color("#ffcf7a"), boss)
 	boss_label.text = "B"
-	var ring := _ensure_panel(portal, "Panel_PortalCurrentRing", Vector2(254.0, 356.0), Vector2(50.0, 50.0), Color(0.0, 0.0, 0.0, 0.0), Color("#35d466"), 4, 18)
+	var ring := _ensure_panel(portal, "Panel_PortalCurrentRing", Vector2(144.0, 458.0), Vector2(50.0, 50.0), Color(0.0, 0.0, 0.0, 0.0), Color("#35d466"), 4, 18)
 	ring.z_index = 4
-	var flag := _ensure_panel(portal, "Panel_PortalCurrentFlag", Vector2(292.0, 326.0), Vector2(34.0, 22.0), Color("#c0392b"), Color("#371311"), 2, 2)
+	var flag := _ensure_panel(portal, "Panel_PortalCurrentFlag", Vector2(182.0, 428.0), Vector2(34.0, 22.0), Color("#c0392b"), Color("#371311"), 2, 2)
 	flag.z_index = 7
-	_ensure_rect(portal, "Line_PortalCurrentFlagPole", Vector2(292.0, 328.0), Vector2(4.0, 52.0), Color("#2e1b16"), 7)
+	_ensure_rect(portal, "Line_PortalCurrentFlagPole", Vector2(182.0, 430.0), Vector2(4.0, 52.0), Color("#2e1b16"), 7)
+
+
+func _portal_progress_from_snapshot(snapshot: Dictionary) -> Dictionary:
+	var map_id := int(snapshot.get("map_id", PORTAL_FIRST_MAP_ID))
+	var linear_index := maxi(0, map_id - PORTAL_FIRST_MAP_ID)
+	var act := int(floor(float(linear_index) / float(PORTAL_MAPS_PER_ACT))) + 1
+	var stage := int(linear_index % PORTAL_MAPS_PER_ACT) + 1
+	return {
+		"map_id": map_id,
+		"act": clampi(act, 1, PORTAL_TOTAL_ACTS),
+		"stage": clampi(stage, 1, PORTAL_MAPS_PER_ACT),
+		"map_name": str(snapshot.get("map_name", "작업표시줄 동굴")),
+	}
+
+
+func _portal_stage_node_name(index: int) -> String:
+	return "Panel_PortalStage%d" % (21 + index)
+
+
+func _portal_stage_position(index: int) -> Vector2:
+	return PORTAL_STAGE_ROUTE_POSITIONS[clampi(index, 0, PORTAL_STAGE_ROUTE_POSITIONS.size() - 1)]
+
+
+func _portal_stage_center(index: int) -> Vector2:
+	return _portal_stage_position(index) + PORTAL_STAGE_NODE_SIZE * 0.5
+
+
+func _portal_visible_act_start(active_act: int) -> int:
+	return clampi(active_act - 1, 1, maxi(1, PORTAL_TOTAL_ACTS - 2))
+
+
+func _portal_window_roots() -> Array:
+	var roots := []
+	var portal_root := _generated_native_root_by_name("Panel_PortalWindowFrame")
+	if portal_root != null:
+		roots.append(portal_root)
+	var overlay_root := _generated_node_or_null("Section_WindowStack/Panel_PortalWindowFrame")
+	if overlay_root != null and not roots.has(overlay_root):
+		roots.append(overlay_root)
+	return roots
+
+
+func _sync_generated_portal_map_progress(snapshot: Dictionary) -> void:
+	var progress := _portal_progress_from_snapshot(snapshot)
+	var active_act := int(progress.get("act", 1))
+	var active_stage := int(progress.get("stage", 1))
+	var map_name := str(progress.get("map_name", "작업표시줄 동굴"))
+	for root in _portal_window_roots():
+		if root is Control:
+			_sync_portal_window_progress(root as Control, active_act, active_stage, map_name)
+
+
+func _sync_portal_window_progress(portal: Control, active_act: int, active_stage: int, map_name: String) -> void:
+	_sync_portal_route_lines(portal, active_stage)
+	var banner_label := portal.get_node_or_null("Panel_PortalMapBanner/Text_PortalMapBanner")
+	if banner_label != null and banner_label is Label:
+		(banner_label as Label).text = map_name
+	var difficulty := portal.get_node_or_null("Panel_DifficultySelect/Text_Difficulty")
+	if difficulty != null and difficulty is Label:
+		(difficulty as Label).text = "보통 / Act %d-%d" % [active_act, active_stage]
+	var visible_act_start := _portal_visible_act_start(active_act)
+	for index in range(3):
+		var visible_act := visible_act_start + index
+		var button := portal.get_node_or_null("Tabs_Act/Btn_Act%d" % (index + 1))
+		if button != null and button is Button:
+			_sync_portal_act_button(button as Button, visible_act, visible_act == active_act)
+	for index in range(PORTAL_MAPS_PER_ACT):
+		_sync_portal_stage_node(portal, index, active_act, active_stage)
+	_sync_portal_current_marker(portal, active_act, active_stage)
+
+
+func _sync_portal_act_button(button: Button, visible_act: int, selected: bool) -> void:
+	button.text = "Act %d" % visible_act
+	var fill := Color("#6b2a18") if selected else Color("#2b1a12")
+	var border := Color("#d18a24") if selected else Color("#6b4a2a")
+	button.add_theme_stylebox_override("normal", _overlay_style(fill, border, 2, 2))
+	button.add_theme_stylebox_override("hover", _overlay_style(fill.lightened(0.1), Color("#ffcf7a"), 2, 2))
+	button.add_theme_stylebox_override("pressed", _overlay_style(fill.darkened(0.12), border, 2, 2))
+	button.add_theme_color_override("font_color", Color("#ffcf7a") if selected else Color("#f3e6c8"))
+
+
+func _sync_portal_stage_node(portal: Control, index: int, active_act: int, active_stage: int) -> void:
+	var stage_number := index + 1
+	var completed := stage_number < active_stage
+	var current := stage_number == active_stage
+	var next_open := stage_number == active_stage + 1
+	var locked := stage_number > active_stage + 1
+	var node := portal.get_node_or_null(_portal_stage_node_name(index))
+	if node == null or not node is PanelContainer:
+		return
+	var panel := node as PanelContainer
+	panel.position = _portal_stage_position(index)
+	panel.size = PORTAL_STAGE_NODE_SIZE
+	var fill := Color("#241d18")
+	var border := Color("#5f5141")
+	var font := Color("#b79a72")
+	if completed:
+		fill = Color("#674522")
+		border = Color("#ffcf7a")
+		font = Color("#fff0a6")
+	elif current:
+		fill = Color("#4b3219")
+		border = Color("#d18a24")
+		font = Color("#fff0a6")
+	elif next_open:
+		fill = Color("#4b3219")
+		border = Color("#b19155")
+		font = Color("#f3e6c8")
+	panel.add_theme_stylebox_override("panel", _overlay_style(fill, border, 2, 10))
+	panel.modulate = Color(1.0, 1.0, 1.0, 0.68 if locked else 1.0)
+	var label := panel.get_node_or_null("Text_%s" % _portal_stage_node_name(index))
+	if label != null and label is Label:
+		(label as Label).text = "%d-%d" % [active_act, stage_number]
+		(label as Label).add_theme_color_override("font_color", font)
+	if stage_number == PORTAL_MAPS_PER_ACT:
+		var boss := portal.get_node_or_null("Panel_PortalBossNode")
+		if boss != null and boss is PanelContainer:
+			var boss_fill := fill.darkened(0.08) if not current else Color("#213619")
+			var boss_border := Color("#ffcf7a") if completed or current else border
+			(boss as PanelContainer).add_theme_stylebox_override("panel", _overlay_style(boss_fill, boss_border, 2, 10))
+
+
+func _sync_portal_current_marker(portal: Control, active_act: int, active_stage: int) -> void:
+	var current_index := clampi(active_stage - 1, 0, PORTAL_MAPS_PER_ACT - 1)
+	var node_pos := _portal_stage_position(current_index)
+	var ring := portal.get_node_or_null("Panel_PortalCurrentRing")
+	if ring != null and ring is PanelContainer:
+		var ring_panel := ring as PanelContainer
+		ring_panel.position = node_pos + Vector2(-4.0, -4.0)
+		ring_panel.size = PORTAL_STAGE_NODE_SIZE + Vector2(8.0, 8.0)
+		ring_panel.z_index = 4
+		ring_panel.add_theme_stylebox_override("panel", _overlay_style(Color(0.0, 0.0, 0.0, 0.0), Color(1.0, 0.76, 0.28, 0.42), 1, 11))
+	var flag := portal.get_node_or_null("Panel_PortalCurrentFlag")
+	if flag != null and flag is Control:
+		(flag as Control).visible = false
+	var pole := portal.get_node_or_null("Line_PortalCurrentFlagPole")
+	if pole != null and pole is Control:
+		(pole as Control).visible = false
+	var stage_button := portal.get_node_or_null("Btn_CurrentStageNode")
+	if stage_button != null and stage_button is Control:
+		var control := stage_button as Control
+		control.position = node_pos
+		control.size = PORTAL_STAGE_NODE_SIZE
+		(control as CanvasItem).z_index = 8
+		if stage_button is Button:
+			var button := stage_button as Button
+			button.text = ""
+			button.flat = true
+			button.tooltip_text = "Act %d-%d" % [active_act, active_stage]
+			var transparent := _overlay_style(Color(0.0, 0.0, 0.0, 0.0), Color(0.0, 0.0, 0.0, 0.0), 0, 10)
+			button.add_theme_stylebox_override("normal", transparent)
+			button.add_theme_stylebox_override("hover", transparent)
+			button.add_theme_stylebox_override("pressed", transparent)
+			button.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.0))
+
+
+func _sync_portal_route_lines(portal: Control, active_stage: int) -> void:
+	var points := _portal_route_curve_points(PORTAL_MAPS_PER_ACT)
+	var completed_points := _portal_route_curve_points(clampi(active_stage, 1, PORTAL_MAPS_PER_ACT))
+	_ensure_portal_route_line(portal, "Line_PortalRoutePathShadow", points, 9.0, Color(0.03, 0.02, 0.01, 0.58), 3)
+	_ensure_portal_route_line(portal, "Line_PortalRoutePath", points, 5.0, Color("#7a5b2c"), 4)
+	_ensure_portal_route_line(portal, "Line_PortalRouteProgress", completed_points, 5.0, Color("#d18a24"), 4)
+
+
+func _portal_route_curve_points(stage_count: int) -> Array:
+	var count := clampi(stage_count, 1, PORTAL_MAPS_PER_ACT)
+	var output := []
+	if count == 1:
+		output.append(_portal_stage_center(0))
+		return output
+	for index in range(count - 1):
+		var start := _portal_stage_center(index)
+		var end := _portal_stage_center(index + 1)
+		var direction := end - start
+		var normal := Vector2.ZERO
+		if direction.length() > 0.001:
+			normal = Vector2(-direction.y, direction.x).normalized()
+		var sway := float(PORTAL_ROUTE_CURVE_SWAYS[index % PORTAL_ROUTE_CURVE_SWAYS.size()])
+		var control := start.lerp(end, 0.5) + normal * sway
+		for step in range(7):
+			if index > 0 and step == 0:
+				continue
+			var t := float(step) / 6.0
+			output.append(_quadratic_curve_point(start, control, end, t))
+	return output
+
+
+func _quadratic_curve_point(start: Vector2, control: Vector2, end: Vector2, t: float) -> Vector2:
+	var a := start.lerp(control, t)
+	var b := control.lerp(end, t)
+	return a.lerp(b, t)
+
+
+func _ensure_portal_route_line(parent: Control, node_name: String, points: Array, width: float, color: Color, z: int) -> Line2D:
+	var existing := parent.get_node_or_null(node_name)
+	var line: Line2D
+	if existing != null and existing is Line2D:
+		line = existing as Line2D
+	else:
+		if existing != null:
+			existing.queue_free()
+		line = Line2D.new()
+		line.name = node_name
+		parent.add_child(line)
+	var packed := PackedVector2Array()
+	for point in points:
+		packed.append(point)
+	line.points = packed
+	line.width = width
+	line.default_color = color
+	line.joint_mode = Line2D.LINE_JOINT_ROUND
+	line.begin_cap_mode = Line2D.LINE_CAP_ROUND
+	line.end_cap_mode = Line2D.LINE_CAP_ROUND
+	line.z_index = z
+	return line
+
+
+func _sync_generated_portal_map_background(snapshot: Dictionary) -> void:
+	var map_node := _generated_node_or_null("Section_WindowStack/Panel_PortalWindowFrame/Tex_ParchmentRouteMap")
+	if map_node == null or not map_node is TextureRect:
+		return
+	var map_id := int(snapshot.get("map_id", 500101))
+	var texture_path := str(GENERATED_PORTAL_MAP_TEXTURES.get(map_id, GENERATED_PORTAL_MAP_TEXTURE_FALLBACK))
+	var texture := _generated_texture(texture_path)
+	if texture == null:
+		return
+	var map_rect := map_node as TextureRect
+	if map_rect.texture != texture:
+		map_rect.texture = texture
+	map_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	map_rect.stretch_mode = TextureRect.STRETCH_SCALE
+	map_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 
 func _ensure_panel(parent: Control, node_name: String, pos: Vector2, panel_size: Vector2, fill: Color, border: Color, border_width: int, radius: int) -> PanelContainer:
@@ -1547,8 +1823,13 @@ func _ensure_runtime_label(node_name: String, pos: Vector2, label_size: Vector2,
 		label.name = node_name
 		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		parent.add_child(label)
+	label.anchor_left = 0.0
+	label.anchor_top = 0.0
+	label.anchor_right = 0.0
+	label.anchor_bottom = 0.0
 	label.position = pos
 	label.size = label_size
+	label.custom_minimum_size = label_size
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.clip_text = true
@@ -2418,6 +2699,43 @@ func _ensure_generated_combat_layer(root: Control) -> void:
 	(combat_strip as Control).move_child(enemy_layer, (combat_strip as Control).get_child_count() - 1)
 
 
+func _ensure_generated_combat_soft_border(root: Control) -> void:
+	var combat_strip := root.get_node_or_null(OVERLAY_COMBAT_STRIP_PATH)
+	if combat_strip == null or not combat_strip is Control:
+		return
+	var strip := combat_strip as Control
+	_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeShadow", Vector2(0.0, 0.0), Vector2(1586.0, 3.0), Color(0.0, 0.0, 0.0, 0.30), 5)
+	_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeWarmLine", Vector2(0.0, 3.0), Vector2(1586.0, 1.0), Color(1.0, 0.80, 0.42, 0.18), 5)
+	_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeSoftLight", Vector2(0.0, 4.0), Vector2(1586.0, 2.0), Color(1.0, 1.0, 1.0, 0.06), 5)
+	_ensure_combat_border_rect(strip, "Rect_CombatBottomEdgeShadow", Vector2(0.0, 230.0), Vector2(1586.0, 6.0), Color(0.0, 0.0, 0.0, 0.28), 5)
+	_ensure_combat_border_rect(strip, "Rect_CombatBottomEdgeWarmLine", Vector2(0.0, 229.0), Vector2(1586.0, 1.0), Color(0.95, 0.62, 0.27, 0.12), 5)
+	_ensure_combat_border_rect(strip, "Rect_CombatLeftEdgeSoftShadow", Vector2(0.0, 0.0), Vector2(4.0, 236.0), Color(0.0, 0.0, 0.0, 0.22), 5)
+	_ensure_combat_border_rect(strip, "Rect_CombatLeftEdgeWarmLine", Vector2(4.0, 0.0), Vector2(1.0, 236.0), Color(1.0, 0.78, 0.42, 0.10), 5)
+	_ensure_combat_border_rect(strip, "Rect_CombatRightEdgeSoftShadow", Vector2(1582.0, 0.0), Vector2(4.0, 236.0), Color(0.0, 0.0, 0.0, 0.22), 5)
+	_ensure_combat_border_rect(strip, "Rect_CombatRightEdgeWarmLine", Vector2(1581.0, 0.0), Vector2(1.0, 236.0), Color(1.0, 0.78, 0.42, 0.10), 5)
+
+
+func _ensure_combat_border_rect(parent: Control, node_name: String, pos: Vector2, rect_size: Vector2, color: Color, z: int) -> ColorRect:
+	var existing := parent.get_node_or_null(node_name)
+	var rect: ColorRect
+	if existing != null and existing is ColorRect:
+		rect = existing as ColorRect
+	else:
+		if existing != null:
+			parent.remove_child(existing)
+			existing.queue_free()
+		rect = ColorRect.new()
+		rect.name = node_name
+		rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(rect)
+	rect.position = pos
+	rect.size = rect_size
+	rect.color = color
+	rect.z_index = z
+	rect.z_as_relative = false
+	return rect
+
+
 func _ensure_generated_combat_readouts(root: Control) -> void:
 	var combat_strip := root.get_node_or_null(OVERLAY_COMBAT_STRIP_PATH)
 	if combat_strip == null or not combat_strip is Control:
@@ -2528,8 +2846,9 @@ func _ensure_combat_map_progress_panel(parent: Control) -> void:
 		root.name = OVERLAY_COMBAT_MAP_PROGRESS_NAME
 		root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		parent.add_child(root)
-	root.position = Vector2(1008.0, 116.0)
+	root.position = Vector2(1074.0, 144.5)
 	root.size = Vector2(264.0, 114.0)
+	root.scale = Vector2.ONE * 0.75
 	root.z_index = 94
 	generated_runtime_nodes["combat_map_progress"] = root
 	for child in root.get_children():
@@ -2931,7 +3250,83 @@ func _ensure_generated_taskbar_controls(root: Control) -> void:
 		_apply_generated_button_style(toggle as Button, "utility_icon")
 		strip.add_child(toggle)
 	generated_runtime_nodes["workshop_toggle"] = toggle
+	_ensure_generated_combat_opacity_control(strip)
 	_ensure_generated_combat_resize_handle(strip)
+
+
+func _ensure_generated_combat_opacity_control(strip: Control) -> void:
+	var panel_node := strip.get_node_or_null(COMBAT_OPACITY_CONTROL_NAME)
+	var panel: Control
+	if panel_node != null and panel_node is Control:
+		panel = panel_node as Control
+	else:
+		if panel_node != null:
+			strip.remove_child(panel_node)
+			panel_node.queue_free()
+		var button_panel := Button.new()
+		button_panel.text = ""
+		button_panel.focus_mode = Control.FOCUS_NONE
+		button_panel.add_theme_stylebox_override("normal", _overlay_style(Color(0.04, 0.025, 0.015, 0.92), Color("#6b4a2a"), 1, 4))
+		button_panel.add_theme_stylebox_override("hover", _overlay_style(Color(0.07, 0.045, 0.025, 0.94), Color("#9f6b2f"), 1, 4))
+		button_panel.add_theme_stylebox_override("pressed", _overlay_style(Color(0.035, 0.022, 0.014, 0.94), Color("#8a5b24"), 1, 4))
+		panel = button_panel
+		panel.name = COMBAT_OPACITY_CONTROL_NAME
+		panel.mouse_filter = Control.MOUSE_FILTER_PASS
+		panel.tooltip_text = "전투 화면 투명도"
+		strip.add_child(panel)
+		var icon := _make_runtime_label("Text_CombatOpacityIcon", Vector2(8.0, 4.0), Vector2(18.0, 18.0), 12, Color("#ffcf7a"))
+		icon.text = "◐"
+		panel.add_child(icon)
+		var slider := HSlider.new()
+		slider.name = COMBAT_OPACITY_SLIDER_NAME
+		slider.position = Vector2(30.0, 7.0)
+		slider.size = Vector2(88.0, 14.0)
+		slider.min_value = COMBAT_OPACITY_MIN * 100.0
+		slider.max_value = COMBAT_OPACITY_MAX * 100.0
+		slider.step = 5.0
+		slider.tooltip_text = "전투 화면 투명도"
+		slider.mouse_filter = Control.MOUSE_FILTER_STOP
+		slider.add_theme_stylebox_override("slider", _overlay_style(Color("#17110c"), Color("#3b2a1a"), 1, 2))
+		slider.add_theme_stylebox_override("grabber_area", _overlay_style(Color("#9f6cf5"), Color("#caa6ff"), 0, 2))
+		slider.add_theme_stylebox_override("grabber_area_highlight", _overlay_style(Color("#b985ff"), Color("#efd5ff"), 0, 2))
+		slider.value_changed.connect(func(value: float):
+			_set_generated_combat_opacity(value / 100.0)
+		)
+		panel.add_child(slider)
+		var value_label := _make_runtime_label(COMBAT_OPACITY_VALUE_NAME, Vector2(124.0, 4.0), Vector2(36.0, 18.0), 10, Color("#f3e6c8"))
+		value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		panel.add_child(value_label)
+	panel.position = Vector2(1088.0, 12.0)
+	panel.size = Vector2(168.0, 28.0)
+	panel.custom_minimum_size = panel.size
+	_layout_generated_combat_opacity_control(panel)
+	panel.visible = true
+	panel.z_index = 4095
+	panel.z_as_relative = false
+	panel.move_to_front()
+	generated_runtime_nodes["combat_opacity_control"] = panel
+	_sync_generated_combat_opacity_control()
+
+
+func _layout_generated_combat_opacity_control(panel: Control) -> void:
+	var icon := panel.get_node_or_null("Text_CombatOpacityIcon")
+	if icon != null and icon is Label:
+		var label := icon as Label
+		label.position = Vector2(8.0, 4.0)
+		label.size = Vector2(18.0, 18.0)
+		label.add_theme_font_size_override("font_size", 12)
+	var slider := panel.get_node_or_null(COMBAT_OPACITY_SLIDER_NAME)
+	if slider != null and slider is HSlider:
+		var h_slider := slider as HSlider
+		h_slider.position = Vector2(30.0, 7.0)
+		h_slider.size = Vector2(88.0, 14.0)
+	var value_label := panel.get_node_or_null(COMBAT_OPACITY_VALUE_NAME)
+	if value_label != null and value_label is Label:
+		var label := value_label as Label
+		label.position = Vector2(124.0, 4.0)
+		label.size = Vector2(36.0, 18.0)
+		label.add_theme_font_size_override("font_size", 10)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 
 func _ensure_generated_combat_resize_handle(strip: Control) -> void:
@@ -3306,12 +3701,57 @@ func _is_runtime_workshop_window(node: Node) -> bool:
 
 func _sync_generated_taskbar_controls() -> void:
 	var toggle: Variant = generated_runtime_nodes.get("workshop_toggle", null)
-	if toggle == null or not toggle is Button:
+	if toggle != null and toggle is Button:
+		var button := toggle as Button
+		button.button_pressed = generated_taskbar_mode
+		button.text = "창 복원" if generated_taskbar_mode else "창 숨김"
+		button.tooltip_text = "Workshop mode 복원" if generated_taskbar_mode else "Taskbar mode로 최소화"
+	_sync_generated_combat_opacity_control()
+
+
+func _set_generated_combat_opacity(value: float) -> void:
+	generated_combat_opacity = clampf(value, COMBAT_OPACITY_MIN, COMBAT_OPACITY_MAX)
+	_sync_generated_combat_opacity_control()
+	_apply_generated_combat_opacity()
+
+
+func _sync_generated_combat_opacity_control() -> void:
+	var panel_node = generated_runtime_nodes.get("combat_opacity_control", null)
+	if panel_node == null or not panel_node is Control:
 		return
-	var button := toggle as Button
-	button.button_pressed = generated_taskbar_mode
-	button.text = "창 복원" if generated_taskbar_mode else "창 숨김"
-	button.tooltip_text = "Workshop mode 복원" if generated_taskbar_mode else "Taskbar mode로 최소화"
+	var panel := panel_node as Control
+	panel.visible = true
+	panel.z_index = 4095
+	panel.z_as_relative = false
+	panel.move_to_front()
+	var percent := roundi(generated_combat_opacity * 100.0)
+	var slider := panel.get_node_or_null(COMBAT_OPACITY_SLIDER_NAME)
+	if slider != null and slider is HSlider:
+		var h_slider := slider as HSlider
+		h_slider.set_value_no_signal(float(percent))
+	var value_label := panel.get_node_or_null(COMBAT_OPACITY_VALUE_NAME)
+	if value_label != null and value_label is Label:
+		(value_label as Label).text = "%d%%" % percent
+
+
+func _apply_generated_combat_opacity() -> void:
+	var strip_node := _generated_node_or_null(OVERLAY_COMBAT_STRIP_PATH)
+	if strip_node == null or not strip_node is Control:
+		return
+	var strip := strip_node as Control
+	var opacity := clampf(generated_combat_opacity, COMBAT_OPACITY_MIN, COMBAT_OPACITY_MAX)
+	for child in strip.get_children():
+		if not child is CanvasItem:
+			continue
+		var child_name := str(child.name)
+		var canvas := child as CanvasItem
+		if child_name == COMBAT_OPACITY_CONTROL_NAME or child_name == COMBAT_RESIZE_HANDLE_NAME:
+			canvas.modulate = Color.WHITE
+			continue
+		if not canvas.has_meta("combat_opacity_base_alpha"):
+			canvas.set_meta("combat_opacity_base_alpha", canvas.modulate.a)
+		var base_alpha := float(canvas.get_meta("combat_opacity_base_alpha", 1.0))
+		canvas.modulate = Color(canvas.modulate.r, canvas.modulate.g, canvas.modulate.b, base_alpha * opacity)
 
 
 func _sync_desktop_status_bar(snapshot: Dictionary, model: Dictionary) -> void:
@@ -4346,6 +4786,7 @@ func _generated_runtime_model(snapshot: Dictionary) -> Dictionary:
 	]:
 		display_resources[str(binding.get("key", ""))] = int(materials.get(int(binding.get("item_id", 0)), resources.get(str(binding.get("key", "")), 0)))
 	_normalize_generated_inventory_selection(progression_snapshot)
+	var portal_progress := _portal_progress_from_snapshot(snapshot)
 	return {
 		"inventory_tab": generated_inventory_tab,
 		"selected_action": generated_selected_action,
@@ -4355,7 +4796,7 @@ func _generated_runtime_model(snapshot: Dictionary) -> Dictionary:
 		"stone_exp_ratio": _keeper_exp_ratio(player, display_resources),
 		"keeper_exp_text": _keeper_exp_text(player, display_resources),
 		"crit_text": "치명타 12.4%  드롭 +8%",
-		"portal_difficulty": "보통 / Act 1",
+		"portal_difficulty": "보통 / Act %d-%d" % [int(portal_progress.get("act", 1)), int(portal_progress.get("stage", 1))],
 		"latest_drop": latest_drop,
 		"resources": display_resources,
 		"stone_slots": _progression_stone_slots(snapshot, display_resources, progression_snapshot),
@@ -6135,7 +6576,7 @@ func _sync_generated_enemy_stack(snapshot: Dictionary, world_size: Vector2) -> v
 		enemy_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		enemy_rect.stretch_mode = TextureRect.STRETCH_SCALE
 		enemy_rect.visible = true
-		enemy_rect.flip_h = true
+		enemy_rect.flip_h = _unit_display_flip_h(enemy, false)
 		enemy_rect.size = enemy_size
 		enemy_rect.pivot_offset = enemy_size * 0.5
 		enemy_rect.position = enemy_pos - enemy_size * 0.5
@@ -6189,8 +6630,9 @@ func _sync_generated_drop_toast(snapshot: Dictionary, model: Dictionary) -> void
 		return
 	if toast is Control:
 		var toast_control := toast as Control
-		toast_control.position = Vector2(1016.0, 60.0)
-		toast_control.size = Vector2(206.0, 70.0)
+		toast_control.position = Vector2(683.0, 20.0)
+		toast_control.size = Vector2(220.0, 70.0)
+		toast_control.z_index = 98
 	var latest_drop: Dictionary = model.get("latest_drop", {}) if typeof(model.get("latest_drop", {})) == TYPE_DICTIONARY else {}
 	var canvas := toast as CanvasItem
 	if latest_drop.is_empty() or int(latest_drop.get("item_id", 0)) == GOLD_ITEM_ID:
@@ -6361,7 +6803,7 @@ func _add_runtime_enemy_foreground(parent: Control, snapshot: Dictionary, world_
 		rect.size = enemy_size
 		rect.pivot_offset = enemy_size * 0.5
 		rect.scale = Vector2.ONE * pulse
-		rect.flip_h = true
+		rect.flip_h = _unit_display_flip_h(data, false)
 		rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		rect.stretch_mode = TextureRect.STRETCH_SCALE
 		rect.modulate = Color(1.8, 0.62, 0.48, 1.0) if hit_flash > 0.0 else Color(1.22, 1.17, 1.08, 1.0)
@@ -6516,13 +6958,30 @@ func _unit_display_texture(unit: Dictionary, is_player: bool, frame := 0) -> Tex
 	var texture: Texture2D = sprites.texture_for_unit(unit_id, sprite_path)
 	if texture == null:
 		return null
-	var region: Rect2 = sprites.hero_frame_region(frame) if is_player else sprites.region_for_unit(unit_id, sprite_path)
+	var elapsed_seconds := float(sim.snapshot().get("elapsed", 0.0)) if sim != null else 0.0
+	var region: Rect2 = sprites.hero_frame_region(frame) if is_player else sprites.region_for_unit(unit_id, sprite_path, _unit_display_action(unit, is_player), elapsed_seconds)
 	if region.has_area():
 		var atlas := AtlasTexture.new()
 		atlas.atlas = texture
 		atlas.region = region
 		return atlas
 	return texture
+
+
+func _unit_display_action(unit: Dictionary, is_player: bool) -> String:
+	if is_player:
+		return ""
+	return "move"
+
+
+func _unit_display_flip_h(unit: Dictionary, is_player: bool) -> bool:
+	if is_player:
+		return true
+	if sprites == null or unit.is_empty():
+		return false
+	var unit_id := int(unit.get("unit_id", 0))
+	var sprite_path := str(unit.get("sprite", ""))
+	return sprites.render_flip_h_for_unit(unit_id, sprite_path, true)
 
 
 func _enemy_skill_texture(skill_id: int) -> Texture2D:
@@ -6794,7 +7253,8 @@ func _draw_unit(unit: Dictionary, field: Rect2, color: Color, is_player: bool) -
 	var unit_id := int(unit.get("unit_id", 0))
 	var sprite_path := str(unit.get("sprite", ""))
 	var texture: Texture2D = sprites.texture_for_unit(unit_id, sprite_path) if sprites != null else null
-	var region: Rect2 = sprites.region_for_unit(unit_id, sprite_path) if sprites != null else Rect2()
+	var elapsed_seconds := float(sim.snapshot().get("elapsed", 0.0)) if sim != null else 0.0
+	var region: Rect2 = sprites.region_for_unit(unit_id, sprite_path, _unit_display_action(unit, is_player), elapsed_seconds) if sprites != null else Rect2()
 	var visual_size := _unit_visual_size(unit, is_player)
 	var tags: Array = unit.get("tags", []) if typeof(unit.get("tags", [])) == TYPE_ARRAY else []
 	var attack_flash := float(unit.get("attack_flash", 0.0))
@@ -6813,10 +7273,17 @@ func _draw_unit(unit: Dictionary, field: Rect2, color: Color, is_player: bool) -
 		var frame: int = int(floor(fmod(float(sim.snapshot().get("elapsed", 0.0)) * 8.0, float(SpriteCatalog.HERO_FRAME_COUNT))))
 		_draw_texture_region_flipped(texture, unit_rect, sprites.hero_frame_region(frame))
 	elif texture != null:
+		var flip_h := _unit_display_flip_h(unit, is_player)
 		if region.has_area():
-			_draw_texture_region_flipped(texture, unit_rect, region)
+			if flip_h:
+				_draw_texture_region_flipped(texture, unit_rect, region)
+			else:
+				draw_texture_rect_region(texture, unit_rect, region)
 		else:
-			_draw_texture_flipped(texture, unit_rect)
+			if flip_h:
+				_draw_texture_flipped(texture, unit_rect)
+			else:
+				draw_texture_rect(texture, unit_rect, false)
 	else:
 		draw_circle(screen_pos, 18.0 if is_player else 14.0, color)
 

@@ -375,6 +375,34 @@ func _run() -> void:
 	if (combat_resize_handle as Control).mouse_filter != Control.MOUSE_FILTER_STOP:
 		_fail("combat resize handle does not capture pointer input")
 		return
+	var opacity_control := overlay.get_node_or_null("Section_BottomCombatStrip/RuntimeCombatOpacityControl")
+	if opacity_control == null or not opacity_control is Control:
+		_fail("combat opacity control is missing")
+		return
+	var opacity_slider := opacity_control.get_node_or_null("Slider_CombatOpacity")
+	if opacity_slider == null or not opacity_slider is HSlider:
+		_fail("combat opacity slider is missing")
+		return
+	var combat_ground := overlay.get_node_or_null("Section_BottomCombatStrip/Tex_CombatGroundStrip")
+	if combat_ground == null or not combat_ground is CanvasItem:
+		_fail("combat opacity target ground texture is missing")
+		return
+	root_node._set_generated_combat_opacity(0.55)
+	for _i in range(2):
+		await process_frame
+	if absf(float(root_node.generated_combat_opacity) - 0.55) > 0.01:
+		_fail("combat opacity value did not update")
+		return
+	if absf(float((opacity_slider as HSlider).value) - 55.0) > 0.1:
+		_fail("combat opacity slider did not sync to 55%%")
+		return
+	if absf((combat_ground as CanvasItem).modulate.a - 0.55) > 0.04:
+		_fail("combat ground alpha did not follow opacity: %s" % str((combat_ground as CanvasItem).modulate.a))
+		return
+	if absf((opacity_control as CanvasItem).modulate.a - 1.0) > 0.01:
+		_fail("combat opacity control should remain opaque")
+		return
+	root_node._set_generated_combat_opacity(1.0)
 	var combat_reference_rect: Rect2 = root_node._native_reference_rect("combat", combat_strip_control)
 	var expected_combat_visual_size := Vector2(
 		combat_strip_control.size.x * combat_native_scale_vector.x,

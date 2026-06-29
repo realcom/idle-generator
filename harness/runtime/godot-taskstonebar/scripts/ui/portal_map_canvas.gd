@@ -6,14 +6,19 @@ const PARCHMENT_DARK := Color("#8c7444")
 const ROUTE := Color("#5f4728")
 const CURRENT_GREEN := Color("#35d466")
 const CURRENT_RING := Color("#eaffcf")
+const ROUTE_CURVE_SWAYS := [18.0, -14.0, 20.0, -15.0, 14.0, -22.0, 16.0, -18.0, 12.0]
 
 var route_points: Array[Vector2] = [
-	Vector2(78.0, 218.0),
-	Vector2(132.0, 188.0),
-	Vector2(194.0, 152.0),
-	Vector2(232.0, 112.0),
-	Vector2(224.0, 72.0),
-	Vector2(292.0, 48.0),
+	Vector2(104.0, 218.0),
+	Vector2(208.0, 196.0),
+	Vector2(150.0, 166.0),
+	Vector2(276.0, 140.0),
+	Vector2(214.0, 112.0),
+	Vector2(304.0, 88.0),
+	Vector2(166.0, 68.0),
+	Vector2(266.0, 50.0),
+	Vector2(126.0, 42.0),
+	Vector2(296.0, 34.0),
 ]
 var current_index := 2
 
@@ -57,28 +62,49 @@ func _draw_map_marks(rect: Rect2) -> void:
 
 
 func _draw_route() -> void:
-	for i in range(route_points.size() - 1):
-		draw_line(route_points[i], route_points[i + 1], Color("#2f2212", 0.38), 8.0)
-		draw_line(route_points[i], route_points[i + 1], ROUTE, 4.0)
+	var curve := _route_curve_points(route_points.size())
+	if curve.size() >= 2:
+		draw_polyline(curve, Color("#2f2212", 0.38), 8.0)
+		draw_polyline(curve, ROUTE, 4.0)
 	for point in route_points:
 		draw_circle(point, 17.0, Color("#4a3219"))
 		draw_circle(point, 13.0, Color("#b19155"))
 		draw_circle(point, 9.0, Color("#5b3b1d"))
 
 
+func _route_curve_points(point_count: int) -> PackedVector2Array:
+	var count := clampi(point_count, 1, route_points.size())
+	var output := PackedVector2Array()
+	if count == 1:
+		output.append(route_points[0])
+		return output
+	for index in range(count - 1):
+		var start := route_points[index]
+		var end := route_points[index + 1]
+		var direction := end - start
+		var normal := Vector2.ZERO
+		if direction.length() > 0.001:
+			normal = Vector2(-direction.y, direction.x).normalized()
+		var sway := float(ROUTE_CURVE_SWAYS[index % ROUTE_CURVE_SWAYS.size()])
+		var control := start.lerp(end, 0.5) + normal * sway
+		for step in range(7):
+			if index > 0 and step == 0:
+				continue
+			var t := float(step) / 6.0
+			output.append(_quadratic_curve_point(start, control, end, t))
+	return output
+
+
+func _quadratic_curve_point(start: Vector2, control: Vector2, end: Vector2, t: float) -> Vector2:
+	var a := start.lerp(control, t)
+	var b := control.lerp(end, t)
+	return a.lerp(b, t)
+
+
 func _draw_current_marker() -> void:
 	if current_index < 0 or current_index >= route_points.size():
 		return
 	var point := route_points[current_index]
-	draw_circle(point, 26.0, Color(CURRENT_GREEN.r, CURRENT_GREEN.g, CURRENT_GREEN.b, 0.22))
-	draw_arc(point, 25.0, 0.0, TAU, 40, CURRENT_GREEN, 5.0)
-	draw_arc(point, 18.0, 0.0, TAU, 40, CURRENT_RING, 3.0)
-	var flag_base := point + Vector2(14.0, -36.0)
-	draw_line(flag_base, flag_base + Vector2(0.0, 46.0), Color("#2e1b16"), 4.0)
-	var flag := PackedVector2Array([
-		flag_base,
-		flag_base + Vector2(28.0, 7.0),
-		flag_base + Vector2(4.0, 18.0),
-	])
-	draw_colored_polygon(flag, Color("#c0392b"))
-	draw_polyline(flag, Color("#371311"), 2.0, true)
+	draw_circle(point, 21.0, Color(0.82, 0.54, 0.14, 0.14))
+	draw_arc(point, 21.0, 0.0, TAU, 40, Color(0.82, 0.54, 0.14, 0.48), 2.0)
+	draw_arc(point, 15.0, 0.0, TAU, 40, Color(CURRENT_RING.r, CURRENT_RING.g, CURRENT_RING.b, 0.28), 1.5)

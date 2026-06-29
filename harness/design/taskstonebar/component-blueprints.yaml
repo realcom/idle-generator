@@ -126,13 +126,14 @@ surfaces:
       bottom_combat_strip:
         role: "Always-on taskbar combat lane that remains visible when the workshop window stack is minimized, with stone keeper projectiles, enemies, HP feedback, damage numbers, stage badge, and rare drop toast."
         process_scope: section
-        components: [TaskbarCombatStrip, HeroCombatSprite, EnemyStack, EnemyHpBar, DamageNumberLayer, ProjectileLayer, AutoCombatToggle, AutoSkillToggle, StageBadge, LootTicker, RareDropToast, CombatMapProgressBadge, CombatSceneShortcutDock]
+        components: [TaskbarCombatStrip, HeroCombatSprite, EnemyStack, EnemyHpBar, DamageNumberLayer, ProjectileLayer, AutoCombatToggle, AutoSkillToggle, StageBadge, LootTicker, RareDropToast, CombatMapProgressBadge, CombatOpacityControl, CombatSceneShortcutDock]
         layout_contract:
           anchor: bottom_above_os_taskbar
           bounds_px: { x: 0, y: 704, width: 1586, height: 236 }
           stage_badge_px: { x: 710, y: 846, width: 166, height: 58 }
-          rare_drop_toast_px: { x: 1276, y: 764, width: 220, height: 70 }
-          map_progress_badge_px: { x: 1008, y: 822, width: 264, height: 106 }
+          rare_drop_toast_px: { x: 683, y: 724, width: 220, height: 70 }
+          map_progress_badge_px: { x: 1074, y: 849, width: 198, height: 86 }
+          opacity_control_px: { x: 1088, y: 716, width: 168, height: 28 }
         asset_keys:
           - taskstonebar.ui.combat_ground_strip
           - taskstonebar.ui.stone_keeper_sheet
@@ -223,6 +224,7 @@ surfaces:
       - LootTicker
       - RareDropToast
       - CombatMapProgressBadge
+      - CombatOpacityControl
       - CombatSceneShortcutDock
       - ModalHost
       - ModalShell
@@ -563,7 +565,7 @@ components:
     data_bindings: { title_text: window.title_key, alert_state: window.alert }
     minimize_policy: "hidden_by_default; opt-in windows may show the minimize slot with a native line glyph."
     box_model:
-      min_width_px: 360
+      min_width_px: 240
       min_height_px: 54
       content_insets_px: { left: 82, right: 82, top: 8, bottom: 6 }
       padding_px: 0
@@ -1009,7 +1011,7 @@ components:
   TaskbarCombatStrip:
     role: "Bottom always-on combat strip over the OS taskbar motif; it is the minimized game surface and remains readable without the workshop windows."
     mode: hybrid
-    anatomy: [ground_strip, hero_sprite, projectile_layer, enemy_stack, hp_bar, damage_number_layer, stage_badge, rare_drop_toast, restore_workshop_affordance]
+    anatomy: [ground_strip, soft_border_layer, hero_sprite, projectile_layer, enemy_stack, hp_bar, damage_number_layer, stage_badge, rare_drop_toast, opacity_control, restore_workshop_affordance]
     data_bindings: { current_map: current_map, current_stage: current_stage, player_state: combat.player, enemy_state: combat.enemies, drop_events: combat.drop_events, window_stack_collapsed: ui.window_stack_collapsed }
     box_model:
       min_width_px: 960
@@ -1083,7 +1085,7 @@ components:
     anatomy: [damage_number_labels, crit_badge_labels]
     data_bindings: { damage_events: combat.damage_events }
     box_model:
-      min_width_px: 360
+      min_width_px: 240
       min_height_px: 92
       content_insets_px: { left: 0, right: 0, top: 0, bottom: 0 }
       padding_px: 0
@@ -1203,9 +1205,10 @@ components:
       note: concepts/combat_map_progress_badge_concept_a_b.md
       candidate_crop: concepts/combat_map_progress_badge_concept_b_candidate.png
     box_model:
-      min_width_px: 220
+      min_width_px: 198
       min_height_px: 86
-      target_size_px: { width: 264, height: 106 }
+      target_size_px: { width: 198, height: 86 }
+      runtime_scale: 0.75
       content_insets_px: { left: 8, right: 8, top: 6, bottom: 8 }
       padding_px: 0
       gap_px: 4
@@ -1239,6 +1242,25 @@ components:
     foundation_refs:
       button_role: utility_icon
       color_tokens: [panel_outer, title_gold, text_cream]
+
+  CombatOpacityControl:
+    role: "Small always-readable combat strip control for adjusting the visual opacity of the full combat screen without fading the control itself."
+    mode: native_ui
+    anatomy: [opacity_icon, opacity_slider, percent_label]
+    data_bindings: { opacity_value: ui.combat_opacity }
+    box_model:
+      min_width_px: 168
+      min_height_px: 28
+      content_insets_px: { left: 6, right: 6, top: 4, bottom: 4 }
+      padding_px: 0
+      gap_px: 4
+      text_clamp: single_line_ellipsis
+      touch_target_px: 28
+    behavior_contract:
+      opacity_range: { min: 0.35, max: 1.0, default: 1.0, step: 0.05 }
+      remains_opaque: true
+    foundation_refs:
+      color_tokens: [panel_inner, panel_outer, title_gold, text_cream]
 
 asset_dependency_matrix:
   taskstonebar.ui.window_frame_9slice:
@@ -1349,7 +1371,7 @@ asset_dependency_matrix:
     component_slots: [TaskbarCombatStrip.ground_strip]
     fixed_sprite_sizes_px: { default: { width: 1586, height: 236 } }
   taskstonebar.ui.native_overlay_controls:
-    component_slots: [DesktopOverlayRoot.native_controls, TopResourceBar.labels, StatusStatScrollPanel.labels, StatList.labels, StatusSearchButton.glyph, SkillPointHeader.labels, SkillLevelTrack.labels, SkillTierRow.native_shapes, EnemyHpBar.labels, DamageNumberLayer.labels, ProjectileLayer.native_shapes, AutoCombatToggle.labels, AutoSkillToggle.labels, StageBadge.labels, LootTicker.labels, StageNode.labels, CombatMapProgressBadge.progress_fill, CombatMapProgressBadge.progress_pointer, CombatMapProgressBadge.tick_marks, CombatSceneShortcutDock.labels, ModalHost.native_controls, ItemDetailModal.labels, ItemDetailStatList.labels, ItemDetailWarningChipRow.labels, ItemDetailActionFooter.labels, EquipmentUpgradeModal.labels, EquipmentUpgradeActionFooter.labels]
+    component_slots: [DesktopOverlayRoot.native_controls, TopResourceBar.labels, StatusStatScrollPanel.labels, StatList.labels, StatusSearchButton.glyph, SkillPointHeader.labels, SkillLevelTrack.labels, SkillTierRow.native_shapes, TaskbarCombatStrip.soft_border_layer, EnemyHpBar.labels, DamageNumberLayer.labels, ProjectileLayer.native_shapes, AutoCombatToggle.labels, AutoSkillToggle.labels, StageBadge.labels, LootTicker.labels, StageNode.labels, CombatMapProgressBadge.progress_fill, CombatMapProgressBadge.progress_pointer, CombatMapProgressBadge.tick_marks, CombatOpacityControl.opacity_slider, CombatOpacityControl.percent_label, CombatSceneShortcutDock.labels, ModalHost.native_controls, ItemDetailModal.labels, ItemDetailStatList.labels, ItemDetailWarningChipRow.labels, ItemDetailActionFooter.labels, EquipmentUpgradeModal.labels, EquipmentUpgradeActionFooter.labels]
     runtime_native: true
 
 runtime_token_mapping:

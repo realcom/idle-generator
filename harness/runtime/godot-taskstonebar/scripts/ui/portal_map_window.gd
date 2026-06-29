@@ -9,6 +9,9 @@ const FRAME_TEXTURE := "res://assets/generated/ui/window_frame_9slice.png"
 const INNER_TEXTURE := "res://assets/generated/ui/dark_inner_well_9slice.png"
 const CLOSE_TEXTURE := "res://assets/generated/ui/close_icon.png"
 const TAB_TEXTURE := "res://assets/generated/ui/tab_burgundy_9slice.png"
+const FIRST_MAP_ID := 500101
+const MAPS_PER_ACT := 10
+const TOTAL_ACTS := 10
 
 var frame_texture: Texture2D
 var inner_texture: Texture2D
@@ -21,6 +24,7 @@ var act_buttons: Array[Button] = []
 var selected_act := 1
 var current_stage := 1
 var current_map_name := "작업표시줄 동굴"
+var visible_act_start := 1
 
 
 func _ready() -> void:
@@ -34,11 +38,11 @@ func _ready() -> void:
 
 
 func set_snapshot(snapshot: Dictionary) -> void:
-	var map_id := int(snapshot.get("map_id", 500101))
+	var map_id := int(snapshot.get("map_id", FIRST_MAP_ID))
 	current_map_name = str(snapshot.get("map_name", current_map_name))
-	var linear_index := maxi(0, map_id - 500101)
-	selected_act = int(floor(float(linear_index) / 10.0)) + 1
-	current_stage = int(linear_index % 10) + 1
+	var linear_index := maxi(0, map_id - FIRST_MAP_ID)
+	selected_act = clampi(int(floor(float(linear_index) / float(MAPS_PER_ACT))) + 1, 1, TOTAL_ACTS)
+	current_stage = clampi(int(linear_index % MAPS_PER_ACT) + 1, 1, MAPS_PER_ACT)
 	_sync_stage_state()
 
 
@@ -142,7 +146,7 @@ func _build_window() -> void:
 		tab.custom_minimum_size = Vector2(104.0, 40.0)
 		tab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		tab.add_theme_font_size_override("font_size", 14)
-		tab.pressed.connect(_select_act.bind(act))
+		tab.pressed.connect(_select_visible_act.bind(act - 1))
 		tabs.add_child(tab)
 		act_buttons.append(tab)
 
@@ -181,7 +185,8 @@ func _build_window() -> void:
 
 
 func _build_stage_buttons() -> void:
-	for index in range(6):
+	var stage_count := mini(MAPS_PER_ACT, map_canvas.route_points.size()) if map_canvas != null else MAPS_PER_ACT
+	for index in range(stage_count):
 		var button := Button.new()
 		button.name = "Btn_StageNode%d" % (index + 1)
 		button.custom_minimum_size = Vector2(50.0, 34.0)
@@ -197,8 +202,8 @@ func _build_stage_buttons() -> void:
 		stage_buttons.append(button)
 
 
-func _select_act(act: int) -> void:
-	selected_act = act
+func _select_visible_act(tab_index: int) -> void:
+	selected_act = clampi(visible_act_start + tab_index, 1, TOTAL_ACTS)
 	current_stage = 1
 	_sync_stage_state()
 
@@ -216,8 +221,15 @@ func _sync_stage_state() -> void:
 		var is_current := index == current_index
 		var is_locked := index > current_index + 1
 		_apply_stage_button_style(button, is_current, is_locked)
+	visible_act_start = _visible_act_start(selected_act)
 	for index in range(act_buttons.size()):
-		_apply_tab_button_style(act_buttons[index], index + 1 == selected_act)
+		var visible_act := visible_act_start + index
+		act_buttons[index].text = "Act %d" % visible_act
+		_apply_tab_button_style(act_buttons[index], visible_act == selected_act)
+
+
+func _visible_act_start(active_act: int) -> int:
+	return clampi(active_act - 1, 1, maxi(1, TOTAL_ACTS - 2))
 
 
 func _apply_stage_button_style(button: Button, is_current: bool, is_locked: bool) -> void:
@@ -225,8 +237,9 @@ func _apply_stage_button_style(button: Button, is_current: bool, is_locked: bool
 	var border := Color("#b19155")
 	var font := Color("#f3e6c8")
 	if is_current:
-		fill = Color("#1f7e3c")
-		border = Color("#35d466")
+		fill = Color("#5b3b1d")
+		border = Color("#d18a24")
+		font = Color("#fff0a6")
 	elif is_locked:
 		fill = Color("#2e251b")
 		border = Color("#6f6253")

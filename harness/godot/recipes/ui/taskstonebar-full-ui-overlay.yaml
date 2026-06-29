@@ -70,6 +70,7 @@ blueprint_refs:
     - LootTicker
     - RareDropToast
     - CombatMapProgressBadge
+    - CombatOpacityControl
     - CombatSceneShortcutDock
     - ModalHost
     - ModalShell
@@ -1205,7 +1206,7 @@ control_tree:
             asset_key: taskstonebar.ui.rare_drop_toast_9slice
             slice_hints: { left: 22, right: 22, top: 18, bottom: 18 }
             content_insets: { left: 12, right: 12, top: 10, bottom: 10 }
-            position_px: { x: 1276, y: 60 }
+            position_px: { x: 683, y: 20 }
             size_px: { width: 220, height: 70 }
             children:
               - atom: TextureAtom
