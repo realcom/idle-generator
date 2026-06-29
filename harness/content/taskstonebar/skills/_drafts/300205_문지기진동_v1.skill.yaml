@@ -4,7 +4,7 @@ tags: [Combat, MonsterSkill, MiniBoss, Area, Taskstonebar]
 damageType: NormalDamage
 projectileType: None
 targetRefreshType: Nearest
-cooldown: 3.00
+cooldown: 2.80
 priority: 25
 timelines:
   - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_KeeperQuake_Start.prefab" } }
@@ -14,5 +14,5 @@ timelines:
       maxHitByUnit: 1
       geometries:
         - circle: { center: { x: 0.0, y: 0.0 }, radius: 1.55 }
-      addDamage: { damagePercent: [170.0] }
+      addDamage: { damagePercent: [280.0] }
   - { time: 0.62, destroy: {} }

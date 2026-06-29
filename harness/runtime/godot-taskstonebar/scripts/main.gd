@@ -114,6 +114,7 @@ const COMBAT_OPACITY_VALUE_NAME := "Text_CombatOpacityValue"
 const COMBAT_TRANSPARENT_BACKDROP_ALPHA := 0.0
 const COMBAT_MAP_PROGRESS_LOGICAL_SIZE := Vector2(264.0, 114.0)
 const COMBAT_MAP_PROGRESS_SCALE := 0.75
+const COMBAT_MAP_PROGRESS_Z := 420
 const COMBAT_OPACITY_CONTROL_SIZE := Vector2(168.0, 28.0)
 const COMBAT_OPACITY_MIN := 0.35
 const COMBAT_OPACITY_MAX := 1.0
@@ -378,6 +379,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 
 func _handle_reload_shortcut(event: InputEvent) -> bool:
+	if generated_visual_capture_mode:
+		return false
 	if not event is InputEventKey:
 		return false
 	var key := event as InputEventKey
@@ -391,6 +394,8 @@ func _handle_reload_shortcut(event: InputEvent) -> bool:
 
 
 func _reload_current_scene_from_shortcut() -> void:
+	if get_tree().current_scene == null:
+		return
 	get_tree().reload_current_scene()
 
 
@@ -3086,7 +3091,7 @@ func _ensure_combat_map_progress_panel(parent: Control) -> void:
 		maxf(0.0, parent.size.x - root.size.x * root.scale.x),
 		maxf(0.0, parent.size.y - root.size.y * root.scale.y)
 	)
-	root.z_index = 180
+	root.z_index = COMBAT_MAP_PROGRESS_Z
 	root.z_as_relative = false
 	generated_runtime_nodes["combat_map_progress"] = root
 	for child in root.get_children():
