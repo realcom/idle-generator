@@ -150,6 +150,7 @@ const NATIVE_WINDOW_ORDER := {
 	"combat": 3,
 }
 const COMBAT_NATIVE_WINDOW_SCALE := 0.61
+const COMBAT_NATIVE_WINDOW_WIDTH_RATIO := 0.5
 const COMBAT_NATIVE_WINDOW_MIN_SCALE := 0.35
 const COMBAT_NATIVE_WINDOW_MAX_SCALE := 1.0
 const COMBAT_RESIZE_HANDLE_NAME := "RuntimeCombatResizeHandle"
@@ -590,7 +591,7 @@ func _promote_runtime_native_window(window_id: String, title: String, panel: Con
 
 	panel.get_parent().remove_child(panel)
 	panel.position = Vector2.ZERO
-	panel.scale = Vector2.ONE * _native_window_scale(window_id)
+	panel.scale = _native_window_scale_vector(window_id)
 	panel.visible = visible
 	panel.mouse_filter = Control.MOUSE_FILTER_PASS
 	panel.focus_mode = Control.FOCUS_ALL
@@ -624,7 +625,7 @@ func _layout_generated_native_windows() -> void:
 		_set_native_window_size(native, _native_window_size_for(str(window_id), rect.size))
 		root.position = Vector2.ZERO
 		root.size = rect.size
-		root.scale = Vector2.ONE * _native_window_scale(str(window_id))
+		root.scale = _native_window_scale_vector(str(window_id))
 
 
 func _native_reference_rect(window_id: String, root: Control) -> Rect2:
@@ -636,8 +637,8 @@ func _native_reference_rect(window_id: String, root: Control) -> Rect2:
 	if window_id == "portal":
 		return Rect2(COMPACT_PORTAL_WINDOW_RECT.position, root.size)
 	if window_id == "combat":
-		var scale := _native_window_scale(window_id)
-		var visual_size := root.size * scale
+		var scale := _native_window_scale_vector(window_id)
+		var visual_size := _scaled_native_window_size(root.size, scale)
 		var combat_x := maxf(0.0, (GENERATED_UI_REFERENCE_SIZE.x - visual_size.x) * 0.5)
 		var combat_y := 704.0 + maxf(0.0, root.size.y - visual_size.y)
 		return Rect2(Vector2(combat_x, combat_y), root.size)
@@ -657,7 +658,11 @@ func _native_window_size(logical_size: Vector2) -> Vector2i:
 
 
 func _native_window_size_for(window_id: String, logical_size: Vector2) -> Vector2i:
-	return _native_window_size(logical_size * _native_window_scale(window_id))
+	return _native_window_size(_scaled_native_window_size(logical_size, _native_window_scale_vector(window_id)))
+
+
+func _scaled_native_window_size(logical_size: Vector2, scale: Vector2) -> Vector2:
+	return Vector2(logical_size.x * scale.x, logical_size.y * scale.y)
 
 
 func _set_native_window_size(native: Window, window_size: Vector2i) -> void:
@@ -677,6 +682,13 @@ func _native_window_scale(window_id: String) -> float:
 	if window_id == "status" or window_id == "keeper" or window_id == "portal":
 		return WORKSHOP_WINDOW_VISUAL_SCALE
 	return 1.0
+
+
+func _native_window_scale_vector(window_id: String) -> Vector2:
+	var scale := _native_window_scale(window_id)
+	if window_id == "combat":
+		return Vector2(scale * COMBAT_NATIVE_WINDOW_WIDTH_RATIO, scale)
+	return Vector2.ONE * scale
 
 
 func _desktop_screen_scale(screen_id: int) -> float:
@@ -902,7 +914,7 @@ func _generated_overlay_values(snapshot: Dictionary, model: Dictionary = {}) -> 
 			"stats.level.label": "Level",
 			"stats.level.value": "Lv.%d" % int(player.get("level", 1)),
 			"stats.exp.label": "Exp",
-			"stats.exp.value": _keeper_exp_text(player, resources),
+			"stats.exp.value": _keeper_exp_text(player, resources).replace("EXP ", "").replace(" / ", "/"),
 		"stats.basic_attack_dps.label": "DPS",
 		"stats.basic_attack_dps.value": _format_stat_value(attack * attack_speed),
 		"stats.attack_damage.label": "Attack",
@@ -1150,13 +1162,14 @@ func _polish_status_window(root: Control) -> void:
 	var stat_scroll := window.get_node_or_null("Panel_StatusStatScroll")
 	if stat_scroll != null and stat_scroll is NinePatchRect:
 		(stat_scroll as Control).position = Vector2(20.0, 64.0)
-		(stat_scroll as Control).size = Vector2(398.0, 148.0)
+		(stat_scroll as Control).size = Vector2(398.0, 166.0)
 		(stat_scroll as NinePatchRect).modulate = Color(1.05, 0.98, 0.84, 1.0)
 	_style_labels_under(stat_scroll, Color("#24170d"), Color("#dfcca2"), 1, ["Text_ClassName"])
+	_polish_status_stat_scroll(status, stat_scroll)
 
 	var skill_header_root := window.get_node_or_null("Panel_SkillPointHeader")
 	if skill_header_root != null and skill_header_root is Control:
-		(skill_header_root as Control).position = Vector2(72.0, 224.0)
+		(skill_header_root as Control).position = Vector2(72.0, 242.0)
 		(skill_header_root as Control).size = Vector2(294.0, 36.0)
 	var skill_header := window.get_node_or_null("Panel_SkillPointHeader/Panel_SkillPointHeaderBg")
 	if skill_header != null and skill_header is PanelContainer:
@@ -1166,20 +1179,31 @@ func _polish_status_window(root: Control) -> void:
 	var skill_tree := window.get_node_or_null("Section_SkillTree")
 	if skill_tree == null or not skill_tree is Control:
 		return
-	(skill_tree as Control).position = Vector2(22.0, 274.0)
-	(skill_tree as Control).size = Vector2(396.0, 250.0)
+	(skill_tree as Control).position = Vector2(22.0, 286.0)
+	(skill_tree as Control).size = Vector2(396.0, 238.0)
+	_polish_status_skill_track(skill_tree as Control)
 	var row_specs := [
-		{"name": "Panel_SkillTierBack0", "pos": Vector2(58.0, 0.0), "size": Vector2(318.0, 62.0), "arrow_y": 18.0},
-		{"name": "Panel_SkillTierBack10", "pos": Vector2(58.0, 78.0), "size": Vector2(318.0, 62.0), "arrow_y": 96.0},
-		{"name": "Panel_SkillTierBack30", "pos": Vector2(58.0, 176.0), "size": Vector2(318.0, 62.0), "arrow_y": 194.0},
+		{"name": "Panel_SkillTierBack0", "pos": Vector2(64.0, 0.0), "size": Vector2(306.0, 62.0), "arrow_y": 18.0},
+		{"name": "Panel_SkillTierBack10", "pos": Vector2(64.0, 76.0), "size": Vector2(306.0, 62.0), "arrow_y": 94.0},
+		{"name": "Panel_SkillTierBack30", "pos": Vector2(64.0, 170.0), "size": Vector2(306.0, 62.0), "arrow_y": 188.0},
 	]
 	for spec in row_specs:
-		var back := _ensure_panel((skill_tree as Control), str(spec["name"]), spec["pos"], spec["size"], Color("#242322"), Color("#46413a"), 2, 3)
+		var back := _ensure_panel((skill_tree as Control), str(spec["name"]), spec["pos"], spec["size"], Color("#242322"), Color("#5d554b"), 2, 3)
 		_move_before((skill_tree as Control), back, "Grid_StatusSkillSlots")
 		var arrow_name := str(spec["name"]).replace("Panel_", "Text_Arrow_")
 		var arrow := _ensure_runtime_label(arrow_name, Vector2(44.0, float(spec["arrow_y"])), Vector2(28.0, 24.0), 18, Color("#b79a72"), skill_tree as Control)
 		arrow.text = "<"
 		arrow.z_index = 3
+	var skill_grid := skill_tree.get_node_or_null("Grid_StatusSkillSlots")
+	if skill_grid != null and skill_grid is GridContainer:
+		var grid := skill_grid as GridContainer
+		grid.position = Vector2(82.0, 3.0)
+		grid.size = Vector2(286.0, 226.0)
+		grid.add_theme_constant_override("h_separation", 24)
+		grid.add_theme_constant_override("v_separation", 18)
+		for child in grid.get_children():
+			if child is Control:
+				_set_generated_slot_size(child as Control, 62.0)
 	_set_canvas_z(skill_tree.get_node_or_null("Grid_StatusSkillSlots"), 3)
 
 
@@ -1213,21 +1237,23 @@ func _polish_hero_inventory_window(root: Control) -> void:
 	var left_grid := hero.get_node_or_null("Grid_EquipmentSlotsLeft")
 	if left_grid != null and left_grid is Control:
 		(left_grid as Control).position = Vector2(30.0, 78.0)
-		(left_grid as Control).size = Vector2(102.0, 102.0)
+		(left_grid as Control).size = Vector2(110.0, 110.0)
 		if left_grid is GridContainer:
 			(left_grid as GridContainer).add_theme_constant_override("h_separation", 6)
 			(left_grid as GridContainer).add_theme_constant_override("v_separation", 6)
+			_resize_grid_slots(left_grid as GridContainer, 52.0)
 	var right_grid := hero.get_node_or_null("Grid_EquipmentSlotsRight")
 	if right_grid != null and right_grid is Control:
 		(right_grid as Control).position = Vector2(370.0, 78.0)
-		(right_grid as Control).size = Vector2(102.0, 102.0)
+		(right_grid as Control).size = Vector2(110.0, 110.0)
 		if right_grid is GridContainer:
 			(right_grid as GridContainer).add_theme_constant_override("h_separation", 6)
 			(right_grid as GridContainer).add_theme_constant_override("v_separation", 6)
+			_resize_grid_slots(right_grid as GridContainer, 52.0)
 	var tab_back := _ensure_panel(hero, "Panel_StoneEquipmentTabBackplate", Vector2(38.0, 262.0), Vector2(428.0, 40.0), Color("#0c0d0b"), Color("#3d2b1b"), 1, 3)
 	_move_before(hero, tab_back, "Tabs_StoneEquipment")
 	_polish_inventory_mode_tabs(hero)
-	var grid_well := _ensure_panel(hero, "Panel_InventoryGridWell", Vector2(44.0, 304.0), Vector2(416.0, 218.0), Color("#070909"), Color("#2c2c25"), 1, 2)
+	var grid_well := _ensure_panel(hero, "Panel_InventoryGridWell", Vector2(32.0, 304.0), Vector2(440.0, 230.0), Color("#070909"), Color("#2c2c25"), 1, 2)
 	_move_before(hero, grid_well, "Grid_StoneInventory")
 	var action_back := hero.get_node_or_null("Panel_RuntimeActionBarWell")
 	if action_back != null:
@@ -1240,11 +1266,12 @@ func _polish_hero_inventory_window(root: Control) -> void:
 	hint.visible = false
 	var grid := hero.get_node_or_null("Grid_StoneInventory")
 	if grid != null and grid is Control:
-		(grid as Control).position = Vector2(54.0, 314.0)
-		(grid as Control).size = Vector2(394.0, 194.0)
+		(grid as Control).position = Vector2(40.0, 314.0)
+		(grid as Control).size = Vector2(424.0, 204.0)
 		if grid is GridContainer:
-			(grid as GridContainer).add_theme_constant_override("h_separation", 6)
-			(grid as GridContainer).add_theme_constant_override("v_separation", 6)
+			(grid as GridContainer).add_theme_constant_override("h_separation", 5)
+			(grid as GridContainer).add_theme_constant_override("v_separation", 5)
+			_resize_grid_slots(grid as GridContainer, 48.0)
 	var dock := hero.get_node_or_null("Dock_KeeperIconDock")
 	if dock != null and dock is Control:
 		(dock as Control).position = Vector2(76.0, 542.0)
@@ -1302,14 +1329,15 @@ func _polish_portal_window(root: Control) -> void:
 		(body_well as Control).size = Vector2(410.0, 486.0)
 	var difficulty := portal.get_node_or_null("Panel_DifficultySelect")
 	if difficulty != null and difficulty is PanelContainer:
-		(difficulty as Control).position = Vector2(98.0, 76.0)
-		(difficulty as Control).size = Vector2(242.0, 34.0)
+		(difficulty as Control).position = Vector2(98.0, 74.0)
+		(difficulty as Control).size = Vector2(242.0, 38.0)
 		(difficulty as PanelContainer).add_theme_stylebox_override("panel", _overlay_style(Color("#21140c"), Color("#8a5b24"), 2, 3))
-	var tab_back := _ensure_panel(portal, "Panel_ActTabsBackplate", Vector2(48.0, 118.0), Vector2(342.0, 44.0), Color("#100c09"), Color("#2e251d"), 1, 2)
+	_ensure_portal_chain(portal)
+	var tab_back := _ensure_panel(portal, "Panel_ActTabsBackplate", Vector2(48.0, 122.0), Vector2(342.0, 42.0), Color("#100c09"), Color("#2e251d"), 1, 2)
 	_move_before(portal, tab_back, "Tabs_Act")
 	var act_tabs := portal.get_node_or_null("Tabs_Act")
 	if act_tabs != null and act_tabs is Control:
-		(act_tabs as Control).position = Vector2(54.0, 124.0)
+		(act_tabs as Control).position = Vector2(54.0, 128.0)
 		(act_tabs as Control).size = Vector2(330.0, 36.0)
 		if act_tabs is HBoxContainer:
 			(act_tabs as HBoxContainer).add_theme_constant_override("separation", 6)
@@ -1323,11 +1351,147 @@ func _polish_portal_window(root: Control) -> void:
 	if map != null and map is Control:
 		(map as Control).position = Vector2(34.0, 174.0)
 		(map as Control).size = Vector2(370.0, 358.0)
+		(map as CanvasItem).modulate = Color(1.06, 1.0, 0.88, 1.0)
+	_ensure_portal_map_overlays(portal)
 	var stage_node := portal.get_node_or_null("Btn_CurrentStageNode")
 	if stage_node != null and stage_node is Control:
-		(stage_node as Control).position = Vector2(244.0, 356.0)
-	for node_name in ["Panel_DifficultySelect", "Tabs_Act", "Tex_ParchmentRouteMap", "Btn_CurrentStageNode"]:
+		(stage_node as Control).position = Vector2(260.0, 364.0)
+		(stage_node as Control).size = Vector2(36.0, 36.0)
+		(stage_node as CanvasItem).z_index = 8
+		if stage_node is Button:
+			(stage_node as Button).text = "2-3"
+	for node_name in ["Panel_DifficultySelect", "Tabs_Act", "Tex_ParchmentRouteMap", "Panel_PortalMapBanner", "Panel_PortalCurrentFlag"]:
 		_set_canvas_z(portal.get_node_or_null(node_name), 3)
+	_set_canvas_z(stage_node, 8)
+
+
+func _polish_status_stat_scroll(_status: Control, stat_scroll_node: Node) -> void:
+	if stat_scroll_node == null or not stat_scroll_node is Control:
+		return
+	var stat_scroll := stat_scroll_node as Control
+	_ensure_rect(stat_scroll, "Line_StatusScrollTopBevel", Vector2(10.0, 8.0), Vector2(378.0, 2.0), Color("#6b4a2a"), 4)
+	_ensure_rect(stat_scroll, "Line_StatusScrollBottomBevel", Vector2(12.0, 158.0), Vector2(374.0, 2.0), Color("#5c4525"), 4)
+	_ensure_rect(stat_scroll, "Line_StatusScrollLeftBinding", Vector2(16.0, 24.0), Vector2(3.0, 124.0), Color("#6a3b20"), 4)
+	_ensure_rect(stat_scroll, "Line_StatusScrollRightBinding", Vector2(362.0, 24.0), Vector2(2.0, 124.0), Color("#6a3b20"), 4)
+	var ribbon := stat_scroll.get_node_or_null("Panel_ClassRibbon")
+	if ribbon != null and ribbon is Control:
+		(ribbon as Control).position = Vector2(86.0, 10.0)
+		(ribbon as Control).size = Vector2(226.0, 28.0)
+		if ribbon is PanelContainer:
+			(ribbon as PanelContainer).add_theme_stylebox_override("panel", _overlay_style(Color("#090705"), Color("#6b4a2a"), 2, 2))
+	var group := stat_scroll.get_node_or_null("Group_StatusRows")
+	if group == null or not group is Control:
+		return
+	var rows := group as Control
+	rows.position = Vector2(54.0, 42.0)
+	rows.size = Vector2(286.0, 116.0)
+	var row_specs := [
+		{"label": "Text_StatusLevelLabel", "value": "Text_StatusLevelValue", "name": "Level", "display": "", "y": 0.0},
+		{"label": "Text_StatusExpLabel", "value": "Text_StatusExpValue", "name": "EXP", "display": "", "y": 15.0},
+		{"label": "Text_StatusDpsLabel", "value": "Text_StatusDpsValue", "name": "Basic Attack DPS", "display": "", "y": 30.0},
+		{"label": "Text_StatusAttackDamageLabel", "value": "Text_StatusAttackDamageValue", "name": "Attack Damage", "display": "", "y": 45.0},
+		{"label": "Text_StatusMaxHpLabel", "value": "Text_StatusMaxHpValue", "name": "Max HP", "display": "", "y": 60.0},
+		{"label": "Text_StatusMoveSpeedLabel", "value": "Text_StatusMoveSpeedValue", "name": "Move Speed", "display": "", "y": 75.0},
+		{"label": "Text_StatusAttackSpeedExtraLabel", "value": "Text_StatusAttackSpeedExtraValue", "name": "Attack Speed", "display": "2.35", "y": 90.0},
+		{"label": "Text_StatusCritExtraLabel", "value": "Text_StatusCritExtraValue", "name": "Critical Rate", "display": "12.4%", "y": 105.0},
+	]
+	for spec in row_specs:
+		_position_status_stat_row(rows, str(spec["label"]), str(spec["value"]), str(spec["name"]), str(spec["display"]), float(spec["y"]))
+	var scroll_thumb := stat_scroll.get_node_or_null("Panel_StatusScrollbar")
+	if scroll_thumb != null and scroll_thumb is Control:
+		(scroll_thumb as Control).position = Vector2(374.0, 44.0)
+		(scroll_thumb as Control).size = Vector2(8.0, 78.0)
+	_ensure_panel(stat_scroll, "Panel_StatusScrollbarTopCap", Vector2(373.0, 33.0), Vector2(10.0, 10.0), Color("#9f7d49"), Color("#2d1a0f"), 1, 1).z_index = 5
+	_ensure_panel(stat_scroll, "Panel_StatusScrollbarBottomCap", Vector2(373.0, 123.0), Vector2(10.0, 10.0), Color("#9f7d49"), Color("#2d1a0f"), 1, 1).z_index = 5
+
+
+func _position_status_stat_row(parent: Control, label_name: String, value_name: String, label_text: String, value_text: String, y: float) -> void:
+	var label := _ensure_runtime_label(label_name, Vector2(0.0, y), Vector2(158.0, 15.0), 12, Color("#24170d"), parent)
+	label.text = label_text
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	label.add_theme_color_override("font_shadow_color", Color("#dfcca2"))
+	label.add_theme_constant_override("shadow_offset_x", 1)
+	label.add_theme_constant_override("shadow_offset_y", 1)
+	var value := _ensure_runtime_label(value_name, Vector2(158.0, y), Vector2(126.0, 15.0), 12, Color("#24170d"), parent)
+	if value_text != "":
+		value.text = value_text
+	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	value.add_theme_color_override("font_shadow_color", Color("#dfcca2"))
+	value.add_theme_constant_override("shadow_offset_x", 1)
+	value.add_theme_constant_override("shadow_offset_y", 1)
+
+
+func _polish_status_skill_track(skill_tree: Control) -> void:
+	var rail := skill_tree.get_node_or_null("Panel_LevelTrackRail")
+	if rail != null and rail is Control:
+		(rail as Control).position = Vector2(28.0, 22.0)
+		(rail as Control).size = Vector2(10.0, 202.0)
+		if rail is PanelContainer:
+			(rail as PanelContainer).add_theme_stylebox_override("panel", _overlay_style(Color("#c0392b"), Color("#432018"), 2, 4))
+	_ensure_panel(skill_tree, "Panel_LevelTrackTopCap", Vector2(18.0, 4.0), Vector2(30.0, 26.0), Color("#4b3420"), Color("#ffcf7a"), 2, 4).z_index = 3
+	_ensure_panel(skill_tree, "Panel_LevelTrackBottomCap", Vector2(20.0, 216.0), Vector2(26.0, 18.0), Color("#4b3420"), Color("#d18a24"), 2, 4).z_index = 3
+	var tick_specs := [
+		{"label": "Text_LevelTick0", "line": "Panel_LevelTickLine0", "label_y": 12.0, "line_y": 30.0},
+		{"label": "Text_LevelTick10", "line": "Panel_LevelTickLine10", "label_y": 88.0, "line_y": 106.0},
+		{"label": "Text_LevelTick30", "line": "Panel_LevelTickLine30", "label_y": 182.0, "line_y": 200.0},
+	]
+	for spec in tick_specs:
+		var label := skill_tree.get_node_or_null(str(spec["label"]))
+		if label != null and label is Control:
+			(label as Control).position = Vector2(0.0, float(spec["label_y"]))
+		var line := skill_tree.get_node_or_null(str(spec["line"]))
+		if line != null and line is Control:
+			(line as Control).position = Vector2(20.0, float(spec["line_y"]))
+			(line as Control).size = Vector2(38.0, 3.0)
+
+
+func _resize_grid_slots(grid: GridContainer, slot_size: float) -> void:
+	for child in grid.get_children():
+		if child is Control:
+			_set_generated_slot_size(child as Control, slot_size)
+
+
+func _ensure_portal_chain(portal: Control) -> void:
+	for index in range(8):
+		var left_x := 38.0 + float(index) * 20.0
+		var right_x := 260.0 + float(index) * 20.0
+		_ensure_panel(portal, "Panel_PortalChainLeft%d" % index, Vector2(left_x, 91.0), Vector2(12.0, 5.0), Color("#4b3624"), Color("#9f7d49"), 1, 2).z_index = 2
+		_ensure_panel(portal, "Panel_PortalChainRight%d" % index, Vector2(right_x, 91.0), Vector2(12.0, 5.0), Color("#4b3624"), Color("#9f7d49"), 1, 2).z_index = 2
+
+
+func _ensure_portal_map_overlays(portal: Control) -> void:
+	var banner := _ensure_panel(portal, "Panel_PortalMapBanner", Vector2(126.0, 188.0), Vector2(188.0, 34.0), Color("#d8c18a"), Color("#6e5a34"), 2, 5)
+	banner.z_index = 5
+	var banner_label := _ensure_runtime_label("Text_PortalMapBanner", Vector2(10.0, 5.0), Vector2(168.0, 24.0), 15, Color("#2d1f12"), banner)
+	banner_label.text = "황량한 사막"
+	banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	banner_label.add_theme_color_override("font_shadow_color", Color("#ecdcae"))
+	var stage_specs := [
+		{"name": "Panel_PortalStage21", "pos": Vector2(150.0, 466.0), "text": "2-1", "active": false},
+		{"name": "Panel_PortalStage22", "pos": Vector2(206.0, 418.0), "text": "2-2", "active": false},
+		{"name": "Panel_PortalStage23", "pos": Vector2(260.0, 364.0), "text": "2-3", "active": true},
+		{"name": "Panel_PortalStage24", "pos": Vector2(286.0, 310.0), "text": "2-4", "active": false},
+		{"name": "Panel_PortalStage25", "pos": Vector2(272.0, 258.0), "text": "2-5", "active": false},
+		{"name": "Panel_PortalStage26", "pos": Vector2(300.0, 212.0), "text": "2-6", "active": false},
+	]
+	for spec in stage_specs:
+		var active := bool(spec["active"])
+		var fill := Color("#191411") if active else Color("#4b3219")
+		var border := Color("#35d466") if active else Color("#b19155")
+		var node := _ensure_panel(portal, str(spec["name"]), spec["pos"], Vector2(36.0, 28.0), fill, border, 2, 10)
+		node.z_index = 5 if not active else 4
+		var label := _ensure_runtime_label("Text_%s" % str(spec["name"]), Vector2(2.0, 5.0), Vector2(32.0, 18.0), 10, Color("#f3e6c8"), node)
+		label.text = str(spec["text"])
+		label.add_theme_color_override("font_shadow_color", Color("#050302"))
+	var boss := _ensure_panel(portal, "Panel_PortalBossNode", Vector2(326.0, 190.0), Vector2(40.0, 34.0), Color("#2b1a12"), Color("#ffcf7a"), 2, 12)
+	boss.z_index = 5
+	var boss_label := _ensure_runtime_label("Text_PortalBossNode", Vector2(7.0, 7.0), Vector2(26.0, 20.0), 11, Color("#ffcf7a"), boss)
+	boss_label.text = "B"
+	var ring := _ensure_panel(portal, "Panel_PortalCurrentRing", Vector2(254.0, 356.0), Vector2(50.0, 50.0), Color(0.0, 0.0, 0.0, 0.0), Color("#35d466"), 4, 18)
+	ring.z_index = 4
+	var flag := _ensure_panel(portal, "Panel_PortalCurrentFlag", Vector2(292.0, 326.0), Vector2(34.0, 22.0), Color("#c0392b"), Color("#371311"), 2, 2)
+	flag.z_index = 7
+	_ensure_rect(portal, "Line_PortalCurrentFlagPole", Vector2(292.0, 328.0), Vector2(4.0, 52.0), Color("#2e1b16"), 7)
 
 
 func _ensure_panel(parent: Control, node_name: String, pos: Vector2, panel_size: Vector2, fill: Color, border: Color, border_width: int, radius: int) -> PanelContainer:
@@ -1345,6 +1509,25 @@ func _ensure_panel(parent: Control, node_name: String, pos: Vector2, panel_size:
 	panel.z_index = 1
 	panel.add_theme_stylebox_override("panel", _overlay_style(fill, border, border_width, radius))
 	return panel
+
+
+func _ensure_rect(parent: Control, node_name: String, pos: Vector2, rect_size: Vector2, color: Color, z: int) -> ColorRect:
+	var existing := parent.get_node_or_null(node_name)
+	var rect: ColorRect
+	if existing != null and existing is ColorRect:
+		rect = existing as ColorRect
+	else:
+		if existing != null:
+			existing.queue_free()
+		rect = ColorRect.new()
+		rect.name = node_name
+		rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(rect)
+	rect.position = pos
+	rect.size = rect_size
+	rect.color = color
+	rect.z_index = z
+	return rect
 
 
 func _move_before(parent: Control, child: Node, before_name: String) -> void:
@@ -1736,11 +1919,18 @@ func _update_generated_combat_strip_resize(mouse_position: Vector2) -> void:
 	var base_size := generated_combat_resize_strip.size
 	if base_size.x <= 0.0 or base_size.y <= 0.0:
 		return
-	var start_visual_size := base_size * generated_combat_resize_start_scale
+	var start_visual_size := _combat_native_visual_size(base_size, generated_combat_resize_start_scale)
 	var next_visual_size := start_visual_size + (mouse_position - generated_combat_resize_start_mouse)
-	var next_scale := maxf(next_visual_size.x / base_size.x, next_visual_size.y / base_size.y)
+	var next_scale := maxf(
+		next_visual_size.x / maxf(1.0, base_size.x * COMBAT_NATIVE_WINDOW_WIDTH_RATIO),
+		next_visual_size.y / base_size.y
+	)
 	_set_generated_combat_window_scale(next_scale, generated_combat_resize_strip)
 	get_viewport().set_input_as_handled()
+
+
+func _combat_native_visual_size(base_size: Vector2, scale: float) -> Vector2:
+	return Vector2(base_size.x * scale * COMBAT_NATIVE_WINDOW_WIDTH_RATIO, base_size.y * scale)
 
 
 func _finish_generated_combat_strip_resize() -> void:
@@ -1763,7 +1953,7 @@ func _apply_generated_combat_window_scale(strip: Control) -> void:
 	var native := _native_window_for_generated_control(strip)
 	if native != null:
 		_set_native_window_size(native, _native_window_size_for("combat", strip.size))
-		strip.scale = Vector2.ONE * _native_window_scale("combat")
+		strip.scale = _native_window_scale_vector("combat")
 
 
 func _update_active_native_drags() -> void:
@@ -2917,6 +3107,7 @@ func _make_runtime_label(node_name: String, pos: Vector2, label_size: Vector2, f
 func _make_runtime_skill_node_button(parent: Control, item_id: int, pos: Vector2, button_size: Vector2) -> void:
 	var button := Button.new()
 	button.name = "Btn_RuntimeSkillNode_%d" % item_id
+	button.text = ""
 	button.position = pos
 	button.size = button_size
 	button.custom_minimum_size = button_size
@@ -2926,6 +3117,28 @@ func _make_runtime_skill_node_button(parent: Control, item_id: int, pos: Vector2
 		_select_runtime_skill_node(item_id)
 	)
 	_apply_generated_button_style(button, "keeper_dock_icon")
+	var icon := TextureRect.new()
+	icon.name = "Tex_RuntimeSkillNodeIcon"
+	icon.position = Vector2(4.0, 5.0)
+	icon.size = Vector2(22.0, 22.0)
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	button.add_child(icon)
+	var state_label := Label.new()
+	state_label.name = "Text_RuntimeSkillNodeState"
+	state_label.position = Vector2(28.0, 3.0)
+	state_label.size = Vector2(maxf(24.0, button_size.x - 31.0), button_size.y - 6.0)
+	state_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	state_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	state_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	state_label.clip_text = true
+	state_label.add_theme_font_size_override("font_size", 9)
+	state_label.add_theme_color_override("font_color", Color("#f3e6c8"))
+	state_label.add_theme_color_override("font_shadow_color", Color("#050302"))
+	state_label.add_theme_constant_override("shadow_offset_x", 1)
+	state_label.add_theme_constant_override("shadow_offset_y", 1)
+	button.add_child(state_label)
 	parent.add_child(button)
 
 
@@ -3182,7 +3395,7 @@ func _sync_status_window_real_data(model: Dictionary) -> void:
 		elif ready:
 			label_text = "0/%d" % max_level
 		_set_status_skill_binding_text(str(spec.get("binding", "")), label_text)
-		_set_status_skill_binding_visual(str(spec.get("binding", "")), level, ready)
+		_set_status_skill_binding_visual(str(spec.get("binding", "")), item_id, item, level, ready)
 	var class_label := _generated_node_or_null("Section_WindowStack/Panel_StatusWindowFrame/Panel_StatusStatScroll/Panel_ClassRibbon/Text_ClassName")
 	if class_label != null and class_label is Label:
 		(class_label as Label).text = "돌팔매꾼 | 스킬 %d/%d" % [learned_count, RUNTIME_SKILL_TREE_ITEM_IDS.size()]
@@ -3206,7 +3419,7 @@ func _set_binding_label_text_recursive(node: Node, binding: String, text: String
 		_set_binding_label_text_recursive(child, binding, text)
 
 
-func _set_status_skill_binding_visual(binding: String, level: int, ready: bool) -> void:
+func _set_status_skill_binding_visual(binding: String, item_id: int, item: Dictionary, level: int, ready: bool) -> void:
 	for root in _status_window_roots():
 		var label := _find_binding_label(root, binding)
 		if label == null:
@@ -3219,6 +3432,17 @@ func _set_status_skill_binding_visual(binding: String, level: int, ready: bool) 
 				(slot as CanvasItem).modulate = Color(1.0, 0.95, 0.72, 0.96)
 			else:
 				(slot as CanvasItem).modulate = Color(0.48, 0.48, 0.48, 0.72)
+			var icon := _find_first_texture_rect(slot)
+			if icon != null:
+				var icon_texture := _runtime_skill_icon_texture(item_id, item)
+				icon.texture = icon_texture
+				icon.visible = icon_texture != null
+				if level > 0:
+					icon.modulate = Color(1.0, 1.0, 1.0, 1.0)
+				elif ready:
+					icon.modulate = Color(1.0, 0.94, 0.72, 0.94)
+				else:
+					icon.modulate = Color(0.7, 0.7, 0.7, 0.72)
 
 
 func _find_binding_label(node: Node, binding: String) -> Label:
@@ -3226,6 +3450,16 @@ func _find_binding_label(node: Node, binding: String) -> Label:
 		return node as Label
 	for child in node.get_children():
 		var found := _find_binding_label(child, binding)
+		if found != null:
+			return found
+	return null
+
+
+func _find_first_texture_rect(node: Node) -> TextureRect:
+	if node is TextureRect:
+		return node as TextureRect
+	for child in node.get_children():
+		var found := _find_first_texture_rect(child)
 		if found != null:
 			return found
 	return null
@@ -3289,11 +3523,26 @@ func _sync_runtime_skill_tree_window(model: Dictionary) -> void:
 		var selected := int(item_id) == generated_selected_skill_item_id
 		var unlock_preview: Dictionary = _runtime_skill_unlock_preview(int(item_id), player_level)
 		var level_preview: Dictionary = _runtime_skill_level_preview(int(item_id))
-		(button as Button).text = _runtime_skill_node_text(item, level, max_level, unlock_preview)
-		(button as Button).disabled = false
-		(button as Button).tooltip_text = _runtime_skill_tooltip(item, level, unlock_preview, level_preview, points, player_level)
-		(button as Button).modulate = _runtime_skill_node_modulate(level, max_level, unlock_preview, level_preview, selected)
+		_sync_runtime_skill_node_button(button as Button, int(item_id), item, level, max_level, unlock_preview, level_preview, selected, points, player_level)
 	_sync_runtime_skill_tree_footer(points, skills)
+
+
+func _sync_runtime_skill_node_button(button: Button, item_id: int, item: Dictionary, level: int, max_level: int, unlock_preview: Dictionary, level_preview: Dictionary, selected: bool, points: int, player_level: int) -> void:
+	button.text = ""
+	button.disabled = false
+	button.tooltip_text = _runtime_skill_tooltip(item, level, unlock_preview, level_preview, points, player_level)
+	button.modulate = _runtime_skill_node_modulate(level, max_level, unlock_preview, level_preview, selected)
+	var icon_node := button.get_node_or_null("Tex_RuntimeSkillNodeIcon")
+	if icon_node != null and icon_node is TextureRect:
+		var icon_texture := _runtime_skill_icon_texture(item_id, item)
+		(icon_node as TextureRect).texture = icon_texture
+		(icon_node as TextureRect).visible = icon_texture != null
+		(icon_node as TextureRect).modulate = Color(1.0, 1.0, 1.0, 1.0) if level > 0 or bool(unlock_preview.get("ok", false)) else Color(0.72, 0.72, 0.72, 0.78)
+	var state_node := button.get_node_or_null("Text_RuntimeSkillNodeState")
+	if state_node != null and state_node is Label:
+		var label := state_node as Label
+		label.text = _runtime_skill_node_status_text(item, level, max_level, unlock_preview)
+		label.add_theme_color_override("font_color", Color("#fff0a6") if selected else Color("#f3e6c8"))
 
 
 func _sync_runtime_skill_tree_footer(points: int, skills: Dictionary) -> void:
@@ -3429,6 +3678,21 @@ func _runtime_skill_level_preview(item_id: int) -> Dictionary:
 	return progression.skill_level_up_preview(int(item_id))
 
 
+func _runtime_skill_icon_texture(item_id: int, item: Dictionary) -> Texture2D:
+	if sprites == null:
+		return null
+	var icon_path := _item_icon_path(item)
+	if icon_path == "" and item_id > 0:
+		icon_path = _progression_item_icon_path(item_id)
+	if icon_path != "":
+		var icon_texture: Texture2D = sprites.texture_for_item_icon(icon_path)
+		if icon_texture != null:
+			return icon_texture
+	if item_id > 0:
+		return sprites.texture_for_item(item_id)
+	return null
+
+
 func _runtime_skill_node_text(item: Dictionary, level: int, max_level: int, unlock_preview: Dictionary) -> String:
 	var second_line := "%d/%d" % [level, max_level]
 	if level > 0:
@@ -3448,6 +3712,13 @@ func _runtime_skill_node_text(item: Dictionary, level: int, max_level: int, unlo
 			_:
 				second_line = "잠김"
 	return "%s\n%s" % [_runtime_skill_short_name(item), second_line]
+
+
+func _runtime_skill_node_status_text(item: Dictionary, level: int, max_level: int, unlock_preview: Dictionary) -> String:
+	var lines := _runtime_skill_node_text(item, level, max_level, unlock_preview).split("\n")
+	if lines.size() >= 2:
+		return str(lines[1])
+	return "%d/%d" % [level, max_level]
 
 
 func _runtime_skill_node_modulate(level: int, max_level: int, unlock_preview: Dictionary, level_preview: Dictionary, selected: bool) -> Color:

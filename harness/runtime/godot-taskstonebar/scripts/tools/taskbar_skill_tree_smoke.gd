@@ -59,8 +59,17 @@ func _run() -> void:
 		_fail("skill tree window has no framed body/footer")
 		return
 	for item_id in [200509, 200514, 200519, 200524, 200529, 200534, 200538]:
-		if skill_window.get_node_or_null("Panel_RuntimeSkillTreeBody/Content_RuntimeSkillTreeBody/Btn_RuntimeSkillNode_%d" % item_id) == null:
+		var skill_node := skill_window.get_node_or_null("Panel_RuntimeSkillTreeBody/Content_RuntimeSkillTreeBody/Btn_RuntimeSkillNode_%d" % item_id)
+		if skill_node == null:
 			_fail("skill tree node %d is missing" % item_id)
+			return
+		var skill_icon := skill_node.get_node_or_null("Tex_RuntimeSkillNodeIcon")
+		if skill_icon == null or not skill_icon is TextureRect or (skill_icon as TextureRect).texture == null:
+			_fail("skill tree node %d did not bind an icon texture" % item_id)
+			return
+		var state_label := skill_node.get_node_or_null("Text_RuntimeSkillNodeState")
+		if state_label == null or not state_label is Label or str((state_label as Label).text) == "":
+			_fail("skill tree node %d did not bind its state label" % item_id)
 			return
 	(skill_window.get_node_or_null("Btn_RuntimeSkillTreeClose") as Button).pressed.emit()
 	for _i in range(4):
@@ -108,6 +117,10 @@ func _run() -> void:
 	var stone_throw_level := overlay.get_node_or_null("Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillStoneThrow/Text_SkillStoneThrowLevel")
 	if stone_throw_level == null or not stone_throw_level is Label:
 		_fail("status window stone throw skill label is missing")
+		return
+	var stone_throw_icon := overlay.get_node_or_null("Section_WindowStack/Panel_StatusWindowFrame/Section_SkillTree/Grid_StatusSkillSlots/Panel_SkillStoneThrow/Icon_SkillStoneThrow")
+	if stone_throw_icon == null or not stone_throw_icon is TextureRect or (stone_throw_icon as TextureRect).texture == null:
+		_fail("status window stone throw skill icon is missing")
 		return
 	var initial_stone_throw_text := str((stone_throw_level as Label).text)
 	var learn_button := skill_window.get_node_or_null("Panel_RuntimeSkillTreeFooter/Content_RuntimeSkillTreeFooter/Btn_RuntimeSkillLearn")

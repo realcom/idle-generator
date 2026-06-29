@@ -353,17 +353,19 @@ func _run() -> void:
 	var combat_strip_control := combat_strip as Control
 	var combat_native_size: Vector2i = root_node._native_window_size_for("combat", combat_strip_control.size)
 	var combat_native_scale: float = root_node._native_window_scale("combat")
+	var combat_native_scale_vector: Vector2 = root_node._native_window_scale_vector("combat")
 	var expected_combat_native_size := Vector2i(
-		roundi(combat_strip_control.size.x * combat_native_scale),
-		roundi(combat_strip_control.size.y * combat_native_scale)
+		roundi(combat_strip_control.size.x * combat_native_scale_vector.x),
+		roundi(combat_strip_control.size.y * combat_native_scale_vector.y)
 	)
 	if combat_native_size != expected_combat_native_size:
-		_fail("combat native window should render at configured scale, got %s expected %s from strip.size=%s strip.scale=%s native.scale=%s" % [
+		_fail("combat native window should render at configured scale, got %s expected %s from strip.size=%s strip.scale=%s native.scale=%s native.scale.vector=%s" % [
 			str(combat_native_size),
 			str(expected_combat_native_size),
 			str(combat_strip_control.size),
 			str(combat_strip_control.scale),
 			str(combat_native_scale),
+			str(combat_native_scale_vector),
 		])
 		return
 	var combat_resize_handle := overlay.get_node_or_null("Section_BottomCombatStrip/RuntimeCombatResizeHandle")
@@ -374,7 +376,10 @@ func _run() -> void:
 		_fail("combat resize handle does not capture pointer input")
 		return
 	var combat_reference_rect: Rect2 = root_node._native_reference_rect("combat", combat_strip_control)
-	var expected_combat_visual_size := combat_strip_control.size * combat_native_scale
+	var expected_combat_visual_size := Vector2(
+		combat_strip_control.size.x * combat_native_scale_vector.x,
+		combat_strip_control.size.y * combat_native_scale_vector.y
+	)
 	var expected_combat_position := Vector2(
 		maxf(0.0, (Vector2(1586.0, 992.0).x - expected_combat_visual_size.x) * 0.5),
 		704.0 + maxf(0.0, combat_strip_control.size.y - expected_combat_visual_size.y)
