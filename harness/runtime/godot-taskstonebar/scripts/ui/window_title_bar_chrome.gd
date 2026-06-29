@@ -24,6 +24,20 @@ const GOLD_RAIL_HIGHLIGHT_NAME := "Line_TitleBarGoldRailHighlight"
 const GOLD_RAIL_SHADOW_NAME := "Line_TitleBarGoldRailShadow"
 const LEFT_GOLD_TICK_NAME := "Line_TitleBarLeftGoldTick"
 const RIGHT_GOLD_TICK_NAME := "Line_TitleBarRightGoldTick"
+const LEFT_STONE_NOTCH_NAME := "Panel_TitleBarLeftStoneNotch"
+const RIGHT_STONE_NOTCH_NAME := "Panel_TitleBarRightStoneNotch"
+const LEFT_CORNER_TOP_NAME := "Line_TitleBarLeftCornerTop"
+const LEFT_CORNER_SIDE_NAME := "Line_TitleBarLeftCornerSide"
+const LEFT_CORNER_BOTTOM_NAME := "Line_TitleBarLeftCornerBottom"
+const RIGHT_CORNER_TOP_NAME := "Line_TitleBarRightCornerTop"
+const RIGHT_CORNER_SIDE_NAME := "Line_TitleBarRightCornerSide"
+const RIGHT_CORNER_BOTTOM_NAME := "Line_TitleBarRightCornerBottom"
+const TOP_RAIL_LEFT_INSET_NAME := "Line_TitleBarTopRailLeftInset"
+const TOP_RAIL_RIGHT_INSET_NAME := "Line_TitleBarTopRailRightInset"
+const CENTER_CREST_WING_LEFT_NAME := "Line_TitleBarCenterCrestWingLeft"
+const CENTER_CREST_WING_RIGHT_NAME := "Line_TitleBarCenterCrestWingRight"
+const LEFT_CORNER_SPARK_NAME := "Panel_TitleBarLeftCornerSpark"
+const RIGHT_CORNER_SPARK_NAME := "Panel_TitleBarRightCornerSpark"
 const CLOSE_ICON_NAME := "Icon_Close"
 const BUTTON_TOP_HIGHLIGHT_NAME := "Line_TitleBarButtonTopHighlight"
 const BUTTON_INNER_SHADOW_NAME := "Line_TitleBarButtonInnerShadow"
@@ -57,6 +71,7 @@ static func apply(window: Control, config: Dictionary = {}) -> Control:
 	var title_bar := _ensure_title_bar(window)
 	_ensure_iron_cap(window, title_bar)
 	_ensure_burgundy_fill(window, title_bar)
+	_ensure_border_ornaments(window, title_bar)
 	_ensure_bottom_line(window, title_bar)
 	_ensure_forged_ornaments(window, title_bar)
 	_hide_decorations(title_bar)
@@ -310,6 +325,63 @@ static func _ensure_bottom_line(window: Control, title_bar: Control) -> void:
 	shadow.z_index = 3
 
 
+static func _ensure_border_ornaments(window: Control, title_bar: Control) -> void:
+	var title_left := title_bar.position.x
+	var title_top := title_bar.position.y
+	var title_right := title_bar.position.x + title_bar.size.x
+	var title_bottom := title_bar.position.y + title_bar.size.y
+	var left_corner := Vector2(title_left + 52.0, title_top + 8.0)
+	var right_corner := Vector2(title_right - 76.0, title_top + 8.0)
+
+	var left_notch := _ensure_panel(window, LEFT_STONE_NOTCH_NAME)
+	left_notch.position = title_bar.position + Vector2(5.0, 10.0)
+	left_notch.size = Vector2(7.0, 22.0)
+	left_notch.z_index = 3
+	left_notch.visible = true
+	left_notch.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	left_notch.add_theme_stylebox_override("panel", _flat_style(Color("#141311"), Color("#4f463a"), 1, 1))
+
+	var right_notch := _ensure_panel(window, RIGHT_STONE_NOTCH_NAME)
+	right_notch.position = title_bar.position + Vector2(title_bar.size.x - 12.0, 10.0)
+	right_notch.size = Vector2(7.0, 22.0)
+	right_notch.z_index = 3
+	right_notch.visible = true
+	right_notch.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	right_notch.add_theme_stylebox_override("panel", _flat_style(Color("#141311"), Color("#4f463a"), 1, 1))
+
+	_place_line(window, LEFT_CORNER_TOP_NAME, COLOR_TITLE_GOLD, left_corner, Vector2(25.0, 2.0), 4)
+	_place_line(window, LEFT_CORNER_SIDE_NAME, COLOR_TITLE_GOLD, left_corner, Vector2(2.0, 13.0), 4)
+	_place_line(window, LEFT_CORNER_BOTTOM_NAME, Color("#9a6b2a"), Vector2(left_corner.x + 7.0, title_bottom - 13.0), Vector2(21.0, 1.0), 4)
+	_place_line(window, RIGHT_CORNER_TOP_NAME, COLOR_TITLE_GOLD, right_corner, Vector2(25.0, 2.0), 4)
+	_place_line(window, RIGHT_CORNER_SIDE_NAME, COLOR_TITLE_GOLD, Vector2(right_corner.x + 23.0, right_corner.y), Vector2(2.0, 13.0), 4)
+	_place_line(window, RIGHT_CORNER_BOTTOM_NAME, Color("#9a6b2a"), Vector2(right_corner.x - 3.0, title_bottom - 13.0), Vector2(21.0, 1.0), 4)
+
+	_place_line(window, TOP_RAIL_LEFT_INSET_NAME, Color("#8f6228"), Vector2(title_left + 78.0, title_top + 6.0), Vector2(52.0, 1.0), 3)
+	_place_line(window, TOP_RAIL_RIGHT_INSET_NAME, Color("#8f6228"), Vector2(title_right - 176.0, title_top + 6.0), Vector2(52.0, 1.0), 3)
+	_place_line(window, CENTER_CREST_WING_LEFT_NAME, Color("#c98f3a"), Vector2(title_left + title_bar.size.x * 0.5 - 39.0, title_top + 7.0), Vector2(24.0, 1.0), 4)
+	_place_line(window, CENTER_CREST_WING_RIGHT_NAME, Color("#c98f3a"), Vector2(title_left + title_bar.size.x * 0.5 + 15.0, title_top + 7.0), Vector2(24.0, 1.0), 4)
+
+	var left_spark := _ensure_panel(window, LEFT_CORNER_SPARK_NAME)
+	left_spark.size = Vector2(5.0, 5.0)
+	left_spark.position = left_corner + Vector2(22.0, 8.0)
+	left_spark.pivot_offset = left_spark.size * 0.5
+	left_spark.rotation = PI * 0.25
+	left_spark.z_index = 4
+	left_spark.visible = true
+	left_spark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	left_spark.add_theme_stylebox_override("panel", _flat_style(Color("#d18a24"), Color("#56360f"), 1, 1))
+
+	var right_spark := _ensure_panel(window, RIGHT_CORNER_SPARK_NAME)
+	right_spark.size = Vector2(5.0, 5.0)
+	right_spark.position = right_corner + Vector2(-4.0, 8.0)
+	right_spark.pivot_offset = right_spark.size * 0.5
+	right_spark.rotation = PI * 0.25
+	right_spark.z_index = 4
+	right_spark.visible = true
+	right_spark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	right_spark.add_theme_stylebox_override("panel", _flat_style(Color("#d18a24"), Color("#56360f"), 1, 1))
+
+
 static func _ensure_forged_ornaments(window: Control, title_bar: Control) -> void:
 	var badge := _ensure_panel(window, LEFT_BADGE_NAME)
 	badge.position = title_bar.position + Vector2(14.0, 6.0)
@@ -428,6 +500,16 @@ static func _ensure_rect(window: Control, node_name: String) -> ColorRect:
 		window.add_child(rect)
 	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return rect
+
+
+static func _place_line(window: Control, node_name: String, color: Color, position: Vector2, size: Vector2, z_index: int) -> ColorRect:
+	var line := _ensure_rect(window, node_name)
+	line.color = color
+	line.position = position
+	line.size = size
+	line.z_index = z_index
+	line.visible = true
+	return line
 
 
 static func _ensure_child_rect(parent: Control, node_name: String) -> ColorRect:

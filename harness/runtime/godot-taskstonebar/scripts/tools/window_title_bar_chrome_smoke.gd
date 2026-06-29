@@ -95,6 +95,20 @@ func _assert_shared_chrome(window: Control, title_name: String, close_name: Stri
 		"Panel_TitleBarMossAccent2",
 		"Line_TitleBarGoldRailHighlight",
 		"Line_TitleBarGoldRailShadow",
+		"Panel_TitleBarLeftStoneNotch",
+		"Panel_TitleBarRightStoneNotch",
+		"Line_TitleBarLeftCornerTop",
+		"Line_TitleBarLeftCornerSide",
+		"Line_TitleBarLeftCornerBottom",
+		"Line_TitleBarRightCornerTop",
+		"Line_TitleBarRightCornerSide",
+		"Line_TitleBarRightCornerBottom",
+		"Line_TitleBarTopRailLeftInset",
+		"Line_TitleBarTopRailRightInset",
+		"Line_TitleBarCenterCrestWingLeft",
+		"Line_TitleBarCenterCrestWingRight",
+		"Panel_TitleBarLeftCornerSpark",
+		"Panel_TitleBarRightCornerSpark",
 	]
 	for concept_node in concept_nodes:
 		if not _is_visible_control(window.get_node_or_null(concept_node)):

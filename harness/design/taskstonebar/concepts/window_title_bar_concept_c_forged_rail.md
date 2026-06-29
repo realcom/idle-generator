@@ -14,7 +14,7 @@
 ## Composition Rules
 
 - Only the title bar is in scope; body panels and full windows are not part of this concept.
-- Use Variant C as the selected runtime direction: black-iron cap, burgundy plate, gold lower rail, small center crest notch, ruby focus bead, and tiny moss accents.
+- Use Variant C as the selected runtime direction: black-iron cap, burgundy plate, gold lower rail, fixed gold corner brackets, carved stone edge notches, small center crest notch, ruby focus bead, and tiny moss accents.
 - Title text remains a native centered `Label`; generated image text is placeholder only.
 - The close button is a native square icon button on the far right.
 - Optional minimize/collapse button is hidden by default; only opt-in windows may show it directly left of the close button, and it must not reuse the close icon.
@@ -27,6 +27,7 @@ The title bar should read as a compact forged UI rail rather than a decorative b
 ## Implementation Notes
 
 - Implement as native Godot `Control` composition, not a single baked title-bar bitmap.
+- Keep the border ornament as fixed native atoms above the burgundy plate and below native labels/buttons; do not bake it into the stretchable 9-slice title skin.
 - Preserve stable layout constants: 42px title height, 10px inset, 42px close hit area, optional 42px minimize hit area, 82px title label side inset.
 - Runtime atoms:
   - `ProgramTitleBar`
@@ -49,6 +50,20 @@ The title bar should read as a compact forged UI rail rather than a decorative b
   - `Line_TitleBarRightGoldTick`
   - `Line_TitleBarGoldRailHighlight`
   - `Line_TitleBarGoldRailShadow`
+  - `Panel_TitleBarLeftStoneNotch`
+  - `Panel_TitleBarRightStoneNotch`
+  - `Line_TitleBarLeftCornerTop`
+  - `Line_TitleBarLeftCornerSide`
+  - `Line_TitleBarLeftCornerBottom`
+  - `Line_TitleBarRightCornerTop`
+  - `Line_TitleBarRightCornerSide`
+  - `Line_TitleBarRightCornerBottom`
+  - `Line_TitleBarTopRailLeftInset`
+  - `Line_TitleBarTopRailRightInset`
+  - `Line_TitleBarCenterCrestWingLeft`
+  - `Line_TitleBarCenterCrestWingRight`
+  - `Panel_TitleBarLeftCornerSpark`
+  - `Panel_TitleBarRightCornerSpark`
   - `Panel_TitleBarRubyBeadGlow`
   - `Panel_TitleBarRubyBead`
   - `Panel_TitleBarMossAccent`
