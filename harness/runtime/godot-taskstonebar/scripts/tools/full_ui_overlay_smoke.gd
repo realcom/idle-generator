@@ -477,6 +477,13 @@ func _run() -> void:
 	if map_progress_control.position.distance_to(expected_map_progress_position) > 0.5:
 		_fail("combat map progress should be pinned to bottom-right, got %s expected %s" % [str(map_progress_control.position), str(expected_map_progress_position)])
 		return
+	var enemy_layer := overlay.get_node_or_null("Section_BottomCombatStrip/RuntimeEnemyLayer")
+	if enemy_layer == null or not enemy_layer is CanvasItem:
+		_fail("combat enemy layer is missing")
+		return
+	if (map_progress as CanvasItem).z_index <= (enemy_layer as CanvasItem).z_index:
+		_fail("combat map progress should render above monsters, got map z=%d enemy z=%d" % [(map_progress as CanvasItem).z_index, (enemy_layer as CanvasItem).z_index])
+		return
 	var combat_ground := overlay.get_node_or_null("Section_BottomCombatStrip/Tex_CombatGroundStrip")
 	if combat_ground == null or not combat_ground is CanvasItem:
 		_fail("combat ground underlay texture node is missing")

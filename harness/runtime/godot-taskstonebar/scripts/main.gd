@@ -3086,7 +3086,8 @@ func _ensure_combat_map_progress_panel(parent: Control) -> void:
 		maxf(0.0, parent.size.x - root.size.x * root.scale.x),
 		maxf(0.0, parent.size.y - root.size.y * root.scale.y)
 	)
-	root.z_index = 94
+	root.z_index = 180
+	root.z_as_relative = false
 	generated_runtime_nodes["combat_map_progress"] = root
 	for child in root.get_children():
 		root.remove_child(child)
