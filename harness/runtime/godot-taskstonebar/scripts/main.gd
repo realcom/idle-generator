@@ -49,16 +49,16 @@ const GENERATED_BATTLE_MAP_TEXTURES := {
 }
 const GENERATED_PORTAL_MAP_TEXTURE_FALLBACK := "res://assets/generated/ui/portal_parchment_map.png"
 const GENERATED_PORTAL_MAP_TEXTURES := {
-	500101: "res://assets/generated/ui/portal_map_500101_taskbar_cave_rounded.png",
-	500102: "res://assets/generated/ui/portal_map_02_moss_grotto_rounded.png",
-	500103: "res://assets/generated/ui/portal_map_03_blue_crystal_quarry_rounded.png",
-	500104: "res://assets/generated/ui/portal_map_04_rusty_forge_storehouse_rounded.png",
-	500105: "res://assets/generated/ui/portal_map_05_haunted_spirit_road_rounded.png",
-	500106: "res://assets/generated/ui/portal_map_06_volcanic_basalt_forge_rounded.png",
-	500107: "res://assets/generated/ui/portal_map_07_frozen_moon_quarry_rounded.png",
-	500108: "res://assets/generated/ui/portal_map_08_boundary_rift_stones_rounded.png",
-	500109: "res://assets/generated/ui/portal_map_09_ancient_garden_stone_rounded.png",
-	500110: "res://assets/generated/ui/portal_map_10_abyss_star_core_rounded.png",
+	1: "res://assets/generated/ui/portal_map_500101_taskbar_cave_rounded.png",
+	2: "res://assets/generated/ui/portal_map_02_moss_grotto_rounded.png",
+	3: "res://assets/generated/ui/portal_map_03_blue_crystal_quarry_rounded.png",
+	4: "res://assets/generated/ui/portal_map_04_rusty_forge_storehouse_rounded.png",
+	5: "res://assets/generated/ui/portal_map_05_haunted_spirit_road_rounded.png",
+	6: "res://assets/generated/ui/portal_map_06_volcanic_basalt_forge_rounded.png",
+	7: "res://assets/generated/ui/portal_map_07_frozen_moon_quarry_rounded.png",
+	8: "res://assets/generated/ui/portal_map_08_boundary_rift_stones_rounded.png",
+	9: "res://assets/generated/ui/portal_map_09_ancient_garden_stone_rounded.png",
+	10: "res://assets/generated/ui/portal_map_10_abyss_star_core_rounded.png",
 }
 const PORTAL_FIRST_MAP_ID := 500101
 const PORTAL_MAPS_PER_ACT := 10
@@ -226,7 +226,7 @@ const COMBAT_ENEMY_LANE_STEP := Vector2(34.0, 14.0)
 const COMBAT_ENEMY_EDGE_STACK_STEP := Vector2(36.0, 13.0)
 const COMBAT_FX_RENDER_LIMIT := 20
 const GOLD_ITEM_ID := 5
-const OPAQUE_NATIVE_WINDOW_PLATFORMS := ["Windows"]
+const OPAQUE_NATIVE_WINDOW_PLATFORMS := []
 const RUNTIME_MAX_FPS := 30
 const RUNTIME_UI_SYNC_INTERVAL := 1.0 / 20.0
 const RUNTIME_MODEL_SYNC_INTERVAL := 0.5
@@ -330,18 +330,19 @@ func _configure_transparent_desktop_window() -> void:
 	get_tree().root.gui_embed_subwindows = false
 	if generated_visual_capture_mode:
 		get_viewport().transparent_bg = true
-		get_window().transparent_bg = true
+		_set_window_transparency(get_window(), true)
 		RenderingServer.set_default_clear_color(Color(0.0, 0.0, 0.0, 0.0))
 		if DisplayServer.get_name() != "headless":
 			DisplayServer.window_set_size(Vector2i(roundi(GENERATED_UI_REFERENCE_SIZE.x), roundi(GENERATED_UI_REFERENCE_SIZE.y)))
 		get_window().size = Vector2i(roundi(GENERATED_UI_REFERENCE_SIZE.x), roundi(GENERATED_UI_REFERENCE_SIZE.y))
 		return
-	get_viewport().transparent_bg = true
-	get_window().transparent_bg = true
-	RenderingServer.set_default_clear_color(Color(0.0, 0.0, 0.0, 0.0))
+	var host_transparent := _host_window_transparency_enabled()
+	get_viewport().transparent_bg = host_transparent
+	_set_window_transparency(get_window(), host_transparent)
+	RenderingServer.set_default_clear_color(Color(0.0, 0.0, 0.0, 0.0) if host_transparent else Color.BLACK)
 	if DisplayServer.get_name() == "headless":
 		return
-	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_TRANSPARENT, true)
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_TRANSPARENT, host_transparent)
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_ALWAYS_ON_TOP, true)
 	var screen_id := DisplayServer.window_get_current_screen()
@@ -354,8 +355,31 @@ func _native_desktop_windows_enabled() -> bool:
 	return DisplayServer.get_name() != "headless"
 
 
+func _host_window_transparency_enabled() -> bool:
+	return _window_transparency_available()
+
+
+func _native_window_transparency_platform_allowed(platform_name: String = OS.get_name()) -> bool:
+	return not OPAQUE_NATIVE_WINDOW_PLATFORMS.has(platform_name)
+
+
+func _window_transparency_available() -> bool:
+	if DisplayServer.get_name() == "headless":
+		return false
+	return DisplayServer.is_window_transparency_available()
+
+
+func _set_window_transparency(target: Window, transparent: bool) -> void:
+	if target == null:
+		return
+	target.transparent = transparent
+	target.transparent_bg = transparent
+
+
 func _native_window_transparency_enabled() -> bool:
-	return not OPAQUE_NATIVE_WINDOW_PLATFORMS.has(OS.get_name())
+	if not _native_window_transparency_platform_allowed():
+		return false
+	return _window_transparency_available()
 
 
 func _process(delta: float) -> void:
@@ -675,7 +699,7 @@ func _promote_runtime_native_window(window_id: String, title: String, panel: Con
 	var native := Window.new()
 	native.name = "Native_%s_Window" % window_id.capitalize()
 	native.title = title
-	native.transparent_bg = _native_window_transparency_enabled()
+	_set_window_transparency(native, _native_window_transparency_enabled())
 	native.borderless = true
 	native.always_on_top = true
 	native.unresizable = true
@@ -717,7 +741,7 @@ func _apply_native_window_system_flags(native: Window) -> void:
 	if native == null:
 		return
 	var transparent := _native_window_transparency_enabled()
-	native.transparent_bg = transparent
+	_set_window_transparency(native, transparent)
 	native.borderless = true
 	native.always_on_top = true
 	native.unresizable = true
@@ -1925,7 +1949,11 @@ func _sync_generated_portal_map_background(snapshot: Dictionary) -> void:
 	if map_node == null or not map_node is TextureRect:
 		return
 	var map_id := int(snapshot.get("map_id", 500101))
-	var texture_path := str(GENERATED_PORTAL_MAP_TEXTURES.get(map_id, GENERATED_PORTAL_MAP_TEXTURE_FALLBACK))
+	var texture_index := clampi(int((maxi(0, map_id - PORTAL_FIRST_MAP_ID) / PORTAL_MAPS_PER_ACT) + 1), 1, PORTAL_TOTAL_ACTS)
+	if store != null:
+		var map_def: Dictionary = store.get_map(map_id)
+		texture_index = _taskstonebar_portal_map_visual_index(map_def)
+	var texture_path := str(GENERATED_PORTAL_MAP_TEXTURES.get(texture_index, GENERATED_PORTAL_MAP_TEXTURE_FALLBACK))
 	var texture := _generated_texture(texture_path)
 	if texture == null:
 		return
@@ -7600,6 +7628,16 @@ func _taskstonebar_map_visual_index(map_def: Dictionary) -> int:
 			return clampi(int(digits), 1, 10)
 	var map_id := int(map_def.get("id", 500101))
 	return clampi(int((maxi(0, map_id - 500101) / 10) + 1), 1, 10)
+
+
+func _taskstonebar_portal_map_visual_index(map_def: Dictionary) -> int:
+	var popup_args: Dictionary = map_def.get("popupArgs", {}) if typeof(map_def.get("popupArgs", {})) == TYPE_DICTIONARY else {}
+	if popup_args.has("ClientPortalMapTextureIndex"):
+		var explicit_index := int(popup_args.get("ClientPortalMapTextureIndex", 1))
+		if explicit_index > 0:
+			return clampi(explicit_index, 1, PORTAL_TOTAL_ACTS)
+	var map_id := int(map_def.get("id", PORTAL_FIRST_MAP_ID))
+	return clampi(int((maxi(0, map_id - PORTAL_FIRST_MAP_ID) / PORTAL_MAPS_PER_ACT) + 1), 1, PORTAL_TOTAL_ACTS)
 
 
 func _sync_generated_combat_units(snapshot: Dictionary) -> void:

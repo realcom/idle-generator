@@ -15,8 +15,15 @@ func _run() -> void:
 	var native_flag_probe := Window.new()
 	root_node.add_child(native_flag_probe)
 	root_node._apply_native_window_system_flags(native_flag_probe)
-	if native_flag_probe.transparent_bg != bool(root_node._native_window_transparency_enabled()):
+	if not root_node._native_window_transparency_platform_allowed("Windows"):
+		_fail("Windows should use runtime transparency capability checks, not a hard opaque platform block")
+		return
+	var expected_native_transparent := bool(root_node._native_window_transparency_enabled())
+	if native_flag_probe.transparent_bg != expected_native_transparent:
 		_fail("native window transparency flag helper did not set transparent_bg")
+		return
+	if native_flag_probe.transparent != expected_native_transparent:
+		_fail("native window transparency flag helper did not set transparent")
 		return
 	if DisplayServer.get_name() != "headless" and (not native_flag_probe.borderless or not native_flag_probe.always_on_top or not native_flag_probe.unresizable):
 		_fail("native window system flag helper did not set chrome flags")
