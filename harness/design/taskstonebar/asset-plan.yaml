@@ -13,6 +13,7 @@ foundation_systems:
 assetization_summary:
   generate_image:
     - taskstonebar.ui.keeper_dock_icon_set
+    - taskstonebar.ui.skill_tree_icon_set
   native_ui:
     - taskstonebar.ui.native_overlay_controls
   hybrid:
@@ -257,6 +258,43 @@ assets:
     source_path: harness/design/taskstonebar/assets/ui/keeper_dock_icon_set_imagegen_alpha.png
     imagegen_source_path: /Users/yangjinhwan/.codex/generated_images/019ef875-8b80-7e73-b57e-20283646ddb0/ig_08305d076a438749016a3bcd79ec3c81948fd48420439626e4.png
     generation_notes: "Generated as a five-icon transparent dock atlas, then alpha-cleaned and packed from the imagegen source. Icons map to inventory, growth/feed, skill tree, synthesis/storage, and Steam asset wallet shortcuts."
+
+  - key: taskstonebar.ui.skill_tree_icon_set
+    type: ui_icon_set
+    mode: generate_image
+    platforms: [godot]
+    usage:
+      - component-blueprints.yaml:SkillIconSlot.skill_icon
+      - growth/taskstonebar-skill-tree-30.growth.md:skill_tree_nodes
+    background: transparent
+    target_size: { width: 240, height: 240 }
+    variants:
+      - stone_throw_training
+      - pebble_barrage
+      - fracture_slam
+      - sunstone_shockwave
+      - throw_lane_nodes
+      - aoe_lane_nodes
+      - boss_lane_nodes
+      - farming_lane_nodes
+      - defense_lane_nodes
+      - forge_formation_lane_nodes
+    slice_hints: null
+    component_contract:
+      icon_cells: "Thirty-four 32x32 transparent skill icons packed into a 6x6 audit sheet with 40x40 cells; no labels, counts, lock marks, or slot frames are baked."
+      item_icon_paths: "Runtime item data binds each skill to an individual PNG under assets/growstone2/generated/skills/imagegen/icons/."
+      semantic_color_tokens: [panel_outer, title_gold, crack_orange, exp_blue, ruby_red, moss_green]
+    godot:
+      usage: texture_rect_atlas
+      target_path: harness/runtime/godot-taskstonebar/assets/generated/ui/skill_tree_icon_set.png
+      import_preset: pixel_sprite
+      cell_size: { width: 40, height: 40 }
+    priority: must
+    status: generated
+    generated_with: image_gen
+    source_path: harness/design/taskstonebar/assets/ui/skill_tree_icon_set_imagegen_alpha.png
+    imagegen_source_path: /Users/yangjinhwan/.codex/generated_images/019f1089-e00c-77c3-91dc-23dc03e0645c/ig_016da25bcc6bbd6c016a41c26c58cc8191b5f18b0c3f13c525.png
+    generation_notes: "Generated from the current 34 Skill item lineup, alpha-cleaned from the imagegen atlas, cropped to individual 32x32 item icons, and packed into this audit sheet for UI review."
 
   - key: taskstonebar.ui.rare_drop_toast_9slice
     type: toast_skin

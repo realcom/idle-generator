@@ -108,6 +108,7 @@ surfaces:
           - taskstonebar.ui.window_title_bar_9slice
           - taskstonebar.ui.dark_inner_well_9slice
           - taskstonebar.ui.slot_frame_9slice
+          - taskstonebar.ui.skill_tree_icon_set
           - taskstonebar.ui.tab_burgundy_9slice
           - taskstonebar.ui.icon_dock_button_9slice
           - taskstonebar.ui.keeper_dock_icon_set
@@ -699,6 +700,10 @@ components:
       usage: godot_nine_patch_rect
       slice_hints_px: { left: 18, right: 18, top: 18, bottom: 18 }
       content_insets_px: { left: 6, right: 6, top: 6, bottom: 16 }
+    asset_contract:
+      asset_key: taskstonebar.ui.skill_tree_icon_set
+      usage: item_icon_texture_or_atlas_cell
+      not_nine_slice: true
     foundation_refs:
       button_role: active_stone_slot
       color_tokens: [panel_inner, title_gold, text_cream]
@@ -1299,6 +1304,10 @@ asset_dependency_matrix:
     component_slots: [KeeperIconDock.icon_atoms]
     fixed_sprite_sizes_px: { cell: { width: 64, height: 64 }, display: { width: 38, height: 38 } }
     must_not_bake: [labels, counts, cooldowns, button_frames]
+  taskstonebar.ui.skill_tree_icon_set:
+    component_slots: [SkillIconSlot.skill_icon]
+    fixed_sprite_sizes_px: { cell: { width: 40, height: 40 }, icon: { width: 32, height: 32 } }
+    must_not_bake: [labels, counts, cooldowns, lock_labels, button_frames]
   taskstonebar.ui.rare_drop_toast_9slice:
     component_slots: [RareDropToast.toast_skin]
     slice_hints_px: { left: 22, right: 22, top: 18, bottom: 18 }
