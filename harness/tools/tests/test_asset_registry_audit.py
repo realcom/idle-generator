@@ -71,6 +71,34 @@ class AssetRegistryAuditTests(unittest.TestCase):
             self.assertFalse(result.ok)
             self.assertEqual(["assets/ui/icon.png"], [ref.path for ref in result.release_blocked])
 
+    def test_registry_root_asset_reference_is_valid(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            runtime = root / "runtime"
+            registry = root / "assets" / "game" / "asset-registry.yaml"
+            runtime.mkdir(parents=True)
+            (registry.parent / "icons").mkdir(parents=True)
+            (registry.parent / "icons" / "skill.png").write_bytes(b"png")
+            (runtime / "index.html").write_text("'assets/game/icons/skill.png'", encoding="utf-8")
+            registry.write_text(
+                "\n".join([
+                    "version: 1",
+                    "game: game",
+                    "collections:",
+                    "  - name: generated-icons",
+                    "    prefix: assets/game/icons/",
+                    "    type: item-icon",
+                    "    status: ai-draft",
+                    "assets: {}",
+                ]),
+                encoding="utf-8",
+            )
+
+            result = asset_registry_audit.audit("game", registry, runtime, root / "build")
+
+            self.assertTrue(result.ok, result)
+            self.assertEqual([], result.missing_files)
+
 
 if __name__ == "__main__":
     unittest.main()

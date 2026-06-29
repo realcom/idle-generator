@@ -8,7 +8,7 @@ import fnmatch
 import json
 import sys
 from dataclasses import dataclass, field
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 import yaml
@@ -138,7 +138,7 @@ def audit(
         return result
 
     result.referenced_assets = collect_referenced_assets(game, runtime_dir, build_dir)
-    result.missing_files = [ref for ref in result.referenced_assets if not asset_exists(runtime_dir, ref.path)]
+    result.missing_files = [ref for ref in result.referenced_assets if not referenced_asset_exists(registry, runtime_dir, ref.path)]
 
     referenced_keys = {ref.path for ref in result.referenced_assets}
     explicit_keys = set(registry.assets)
@@ -219,11 +219,35 @@ def validate_entry_file(registry: Registry, key: str, entry: Any, runtime_dir: P
     if file_value:
         path = (registry.path.parent / str(file_value)).resolve()
     elif key.startswith("assets/"):
+        if referenced_asset_exists(registry, runtime_dir, key):
+            return
         path = runtime_dir / key
     else:
         return
     if not path.exists():
         errors.append(f"asset {key}: file missing: {path}")
+
+
+def referenced_asset_exists(registry: Registry, runtime_dir: Path, asset_path: str) -> bool:
+    if asset_exists(runtime_dir, asset_path):
+        return True
+    if not asset_path.startswith("assets/"):
+        return True
+
+    for path in registry_asset_candidates(registry, runtime_dir, asset_path):
+        if path.is_file():
+            return True
+    return False
+
+
+def registry_asset_candidates(registry: Registry, runtime_dir: Path, asset_path: str) -> list[Path]:
+    parts = PurePosixPath(asset_path).parts
+    candidates = [runtime_dir / asset_path]
+    if len(parts) >= 3 and parts[0] == "assets" and parts[1] == registry.path.parent.name:
+        candidates.append(registry.path.parent.joinpath(*parts[2:]))
+    if len(registry.path.parents) >= 3:
+        candidates.append(registry.path.parents[2] / asset_path)
+    return candidates
 
 
 def validate_collection(index: int, collection: Any, errors: list[str]) -> None:
