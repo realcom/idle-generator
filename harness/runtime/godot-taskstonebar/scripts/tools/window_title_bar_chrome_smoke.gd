@@ -87,8 +87,6 @@ func _assert_shared_chrome(window: Control, title_name: String, close_name: Stri
 		"Line_TitleBarLeftStoneChipHighlight",
 		"Panel_TitleBarCenterCrest",
 		"Panel_TitleBarCenterCrestInner",
-		"Line_TitleBarLeftGoldTick",
-		"Line_TitleBarRightGoldTick",
 		"Panel_TitleBarRubyBeadGlow",
 		"Panel_TitleBarRubyBead",
 		"Panel_TitleBarMossAccent",
@@ -96,7 +94,14 @@ func _assert_shared_chrome(window: Control, title_name: String, close_name: Stri
 		"Line_TitleBarGoldRailHighlight",
 		"Line_TitleBarGoldRailShadow",
 		"Panel_TitleBarLeftStoneNotch",
-		"Panel_TitleBarRightStoneNotch",
+	]
+	for concept_node in concept_nodes:
+		if not _is_visible_control(window.get_node_or_null(concept_node)):
+			_fail("forged rail concept node is missing on %s: %s" % [str(window.name), concept_node])
+			return false
+	for noisy_detail in [
+		"Line_TitleBarLeftGoldTick",
+		"Line_TitleBarRightGoldTick",
 		"Line_TitleBarLeftCornerTop",
 		"Line_TitleBarLeftCornerSide",
 		"Line_TitleBarLeftCornerBottom",
@@ -109,10 +114,10 @@ func _assert_shared_chrome(window: Control, title_name: String, close_name: Stri
 		"Line_TitleBarCenterCrestWingRight",
 		"Panel_TitleBarLeftCornerSpark",
 		"Panel_TitleBarRightCornerSpark",
-	]
-	for concept_node in concept_nodes:
-		if not _is_visible_control(window.get_node_or_null(concept_node)):
-			_fail("forged rail concept node is missing on %s: %s" % [str(window.name), concept_node])
+		"Panel_TitleBarRightStoneNotch",
+	]:
+		if _is_visible_control(window.get_node_or_null(noisy_detail)):
+			_fail("noisy title detail should be hidden on %s: %s" % [str(window.name), noisy_detail])
 			return false
 	for noisy_detail in ["Panel_HeaderLeftPattern", "Panel_HeaderLeftGoldSlash", "Panel_HeaderRightGoldSlash", "Panel_HeaderCenterRivets"]:
 		if _is_visible_control(title_bar.get_node_or_null(noisy_detail)):
@@ -134,8 +139,14 @@ func _assert_shared_chrome(window: Control, title_name: String, close_name: Stri
 	if close_button.get_node_or_null("Icon_Close") == null:
 		_fail("close button icon is missing on %s" % str(window.name))
 		return false
-	if not _has_button_detail(close_button as Button):
-		_fail("close button forged detail is missing on %s" % str(window.name))
+	if _has_any_button_detail(close_button as Button):
+		_fail("close button border detail should be hidden on %s" % str(window.name))
+		return false
+	if _stylebox_has_border((close_button as Button).get_theme_stylebox("normal")):
+		_fail("close button normal style still has a border on %s" % str(window.name))
+		return false
+	if (close_button as Button).get_index() <= (title_bar as Control).get_index():
+		_fail("close button should be above ProgramTitleBar in hit-test order on %s" % str(window.name))
 		return false
 
 	if minimize_name != "":
@@ -164,6 +175,17 @@ func _assert_shared_chrome(window: Control, title_name: String, close_name: Stri
 
 func _has_button_detail(button: Button) -> bool:
 	return _is_visible_control(button.get_node_or_null("Line_TitleBarButtonTopHighlight")) and _is_visible_control(button.get_node_or_null("Line_TitleBarButtonInnerShadow"))
+
+
+func _has_any_button_detail(button: Button) -> bool:
+	return _is_visible_control(button.get_node_or_null("Line_TitleBarButtonTopHighlight")) or _is_visible_control(button.get_node_or_null("Line_TitleBarButtonInnerShadow"))
+
+
+func _stylebox_has_border(stylebox: StyleBox) -> bool:
+	if stylebox is StyleBoxFlat:
+		var flat := stylebox as StyleBoxFlat
+		return flat.border_width_left > 0 or flat.border_width_right > 0 or flat.border_width_top > 0 or flat.border_width_bottom > 0
+	return false
 
 
 func _is_visible_control(node) -> bool:

@@ -42,6 +42,22 @@ const CLOSE_ICON_NAME := "Icon_Close"
 const BUTTON_TOP_HIGHLIGHT_NAME := "Line_TitleBarButtonTopHighlight"
 const BUTTON_INNER_SHADOW_NAME := "Line_TitleBarButtonInnerShadow"
 const MINIMIZE_GLYPH_NAME := "Line_TitleBarMinimizeGlyph"
+const NOISY_DETAIL_LINE_NAMES := [
+	LEFT_GOLD_TICK_NAME,
+	RIGHT_GOLD_TICK_NAME,
+	LEFT_CORNER_TOP_NAME,
+	LEFT_CORNER_SIDE_NAME,
+	LEFT_CORNER_BOTTOM_NAME,
+	RIGHT_CORNER_TOP_NAME,
+	RIGHT_CORNER_SIDE_NAME,
+	RIGHT_CORNER_BOTTOM_NAME,
+	TOP_RAIL_LEFT_INSET_NAME,
+	TOP_RAIL_RIGHT_INSET_NAME,
+	CENTER_CREST_WING_LEFT_NAME,
+	CENTER_CREST_WING_RIGHT_NAME,
+	LEFT_CORNER_SPARK_NAME,
+	RIGHT_CORNER_SPARK_NAME,
+]
 
 const TITLE_HEIGHT := 42.0
 const TITLE_INSET := Vector2(10.0, 10.0)
@@ -75,6 +91,7 @@ static func apply(window: Control, config: Dictionary = {}) -> Control:
 	_ensure_bottom_line(window, title_bar)
 	_ensure_forged_ornaments(window, title_bar)
 	_hide_decorations(title_bar)
+	_hide_noisy_detail_lines(window)
 	_hide_help_button(window)
 
 	var title_label: Label = config.get("title_label", null) as Label
@@ -155,32 +172,47 @@ static func style_button(window: Control, button: Button, right_index: int, role
 	)
 	button.size = WINDOW_BUTTON_SIZE
 	button.custom_minimum_size = WINDOW_BUTTON_SIZE
-	button.z_index = 6
-	button.flat = false
+	button.z_index = 20 if role == "window_close" else 6
+	button.flat = role == "window_close"
 	button.mouse_filter = Control.MOUSE_FILTER_STOP
 	button.set_meta("button_role", role)
 
 	var fill := Color("#5a1e18")
 	var border := COLOR_TITLE_LINE
 	var radius := 2
-	if role == "utility_icon":
+	var border_width := 2
+	if role == "window_close":
+		fill = Color(0.0, 0.0, 0.0, 0.0)
+		border = Color(0.0, 0.0, 0.0, 0.0)
+		border_width = 0
+		radius = 4
+	elif role == "utility_icon":
 		fill = Color("#151513")
 		border = Color("#8a5b24")
 		radius = 4
-	button.add_theme_stylebox_override("normal", _flat_style(fill, border, 2, radius))
-	button.add_theme_stylebox_override("hover", _flat_style(fill.lightened(0.12), COLOR_TITLE_GOLD, 2, radius))
-	button.add_theme_stylebox_override("pressed", _flat_style(fill.darkened(0.16), border, 2, radius))
-	button.add_theme_stylebox_override("disabled", _flat_style(fill.darkened(0.18), Color("#5a5146"), 1, radius))
+		border_width = 2
+	var hover_fill := Color(1.0, 0.80, 0.42, 0.12) if role == "window_close" else fill.lightened(0.12)
+	var hover_border := Color(0.0, 0.0, 0.0, 0.0) if role == "window_close" else COLOR_TITLE_GOLD
+	var pressed_fill := Color(0.0, 0.0, 0.0, 0.20) if role == "window_close" else fill.darkened(0.16)
+	button.add_theme_stylebox_override("normal", _flat_style(fill, border, border_width, radius))
+	button.add_theme_stylebox_override("hover", _flat_style(hover_fill, hover_border, border_width, radius))
+	button.add_theme_stylebox_override("pressed", _flat_style(pressed_fill, border, border_width, radius))
+	button.add_theme_stylebox_override("disabled", _flat_style(fill.darkened(0.18), Color(0.0, 0.0, 0.0, 0.0), 0 if role == "window_close" else 1, radius))
 	button.add_theme_color_override("font_color", COLOR_TITLE_GOLD)
 	button.add_theme_color_override("font_hover_color", Color("#fff0a6"))
 	button.add_theme_color_override("font_pressed_color", Color("#f3e6c8"))
 	button.add_theme_font_size_override("font_size", 16)
-	_ensure_button_detail(button)
+	if role == "window_close":
+		_remove_button_detail_node(button, BUTTON_TOP_HIGHLIGHT_NAME)
+		_remove_button_detail_node(button, BUTTON_INNER_SHADOW_NAME)
+	else:
+		_ensure_button_detail(button)
 	if role == "utility_icon" and text == "-":
 		_ensure_minimize_glyph(button)
 	else:
 		_remove_button_detail_node(button, MINIMIZE_GLYPH_NAME)
 	button.size = WINDOW_BUTTON_SIZE
+	_raise_control(button)
 
 
 static func ensure_close_icon(button: Button, texture: Texture2D) -> void:
@@ -309,7 +341,7 @@ static func _ensure_bottom_line(window: Control, title_bar: Control) -> void:
 		window.add_child(line)
 	line.color = COLOR_TITLE_LINE
 	line.position = title_bar.position + Vector2(12.0, title_bar.size.y - 5.0)
-	line.size = Vector2(maxf(1.0, title_bar.size.x - 24.0), 2.0)
+	line.size = Vector2(maxf(1.0, title_bar.size.x - 58.0), 2.0)
 	line.z_index = 3
 
 	var highlight := _ensure_rect(window, GOLD_RAIL_HIGHLIGHT_NAME)
@@ -345,7 +377,7 @@ static func _ensure_border_ornaments(window: Control, title_bar: Control) -> voi
 	right_notch.position = title_bar.position + Vector2(title_bar.size.x - 12.0, 10.0)
 	right_notch.size = Vector2(7.0, 22.0)
 	right_notch.z_index = 3
-	right_notch.visible = true
+	right_notch.visible = false
 	right_notch.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	right_notch.add_theme_stylebox_override("panel", _flat_style(Color("#141311"), Color("#4f463a"), 1, 1))
 
@@ -555,6 +587,11 @@ static func _remove_button_detail_node(button: Button, node_name: String) -> voi
 		node.queue_free()
 
 
+static func _raise_control(control: Control) -> void:
+	if control != null and control.get_parent() != null:
+		control.get_parent().move_child(control, control.get_parent().get_child_count() - 1)
+
+
 static func _hide_optional_button(button: Button) -> void:
 	button.visible = false
 	button.disabled = true
@@ -583,6 +620,13 @@ static func _hide_decorations(title_bar: Control) -> void:
 		"Panel_HeaderCenterRivets",
 	]:
 		var node := title_bar.get_node_or_null(node_name)
+		if node != null:
+			_hide_canvas_node(node)
+
+
+static func _hide_noisy_detail_lines(window: Control) -> void:
+	for node_name in NOISY_DETAIL_LINE_NAMES:
+		var node := window.get_node_or_null(node_name)
 		if node != null:
 			_hide_canvas_node(node)
 

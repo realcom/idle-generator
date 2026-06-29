@@ -6,19 +6,18 @@ const PARCHMENT_DARK := Color("#8c7444")
 const ROUTE := Color("#5f4728")
 const CURRENT_GREEN := Color("#35d466")
 const CURRENT_RING := Color("#eaffcf")
-const ROUTE_CURVE_SWAYS := [18.0, -14.0, 20.0, -15.0, 14.0, -22.0, 16.0, -18.0, 12.0]
 
 var route_points: Array[Vector2] = [
-	Vector2(104.0, 218.0),
-	Vector2(208.0, 196.0),
-	Vector2(150.0, 166.0),
-	Vector2(276.0, 140.0),
-	Vector2(214.0, 112.0),
-	Vector2(304.0, 88.0),
-	Vector2(166.0, 68.0),
-	Vector2(266.0, 50.0),
-	Vector2(126.0, 42.0),
-	Vector2(296.0, 34.0),
+	Vector2(96.0, 220.0),
+	Vector2(158.0, 194.0),
+	Vector2(116.0, 166.0),
+	Vector2(202.0, 142.0),
+	Vector2(252.0, 116.0),
+	Vector2(204.0, 92.0),
+	Vector2(126.0, 78.0),
+	Vector2(178.0, 56.0),
+	Vector2(98.0, 44.0),
+	Vector2(244.0, 36.0),
 ]
 var current_index := 2
 
@@ -79,26 +78,22 @@ func _route_curve_points(point_count: int) -> PackedVector2Array:
 		output.append(route_points[0])
 		return output
 	for index in range(count - 1):
-		var start := route_points[index]
-		var end := route_points[index + 1]
-		var direction := end - start
-		var normal := Vector2.ZERO
-		if direction.length() > 0.001:
-			normal = Vector2(-direction.y, direction.x).normalized()
-		var sway := float(ROUTE_CURVE_SWAYS[index % ROUTE_CURVE_SWAYS.size()])
-		var control := start.lerp(end, 0.5) + normal * sway
-		for step in range(7):
+		var p0 := route_points[maxi(0, index - 1)]
+		var p1 := route_points[index]
+		var p2 := route_points[mini(count - 1, index + 1)]
+		var p3 := route_points[mini(count - 1, index + 2)]
+		for step in range(8):
 			if index > 0 and step == 0:
 				continue
-			var t := float(step) / 6.0
-			output.append(_quadratic_curve_point(start, control, end, t))
+			var t := float(step) / 7.0
+			output.append(_catmull_rom_point(p0, p1, p2, p3, t))
 	return output
 
 
-func _quadratic_curve_point(start: Vector2, control: Vector2, end: Vector2, t: float) -> Vector2:
-	var a := start.lerp(control, t)
-	var b := control.lerp(end, t)
-	return a.lerp(b, t)
+func _catmull_rom_point(p0: Vector2, p1: Vector2, p2: Vector2, p3: Vector2, t: float) -> Vector2:
+	var t2 := t * t
+	var t3 := t2 * t
+	return (p1 * 2.0 + (p2 - p0) * t + (p0 * 2.0 - p1 * 5.0 + p2 * 4.0 - p3) * t2 + (-p0 + p1 * 3.0 - p2 * 3.0 + p3) * t3) * 0.5
 
 
 func _draw_current_marker() -> void:

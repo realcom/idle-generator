@@ -704,11 +704,13 @@ func _cast_player_skill(skill: Dictionary, primary_target: Dictionary, source_st
 	_fx("attack", {
 		"source_id": int(player.get("id", 0)),
 		"source_name": str(player.get("name", "작업돌지기")),
+		"source_position": player.get("position", Vector2.ZERO),
 		"source_stone_instance_id": int(source_stone.get("instance_id", 0)),
 		"source_stone_item_id": int(source_stone.get("item_data_id", 0)),
 		"source_stone_name": stone_name,
 		"target_id": int(primary_target.get("id", 0)),
 		"target_name": str(primary_target.get("name", "몬스터")),
+		"target_position": primary_target.get("position", Vector2(805.0, 80.0)),
 		"skill_id": skill_id,
 		"skill_name": skill_name,
 		"amount": total_damage,
@@ -903,6 +905,8 @@ func _update_enemy_attacks(delta: float) -> void:
 			_fx("enemy_skill", {
 				"source_id": int(enemy.get("id", 0)),
 				"source_name": str(enemy.get("name", "몬스터")),
+				"source_position": enemy.get("position", Vector2(805.0, 80.0)),
+				"target_position": player.get("position", Vector2.ZERO),
 				"skill_id": skill_id,
 				"skill_name": str(skill_info.get("skill_name", "스킬")),
 				"amount": damage,
@@ -913,18 +917,22 @@ func _update_enemy_attacks(delta: float) -> void:
 			_fx("hit_player", {
 				"source_id": int(enemy.get("id", 0)),
 				"source_name": str(enemy.get("name", "몬스터")),
+				"source_position": enemy.get("position", Vector2(805.0, 80.0)),
+				"target_position": player.get("position", Vector2.ZERO),
 				"amount": damage,
 				"ttl": 0.72,
 			})
 
 
 func _collect_dead_enemies() -> void:
+	var removed_any := false
 	for enemy in enemies:
 		if typeof(enemy) != TYPE_DICTIONARY or not bool(enemy.get("alive", true)):
 			continue
 		if float(enemy.get("hp", 0.0)) > 0.0:
 			continue
 		enemy["alive"] = false
+		removed_any = true
 		kill_count += 1
 		var unit: Dictionary = {}
 		if store != null:
@@ -934,8 +942,19 @@ func _collect_dead_enemies() -> void:
 		_fx("kill", {
 			"target_id": int(enemy.get("id", 0)),
 			"target_name": str(enemy.get("name", "몬스터")),
+			"position": enemy.get("position", Vector2(805.0, 80.0)),
 			"ttl": 1.0,
 		})
+	if removed_any:
+		_compact_alive_enemies()
+
+
+func _compact_alive_enemies() -> void:
+	var alive_enemies: Array = []
+	for enemy in enemies:
+		if typeof(enemy) == TYPE_DICTIONARY and bool(enemy.get("alive", true)):
+			alive_enemies.append(enemy)
+	enemies = alive_enemies
 
 
 func _apply_unit_rewards(unit: Dictionary, reward_origin := {}) -> void:

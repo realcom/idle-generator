@@ -147,6 +147,7 @@ surfaces:
           - taskstonebar.ui.native_overlay_controls
         qa_focus:
           - "Combat readability wins over decorative frame weight."
+          - "Ground, soft border, and decorative scene props stay transparent in overlay mode so other desktop/game windows can show behind the combat elements."
           - "Damage number, stage name, and drop text are native controls."
           - "The strip must work as a standalone glanceable taskbar companion: current stage, enemy HP, latest hit, and latest drop are understandable without any modal open."
 
@@ -1011,7 +1012,7 @@ components:
   TaskbarCombatStrip:
     role: "Bottom always-on combat strip over the OS taskbar motif; it is the minimized game surface and remains readable without the workshop windows."
     mode: hybrid
-    anatomy: [ground_strip, soft_border_layer, hero_sprite, projectile_layer, enemy_stack, hp_bar, damage_number_layer, stage_badge, rare_drop_toast, opacity_control, restore_workshop_affordance]
+    anatomy: [transparent_backdrop, optional_ground_strip_hidden, hero_sprite, projectile_layer, enemy_stack, hp_bar, damage_number_layer, stage_badge, rare_drop_toast, opacity_control, restore_workshop_affordance]
     data_bindings: { current_map: current_map, current_stage: current_stage, player_state: combat.player, enemy_state: combat.enemies, drop_events: combat.drop_events, window_stack_collapsed: ui.window_stack_collapsed }
     box_model:
       min_width_px: 960
@@ -1023,7 +1024,8 @@ components:
       touch_target_px: 40
     asset_contract:
       asset_key: taskstonebar.ui.combat_ground_strip
-      usage: fixed_texture_atom
+      usage: hidden_reference_atom_in_transparent_overlay
+      runtime_visibility: hidden_by_default
       not_nine_slice: true
 
   HeroCombatSprite:
@@ -1369,6 +1371,7 @@ asset_dependency_matrix:
     fixed_sprite_sizes_px: { default: { width: 372, height: 404 } }
   taskstonebar.ui.combat_ground_strip:
     component_slots: [TaskbarCombatStrip.ground_strip]
+    runtime_visibility: hidden_by_default_for_transparent_overlay
     fixed_sprite_sizes_px: { default: { width: 1586, height: 236 } }
   taskstonebar.ui.native_overlay_controls:
     component_slots: [DesktopOverlayRoot.native_controls, TopResourceBar.labels, StatusStatScrollPanel.labels, StatList.labels, StatusSearchButton.glyph, SkillPointHeader.labels, SkillLevelTrack.labels, SkillTierRow.native_shapes, TaskbarCombatStrip.soft_border_layer, EnemyHpBar.labels, DamageNumberLayer.labels, ProjectileLayer.native_shapes, AutoCombatToggle.labels, AutoSkillToggle.labels, StageBadge.labels, LootTicker.labels, StageNode.labels, CombatMapProgressBadge.progress_fill, CombatMapProgressBadge.progress_pointer, CombatMapProgressBadge.tick_marks, CombatOpacityControl.opacity_slider, CombatOpacityControl.percent_label, CombatSceneShortcutDock.labels, ModalHost.native_controls, ItemDetailModal.labels, ItemDetailStatList.labels, ItemDetailWarningChipRow.labels, ItemDetailActionFooter.labels, EquipmentUpgradeModal.labels, EquipmentUpgradeActionFooter.labels]

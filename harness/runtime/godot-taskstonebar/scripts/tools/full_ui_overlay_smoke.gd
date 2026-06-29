@@ -385,7 +385,14 @@ func _run() -> void:
 		return
 	var combat_ground := overlay.get_node_or_null("Section_BottomCombatStrip/Tex_CombatGroundStrip")
 	if combat_ground == null or not combat_ground is CanvasItem:
-		_fail("combat opacity target ground texture is missing")
+		_fail("combat ground underlay texture node is missing")
+		return
+	if not (combat_ground as CanvasItem).visible or (combat_ground as CanvasItem).modulate.a < 0.95:
+		_fail("combat ground underlay should be visible behind elements")
+		return
+	var combat_stage_badge := overlay.get_node_or_null("Section_BottomCombatStrip/Text_StageBadge")
+	if combat_stage_badge == null or not combat_stage_badge is CanvasItem:
+		_fail("combat opacity target stage badge is missing")
 		return
 	root_node._set_generated_combat_opacity(0.55)
 	for _i in range(2):
@@ -396,22 +403,18 @@ func _run() -> void:
 	if absf(float((opacity_slider as HSlider).value) - 55.0) > 0.1:
 		_fail("combat opacity slider did not sync to 55%%")
 		return
+	if absf((combat_stage_badge as CanvasItem).modulate.a - 0.55) > 0.04:
+		_fail("combat element alpha did not follow opacity: %s" % str((combat_stage_badge as CanvasItem).modulate.a))
+		return
 	if absf((combat_ground as CanvasItem).modulate.a - 0.55) > 0.04:
-		_fail("combat ground alpha did not follow opacity: %s" % str((combat_ground as CanvasItem).modulate.a))
+		_fail("combat ground underlay alpha did not follow opacity: %s" % str((combat_ground as CanvasItem).modulate.a))
 		return
 	if absf((opacity_control as CanvasItem).modulate.a - 1.0) > 0.01:
 		_fail("combat opacity control should remain opaque")
 		return
 	root_node._set_generated_combat_opacity(1.0)
 	var combat_reference_rect: Rect2 = root_node._native_reference_rect("combat", combat_strip_control)
-	var expected_combat_visual_size := Vector2(
-		combat_strip_control.size.x * combat_native_scale_vector.x,
-		combat_strip_control.size.y * combat_native_scale_vector.y
-	)
-	var expected_combat_position := Vector2(
-		maxf(0.0, (Vector2(1586.0, 992.0).x - expected_combat_visual_size.x) * 0.5),
-		704.0 + maxf(0.0, combat_strip_control.size.y - expected_combat_visual_size.y)
-	)
+	var expected_combat_position: Vector2 = root_node._combat_native_desktop_position(combat_strip_control.size)
 	if combat_reference_rect.position.distance_to(expected_combat_position) > 0.1:
 		_fail("combat native window should be centered above taskbar after configured scale, got %s expected %s" % [str(combat_reference_rect.position), str(expected_combat_position)])
 		return

@@ -55,18 +55,17 @@ const PORTAL_MAPS_PER_ACT := 10
 const PORTAL_TOTAL_ACTS := 10
 const PORTAL_STAGE_NODE_SIZE := Vector2(44.0, 30.0)
 const PORTAL_STAGE_ROUTE_POSITIONS := [
-	Vector2(124.0, 462.0),
-	Vector2(230.0, 436.0),
-	Vector2(174.0, 398.0),
-	Vector2(300.0, 370.0),
-	Vector2(224.0, 334.0),
-	Vector2(326.0, 304.0),
-	Vector2(186.0, 276.0),
-	Vector2(284.0, 246.0),
-	Vector2(142.0, 236.0),
-	Vector2(316.0, 214.0),
+	Vector2(118.0, 462.0),
+	Vector2(178.0, 426.0),
+	Vector2(138.0, 386.0),
+	Vector2(224.0, 356.0),
+	Vector2(276.0, 322.0),
+	Vector2(226.0, 288.0),
+	Vector2(146.0, 270.0),
+	Vector2(198.0, 238.0),
+	Vector2(120.0, 220.0),
+	Vector2(270.0, 208.0),
 ]
-const PORTAL_ROUTE_CURVE_SWAYS := [24.0, -18.0, 28.0, -20.0, 18.0, -30.0, 22.0, -24.0, 18.0]
 const KEEPER_DOCK_ICON_SIZE := Vector2(64.0, 64.0)
 const KEEPER_DOCK_ICON_DISPLAY_SIZE := Vector2(38.0, 38.0)
 const WORKSHOP_WINDOW_VISUAL_SCALE := 0.8
@@ -105,6 +104,7 @@ const OVERLAY_WORKSHOP_TOGGLE_NAME := "Btn_RuntimeWorkshopToggle"
 const COMBAT_OPACITY_CONTROL_NAME := "RuntimeCombatOpacityControl"
 const COMBAT_OPACITY_SLIDER_NAME := "Slider_CombatOpacity"
 const COMBAT_OPACITY_VALUE_NAME := "Text_CombatOpacityValue"
+const COMBAT_TRANSPARENT_BACKDROP_ALPHA := 0.0
 const COMBAT_OPACITY_MIN := 0.35
 const COMBAT_OPACITY_MAX := 1.0
 const KEEPER_EXP_BAR_NAME := "Progress_KeeperExp"
@@ -589,6 +589,7 @@ func _promote_generated_overlay_to_native_windows() -> void:
 		_promote_runtime_native_window("skill_tree", "Taskstonebar Skill Tree", skill_window, false)
 	generated_ui_overlay.visible = false
 	_layout_generated_native_windows()
+	_show_initial_native_windows()
 
 
 func _promote_generated_native_window(window_id: String) -> void:
@@ -601,7 +602,7 @@ func _promote_generated_native_window(window_id: String) -> void:
 
 
 func _promote_runtime_native_window(window_id: String, title: String, panel: Control, visible: bool) -> void:
-	var original_rect := panel.get_global_rect()
+	var original_rect := _native_reference_rect(window_id, panel)
 	var native := Window.new()
 	native.name = "Native_%s_Window" % window_id.capitalize()
 	native.title = title
@@ -618,7 +619,8 @@ func _promote_runtime_native_window(window_id: String, title: String, panel: Con
 
 	panel.get_parent().remove_child(panel)
 	panel.position = Vector2.ZERO
-	panel.scale = _native_window_scale_vector(window_id)
+	panel.size = original_rect.size
+	panel.scale = _native_window_canvas_scale_vector(window_id)
 	panel.visible = visible
 	panel.mouse_filter = Control.MOUSE_FILTER_PASS
 	panel.focus_mode = Control.FOCUS_ALL
@@ -652,32 +654,91 @@ func _layout_generated_native_windows() -> void:
 		_set_native_window_size(native, _native_window_size_for(str(window_id), rect.size))
 		root.position = Vector2.ZERO
 		root.size = rect.size
-		root.scale = _native_window_scale_vector(str(window_id))
+		root.scale = _native_window_canvas_scale_vector(str(window_id))
+
+
+func _show_initial_native_windows() -> void:
+	_ensure_desktop_window_manager()
+	for window_id in NATIVE_WINDOW_IDS:
+		var id := str(window_id)
+		var native: Window = generated_native_windows.get(id, null)
+		var root: Control = generated_native_window_roots.get(id, null)
+		if root != null:
+			root.visible = true
+		if native != null:
+			native.visible = true
+		if desktop_window_manager.has_window(id):
+			desktop_window_manager.show_window(id, false)
+	var skill_native: Window = generated_native_windows.get("skill_tree", null)
+	var skill_root: Control = generated_native_window_roots.get("skill_tree", null)
+	if skill_root != null:
+		skill_root.visible = false
+	if skill_native != null:
+		skill_native.visible = false
+	if desktop_window_manager.has_window("skill_tree"):
+		desktop_window_manager.hide_window("skill_tree")
 
 
 func _native_reference_rect(window_id: String, root: Control) -> Rect2:
 	var order := int(NATIVE_WINDOW_ORDER.get(window_id, 0))
+	var logical_size := _native_window_logical_size(window_id, root)
 	if window_id == "status":
-		return Rect2(COMPACT_STATUS_WINDOW_RECT.position, root.size)
+		return Rect2(_workshop_native_desktop_position("status"), logical_size)
 	if window_id == "keeper":
-		return Rect2(COMPACT_HERO_WINDOW_RECT.position, root.size)
+		return Rect2(_workshop_native_desktop_position("keeper"), logical_size)
 	if window_id == "portal":
-		return Rect2(COMPACT_PORTAL_WINDOW_RECT.position, root.size)
+		return Rect2(_workshop_native_desktop_position("portal"), logical_size)
 	if window_id == "combat":
-		var scale := _native_window_scale_vector(window_id)
-		var visual_size := _scaled_native_window_size(root.size, scale)
-		var combat_x := maxf(0.0, (GENERATED_UI_REFERENCE_SIZE.x - visual_size.x) * 0.5)
-		var combat_y := 704.0 + maxf(0.0, root.size.y - visual_size.y)
-		return Rect2(Vector2(combat_x, combat_y), root.size)
+		return Rect2(_combat_native_desktop_position(logical_size), logical_size)
 	if window_id == "skill_tree":
-		return Rect2(Vector2(914.0, 72.0), root.size)
-	return Rect2(Vector2(48.0 + float(order) * 120.0, 64.0), root.size)
+		return Rect2(Vector2(914.0, 72.0), logical_size)
+	return Rect2(Vector2(48.0 + float(order) * 120.0, 64.0), logical_size)
+
+
+func _workshop_native_desktop_position(window_id: String) -> Vector2:
+	var gap := 24.0
+	var start := Vector2(20.0, 50.0)
+	var status_width := COMPACT_STATUS_WINDOW_RECT.size.x * WORKSHOP_WINDOW_VISUAL_SCALE
+	var keeper_width := COMPACT_HERO_WINDOW_RECT.size.x * WORKSHOP_WINDOW_VISUAL_SCALE
+	if window_id == "status":
+		return start
+	if window_id == "keeper":
+		return start + Vector2(status_width + gap, 0.0)
+	if window_id == "portal":
+		return start + Vector2(status_width + gap + keeper_width + gap, 0.0)
+	return start
+
+
+func _combat_native_desktop_position(logical_size: Vector2) -> Vector2:
+	var visual_size := _scaled_native_window_size(logical_size, _native_window_scale_vector("combat"))
+	var x := maxf(20.0, (GENERATED_UI_REFERENCE_SIZE.x - visual_size.x) * 0.5)
+	var workshop_bottom := 50.0 + maxf(
+		COMPACT_STATUS_WINDOW_RECT.size.y * WORKSHOP_WINDOW_VISUAL_SCALE,
+		COMPACT_HERO_WINDOW_RECT.size.y * WORKSHOP_WINDOW_VISUAL_SCALE
+	)
+	return Vector2(x, workshop_bottom + 32.0)
+
+
+func _native_window_logical_size(window_id: String, root: Control) -> Vector2:
+	if window_id == "status":
+		return COMPACT_STATUS_WINDOW_RECT.size
+	if window_id == "keeper":
+		return COMPACT_HERO_WINDOW_RECT.size
+	if window_id == "portal":
+		return COMPACT_PORTAL_WINDOW_RECT.size
+	if window_id == "combat":
+		return Vector2(1586.0, 236.0)
+	var minimum := root.custom_minimum_size
+	if minimum.x > 0.0 and minimum.y > 0.0:
+		return minimum
+	return root.size
 
 
 func _native_window_position(logical_position: Vector2) -> Vector2i:
 	var screen_id := DisplayServer.window_get_current_screen()
 	var screen_position := DisplayServer.screen_get_position(screen_id)
-	return screen_position + Vector2i(roundi(logical_position.x), roundi(logical_position.y))
+	var pixel_scale := _native_window_pixel_scale()
+	return screen_position + Vector2i(roundi(logical_position.x * pixel_scale), roundi(logical_position.y * pixel_scale))
 
 
 func _native_window_size(logical_size: Vector2) -> Vector2i:
@@ -685,7 +746,7 @@ func _native_window_size(logical_size: Vector2) -> Vector2i:
 
 
 func _native_window_size_for(window_id: String, logical_size: Vector2) -> Vector2i:
-	return _native_window_size(_scaled_native_window_size(logical_size, _native_window_scale_vector(window_id)))
+	return _native_window_size(_scaled_native_window_size(logical_size, _native_window_canvas_scale_vector(window_id)))
 
 
 func _scaled_native_window_size(logical_size: Vector2, scale: Vector2) -> Vector2:
@@ -696,11 +757,6 @@ func _set_native_window_size(native: Window, window_size: Vector2i) -> void:
 	if native == null:
 		return
 	native.size = window_size
-	if DisplayServer.get_name() == "headless":
-		return
-	if native.has_method("get_window_id"):
-		var window_id := int(native.call("get_window_id"))
-		DisplayServer.window_set_size(window_size, window_id)
 
 
 func _native_window_scale(window_id: String) -> float:
@@ -716,6 +772,18 @@ func _native_window_scale_vector(window_id: String) -> Vector2:
 	if window_id == "combat":
 		return Vector2(scale * COMBAT_NATIVE_WINDOW_WIDTH_RATIO, scale)
 	return Vector2.ONE * scale
+
+
+func _native_window_canvas_scale_vector(window_id: String) -> Vector2:
+	return _native_window_scale_vector(window_id) * _native_window_pixel_scale()
+
+
+func _native_window_pixel_scale() -> float:
+	if DisplayServer.get_name() == "headless":
+		return 1.0
+	if OS.get_name() != "macOS":
+		return 1.0
+	return _desktop_screen_scale(DisplayServer.window_get_current_screen())
 
 
 func _desktop_screen_scale(screen_id: int) -> float:
@@ -1121,7 +1189,7 @@ func _polish_desktop_status_bar(root: Control) -> void:
 	status_bar.size = Vector2(GENERATED_UI_REFERENCE_SIZE.x, 44.0)
 	status_bar.custom_minimum_size = status_bar.size
 	status_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	status_bar.add_theme_stylebox_override("panel", _overlay_style(Color("#080604"), Color("#5a3a20"), 1, 0))
+	status_bar.add_theme_stylebox_override("panel", _overlay_style(Color("#080604"), Color(0.0, 0.0, 0.0, 0.0), 0, 0))
 	for child in status_bar.get_children():
 		if str(child.name) != "Text_SteamSyncStatus":
 			child.queue_free()
@@ -1146,9 +1214,20 @@ func _polish_desktop_status_bar(root: Control) -> void:
 		top_line.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		status_layer.add_child(top_line)
 	(top_line as ColorRect).position = Vector2.ZERO
-	(top_line as ColorRect).size = Vector2(status_layer.size.x, 2.0)
-	(top_line as ColorRect).color = Color("#8a5b24")
+	(top_line as ColorRect).size = Vector2(status_layer.size.x, 1.0)
+	(top_line as ColorRect).color = Color(0.82, 0.54, 0.20, 0.42)
 	(top_line as ColorRect).z_index = 4
+
+	var top_shadow := status_layer.get_node_or_null("Panel_StatusBarTopInsetShadow")
+	if top_shadow == null or not top_shadow is ColorRect:
+		top_shadow = ColorRect.new()
+		top_shadow.name = "Panel_StatusBarTopInsetShadow"
+		top_shadow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		status_layer.add_child(top_shadow)
+	(top_shadow as ColorRect).position = Vector2(0.0, 1.0)
+	(top_shadow as ColorRect).size = Vector2(status_layer.size.x, 1.0)
+	(top_shadow as ColorRect).color = Color(0.0, 0.0, 0.0, 0.38)
+	(top_shadow as ColorRect).z_index = 4
 
 	_ensure_status_bar_chip(status_layer, "Panel_StatusBarBrandChip", Vector2(18.0, 8.0), Vector2(188.0, 28.0), Color("#1a1008"), Color("#d18a24"))
 	_ensure_status_bar_chip(status_layer, "Panel_StatusBarModeChip", Vector2(222.0, 8.0), Vector2(160.0, 28.0), Color("#251711"), Color("#6b4a2a"))
@@ -1167,7 +1246,11 @@ func _polish_desktop_status_bar(root: Control) -> void:
 
 
 func _ensure_status_bar_chip(parent: Control, node_name: String, pos: Vector2, chip_size: Vector2, fill: Color, border: Color) -> PanelContainer:
-	var chip := _ensure_panel(parent, node_name, pos, chip_size, fill, border, 1, 2)
+	var soft_fill := fill
+	soft_fill.a = minf(fill.a, 0.94)
+	var soft_border := border
+	soft_border.a = minf(border.a, 0.58)
+	var chip := _ensure_panel(parent, node_name, pos, chip_size, soft_fill, soft_border, 1, 1)
 	chip.z_index = 1
 	return chip
 
@@ -1527,7 +1610,7 @@ func _ensure_portal_map_overlays(portal: Control) -> void:
 		label.text = "1-%d" % (index + 1)
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.add_theme_color_override("font_shadow_color", Color("#050302"))
-	var boss := _ensure_panel(portal, "Panel_PortalBossNode", Vector2(366.0, 202.0), Vector2(30.0, 28.0), Color("#2b1a12"), Color("#ffcf7a"), 2, 10)
+	var boss := _ensure_panel(portal, "Panel_PortalBossNode", Vector2(328.0, 200.0), Vector2(30.0, 28.0), Color("#2b1a12"), Color("#ffcf7a"), 2, 10)
 	boss.z_index = 5
 	var boss_label := _ensure_runtime_label("Text_PortalBossNode", Vector2(3.0, 5.0), Vector2(24.0, 18.0), 11, Color("#ffcf7a"), boss)
 	boss_label.text = "B"
@@ -1695,9 +1778,9 @@ func _sync_portal_current_marker(portal: Control, active_act: int, active_stage:
 func _sync_portal_route_lines(portal: Control, active_stage: int) -> void:
 	var points := _portal_route_curve_points(PORTAL_MAPS_PER_ACT)
 	var completed_points := _portal_route_curve_points(clampi(active_stage, 1, PORTAL_MAPS_PER_ACT))
-	_ensure_portal_route_line(portal, "Line_PortalRoutePathShadow", points, 9.0, Color(0.03, 0.02, 0.01, 0.58), 3)
-	_ensure_portal_route_line(portal, "Line_PortalRoutePath", points, 5.0, Color("#7a5b2c"), 4)
-	_ensure_portal_route_line(portal, "Line_PortalRouteProgress", completed_points, 5.0, Color("#d18a24"), 4)
+	_ensure_portal_route_line(portal, "Line_PortalRoutePathShadow", points, 7.0, Color(0.03, 0.02, 0.01, 0.46), 3)
+	_ensure_portal_route_line(portal, "Line_PortalRoutePath", points, 4.0, Color("#7a5b2c"), 4)
+	_ensure_portal_route_line(portal, "Line_PortalRouteProgress", completed_points, 4.0, Color("#d18a24"), 4)
 
 
 func _portal_route_curve_points(stage_count: int) -> Array:
@@ -1707,26 +1790,22 @@ func _portal_route_curve_points(stage_count: int) -> Array:
 		output.append(_portal_stage_center(0))
 		return output
 	for index in range(count - 1):
-		var start := _portal_stage_center(index)
-		var end := _portal_stage_center(index + 1)
-		var direction := end - start
-		var normal := Vector2.ZERO
-		if direction.length() > 0.001:
-			normal = Vector2(-direction.y, direction.x).normalized()
-		var sway := float(PORTAL_ROUTE_CURVE_SWAYS[index % PORTAL_ROUTE_CURVE_SWAYS.size()])
-		var control := start.lerp(end, 0.5) + normal * sway
-		for step in range(7):
+		var p0 := _portal_stage_center(maxi(0, index - 1))
+		var p1 := _portal_stage_center(index)
+		var p2 := _portal_stage_center(mini(count - 1, index + 1))
+		var p3 := _portal_stage_center(mini(count - 1, index + 2))
+		for step in range(8):
 			if index > 0 and step == 0:
 				continue
-			var t := float(step) / 6.0
-			output.append(_quadratic_curve_point(start, control, end, t))
+			var t := float(step) / 7.0
+			output.append(_catmull_rom_point(p0, p1, p2, p3, t))
 	return output
 
 
-func _quadratic_curve_point(start: Vector2, control: Vector2, end: Vector2, t: float) -> Vector2:
-	var a := start.lerp(control, t)
-	var b := control.lerp(end, t)
-	return a.lerp(b, t)
+func _catmull_rom_point(p0: Vector2, p1: Vector2, p2: Vector2, p3: Vector2, t: float) -> Vector2:
+	var t2 := t * t
+	var t3 := t2 * t
+	return (p1 * 2.0 + (p2 - p0) * t + (p0 * 2.0 - p1 * 5.0 + p2 * 4.0 - p3) * t2 + (-p0 + p1 * 3.0 - p2 * 3.0 + p3) * t3) * 0.5
 
 
 func _ensure_portal_route_line(parent: Control, node_name: String, points: Array, width: float, color: Color, z: int) -> Line2D:
@@ -2234,7 +2313,7 @@ func _apply_generated_combat_window_scale(strip: Control) -> void:
 	var native := _native_window_for_generated_control(strip)
 	if native != null:
 		_set_native_window_size(native, _native_window_size_for("combat", strip.size))
-		strip.scale = _native_window_scale_vector("combat")
+		strip.scale = _native_window_canvas_scale_vector("combat")
 
 
 func _update_active_native_drags() -> void:
@@ -2671,6 +2750,8 @@ func _ensure_generated_combat_layer(root: Control) -> void:
 		(combat_strip as Control).add_child(prop_layer)
 	prop_layer.z_index = 6
 	(prop_layer as CanvasItem).z_as_relative = false
+	(prop_layer as CanvasItem).visible = false
+	_mark_generated_combat_backdrop_item(prop_layer as CanvasItem)
 	generated_runtime_nodes["combat_prop_layer"] = prop_layer
 	var enemy_layer := (combat_strip as Control).get_node_or_null(OVERLAY_ENEMY_LAYER_NAME)
 	if enemy_layer == null:
@@ -2704,15 +2785,19 @@ func _ensure_generated_combat_soft_border(root: Control) -> void:
 	if combat_strip == null or not combat_strip is Control:
 		return
 	var strip := combat_strip as Control
-	_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeShadow", Vector2(0.0, 0.0), Vector2(1586.0, 3.0), Color(0.0, 0.0, 0.0, 0.30), 5)
-	_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeWarmLine", Vector2(0.0, 3.0), Vector2(1586.0, 1.0), Color(1.0, 0.80, 0.42, 0.18), 5)
-	_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeSoftLight", Vector2(0.0, 4.0), Vector2(1586.0, 2.0), Color(1.0, 1.0, 1.0, 0.06), 5)
-	_ensure_combat_border_rect(strip, "Rect_CombatBottomEdgeShadow", Vector2(0.0, 230.0), Vector2(1586.0, 6.0), Color(0.0, 0.0, 0.0, 0.28), 5)
-	_ensure_combat_border_rect(strip, "Rect_CombatBottomEdgeWarmLine", Vector2(0.0, 229.0), Vector2(1586.0, 1.0), Color(0.95, 0.62, 0.27, 0.12), 5)
-	_ensure_combat_border_rect(strip, "Rect_CombatLeftEdgeSoftShadow", Vector2(0.0, 0.0), Vector2(4.0, 236.0), Color(0.0, 0.0, 0.0, 0.22), 5)
-	_ensure_combat_border_rect(strip, "Rect_CombatLeftEdgeWarmLine", Vector2(4.0, 0.0), Vector2(1.0, 236.0), Color(1.0, 0.78, 0.42, 0.10), 5)
-	_ensure_combat_border_rect(strip, "Rect_CombatRightEdgeSoftShadow", Vector2(1582.0, 0.0), Vector2(4.0, 236.0), Color(0.0, 0.0, 0.0, 0.22), 5)
-	_ensure_combat_border_rect(strip, "Rect_CombatRightEdgeWarmLine", Vector2(1581.0, 0.0), Vector2(1.0, 236.0), Color(1.0, 0.78, 0.42, 0.10), 5)
+	var border_nodes := [
+		_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeShadow", Vector2(0.0, 0.0), Vector2(1586.0, 3.0), Color(0.0, 0.0, 0.0, 0.30), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeWarmLine", Vector2(0.0, 3.0), Vector2(1586.0, 1.0), Color(1.0, 0.80, 0.42, 0.18), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatTopEdgeSoftLight", Vector2(0.0, 4.0), Vector2(1586.0, 2.0), Color(1.0, 1.0, 1.0, 0.06), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatBottomEdgeShadow", Vector2(0.0, 230.0), Vector2(1586.0, 6.0), Color(0.0, 0.0, 0.0, 0.28), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatBottomEdgeWarmLine", Vector2(0.0, 229.0), Vector2(1586.0, 1.0), Color(0.95, 0.62, 0.27, 0.12), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatLeftEdgeSoftShadow", Vector2(0.0, 0.0), Vector2(4.0, 236.0), Color(0.0, 0.0, 0.0, 0.22), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatLeftEdgeWarmLine", Vector2(4.0, 0.0), Vector2(1.0, 236.0), Color(1.0, 0.78, 0.42, 0.10), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatRightEdgeSoftShadow", Vector2(1582.0, 0.0), Vector2(4.0, 236.0), Color(0.0, 0.0, 0.0, 0.22), 5),
+		_ensure_combat_border_rect(strip, "Rect_CombatRightEdgeWarmLine", Vector2(1581.0, 0.0), Vector2(1.0, 236.0), Color(1.0, 0.78, 0.42, 0.10), 5),
+	]
+	for border in border_nodes:
+		_mark_generated_combat_backdrop_item(border)
 
 
 func _ensure_combat_border_rect(parent: Control, node_name: String, pos: Vector2, rect_size: Vector2, color: Color, z: int) -> ColorRect:
@@ -2734,6 +2819,14 @@ func _ensure_combat_border_rect(parent: Control, node_name: String, pos: Vector2
 	rect.z_index = z
 	rect.z_as_relative = false
 	return rect
+
+
+func _mark_generated_combat_backdrop_item(canvas: CanvasItem) -> void:
+	if canvas == null:
+		return
+	canvas.visible = false
+	canvas.modulate = Color(canvas.modulate.r, canvas.modulate.g, canvas.modulate.b, COMBAT_TRANSPARENT_BACKDROP_ALPHA)
+	canvas.set_meta("combat_opacity_base_alpha", COMBAT_TRANSPARENT_BACKDROP_ALPHA)
 
 
 func _ensure_generated_combat_readouts(root: Control) -> void:
@@ -6193,22 +6286,25 @@ func _sync_generated_combat_overlay(snapshot: Dictionary, model: Dictionary) -> 
 
 func _sync_generated_combat_map_texture(snapshot: Dictionary) -> void:
 	var ground := _generated_node_or_null("Section_BottomCombatStrip/Tex_CombatGroundStrip")
-	if ground == null or not ground is TextureRect or store == null:
+	if ground == null or not ground is TextureRect:
 		return
-	var map_def: Dictionary = store.get_map(int(snapshot.get("map_id", 500101)))
-	var map_index := _taskstonebar_map_visual_index(map_def)
+	var map_index := 1
+	if store != null:
+		var map_def: Dictionary = store.get_map(int(snapshot.get("map_id", 500101)))
+		map_index = _taskstonebar_map_visual_index(map_def)
 	var texture_path := str(GENERATED_BATTLE_MAP_TEXTURES.get(map_index, GENERATED_BATTLE_MAP_TEXTURES[1]))
 	var texture := _generated_texture(texture_path)
-	if texture == null:
-		return
 	var texture_rect := ground as TextureRect
-	if texture_rect.texture != texture:
+	if texture != null and texture_rect.texture != texture:
 		texture_rect.texture = texture
 	texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	texture_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	texture_rect.visible = true
 	texture_rect.modulate = Color(1.08, 1.02, 0.92, 1.0)
 	texture_rect.z_index = 0
+	texture_rect.z_as_relative = false
+	texture_rect.set_meta("combat_opacity_base_alpha", 1.0)
 
 
 func _sync_generated_combat_scene_chrome(snapshot: Dictionary, model: Dictionary) -> void:
@@ -6217,22 +6313,15 @@ func _sync_generated_combat_scene_chrome(snapshot: Dictionary, model: Dictionary
 	_sync_generated_map_progress(snapshot)
 
 
-func _sync_generated_combat_props(snapshot: Dictionary) -> void:
+func _sync_generated_combat_props(_snapshot: Dictionary) -> void:
 	var layer_node = generated_runtime_nodes.get("combat_prop_layer", null)
 	if layer_node == null or not layer_node is Control:
 		return
 	var layer := layer_node as Control
-	var elapsed := float(snapshot.get("elapsed", 0.0))
-	var props := [
-		{"name": "Prop_ReedLeft", "pos": Vector2(182.0, 140.0), "size": Vector2(34.0, 54.0), "color": Color("#8fb44a"), "phase": 0.0},
-		{"name": "Prop_PalmMid", "pos": Vector2(836.0, 90.0), "size": Vector2(52.0, 76.0), "color": Color("#7ca53d"), "phase": 0.7},
-		{"name": "Prop_GrassRight", "pos": Vector2(1258.0, 125.0), "size": Vector2(64.0, 46.0), "color": Color("#9bb64c"), "phase": 1.4},
-		{"name": "Prop_RubbleA", "pos": Vector2(618.0, 164.0), "size": Vector2(42.0, 24.0), "color": Color("#594435"), "phase": 0.2},
-		{"name": "Prop_RubbleB", "pos": Vector2(1160.0, 168.0), "size": Vector2(50.0, 22.0), "color": Color("#4a3d35"), "phase": 1.2},
-	]
-	for spec in props:
-		var node := _ensure_pixel_prop(layer, str(spec["name"]), spec["pos"], spec["size"], spec["color"])
-		node.position.y = float((spec["pos"] as Vector2).y) + sin(elapsed * 1.8 + float(spec["phase"])) * 1.5
+	_mark_generated_combat_backdrop_item(layer)
+	for child in layer.get_children():
+		if child is CanvasItem:
+			_mark_generated_combat_backdrop_item(child as CanvasItem)
 
 
 func _sync_generated_drop_banner(snapshot: Dictionary, model: Dictionary) -> void:
@@ -6702,7 +6791,8 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 				_add_runtime_effect(layer as Control, spawn_key, spawn_pos, spawn_size, progress, Color(1, 1, 1, fade))
 			"attack":
 				var target := _find_entity(enemies, int(event.get("target_id", 0)))
-				var target_pos := _overlay_enemy_center(target, world_size) if not target.is_empty() else _overlay_world_to_combat(Vector2(805.0, 80.0), world_size) + COMBAT_ENEMY_VISUAL_SHIFT
+				var target_position: Vector2 = event.get("target_position", Vector2(805.0, 80.0))
+				var target_pos := _overlay_enemy_center(target, world_size) if not target.is_empty() else _overlay_world_to_combat(target_position, world_size) + COMBAT_ENEMY_VISUAL_SHIFT
 				var skill_id := int(event.get("skill_id", 0))
 				var style := _enemy_skill_fx_style(skill_id)
 				var color: Color = style.get("color", Color("#ffcf7a"))
@@ -6732,7 +6822,8 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 					_add_runtime_label(layer as Control, "-%d" % int(round(float(event.get("amount", 0.0)))), hit_pos, Vector2(82.0, 30.0), 22, color.lightened(0.38), fade)
 			"enemy_skill":
 				var source := _find_entity(enemies, int(event.get("source_id", 0)))
-				var source_pos := _overlay_enemy_center(source, world_size) if not source.is_empty() else _overlay_world_to_combat(Vector2(805.0, 80.0), world_size) + COMBAT_ENEMY_VISUAL_SHIFT
+				var source_position: Vector2 = event.get("source_position", Vector2(805.0, 80.0))
+				var source_pos := _overlay_enemy_center(source, world_size) if not source.is_empty() else _overlay_world_to_combat(source_position, world_size) + COMBAT_ENEMY_VISUAL_SHIFT
 				var skill_name := str(event.get("skill_name", "스킬"))
 				var skill_id := int(event.get("skill_id", 0))
 				var style := _enemy_skill_fx_style(skill_id)
@@ -6759,7 +6850,8 @@ func _sync_generated_combat_fx(snapshot: Dictionary) -> void:
 				_add_runtime_label(layer as Control, "HIT -%d" % int(round(float(event.get("amount", 0.0)))), player_pos + Vector2(-46.0, -76.0 - 28.0 * progress), Vector2(112.0, 34.0), 24, Color("#ff6b35"), fade)
 			"kill":
 				var target := _find_entity(enemies, int(event.get("target_id", 0)))
-				var target_pos := _overlay_enemy_center(target, world_size) if not target.is_empty() else _overlay_world_to_combat(Vector2(805.0, 80.0), world_size) + COMBAT_ENEMY_VISUAL_SHIFT
+				var kill_position: Vector2 = event.get("position", Vector2(805.0, 80.0))
+				var target_pos := _overlay_enemy_center(target, world_size) if not target.is_empty() else _overlay_world_to_combat(kill_position, world_size) + COMBAT_ENEMY_VISUAL_SHIFT
 				_add_runtime_label(layer as Control, "처치!", target_pos + Vector2(-30.0, -72.0 - 18.0 * progress), Vector2(86.0, 30.0), 20, Color("#ffcf7a"), fade)
 			"drop":
 				var label_text := "+%s x%d" % [str(event.get("item_name", "전리품")), int(event.get("count", 1))]
@@ -7014,6 +7106,7 @@ func _prepare_generated_texture_atom(texture_rect: TextureRect) -> void:
 func _apply_generated_button_style(button: Button, role: String) -> void:
 	var fill := Color("#2a1a10")
 	var border := Color("#6b4a2a")
+	var border_width := 2
 	var radius := 3
 	var texture_key := ""
 	match role:
@@ -7028,20 +7121,24 @@ func _apply_generated_button_style(button: Button, role: String) -> void:
 			radius = 4
 			texture_key = "taskstonebar.ui.icon_dock_button_9slice"
 		"window_close":
-			fill = Color("#3a1710")
-			border = Color("#d18a24")
-			radius = 2
-	button.flat = false
+			fill = Color(0.0, 0.0, 0.0, 0.0)
+			border = Color(0.0, 0.0, 0.0, 0.0)
+			border_width = 0
+			radius = 4
+	button.flat = role == "window_close"
 	var textured_style: StyleBox = _overlay_texture_style(texture_key)
 	if textured_style != null:
 		button.add_theme_stylebox_override("normal", textured_style)
 		button.add_theme_stylebox_override("hover", _overlay_texture_style(texture_key, Color(1.14, 1.14, 1.14, 1.0)))
 		button.add_theme_stylebox_override("pressed", _overlay_texture_style(texture_key, Color(0.82, 0.82, 0.82, 1.0)))
 	else:
-		button.add_theme_stylebox_override("normal", _overlay_style(fill, border, 2, radius))
-		button.add_theme_stylebox_override("hover", _overlay_style(fill.lightened(0.12), Color("#ffcf7a"), 2, radius))
-		button.add_theme_stylebox_override("pressed", _overlay_style(fill.darkened(0.16), border, 2, radius))
-	button.add_theme_stylebox_override("disabled", _overlay_style(fill.darkened(0.18), Color("#5a5146"), 1, radius))
+		var hover_fill := Color(1.0, 0.80, 0.42, 0.12) if role == "window_close" else fill.lightened(0.12)
+		var hover_border := Color(0.0, 0.0, 0.0, 0.0) if role == "window_close" else Color("#ffcf7a")
+		var pressed_fill := Color(0.0, 0.0, 0.0, 0.20) if role == "window_close" else fill.darkened(0.16)
+		button.add_theme_stylebox_override("normal", _overlay_style(fill, border, border_width, radius))
+		button.add_theme_stylebox_override("hover", _overlay_style(hover_fill, hover_border, border_width, radius))
+		button.add_theme_stylebox_override("pressed", _overlay_style(pressed_fill, border, border_width, radius))
+	button.add_theme_stylebox_override("disabled", _overlay_style(fill.darkened(0.18), Color(0.0, 0.0, 0.0, 0.0) if role == "window_close" else Color("#5a5146"), 0 if role == "window_close" else 1, radius))
 	button.add_theme_color_override("font_color", Color("#ffcf7a"))
 	button.add_theme_color_override("font_pressed_color", Color("#f3e6c8"))
 	button.add_theme_color_override("font_hover_color", Color("#fff0a6"))
@@ -7342,15 +7439,13 @@ func _draw_fx(snapshot: Dictionary, field: Rect2) -> void:
 				_draw_effect_sprite(str(event.get("fx_key", "fx_mob_spawn")), spawn_pos, Vector2.ONE * float(event.get("size", 58.0)), t, Color(1, 1, 1, 1.0 - t * 0.15))
 			"attack":
 				var target: Dictionary = _find_entity(snapshot.get("enemies", []), int(event.get("target_id", 0)))
-				if target.is_empty():
-					continue
-				var target_pos: Vector2 = _world_to_field(target.get("position", Vector2.ZERO), field, world_size)
+				var target_position: Vector2 = event.get("target_position", Vector2(805.0, 80.0))
+				var target_pos: Vector2 = _world_to_field(target.get("position", target_position) if not target.is_empty() else target_position, field, world_size)
 				_draw_enemy_skill_fx(event, player_pos, target_pos, t)
 			"enemy_skill":
 				var source: Dictionary = _find_entity(snapshot.get("enemies", []), int(event.get("source_id", 0)))
-				if source.is_empty():
-					continue
-				var source_pos: Vector2 = _world_to_field(source.get("position", Vector2.ZERO), field, world_size)
+				var source_position: Vector2 = event.get("source_position", Vector2(805.0, 80.0))
+				var source_pos: Vector2 = _world_to_field(source.get("position", source_position) if not source.is_empty() else source_position, field, world_size)
 				_draw_enemy_skill_fx(event, source_pos, player_pos, t)
 
 
