@@ -164,6 +164,9 @@ func set_player_skill_ids(skill_ids: Array) -> void:
 
 
 func set_player_learned_skills(skill_entries: Array) -> void:
+	var previous_skill_ids := _player_learned_skill_ids()
+	var previous_skill_index := player_learned_skill_index
+	var previous_skill_timer := learned_skill_timer
 	configured_player_learned_skills.clear()
 	for entry in skill_entries:
 		if typeof(entry) != TYPE_DICTIONARY:
@@ -174,11 +177,19 @@ func set_player_learned_skills(skill_entries: Array) -> void:
 		configured_player_learned_skills.append((entry as Dictionary).duplicate(true))
 	if store != null:
 		_build_player_learned_skill_rotation()
-		player_learned_skill_index = 0
-		learned_skill_timer = 0.05
+		var new_skill_ids := _player_learned_skill_ids()
+		if running and previous_skill_ids == new_skill_ids:
+			player_learned_skill_index = previous_skill_index
+			learned_skill_timer = maxf(0.0, previous_skill_timer)
+		else:
+			player_learned_skill_index = 0
+			learned_skill_timer = 0.05
+			if running and not player_learned_skill_rotation.is_empty():
+				learned_skill_timer = _player_skill_cooldown(player_learned_skill_rotation[0])
 
 
 func set_player_stone_loadout(stone_instances: Array) -> void:
+	var previous_stone_timers := _stone_cooldown_timers_by_key()
 	configured_player_stones.clear()
 	configured_player_skill_ids.clear()
 	for instance in stone_instances:
@@ -196,7 +207,7 @@ func set_player_stone_loadout(stone_instances: Array) -> void:
 		configured_player_skill_ids.append(300101)
 	if store != null:
 		_build_player_skill_rotation()
-		_build_player_stone_loadout()
+		_build_player_stone_loadout(previous_stone_timers)
 		player_skill_index = 0
 
 
@@ -810,7 +821,7 @@ func _build_player_learned_skill_rotation() -> void:
 		player_learned_skill_rotation.append(runtime_skill)
 
 
-func _build_player_stone_loadout() -> void:
+func _build_player_stone_loadout(previous_timers: Dictionary = {}) -> void:
 	player_stone_loadout.clear()
 	if store == null:
 		return
@@ -826,6 +837,12 @@ func _build_player_stone_loadout() -> void:
 			if skill.is_empty():
 				continue
 			var loadout_index := player_stone_loadout.size()
+			var timer_key := _stone_loadout_timer_key(int(instance.get("instance_id", 0)), skill_id)
+			var cooldown_timer := minf(0.24, 0.045 * float(loadout_index))
+			if running:
+				cooldown_timer = _player_skill_cooldown(skill)
+				if previous_timers.has(timer_key):
+					cooldown_timer = maxf(0.0, float(previous_timers[timer_key]))
 			player_stone_loadout.append({
 				"instance_id": int(instance.get("instance_id", 0)),
 				"item_data_id": int(instance.get("item_data_id", 0)),
@@ -833,8 +850,22 @@ func _build_player_stone_loadout() -> void:
 				"stage": int(instance.get("stage", 1)),
 				"skill_id": skill_id,
 				"skill": skill,
-				"cooldown_timer": minf(0.24, 0.045 * float(loadout_index)),
+				"cooldown_timer": cooldown_timer,
 			})
+
+
+func _stone_cooldown_timers_by_key() -> Dictionary:
+	var result := {}
+	for stone in player_stone_loadout:
+		if typeof(stone) != TYPE_DICTIONARY:
+			continue
+		var key := _stone_loadout_timer_key(int(stone.get("instance_id", 0)), int(stone.get("skill_id", 0)))
+		result[key] = float(stone.get("cooldown_timer", 0.0))
+	return result
+
+
+func _stone_loadout_timer_key(instance_id: int, skill_id: int) -> String:
+	return "%d:%d" % [int(instance_id), int(skill_id)]
 
 
 func _skill_ids_for_stone(stone: Dictionary) -> Array:

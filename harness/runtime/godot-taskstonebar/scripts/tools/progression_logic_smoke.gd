@@ -14,6 +14,7 @@ func _init() -> void:
 	_smoke_stone_synthesis(store)
 	_smoke_stone_equip_loadout(store)
 	_smoke_stone_merge_refreshes_equipped_loadout(store)
+	_smoke_stone_merge_preserves_combat_cooldowns(store)
 	_smoke_unit_drop_items(store)
 	_smoke_early_monster_hit_budget(store)
 	_smoke_stone_direct_drop(store)
@@ -26,7 +27,7 @@ func _init() -> void:
 	_smoke_learned_skill_auto_equip(store)
 	_smoke_skill_unlock_requirements(store)
 
-	print("progression logic smoke ok: stone synthesis, stone equip loadout, stone merge loadout refresh, direct loot drops, equipment equip toggle, equipment synthesis, dynamic player level-up, skill unlock/level-up, learned skill auto-equip")
+	print("progression logic smoke ok: stone synthesis, stone equip loadout, stone merge loadout refresh, merge cooldown preservation, direct loot drops, equipment equip toggle, equipment synthesis, dynamic player level-up, skill unlock/level-up, learned skill auto-equip")
 	quit(0)
 
 
@@ -117,6 +118,43 @@ func _smoke_stone_merge_refreshes_equipped_loadout(store) -> void:
 	var combat_skill_ids: Array = sim.snapshot().get("player_stone_skill_ids", [])
 	_assert(not combat_skill_ids.has(300102), "unequipped source stone skill remained in combat loadout after merge")
 	_assert(combat_skill_ids.has(300103) and combat_skill_ids.has(300104) and combat_skill_ids.has(300105), "equipped higher stone skills did not reach combat after merge")
+
+
+func _smoke_stone_merge_preserves_combat_cooldowns(store) -> void:
+	var state = ProgressionState.new(store)
+	for _i in range(ProgressionState.STONE_SYNTHESIS_COUNT):
+		var added: Dictionary = state.add_item_instance(200202)
+		_assert(bool(added.get("ok", false)), "failed to add source stone for cooldown preservation smoke")
+	state.add_item_instance(200203)
+	state.add_item_instance(200204)
+	state.auto_equip_best_stones()
+	state.learn_skill(200502)
+
+	var sim = BasicCombatSim.new(store)
+	sim.set_progression_state(state)
+	_apply_progression_state_to_sim(state, sim)
+	sim.start(500101)
+	for _i in range(30):
+		sim.step(1.0 / 30.0)
+
+	var source_ids := []
+	for instance in state.inventory_snapshot().get("items", []):
+		if typeof(instance) == TYPE_DICTIONARY and int(instance.get("item_data_id", 0)) == 200202:
+			source_ids.append(int(instance.get("instance_id", 0)))
+	var result: Dictionary = state.synthesize_stones(source_ids.slice(0, ProgressionState.STONE_SYNTHESIS_COUNT))
+	_assert(bool(result.get("ok", false)), "stone merge failed in cooldown preservation smoke: %s" % str(result))
+
+	_apply_progression_state_to_sim(state, sim)
+	var before: Dictionary = sim.snapshot()
+	var player_cast_before := int(before.get("player_skill_cast_count", 0))
+	var learned_cast_before := int(before.get("player_learned_skill_cast_count", 0))
+	for _i in range(3):
+		sim.step(1.0 / 30.0)
+	var after: Dictionary = sim.snapshot()
+	var player_cast_delta := int(after.get("player_skill_cast_count", 0)) - player_cast_before
+	var learned_cast_delta := int(after.get("player_learned_skill_cast_count", 0)) - learned_cast_before
+	_assert(player_cast_delta <= 1, "stone merge reset combat cooldowns and caused burst casts: delta=%d" % player_cast_delta)
+	_assert(learned_cast_delta == 0, "stone merge reset learned skill cooldown: delta=%d" % learned_cast_delta)
 
 
 func _smoke_unit_drop_items(store) -> void:
@@ -443,6 +481,13 @@ func _stone_stat_summary(stones: Array) -> Dictionary:
 		for stat_type in stats.keys():
 			result[str(stat_type)] = float(result.get(str(stat_type), 0.0)) + float(stats[stat_type])
 	return result
+
+
+func _apply_progression_state_to_sim(state, sim) -> void:
+	var snapshot: Dictionary = state.inventory_snapshot()
+	sim.set_player_stat_bonuses(snapshot.get("equipped_stats", {}))
+	sim.set_player_learned_skills(snapshot.get("learned_skills", []))
+	sim.set_player_stone_loadout(snapshot.get("equipped_stones", []))
 
 
 func _count_value(values: Array, wanted: int) -> int:

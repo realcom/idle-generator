@@ -484,6 +484,15 @@ func _run() -> void:
 	if (map_progress as CanvasItem).z_index <= (enemy_layer as CanvasItem).z_index:
 		_fail("combat map progress should render above monsters, got map z=%d enemy z=%d" % [(map_progress as CanvasItem).z_index, (enemy_layer as CanvasItem).z_index])
 		return
+	if (map_progress as CanvasItem).z_index < root_node.COMBAT_MAP_PROGRESS_Z:
+		_fail("combat map progress should use the HUD z-index, got %d expected at least %d" % [(map_progress as CanvasItem).z_index, root_node.COMBAT_MAP_PROGRESS_Z])
+		return
+	for enemy_child in (enemy_layer as Node).get_children():
+		if not str(enemy_child.name).begins_with("RuntimeEnemy_") or not enemy_child is CanvasItem:
+			continue
+		if (map_progress as CanvasItem).z_index <= (enemy_child as CanvasItem).z_index:
+			_fail("combat map progress should render above enemy sprites, got map z=%d enemy sprite %s z=%d" % [(map_progress as CanvasItem).z_index, str(enemy_child.name), (enemy_child as CanvasItem).z_index])
+			return
 	var combat_ground := overlay.get_node_or_null("Section_BottomCombatStrip/Tex_CombatGroundStrip")
 	if combat_ground == null or not combat_ground is CanvasItem:
 		_fail("combat ground underlay texture node is missing")
