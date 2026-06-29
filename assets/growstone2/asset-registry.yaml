@@ -50,7 +50,7 @@ assets:
       - unit-series:taskstonebar-main-100
       - runtime:godot-taskstonebar-combat-strip
     source: growstone2-runtime-unit-sprites
-    note: "Maps 10 visual themes to 50 normal monster sprites plus 10 boss sprites; active paths point directly to original runtime monster sheets."
+    note: "Maps 10 visual themes to 50 normal monster sprites plus 10 boss sprites; active paths point directly to original multi-frame runtime monster sheets."
   taskstonebar_monster_animation_catalog:
     file: runtime/units/monsters/taskstonebar-monster-animations.json
     type: animation-metadata
@@ -59,7 +59,7 @@ assets:
       - runtime:godot-taskstonebar-combat-strip
       - unit-series:taskstonebar-main-100
     source: growstone2-runtime-unit-sprites
-    note: "Frame regions, timing, and optional runtime flip flags for original Taskstonebar monster sheets. Does not copy, tint, crop, or repack source pixels."
+    note: "Frame regions, timing, and optional runtime flip flags for original Taskstonebar monster sheets. Single-frame stationary dummy sheets are excluded from active monster candidates."
   stone_keeper_remodel_sheet_a:
     file: generated/characters/stone_keeper_character_remodel_sheet_a.png
     source_file: ../../design/taskstonebar/concepts/stone_keeper_character_remodel_sheet_a_source.png

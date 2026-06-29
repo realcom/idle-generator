@@ -1,7 +1,7 @@
 {
   "version": 2,
   "game": "taskstonebar",
-  "source_policy": "Original curated runtime monster sheets are used in place; this file stores frame rectangles/timing only.",
+  "source_policy": "Original curated runtime monster sheets are used in place; this file stores frame rectangles/timing only. Single-frame stationary dummy/scarecrow sheets are excluded from active Taskstonebar monster candidates.",
   "orientation_contract": "Frames preserve original sheet direction. render_flip_h is false unless a source needs runtime mirroring.",
   "sprites": {
     "runtime/units/monsters/abyss_osuarius.png": {
@@ -59,6 +59,7 @@
       "default_action": "move",
       "unit_ids": [
         111035,
+        111065,
         111085,
         111101
       ],
@@ -68,6 +69,7 @@
       ],
       "map_sets": [
         3,
+        6,
         8,
         10
       ],
@@ -329,6 +331,7 @@
       },
       "default_action": "move",
       "unit_ids": [
+        111015,
         111024,
         111045,
         111064,
@@ -342,6 +345,7 @@
         "miniboss"
       ],
       "map_sets": [
+        1,
         2,
         4,
         6,
@@ -466,6 +470,7 @@
       },
       "default_action": "move",
       "unit_ids": [
+        111025,
         111034,
         111052,
         111071,
@@ -474,9 +479,11 @@
       "roles": [
         "armored",
         "basic",
-        "fast"
+        "fast",
+        "miniboss"
       ],
       "map_sets": [
+        2,
         3,
         5,
         7,
@@ -538,14 +545,17 @@
       },
       "default_action": "move",
       "unit_ids": [
+        111044,
         111505,
         111102
       ],
       "roles": [
+        "armored",
         "boss",
         "fast"
       ],
       "map_sets": [
+        4,
         5,
         10
       ],
@@ -623,6 +633,7 @@
       },
       "default_action": "move",
       "unit_ids": [
+        111501,
         111502,
         111507,
         111094,
@@ -633,6 +644,7 @@
         "boss"
       ],
       "map_sets": [
+        1,
         2,
         7,
         9
@@ -688,6 +700,7 @@
       "default_action": "move",
       "unit_ids": [
         111503,
+        111504,
         111506,
         111095
       ],
@@ -697,6 +710,7 @@
       ],
       "map_sets": [
         3,
+        4,
         6,
         9
       ],
@@ -764,6 +778,7 @@
       },
       "default_action": "move",
       "unit_ids": [
+        111012,
         111022,
         111072
       ],
@@ -771,6 +786,7 @@
         "fast"
       ],
       "map_sets": [
+        1,
         2,
         7
       ],
@@ -838,12 +854,14 @@
       },
       "default_action": "move",
       "unit_ids": [
+        111042,
         111062
       ],
       "roles": [
         "fast"
       ],
       "map_sets": [
+        4,
         6
       ],
       "source": "runtime/units/monsters/legacy_monster_0010.png"
@@ -910,13 +928,15 @@
       },
       "default_action": "move",
       "unit_ids": [
-        111032
+        111032,
+        111092
       ],
       "roles": [
         "fast"
       ],
       "map_sets": [
-        3
+        3,
+        9
       ],
       "source": "runtime/units/monsters/legacy_monster_0013.png"
     },
@@ -1219,148 +1239,8 @@
       ],
       "source": "runtime/units/monsters/legacy_monster_0032.png"
     },
-    "runtime/units/monsters/mine_boss_0036.png": {
-      "render_flip_h": false,
-      "actions": {
-        "idle": {
-          "delay_ms": 160,
-          "frames": [
-            [
-              0,
-              0,
-              45,
-              51
-            ]
-          ]
-        },
-        "move": {
-          "delay_ms": 160,
-          "frames": [
-            [
-              0,
-              0,
-              45,
-              51
-            ]
-          ]
-        }
-      },
-      "extraction": {
-        "type": "single-frame"
-      },
-      "default_action": "move",
-      "unit_ids": [
-        111015,
-        111501,
-        111504,
-        111065
-      ],
-      "roles": [
-        "boss",
-        "miniboss"
-      ],
-      "map_sets": [
-        1,
-        4,
-        6
-      ],
-      "source": "runtime/units/monsters/mine_boss_0036.png"
-    },
-    "runtime/units/monsters/mine_guard_0035.png": {
-      "render_flip_h": false,
-      "actions": {
-        "idle": {
-          "delay_ms": 160,
-          "frames": [
-            [
-              0,
-              0,
-              45,
-              51
-            ]
-          ]
-        },
-        "move": {
-          "delay_ms": 160,
-          "frames": [
-            [
-              0,
-              0,
-              45,
-              51
-            ]
-          ]
-        }
-      },
-      "extraction": {
-        "type": "single-frame"
-      },
-      "default_action": "move",
-      "unit_ids": [
-        111012,
-        111025,
-        111044,
-        111092
-      ],
-      "roles": [
-        "armored",
-        "fast",
-        "miniboss"
-      ],
-      "map_sets": [
-        1,
-        2,
-        4,
-        9
-      ],
-      "source": "runtime/units/monsters/mine_guard_0035.png"
-    },
-    "runtime/units/monsters/mine_worker_0034.png": {
-      "render_flip_h": false,
-      "actions": {
-        "idle": {
-          "delay_ms": 160,
-          "frames": [
-            [
-              0,
-              0,
-              45,
-              51
-            ]
-          ]
-        },
-        "move": {
-          "delay_ms": 160,
-          "frames": [
-            [
-              0,
-              0,
-              45,
-              51
-            ]
-          ]
-        }
-      },
-      "extraction": {
-        "type": "single-frame"
-      },
-      "default_action": "move",
-      "unit_ids": [
-        111011,
-        111042
-      ],
-      "roles": [
-        "basic",
-        "fast"
-      ],
-      "map_sets": [
-        1,
-        4
-      ],
-      "source": "runtime/units/monsters/mine_worker_0034.png"
-    },
     "runtime/units/monsters/stone_mini_b10000.png": {
-      "render_flip_h": false,
+      "render_flip_h": true,
       "actions": {
         "idle": {
           "delay_ms": 140,
@@ -1413,6 +1293,7 @@
       },
       "default_action": "move",
       "unit_ids": [
+        111011,
         111021,
         111091
       ],
@@ -1420,10 +1301,12 @@
         "basic"
       ],
       "map_sets": [
+        1,
         2,
         9
       ],
       "source": "runtime/units/monsters/stone_mini_b10000.png"
     }
-  }
+  },
+  "candidate_policy": "Every active Taskstonebar monster source must provide at least two move frames."
 }

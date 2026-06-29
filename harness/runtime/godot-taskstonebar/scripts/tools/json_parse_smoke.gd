@@ -241,6 +241,13 @@ func _check_monster_sprite_paths(store) -> void:
 			if not sprites.has_unit_animation(sprite_path):
 				_fail("%s has no animation metadata for %s" % [str(unit.get("name", unit.get("id", ""))), sprite_path])
 				return
+			var animation := sprites.animation_for_unit(sprite_path)
+			var actions = animation.get("actions", {}) if typeof(animation) == TYPE_DICTIONARY else {}
+			var move_action = actions.get("move", {}) if typeof(actions) == TYPE_DICTIONARY else {}
+			var move_frames = move_action.get("frames", []) if typeof(move_action) == TYPE_DICTIONARY else []
+			if typeof(move_frames) != TYPE_ARRAY or move_frames.size() < 2:
+				_fail("%s sprite must have at least 2 move frames: %s" % [str(unit.get("name", unit.get("id", ""))), sprite_path])
+				return
 			if not sprites.region_for_unit(int(unit.get("id", 0)), sprite_path, "move", 0.2).has_area():
 				_fail("%s has no valid move animation region for %s" % [str(unit.get("name", unit.get("id", ""))), sprite_path])
 				return

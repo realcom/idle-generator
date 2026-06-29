@@ -1,8 +1,8 @@
 version: 1
 game: taskstonebar
 status: review
-source_policy: Existing Growstone2 runtime/raw monster sprites are used directly for active Taskstonebar units; generated/static cutouts remain review-only fallback references.
-animation_contract: Active Taskstonebar monster sprite paths point directly to original curated runtime sheets; animation metadata stores frame rects only and does not copy, tint, crop, or repack source pixels.
+source_policy: Existing Growstone2 runtime/raw monster sprites are used directly for active Taskstonebar units; generated/static cutouts and single-frame stationary dummy sheets are excluded from active monster candidates.
+animation_contract: Active Taskstonebar monster sprite paths point directly to original curated runtime sheets; candidates must provide at least two move frames, and metadata stores frame rects only without copying, tinting, cropping, or repacking source pixels.
 orientation_contract: Original monster sheet frame direction is preserved. Godot applies render_flip_h only when animation metadata explicitly asks for it; Taskstonebar source monsters currently render without destructive file flips.
 orientation_fix:
   date: 2026-06-29
@@ -13,12 +13,12 @@ sets:
   name: 작업굴
   tint: '#d19a55'
   roles:
-    basic: mine_worker_0034.png
-    fast: mine_guard_0035.png
+    basic: stone_mini_b10000.png
+    fast: legacy_monster_0007.png
     ranged: legacy_monster_0032.png
     armored: border_revived_corpse.png
-    miniboss: mine_boss_0036.png
-    boss: mine_boss_0036.png
+    miniboss: border_spider_pivot.png
+    boss: foundation_giant_00204.png
 - set: 2
   slug: moss
   name: 이끼굴
@@ -28,7 +28,7 @@ sets:
     fast: legacy_monster_0007.png
     ranged: legacy_monster_0030.png
     armored: border_spider_pivot.png
-    miniboss: mine_guard_0035.png
+    miniboss: border_wraith_hound.png
     boss: foundation_giant_00204.png
 - set: 3
   slug: crystal
@@ -47,11 +47,11 @@ sets:
   tint: '#b6653f'
   roles:
     basic: border_revived_corpse.png
-    fast: mine_worker_0034.png
+    fast: legacy_monster_0010.png
     ranged: legacy_monster_0031.png
-    armored: mine_guard_0035.png
+    armored: border_wraith_hound_pivot.png
     miniboss: border_spider_pivot.png
-    boss: mine_boss_0036.png
+    boss: foundation_giant_00204b.png
 - set: 5
   slug: wraith
   name: 망령길
@@ -72,7 +72,7 @@ sets:
     fast: legacy_monster_0010.png
     ranged: legacy_monster_0030.png
     armored: border_spider_pivot.png
-    miniboss: mine_boss_0036.png
+    miniboss: abyss_osuarius.png
     boss: foundation_giant_00204b.png
 - set: 7
   slug: frost
@@ -102,7 +102,7 @@ sets:
   tint: '#d5b05f'
   roles:
     basic: stone_mini_b10000.png
-    fast: mine_guard_0035.png
+    fast: legacy_monster_0013.png
     ranged: legacy_monster_0032.png
     armored: foundation_giant_00204.png
     miniboss: foundation_giant_00204b.png
@@ -124,8 +124,8 @@ sprites:
   role_name: 일꾼
   map_set: 1
   map_theme: 작업굴
-  sprite: runtime/units/monsters/mine_worker_0034.png
-  source: runtime/units/monsters/mine_worker_0034.png
+  sprite: runtime/units/monsters/stone_mini_b10000.png
+  source: runtime/units/monsters/stone_mini_b10000.png
   tint: '#d19a55'
   status: review
 - unit_id: 111012
@@ -133,8 +133,8 @@ sprites:
   role_name: 질주꾼
   map_set: 1
   map_theme: 작업굴
-  sprite: runtime/units/monsters/mine_guard_0035.png
-  source: runtime/units/monsters/mine_guard_0035.png
+  sprite: runtime/units/monsters/legacy_monster_0007.png
+  source: runtime/units/monsters/legacy_monster_0007.png
   tint: '#d19a55'
   status: review
 - unit_id: 111013
@@ -160,8 +160,8 @@ sprites:
   role_name: 문지기
   map_set: 1
   map_theme: 작업굴
-  sprite: runtime/units/monsters/mine_boss_0036.png
-  source: runtime/units/monsters/mine_boss_0036.png
+  sprite: runtime/units/monsters/border_spider_pivot.png
+  source: runtime/units/monsters/border_spider_pivot.png
   tint: '#d19a55'
   status: review
 - unit_id: 111501
@@ -169,8 +169,8 @@ sprites:
   role_name: 군주
   map_set: 1
   map_theme: 작업굴
-  sprite: runtime/units/monsters/mine_boss_0036.png
-  source: runtime/units/monsters/mine_boss_0036.png
+  sprite: runtime/units/monsters/foundation_giant_00204.png
+  source: runtime/units/monsters/foundation_giant_00204.png
   tint: '#d19a55'
   status: review
 - unit_id: 111021
@@ -214,8 +214,8 @@ sprites:
   role_name: 문지기
   map_set: 2
   map_theme: 이끼굴
-  sprite: runtime/units/monsters/mine_guard_0035.png
-  source: runtime/units/monsters/mine_guard_0035.png
+  sprite: runtime/units/monsters/border_wraith_hound.png
+  source: runtime/units/monsters/border_wraith_hound.png
   tint: '#6fbf5a'
   status: review
 - unit_id: 111502
@@ -295,8 +295,8 @@ sprites:
   role_name: 질주꾼
   map_set: 4
   map_theme: 녹슨굴
-  sprite: runtime/units/monsters/mine_worker_0034.png
-  source: runtime/units/monsters/mine_worker_0034.png
+  sprite: runtime/units/monsters/legacy_monster_0010.png
+  source: runtime/units/monsters/legacy_monster_0010.png
   tint: '#b6653f'
   status: review
 - unit_id: 111043
@@ -313,8 +313,8 @@ sprites:
   role_name: 방패병
   map_set: 4
   map_theme: 녹슨굴
-  sprite: runtime/units/monsters/mine_guard_0035.png
-  source: runtime/units/monsters/mine_guard_0035.png
+  sprite: runtime/units/monsters/border_wraith_hound_pivot.png
+  source: runtime/units/monsters/border_wraith_hound_pivot.png
   tint: '#b6653f'
   status: review
 - unit_id: 111045
@@ -331,8 +331,8 @@ sprites:
   role_name: 군주
   map_set: 4
   map_theme: 녹슨굴
-  sprite: runtime/units/monsters/mine_boss_0036.png
-  source: runtime/units/monsters/mine_boss_0036.png
+  sprite: runtime/units/monsters/foundation_giant_00204b.png
+  source: runtime/units/monsters/foundation_giant_00204b.png
   tint: '#b6653f'
   status: review
 - unit_id: 111051
@@ -430,8 +430,8 @@ sprites:
   role_name: 문지기
   map_set: 6
   map_theme: 용암고
-  sprite: runtime/units/monsters/mine_boss_0036.png
-  source: runtime/units/monsters/mine_boss_0036.png
+  sprite: runtime/units/monsters/abyss_osuarius.png
+  source: runtime/units/monsters/abyss_osuarius.png
   tint: '#f06435'
   status: review
 - unit_id: 111506
@@ -565,8 +565,8 @@ sprites:
   role_name: 질주꾼
   map_set: 9
   map_theme: 초석로
-  sprite: runtime/units/monsters/mine_guard_0035.png
-  source: runtime/units/monsters/mine_guard_0035.png
+  sprite: runtime/units/monsters/legacy_monster_0013.png
+  source: runtime/units/monsters/legacy_monster_0013.png
   tint: '#d5b05f'
   status: review
 - unit_id: 111093
