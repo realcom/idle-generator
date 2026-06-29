@@ -19,7 +19,7 @@ collections:
     type: unit-sprite
     status: review
     source: growstone2-runtime-unit-sprites
-    note: "60 palette/framing variants for the 10 Taskstonebar combat map themes."
+    note: "60 static palette/framing fallback cutouts from an earlier review pass. Active Taskstonebar units now reference original runtime monster sheets directly."
   - name: taskstone-imported-pixel-ui
     prefix: assets/growstone2/source/taskstone/
     type: ui-sprite
@@ -50,7 +50,16 @@ assets:
       - unit-series:taskstonebar-main-100
       - runtime:godot-taskstonebar-combat-strip
     source: growstone2-runtime-unit-sprites
-    note: "Maps 10 visual themes to 50 normal monster sprites plus 10 boss sprites."
+    note: "Maps 10 visual themes to 50 normal monster sprites plus 10 boss sprites; active paths point directly to original runtime monster sheets."
+  taskstonebar_monster_animation_catalog:
+    file: runtime/units/monsters/taskstonebar-monster-animations.json
+    type: animation-metadata
+    status: review
+    used_by:
+      - runtime:godot-taskstonebar-combat-strip
+      - unit-series:taskstonebar-main-100
+    source: growstone2-runtime-unit-sprites
+    note: "Frame regions, timing, and optional runtime flip flags for original Taskstonebar monster sheets. Does not copy, tint, crop, or repack source pixels."
   stone_keeper_remodel_sheet_a:
     file: generated/characters/stone_keeper_character_remodel_sheet_a.png
     source_file: ../../design/taskstonebar/concepts/stone_keeper_character_remodel_sheet_a_source.png

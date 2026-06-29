@@ -2,8 +2,9 @@ extends RefCounted
 
 const WORLD_SIZE := Vector2(960.0, 160.0)
 const PLAYER_X := 150.0
-const PLAYER_SPAWN_Y_RATIO := 0.6
+const PLAYER_SPAWN_Y_RATIO := 0.8
 const ENEMY_SPAWN_X := 995.0
+const ENEMY_SPAWN_Y_RATIO := PLAYER_SPAWN_Y_RATIO
 const CONTACT_RANGE := 82.0
 const ENEMY_SPACING := 30.0
 const ENEMY_SPAWN_DELAY := 0.18
@@ -1343,7 +1344,7 @@ func _unit_type(unit: Dictionary) -> String:
 
 
 func _spawn_position_for_entry(entry: Dictionary, spawn_slot: int) -> Vector2:
-	var base := Vector2(ENEMY_SPAWN_X, WORLD_SIZE.y * 0.5)
+	var base := Vector2(ENEMY_SPAWN_X, WORLD_SIZE.y * ENEMY_SPAWN_Y_RATIO)
 	if int(entry.get("location_id", 0)) != 0:
 		base = _world_position_for_map_location(int(entry.get("location_id", 0)), base)
 	elif is_finite(float(entry.get("position_x", INF))) and is_finite(float(entry.get("position_y", INF))):
@@ -1370,7 +1371,7 @@ func _world_position_from_map_coords(x: float, y: float) -> Vector2:
 	var map_span := maxf(0.1, enemy_location.x - player_location.x)
 	var world_scale := (ENEMY_SPAWN_X - PLAYER_X) / map_span
 	var world_x := PLAYER_X + (x - player_location.x) * world_scale
-	var world_y := WORLD_SIZE.y * 0.5 + (y - player_location.y) * world_scale * 0.45
+	var world_y := WORLD_SIZE.y * ENEMY_SPAWN_Y_RATIO + (y - player_location.y) * world_scale * 0.45
 	return Vector2(world_x, world_y)
 
 

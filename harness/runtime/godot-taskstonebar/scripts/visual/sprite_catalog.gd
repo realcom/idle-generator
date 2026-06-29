@@ -7,6 +7,7 @@ const ASSET_ROOTS := [
 ]
 const HERO_FRAME_SIZE := Vector2(48.0, 48.0)
 const HERO_FRAME_COUNT := 11
+const UNIT_ANIMATION_CATALOG := "runtime/units/monsters/taskstonebar-monster-animations.json"
 
 const FILES := {
 	"hero": "source/taskstone/hero.png",
@@ -188,11 +189,14 @@ const SPRITE_REGIONS := {
 
 var textures := {}
 var texture_paths := {}
+var unit_animation_defs := {}
 var errors: Array[String] = []
 
 
 func load_all() -> bool:
 	textures.clear()
+	texture_paths.clear()
+	unit_animation_defs.clear()
 	errors.clear()
 	for key in FILES.keys():
 		var relative_path := str(FILES[key])
@@ -200,6 +204,7 @@ func load_all() -> bool:
 		if texture != null:
 			textures[str(key)] = texture
 			texture_paths[str(key)] = relative_path
+	_load_unit_animation_catalog()
 	return errors.is_empty()
 
 
@@ -235,6 +240,24 @@ func texture_for_item_icon(sprite_path: String) -> Texture2D:
 	return _texture_for_path_or_null(relative_path)
 
 
+func has_unit_animation(sprite_path := "") -> bool:
+	return unit_animation_defs.has(_normalize_sprite_path(sprite_path))
+
+
+func animation_for_unit(sprite_path := "") -> Dictionary:
+	var definition = unit_animation_defs.get(_normalize_sprite_path(sprite_path), {})
+	return definition if typeof(definition) == TYPE_DICTIONARY else {}
+
+
+func render_flip_h_for_unit(unit_id: int, sprite_path := "", fallback := true) -> bool:
+	var key := str(UNIT_TEXTURE_KEYS.get(int(unit_id), ""))
+	var relative_path := str(texture_paths.get(key, "")) if key != "" else _normalize_sprite_path(sprite_path)
+	var definition = unit_animation_defs.get(relative_path, {})
+	if typeof(definition) == TYPE_DICTIONARY and definition.has("render_flip_h"):
+		return bool(definition.get("render_flip_h", fallback))
+	return fallback
+
+
 func effect_key_for_skill(skill_id: int) -> String:
 	return str(PLAYER_SKILL_EFFECT_KEYS.get(int(skill_id), "fx_skill_orb"))
 
@@ -244,9 +267,11 @@ func has_effect_for_skill(skill_id: int) -> bool:
 	return PLAYER_SKILL_EFFECT_KEYS.has(int(skill_id)) and FILES.has(key)
 
 
-func region_for_unit(unit_id: int, sprite_path := "") -> Rect2:
+func region_for_unit(unit_id: int, sprite_path := "", action := "", elapsed_seconds := 0.0) -> Rect2:
 	var key := str(UNIT_TEXTURE_KEYS.get(int(unit_id), ""))
 	var relative_path := str(texture_paths.get(key, "")) if key != "" else _normalize_sprite_path(sprite_path)
+	if unit_animation_defs.has(relative_path):
+		return _animation_frame_region(unit_animation_defs[relative_path], action, elapsed_seconds)
 	return SPRITE_REGIONS.get(relative_path, Rect2())
 
 
@@ -346,3 +371,73 @@ func _load_texture(filename: String) -> Texture2D:
 		return null
 
 	return ImageTexture.create_from_image(image)
+
+
+func _load_unit_animation_catalog() -> void:
+	var path := asset_path(UNIT_ANIMATION_CATALOG)
+	if not FileAccess.file_exists(path):
+		errors.append("Missing unit animation catalog %s" % path)
+		return
+
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		errors.append("Cannot open unit animation catalog %s: %s" % [path, error_string(FileAccess.get_open_error())])
+		return
+
+	var parser := JSON.new()
+	var parse_error := parser.parse(file.get_as_text())
+	if parse_error != OK:
+		errors.append("Cannot parse unit animation catalog %s at line %d: %s" % [
+			path,
+			parser.get_error_line(),
+			parser.get_error_message(),
+		])
+		return
+
+	if typeof(parser.data) != TYPE_DICTIONARY:
+		errors.append("Unit animation catalog %s must have a dictionary root" % path)
+		return
+	var sprites_data = parser.data.get("sprites", {})
+	if typeof(sprites_data) != TYPE_DICTIONARY:
+		errors.append("Unit animation catalog %s must include a sprites dictionary" % path)
+		return
+
+	for key in sprites_data.keys():
+		var relative_path := _normalize_sprite_path(str(key))
+		var definition = sprites_data[key]
+		if relative_path == "" or typeof(definition) != TYPE_DICTIONARY:
+			continue
+		unit_animation_defs[relative_path] = definition
+
+
+func _animation_frame_region(definition: Dictionary, action := "", elapsed_seconds := 0.0) -> Rect2:
+	var actions = definition.get("actions", {})
+	if typeof(actions) != TYPE_DICTIONARY or actions.is_empty():
+		return Rect2()
+
+	var action_name := str(action)
+	if action_name == "" or not actions.has(action_name):
+		action_name = str(definition.get("default_action", ""))
+	if action_name == "" or not actions.has(action_name):
+		action_name = "move" if actions.has("move") else "idle"
+	if not actions.has(action_name):
+		action_name = str(actions.keys()[0])
+
+	var action_def = actions.get(action_name, {})
+	if typeof(action_def) != TYPE_DICTIONARY:
+		return Rect2()
+	var frames = action_def.get("frames", [])
+	if typeof(frames) != TYPE_ARRAY or frames.is_empty():
+		return Rect2()
+	var delay_ms := maxf(1.0, float(action_def.get("delay_ms", 160)))
+	var frame_index: int = int(floor(maxf(0.0, float(elapsed_seconds)) * 1000.0 / delay_ms)) % frames.size()
+	return _rect_from_animation_frame(frames[frame_index])
+
+
+func _rect_from_animation_frame(frame) -> Rect2:
+	if typeof(frame) != TYPE_ARRAY or frame.size() < 4:
+		return Rect2()
+	return Rect2(
+		Vector2(float(frame[0]), float(frame[1])),
+		Vector2(float(frame[2]), float(frame[3]))
+	)

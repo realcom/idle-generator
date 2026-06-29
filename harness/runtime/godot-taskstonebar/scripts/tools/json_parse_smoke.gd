@@ -167,9 +167,8 @@ func _check_taskstonebar_monster_sets(store) -> void:
 			_fail("%s is missing SetXX or role tags" % str(unit.get("name", unit.get("id", ""))))
 			return
 		var sprite := str(unit.get("sprite", ""))
-		var set_number := set_tag.trim_prefix("Set")
-		if not sprite.begins_with("runtime/units/monsters/taskstonebar_s%s_" % set_number):
-			_fail("%s sprite does not match %s: %s" % [str(unit.get("name", unit.get("id", ""))), set_tag, sprite])
+		if not sprite.begins_with("runtime/units/monsters/") or sprite.contains("/animated/") or sprite.get_file().begins_with("taskstonebar_s"):
+			_fail("%s sprite must use an original runtime monster sheet for %s: %s" % [str(unit.get("name", unit.get("id", ""))), set_tag, sprite])
 			return
 		if not roles_by_set.has(set_tag):
 			roles_by_set[set_tag] = {}
@@ -237,6 +236,14 @@ func _check_monster_sprite_paths(store) -> void:
 		if texture == null:
 			_fail("%s has no loadable sprite %s" % [str(unit.get("name", unit.get("id", ""))), str(unit.get("sprite", ""))])
 			return
+		var sprite_path := str(unit.get("sprite", ""))
+		if sprite_path.begins_with("runtime/units/monsters/"):
+			if not sprites.has_unit_animation(sprite_path):
+				_fail("%s has no animation metadata for %s" % [str(unit.get("name", unit.get("id", ""))), sprite_path])
+				return
+			if not sprites.region_for_unit(int(unit.get("id", 0)), sprite_path, "move", 0.2).has_area():
+				_fail("%s has no valid move animation region for %s" % [str(unit.get("name", unit.get("id", ""))), sprite_path])
+				return
 	if not sprites.errors.is_empty():
 		_fail("sprite path errors after JSON parse: %s" % "; ".join(sprites.errors))
 
