@@ -2,8 +2,8 @@ extends RefCounted
 
 const GAME_ID := "taskstonebar"
 const BUILD_DIRS := [
-	"export_data/build/taskstonebar",
 	"../../build/taskstonebar",
+	"export_data/build/taskstonebar",
 ]
 const BUNDLES := {
 	"Maps": "maps",

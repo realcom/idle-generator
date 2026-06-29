@@ -125,7 +125,10 @@ def godot_smoke(skip_progression: bool = False) -> int:
     if not godot:
         print("growstone2_harness: godot executable not found", file=sys.stderr)
         return 127
-    scripts = ["res://scripts/tools/smoke.gd"]
+    scripts = [
+        "res://scripts/tools/json_parse_smoke.gd",
+        "res://scripts/tools/smoke.gd",
+    ]
     if not skip_progression:
         scripts.append("res://scripts/tools/progression_logic_smoke.gd")
     for script in scripts:
