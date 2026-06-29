@@ -4,7 +4,7 @@ tags: [Combat, MonsterSkill, Ranged, Taskstonebar]
 damageType: Pierce
 projectileType: Straight
 targetRefreshType: Nearest
-cooldown: 2.40
+cooldown: 1.80
 priority: 23
 projectilePrefab: "FXPrefabs/Taskstonebar/NeedleStoneProjectile.prefab"
 timelines:
@@ -12,5 +12,5 @@ timelines:
   - time: 0.16
     hit:
       maxHit: 1
-      addDamage: { damagePercent: [126.0] }
+      addDamage: { damagePercent: [620.0] }
   - { time: 0.36, destroy: {} }

@@ -4,12 +4,12 @@ tags: [Combat, MonsterSkill, Basic, Taskstonebar]
 damageType: NormalDamage
 projectileType: None
 targetRefreshType: Nearest
-cooldown: 2.20
+cooldown: 1.65
 priority: 21
 timelines:
   - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_Claw_Start.prefab" } }
   - time: 0.12
     hit:
       maxHit: 1
-      addDamage: { damagePercent: [88.0] }
+      addDamage: { damagePercent: [620.0] }
   - { time: 0.28, destroy: {} }

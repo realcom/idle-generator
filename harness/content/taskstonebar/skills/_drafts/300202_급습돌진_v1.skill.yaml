@@ -4,7 +4,7 @@ tags: [Combat, MonsterSkill, Fast, Taskstonebar]
 damageType: Pierce
 projectileType: None
 targetRefreshType: Nearest
-cooldown: 1.60
+cooldown: 1.20
 priority: 22
 timelines:
   - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_Lunge_Start.prefab" } }
@@ -15,5 +15,5 @@ timelines:
   - time: 0.18
     hit:
       maxHit: 1
-      addDamage: { damagePercent: [116.0] }
+      addDamage: { damagePercent: [680.0] }
   - { time: 0.34, destroy: {} }

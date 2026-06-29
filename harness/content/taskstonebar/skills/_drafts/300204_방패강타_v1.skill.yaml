@@ -4,14 +4,14 @@ tags: [Combat, MonsterSkill, Armored, Taskstonebar]
 damageType: NormalDamage
 projectileType: None
 targetRefreshType: Nearest
-cooldown: 2.80
+cooldown: 2.10
 priority: 24
 timelines:
   - { time: 0.0, playFx: { prefab: "FXPrefabs/Taskstonebar/VFX_ShieldSlam_Start.prefab" } }
   - time: 0.22
     hit:
       maxHit: 1
-      addDamage: { damagePercent: [142.0] }
+      addDamage: { damagePercent: [560.0] }
   - time: 0.24
     unitKnockback:
       duration: 0.12

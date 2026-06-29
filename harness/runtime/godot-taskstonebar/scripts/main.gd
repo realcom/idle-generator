@@ -4294,17 +4294,17 @@ func _set_status_skill_binding_visual(binding: String, item_id: int, item: Dicti
 				(slot as CanvasItem).modulate = Color(1.0, 0.95, 0.72, 0.96)
 			else:
 				(slot as CanvasItem).modulate = Color(0.48, 0.48, 0.48, 0.72)
-			var icon := _find_first_texture_rect(slot)
-			if icon != null:
-				var icon_texture := _runtime_skill_icon_texture(item_id, item)
-				icon.texture = icon_texture
-				icon.visible = icon_texture != null
-				if level > 0:
-					icon.modulate = Color(1.0, 1.0, 1.0, 1.0)
-				elif ready:
-					icon.modulate = Color(1.0, 0.94, 0.72, 0.94)
-				else:
-					icon.modulate = Color(0.7, 0.7, 0.7, 0.72)
+		var icon := _find_first_texture_rect(slot)
+		if icon != null:
+			var icon_texture := _runtime_skill_icon_texture(item_id, item)
+			icon.texture = icon_texture
+			icon.visible = icon_texture != null
+			if level > 0:
+				icon.modulate = Color(1.0, 1.0, 1.0, 1.0)
+			elif ready:
+				icon.modulate = Color(1.0, 0.94, 0.72, 0.94)
+			else:
+				icon.modulate = Color(0.7, 0.7, 0.7, 0.72)
 
 
 func _prepare_status_skill_binding_input(binding: String, item_id: int, item: Dictionary, level: int, unlock_preview: Dictionary, level_preview: Dictionary, points: int, player_level: int) -> void:
@@ -7650,22 +7650,22 @@ func _sync_generated_enemy_stack(snapshot: Dictionary, world_size: Vector2, elap
 		active_names[shadow_name] = true
 		var enemy_rect := _runtime_enemy_texture_rect(layer, node_name)
 		var enemy_shadow := _runtime_enemy_shadow(layer, shadow_name)
-			var enemy_size := _overlay_enemy_size(enemy)
-			var enemy_pos := _overlay_enemy_center(enemy, world_size, enemy_size)
-			var enemy_texture := _unit_display_texture(enemy, false, 0, elapsed_seconds)
-			if enemy_texture != null:
-				enemy_rect.texture = enemy_texture
-			else:
-				if sprites != null:
-					enemy_rect.texture = sprites.get_texture("monster_basic")
+		var enemy_size := _overlay_enemy_size(enemy)
+		var enemy_pos := _overlay_enemy_center(enemy, world_size, enemy_size)
+		var enemy_texture := _unit_display_texture(enemy, false, 0, elapsed_seconds)
+		if enemy_texture != null:
+			enemy_rect.texture = enemy_texture
+		else:
+			if sprites != null:
+				enemy_rect.texture = sprites.get_texture("monster_basic")
 		enemy_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		enemy_rect.stretch_mode = TextureRect.STRETCH_SCALE
 		enemy_rect.visible = true
 		enemy_rect.flip_h = _unit_display_flip_h(enemy, false)
 		enemy_rect.size = enemy_size
 		enemy_rect.pivot_offset = enemy_size * 0.5
-			var enemy_top_left := enemy_pos - enemy_size * 0.5
-			enemy_rect.position = enemy_top_left
+		var enemy_top_left := enemy_pos - enemy_size * 0.5
+		enemy_rect.position = enemy_top_left
 		enemy_rect.z_index = 118 + int(round(enemy_pos.y))
 		enemy_rect.z_as_relative = false
 		enemy_shadow.visible = true
